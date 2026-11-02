@@ -170,9 +170,65 @@ _FINS = {
     "thickness_m": 0.003,
 }
 
+# The FIRST design of every tier is meant to fail so the demo shows "read the failure reason,
+# fix the cause"; the following ones pass. Bottle/amateur are judged by the dummy physics until
+# phase 3; commercial/heavy by the real multistage model.
+#
+# Commercial numbers came from scripts/tune_demo_design.py (real physics, scenario env):
+#   * attempt 1: Electron-class, 9 x rutherford + 2 500 kg upper stage -> perigee ~290 km,
+#     fails "perigee below target 400 km" (under-fuelled upper stage, too little burn time).
+#   * attempt 2: +1 000 kg upper-stage propellant, 10 engines, re-tuned pitch program
+#     (25.5 s / 7.95 deg sits inside the +-0.5 s / +-0.2 deg passing window) -> ~475 x 670 km.
+#   * attempt 3: slightly lighter first stage, later/larger kick (37.5 s / 13.55 deg) -> ~440 x
+#     540 km, a more circular insertion.
+# A merlin_1d first stage is too strong for a 150 kg payload under the 2e9 JPY budget (liftoff
+# TWR > 3 and max-Q far above 60 kPa), hence the Rutherford-class vehicle.
+_COMMERCIAL_STAGE_TEMPLATE = {"structural_fraction": 0.08, "engine_id": "rutherford"}
+
+
+def _commercial(
+    prop1_kg: float, engines1: int, prop2_kg: float, pitch_start_s: float, pitch_deg: float
+) -> dict[str, Any]:
+    return {
+        "tier": "commercial",
+        "stages": [
+            {
+                **_COMMERCIAL_STAGE_TEMPLATE,
+                "propellant_mass_kg": prop1_kg,
+                "engine_count": engines1,
+            },
+            {
+                "propellant_mass_kg": prop2_kg,
+                "structural_fraction": 0.10,
+                "engine_id": "rutherford",
+                "engine_count": 1,
+            },
+        ],
+        "boosters": [],
+        "fairing_mass_kg": 50,
+        "payload_mass_kg": 150,
+        "pitch_start_s": pitch_start_s,
+        "initial_pitch_deg": pitch_deg,
+    }
+
+
+_AMATEUR_BASE = {
+    "tier": "amateur",
+    "body_diameter_m": 0.054,
+    "body_length_m": 0.9,
+    "nose_shape": "ogive",
+    "nose_length_m": 0.15,
+    "fins": _FINS,
+    "motor_id": "dummy-J700",
+    "dry_mass_kg": 1.5,
+    "payload_mass_kg": 1.0,
+    "parachute_diameter_m": 1.2,
+    "deploy_delay_s": 5.0,
+}
+
 DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
     "bottle": [
-        {
+        {  # fails: apogee short of the 25 m target (dummy)
             "tier": "bottle",
             "bottle_volume_m3": 0.0015,
             "water_fill_frac": 0.4,
@@ -198,19 +254,8 @@ DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
         },
     ],
     "amateur": [
-        {
-            "tier": "amateur",
-            "body_diameter_m": 0.054,
-            "body_length_m": 0.9,
-            "nose_shape": "ogive",
-            "nose_length_m": 0.15,
-            "fins": _FINS,
-            "motor_id": "dummy-J700",
-            "dry_mass_kg": 1.5,
-            "payload_mass_kg": 1.0,
-            "parachute_diameter_m": 1.2,
-            "deploy_delay_s": 5.0,
-        },
+        {**_AMATEUR_BASE, "parachute_diameter_m": 0.6},  # fails: descent too fast (dummy)
+        _AMATEUR_BASE,
         {
             "tier": "amateur",
             "body_diameter_m": 0.066,
@@ -226,70 +271,30 @@ DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
         },
     ],
     "commercial": [
-        {
-            "tier": "commercial",
-            "stages": [
-                {
-                    "propellant_mass_kg": 14000,
-                    "structural_fraction": 0.09,
-                    "engine_id": "eng-a",
-                    "engine_count": 1,
-                },
-                {
-                    "propellant_mass_kg": 2500,
-                    "structural_fraction": 0.11,
-                    "engine_id": "eng-b",
-                    "engine_count": 1,
-                },
-            ],
-            "boosters": [],
-            "fairing_mass_kg": 80,
-            "payload_mass_kg": 150,
-            "pitch_start_s": 12,
-            "initial_pitch_deg": 4,
-        },
-        {
-            "tier": "commercial",
-            "stages": [
-                {
-                    "propellant_mass_kg": 16000,
-                    "structural_fraction": 0.085,
-                    "engine_id": "eng-a",
-                    "engine_count": 1,
-                },
-                {
-                    "propellant_mass_kg": 3000,
-                    "structural_fraction": 0.10,
-                    "engine_id": "eng-b",
-                    "engine_count": 1,
-                },
-            ],
-            "boosters": [],
-            "fairing_mass_kg": 90,
-            "payload_mass_kg": 150,
-            "pitch_start_s": 10,
-            "initial_pitch_deg": 5,
-        },
+        _commercial(9250, 9, 2500, 12.0, 4.0),  # fails: perigee ~290 km < 400 km
+        _commercial(9250, 10, 3500, 25.5, 7.95),
+        _commercial(9000, 10, 3500, 37.5, 13.55),
     ],
     "heavy": [
+        # Catalog ids only; not tuned (no heavy demo scenario yet).
         {
             "tier": "heavy",
             "stages": [
                 {
-                    "propellant_mass_kg": 400000,
-                    "structural_fraction": 0.06,
-                    "engine_id": "eng-a",
-                    "engine_count": 9,
+                    "propellant_mass_kg": 280000,
+                    "structural_fraction": 0.07,
+                    "engine_id": "rd_180",
+                    "engine_count": 1,
                 },
                 {
-                    "propellant_mass_kg": 90000,
-                    "structural_fraction": 0.08,
-                    "engine_id": "eng-b",
+                    "propellant_mass_kg": 25000,
+                    "structural_fraction": 0.09,
+                    "engine_id": "rl10",
                     "engine_count": 1,
                 },
             ],
-            "boosters": [{"booster_id": "srb-x", "count": 2}],
-            "fairing_mass_kg": 2000,
+            "boosters": [{"booster_id": "gem_63", "count": 2}],
+            "fairing_mass_kg": 2500,
             "payload_mass_kg": 5000,
             "pitch_start_s": 12,
             "initial_pitch_deg": 4,
@@ -298,30 +303,32 @@ DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
             "tier": "heavy",
             "stages": [
                 {
-                    "propellant_mass_kg": 450000,
-                    "structural_fraction": 0.06,
-                    "engine_id": "eng-a",
-                    "engine_count": 9,
+                    "propellant_mass_kg": 280000,
+                    "structural_fraction": 0.07,
+                    "engine_id": "rd_180",
+                    "engine_count": 1,
                 },
                 {
-                    "propellant_mass_kg": 100000,
-                    "structural_fraction": 0.08,
-                    "engine_id": "eng-b",
+                    "propellant_mass_kg": 25000,
+                    "structural_fraction": 0.09,
+                    "engine_id": "rl10",
                     "engine_count": 1,
                 },
             ],
-            "boosters": [{"booster_id": "srb-x", "count": 4}],
-            "fairing_mass_kg": 2200,
+            "boosters": [{"booster_id": "gem_63", "count": 4}],
+            "fairing_mass_kg": 2500,
             "payload_mass_kg": 5000,
             "pitch_start_s": 14,
-            "initial_pitch_deg": 3,
+            "initial_pitch_deg": 5,
         },
     ],
 }
 
 
 def _final_from_results(tier: str, designs: list[dict[str, Any]], sim_ids: list[str]):
-    """Script item that composes the final JSON from the simulate_design results in history."""
+    """Script item that composes the final JSON from the simulate_design results in history.
+    Only passing designs are reported (CLAUDE.md section 1); if none passed, all attempts are
+    listed with passed=false so the user still sees what was tried."""
 
     def build(history: list[dict[str, Any]]) -> Message:
         results = tool_results_from_history(history)
@@ -348,9 +355,16 @@ def _final_from_results(tier: str, designs: list[dict[str, Any]], sim_ids: list[
                     "explanation": explanation,
                 }
             )
+        passing = [d for d in out_designs if d["passed"]]
+        n_failed = len(out_designs) - len(passing)
+        physics = "real multistage physics" if tier in ("commercial", "heavy") else "dummy physics"
         final = {
-            "designs": out_designs,
-            "summary": f"Tier {tier}: two candidate designs simulated with dummy physics.",
+            "designs": passing or out_designs,
+            "summary": (
+                f"Tier {tier}: the first attempt failed, its failure reason was read and the "
+                f"cause fixed; {len(passing)} of {len(out_designs)} designs passed "
+                f"({physics}). Attempts that failed: {n_failed}."
+            ),
             "open_questions": [],
         }
         return make_message([text_block(json.dumps(final, ensure_ascii=False))])
@@ -361,10 +375,25 @@ def _final_from_results(tier: str, designs: list[dict[str, Any]], sim_ids: list[
 def build_demo_script(
     tier: str, requirement_text: str, env: dict[str, Any], seed: int | None
 ) -> list[ScriptItem]:
-    """classify -> search_catalog -> simulate_design x2 (one turn) -> final JSON."""
+    """classify -> search_catalog -> simulate_design (first attempt, fails) -> simulate_design
+    x(N-1) in one turn (corrected designs) -> final JSON."""
     requirement = {**DEMO_REQUIREMENTS[tier], "text": requirement_text}
     designs = DEMO_DESIGNS[tier]
-    sim_ids = ["toolu_sim_1", "toolu_sim_2"]
+    sim_ids = [f"toolu_sim_{i + 1}" for i in range(len(designs))]
+
+    def simulate(sim_id: str, design: dict[str, Any]):
+        return tool_use_block(
+            sim_id,
+            "simulate_design",
+            {
+                "design": design,
+                "env": env,
+                "seed": seed,
+                "requirement": requirement,
+                "tune_pitch": False,  # the demo uses pre-tuned numbers (see DEMO_DESIGNS)
+            },
+        )
+
     return [
         make_message(
             [
@@ -386,15 +415,19 @@ def build_demo_script(
         ),
         make_message(
             [
-                thinking_block("Proposing two initial designs and simulating both."),
-                *[
-                    tool_use_block(
-                        sim_id,
-                        "simulate_design",
-                        {"design": d, "env": env, "seed": seed, "requirement": requirement},
-                    )
-                    for sim_id, d in zip(sim_ids, designs, strict=True)
-                ],
+                thinking_block("Proposing an initial design and simulating it."),
+                simulate(sim_ids[0], designs[0]),
+            ],
+            stop_reason="tool_use",
+        ),
+        make_message(
+            [
+                thinking_block(
+                    "The first attempt failed. Reading failure_reasons and fixing the cause "
+                    "(not the symptom): adjusting the design variable it points at, then "
+                    "simulating the corrected candidates."
+                ),
+                *[simulate(sim_id, d) for sim_id, d in zip(sim_ids[1:], designs[1:], strict=True)],
             ],
             stop_reason="tool_use",
         ),

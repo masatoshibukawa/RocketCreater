@@ -175,12 +175,24 @@ class AmateurDesign(_Frozen):
 class Stage(_Frozen):
     propellant_mass_kg: float = Field(gt=0)
     structural_fraction: float = Field(gt=0, lt=1)  # structure / (structure + propellant)
-    engine_id: str = Field(min_length=1)  # catalog/engines.yaml id
+    engine_id: str = Field(
+        min_length=1,
+        description=(
+            "Engine id from catalog/engines.yaml exactly as search_catalog returns it "
+            "(e.g. merlin_1d, rutherford, rd_180). Unknown ids are rejected."
+        ),
+    )
     engine_count: int = Field(default=1, ge=1)
 
 
 class Booster(_Frozen):
-    booster_id: str = Field(min_length=1)
+    booster_id: str = Field(
+        min_length=1,
+        description=(
+            "Strap-on booster id from catalog/engines.yaml `boosters` (e.g. gem_63), as "
+            "returned by search_catalog."
+        ),
+    )
     count: int = Field(ge=1)
 
 

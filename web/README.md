@@ -1,0 +1,57 @@
+# RocketWright web UI
+
+Single-screen Next.js (App Router, TypeScript, React 19) frontend for the RocketWright design
+agent. Left column: the conversation. Right column: tier badge and attempt counter, live attempt
+log, design candidate cards, and the flight charts (ascent profile for commercial/heavy, landing
+scatter for bottle/amateur). Charts use Recharts only.
+
+## Run
+
+Requirements: Node >= 18.18 and the Python backend.
+
+```bash
+# backend (repository root)
+uv run uvicorn api.main:app --reload --port 8000
+
+# frontend
+cd web
+npm install
+npm run dev          # http://localhost:3000
+```
+
+The backend allows CORS from `http://localhost:3000` and `http://127.0.0.1:3000`.
+
+### Environment
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_BASE` | `http://localhost:8000` | Base URL of the FastAPI backend (`POST /design`). |
+
+Put it in `web/.env.local` to override, e.g. `NEXT_PUBLIC_API_BASE=http://127.0.0.1:8000`.
+
+## How it works
+
+- `app/lib/sse.ts`: pure SSE parser (`parseSseChunk`) for the `fetch` ReadableStream; the request
+  is a POST, so `EventSource` cannot be used.
+- `app/lib/designState.ts`: pure reducer that folds `AgentEvent`s (thinking / text / tool_call /
+  tool_result / candidate / final / error / question) into UI state. Testable without React.
+- `app/lib/useDesignStream.ts`: the hook that POSTs to `/design` and drives the reducer.
+- `app/components/*`: presentational client components (chat, tier badge, attempt log, candidate
+  cards, flight charts).
+
+Every number shown comes from a tool result in the stream; the UI only converts units
+(`format.ts`). Provenance violations reported by the backend are shown as errors in the chat.
+
+## Note on this scaffold
+
+This scaffold was written on a machine where `next build` could not be run (Node 10 only), so the
+first `npm install && npm run build` may need small type fixes (most likely around Recharts
+`Tooltip` formatter typings or `next-env.d.ts` generation). The logic was kept simple on purpose:
+plain CSS in `app/globals.css`, no UI kit, Recharts as the only extra dependency.
+
+## 日本語の概要
+
+左が対話、右が「段階バッジ／試行ログ／設計案カード／飛行グラフ」の1画面構成です。
+バックエンド（`uv run uvicorn api.main:app --reload --port 8000`）を起動した上で、
+`npm install && npm run dev` で http://localhost:3000 を開いてください。
+表示される数値はすべてバックエンドのツール結果から取り、UI 側では単位変換のみ行います。

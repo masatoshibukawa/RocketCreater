@@ -42,20 +42,22 @@ async def test_scripted_amateur_run_event_sequence():
     types = [e.type for e in events]
     assert types[0] == "thinking"
     tool_calls = [e.payload["name"] for e in events if e.type == "tool_call"]
+    # first attempt alone (it fails), then two corrected designs in one turn
     assert tool_calls == [
         "classify_requirement",
         "search_catalog",
         "simulate_design",
         "simulate_design",
+        "simulate_design",
     ]
-    assert types.count("tool_result") == 4
+    assert types.count("tool_result") == 5
     assert types[-1] == "final"
     assert types.count("final") == 1
     assert "candidate" in types
 
     # attempts = number of simulate_design calls
     final = events[-1]
-    assert final.attempt == 2
+    assert final.attempt == 3
     assert all(e.t_s >= 0 for e in events)
 
     # the final payload is parsed JSON with sources and provenance info
@@ -79,13 +81,13 @@ async def test_scripted_amateur_run_event_sequence():
     last_messages = client.calls[-1]["messages"]
     assert last_messages[0]["role"] == "user"
     roles = [m["role"] for m in last_messages]
-    assert roles == ["user", "assistant", "user", "assistant", "user", "assistant", "user"]
+    assert roles == ["user", "assistant"] * 4 + ["user"]
     last_user = last_messages[-1]["content"]
     results = [b for b in last_user if b["type"] == "tool_result"]
     assert len(results) == 2
-    assert {r["tool_use_id"] for r in results} == {"toolu_sim_1", "toolu_sim_2"}
+    assert {r["tool_use_id"] for r in results} == {"toolu_sim_2", "toolu_sim_3"}
     assert all(isinstance(r["content"], str) for r in results)
-    assert all("DUMMY" in r["content"] for r in results)
+    assert all("DUMMY" in r["content"] for r in results)  # amateur is dummy until phase 3
 
 
 @pytest.mark.anyio
@@ -104,13 +106,22 @@ async def test_attempt_budget_is_enforced():
     events = await _collect(client, env=ENV, seed=1, config=cfg)
     results = [e for e in events if e.type == "tool_result"]
     sim_results = [e for e in results if e.payload["name"] == "simulate_design"]
-    assert len(sim_results) == 2
+    assert len(sim_results) == 3
     assert sim_results[0].payload["is_error"] is False
     assert sim_results[1].payload["is_error"] is True
+    assert sim_results[2].payload["is_error"] is True
     assert "attempt" in sim_results[1].payload["result"]["error"]
-    # the loop told the model to wrap up
-    last_user = client.calls[-1]["messages"][-1]["content"]
-    assert any(b["type"] == "text" and "final" in b["text"].lower() for b in last_user)
+    # the loop told the model to wrap up (once, right after the budget was reached)
+    user_turns = [m["content"] for m in client.calls[-1]["messages"] if m["role"] == "user"]
+    told = [
+        b
+        for content in user_turns
+        if isinstance(content, list)
+        for b in content
+        if b["type"] == "text" and "final" in b["text"].lower()
+    ]
+    assert len(told) == 1
+    assert any(b in user_turns[-2] for b in told)  # sent with the first simulate result
     assert events[-1].type == "final"
     assert events[-1].attempt == 1
 

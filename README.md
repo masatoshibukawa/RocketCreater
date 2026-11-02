@@ -91,9 +91,49 @@ Current: phase 1 (scaffold complete).
 
 ## Simplifications
 
-Filled in as physics models land. Each entry mirrors a `# SIMPLIFICATION:` comment in the code.
+Each entry mirrors a `# SIMPLIFICATION:` comment in the code (`grep -rn SIMPLIFICATION rocketwright/`).
 
-- (none yet)
+Physics status per tier:
+
+- `commercial` / `heavy` use the real `physics/multistage.py` model through the agent tools.
+- `bottle` and `amateur` are still **dummy physics** (`rocketwright/agent/tools.py`, closed-form
+  placeholders tagged `DUMMY PHYSICS` in every result) until phase 3 wires in `physics/water.py`
+  and `physics/solid.py`. Monte-Carlo dispersion is a dummy spread around the nominal result for
+  every tier until phase 3.
+
+`physics/atmosphere.py`:
+
+- Above 86 km the temperature is held constant and pressure/density decay exponentially; the
+  real USSA76 thermosphere rises to ~1000 K.
+- The molar mass of air is held at its sea-level value (USSA76 lets it drop above 86 km).
+- The temperature offset does not re-integrate the hydrostatic pressure profile.
+
+`physics/multistage.py`:
+
+- Spherical Earth with the mean radius; central gravity only (no J2).
+- Fairing jettison at a fixed altitude (110 km) instead of a free-molecular-heating limit.
+- Vehicle diameter is estimated from total propellant mass (`d = 0.05 m * m_prop^(1/3)`).
+- Drag coefficient is a small Mach table for a slender launcher, not vehicle-specific.
+- Engine mass is assumed to be part of the structural fraction (a warning is raised when the
+  fraction cannot even cover the engines).
+- All strap-on boosters are jettisoned together when the shortest-burning one is empty; leftover
+  propellant is dropped with them, and boosters that outlast stage 1 are dropped with stage 1.
+- Upper stages ignite immediately at separation (no coast, no ullage).
+- With Earth rotation on, the in-plane component of the co-rotating atmosphere is
+  `omega * cos(latitude)`, as if the trajectory plane were the equator.
+- Speed of sound comes from the same atmosphere model with no hypersonic subtleties.
+- The pitch kick is instantaneous and rotates the air-relative velocity vector; afterwards the
+  thrust follows the velocity (zero angle of attack, open-loop gravity turn). This makes the
+  reachable orbit very sensitive to `pitch_start_s` / `initial_pitch_deg` (a tenth of a degree can
+  move the perigee by tens of km) and favours elliptical insertions; `tune_pitch_program`
+  (scipy) searches the two parameters.
+- For the ideal delta-v budget the fairing is dropped after the first phase.
+- Payload margin holds the simulated losses fixed and inverts the ideal rocket equation against the
+  circular speed at the reference perigee.
+
+`cost.py`:
+
+- Flat placeholder prices (all provisional); booster mass is a placeholder constant.
 
 ## Values to confirm / 要確認の値
 

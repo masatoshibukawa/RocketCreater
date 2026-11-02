@@ -7,8 +7,9 @@
 * `TOOL_REGISTRY` maps tool name -> implementation (parsed input dict -> JSON-serialisable dict).
 * `execute_tool(name, input, tool_use_id)` validates, runs, and stamps `source_id`.
 
-Physics dispatch lives in `_simulate_dispatch` / `_dispersion_dispatch` ONLY, so phase 2 can swap
-the dummy for rocketwright.physics.{multistage,solid,water} in one place.
+Physics dispatch lives in `_simulate_dispatch` / `_dispersion_dispatch` ONLY. Commercial/heavy
+designs go to rocketwright.physics.multistage (real model); bottle/amateur still use the dummy
+placeholders below until phase 3 wires in physics.solid / physics.water.
 """
 
 from __future__ import annotations
@@ -26,7 +27,8 @@ import yaml
 from pydantic import BaseModel, ValidationError
 
 from rocketwright.classify import classify, load_tiers
-from rocketwright.cost import COST_CONSTANTS, estimate_cost_jpy, liftoff_mass_kg
+from rocketwright.cost import COST_CONSTANTS, estimate_cost_jpy
+from rocketwright.physics import multistage
 from rocketwright.schema import (
     AmateurDesign,
     BottleDesign,
@@ -69,13 +71,18 @@ TOOL_NAMES: tuple[str, ...] = (
 
 DUMMY_WARNING = "DUMMY PHYSICS: values are placeholders"
 
-# Pass/fail thresholds used by the dummy judge (CLAUDE.md section 6). The real physics modules
-# own their own criteria; these are kept here only until phase 2 swaps the dummy out.
+# Suborbital (bottle/amateur) pass/fail thresholds used by `_judge` (CLAUDE.md section 6).
+# Orbital rules (perigee/apogee tolerance, liftoff TWR, max-Q) live ONLY in
+# rocketwright.physics.multistage.PASS_THRESHOLDS; the budget rule is shared and lives in
+# `_finalize`. Phase 3 moves these into physics.solid / physics.water.
 PASS_CRITERIA: dict[str, float] = {
     "altitude_tolerance_frac": 0.10,  # apogee within +-10 % of target
     "min_stability_margin_cal": 1.5,
     "max_descent_speed_mps": 6.0,
 }
+
+# tune_pitch_program budget: ~60 ascents at ~35 ms each, i.e. a few seconds per call.
+_TUNE_MAX_EVALUATIONS = 60
 
 _CATALOG_DIR = Path(__file__).resolve().parent.parent / "catalog"
 _MAX_ERROR_CHARS = 2000
@@ -168,8 +175,10 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "search_catalog",
             "description": (
-                "List catalog items: engines (commercial/heavy), parts (bottle/amateur) and "
-                "solid motors (amateur, RASP .eng files). Filter by tier and/or free-text query."
+                "List catalog items: engines and strap-on boosters (commercial/heavy, "
+                "catalog/engines.yaml), parts (bottle/amateur) and solid motors (amateur, RASP "
+                ".eng files). Filter by tier and/or free-text query. Use the returned `id` "
+                "values verbatim as engine_id / booster_id / motor_id in designs."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -184,8 +193,15 @@ def get_tool_definitions() -> list[dict[str, Any]]:
             "name": "simulate_design",
             "description": (
                 "Simulate one flight of a design in the given environment. Pass the requirement "
-                "so pass/fail is judged against it. Returns SimResult: success, failure_reasons, "
-                "metrics (unit-suffixed keys), cost_jpy, trace, warnings, source_id."
+                "so pass/fail is judged against it (orbit goals: perigee >= target - 10 %, "
+                "budget). Returns SimResult: success, failure_reasons, metrics (unit-suffixed "
+                "keys), cost_jpy, trace, warnings, source_id. Commercial/heavy designs use the "
+                "real multistage model and need engine ids from search_catalog "
+                "(catalog/engines.yaml, e.g. merlin_1d). Set tune_pitch=true (orbit goals "
+                "only) to let scipy search pitch_start_s / initial_pitch_deg for the target "
+                "orbit before simulating: it costs a few seconds and the result then includes "
+                "`tuned_design`, which you should adopt as your design. The open-loop gravity "
+                "turn is sensitive: a tenth of a degree can change the perigee by tens of km."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -194,6 +210,7 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                     "env": env,
                     "seed": _nullable({"type": "integer"}),
                     "requirement": _nullable(req),
+                    "tune_pitch": {"type": "boolean"},
                 }
             ),
         },
@@ -280,18 +297,16 @@ def _parabola_trace(apogee_m: float, flight_time_s: float, n: int = 60) -> list[
 
 # --------------------------------------------------------------------------- dummy physics
 #
-# SIMPLIFICATION: crude closed-form placeholders so that the dummy responds monotonically to the
-# design (bigger motor -> higher, bigger chute -> slower) while phase 2 physics is not wired in.
-# Every number produced here is marked with DUMMY_WARNING. Constants are provisional.
+# SIMPLIFICATION: crude closed-form placeholders for bottle/amateur so that the dummy responds
+# monotonically to the design (bigger motor -> higher, bigger chute -> slower) until phase 3
+# wires in physics.solid / physics.water. Every number produced here is marked with
+# DUMMY_WARNING. Constants are provisional.
 
 _G0 = 9.80665
 _RHO_SL = 1.225
 _CHUTE_CD = 1.5
-_DUMMY_ISP_S = 300.0  # provisional, all engines alike
 _DUMMY_DRAG_FACTOR = 0.5  # fraction of the drag-free apogee actually reached
 _DUMMY_WATER_EFFICIENCY = 0.6  # fraction of p*V turned into height
-_MU_EARTH = 3.986004418e14
-_R_EARTH = 6_371_000.0
 
 
 def _jitter(rng: random.Random, frac: float = 0.03) -> float:
@@ -366,102 +381,29 @@ def _dummy_suborbital(
             "landing_north_m": round(drift * math.cos(theta), 1),
         }
     )
-    cost = round(estimate_cost_jpy(design), 0)
-    reasons = _judge(metrics, cost, req)
+    reasons = _judge(metrics, req)
     return SimResult(
         tier=tier,
         success=not reasons,
         failure_reasons=reasons,
         metrics=metrics,
-        cost_jpy=cost,
+        cost_jpy=0.0,  # filled in by _finalize
         trace=_parabola_trace(apogee, flight_time),
         warnings=[DUMMY_WARNING],
     )
 
 
-def _dummy_multistage(
-    design: MultistageDesign, env: Env, seed: int | None, req: Requirement | None
-) -> SimResult:
-    tier = Tier(design.tier)
-    rng = _rng_for(design, env, seed, "sim")
-    target = req.target_altitude_m if req is not None else 400_000.0
-    orbit_goal = req is None or req.goal_kind is GoalKind.ORBIT
-
-    # Serial-staging Tsiolkowsky with one provisional Isp for every engine (boosters ignored).
-    masses = [
-        (
-            s.propellant_mass_kg,
-            s.propellant_mass_kg * s.structural_fraction / (1.0 - s.structural_fraction),
-        )
-        for s in design.stages
-    ]
-    remaining = design.fairing_mass_kg + design.payload_mass_kg + sum(p + st for p, st in masses)
-    dv_ideal = 0.0
-    for prop, struct in masses:
-        dv_ideal += _G0 * _DUMMY_ISP_S * math.log(remaining / (remaining - prop))
-        remaining -= prop + struct
-    gravity_loss = (1_100.0 + 300.0 * rng.random()) * (1.0 + 0.01 * design.pitch_start_s)
-    drag_loss = 80.0 + 120.0 * rng.random()
-    v_net = dv_ideal - gravity_loss - drag_loss
-    liftoff = liftoff_mass_kg(design)
-    if orbit_goal:
-        v_orbit = math.sqrt(_MU_EARTH / (_R_EARTH + target))
-        surplus = v_net - v_orbit
-        perigee = target + surplus * 150.0  # m of perigee per m/s of surplus, provisional
-        apogee = perigee + max(surplus, 0.0) * 50.0 * _jitter(rng)
-        payload_margin = surplus / 10.0  # kg per m/s, provisional
-    else:
-        perigee = -_R_EARTH
-        apogee = v_net**2 / (2.0 * _G0) * _jitter(rng) if v_net > 0 else 0.0
-        payload_margin = 0.1 * design.payload_mass_kg
-    metrics: dict[str, float] = {
-        "perigee_m": round(perigee, 0),
-        "apogee_m": round(apogee, 0),
-        "max_q_pa": round(
-            (25_000.0 + 20_000.0 * rng.random()) * (1.0 + 2.0 / max(design.pitch_start_s, 1.0)), 0
-        ),
-        "payload_margin_kg": round(payload_margin, 1),
-        "delta_v_ideal_mps": round(dv_ideal, 0),
-        "gravity_loss_mps": round(gravity_loss, 0),
-        "drag_loss_mps": round(drag_loss, 0),
-        "burnout_speed_mps": round(v_net, 0),
-        "liftoff_mass_kg": round(liftoff, 0),
-        "stage_count_count": float(len(design.stages)),
-    }
-    cost = round(estimate_cost_jpy(design), 0)
-    reasons = _judge(metrics, cost, req)
-    flight_time = 500.0 + 100.0 * rng.random()
-    return SimResult(
-        tier=tier,
-        success=not reasons,
-        failure_reasons=reasons,
-        metrics=metrics,
-        cost_jpy=cost,
-        trace=_parabola_trace(max(apogee, 1.0), flight_time),
-        warnings=[DUMMY_WARNING],
-    )
-
-
-def _judge(metrics: dict[str, float], cost_jpy: float, req: Requirement | None) -> list[str]:
-    """Pass/fail against the requirement; thresholds in PASS_CRITERIA."""
+def _judge(metrics: dict[str, float], req: Requirement | None) -> list[str]:
+    """Suborbital pass/fail against the requirement; thresholds in PASS_CRITERIA. Orbital rules
+    are judged inside physics.multistage; the budget rule is applied by `_finalize`."""
     reasons: list[str] = []
     tol = PASS_CRITERIA["altitude_tolerance_frac"]
-    if req is not None:
-        if req.goal_kind is GoalKind.ORBIT:
-            if metrics.get("perigee_m", -1.0) < req.target_altitude_m:
-                reasons.append(
-                    f"perigee {metrics.get('perigee_m'):.0f} m below target "
-                    f"{req.target_altitude_m:.0f} m"
-                )
-        else:
-            apogee = metrics.get("apogee_m", 0.0)
-            if abs(apogee - req.target_altitude_m) > tol * req.target_altitude_m:
-                reasons.append(
-                    f"apogee {apogee:.1f} m outside +-{tol:.0%} of target "
-                    f"{req.target_altitude_m:.1f} m"
-                )
-        if req.budget_jpy is not None and cost_jpy > req.budget_jpy:
-            reasons.append(f"cost {cost_jpy:,.0f} JPY exceeds budget {req.budget_jpy:,.0f} JPY")
+    if req is not None and req.goal_kind is GoalKind.ALTITUDE:
+        apogee = metrics.get("apogee_m", 0.0)
+        if abs(apogee - req.target_altitude_m) > tol * req.target_altitude_m:
+            reasons.append(
+                f"apogee {apogee:.1f} m outside +-{tol:.0%} of target {req.target_altitude_m:.1f} m"
+            )
     margin = metrics.get("stability_margin_cal")
     if margin is not None and margin < PASS_CRITERIA["min_stability_margin_cal"]:
         reasons.append(
@@ -472,20 +414,60 @@ def _judge(metrics: dict[str, float], cost_jpy: float, req: Requirement | None) 
         reasons.append(
             f"descent speed {descent:.2f} m/s above {PASS_CRITERIA['max_descent_speed_mps']} m/s"
         )
-    payload_margin = metrics.get("payload_margin_kg")
-    if payload_margin is not None and payload_margin < 0:
-        reasons.append(f"negative payload margin {payload_margin:.1f} kg")
     return reasons
+
+
+def _finalize(result: SimResult, design: Design, req: Requirement | None) -> SimResult:
+    """Shared post-processing for the dummy and real paths: cost.py owns the cost estimate and
+    the budget rule lives here once (CLAUDE.md section 6: "within budget")."""
+    cost_jpy = round(estimate_cost_jpy(design), 0)
+    reasons = list(result.failure_reasons)
+    if req is not None and req.budget_jpy is not None and cost_jpy > req.budget_jpy:
+        reasons.append(f"cost {cost_jpy:,.0f} JPY exceeds budget {req.budget_jpy:,.0f} JPY")
+    return result.model_copy(
+        update={"cost_jpy": cost_jpy, "failure_reasons": reasons, "success": not reasons}
+    )
+
+
+def _orbit_targets(req: Requirement | None) -> tuple[float | None, float | None]:
+    """(target_perigee_m, target_apogee_m) for physics.multistage, or (None, None) when the
+    requirement is not an orbit goal (the model then applies its default minimum perigee)."""
+    if req is None or req.goal_kind is not GoalKind.ORBIT:
+        return None, None
+    return req.target_altitude_m, req.target_apogee_m
 
 
 def _simulate_dispatch(
     design: Design, env: Env, seed: int | None, req: Requirement | None = None
 ) -> SimResult:
-    """Single dispatch point. Phase 2: route commercial/heavy to physics.multistage.simulate,
-    amateur to physics.solid, bottle to physics.water."""
+    """Single dispatch point. Commercial/heavy -> physics.multistage (real). Bottle/amateur ->
+    dummy until phase 3 routes them to physics.water / physics.solid."""
     if isinstance(design, MultistageDesign):
-        return _dummy_multistage(design, env, seed, req)
-    return _dummy_suborbital(design, env, seed, req)
+        perigee_m, apogee_m = _orbit_targets(req)
+        # TODO(phase 3): altitude goals for multistage (e.g. 100 km sounding flights) need a
+        # suborbital judge in physics.multistage; today the model's minimum-perigee rule applies.
+        result = multistage.simulate(
+            design, env, seed, target_perigee_m=perigee_m, target_apogee_m=apogee_m
+        )
+    else:
+        result = _dummy_suborbital(design, env, seed, req)
+    return _finalize(result, design, req)
+
+
+def _tune_pitch(design: Design, env: Env, req: Requirement | None) -> MultistageDesign:
+    """Run physics.multistage.tune_pitch_program for the requirement's orbit (a few seconds)."""
+    if not isinstance(design, MultistageDesign):
+        raise ValueError("tune_pitch is only available for commercial/heavy designs")
+    perigee_m, apogee_m = _orbit_targets(req)
+    if perigee_m is None:
+        raise ValueError("tune_pitch needs a requirement with goal_kind 'orbit'")
+    return multistage.tune_pitch_program(
+        design,
+        env,
+        target_perigee_m=perigee_m,
+        target_apogee_m=apogee_m,
+        max_evaluations=_TUNE_MAX_EVALUATIONS,
+    )
 
 
 def _quantiles_around(value: float, rng: random.Random) -> Quantiles:
@@ -496,7 +478,13 @@ def _quantiles_around(value: float, rng: random.Random) -> Quantiles:
 def _dispersion_dispatch(
     design: Design, env: Env, n: int, seed: int, req: Requirement | None = None
 ) -> DispersionResult:
-    """Single dispatch point for Monte-Carlo runs (phase 3: rocketwright.dispersion)."""
+    """Single dispatch point for Monte-Carlo runs.
+
+    TODO(phase 3): replace with rocketwright.dispersion (real Monte Carlo over Isp / thrust /
+    structural mass for multistage, pressure / wind / motor for bottle & amateur). Until then the
+    spread is a DUMMY, but the p50 of every quantile is the nominal `_simulate_dispatch` result
+    (real physics for commercial/heavy) so the numbers agree with simulate_design.
+    """
     sim = _simulate_dispatch(design, env, seed, req)
     rng = _rng_for(design, env, seed, f"dispersion:{n}")
     success_rate = round(0.60 + 0.38 * rng.random(), 3)
@@ -642,6 +630,11 @@ def _tool_search_catalog(inp: dict[str, Any]) -> dict[str, Any]:
         out["note"] = (
             "catalog is empty or nothing matched; propose representative values and say so"
         )
+    else:
+        out["note"] = (
+            "use each item's `id` verbatim: engines -> Stage.engine_id, boosters -> "
+            "Booster.booster_id, motors -> AmateurDesign.motor_id; unknown ids are rejected"
+        )
     return out
 
 
@@ -650,7 +643,14 @@ def _tool_simulate(inp: dict[str, Any]) -> dict[str, Any]:
     env = Env.model_validate(inp.get("env") or {})
     seed = inp.get("seed")
     req = _parse_optional_requirement(inp.get("requirement"))
-    return _simulate_dispatch(design, env, seed, req).model_dump(mode="json")
+    tuned: MultistageDesign | None = None
+    if inp.get("tune_pitch"):
+        tuned = _tune_pitch(design, env, req)
+        design = tuned
+    out = _simulate_dispatch(design, env, seed, req).model_dump(mode="json")
+    if tuned is not None:
+        out["tuned_design"] = tuned.model_dump(mode="json")
+    return out
 
 
 def _tool_dispersion(inp: dict[str, Any]) -> dict[str, Any]:
@@ -717,7 +717,9 @@ def execute_tool(name: str, tool_input: Any, tool_use_id: str) -> dict[str, Any]
             "error": f"validation error: {str(exc)[:_MAX_ERROR_CHARS]}",
             "source_id": tool_use_id,
         }
-    except (KeyError, ValueError, TypeError) as exc:
+    except (KeyError, ValueError, TypeError, RuntimeError) as exc:
+        # KeyError: unknown catalog id (physics.multistage.get_engine lists the valid ones);
+        # RuntimeError: the ODE integration failed. Both go back to the model as is_error.
         return {
             "error": f"{type(exc).__name__}: {str(exc)[:_MAX_ERROR_CHARS]}",
             "source_id": tool_use_id,

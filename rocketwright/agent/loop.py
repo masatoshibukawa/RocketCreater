@@ -280,7 +280,8 @@ async def run_design_loop(
                     "candidate",
                     {
                         "source_id": tu.id,
-                        "design": tool_input.get("design"),
+                        # with tune_pitch the simulated design is the tuned one
+                        "design": result.get("tuned_design") or tool_input.get("design"),
                         "metrics": result.get("metrics", {}),
                         "cost_jpy": result.get("cost_jpy"),
                     },
