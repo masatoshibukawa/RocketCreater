@@ -28,6 +28,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.integrate import solve_ivp
 
+from rocketwright import dispersion as mc
 from rocketwright.physics import atmosphere as atm
 from rocketwright.physics import recovery, stability
 from rocketwright.schema import (
@@ -145,6 +146,28 @@ class Motor:
         t0, t1 = self._times[i - 1], self._times[i]
         f0, f1 = self._thrusts[i - 1], self._thrusts[i]
         return f0 + (f1 - f0) * (t_s - t0) / (t1 - t0)
+
+    def scaled(self, thrust_scale: float) -> Motor:
+        """Copy with every thrust sample multiplied by `thrust_scale` (total impulse scales with
+        it; burn time and propellant mass do not). Used by the Monte-Carlo dispersion."""
+        if thrust_scale == 1.0:
+            return self
+        if thrust_scale <= 0.0:
+            raise ValueError(f"thrust_scale must be > 0, got {thrust_scale}")
+        return Motor(
+            id=self.id,
+            name=self.name,
+            diameter_m=self.diameter_m,
+            length_m=self.length_m,
+            delays=self.delays,
+            propellant_mass_kg=self.propellant_mass_kg,
+            total_mass_kg=self.total_mass_kg,
+            manufacturer=self.manufacturer,
+            thrust_curve=tuple((t, f * thrust_scale) for t, f in self.thrust_curve),
+            source=self.source,
+            license=self.license,
+            provisional=self.provisional,
+        )
 
     def impulse_ns(self, t_s: float) -> float:
         """Impulse delivered up to `t_s` (used for the propellant-mass bookkeeping)."""
@@ -339,10 +362,17 @@ def _check_design(design: Design) -> AmateurDesign:
     return design
 
 
-def run_flight(design: AmateurDesign, env: Env, options: FlightOptions | None = None) -> Flight:
-    """Integrate ignition -> rail exit -> burnout -> apogee -> deploy_delay_s of free fall."""
+def run_flight(
+    design: AmateurDesign,
+    env: Env,
+    options: FlightOptions | None = None,
+    *,
+    thrust_scale: float = 1.0,
+) -> Flight:
+    """Integrate ignition -> rail exit -> burnout -> apogee -> deploy_delay_s of free fall.
+    `thrust_scale` multiplies the motor's thrust curve (Monte-Carlo total-impulse spread)."""
     options = options or FlightOptions()
-    motor = load_motor(design.motor_id)
+    motor = load_motor(design.motor_id).scaled(thrust_scale)
     dyn = _Dynamics(design, motor, env, options)
     m0 = design.dry_mass_kg + design.payload_mass_kg + motor.total_mass_kg
     state = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, m0])
@@ -487,12 +517,13 @@ def simulate_with_options(
     gravity: bool = True,
     drag: bool = True,
     target_apogee_m: float | None = None,
+    thrust_scale: float = 1.0,
 ) -> SimResult:
     """`simulate` with physics switches (tests use them to isolate the rocket equation)."""
     am_design = _check_design(design)
-    motor = load_motor(am_design.motor_id)
+    motor = load_motor(am_design.motor_id).scaled(thrust_scale)
     options = FlightOptions(gravity=gravity, drag=drag)
-    flight = run_flight(am_design, env, options)
+    flight = run_flight(am_design, env, options, thrust_scale=thrust_scale)
     th = PASS_THRESHOLDS
     failures: list[str] = []
     warnings: list[str] = []
@@ -609,13 +640,33 @@ def simulate_with_options(
 
 
 def simulate(
-    design: Design, env: Env, seed: int | None = None, *, target_apogee_m: float | None = None
+    design: Design,
+    env: Env,
+    seed: int | None = None,
+    *,
+    target_apogee_m: float | None = None,
+    thrust_scale: float = 1.0,
 ) -> SimResult:
     """Common physics interface (CLAUDE.md section 6). `seed` is accepted for interface
-    compatibility; the nominal solid model is deterministic and ignores it."""
+    compatibility; the nominal solid model is deterministic and ignores it. `thrust_scale`
+    (default 1.0) multiplies the motor thrust curve and is what the dispersion perturbs."""
     del seed
-    return simulate_with_options(design, env, target_apogee_m=target_apogee_m)
+    return simulate_with_options(
+        design, env, target_apogee_m=target_apogee_m, thrust_scale=thrust_scale
+    )
 
 
 def dispersion(design: Design, env: Env, n: int, seed: int) -> DispersionResult:
-    raise NotImplementedError("solid.dispersion: implemented in phase 3")
+    """Monte-Carlo dispersion with the amateur spec (rocketwright.dispersion.DISPERSION_SPEC):
+    motor total impulse, dry mass, wind speed/direction and deploy delay."""
+    _check_design(design)
+    return mc.run_dispersion(
+        design,
+        env,
+        n,
+        seed,
+        perturb=mc.perturb_amateur,
+        simulate=simulate,
+        tier=Tier.AMATEUR,
+        summarize=mc.summarize_landing,
+    )

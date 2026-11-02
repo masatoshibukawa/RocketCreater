@@ -32,6 +32,7 @@ from numpy.typing import NDArray
 from scipy.integrate import solve_ivp
 from scipy.optimize import brentq, minimize
 
+from rocketwright import dispersion as mc
 from rocketwright.physics import atmosphere as atm
 from rocketwright.schema import (
     MAX_TRACE_POINTS,
@@ -241,7 +242,15 @@ def structural_mass_kg(propellant_mass_kg: float, structural_fraction: float) ->
     return propellant_mass_kg * structural_fraction / (1.0 - structural_fraction)
 
 
-def _build_vehicle(design: MultistageDesign) -> _Vehicle:
+def _build_vehicle(
+    design: MultistageDesign, *, isp_scale: float = 1.0, thrust_scale: float = 1.0
+) -> _Vehicle:
+    """Assemble the burn phases. `isp_scale` multiplies every Isp and `thrust_scale` every
+    thrust (so the mass flow scales with thrust_scale / isp_scale); both default to 1.0 and are
+    what the Monte-Carlo dispersion perturbs."""
+    if isp_scale <= 0.0 or thrust_scale <= 0.0:
+        raise ValueError("isp_scale and thrust_scale must be > 0")
+    mdot_scale = thrust_scale / isp_scale
     warnings: list[str] = []
     stage_wet: list[float] = []
     stage_dry: list[float] = []
@@ -264,7 +273,11 @@ def _build_vehicle(design: MultistageDesign) -> _Vehicle:
         stage_dry.append(dry)
         stage_wet.append(dry + stage.propellant_mass_kg)
         stage_thrusters.append(
-            _Thruster(spec.mdot_kgps * stage.engine_count, spec.isp_sl_s, spec.isp_vac_s)
+            _Thruster(
+                spec.mdot_kgps * stage.engine_count * mdot_scale,
+                spec.isp_sl_s * isp_scale,
+                spec.isp_vac_s * isp_scale,
+            )
         )
 
     booster_thrusters: list[_Thruster] = []
@@ -280,12 +293,18 @@ def _build_vehicle(design: MultistageDesign) -> _Vehicle:
                 "awaiting confirmation"
             )
         booster_thrusters.append(
-            _Thruster(spec.mdot_kgps * booster.count, spec.isp_sl_s, spec.isp_vac_s)
+            _Thruster(
+                spec.mdot_kgps * booster.count * mdot_scale,
+                spec.isp_sl_s * isp_scale,
+                spec.isp_vac_s * isp_scale,
+            )
         )
         booster_prop_kg += spec.propellant_mass_kg * booster.count
         booster_dry_kg += spec.mass_kg * booster.count
-        booster_burn_s = min(booster_burn_s, spec.propellant_mass_kg / spec.mdot_kgps)
-        booster_thrust_sl_n += spec.thrust_sl_n * booster.count
+        booster_burn_s = min(
+            booster_burn_s, spec.propellant_mass_kg / (spec.mdot_kgps * mdot_scale)
+        )
+        booster_thrust_sl_n += spec.thrust_sl_n * booster.count * thrust_scale
 
     phases: list[_Phase] = []
     stage0 = design.stages[0]
@@ -361,7 +380,9 @@ def _build_vehicle(design: MultistageDesign) -> _Vehicle:
         + design.payload_mass_kg
     )
     stage0_spec = get_engine(stage0.engine_id, kind="engine")
-    liftoff_thrust_sl = stage0_spec.thrust_sl_n * stage0.engine_count + booster_thrust_sl_n
+    liftoff_thrust_sl = (
+        stage0_spec.thrust_sl_n * stage0.engine_count * thrust_scale + booster_thrust_sl_n
+    )
     total_prop = sum(s.propellant_mass_kg for s in design.stages) + booster_prop_kg
     diameter_m = DIAMETER_PER_CUBE_ROOT_KG * total_prop ** (1.0 / 3.0)
     return _Vehicle(
@@ -535,9 +556,16 @@ def _rotate_clockwise(vx: float, vy: float, angle_rad: float) -> tuple[float, fl
     return vx * c + vy * s, -vx * s + vy * c
 
 
-def run_ascent(design: MultistageDesign, env: Env, options: AscentOptions) -> Ascent:
+def run_ascent(
+    design: MultistageDesign,
+    env: Env,
+    options: AscentOptions,
+    *,
+    isp_scale: float = 1.0,
+    thrust_scale: float = 1.0,
+) -> Ascent:
     """Integrate the ascent through all burn phases and return the raw trajectory."""
-    vehicle = _build_vehicle(design)
+    vehicle = _build_vehicle(design, isp_scale=isp_scale, thrust_scale=thrust_scale)
     dyn = _Dynamics(vehicle, env, options)
 
     r0 = R_EARTH_M + env.launch_altitude_m
@@ -766,12 +794,14 @@ def simulate_with_options(
     atmosphere: bool = True,
     target_perigee_m: float | None = None,
     target_apogee_m: float | None = None,
+    isp_scale: float = 1.0,
+    thrust_scale: float = 1.0,
 ) -> SimResult:
     """`simulate` with physics switches (tests use them to isolate the rocket equation)."""
     ms_design = _check_design(design)
     options = AscentOptions(gravity=gravity, drag=drag, atmosphere=atmosphere)
-    vehicle = _build_vehicle(ms_design)
-    ascent = run_ascent(ms_design, env, options)
+    vehicle = _build_vehicle(ms_design, isp_scale=isp_scale, thrust_scale=thrust_scale)
+    ascent = run_ascent(ms_design, env, options, isp_scale=isp_scale, thrust_scale=thrust_scale)
 
     xf, yf, vxf, vyf = (
         float(a[-1]) for a in (ascent.x_m, ascent.y_m, ascent.vx_mps, ascent.vy_mps)
@@ -867,12 +897,21 @@ def simulate(
     *,
     target_perigee_m: float | None = None,
     target_apogee_m: float | None = None,
+    isp_scale: float = 1.0,
+    thrust_scale: float = 1.0,
 ) -> SimResult:
     """Common physics interface (CLAUDE.md section 6). `seed` is accepted for interface
-    compatibility; the nominal multistage model is deterministic and ignores it."""
+    compatibility; the nominal multistage model is deterministic and ignores it. `isp_scale` /
+    `thrust_scale` (default 1.0) multiply every engine's Isp / thrust: the dispersion perturbs
+    them."""
     del seed
     return simulate_with_options(
-        design, env, target_perigee_m=target_perigee_m, target_apogee_m=target_apogee_m
+        design,
+        env,
+        target_perigee_m=target_perigee_m,
+        target_apogee_m=target_apogee_m,
+        isp_scale=isp_scale,
+        thrust_scale=thrust_scale,
     )
 
 
@@ -971,4 +1010,16 @@ def tune_pitch_program(
 
 
 def dispersion(design: Design, env: Env, n: int, seed: int) -> DispersionResult:
-    raise NotImplementedError("multistage.dispersion: implemented in phase 3")
+    """Monte-Carlo dispersion with the commercial/heavy spec
+    (rocketwright.dispersion.DISPERSION_SPEC): Isp, thrust and structural fraction."""
+    ms_design = _check_design(design)
+    return mc.run_dispersion(
+        design,
+        env,
+        n,
+        seed,
+        perturb=mc.perturb_multistage,
+        simulate=simulate,
+        tier=Tier(ms_design.tier),
+        summarize=mc.summarize_orbit,
+    )

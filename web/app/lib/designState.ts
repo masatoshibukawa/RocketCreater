@@ -7,9 +7,12 @@
  *   text          -> chat message (role "agent"); a JSON blob (the model's final answer) is
  *                    collapsed to a system line because `final` carries the parsed version
  *   question      -> chat message (role "question")
- *   tool_call     -> chat system line
+ *   tool_call     -> chat system line; the input is kept by id so a result can be tied back
+ *                    to the design it was run on
  *   tool_result   -> classify_requirement: tier badge; simulate_design: attempt log row;
- *                    run_dispersion: landing scatter / success rate; errors: chat error line
+ *                    run_dispersion: stored per candidate (matched by design equality via
+ *                    `findAttemptByDesign`) with success rate / scatter / orbit errors;
+ *                    errors: chat error line
  *   candidate     -> candidate card (passed/failure_reasons looked up from the attempt log)
  *   final         -> final summary, candidate cards merged with designs[], provenance warnings
  *   error         -> chat error line, status "error"
@@ -25,11 +28,16 @@ import {
   type ChatRole,
   type ClassifyResult,
   type Design,
-  type DispersionSummary,
+  type DispersionResult,
+  type Ellipse95,
   type FinalDesign,
   type FinalPayload,
   type FinalResult,
   type LandingPoint,
+  type LandingScatter,
+  type OrbitInsertionStats,
+  type OrbitSample,
+  type Quantiles,
   type SimResult,
   type Tier,
   type TracePoint,
@@ -47,7 +55,13 @@ export interface DesignState {
   attempts: AttemptRow[];
   attemptCount: number;
   candidates: Candidate[];
-  dispersion: DispersionSummary | null;
+  /** The most recent run_dispersion result (fallback when the selection has none). */
+  dispersion: DispersionResult | null;
+  /** run_dispersion results keyed by the matched candidate / attempt source_id (or by the
+   * dispersion's own source_id when no attempt has the same design). */
+  dispersions: Record<string, DispersionResult>;
+  /** tool_call inputs by tool_use id (simulate_design / run_dispersion carry the design). */
+  toolInputs: Record<string, Record<string, unknown>>;
   final: FinalPayload | null;
   errors: string[];
   seq: number;
@@ -64,6 +78,8 @@ export const initialState: DesignState = {
   attemptCount: 0,
   candidates: [],
   dispersion: null,
+  dispersions: {},
+  toolInputs: {},
   final: null,
   errors: [],
   seq: 0,
@@ -203,28 +219,126 @@ function toClassify(rec: Record<string, unknown>): ClassifyResult {
   };
 }
 
-function toDispersion(rec: Record<string, unknown>): DispersionSummary {
-  const landing = asRecord(rec.landing);
+function toQuantiles(value: unknown): Quantiles | null {
+  const rec = asRecord(value);
+  if (!rec) return null;
+  const p05 = asNumber(rec.p05);
+  const p50 = asNumber(rec.p50);
+  const p95 = asNumber(rec.p95);
+  if (!Number.isFinite(p05) || !Number.isFinite(p50) || !Number.isFinite(p95)) return null;
+  return { p05, p50, p95 };
+}
+
+function toLandingScatter(value: unknown): LandingScatter | null {
+  const rec = asRecord(value);
+  if (!rec) return null;
   const points: LandingPoint[] = [];
-  if (landing && Array.isArray(landing.points)) {
-    for (const item of landing.points) {
+  if (Array.isArray(rec.points)) {
+    for (const item of rec.points) {
       const p = asRecord(item);
       if (p) points.push({ east_m: asNumber(p.east_m, 0), north_m: asNumber(p.north_m, 0) });
     }
   }
+  const e = asRecord(rec.ellipse_95);
+  const ellipse: Ellipse95 = {
+    center_east_m: asNumber(e?.center_east_m, 0),
+    center_north_m: asNumber(e?.center_north_m, 0),
+    semi_major_m: asNumber(e?.semi_major_m, 0),
+    semi_minor_m: asNumber(e?.semi_minor_m, 0),
+    angle_deg: asNumber(e?.angle_deg, 0),
+  };
+  return { points, ellipse_95: ellipse };
+}
+
+function toOrbitStats(value: unknown): OrbitInsertionStats | null {
+  const rec = asRecord(value);
+  if (!rec) return null;
+  const zero: Quantiles = { p05: 0, p50: 0, p95: 0 };
+  const samples: OrbitSample[] = [];
+  if (Array.isArray(rec.samples)) {
+    for (const item of rec.samples) {
+      const p = asRecord(item);
+      if (!p) continue;
+      const perigee = asNumber(p.perigee_m);
+      const apogee = asNumber(p.apogee_m);
+      if (!Number.isFinite(perigee) || !Number.isFinite(apogee)) continue;
+      samples.push({ perigee_m: perigee, apogee_m: apogee, payload_margin_kg: asNumber(p.payload_margin_kg, 0) });
+    }
+  }
+  return {
+    perigee_error_m: toQuantiles(rec.perigee_error_m) ?? zero,
+    apogee_error_m: toQuantiles(rec.apogee_error_m) ?? zero,
+    payload_margin_kg: toQuantiles(rec.payload_margin_kg) ?? zero,
+    samples,
+  };
+}
+
+function toDispersion(rec: Record<string, unknown>, design: Design | null): DispersionResult {
   const counts: Record<string, number> = {};
   const rawCounts = asRecord(rec.failure_counts);
   if (rawCounts) {
     for (const [k, v] of Object.entries(rawCounts)) counts[k] = asNumber(v, 0);
   }
+  const quantiles: Record<string, Quantiles> = {};
+  const rawQ = asRecord(rec.quantiles);
+  if (rawQ) {
+    for (const [k, v] of Object.entries(rawQ)) {
+      const q = toQuantiles(v);
+      if (q) quantiles[k] = q;
+    }
+  }
+  const nominal = asRecord(rec.nominal);
   return {
     source_id: asString(rec.source_id),
     tier: isTier(rec.tier) ? rec.tier : null,
     n: asNumber(rec.n, 0),
+    seed: asNumberOrNull(rec.seed),
     success_rate: asNumber(rec.success_rate, Number.NaN),
-    landing_points: points,
+    quantiles,
     failure_counts: counts,
+    landing: toLandingScatter(rec.landing),
+    orbit_insertion: toOrbitStats(rec.orbit_insertion),
+    warnings: asStringArray(rec.warnings),
+    nominal_metrics: asNumberMap(nominal?.metrics),
+    design,
+    candidate_id: null,
+    target_perigee_m: null,
+    target_apogee_m: null,
   };
+}
+
+/** (target_perigee_m, target_apogee_m) of an orbit requirement in a tool_call input. */
+function orbitTargets(input: Record<string, unknown> | undefined): [number | null, number | null] {
+  const req = asRecord(input?.requirement);
+  if (!req || req.goal_kind !== "orbit") return [null, null];
+  return [asNumberOrNull(req.target_altitude_m), asNumberOrNull(req.target_apogee_m)];
+}
+
+/** JSON with keys sorted recursively, so two designs compare equal regardless of key order
+ * (150 and 150.0 both serialise to "150" once parsed from JSON). */
+export function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  const rec = asRecord(value);
+  if (rec) {
+    const keys = Object.keys(rec).sort();
+    return `{${keys.map((k) => `${JSON.stringify(k)}:${canonicalJson(rec[k])}`).join(",")}}`;
+  }
+  const text = JSON.stringify(value) as string | undefined;
+  return text === undefined ? "null" : text;
+}
+
+/** source_id of the candidate (preferred) or attempt whose design equals `design`, else null.
+ * Used to attach a run_dispersion result to the design card it was run on. */
+export function findAttemptByDesign(
+  state: Pick<DesignState, "candidates" | "attempts">,
+  design: Design | null,
+): string | null {
+  if (!design) return null;
+  const key = canonicalJson(design);
+  const candidate = state.candidates.find((c) => canonicalJson(c.design) === key);
+  if (candidate) return candidate.source_id;
+  const attempt = state.attempts.find((a) => a.design !== null && canonicalJson(a.design) === key);
+  return attempt ? attempt.id : null;
 }
 
 function toFinalDesign(rec: Record<string, unknown>): FinalDesign | null {
@@ -289,8 +403,13 @@ function applyEvent(state: DesignState, ev: AgentEvent): DesignState {
     }
     case "question":
       return push(next, "question", asString(p.text));
-    case "tool_call":
-      return push(next, "system", `ツール呼び出し: ${asString(p.name)}`);
+    case "tool_call": {
+      const callId = asString(p.id);
+      const input = asRecord(p.input);
+      const withInput: DesignState =
+        callId && input ? { ...next, toolInputs: { ...next.toolInputs, [callId]: input } } : next;
+      return push(withInput, "system", `ツール呼び出し: ${asString(p.name)}`);
+    }
     case "tool_result":
       return applyToolResult(next, ev);
     case "candidate":
@@ -319,7 +438,10 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
     if (name === "simulate_design") {
       next = {
         ...next,
-        attempts: [...next.attempts, { id, attempt: ev.attempt, t_s: ev.t_s, result: null, error: errorText }],
+        attempts: [
+          ...next.attempts,
+          { id, attempt: ev.attempt, t_s: ev.t_s, result: null, error: errorText, design: null },
+        ],
       };
     }
     return push(next, "error", `ツール ${name} がエラーを返しました: ${errorText}`);
@@ -337,19 +459,37 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
     }
     case "simulate_design": {
       const sim = toSimResult(result);
-      const row: AttemptRow = { id, attempt: ev.attempt, t_s: ev.t_s, result: sim, error: null };
+      // with tune_pitch the simulated design is the tuned one the result reports
+      const design = toDesign(result.tuned_design) ?? toDesign(state.toolInputs[id]?.design);
+      const row: AttemptRow = { id, attempt: ev.attempt, t_s: ev.t_s, result: sim, error: null, design };
       let next: DesignState = { ...state, attempts: [...state.attempts, row] };
       if (!state.tier && sim.tier) next = { ...next, tier: sim.tier };
       return next;
     }
     case "run_dispersion": {
-      const dispersion = toDispersion(result);
-      let next: DesignState = { ...state, dispersion };
+      const input = state.toolInputs[id];
+      const design = toDesign(input?.design);
+      const candidateId = findAttemptByDesign(state, design);
+      const [targetPerigee, targetApogee] = orbitTargets(input);
+      const dispersion: DispersionResult = {
+        ...toDispersion(result, design),
+        candidate_id: candidateId,
+        target_perigee_m: targetPerigee,
+        target_apogee_m: targetApogee,
+      };
+      const key = candidateId ?? (dispersion.source_id || id);
+      let next: DesignState = {
+        ...state,
+        dispersion,
+        dispersions: { ...state.dispersions, [key]: dispersion },
+      };
       if (Number.isFinite(dispersion.success_rate)) {
         next = push(
           next,
           "system",
-          `多数回試行 n=${dispersion.n}: 成功率 ${(dispersion.success_rate * 100).toFixed(1)} %`,
+          `多数回試行 n=${dispersion.n}${candidateId ? ` (${candidateId})` : ""}: 成功率 ${(
+            dispersion.success_rate * 100
+          ).toFixed(1)} %`,
         );
       }
       return next;

@@ -169,7 +169,8 @@ class AmateurDesign(_Frozen):
     dry_mass_kg: float = Field(gt=0)  # airframe without motor and payload
     payload_mass_kg: float = Field(default=0.0, ge=0)
     parachute_diameter_m: float = Field(gt=0)
-    deploy_delay_s: float = Field(default=0.0, ge=0)  # after burnout
+    # after apogee (parachute opens at apogee + delay)
+    deploy_delay_s: float = Field(default=0.0, ge=0)
 
 
 class Stage(_Frozen):

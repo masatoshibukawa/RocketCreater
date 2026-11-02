@@ -5,10 +5,11 @@ import AttemptLog from "./components/AttemptLog";
 import CandidateCards from "./components/CandidateCards";
 import ChatPanel from "./components/ChatPanel";
 import FlightChart from "./components/FlightChart";
+import ReviewPanel from "./components/ReviewPanel";
 import TierBadge from "./components/TierBadge";
 import { exportInfoFromEvents } from "./lib/api";
 import { useDesignStream } from "./lib/useDesignStream";
-import type { LandingPoint, Tier, TracePoint } from "./lib/types";
+import type { DispersionResult, LandingPoint, Tier, TracePoint } from "./lib/types";
 
 /** Mirrors config/models.yaml `max_attempts` (display only; the backend enforces the budget). */
 const MAX_ATTEMPTS = 40;
@@ -46,6 +47,13 @@ export default function Home() {
     return typeof east === "number" && typeof north === "number" ? { east_m: east, north_m: north } : null;
   }, [selectedAttempt]);
 
+  // run_dispersion result of the selected candidate; otherwise the latest run (its panel says
+  // which candidate it belongs to).
+  const dispersion: DispersionResult | null = useMemo(() => {
+    const own = effectiveId === null ? undefined : stream.dispersions[effectiveId];
+    return own ?? stream.dispersion;
+  }, [effectiveId, stream.dispersions, stream.dispersion]);
+
   const handleStart = useCallback(
     (text: string, seed: number | null) => {
       setSelectedId(null);
@@ -82,6 +90,7 @@ export default function Home() {
           onViewTierChange={setViewTier}
         />
         <AttemptLog attempts={stream.attempts} tier={tier} selectedId={effectiveId} onSelect={setSelectedId} />
+        <ReviewPanel events={stream.events} selectedId={effectiveId} onSelect={setSelectedId} />
         <CandidateCards
           candidates={stream.candidates}
           tier={tier}
@@ -93,7 +102,7 @@ export default function Home() {
           tier={tier}
           trace={trace}
           landing={landing}
-          dispersion={stream.dispersion}
+          dispersion={dispersion}
           selectedId={effectiveId}
         />
       </section>

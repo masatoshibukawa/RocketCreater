@@ -25,6 +25,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.integrate import solve_ivp
 
+from rocketwright import dispersion as mc
 from rocketwright.physics import atmosphere as atm
 from rocketwright.physics import recovery
 from rocketwright.schema import (
@@ -502,4 +503,16 @@ def simulate(
 
 
 def dispersion(design: Design, env: Env, n: int, seed: int) -> DispersionResult:
-    raise NotImplementedError("water.dispersion: implemented in phase 3")
+    """Monte-Carlo dispersion with the bottle spec (rocketwright.dispersion.DISPERSION_SPEC):
+    initial pressure and wind speed/direction."""
+    _check_design(design)
+    return mc.run_dispersion(
+        design,
+        env,
+        n,
+        seed,
+        perturb=mc.perturb_bottle,
+        simulate=simulate,
+        tier=Tier.BOTTLE,
+        summarize=mc.summarize_landing,
+    )

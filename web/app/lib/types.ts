@@ -29,6 +29,8 @@ export type EventType =
   | "tool_call"
   | "tool_result"
   | "candidate"
+  | "review"
+  | "warning"
   | "final"
   | "error"
   | "question";
@@ -39,6 +41,8 @@ export const EVENT_TYPES: readonly EventType[] = [
   "tool_call",
   "tool_result",
   "candidate",
+  "review",
+  "warning",
   "final",
   "error",
   "question",
@@ -154,13 +158,60 @@ export interface LandingPoint {
   north_m: number;
 }
 
-export interface DispersionSummary {
+export interface Quantiles {
+  p05: number;
+  p50: number;
+  p95: number;
+}
+
+/** 95 % containment ellipse of the landing scatter (schema.Ellipse95). */
+export interface Ellipse95 {
+  center_east_m: number;
+  center_north_m: number;
+  semi_major_m: number;
+  semi_minor_m: number;
+  /** Major axis from east, counter-clockwise. */
+  angle_deg: number;
+}
+
+export interface LandingScatter {
+  points: LandingPoint[];
+  ellipse_95: Ellipse95;
+}
+
+export interface OrbitSample {
+  perigee_m: number;
+  apogee_m: number;
+  payload_margin_kg: number;
+}
+
+export interface OrbitInsertionStats {
+  perigee_error_m: Quantiles;
+  apogee_error_m: Quantiles;
+  payload_margin_kg: Quantiles;
+  samples: OrbitSample[];
+}
+
+/** A run_dispersion tool result (schema.DispersionResult plus the tool's `nominal` echo and the
+ * design it was run on, taken from the matching tool_call input). */
+export interface DispersionResult {
   source_id: string;
   tier: Tier | null;
   n: number;
+  seed: number | null;
   success_rate: number;
-  landing_points: LandingPoint[];
+  quantiles: Record<string, Quantiles>;
   failure_counts: Record<string, number>;
+  landing: LandingScatter | null;
+  orbit_insertion: OrbitInsertionStats | null;
+  warnings: string[];
+  nominal_metrics: Record<string, number>;
+  design: Design | null;
+  /** source_id of the candidate / attempt whose design equals `design`, if any. */
+  candidate_id: string | null;
+  /** Orbit target from the tool_call's requirement (perigee = target_altitude_m), if any. */
+  target_perigee_m: number | null;
+  target_apogee_m: number | null;
 }
 
 /** One row of the attempt log: a simulate_design tool_result (or its error). */
@@ -170,6 +221,8 @@ export interface AttemptRow {
   t_s: number;
   result: SimResult | null;
   error: string | null;
+  /** The simulated design (tool_call input, or the tuned design the result reports). */
+  design: Design | null;
 }
 
 /** A design candidate, merged from `candidate` events and `final.result.designs`. */

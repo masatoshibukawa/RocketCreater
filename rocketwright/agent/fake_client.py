@@ -391,15 +391,22 @@ DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
 }
 
 
-def _final_from_results(tier: str, designs: list[dict[str, Any]], sim_ids: list[str]):
+def _final_from_results(
+    tier: str,
+    designs: list[dict[str, Any]],
+    sim_ids: list[str],
+    dispersion_ids: dict[int, str] | None = None,
+):
     """Script item that composes the final JSON from the simulate_design results in history.
     Only passing designs are reported (CLAUDE.md section 1); if none passed, all attempts are
-    listed with passed=false so the user still sees what was tried."""
+    listed with passed=false so the user still sees what was tried. `dispersion_ids` maps a
+    design index to the run_dispersion tool_use id whose success_rate it quotes."""
+    dispersion_ids = dispersion_ids or {}
 
     def build(history: list[dict[str, Any]]) -> Message:
         results = tool_results_from_history(history)
         out_designs = []
-        for design, sim_id in zip(designs, sim_ids, strict=True):
+        for i, (design, sim_id) in enumerate(zip(designs, sim_ids, strict=True)):
             sim = results.get(sim_id, {})
             metrics = sim.get("metrics", {})
             cost = sim.get("cost_jpy")
@@ -410,14 +417,25 @@ def _final_from_results(tier: str, designs: list[dict[str, Any]], sim_ids: list[
                 else "failed: " + "; ".join(sim.get("failure_reasons", []))
             )
             explanation = f"{key} = {metrics.get(key)} m, cost {cost} JPY ({verdict})"
+            sources = {**{k: sim_id for k in metrics}, "cost_jpy": sim_id}
+            success_rate = None
+            disp_id = dispersion_ids.get(i)
+            disp = results.get(disp_id, {}) if disp_id else {}
+            if isinstance(disp.get("success_rate"), (int, float)):
+                success_rate = disp["success_rate"]
+                sources["success_rate"] = disp_id
+                explanation += (
+                    f"; Monte-Carlo success_rate = {success_rate} over n = {disp.get('n')} "
+                    f"perturbed flights"
+                )
             out_designs.append(
                 {
                     "design": design,
                     "metrics": metrics,
                     "passed": bool(sim.get("success")),
                     "cost_jpy": cost,
-                    "success_rate": None,
-                    "sources": {**{k: sim_id for k in metrics}, "cost_jpy": sim_id},
+                    "success_rate": success_rate,
+                    "sources": sources,
                     "explanation": explanation,
                 }
             )
@@ -486,13 +504,18 @@ def build_demo_script(
     seed: int | None,
     *,
     reviews: bool = False,
+    dispersion: bool = True,
 ) -> list[ScriptItem]:
     """classify -> search_catalog -> simulate_design (first attempt, fails) -> simulate_design
-    x(N-1) in one turn (corrected designs) -> final JSON. With `reviews=True` the returned
-    DemoScript also carries `build_demo_reviews()` for the fake client's reviewer calls."""
+    x(N-1) in one turn (corrected designs) -> run_dispersion on the first passing design
+    (index 1, n=100) -> final JSON quoting its success_rate. With `reviews=True` the returned
+    DemoScript also carries `build_demo_reviews()` for the fake client's reviewer calls;
+    `dispersion=False` drops the run_dispersion turn (loop-mechanics tests)."""
     requirement = {**DEMO_REQUIREMENTS[tier], "text": requirement_text}
     designs = DEMO_DESIGNS[tier]
     sim_ids = [f"toolu_sim_{i + 1}" for i in range(len(designs))]
+    dispersion_index = 1  # the first design meant to pass (see DEMO_DESIGNS)
+    dispersion_ids = {dispersion_index: "toolu_disp_1"} if dispersion else {}
 
     def simulate(sim_id: str, design: dict[str, Any]):
         return tool_use_block(
@@ -550,7 +573,34 @@ def build_demo_script(
                 ],
                 stop_reason="tool_use",
             ),
-            _final_from_results(tier, designs, sim_ids),
+            *(
+                [
+                    make_message(
+                        [
+                            thinking_block(
+                                "A corrected design passed. Running the Monte-Carlo dispersion "
+                                "on it (n=100, same seed) to quote a success rate instead of "
+                                "guessing one."
+                            ),
+                            tool_use_block(
+                                dispersion_ids[dispersion_index],
+                                "run_dispersion",
+                                {
+                                    "design": designs[dispersion_index],
+                                    "env": env,
+                                    "n": 100,
+                                    "seed": seed if seed is not None else 0,
+                                    "requirement": requirement,
+                                },
+                            ),
+                        ],
+                        stop_reason="tool_use",
+                    )
+                ]
+                if dispersion
+                else []
+            ),
+            _final_from_results(tier, designs, sim_ids, dispersion_ids),
         ]
     )
     if reviews:

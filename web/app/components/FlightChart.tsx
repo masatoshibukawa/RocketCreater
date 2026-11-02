@@ -1,25 +1,17 @@
 "use client";
 
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Scatter,
-  ScatterChart,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { fmt, fmtPercent } from "../lib/format";
-import { isOrbital, type DispersionSummary, type LandingPoint, type TracePoint, type Tier } from "../lib/types";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { fmt } from "../lib/format";
+import { isOrbital, type DispersionResult, type LandingPoint, type TracePoint, type Tier } from "../lib/types";
+import DispersionPanel from "./DispersionPanel";
 
 interface FlightChartProps {
   tier: Tier | null;
   trace: TracePoint[];
   /** Single-shot landing point from the selected attempt's metrics (bottle/amateur), if any. */
   landing: LandingPoint | null;
-  dispersion: DispersionSummary | null;
+  /** run_dispersion result for the selected candidate (or the latest one as a fallback). */
+  dispersion: DispersionResult | null;
   selectedId: string | null;
 }
 
@@ -42,8 +34,9 @@ const TOOLTIP_STYLE = {
 const toFixed1 = (v: unknown): string => fmt(Number(v), 1);
 const toFixed0 = (v: unknown): string => fmt(Number(v), 0);
 
-/** Flight graph for the selected candidate. Orbital tiers add the ascent profile; suborbital
- * tiers show the landing scatter panel (placeholder until run_dispersion results arrive). */
+/** Flight graph for the selected candidate. Orbital tiers add the ascent profile and, below it,
+ * the insertion-error dispersion; suborbital tiers show the landing scatter with its 95 %
+ * ellipse (DispersionPanel) next to the altitude plot. */
 export default function FlightChart({ tier, trace, landing, dispersion, selectedId }: FlightChartProps) {
   const orbital = isOrbital(tier);
   const unit = orbital ? "km" : "m";
@@ -102,9 +95,14 @@ export default function FlightChart({ tier, trace, landing, dispersion, selected
         {orbital ? (
           <AscentProfile rows={rows} />
         ) : (
-          <LandingScatter landing={landing} dispersion={dispersion} />
+          <DispersionPanel tier={tier} dispersion={dispersion} landing={landing} selectedId={selectedId} />
         )}
       </div>
+      {orbital && (
+        <div style={{ marginTop: 12 }}>
+          <DispersionPanel tier={tier} dispersion={dispersion} landing={landing} selectedId={selectedId} />
+        </div>
+      )}
     </div>
   );
 }
@@ -146,67 +144,6 @@ function AscentProfile({ rows }: { rows: AltitudeRow[] }) {
             </LineChart>
           </ResponsiveContainer>
         </div>
-      )}
-    </div>
-  );
-}
-
-/** Landing-point scatter for bottle / amateur. Uses run_dispersion points when available,
- * otherwise the single landing point of the selected attempt, otherwise a placeholder. */
-function LandingScatter({
-  landing,
-  dispersion,
-}: {
-  landing: LandingPoint | null;
-  dispersion: DispersionSummary | null;
-}) {
-  const points: LandingPoint[] =
-    dispersion && dispersion.landing_points.length > 0
-      ? dispersion.landing_points
-      : landing
-        ? [landing]
-        : [];
-  const caption =
-    dispersion && dispersion.landing_points.length > 0
-      ? `着地点の散布 (n=${dispersion.n}, 成功率 ${
-          Number.isFinite(dispersion.success_rate) ? fmtPercent(dispersion.success_rate) : "-"
-        })`
-      : "着地点 [m]（東 / 北）";
-  return (
-    <div>
-      <p className="chart-caption">{caption}</p>
-      {points.length === 0 ? (
-        <div className="placeholder">多数回試行の結果はフェーズ3で表示</div>
-      ) : (
-        <div className="chart">
-          <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
-              <CartesianGrid stroke={GRID_STROKE} strokeDasharray="3 3" />
-              <XAxis
-                dataKey="east_m"
-                type="number"
-                name="東"
-                tick={AXIS_STYLE}
-                tickFormatter={toFixed0}
-                unit=" m"
-              />
-              <YAxis
-                dataKey="north_m"
-                type="number"
-                name="北"
-                tick={AXIS_STYLE}
-                tickFormatter={toFixed0}
-                unit=" m"
-                width={64}
-              />
-              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ strokeDasharray: "3 3" }} />
-              <Scatter data={points} fill="#3fbf7f" isAnimationActive={false} />
-            </ScatterChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-      {points.length === 1 && (
-        <p className="chart-caption">単発シミュレーションの着地点。散布はフェーズ3の多数回試行で表示。</p>
       )}
     </div>
   );

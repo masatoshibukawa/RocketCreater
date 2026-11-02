@@ -1,13 +1,14 @@
 """Tests for the agent tool definitions and their implementations (real physics for every tier:
-multistage for commercial/heavy, solid for amateur, water for bottle; dispersion is still a
-dummy spread)."""
+multistage for commercial/heavy, solid for amateur, water for bottle; run_dispersion is the
+real Monte Carlo of rocketwright.dispersion over the same judged simulate)."""
 
 import json
 
 import pytest
 
 from rocketwright.agent.tools import (
-    DUMMY_WARNING,
+    DISPERSION_DEFAULT_N,
+    DISPERSION_MAX_N,
     PASS_CRITERIA,
     TOOL_NAMES,
     TOOL_REGISTRY,
@@ -321,26 +322,72 @@ def test_simulate_design_rejects_bad_design():
     assert "error" in out
 
 
-@pytest.mark.parametrize("design", [AMATEUR_DESIGN, COMMERCIAL_DESIGN])
-def test_run_dispersion_dummy(design):
-    out = execute_tool(
+def _disp(design, req, n=50, seed=3, tool_id="toolu_d"):
+    return execute_tool(
         "run_dispersion",
-        {"design": design, "env": ENV, "n": 50, "seed": 3, "requirement": None},
-        "toolu_d",
+        {"design": design, "env": ENV, "n": n, "seed": seed, "requirement": req},
+        tool_id,
     )
-    assert "error" not in out
-    disp = DispersionResult.model_validate(out)
-    assert disp.n == 50
-    assert disp.seed == 3
+
+
+@pytest.mark.parametrize("design", [AMATEUR_DESIGN, COMMERCIAL_DESIGN, BOTTLE_DESIGN])
+def test_run_dispersion_is_real_monte_carlo(design):
+    out = _disp(design, None)
+    assert "error" not in out, out
+    assert out["source_id"] == "toolu_d"
+    disp = DispersionResult.model_validate({k: v for k, v in out.items() if k != "nominal"})
+    assert disp.n == 50 and disp.seed == 3
     assert 0 <= disp.success_rate <= 1
-    assert DUMMY_WARNING in disp.warnings
-    if design["tier"] == "amateur":
-        assert disp.landing is not None and len(disp.landing.points) == 50
+    assert not any("DUMMY" in w for w in disp.warnings)
+    # the nominal (unperturbed) run is the simulate_design result, echoed under `nominal`
+    real = _sim(design, None)
+    assert out["nominal"]["metrics"] == real["metrics"]
+    assert out["nominal"]["success"] == real["success"]
+    assert out["nominal"]["failure_reasons"] == real["failure_reasons"]
+    # quantiles bracket the nominal of the main metric (the spread is real but modest)
+    key = "perigee_m" if design["tier"] in ("commercial", "heavy") else "apogee_m"
+    q = disp.quantiles[key]
+    assert q.p05 < q.p95
+    if design["tier"] in ("commercial", "heavy"):
+        assert disp.orbit_insertion is not None and disp.landing is None
+        assert len(disp.orbit_insertion.samples) == 50
     else:
-        assert disp.orbit_insertion is not None
-        # the p50 is the REAL simulate result so the numbers stay consistent
-        real = _sim(design, None)
-        assert disp.quantiles["perigee_m"].p50 == real["metrics"]["perigee_m"]
+        assert disp.landing is not None and disp.orbit_insertion is None
+        assert len(disp.landing.points) == 50
+        assert disp.landing.ellipse_95.semi_major_m >= disp.landing.ellipse_95.semi_minor_m
+    # deterministic: same input + seed -> identical result
+    again = _disp(design, None, tool_id="toolu_d2")
+    again.pop("source_id")
+    out.pop("source_id")
+    assert again == out
+
+
+def test_run_dispersion_samples_are_judged_against_the_requirement():
+    # a G80 cannot reach 2 km with 1.5 kg: every sample fails the requirement's apogee rule
+    out = _disp(AMATEUR_DESIGN, REQ_AMATEUR, n=20)
+    assert "error" not in out
+    assert out["success_rate"] == 0.0
+    assert any("apogee" in k for k in out["failure_counts"])
+    assert sum(out["failure_counts"].values()) >= 20
+    # the bucket keys carry no sample-specific numbers
+    for k in out["failure_counts"]:
+        assert "2000" not in k
+    # the budget rule of _finalize applies to every sample too
+    tight = {**REQ_ORBIT, "budget_jpy": 1000.0}
+    out = _disp(COMMERCIAL_DESIGN, tight, n=4)
+    assert out["success_rate"] == 0.0
+    assert any("budget" in k for k in out["failure_counts"])
+
+
+def test_run_dispersion_n_default_and_cap():
+    out = _disp(BOTTLE_DESIGN, None, n=None)
+    assert "error" not in out and out["n"] == DISPERSION_DEFAULT_N
+    out = _disp(BOTTLE_DESIGN, None, n=DISPERSION_MAX_N + 1)
+    assert "error" in out and str(DISPERSION_MAX_N) in out["error"]
+    out = _disp(BOTTLE_DESIGN, None, n=0)
+    assert "error" in out
+    defs = {d["name"]: d for d in get_tool_definitions()}
+    assert "success_rate" in defs["run_dispersion"]["description"]
 
 
 def test_estimate_cost_tool():

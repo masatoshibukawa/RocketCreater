@@ -17,7 +17,6 @@ import yaml
 from rocketwright.agent.events import AgentEvent
 from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
 from rocketwright.agent.loop import AgentConfig, run_design_loop
-from rocketwright.agent.tools import DUMMY_WARNING
 
 SCENARIO_DIR = Path(__file__).resolve().parent.parent / "scenarios"
 SCENARIOS = sorted(SCENARIO_DIR.glob("*.yaml"))
@@ -44,13 +43,17 @@ async def _run(scenario: dict[str, Any]) -> list[AgentEvent]:
     return [ev async for ev in run_design_loop(text, client=client, config=cfg, env=env, seed=seed)]
 
 
-def _sim_results(events: list[AgentEvent]) -> dict[str, dict[str, Any]]:
-    """tool_use id -> simulate_design result, in call order."""
+def _tool_results(events: list[AgentEvent], name: str) -> dict[str, dict[str, Any]]:
+    """tool_use id -> result of the named tool, in call order."""
     return {
         e.payload["id"]: e.payload["result"]
         for e in events
-        if e.type == "tool_result" and e.payload["name"] == "simulate_design"
+        if e.type == "tool_result" and e.payload["name"] == name
     }
+
+
+def _sim_results(events: list[AgentEvent]) -> dict[str, dict[str, Any]]:
+    return _tool_results(events, "simulate_design")
 
 
 def test_scenario_files_exist() -> None:
@@ -88,15 +91,35 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
     assert passing
     assert final.payload["provenance_violations"] == []
 
-    # every source id maps to a real simulate_design tool_use id of this run
+    # every source id maps to a real simulate_design / run_dispersion tool_use id of this run
     sims = _sim_results(events)
+    disps = _tool_results(events, "run_dispersion")
     for d in result["designs"]:
         assert d["sources"], d
-        assert set(d["sources"].values()) <= set(sims), d["sources"]
+        assert set(d["sources"].values()) <= set(sims) | set(disps), d["sources"]
         sim = sims[d["sources"]["cost_jpy"]]
         assert d["cost_jpy"] == sim["cost_jpy"]
         assert d["metrics"] == sim["metrics"]
         assert d["passed"] == sim["success"]
+
+    # the demo runs the Monte-Carlo dispersion on the first passing design and reports its
+    # success rate (real rocketwright.dispersion, n=100, same seed as the scenario)
+    assert len(disps) == 1
+    disp = next(iter(disps.values()))
+    assert disp["n"] == 100 and disp["seed"] == scenario.get("seed")
+    assert 0.0 <= disp["success_rate"] <= 1.0
+    assert disp["quantiles"] and "nominal" in disp
+    assert not any("DUMMY" in w for w in disp["warnings"])
+    with_rate = [d for d in result["designs"] if d["success_rate"] is not None]
+    assert with_rate, "the final answer must carry the dispersion success rate"
+    for d in with_rate:
+        assert d["success_rate"] == disp["success_rate"]
+        assert d["sources"]["success_rate"] in disps
+    if expected_tier in ("bottle", "amateur"):
+        assert disp["landing"] is not None and len(disp["landing"]["points"]) == 100
+        assert disp["orbit_insertion"] is None
+    else:
+        assert disp["orbit_insertion"] is not None and disp["landing"] is None
 
     # the demo's point: a failing attempt whose reason is read and fixed, then passes
     ordered = list(sims.values())
@@ -106,7 +129,6 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
 
     # real physics for every tier: no dummy placeholder in any simulate result
     for sim in ordered:
-        assert DUMMY_WARNING not in sim["warnings"]
         assert not any("DUMMY" in w for w in sim["warnings"])
         assert sim["cost_jpy"] > 0
 

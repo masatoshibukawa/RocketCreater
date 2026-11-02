@@ -42,7 +42,9 @@ def test_config_loads_from_yaml():
 
 @pytest.mark.anyio
 async def test_scripted_amateur_run_event_sequence():
-    client = FakeAnthropicClient(build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1))
+    client = FakeAnthropicClient(
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, dispersion=False)
+    )
     events = await _collect(client, env=ENV, seed=1)
     types = [e.type for e in events]
     assert types[0] == "thinking"
@@ -106,7 +108,9 @@ async def test_guard_blocks_before_any_api_call():
 
 @pytest.mark.anyio
 async def test_attempt_budget_is_enforced():
-    client = FakeAnthropicClient(build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1))
+    client = FakeAnthropicClient(
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, dispersion=False)
+    )
     cfg = AgentConfig.load().model_copy(update={"max_attempts": 1})
     events = await _collect(client, env=ENV, seed=1, config=cfg)
     results = [e for e in events if e.type == "tool_result"]
@@ -220,7 +224,7 @@ def _by_type(events: list[AgentEvent], kind: str) -> list[AgentEvent]:
 @pytest.mark.anyio
 async def test_review_events_follow_candidates_and_feedback_is_injected():
     client = FakeAnthropicClient(
-        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True)
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True, dispersion=False)
     )
     events = await _collect(client, env=ENV, seed=1)
     types = [e.type for e in events]
@@ -274,7 +278,8 @@ async def test_blocker_moves_design_out_of_passing_list():
         "suggested_changes": ["replace the payload with an inert mass"],
     }
     client = FakeAnthropicClient(
-        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1), reviews=[{"safety": blocker}]
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, dispersion=False),
+        reviews=[{"safety": blocker}],
     )
     events = await _collect(client, env=ENV, seed=1)
     reviews = _by_type(events, "review")
@@ -311,7 +316,8 @@ async def test_reviewer_findings_with_invented_numbers_are_dropped_before_feedba
         "suggested_changes": ["increase fin span to 0.123 m"],
     }
     client = FakeAnthropicClient(
-        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1), reviews=[{"stability": invented}]
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, dispersion=False),
+        reviews=[{"stability": invented}],
     )
     events = await _collect(client, env=ENV, seed=1)
     review = _by_type(events, "review")[0]
@@ -337,7 +343,7 @@ async def test_reviewer_findings_with_invented_numbers_are_dropped_before_feedba
 @pytest.mark.anyio
 async def test_reviewers_can_be_disabled_and_never_run_on_failed_attempts():
     client = FakeAnthropicClient(
-        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True)
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True, dispersion=False)
     )
     cfg = AgentConfig.load().model_copy(update={"reviewers": ReviewerConfig(enabled=False)})
     events = await _collect(client, env=ENV, seed=1, config=cfg)
@@ -348,7 +354,7 @@ async def test_reviewers_can_be_disabled_and_never_run_on_failed_attempts():
 
     # enabled: the failing first attempt (toolu_sim_1) is never reviewed
     client = FakeAnthropicClient(
-        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True)
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True, dispersion=False)
     )
     events = await _collect(client, env=ENV, seed=1)
     assert {e.payload["source_id"] for e in _by_type(events, "review")} == {

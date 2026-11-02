@@ -9,15 +9,15 @@
 
 Physics dispatch lives in `_simulate_dispatch` / `_dispersion_dispatch` ONLY. Commercial/heavy
 designs go to rocketwright.physics.multistage, amateur to physics.solid and bottle to
-physics.water (all real models). Monte-Carlo dispersion is still a dummy spread around the
-nominal result (tagged DUMMY_WARNING) until rocketwright.dispersion lands.
+physics.water (all real models). Monte-Carlo dispersion runs rocketwright.dispersion with the
+tier's perturbation spec over the same judged `_simulate_dispatch`, so every sample is passed or
+failed by the same rules (requirement target, payload, recovery, budget) as simulate_design.
 """
 
 from __future__ import annotations
 
-import hashlib
+import functools
 import json
-import random
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -25,6 +25,7 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ValidationError
 
+from rocketwright import dispersion as mc
 from rocketwright.agent.store import store_drawing, store_report
 from rocketwright.classify import classify, load_tiers
 from rocketwright.cost import COST_CONSTANTS, estimate_cost_jpy
@@ -35,15 +36,9 @@ from rocketwright.schema import (
     Design,
     DesignAdapter,
     DispersionResult,
-    Ellipse95,
     Env,
     GoalKind,
-    LandingPoint,
-    LandingScatter,
     MultistageDesign,
-    OrbitInsertionStats,
-    OrbitSample,
-    Quantiles,
     Requirement,
     SimResult,
     Tier,
@@ -52,7 +47,8 @@ from rocketwright.schema import (
 __all__ = [
     "TOOL_NAMES",
     "TOOL_REGISTRY",
-    "DUMMY_WARNING",
+    "DISPERSION_DEFAULT_N",
+    "DISPERSION_MAX_N",
     "PASS_CRITERIA",
     "execute_tool",
     "get_tool_definitions",
@@ -68,7 +64,10 @@ TOOL_NAMES: tuple[str, ...] = (
     "export_report",
 )
 
-DUMMY_WARNING = "DUMMY PHYSICS: values are placeholders"
+# run_dispersion sample count: default when the model passes null, and the hard cap (the
+# schema caps the scatter at 5000 points; 500 keeps a commercial run at a few seconds).
+DISPERSION_DEFAULT_N = 100
+DISPERSION_MAX_N = 500
 
 # Requirement-vs-design rules judged here (`_judge`, CLAUDE.md section 6). Flight rules live
 # ONLY in the physics modules' PASS_THRESHOLDS (multistage: perigee/apogee tolerance, liftoff
@@ -214,16 +213,23 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "run_dispersion",
             "description": (
-                "Monte-Carlo dispersion of n flights with a seed. Returns success_rate, "
-                "quantiles (p05/p50/p95), failure_counts and landing scatter (bottle/amateur) "
-                "or orbit-insertion statistics (commercial/heavy)."
+                "Monte-Carlo dispersion: n perturbed flights of a design (bottle: pressure and "
+                "wind; amateur: motor impulse, dry mass, wind, deploy delay; commercial/heavy: "
+                "Isp, thrust, structural fraction; sigmas are provisional) judged by the same "
+                "rules as simulate_design when the requirement is passed. Returns success_rate "
+                "(fraction of samples that pass), quantiles (p05/p50/p95 of every metric), "
+                "failure_counts (reason -> samples), landing scatter with a 95 % ellipse "
+                "(bottle/amateur) or orbit-insertion error statistics about the nominal run "
+                "(commercial/heavy), warnings, and `nominal` (the unperturbed result). "
+                f"n: null = {DISPERSION_DEFAULT_N}, max {DISPERSION_MAX_N}. Run it on passing "
+                "designs only (a few seconds each) and quote success_rate from it."
             ),
             "strict": True,
             "input_schema": _obj(
                 {
                     "design": design,
                     "env": env,
-                    "n": {"type": "integer"},
+                    "n": _nullable({"type": "integer"}),
                     "seed": {"type": "integer"},
                     "requirement": _nullable(req),
                 }
@@ -281,21 +287,6 @@ def _parse_optional_requirement(data: Any) -> Requirement | None:
     return None if data is None else Requirement.model_validate(data)
 
 
-def _rng_for(design: Design, env: Env, seed: int | None, salt: str) -> random.Random:
-    """Deterministic RNG from a hash of (design, env, seed, salt)."""
-    payload = json.dumps(
-        {
-            "design": design.model_dump(mode="json"),
-            "env": env.model_dump(mode="json"),
-            "seed": seed,
-            "salt": salt,
-        },
-        sort_keys=True,
-    )
-    digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
-    return random.Random(int(digest[:16], 16))
-
-
 def _judge(design: Design, req: Requirement | None) -> list[str]:
     """Requirement-vs-design rules that no physics module owns (payload carried, recovery
     requested). Flight rules are judged inside physics.multistage / solid / water; the budget
@@ -344,21 +335,28 @@ def _orbit_targets(req: Requirement | None) -> tuple[float | None, float | None]
 
 
 def _simulate_dispatch(
-    design: Design, env: Env, seed: int | None, req: Requirement | None = None
+    design: Design,
+    env: Env,
+    seed: int | None,
+    req: Requirement | None = None,
+    **scales: float,
 ) -> SimResult:
     """Single dispatch point. Commercial/heavy -> physics.multistage, amateur -> physics.solid,
-    bottle -> physics.water (all real models, judged against the requirement's target)."""
+    bottle -> physics.water (all real models, judged against the requirement's target).
+    `scales` are the model's perturbation keywords (multistage: isp_scale / thrust_scale,
+    solid: thrust_scale) that rocketwright.dispersion passes per sample; empty for a nominal
+    run. Module-level and picklable on purpose (dispersion workers)."""
     if isinstance(design, MultistageDesign):
         perigee_m, apogee_m = _orbit_targets(req)
         # TODO: altitude goals for multistage (e.g. 100 km sounding flights) need a suborbital
         # judge in physics.multistage; today the model's minimum-perigee rule applies.
         result = multistage.simulate(
-            design, env, seed, target_perigee_m=perigee_m, target_apogee_m=apogee_m
+            design, env, seed, target_perigee_m=perigee_m, target_apogee_m=apogee_m, **scales
         )
     elif isinstance(design, AmateurDesign):
-        result = solid.simulate(design, env, seed, target_apogee_m=_altitude_target(req))
+        result = solid.simulate(design, env, seed, target_apogee_m=_altitude_target(req), **scales)
     elif isinstance(design, BottleDesign):
-        result = water.simulate(design, env, seed, target_apogee_m=_altitude_target(req))
+        result = water.simulate(design, env, seed, target_apogee_m=_altitude_target(req), **scales)
     else:  # pragma: no cover - the discriminated union has no other member
         raise TypeError(f"unsupported design type {type(design).__name__}")
     return _finalize(result, design, req)
@@ -380,71 +378,22 @@ def _tune_pitch(design: Design, env: Env, req: Requirement | None) -> Multistage
     )
 
 
-def _quantiles_around(value: float, rng: random.Random) -> Quantiles:
-    spread = abs(value) * (0.04 + 0.04 * rng.random()) + 1e-9
-    return Quantiles(p05=value - spread, p50=value, p95=value + spread)
-
-
 def _dispersion_dispatch(
     design: Design, env: Env, n: int, seed: int, req: Requirement | None = None
-) -> DispersionResult:
-    """Single dispatch point for Monte-Carlo runs.
-
-    TODO(phase 3): replace with rocketwright.dispersion (real Monte Carlo over Isp / thrust /
-    structural mass for multistage, pressure / wind / motor for bottle & amateur). Until then the
-    spread is a DUMMY, but the p50 of every quantile is the nominal `_simulate_dispatch` result
-    (real physics for commercial/heavy) so the numbers agree with simulate_design.
-    """
-    sim = _simulate_dispatch(design, env, seed, req)
-    rng = _rng_for(design, env, seed, f"dispersion:{n}")
-    success_rate = round(0.60 + 0.38 * rng.random(), 3)
-    quantiles = {k: _quantiles_around(v, rng) for k, v in sim.metrics.items()}
-    n_fail = int(round(n * (1.0 - success_rate)))
-    failure_counts = {"apogee outside tolerance": n_fail} if n_fail else {}
-    landing: LandingScatter | None = None
-    orbit: OrbitInsertionStats | None = None
-    if isinstance(design, MultistageDesign):
-        samples = [
-            OrbitSample(
-                perigee_m=sim.metrics["perigee_m"] + rng.gauss(0, 5_000),
-                apogee_m=sim.metrics["apogee_m"] + rng.gauss(0, 8_000),
-                payload_margin_kg=sim.metrics["payload_margin_kg"] + rng.gauss(0, 5),
-            )
-            for _ in range(min(n, 200))
-        ]
-        orbit = OrbitInsertionStats(
-            perigee_error_m=Quantiles(p05=-8_000.0, p50=0.0, p95=8_000.0),
-            apogee_error_m=Quantiles(p05=-13_000.0, p50=0.0, p95=13_000.0),
-            payload_margin_kg=_quantiles_around(sim.metrics["payload_margin_kg"], rng),
-            samples=samples,
-        )
-    else:
-        ce, cn = sim.metrics["landing_east_m"], sim.metrics["landing_north_m"]
-        sigma = max(5.0, 0.15 * sim.metrics["apogee_m"])
-        points = [
-            LandingPoint(east_m=ce + rng.gauss(0, sigma), north_m=cn + rng.gauss(0, 0.6 * sigma))
-            for _ in range(n)
-        ]
-        landing = LandingScatter(
-            points=points,
-            ellipse_95=Ellipse95(
-                center_east_m=ce,
-                center_north_m=cn,
-                semi_major_m=2.45 * sigma,
-                semi_minor_m=2.45 * 0.6 * sigma,
-                angle_deg=0.0,
-            ),
-        )
-    return DispersionResult(
-        tier=sim.tier,
-        n=n,
-        seed=seed,
-        success_rate=success_rate,
-        quantiles=quantiles,
-        failure_counts=failure_counts,
-        landing=landing,
-        orbit_insertion=orbit,
-        warnings=[DUMMY_WARNING],
+) -> mc.DispersionRun:
+    """Single dispatch point for Monte-Carlo runs: rocketwright.dispersion with the tier's
+    perturbation spec, every sample simulated and judged by `_simulate_dispatch` (so the
+    requirement's target / payload / recovery / budget rules apply to each sample)."""
+    perturb, summarize = mc.components_for(design.tier)
+    return mc.run_dispersion_detailed(
+        design,
+        env,
+        n,
+        seed,
+        perturb=perturb,
+        simulate=functools.partial(_simulate_dispatch, req=req),
+        tier=Tier(design.tier),
+        summarize=summarize,
     )
 
 
@@ -564,14 +513,23 @@ def _tool_simulate(inp: dict[str, Any]) -> dict[str, Any]:
 
 
 def _tool_dispersion(inp: dict[str, Any]) -> dict[str, Any]:
+    """DispersionResult fields plus `nominal` (the unperturbed run's success / failure_reasons /
+    metrics, not one of the n samples) so the model can relate the spread to simulate_design."""
     design = _parse_design(inp["design"])
     env = Env.model_validate(inp.get("env") or {})
-    n = int(inp["n"])
+    n = DISPERSION_DEFAULT_N if inp.get("n") is None else int(inp["n"])
     seed = int(inp["seed"])
-    if n < 1:
-        raise ValueError("n must be >= 1")
+    if not 1 <= n <= DISPERSION_MAX_N:
+        raise ValueError(f"n must be between 1 and {DISPERSION_MAX_N}, got {n}")
     req = _parse_optional_requirement(inp.get("requirement"))
-    return _dispersion_dispatch(design, env, n, seed, req).model_dump(mode="json")
+    run = _dispersion_dispatch(design, env, n, seed, req)
+    out = run.result.model_dump(mode="json")
+    out["nominal"] = {
+        "success": run.nominal.success,
+        "failure_reasons": list(run.nominal.failure_reasons),
+        "metrics": dict(run.nominal.metrics),
+    }
+    return out
 
 
 def _tool_estimate_cost(inp: dict[str, Any]) -> dict[str, Any]:

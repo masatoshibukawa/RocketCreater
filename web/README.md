@@ -2,7 +2,7 @@
 
 Single-screen Next.js (App Router, TypeScript, React 19) frontend for the RocketWright design
 agent. Left column: the conversation. Right column: tier badge and attempt counter, live attempt
-log, design candidate cards, and the flight charts (ascent profile for commercial/heavy, landing
+log, reviewer verdicts per candidate, design candidate cards, and the flight charts (ascent profile for commercial/heavy, landing
 scatter for bottle/amateur). Charts use Recharts only.
 
 ## Run
@@ -36,8 +36,14 @@ Put it in `web/.env.local` to override, e.g. `NEXT_PUBLIC_API_BASE=http://127.0.
 - `app/lib/designState.ts`: pure reducer that folds `AgentEvent`s (thinking / text / tool_call /
   tool_result / candidate / final / error / question) into UI state. Testable without React.
 - `app/lib/useDesignStream.ts`: the hook that POSTs to `/design` and drives the reducer.
-- `app/components/*`: presentational client components (chat, tier badge, attempt log, candidate
-  cards, flight charts).
+- `app/components/*`: presentational client components (chat, tier badge, attempt log, review
+  panel, candidate cards, flight charts).
+- `app/components/ReviewPanel.tsx` + `app/lib/reviewTypes.ts`: the review panel folds `review`
+  events (per-aspect reviewer verdicts for one candidate: 安定性 / 回収 / 費用 / 安全, each a chip
+  coloured by severity ok / minor / major / blocker, with findings and suggested changes) and
+  shows a 「レビューで除外」 badge plus the `warning` event of kind `review_gate` when a blocker
+  removed a design from the final list. `reviewsFromEvents` is a pure helper, testable without
+  React.
 
 Every number shown comes from a tool result in the stream; the UI only converts units
 (`format.ts`). Provenance violations reported by the backend are shown as errors in the chat.
@@ -68,7 +74,7 @@ Candidate cards carry a collapsible 側面図 (side view) and download links.
 
 ## 日本語の概要
 
-左が対話、右が「段階バッジ／試行ログ／設計案カード／飛行グラフ」の1画面構成です。
+左が対話、右が「段階バッジ／試行ログ／レビュー／設計案カード／飛行グラフ」の1画面構成です。
 バックエンド（`uv run uvicorn api.main:app --reload --port 8000`）を起動した上で、
 `npm install && npm run dev` で http://localhost:3000 を開いてください。
 表示される数値はすべてバックエンドのツール結果から取り、UI 側では単位変換のみ行います。
