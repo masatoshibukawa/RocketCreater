@@ -2,7 +2,7 @@
 #
 # Representative public values only; the model never designs engines (CLAUDE.md section 4).
 # Each entry carries either a `source` URL (Wikipedia pages are acceptable) or
-# `provisional: true` (awaiting human confirmation; listed in README "Values to confirm").
+# `provisional: true` (awaiting human confirmation; listed in README 要確認の値).
 # `notes` may point at the page the numbers were read from even for provisional entries.
 #
 # Engine fields (all SI): id, name, manufacturer, thrust_sl_n, thrust_vac_n, isp_sl_s, isp_vac_s,
