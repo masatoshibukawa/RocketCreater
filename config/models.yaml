@@ -1,0 +1,9 @@
+# Claude model configuration for rocketwright/agent/loop.py (CLAUDE.md section 8).
+# API key is read by the SDK from the ANTHROPIC_API_KEY environment variable; never put it here.
+design_model: claude-opus-5-5     # design decisions (extended thinking, adaptive)
+light_model: claude-haiku-5-5     # light work: catalog summaries, reviewer fan-out (phase 3)
+effort: high                      # output_config.effort for the design model: low|medium|high|xhigh|max
+thinking_display: summarized      # thinking: {type: adaptive, display: ...}
+max_tokens: 64000                 # per assistant turn (streaming)
+max_attempts: 40                  # simulate_design calls per request
+max_turns: 80                     # hard cap on API round trips (safety net; must exceed max_attempts)

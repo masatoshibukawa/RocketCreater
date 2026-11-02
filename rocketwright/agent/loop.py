@@ -1,8 +1,309 @@
-"""Design exploration loop over the Claude API (tool use, streaming).
+"""Design exploration loop over the Claude API (manual tool-use loop, streaming helper).
 
-Implemented in phase 1 (prompt 1B).
+`run_design_loop()` is an async generator of AgentEvent:
+  guard check -> [error] | (thinking | text | tool_call | tool_result | candidate)* ->
+  final | question | error
+
+Facts baked in (anthropic SDK 1.x, claude-opus-5-5 / claude-haiku-5-5):
+  * thinking = {"type": "adaptive", "display": "summarized"}; never `budget_tokens`;
+  * depth via output_config={"effort": ...}; no forced tool_choice (prompt steers instead);
+  * `client.messages.stream(...)` + `await stream.get_final_message()`;
+  * all tool_results of one assistant turn go back in ONE user message;
+  * stop reasons handled: end_turn, tool_use, max_tokens, refusal (stop_details), pause_turn.
+The SDK reads ANTHROPIC_API_KEY itself; this module never touches or logs it.
 """
 
+from __future__ import annotations
 
-def run_design_loop(requirement_text: str):  # noqa: ANN201 - async iterator defined in phase 1B
-    raise NotImplementedError("loop.run_design_loop: implemented in phase 1 (prompt 1B)")
+import json
+import re
+import time
+from collections.abc import AsyncIterator
+from pathlib import Path
+from typing import Any, Literal
+
+import anthropic
+import yaml
+from pydantic import BaseModel, ConfigDict, Field
+
+from rocketwright.agent.events import AgentEvent
+from rocketwright.agent.prompts import SYSTEM_PROMPT
+from rocketwright.agent.provenance import find_unsourced_numbers
+from rocketwright.agent.tools import execute_tool, get_tool_definitions
+from rocketwright.guard import check_scope
+from rocketwright.schema import Env
+
+__all__ = ["AgentConfig", "models_config_path", "run_design_loop"]
+
+ATTEMPT_TOOL = "simulate_design"
+_TRACE_KEY = "trace"
+
+
+def models_config_path() -> Path:
+    return Path(__file__).resolve().parent.parent.parent / "config" / "models.yaml"
+
+
+class AgentConfig(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    design_model: str = "claude-opus-5-5"
+    light_model: str = "claude-haiku-5-5"
+    effort: Literal["low", "medium", "high", "xhigh", "max"] = "high"
+    thinking_display: str = "summarized"
+    max_tokens: int = Field(default=64000, gt=0)
+    max_attempts: int = Field(default=40, ge=1)
+    max_turns: int = Field(default=80, ge=1)
+
+    @classmethod
+    def load(cls, path: Path | None = None) -> AgentConfig:
+        with (path or models_config_path()).open(encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        return cls.model_validate(data)
+
+
+# --------------------------------------------------------------------------- helpers
+
+
+def _parse_final_json(text: str) -> dict[str, Any] | None:
+    s = text.strip()
+    fence = re.search(r"```(?:json)?\s*(.*?)```", s, re.DOTALL)
+    if fence:
+        s = fence.group(1).strip()
+    for candidate in (s, s[s.find("{") : s.rfind("}") + 1] if "{" in s and "}" in s else ""):
+        if not candidate:
+            continue
+        try:
+            parsed = json.loads(candidate)
+        except ValueError:
+            continue
+        if isinstance(parsed, dict):
+            return parsed
+    return None
+
+
+def _explanation_text(result: dict[str, Any]) -> str:
+    parts: list[str] = [str(result.get("summary", ""))]
+    for d in result.get("designs", []) or []:
+        if isinstance(d, dict):
+            parts.append(str(d.get("explanation", "")))
+    return "\n".join(parts)
+
+
+def _for_model(result: dict[str, Any]) -> dict[str, Any]:
+    """Tool result as sent to the model: the trace is dropped (the UI gets it via the event)."""
+    if _TRACE_KEY in result and isinstance(result[_TRACE_KEY], list):
+        slim = dict(result)
+        slim["trace_point_count"] = len(slim.pop(_TRACE_KEY))
+        return slim
+    return result
+
+
+def _initial_user_message(
+    text: str, env: Env | None, seed: int | None, legal_note: str | None
+) -> str:
+    lines = [text.strip()]
+    if env is not None:
+        lines.append(
+            "Launch environment (pass as `env` to simulate_design / run_dispersion): "
+            + json.dumps(env.model_dump(mode="json"), ensure_ascii=False)
+        )
+    if seed is not None:
+        lines.append(f"Use seed {seed} for every simulate_design and run_dispersion call.")
+    if legal_note:
+        lines.append(f"Note from the scope guard: {legal_note}")
+    return "\n\n".join(lines)
+
+
+def _looks_like_question(text: str) -> bool:
+    return "?" in text or "？" in text
+
+
+# --------------------------------------------------------------------------- loop
+
+
+async def run_design_loop(
+    requirement_text: str,
+    *,
+    client: anthropic.AsyncAnthropic | None = None,
+    config: AgentConfig | None = None,
+    env: Env | dict[str, Any] | None = None,
+    seed: int | None = None,
+) -> AsyncIterator[AgentEvent]:
+    cfg = config or AgentConfig.load()
+    t0 = time.monotonic()
+    attempts = 0
+
+    def ev(kind: str, payload: dict[str, Any]) -> AgentEvent:
+        return AgentEvent(type=kind, attempt=attempts, payload=payload, t_s=time.monotonic() - t0)  # type: ignore[arg-type]
+
+    # 1. scope guard before anything reaches the model
+    guard = check_scope(requirement_text)
+    if not guard.allowed:
+        yield ev(
+            "error",
+            {
+                "kind": "out_of_scope",
+                "category": guard.category,
+                "reason": guard.reason,
+                "suggestion": guard.suggestion,
+            },
+        )
+        return
+    legal_note = guard.suggestion if guard.category == "legal_approval" else None
+
+    env_model = Env.model_validate(env) if isinstance(env, dict) else env
+    messages: list[dict[str, Any]] = [
+        {
+            "role": "user",
+            "content": _initial_user_message(requirement_text, env_model, seed, legal_note),
+        }
+    ]
+    tools = get_tool_definitions()
+    tool_results_log: list[dict[str, Any]] = []
+    budget_exhausted_told = False
+
+    api = client if client is not None else anthropic.AsyncAnthropic()
+
+    for _turn in range(cfg.max_turns):
+        try:
+            async with api.messages.stream(
+                model=cfg.design_model,
+                max_tokens=cfg.max_tokens,
+                system=SYSTEM_PROMPT,
+                tools=tools,
+                messages=messages,
+                thinking={"type": "adaptive", "display": cfg.thinking_display},
+                output_config={"effort": cfg.effort},
+            ) as stream:
+                response = await stream.get_final_message()
+        except anthropic.APIError as exc:
+            yield ev("error", {"kind": "api_error", "error": f"{type(exc).__name__}: {exc}"})
+            return
+
+        # 2. surface the assistant turn
+        tool_uses: list[Any] = []
+        text_parts: list[str] = []
+        for block in response.content:
+            btype = getattr(block, "type", None)
+            if btype == "thinking":
+                summary = getattr(block, "thinking", "") or ""
+                if summary:
+                    yield ev("thinking", {"summary": summary})
+            elif btype == "text":
+                text_parts.append(block.text)
+                yield ev("text", {"text": block.text})
+            elif btype == "tool_use":
+                tool_uses.append(block)
+                yield ev("tool_call", {"id": block.id, "name": block.name, "input": block.input})
+
+        stop = response.stop_reason
+        if stop == "pause_turn":
+            messages.append({"role": "assistant", "content": response.content})
+            continue
+        if stop == "refusal":
+            details = getattr(response, "stop_details", None)
+            yield ev(
+                "error",
+                {
+                    "kind": "refusal",
+                    "stop_reason": stop,
+                    "stop_details": details.model_dump()
+                    if hasattr(details, "model_dump")
+                    else details,
+                },
+            )
+            return
+        if stop == "max_tokens":
+            yield ev(
+                "error",
+                {
+                    "kind": "truncated",
+                    "stop_reason": stop,
+                    "detail": "assistant turn hit max_tokens"
+                    + (" with a tool call in flight" if tool_uses else ""),
+                    "text": "".join(text_parts),
+                },
+            )
+            return
+
+        # 3. no tool calls -> final answer (or a clarifying question)
+        if not tool_uses:
+            text = "".join(text_parts)
+            parsed = _parse_final_json(text)
+            if parsed is None:
+                if _looks_like_question(text):
+                    yield ev("question", {"text": text})
+                else:
+                    yield ev(
+                        "final",
+                        {"result": None, "raw_text": text, "parse_error": "not a JSON object"},
+                    )
+                return
+            violations = find_unsourced_numbers(_explanation_text(parsed), tool_results_log)
+            yield ev(
+                "final",
+                {
+                    "result": parsed,
+                    "provenance_violations": violations,
+                    "attempts": attempts,
+                    "stop_reason": stop,
+                },
+            )
+            return
+
+        # 4. run every tool of this turn, return all results in ONE user message
+        messages.append({"role": "assistant", "content": response.content})
+        results_content: list[dict[str, Any]] = []
+        for tu in tool_uses:
+            tool_input = tu.input if isinstance(tu.input, dict) else {}
+            if tu.name == ATTEMPT_TOOL:
+                if attempts >= cfg.max_attempts:
+                    result: dict[str, Any] = {
+                        "error": f"attempt budget exhausted ({cfg.max_attempts} simulate_design "
+                        "calls); produce the final answer now",
+                        "source_id": tu.id,
+                    }
+                else:
+                    attempts += 1
+                    result = execute_tool(tu.name, tool_input, tu.id)
+            else:
+                result = execute_tool(tu.name, tool_input, tu.id)
+            is_error = "error" in result
+            if not is_error:
+                tool_results_log.append(result)
+            yield ev(
+                "tool_result",
+                {"id": tu.id, "name": tu.name, "is_error": is_error, "result": result},
+            )
+            if tu.name == ATTEMPT_TOOL and not is_error and result.get("success"):
+                yield ev(
+                    "candidate",
+                    {
+                        "source_id": tu.id,
+                        "design": tool_input.get("design"),
+                        "metrics": result.get("metrics", {}),
+                        "cost_jpy": result.get("cost_jpy"),
+                    },
+                )
+            block: dict[str, Any] = {
+                "type": "tool_result",
+                "tool_use_id": tu.id,
+                "content": json.dumps(_for_model(result), ensure_ascii=False),
+            }
+            if is_error:
+                block["is_error"] = True
+            results_content.append(block)
+
+        if attempts >= cfg.max_attempts and not budget_exhausted_told:
+            budget_exhausted_told = True
+            results_content.append(
+                {
+                    "type": "text",
+                    "text": f"Attempt budget reached ({attempts}/{cfg.max_attempts} "
+                    "simulate_design calls). Do not simulate again; write the final JSON answer "
+                    "now from the results you already have.",
+                }
+            )
+        messages.append({"role": "user", "content": results_content})
+
+    yield ev("error", {"kind": "max_turns", "detail": f"exceeded {cfg.max_turns} API turns"})

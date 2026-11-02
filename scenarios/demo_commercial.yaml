@@ -1,0 +1,11 @@
+# Demo scenario (commercial tier). Used by scripts/run_scenario.py and as a regression fixture.
+name: demo_commercial
+request_text: "150 kg の小型衛星を高度 400 km の軌道に投入したい。予算 20 億円。"
+env:
+  launch_latitude_deg: 31.25    # provisional: Uchinoura-like latitude placeholder
+  launch_altitude_m: 20
+  wind_speed_mps: 5.0
+  wind_direction_deg: 200
+seed: 42
+expected:
+  tier: commercial
