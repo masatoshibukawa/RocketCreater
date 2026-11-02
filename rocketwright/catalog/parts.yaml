@@ -1,0 +1,4 @@
+# Parts catalog for the bottle and amateur tiers (nose cones, tubes, fins, parachutes, ...).
+# Each item: {id, tier, name, mass_kg, price_jpy, source|provisional}. Filled in phase 2/3.
+version: 1
+items: []

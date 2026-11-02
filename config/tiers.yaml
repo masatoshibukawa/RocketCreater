@@ -1,0 +1,40 @@
+# Tier boundaries consumed by rocketwright/classify.py (CLAUDE.md section 3).
+#
+# Every numeric entry carries value/unit/provisional/source. `provisional: true` means a human
+# has not confirmed the number; all such entries are listed in README "Values to confirm".
+# A `null` value means "no upper bound".
+#
+# Semantics for classify.py:
+#   target_altitude_max / payload_mass_max : the LOWEST tier whose ceiling covers the request
+#   target_altitude_min                    : floor below which this tier is not meaningful
+#   budget_min                             : rough floor needed to execute at that tier; used to
+#                                            detect "requirement needs tier X but budget < X.budget_min"
+#                                            and to pick the fallback tier (highest tier whose
+#                                            budget_min <= budget). A larger budget never raises the tier.
+version: 1
+tiers:
+  bottle:
+    notes: "Water + compressed air. Tens of metres, egg-class payload, recovered intact."
+    target_altitude_max: {value: 100, unit: m, provisional: true, source: null}
+    payload_mass_max: {value: 0.2, unit: kg, provisional: true, source: null}
+    budget_min: {value: 1000, unit: jpy, provisional: true, source: null}
+    orbit_capable: {value: false, unit: bool, provisional: false, source: "CLAUDE.md section 3"}
+  amateur:
+    notes: "Certified commercial solid motors, hundreds of metres to a few km, ~1 kg payload, parachute recovery."
+    target_altitude_max: {value: 5000, unit: m, provisional: true, source: null}
+    payload_mass_max: {value: 5.0, unit: kg, provisional: true, source: null}
+    budget_min: {value: 30000, unit: jpy, provisional: true, source: null}
+    orbit_capable: {value: false, unit: bool, provisional: false, source: "CLAUDE.md section 3"}
+  commercial:
+    notes: "Multistage, 100 km+ and small satellites to LEO. Concept-level design only."
+    target_altitude_min: {value: 100000, unit: m, provisional: true, source: null}  # Karman line
+    target_altitude_max: {value: 2000000, unit: m, provisional: true, source: null}  # LEO upper bound
+    payload_mass_max: {value: 1000, unit: kg, provisional: true, source: null}
+    budget_min: {value: 1000000000, unit: jpy, provisional: true, source: null}
+    orbit_capable: {value: true, unit: bool, provisional: false, source: "CLAUDE.md section 3"}
+  heavy:
+    notes: "Multistage + strap-on boosters, multi-tonne payloads to LEO/GTO."
+    target_altitude_max: {value: null, unit: m, provisional: true, source: null}  # GTO apogee ~35,786 km
+    payload_mass_max: {value: null, unit: kg, provisional: true, source: null}
+    budget_min: {value: 5000000000, unit: jpy, provisional: true, source: null}
+    orbit_capable: {value: true, unit: bool, provisional: false, source: "CLAUDE.md section 3"}

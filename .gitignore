@@ -1,0 +1,32 @@
+# Python / uv
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# Node / Next.js (web/)
+web/node_modules/
+web/.next/
+web/out/
+web/next-env.d.ts
+web/*.tsbuildinfo
+web/.vercel/
+npm-debug.log*
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# generated outputs
+output/
+*.log

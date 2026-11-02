@@ -1,0 +1,5 @@
+# Engine catalog for the commercial and heavy tiers (representative public values).
+# Each engine: {id, name, thrust_sl_n, thrust_vac_n, isp_sl_s, isp_vac_s, mass_kg, source|provisional}.
+# Filled in phase 1 (prompt 1A).
+version: 1
+engines: []
