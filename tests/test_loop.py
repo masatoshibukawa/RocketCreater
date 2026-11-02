@@ -51,22 +51,22 @@ async def test_scripted_amateur_run_event_sequence():
     assert types[0] == "thinking"
     tool_calls = [e.payload["name"] for e in events if e.type == "tool_call"]
     # classify; derive + catalog in one turn; reference seed; the seed-based first attempt
-    # alone (it fails); then two corrected designs in one turn
+    # alone (it fails: buildability error); then two corrected part builds in one turn
     assert tool_calls == [
         "classify_requirement",
         "derive_requirements",
         "search_catalog",
         "find_reference_designs",
-        "simulate_design",
-        "simulate_design",
-        "simulate_design",
+        "design_from_parts",
+        "design_from_parts",
+        "design_from_parts",
     ]
     assert types.count("tool_result") == 7
     assert types[-1] == "final"
     assert types.count("final") == 1
     assert "candidate" in types
 
-    # attempts = number of simulate_design calls
+    # attempts = number of design_from_parts (or simulate_design) calls
     final = events[-1]
     assert final.attempt == 3
     assert all(e.t_s >= 0 for e in events)
@@ -88,7 +88,7 @@ async def test_scripted_amateur_run_event_sequence():
         assert all(t["strict"] is True for t in call["tools"])
         assert "budget_tokens" not in json.dumps(call["thinking"])
 
-    # both simulate_design results of one assistant turn went back in ONE user message
+    # both design_from_parts results of one assistant turn went back in ONE user message
     last_messages = client.calls[-1]["messages"]
     assert last_messages[0]["role"] == "user"
     roles = [m["role"] for m in last_messages]
@@ -118,7 +118,7 @@ async def test_attempt_budget_is_enforced():
     cfg = AgentConfig.load().model_copy(update={"max_attempts": 1})
     events = await _collect(client, env=ENV, seed=1, config=cfg)
     results = [e for e in events if e.type == "tool_result"]
-    sim_results = [e for e in results if e.payload["name"] == "simulate_design"]
+    sim_results = [e for e in results if e.payload["name"] == "design_from_parts"]
     assert len(sim_results) == 3
     assert sim_results[0].payload["is_error"] is False
     assert sim_results[1].payload["is_error"] is True
@@ -251,7 +251,11 @@ async def test_review_events_follow_candidates_and_feedback_is_injected():
     assert reviews[1].payload["feedback"] is None
     # the cited cost is the tool result's own number (no invented numbers survive)
     sim2 = next(e for e in events if e.type == "tool_result" and e.payload["id"] == "toolu_sim_2")
-    assert f"cost_jpy {sim2.payload['result']['cost_jpy']:.0f}" in first["cost"]["findings"][0]
+    cost2 = sim2.payload["result"]["sim"]["cost_jpy"]  # design_from_parts: the embedded sim
+    assert f"cost_jpy {cost2:.0f}" in first["cost"]["findings"][0]
+    # part-space candidates carry the parts and the bill for the UI and the reviewers
+    assert candidates[0].payload["build"]["tier"] == "amateur"
+    assert candidates[0].payload["bill"]["dry_mass_kg"] > 0
     assert reviews[0].payload["dropped"] == {}
     # 4 reviewer calls per candidate, each reviewed exactly once, on the reviewer model
     assert len(client.parse_calls) == 8

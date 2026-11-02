@@ -95,6 +95,8 @@ const TOOL_LABELS: Record<string, string> = {
   find_reference_designs: "実機データの検索",
   search_catalog: "カタログ検索",
   simulate_design: "シミュレーション",
+  list_parts: "部品カタログ",
+  design_from_parts: "部品から設計・検証",
   run_dispersion: "多数回試行",
   estimate_cost: "費用見積",
   render_drawing: "図面の描画",

@@ -234,28 +234,49 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 ## 設計精度 — 実機再現
 
 `catalog/references/*.yaml` の実機（出典 URL つき、すべて provisional）を同じ物理モデルで再現した誤差です
-（`uv run python scripts/check_references.py`、2026-11-02。軌道機はピッチ指令を再調整して積載能力を求める。
-許容は各項目の `tolerance_frac`、既定 30 %）：
+（`uv run python scripts/check_references.py`、2026-11-03。軌道機はピッチ指令を再調整して積載能力を求める。
+許容は各項目の `tolerance_frac`（頂点高度）と `mass_tolerance_frac`（乾燥質量）、既定 30 %）。
 
-| id | 規模 | 指標 | 公表 | sim | 誤差 |
+**ペットボトルとアマチュアの基準値はキット単位になりました。** 各項目は `build:`（`catalog/parts.yaml` の部品 id と
+モーター id）を持ち、再現では部品を解決して得た乾燥質量を公表重量と比べ、その解決済み設計を飛ばして頂点高度を比べます
+（手書きの `design` は `build` が無いときの予備）。エージェントの種設計もこのキットの部品から始まります。
+フィン寸法とノーズ長はキットの公表値に無いため推定（各項目の `notes` に明記）。
+
+| id | 規模 | 公表 頂点高度 / 乾燥質量 | sim 頂点高度 / 乾燥質量 | 誤差 (高度 / 質量) | 許容 (高度 / 質量) |
 | --- | --- | --- | --- | --- | --- |
-| estes_alpha_iii_c6 | amateur | 頂点高度 m | 351.0 | 345.5 | -1.6 % |
-| estes_alpha_c6 | amateur | 頂点高度 m | 305.0 | 347.6 | +14.0 % |
-| estes_big_bertha_c6 | amateur | 頂点高度 m | 152.0 | 171.9 | +13.1 % |
-| estes_mean_machine_e12 | amateur | 頂点高度 m | 213.0 | 264.0 | +24.0 % |
-| apte_2l_800ml_30psi | bottle | 頂点高度 m | 19.0 | 20.7 | +8.7 % |
-| apte_2l_800ml_40psi | bottle | 頂点高度 m | 22.0 | 25.6 | +16.4 % |
-| apte_2l_350ml_40psi | bottle | 頂点高度 m | 18.4 | 24.6 | +33.4 % |
-| fischer_1l_350ml_2p5bar | bottle | 頂点高度 m | 17.5 | 16.2 | -7.5 % |
-| fischer_1l_255ml_2bar | bottle | 頂点高度 m | 14.1 | 11.8 | -16.6 % |
-| electron | commercial | 軌道投入能力 kg | 300 | 321.7 | +7.2 % |
-| vega | commercial | 軌道投入能力 kg | 1,963 | 2,294.4 | +16.9 % |
-| firefly_alpha | commercial | 軌道投入能力 kg | 1,030 | 1,099.7 | +6.8 % |
-| epsilon_enhanced | commercial | 軌道投入能力 kg | 1,200 | 1,279.9 | +6.7 % |
-| falcon_9_ft | heavy | 軌道投入能力 kg | 22,800 | 23,450.1 | +2.9 % |
-| atlas_v_551 | heavy | 軌道投入能力 kg | 18,814 | 23,750.7 | +26.2 % |
+| estes_alpha_iii_c6 | amateur | 351 m / 34.0 g | 350.7 m / 31.1 g | -0.1 % / -8.5 % | 15 % / 15 % |
+| estes_alpha_c6 | amateur | 305 m / 22.7 g | 350.5 m / 31.6 g | +14.9 % / +39.4 % | 15 % / 45 % |
+| estes_big_bertha_c6 | amateur | 152 m / 70.9 g | 164.0 m / 82.7 g | +7.9 % / +16.6 % | 15 % / 30 % |
+| estes_mean_machine_e12 | amateur | 213 m / 241 g | 325.2 m / 184.2 g | +52.7 % / -23.6 % | 60 % / 30 % |
+| estes_hi_flier_c6 | amateur | 457 m / 31.2 g | 495.6 m / 18.9 g | +8.5 % / -39.4 % | 15 % / 45 % |
+| estes_wizard_c6 | amateur | 488 m / 14.2 g | 495.6 m / 18.8 g | +1.6 % / +32.4 % | 15 % / 45 % |
+| estes_viking_c6 | amateur | 488 m / 17.0 g | 495.9 m / 19.3 g | +1.6 % / +13.7 % | 15 % / 15 % |
+| estes_baby_bertha_c6 | amateur | 175 m / 53.9 g | 181.0 m / 60.1 g | +3.4 % / +11.5 % | 15 % / 15 % |
+| estes_der_red_max_c6 | amateur | 183 m / 68.0 g | 174.4 m / 69.9 g | -4.7 % / +2.7 % | 15 % / 15 % |
+| estes_crossfire_isx_c6 | amateur | 351 m / 37.0 g | 349.7 m / 33.0 g | -0.4 % / -10.9 % | 15 % / 15 % |
+| apte_2l_800ml_30psi | bottle | 19.0 m / （未公表） | 20.7 m / 100 g | +8.8 % / — | 15 % / — |
+| apte_2l_800ml_40psi | bottle | 22.0 m / （未公表） | 25.6 m / 100 g | +16.5 % / — | 30 % / — |
+| apte_2l_350ml_40psi | bottle | 18.4 m / （未公表） | 24.6 m / 100 g | +33.4 % / — | 45 % / — |
+| apte_2l_350ml_20psi | bottle | 15.1 m / （未公表） | 15.6 m / 100 g | +3.2 % / — | 15 % / — |
+| apte_2l_800ml_20psi | bottle | 17.0 m / （未公表） | 13.1 m / 100 g | -23.3 % / — | 30 % / — |
+| apte_2l_1250ml_40psi | bottle | 18.9 m / （未公表） | 11.7 m / 100 g | -38.2 % / — | 45 % / — |
+| fischer_1l_350ml_2p5bar | bottle | 17.5 m / 143 g | 16.2 m / 143 g | -7.5 % / 0 % | 15 % / 15 % |
+| fischer_1l_255ml_2bar | bottle | 14.1 m / 143 g | 11.8 m / 143 g | -16.6 % / 0 % | 30 % / 15 % |
+| fischer_1l_255ml_2p5bar | bottle | 17.4 m / 143 g | 15.1 m / 143 g | -13.0 % / 0 % | 15 % / 15 % |
+| fischer_1l_325ml_2p5bar | bottle | 17.1 m / 143 g | 16.2 m / 143 g | -5.5 % / 0 % | 15 % / 15 % |
+| electron | commercial | 300 kg（軌道投入能力） | 321.7 kg | +7.2 % | 30 % |
+| vega | commercial | 1,963 kg | 2,294.4 kg | +16.9 % | 30 % |
+| firefly_alpha | commercial | 1,030 kg | 1,099.7 kg | +6.8 % | 30 % |
+| epsilon_enhanced | commercial | 1,200 kg | 1,279.9 kg | +6.7 % | 30 % |
+| falcon_9_ft | heavy | 22,800 kg | 23,450.1 kg | +2.9 % | 30 % |
+| atlas_v_551 | heavy | 18,814 kg | 23,750.7 kg | +26.2 % | 30 % |
 
-軌道機の軌道高度は再調整により公表値の ±0.1 % 以内です。15 項目すべてが許容内（atlas_v_551 は 30 % の許容に対し +26 %：
+Fischer の質量 0 % は、論文の 143 g を閉じるよう部品 `bottle_fin_set_fischer_1l` を置いた整合性確認で予測ではありません
+（Apte の論文は質量を公表していないため、`bottle_fin_set_apte_2l` が 0.10 kg の推定を閉じます）。
+キット重量の誤差が大きい項目（Alpha +39 %、Hi-Flier -39 %、Wizard +32 %）は Estes の「重量」の定義が揃っていないことを示します
+（同じ BT-20 キットで 14 g と 31 g）。Mean Machine は部品だけでは 241 g に届かず（カプラ・長いショックコードが未収録）、
+軽くなった分 2 m の胴の摩擦抵抗を捉えない Cd 0.75 の過大予測がさらに増えます（+53 %、許容 60 %、既知の限界）。
+軌道機の軌道高度は再調整により公表値の ±0.1 % 以内です。すべての項目が許容内（atlas_v_551 は 30 % の許容に対し +26 %：
 固体ブースタの燃焼終了後の推進剤を捨てる簡易化が主因）。較正した定数：
 
 - `solid.DEFAULT_CD = 0.75`（Estes 4 機に対し RMS 誤差 15.4 %）。
@@ -274,6 +295,23 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 ## 要確認の値
 
 以下はすべてリポジトリ内で `provisional: true`（または出典のないハードコード定数）であり、人間の判断か出典が必要です。
+
+`build.py`（部品設計の組立規則 `BUILD_THRESHOLDS` と手当 `ALLOWANCES`、すべて provisional。キット単位の基準値
+`catalog/references/amateur.yaml` が規則の検証データで、実キットが規則に反したときは規則の側を直した）：
+
+| キー | 仮置き | 根拠・変更理由 |
+| --- | --- | --- |
+| body_length_margin_calibers | 2.0（胴長 ≥ モーター室 + 2 径） | モーター室は max(モーター長, マウント長)。旧「モーター長 + マウント長」は Baby Bertha（胴 204 mm）を不可としたため修正 |
+| 胴長 > 在庫チューブ長 | 警告（旧：エラー） | Mean Machine は BT-60 3 本をカプラで継ぐ。部品表は本数分を買い、カプラ質量は未計上 |
+| deploy_delay_s = 0 | 常に許可 | 「頂点で開傘＝燃焼終了から頂点までの遅延グレイン」。E12 には 0 秒品が無いが Mean Machine は E12-4 でそう飛ぶ |
+| error_static_margin_cal | 1.0 cal（エラー） | 1.0〜1.5 cal は警告のみ（旧：1.5 未満でエラー）。Baby Bertha が Barrowman 法で ~1.3 cal |
+| min_static_margin_cal / max | 1.5 / 4.0 cal（飛行モデルと同じ） | 飛行判定は従来どおり 1.5 cal |
+| fin_span_max_calibers | 2.5 | 警告のみ |
+| liftoff_twr_error / warn | 3.0 / 5.0 | NAR の 5:1 目安 |
+| fill_frac_min / max | 0.2 / 0.6 | 警告のみ（Apte 1250 mL = 62.5 % は実飛行） |
+| adhesive_paint_mass_frac | 10 % | Estes の公表重量は塗装込みか不明 |
+| motor_price_jpy_per_ns | 25 円/Ns（旧 60） | 米国小売 × 150 円/USD（G80 約 $30、H128 リロード約 $40、J420 リロード約 $80）。旧値は J を 5.6 万円と見積もり実売の 3〜4 倍 |
+| motor_price_min_jpy | 600 円 | Estes C6 |
 
 `config/tiers.yaml`：
 

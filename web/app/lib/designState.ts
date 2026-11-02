@@ -518,7 +518,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
 
   if (errorText !== null) {
     let next = state;
-    if (name === "simulate_design") {
+    if (name === "simulate_design" || name === "design_from_parts") {
       next = {
         ...next,
         attempts: [
@@ -565,6 +565,32 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
       };
       let next: DesignState = { ...state, attempts: [...state.attempts, row] };
       if (!state.tier && sim.tier) next = { ...next, tier: sim.tier };
+      return next;
+    }
+    case "design_from_parts": {
+      // bottle/amateur attempt: the parts were resolved into `design`; `sim` is null when a
+      // buildability error stopped the simulation (the error issues are the row's error text)
+      const design = toDesign(result.design);
+      const simRecord = asRecord(result.sim);
+      const issues = Array.isArray(result.issues) ? result.issues : [];
+      const errors = issues
+        .map((it) => asRecord(it))
+        .filter((it) => it !== null && asString(it.severity) === "error")
+        .map((it) => asString(it?.message));
+      const row: AttemptRow = {
+        id,
+        attempt: ev.attempt,
+        t_s: ev.t_s,
+        result: simRecord ? toSimResult(simRecord) : null,
+        error: simRecord ? null : errors.join("; ") || asString(result.note) || "buildability error",
+        design,
+        seededFrom: null,
+      };
+      let next: DesignState = { ...state, attempts: [...state.attempts, row] };
+      if (!state.tier && simRecord) {
+        const sim = toSimResult(simRecord);
+        if (sim.tier) next = { ...next, tier: sim.tier };
+      }
       return next;
     }
     case "find_reference_designs": {

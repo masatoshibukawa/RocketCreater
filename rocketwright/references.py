@@ -14,7 +14,7 @@ public source; numbers not confirmed by a human are `provisional: true`. Two use
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -26,7 +26,9 @@ from rocketwright.build import (
     AmateurBuild,
     BottleBuild,
     Build,
+    BuildAdapter,
     BuildBill,
+    resolve,
     resolve_amateur,
     resolve_bottle,
 )
@@ -50,10 +52,13 @@ from rocketwright.schema import (
 
 REFERENCES_DIR = Path(__file__).resolve().parent / "catalog" / "references"
 DEFAULT_TOLERANCE_FRAC = 0.30  # reproduction error allowed unless the entry says otherwise
+DEFAULT_MASS_TOLERANCE_FRAC = 0.30  # dry-mass error allowed for kit-level (build) entries
 
 # Published-performance keys the reproduction knows how to compare, per goal kind.
 _SUBORBITAL_KEYS = ("apogee_m",)
 _ORBITAL_KEYS = ("payload_to_orbit_kg", "orbit_altitude_m")
+# Compared only when the entry carries a parts build (the bill's dry mass vs the kit's weight).
+_MASS_KEY = "dry_mass_kg"
 
 
 class ReferenceEntry(BaseModel):
@@ -65,14 +70,22 @@ class ReferenceEntry(BaseModel):
     sources: list[str] = Field(min_length=1)
     provisional: bool = True
     requirement: Requirement
+    # The vehicle as flown by the physics. Kit-level entries (bottle/amateur) may omit it: the
+    # loader resolves `build` with the parts catalog and fills it in (load_references_from).
     design: Design
     # Optional parts build of the same vehicle (bottle/amateur, rocketwright.build): when present
-    # the seed is made in part space (motor/mount/tube swapped, parts snapped to the catalog).
+    # the reproduction flies the RESOLVED build (mass from the bill) and the seed is made in
+    # part space (motor/mount/tube swapped, parts snapped to the catalog).
     build: Build | None = None
     published: dict[str, float]
     env: Env = Env()
     tolerance_frac: float = Field(default=DEFAULT_TOLERANCE_FRAC, gt=0)
+    # Tolerance on `published.dry_mass_kg` vs the bill's dry mass (build entries only).
+    mass_tolerance_frac: float = Field(default=DEFAULT_MASS_TOLERANCE_FRAC, gt=0)
     notes: str = ""
+
+    def tolerance_for(self, key: str) -> float:
+        return self.mass_tolerance_frac if key == _MASS_KEY else self.tolerance_frac
 
     @field_validator("sources")
     @classmethod
@@ -111,13 +124,29 @@ def _check_consistency(entry: ReferenceEntry) -> None:
         )
 
 
-def load_references_from(directory: Path) -> list[ReferenceEntry]:
+def _design_from_build(raw: dict[str, Any], catalog: PartsCatalog | None) -> dict[str, Any]:
+    """A raw entry with `build` but no `design` gets the design the build resolves to (the
+    bundled parts catalog unless one is given). The YAML then states the kit once."""
+    if not isinstance(raw, dict) or "design" in raw or "build" not in raw:
+        return raw
+    build = BuildAdapter.validate_python(raw["build"])
+    cat = catalog if catalog is not None else load_parts()
+    try:
+        design, _ = resolve(build, cat)
+    except (KeyError, ValueError) as exc:
+        raise ValueError(f"{raw.get('id')}: build names parts the catalog lacks: {exc}") from exc
+    return {**raw, "design": design.model_dump(mode="json")}
+
+
+def load_references_from(
+    directory: Path, *, catalog: PartsCatalog | None = None
+) -> list[ReferenceEntry]:
     entries: list[ReferenceEntry] = []
     seen: set[str] = set()
     for path in sorted(directory.glob("*.yaml")):
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         for raw in data.get("references", []) or []:
-            entry = ReferenceEntry.model_validate(raw)
+            entry = ReferenceEntry.model_validate(_design_from_build(raw, catalog))
             _check_consistency(entry)
             if entry.id in seen:
                 raise ValueError(f"duplicate reference id {entry.id!r} in {path.name}")
@@ -183,10 +212,17 @@ class Reproduction:
     failure_reasons: tuple[str, ...]
     warnings: tuple[str, ...]
     tolerance_frac: float
+    # per compared key (dry_mass_kg has its own tolerance; every other key uses tolerance_frac)
+    tolerances_frac: dict[str, float] = field(default_factory=dict)
+    # True when the entry's parts build was resolved and flown (kit-level ground truth)
+    from_build: bool = False
+
+    def tolerance_for(self, key: str) -> float:
+        return self.tolerances_frac.get(key, self.tolerance_frac)
 
     @property
     def within_tolerance(self) -> bool:
-        return all(abs(e) <= self.tolerance_frac for e in self.errors_frac.values())
+        return all(abs(e) <= self.tolerance_for(k) for k, e in self.errors_frac.items())
 
 
 def _reproduce_orbital(entry: ReferenceEntry, *, tune: bool) -> tuple[SimResult, dict[str, float]]:
@@ -209,21 +245,42 @@ def _reproduce_orbital(entry: ReferenceEntry, *, tune: bool) -> tuple[SimResult,
     return result, simulated
 
 
-def _reproduce_suborbital(entry: ReferenceEntry) -> tuple[SimResult, dict[str, float]]:
+def _reproduce_suborbital(
+    entry: ReferenceEntry, catalog: PartsCatalog | None
+) -> tuple[SimResult, dict[str, float], bool]:
+    """Fly the entry and return (sim, simulated metrics, flown-from-build). With a parts build
+    the design flown is the build RESOLVED against the catalog (its dry mass is the bill's,
+    reported under `dry_mass_kg` so it can be compared with the kit's published weight); the
+    hand-written `design` is the fallback when the entry has no build."""
     target = entry.published["apogee_m"]
+    design: Design = entry.design
+    simulated: dict[str, float] = {}
+    from_build = False
+    if entry.build is not None:
+        cat = catalog if catalog is not None else load_parts()
+        design, bill = resolve(entry.build, cat)
+        simulated[_MASS_KEY] = bill.dry_mass_kg
+        from_build = True
     if entry.tier is Tier.AMATEUR:
-        result = solid.simulate(entry.design, entry.env, None, target_apogee_m=target)
+        result = solid.simulate(design, entry.env, None, target_apogee_m=target)
     else:
-        result = water.simulate(entry.design, entry.env, None, target_apogee_m=target)
-    return result, {"apogee_m": result.metrics["apogee_m"]}
+        result = water.simulate(design, entry.env, None, target_apogee_m=target)
+    simulated["apogee_m"] = result.metrics["apogee_m"]
+    return result, simulated, from_build
 
 
-def reproduce(entry: ReferenceEntry, *, tune: bool = True) -> Reproduction:
-    """Fly the reference design through our physics and compare with its published numbers."""
+def reproduce(
+    entry: ReferenceEntry, *, tune: bool = True, catalog: PartsCatalog | None = None
+) -> Reproduction:
+    """Fly the reference through our physics and compare with its published numbers. Entries
+    with a parts build are resolved with `catalog` (default: the bundled parts) and flown as
+    resolved; their bill's dry mass is compared with `published.dry_mass_kg` when given, under
+    the entry's `mass_tolerance_frac`."""
+    from_build = False
     if entry.is_orbital:
         result, simulated = _reproduce_orbital(entry, tune=tune)
     else:
-        result, simulated = _reproduce_suborbital(entry)
+        result, simulated, from_build = _reproduce_suborbital(entry, catalog)
     errors = {
         k: (simulated[k] - entry.published[k]) / entry.published[k]
         for k in simulated
@@ -239,6 +296,8 @@ def reproduce(entry: ReferenceEntry, *, tune: bool = True) -> Reproduction:
         failure_reasons=tuple(result.failure_reasons),
         warnings=tuple(result.warnings),
         tolerance_frac=entry.tolerance_frac,
+        tolerances_frac={k: entry.tolerance_for(k) for k in errors},
+        from_build=from_build,
     )
 
 
@@ -916,6 +975,9 @@ def find_reference_designs(req: Requirement, tier: Tier, k: int = 3) -> list[dic
                 "env": entry.env.model_dump(mode="json"),
                 "provisional": entry.provisional,
                 "tolerance_frac": entry.tolerance_frac,
+                # the kit's parts (bottle/amateur): the agent adopts or edits it with
+                # design_from_parts; null for geometric entries and the orbital tiers
+                "build": None if entry.build is None else entry.build.model_dump(mode="json"),
                 "notes": entry.notes[:300],
             }
         )

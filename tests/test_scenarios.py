@@ -16,7 +16,12 @@ import pytest
 import yaml
 
 from rocketwright.agent.events import AgentEvent
-from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
+from rocketwright.agent.fake_client import (
+    DEMO_ATTEMPT_TOOL,
+    FakeAnthropicClient,
+    attempt_outcome,
+    build_demo_script,
+)
 from rocketwright.agent.loop import AgentConfig, run_design_loop
 from rocketwright.references import load_references
 
@@ -54,8 +59,24 @@ def _tool_results(events: list[AgentEvent], name: str) -> dict[str, dict[str, An
     }
 
 
-def _sim_results(events: list[AgentEvent]) -> dict[str, dict[str, Any]]:
-    return _tool_results(events, "simulate_design")
+def _sim_results(events: list[AgentEvent], tier: str) -> dict[str, dict[str, Any]]:
+    """tool_use id -> sim result of every attempt (simulate_design result, or the `sim` of a
+    design_from_parts result; a build stopped by a buildability error gives a failed, empty
+    sim whose failure_reasons are the error issues)."""
+    out: dict[str, dict[str, Any]] = {}
+    for tid, result in _tool_results(events, DEMO_ATTEMPT_TOOL[tier]).items():
+        sim, _ = attempt_outcome(tier, result)
+        if not sim:
+            errors = [i["message"] for i in result["issues"] if i["severity"] == "error"]
+            sim = {
+                "success": False,
+                "failure_reasons": errors,
+                "metrics": {},
+                "warnings": [],
+                "cost_jpy": (result.get("bill") or {}).get("cost_jpy"),  # the bill still exists
+            }
+        out[tid] = sim
+    return out
 
 
 def test_scenario_files_exist() -> None:
@@ -111,14 +132,19 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
     assert seed["reference_id"] == result["reference_id"]
     assert seed["notes"] and "trace" not in seed["sim"]
     assert seed["design"]["tier"] == expected_tier
-    # the first attempt is based on the seed design (same tier and propulsion / bottle)
+    # the first attempt is based on the seed (same tier and propulsion / bottle); the part-space
+    # tiers adopt the seed BUILD with design_from_parts, the others the seed design
+    attempt_tool = DEMO_ATTEMPT_TOOL[expected_tier]
     first_call = next(
-        e for e in events if e.type == "tool_call" and e.payload["name"] == "simulate_design"
+        e for e in events if e.type == "tool_call" and e.payload["name"] == attempt_tool
     )
-    first_design = first_call.payload["input"]["design"]
-    for key in ("motor_id", "nozzle_diameter_m", "boosters"):
-        if key in seed["design"]:
-            assert first_design[key] == seed["design"][key]
+    if attempt_tool == "design_from_parts":
+        assert seed["build"] is not None and first_call.payload["input"]["build"] == seed["build"]
+    else:
+        first_design = first_call.payload["input"]["design"]
+        for key in ("motor_id", "nozzle_diameter_m", "boosters"):
+            if key in seed["design"]:
+                assert first_design[key] == seed["design"][key]
     # a passing seed is shown as a free candidate (attempt 0) citing the reference tool call
     seed_candidates = [
         e for e in events if e.type == "candidate" and e.payload["source_id"] == ref_id
@@ -131,8 +157,8 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
     else:
         assert seed_candidates == []
 
-    # every source id maps to a real simulate_design / run_dispersion tool_use id of this run
-    sims = _sim_results(events)
+    # every source id maps to a real attempt / run_dispersion tool_use id of this run
+    sims = _sim_results(events, expected_tier)
     disps = _tool_results(events, "run_dispersion")
     for d in result["designs"]:
         assert d["sources"], d
@@ -142,6 +168,11 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
         assert d["metrics"] == sim["metrics"]
         assert d["passed"] == sim["success"]
         assert d["design"]["tier"] == expected_tier
+        if attempt_tool == "design_from_parts":
+            # the final cites the parts: the build's ids and the bill rows
+            assert d["build"]["tier"] == expected_tier
+            assert d["bill"] and all(r["part_id"] for r in d["bill"])
+            assert "parts:" in d["explanation"]
 
     # the demo runs the Monte-Carlo dispersion on the first passing design and reports its
     # success rate (real rocketwright.dispersion, n=100, same seed as the scenario)
@@ -185,26 +216,29 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
             assert d["metrics"]["perigee_m"] >= 360_000
             assert d["cost_jpy"] <= 2.0e9  # scenario budget
     elif expected_tier == "amateur":
-        # seeded from the Estes Alpha III: the scaled seed is about a tenth too high, the
-        # wider / heavier airframe fixes it
+        # seeded from an Estes kit scaled into a 54 mm minimum-diameter airframe: the seed
+        # build cannot be built (fins do not fit the balsa sheet) and its own sim overshoots;
+        # the 66 mm BT-80 airframe with plywood / G-10 fins fixes both
         assert result["reference_id"].startswith("estes_")
         assert [s["success"] for s in ordered] == [False, True, True]
-        assert any("apogee" in r for r in ordered[0]["failure_reasons"])
-        assert ordered[0]["metrics"]["apogee_m"] > 2_200
+        assert any("fin" in r and "sheet" in r for r in ordered[0]["failure_reasons"])
+        assert seed["sim"]["metrics"]["apogee_m"] > 2_200 and not seed["sim"]["success"]
         for d in passing:
             assert 1_800 <= d["metrics"]["apogee_m"] <= 2_200  # +-10 % of the 2 km target
             assert d["metrics"]["stability_margin_cal"] >= 1.5
             assert d["metrics"]["descent_speed_mps"] <= 6.0
             assert d["cost_jpy"] <= 50_000
+            assert d["build"]["body_tube_id"] == "estes_bt80_tube"
+            assert d["build"]["motor_id"] == seed["build"]["motor_id"]
     else:
-        # seeded from the Apte 2 L bottle: the seed passes, the push towards the derived
-        # pressure overshoots, a small pressure increase passes
+        # seeded from the Apte 2 L kit: the seed build is over budget (the launcher), the
+        # user's 1.5 L bottle without the launcher passes, with more pressure and chute too
         assert result["reference_id"].startswith("apte_")
-        assert [s["success"] for s in ordered] == [True, False, True]
-        assert any("apogee" in r for r in ordered[1]["failure_reasons"])
-        assert ordered[1]["metrics"]["apogee_m"] > 33
+        assert [s["success"] for s in ordered] == [False, True, True]
+        assert any("cost" in r for r in ordered[0]["failure_reasons"])
         for d in passing:
-            assert d["design"]["bottle_volume_m3"] == 0.0015  # the bottle the user has
+            assert d["build"]["bottle_id"] == "pet_bottle_1p5l"  # the bottle the user has
+            assert d["design"]["bottle_volume_m3"] == 0.0015
             assert 27 <= d["metrics"]["apogee_m"] <= 33  # +-10 % of the 30 m target
             assert d["metrics"]["descent_speed_mps"] <= 6.0  # the egg
             assert d["cost_jpy"] <= 3_000

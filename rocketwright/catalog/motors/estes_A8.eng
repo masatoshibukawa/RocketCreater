@@ -1,0 +1,20 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the manufacturer's summary
+; source: https://estesrockets.com/products/a8-3-engines
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: Estes page: total impulse 2.50 N-sec, max thrust 10.70 N, thrust duration 0.80 s, propellant 4.1 g, total 15.6 g, 18 mm x 2.8 in (70 mm). Curve integral set to 2.49 N-s so the A-class bound (<= 2.5 N-s) holds after rounding.
+; note: curve integral 2.49 N-s, average thrust 3.1 N. The "8" in A8 is NOT the average thrust over the published 0.80 s (that would be 3.1 N): Estes' designation follows the historical peak-ish rating; tests/test_solid.py exempts this motor from the label check for that reason.
+; diameter_m: 0.018
+; length_m: 0.070
+; delays: 0,3,5
+; propellant_mass_kg: 0.0041
+; total_mass_kg: 0.0156
+; price_jpy: 650 (Estes 3-pack $12.99 -> per motor at 150 JPY/USD, provisional)
+A8 18 70 0-3-5 0.0041 0.0156 Estes
+0.050 4.28
+0.150 10.70
+0.250 2.00
+0.700 2.00
+0.800 0.00
+;

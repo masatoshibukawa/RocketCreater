@@ -502,7 +502,7 @@ def test_seed_bottle_in_build_space_adds_catalog_parachute_and_clips_pressure():
 def test_seed_without_build_falls_back_to_geometry():
     from rocketwright.references import seed_design, seed_design_with_build
 
-    entry = get_reference("estes_alpha_iii_c6")
+    entry = get_reference("estes_alpha_iii_c6").model_copy(update={"build": None})
     req = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=400)
     seed = seed_design_with_build(entry, req, catalog=_fixture_catalog())
     design, notes = seed_design(entry, req)
@@ -543,3 +543,106 @@ def test_find_reference_designs_tool_reports_seed_build(monkeypatch):
     assert seed["build"]["tier"] == "amateur" and seed["build"]["motor_id"] == "estes_C6"
     assert seed["bill"]["cost_jpy"] == pytest.approx(seed["sim"]["cost_jpy"], abs=0.5)
     assert seed["design"]["dry_mass_kg"] == pytest.approx(seed["bill"]["dry_mass_kg"])
+
+
+# --------------------------------------------------------------------------- kit-level ground truth
+
+
+def _kit_entries() -> list[ReferenceEntry]:
+    return [e for e in load_references() if e.tier in (Tier.BOTTLE, Tier.AMATEUR)]
+
+
+def test_every_bottle_and_amateur_reference_is_a_kit():
+    """Bottle/amateur ground truth is kit-level: every entry carries a parts build whose ids
+    resolve against the bundled catalog, and its `design` IS that build resolved (hand-written
+    designs only remain as documented fallbacks)."""
+    from rocketwright.build import resolve
+    from rocketwright.parts import load_parts
+
+    cat = load_parts()
+    kits = _kit_entries()
+    assert len(kits) >= 9 + 6 + 2
+    for e in kits:
+        assert e.build is not None, e.id
+        design, bill = resolve(e.build, cat)
+        assert design.tier == e.tier.value
+        assert bill.dry_mass_kg > 0
+
+
+def test_reference_builds_have_no_buildability_error():
+    """A real kit must be buildable by our rules; a kit that is not is evidence against the
+    rule (build.BUILD_THRESHOLDS carries the kits that changed them)."""
+    from rocketwright.build import check_buildability
+    from rocketwright.parts import load_parts
+
+    cat = load_parts()
+    bad = {
+        e.id: [i.message for i in check_buildability(e.build, cat) if i.severity == "error"]
+        for e in _kit_entries()
+    }
+    assert not {k: v for k, v in bad.items() if v}
+
+
+def test_entries_without_design_get_it_from_the_build(tmp_path):
+    raw = {
+        "id": "kit_only",
+        "tier": "amateur",
+        "name": "Kit stated once",
+        "sources": ["https://example.org/kit"],
+        "requirement": {"goal_kind": "altitude", "target_altitude_m": 300},
+        "build": _alpha_build_entry().build.model_dump(mode="json"),
+        "published": {"apogee_m": 300, "dry_mass_kg": 0.03},
+    }
+    [entry] = load_references_from(_write(tmp_path, raw), catalog=_fixture_catalog())
+    assert entry.design.tier == "amateur"
+    assert entry.design.dry_mass_kg == pytest.approx(_alpha_build_entry().design.dry_mass_kg)
+    assert entry.design.motor_id == "estes_C6"
+    # a build naming parts the catalog lacks is a loading error, not a silent fallback
+    from rocketwright.parts import load_parts
+
+    empty = tmp_path / "empty.yaml"
+    empty.write_text("version: 2\nparts: []\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="catalog lacks"):
+        load_references_from(_write(tmp_path, raw), catalog=load_parts(empty))
+
+
+def test_reproduce_flies_the_resolved_build_and_compares_mass():
+    from rocketwright.build import resolve_amateur
+
+    cat = _fixture_catalog()
+    entry = _alpha_build_entry()
+    design, bill = resolve_amateur(entry.build, cat)
+    heavy = entry.model_copy(
+        update={
+            # a hand-written design twice as heavy: it must NOT be the one flown
+            "design": design.model_copy(update={"dry_mass_kg": 2 * design.dry_mass_kg}),
+            "published": {"apogee_m": 300.0, "dry_mass_kg": bill.dry_mass_kg * 1.1},
+            "mass_tolerance_frac": 0.15,
+            "tolerance_frac": 0.60,
+        }
+    )
+    rep = reproduce(heavy, catalog=cat)
+    assert rep.from_build
+    assert rep.simulated["dry_mass_kg"] == pytest.approx(bill.dry_mass_kg)
+    assert rep.errors_frac["dry_mass_kg"] == pytest.approx(1 / 1.1 - 1)
+    assert rep.tolerance_for("dry_mass_kg") == 0.15 and rep.tolerance_for("apogee_m") == 0.60
+    assert rep.within_tolerance
+    flown_light = solid.simulate(design, heavy.env, None).metrics["apogee_m"]
+    assert rep.simulated["apogee_m"] == pytest.approx(flown_light)
+    # the mass tolerance is its own: 30 % off the published weight fails at 0.15
+    off = heavy.model_copy(
+        update={"published": {"apogee_m": 300.0, "dry_mass_kg": bill.dry_mass_kg * 1.3}}
+    )
+    assert not reproduce(off, catalog=cat).within_tolerance
+    # no build: the hand-written design is flown and no mass is compared
+    geometric = heavy.model_copy(update={"build": None})
+    rep2 = reproduce(geometric, catalog=cat)
+    assert not rep2.from_build and "dry_mass_kg" not in rep2.simulated
+    assert rep2.simulated["apogee_m"] < flown_light
+
+
+def test_find_reference_designs_rows_carry_the_build():
+    rows = find_reference_designs(DEMO_AMATEUR, Tier.AMATEUR, k=2)
+    assert rows and all(r["build"] is not None and r["build"]["tier"] == "amateur" for r in rows)
+    assert all("design" not in r for r in rows)
+    assert find_reference_designs(DEMO_COMMERCIAL, Tier.COMMERCIAL, k=1)[0]["build"] is None

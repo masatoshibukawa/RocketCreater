@@ -187,9 +187,27 @@ def test_nose_must_fit_tube():
 
 
 def test_body_length_within_stock_and_long_enough():
+    # longer than one stock tube: several tubes + couplers (Estes Mean Machine), a WARNING that
+    # names the tube count; the bill buys that many tubes but flies the cut length's mass
     too_long = GOOD_AMATEUR.model_copy(update={"body_length_m": 0.6})
-    assert "body_length_stock" in _codes(check_buildability(too_long, CATALOG), "error")
-    too_short = GOOD_AMATEUR.model_copy(update={"body_length_m": 0.15})
+    issues = check_buildability(too_long, CATALOG)
+    assert "body_length_stock" in _codes(issues, "warning")
+    assert "body_length_stock" not in _codes(issues, "error")
+    assert "2 tubes" in next(i.message for i in issues if i.code == "body_length_stock")
+    _, bill = resolve_amateur(too_long, CATALOG)
+    tube_row = next(r for r in bill.parts if r.part_id == "estes_bt50")
+    tube = CATALOG.get("estes_bt50")
+    assert tube_row.qty == 2 and tube_row.price_jpy == pytest.approx(2 * tube.price_jpy)
+    assert tube_row.mass_kg == pytest.approx(tube.mass_kg * 0.6 / tube.length_m)
+    assert any("coupler" in n for n in bill.notes)
+    # the motor sits INSIDE the mount: the bay is the longer of the two, not their sum
+    # (Estes Baby Bertha: 204 mm BT-60 body, 70 mm C6 in a 70 mm mount)
+    motor, mount = solid.load_motor("estes_C6"), CATALOG.get("mount_18mm_bt50")
+    od = CATALOG.get("estes_bt50").outer_diameter_m
+    min_len = max(motor.length_m, mount.length_m) + 2.0 * od
+    just_ok = GOOD_AMATEUR.model_copy(update={"body_length_m": min_len + 1e-3})
+    assert "body_length_min" not in _codes(check_buildability(just_ok, CATALOG))
+    too_short = GOOD_AMATEUR.model_copy(update={"body_length_m": min_len - 5e-3})
     issues = check_buildability(too_short, CATALOG)
     assert "body_length_min" in _codes(issues, "error")
     msg = next(i.message for i in issues if i.code == "body_length_min")
@@ -240,6 +258,23 @@ def test_deploy_delay_must_be_a_motor_option():
     assert "deploy_delay" in _codes(issues, "error")
     ok = GOOD_AMATEUR.model_copy(update={"deploy_delay_s": 5.0})
     assert "deploy_delay" not in _codes(check_buildability(ok, CATALOG))
+    # 0 s (eject at apogee = the delay grain matched to the coast) is always allowed, even for
+    # a motor with no 0 s grain: the Estes Mean Machine flies an E12-4 (grains 4/6/8) that way
+    e12 = GOOD_AMATEUR.model_copy(
+        update={
+            "body_tube_id": "estes_bt60",
+            "nose_cone_id": "estes_pnc60",
+            "motor_mount_id": "mount_24mm_bt60",
+            "motor_id": "estes_E12",
+            "body_length_m": 0.45,
+            "parachute_id": "chute_18in",
+            "deploy_delay_s": 0.0,
+        }
+    )
+    assert "deploy_delay" not in _codes(check_buildability(e12, CATALOG))
+    assert "deploy_delay" in _codes(
+        check_buildability(e12.model_copy(update={"deploy_delay_s": 5.0}), CATALOG), "error"
+    )
 
 
 def test_deploy_delay_without_listed_delays_is_a_warning(tmp_path, monkeypatch):
@@ -266,6 +301,24 @@ def test_static_margin_rules():
     )
     issues = check_buildability(small, CATALOG)
     assert "static_margin_low" in _codes(issues, "error")
+    # between the one-caliber error line and the flight model's 1.5 cal: a warning (the Estes
+    # Baby Bertha sits there by Barrowman and has flown for decades)
+    from rocketwright.build import BUILD_THRESHOLDS
+
+    assert BUILD_THRESHOLDS["error_static_margin_cal"] < BUILD_THRESHOLDS["min_static_margin_cal"]
+    for root in (0.030, 0.035, 0.040, 0.045, 0.050):
+        mid = GOOD_AMATEUR.model_copy(
+            update={"fins": FinGeometry(count=3, root_chord_m=root, tip_chord_m=0.01, span_m=0.03)}
+        )
+        design, _ = resolve_amateur(mid, CATALOG)
+        margin = stability.static_margin_cal(design)
+        if 1.0 <= margin < 1.5:
+            issues = check_buildability(mid, CATALOG)
+            assert "static_margin_low" in _codes(issues, "warning")
+            assert "static_margin_low" not in _codes(issues, "error")
+            break
+    else:  # pragma: no cover - fixture geometry drifted
+        pytest.skip("no fin size in the sweep lands between 1.0 and 1.5 cal")
     # huge fins -> overstable warning only (span under the 2.5 OD rule still: use chord)
     big = GOOD_AMATEUR.model_copy(
         update={

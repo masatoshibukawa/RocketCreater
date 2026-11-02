@@ -1,17 +1,28 @@
-# Bottle-tier reference vehicles (water rockets) with a published, measured apogee.
+# Bottle-tier reference vehicles (water rockets) with a published, measured apogee, as KIT-LEVEL
+# ground truth: every entry carries `build` (bottle, nozzle, fin set, launcher from
+# catalog/parts.yaml); references.reproduce resolves it (dry mass = the bill), compares the mass
+# with `published.dry_mass_kg` where the paper gives one, and flies the resolved design.
 # Format: see README.md in this directory. Every number either comes from the cited source or is
 # an estimate named in `notes` (then the entry stays `provisional: true`).
 #
 # Source A: Apte & Apte, "The influence of different factors on the maximum height reached of a
 #   water powered rocket", Journal of High School Science (2 L soda bottle, 3 plastic fins, nose
 #   cone cut from a second 2 L bottle, nozzle area 3.878e-4 m2 = 22.2 mm bore, launched from a
-#   PVC launch-tube pad). Flight time measured by stopwatch; the paper converts it to height with
-#   h = (g t/2)^2 / (2 g) = g t^2 / 8 (Table 4). Water volume 350/800/1250 mL, 20/30/40 psig.
-#   The empty-rocket mass is NOT stated in the paper (estimated below).
+#   PVC launch-tube pad pressurised with a bicycle pump with gauge). Flight time measured by
+#   stopwatch; the paper converts it to height with h = (g t/2)^2 / (2 g) = g t^2 / 8 (Table 4).
+#   Water volume 350/800/1250 mL, 20/30/40 psig. The empty-rocket mass is NOT stated in the
+#   paper: the catalog part `bottle_fin_set_apte_2l` closes the 0.10 kg ESTIMATE.
 # Source B: Fischer et al., "On the approximation of D.I.Y. water rocket dynamics including air
 #   drag", arXiv:2001.08828 (1000 mL bottle, radius 40 mm, empty mass 143 g, nozzle 9 mm,
 #   wind-tunnel Cd 0.6 +/- 0.2; altitude read from video against a measuring rod, +/- 0.5 m;
-#   p0 in the paper is ABSOLUTE pressure, gauge = p0 - 1 bar; launches 1-4 at 17 C).
+#   p0 in the paper is ABSOLUTE pressure, gauge = p0 - 1 bar; launches 1-4 at 17 C). The catalog
+#   part `bottle_fin_set_fischer_1l` (fins + nose + ballast) closes the published 143 g.
+#
+# No further independent water-rocket source with BOTH a measured apogee and a parts list was
+# found (2026-11-03): JAXA / APRSAF and the Japanese school reports score landing distance, the
+# NHSJS 2025 1 L study measures range, the WRA2 single-bottle records exceed the catalog's
+# 500 kPa bottle cap and publish no parts. The added entries are further flights of the two
+# documented rockets.
 version: 1
 references:
   - id: apte_2l_800ml_30psi
@@ -24,7 +35,7 @@ references:
       goal_kind: altitude
       target_altitude_m: 19.0
       payload_mass_kg: 0.0
-    design:
+    design:                            # hand-written fallback; `build` is flown
       tier: bottle
       bottle_volume_m3: 0.002
       water_fill_frac: 0.40            # 800 mL of 2000 mL (Table 2: medium)
@@ -33,6 +44,14 @@ references:
       dry_mass_kg: 0.10                # ESTIMATE: not in the paper (see notes)
       has_fins: true
       has_parachute: false
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_2l         # 2 L carbonated soda bottle (Table 1: 111 mm x 330 mm body)
+      water_fill_frac: 0.40
+      initial_gauge_pressure_pa: 206843
+      nozzle_id: bottle_nozzle_full_bore_22mm  # open neck, 21.7 mm vs the paper's 22.2 mm bore
+      fin_set_id: bottle_fin_set_apte_2l       # the paper's 3 fins + bottle-top nose (provisional)
+      launcher_id: launcher_bicycle_pump       # paper: bicycle pump with gauge, 2 ft PVC pad
     published:
       apogee_m: 19.02                  # Table 4, experiment 5 (flight time 3.94 s -> g t^2 / 8)
       flight_time_s: 3.94
@@ -41,14 +60,14 @@ references:
     notes: >-
       Apogee is the paper's own conversion of the stopwatch flight time (3.94 s) with
       h = g t^2 / 8, i.e. ballistic up-and-down with no drag; a drag-affected real apogee would be
-      a little lower, so the published value is an upper-ish bound. dry_mass_kg 0.10 is an
-      ESTIMATE (2 L PET bottle ~50 g + 3 plastic-folder fins + nose cone cut from a second 2 L
-      bottle + hot glue); the paper gives no mass. The launcher is a PVC launch tube inside the
-      bottle (the model has no launch-tube thrust; rail_length_m 0.6 = the 2 ft PVC pad).
-      With the calibrated water.DEFAULT_CD = 0.8 (the paper's own assumption) and
-      AIR_IMPULSE_EFFICIENCY = 0.25 (scripts/calibrate_small_rockets.py) our model gives 20.7 m
-      (+8.7 %, was +43 % at Cd 0.5 / 0.5); tolerance tightened from 0.50 to 0.15. Remaining
-      attribution: the dry-mass ESTIMATE and the stopwatch-derived apogee (+/-0.3 s ~ +/-15 %).
+      a little lower, so the published value is an upper-ish bound. The rocket's mass is not in
+      the paper: bill = 44 g bottle + 5 g neck seal + 51 g fin/nose set = 0.100 kg (ESTIMATE),
+      so no dry_mass_kg is published for the Apte entries. The launcher is a PVC launch tube
+      inside the bottle (the model has no launch-tube thrust; rail_length_m 0.6 = the 2 ft PVC
+      pad). With the calibrated water.DEFAULT_CD = 0.8 (the paper's own assumption) and
+      AIR_IMPULSE_EFFICIENCY = 0.25 (scripts/calibrate_small_rockets.py) the resolved build gives
+      20.7 m (+8.8 %); tolerance 0.15. Remaining attribution: the dry-mass ESTIMATE and the
+      stopwatch-derived apogee (+/-0.3 s ~ +/-15 %).
   - id: apte_2l_800ml_40psi
     tier: bottle
     name: "Apte & Apte 2 L soda-bottle rocket, 800 mL water, 40 psig"
@@ -68,6 +87,14 @@ references:
       dry_mass_kg: 0.10                # ESTIMATE (see apte_2l_800ml_30psi)
       has_fins: true
       has_parachute: false
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_2l
+      water_fill_frac: 0.40
+      initial_gauge_pressure_pa: 275790
+      nozzle_id: bottle_nozzle_full_bore_22mm
+      fin_set_id: bottle_fin_set_apte_2l
+      launcher_id: launcher_bicycle_pump
     published:
       apogee_m: 22.02                  # Table 4, experiment 6 (flight time 4.24 s)
       flight_time_s: 4.24
@@ -76,10 +103,9 @@ references:
     notes: >-
       Same rocket and caveats as apte_2l_800ml_30psi; the highest flight of the paper's 3x3
       design of experiments. Apogee derived from flight time by the authors (g t^2 / 8).
-      With the calibrated Cd 0.8 / AIR_IMPULSE_EFFICIENCY 0.25 our model gives 25.6 m (+16.4 %,
-      was +59 %); tolerance tightened from 0.60 to 0.30. Remaining attribution: the 0.10 kg
-      dry-mass ESTIMATE (0.20 kg would give +9 %) and the stopwatch-derived apogee; the model
-      over-predicts more at the higher pressure, which also points at the air-blowdown model.
+      The resolved build gives 25.6 m (+16.5 %); tolerance 0.30. Remaining attribution: the
+      0.10 kg dry-mass ESTIMATE (0.20 kg would give +9 %) and the stopwatch-derived apogee; the
+      model over-predicts more at the higher pressure, which also points at the air-blowdown model.
   - id: apte_2l_350ml_40psi
     tier: bottle
     name: "Apte & Apte 2 L soda-bottle rocket, 350 mL water, 40 psig"
@@ -99,6 +125,14 @@ references:
       dry_mass_kg: 0.10                # ESTIMATE (see apte_2l_800ml_30psi)
       has_fins: true
       has_parachute: false
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_2l
+      water_fill_frac: 0.175
+      initial_gauge_pressure_pa: 275790
+      nozzle_id: bottle_nozzle_full_bore_22mm
+      fin_set_id: bottle_fin_set_apte_2l
+      launcher_id: launcher_bicycle_pump
     published:
       apogee_m: 18.44                  # Table 4, experiment 3 (flight time 3.88 s)
       flight_time_s: 3.88
@@ -107,13 +141,99 @@ references:
     notes: >-
       Same rocket and caveats as apte_2l_800ml_30psi; low-water case, where the residual air
       blowdown carries more of the impulse. Apogee derived from flight time by the authors.
-      With the calibrated Cd 0.8 / AIR_IMPULSE_EFFICIENCY 0.25 our model gives 24.6 m (+33.4 %,
-      was +96 % at Cd 0.5 / 0.5); tolerance lowered from 1.0 to 0.45, still the worst entry.
-      With only 350 mL of water the air left at 33 psig when the water runs out (paper, Table 4)
-      carries much of the impulse, so the one-impulse air-blowdown model is the prime suspect
-      (AIR_IMPULSE_EFFICIENCY 0.0 would give +12.8 %, but that leaves the Fischer flights 15-26 %
-      low); the 0.10 kg dry-mass ESTIMATE is the other (0.20 kg would give +7 %). Confirm the
-      rocket's mass or replace the air phase with a time-resolved blowdown before tightening.
+      The resolved build gives 24.6 m (+33.4 %); tolerance 0.45. With only 350 mL of water the
+      air left at 33 psig when the water runs out (paper, Table 4) carries much of the impulse,
+      so the one-impulse air-blowdown model is the prime suspect (AIR_IMPULSE_EFFICIENCY 0.0
+      would give +12.8 %, but that leaves the Fischer flights 15-26 % low); the 0.10 kg dry-mass
+      ESTIMATE is the other (0.20 kg would give +7 %). Confirm the rocket's mass or replace the
+      air phase with a time-resolved blowdown before tightening.
+  - id: apte_2l_350ml_20psi
+    tier: bottle
+    name: "Apte & Apte 2 L soda-bottle rocket, 350 mL water, 20 psig"
+    sources:
+      - "https://jhss.scholasticahq.com/api/v1/articles/2101-the-influence-of-different-factors-on-the-maximum-height-reached-of-a-water-powered-rocket.pdf"
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 15.0
+      payload_mass_kg: 0.0
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_2l
+      water_fill_frac: 0.175           # 350 mL (low)
+      initial_gauge_pressure_pa: 137895  # 20 psig (low)
+      nozzle_id: bottle_nozzle_full_bore_22mm
+      fin_set_id: bottle_fin_set_apte_2l
+      launcher_id: launcher_bicycle_pump
+    published:
+      apogee_m: 15.09                  # Table 4, experiment 1 (flight time 3.51 s)
+      flight_time_s: 3.51
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.6}
+    tolerance_frac: 0.15
+    notes: >-
+      Same rocket and caveats as apte_2l_800ml_30psi; the lowest-energy corner of the 3x3
+      design of experiments. The resolved build gives 15.6 m (+3 %); tolerance 0.15. Low water
+      AND low pressure: the air-blowdown share that hurts apte_2l_350ml_40psi is small here.
+  - id: apte_2l_800ml_20psi
+    tier: bottle
+    name: "Apte & Apte 2 L soda-bottle rocket, 800 mL water, 20 psig"
+    sources:
+      - "https://jhss.scholasticahq.com/api/v1/articles/2101-the-influence-of-different-factors-on-the-maximum-height-reached-of-a-water-powered-rocket.pdf"
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 17.0
+      payload_mass_kg: 0.0
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_2l
+      water_fill_frac: 0.40            # 800 mL (medium)
+      initial_gauge_pressure_pa: 137895  # 20 psig (low)
+      nozzle_id: bottle_nozzle_full_bore_22mm
+      fin_set_id: bottle_fin_set_apte_2l
+      launcher_id: launcher_bicycle_pump
+    published:
+      apogee_m: 17.04                  # Table 4, experiment 4 (flight time 3.73 s)
+      flight_time_s: 3.73
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.6}
+    tolerance_frac: 0.30
+    notes: >-
+      Same rocket and caveats as apte_2l_800ml_30psi. The resolved build gives 13.1 m (-23 %);
+      tolerance 0.30. The paper itself calls this corner anomalous (its acceleration metric is
+      lowest here "with the exception of the case of medium volume and low pressure"); with 800 mL
+      at only 20 psig the water is not fully expelled before the pressure is spent, which the
+      model handles with a fixed air-impulse share. Together with apte_2l_1250ml_40psi this is the
+      under-prediction side of the air-blowdown SIMPLIFICATION.
+  - id: apte_2l_1250ml_40psi
+    tier: bottle
+    name: "Apte & Apte 2 L soda-bottle rocket, 1250 mL water, 40 psig"
+    sources:
+      - "https://jhss.scholasticahq.com/api/v1/articles/2101-the-influence-of-different-factors-on-the-maximum-height-reached-of-a-water-powered-rocket.pdf"
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 19.0
+      payload_mass_kg: 0.0
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_2l
+      water_fill_frac: 0.625           # 1250 mL (high)
+      initial_gauge_pressure_pa: 275790  # 40 psig (high)
+      nozzle_id: bottle_nozzle_full_bore_22mm
+      fin_set_id: bottle_fin_set_apte_2l
+      launcher_id: launcher_bicycle_pump
+    published:
+      apogee_m: 18.92                  # Table 4, experiment 9 (flight time 3.93 s)
+      flight_time_s: 3.93
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.6}
+    tolerance_frac: 0.45
+    notes: >-
+      Same rocket and caveats as apte_2l_800ml_30psi; the high-water corner (the paper notes
+      water was left in the rocket after the 1250 mL / 20 psig flight, experiment 7, which is
+      why that one is not an entry). The resolved build gives 11.7 m (-38 %); tolerance 0.45.
+      With 62.5 % fill the model's isentropic air expansion runs out of pressure early and the
+      heavy residual water is dead mass; the paper's rocket evidently expelled more of it.
+      build.check_buildability warns that 62 % is outside the usual 20-60 % fill range.
   - id: fischer_1l_350ml_2p5bar
     tier: bottle
     name: "Fischer et al. 1 L D.I.Y. rocket, 350 mL water, 2.5 bar gauge"
@@ -124,7 +244,7 @@ references:
       goal_kind: altitude
       target_altitude_m: 17.5
       payload_mass_kg: 0.0
-    design:
+    design:                            # hand-written fallback; `build` is flown
       tier: bottle
       bottle_volume_m3: 0.001          # Section 9: bottle volume 1000 mL, radius 40 mm
       water_fill_frac: 0.35            # Table 2, launch 1: Vl = 350 +/- 10 mL
@@ -133,19 +253,29 @@ references:
       dry_mass_kg: 0.143               # Section 9: "has weight 143 g"
       has_fins: true
       has_parachute: false
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_1l         # 1000 mL bottle, radius 40 mm
+      water_fill_frac: 0.35
+      initial_gauge_pressure_pa: 250000
+      nozzle_id: bottle_nozzle_gardena_9mm     # "about 9 mm" (Gardena-type)
+      fin_set_id: bottle_fin_set_fischer_1l    # the paper's fins + nose + ballast (provisional)
+      launcher_id: null                # indoor "launching device", not described
     published:
       apogee_m: 17.5                   # Table 2, launch 1: h_mes = 17.5 +/- 0.5 m (video vs rod)
+      dry_mass_kg: 0.143               # Section 9: "has weight 143 g" (empty rocket)
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.5}
     tolerance_frac: 0.15
+    mass_tolerance_frac: 0.15
     notes: >-
       All design numbers are stated in the paper; only the launcher length (0.5 m) is an
       ESTIMATE (an indoor "launching device", length not given). The paper's own model with
       Cd = 0.6 (wind-tunnel value) and an air-thrust efficiency factor reproduces 17.2 m.
-      "Fins" is assumed: the wind-tunnel photo shows a finned, nose-first rocket. Has fins per the
-      paper's streamlined D.I.Y. rocket; gauge pressure = p0 - 1 bar (the paper quotes absolute).
-      With the calibrated Cd 0.8 / AIR_IMPULSE_EFFICIENCY 0.25 our model gives 16.2 m (-7.5 %;
-      +9 % at the old 0.5 / 0.5); tolerance tightened from 0.30 to 0.15. The fleet Cd 0.8 is
-      above this streamlined rocket's measured 0.6, which is why it now under-predicts.
+      "Fins" is assumed: the wind-tunnel photo shows a finned, nose-first rocket. Gauge pressure
+      = p0 - 1 bar (the paper quotes absolute). The resolved build weighs 143 g by construction
+      (the fin/nose set closes the published mass: 0 % error, a consistency check rather than a
+      prediction); apogee 16.2 m (-7.5 %); tolerance 0.15. The fleet Cd 0.8 is above this
+      streamlined rocket's measured 0.6, which is why it under-predicts.
   - id: fischer_1l_255ml_2bar
     tier: bottle
     name: "Fischer et al. 1 L D.I.Y. rocket, 255 mL water, 2.0 bar gauge"
@@ -165,15 +295,80 @@ references:
       dry_mass_kg: 0.143
       has_fins: true
       has_parachute: false
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_1l
+      water_fill_frac: 0.255
+      initial_gauge_pressure_pa: 200000
+      nozzle_id: bottle_nozzle_gardena_9mm
+      fin_set_id: bottle_fin_set_fischer_1l
+      launcher_id: null
     published:
       apogee_m: 14.1                   # Table 2, launch 3: h_mes = 14.1 +/- 0.5 m
+      dry_mass_kg: 0.143
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.5}
     tolerance_frac: 0.30
+    mass_tolerance_frac: 0.15
     notes: >-
       Same rocket as fischer_1l_350ml_2p5bar (the paper's own prediction: 13.3 m; the conclusion
-      says the measured lower bound was 13.6 m). Launcher length 0.5 m is an ESTIMATE.
-      With the calibrated Cd 0.8 / AIR_IMPULSE_EFFICIENCY 0.25 our model gives 11.8 m (-16.6 %;
-      -0.5 % at the old 0.5 / 0.5), so the tolerance stays 0.30. Remaining attribution: the
-      fleet Cd 0.8 is above this rocket's wind-tunnel 0.6, and with less water (255 mL) the
+      says the measured lower bound was 13.6 m). Launcher length 0.5 m is an ESTIMATE. The
+      resolved build gives 11.8 m (-16.6 %), so the tolerance stays 0.30. Remaining attribution:
+      the fleet Cd 0.8 is above this rocket's wind-tunnel 0.6, and with less water (255 mL) the
       halved air impulse matters more; with its own Cd 0.6 and air 0.5 the model gives -2.7 %.
       A per-design Cd (BottleDesign has none) would reconcile the Apte and Fischer rockets.
+  - id: fischer_1l_255ml_2p5bar
+    tier: bottle
+    name: "Fischer et al. 1 L D.I.Y. rocket, 255 mL water, 2.5 bar gauge"
+    sources:
+      - "https://arxiv.org/abs/2001.08828"
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 17.4
+      payload_mass_kg: 0.0
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_1l
+      water_fill_frac: 0.255           # Table 2, launch 4: Vl = 255 +/- 10 mL
+      initial_gauge_pressure_pa: 250000  # p0 = 3.5 bar absolute -> 2.5 bar gauge
+      nozzle_id: bottle_nozzle_gardena_9mm
+      fin_set_id: bottle_fin_set_fischer_1l
+      launcher_id: null
+    published:
+      apogee_m: 17.4                   # Table 2, launch 4: h_mes = 17.4 +/- 0.5 m
+      dry_mass_kg: 0.143
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.5}
+    tolerance_frac: 0.15
+    mass_tolerance_frac: 0.15
+    notes: >-
+      Same rocket as fischer_1l_350ml_2p5bar, launch 4 (the paper's prediction 17.2 m lies within
+      the measurement error). The resolved build gives 15.1 m (-13 %); tolerance 0.15. Less water
+      than launch 1 at the same pressure: the paper measured almost the same height (17.4 vs
+      17.5 m) while the model loses 1.1 m, again the under-weighted air impulse at low fill.
+  - id: fischer_1l_325ml_2p5bar
+    tier: bottle
+    name: "Fischer et al. 1 L D.I.Y. rocket, 325 mL water, 2.5 bar gauge"
+    sources:
+      - "https://arxiv.org/abs/2001.08828"
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 17.1
+      payload_mass_kg: 0.0
+    build:
+      tier: bottle
+      bottle_id: pet_bottle_1l
+      water_fill_frac: 0.325           # Table 2, launch 2: Vl = 325 +/- 10 mL
+      initial_gauge_pressure_pa: 250000  # p0 = 3.5 bar absolute -> 2.5 bar gauge
+      nozzle_id: bottle_nozzle_gardena_9mm
+      fin_set_id: bottle_fin_set_fischer_1l
+      launcher_id: null
+    published:
+      apogee_m: 17.1                   # Table 2, launch 2: h_mes = 17.1 +/- 0.5 m
+      dry_mass_kg: 0.143
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.5}
+    tolerance_frac: 0.15
+    mass_tolerance_frac: 0.15
+    notes: >-
+      Same rocket as fischer_1l_350ml_2p5bar, launch 2 (the paper's prediction 17.4 m lies within
+      the measurement error). The resolved build gives 16.2 m (-5.5 %); tolerance 0.15.

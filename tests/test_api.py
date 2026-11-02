@@ -288,7 +288,6 @@ def test_summary_artifact_from_build(monkeypatch):
     """`build` on /artifacts/summary: cost and BOM come from the parts bill, the drawing from
     the resolved design."""
     from rocketwright import parts
-    from rocketwright.agent.fake_client import demo_designs
 
     monkeypatch.setattr(
         parts, "DEFAULT_PARTS_PATH", Path(__file__).resolve().parent / "fixtures" / "parts_v2.yaml"
@@ -304,8 +303,19 @@ def test_summary_artifact_from_build(monkeypatch):
         "fins": {"count": 3, "root_chord_m": 0.064, "tip_chord_m": 0.025, "span_m": 0.044},
         "parachute_id": "chute_12in",
     }
-    # the design field is required by the request model but the build wins
-    placeholder = demo_designs("amateur")[0]
+    # the design field is required by the request model but the build wins (a literal
+    # placeholder: the demo designs are seeded from kit builds the fixture catalog lacks)
+    placeholder = {
+        "tier": "amateur",
+        "body_diameter_m": 0.05,
+        "body_length_m": 0.6,
+        "nose_shape": "ogive",
+        "nose_length_m": 0.15,
+        "fins": {"count": 3, "root_chord_m": 0.1, "tip_chord_m": 0.05, "span_m": 0.06},
+        "motor_id": "estes_C6",
+        "dry_mass_kg": 0.3,
+        "parachute_diameter_m": 0.6,
+    }
     r = client.post("/artifacts/summary", json={"design": placeholder, "build": build})
     assert r.status_code == 200, r.text
     body = r.json()

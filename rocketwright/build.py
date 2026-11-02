@@ -51,17 +51,34 @@ ALLOWANCES: dict[str, dict[str, float | bool]] = {
     "adhesive_paint_mass_frac": {"value": 0.10, "provisional": True},
     "adhesive_paint_price_jpy": {"value": 300.0, "provisional": True},
     # Motor price for the bill: RASP files carry no price, so a provisional per-impulse rate
-    # with a floor (an Estes C6 ~ 600 JPY, a G ~ 7,000 JPY, a J ~ 56,000 JPY).
-    "motor_price_jpy_per_ns": {"value": 60.0, "provisional": True},
+    # with a floor. 25 JPY/Ns (was 60) follows US retail at 150 JPY/USD: an Estes C6 is the
+    # 600 JPY floor, an AeroTech G80 single-use ~$30 (4,500 JPY vs 3,400 here), an H128W
+    # reload ~$40 (6,000 vs 4,300), a J420R reload ~$80 (12,000 vs 23,400: the rate is on the
+    # high side for J reloads, whose casing is bought once). The old 60 JPY/Ns priced a J at
+    # 56,000 JPY, three to four times retail.
+    "motor_price_jpy_per_ns": {"value": 25.0, "provisional": True},
     "motor_price_min_jpy": {"value": 600.0, "provisional": True},
 }
 
 # Single place for the buildability rules. Flight thresholds are the physics modules' own.
+# Every value is provisional (README 要確認の値); the kit-level references in
+# catalog/references/amateur.yaml are the evidence the rules are checked against
+# (tests/test_references.py::test_reference_builds_have_no_buildability_error).
 BUILD_THRESHOLDS: dict[str, float] = {
     "diameter_tolerance_m": 0.0005,  # motor-vs-mount and nozzle-vs-neck matching
-    "body_length_margin_calibers": 2.0,  # tube must hold motor + mount + 2 OD of chute space
+    # The tube must hold the motor bay (the motor sits INSIDE the mount, so the longer of the
+    # two, not their sum: the Estes Baby Bertha's 204 mm BT-60 body holds a 70 mm C6 in a
+    # 70 mm mount and the sum rule rejected it) plus this many body diameters of parachute and
+    # wadding space.
+    "body_length_margin_calibers": 2.0,
     "fin_span_max_calibers": 2.5,  # wider fins are hard to build and to launch (warning)
+    # Below `min_static_margin_cal` (the flight model's 1.5 cal) the build is a WARNING: the
+    # Estes Baby Bertha (short, fat BT-60 kit, flown on C6-5 for decades) comes out at ~1.3
+    # cal by Barrowman with the catalog nose and estimated fins, so 1.5 cal is not a
+    # buildability limit. Below `error_static_margin_cal` (the one-caliber rule of thumb of
+    # the hobby) it is an error. Both provisional.
     "min_static_margin_cal": solid.PASS_THRESHOLDS["min_stability_margin_cal"],
+    "error_static_margin_cal": 1.0,
     "max_static_margin_cal": solid.PASS_THRESHOLDS["max_stability_margin_cal"],
     # SIMPLIFICATION: common launch-rail rule of thumb (NAR/Tripoli guidance quotes 5:1 on the
     # average thrust); below 3:1 the rocket may not clear the rod safely. Provisional.
@@ -120,7 +137,10 @@ class AmateurBuild(_Frozen):
     deploy_delay_s: float = Field(
         default=0.0,
         ge=0,
-        description="parachute delay after apogee; must be one of the motor's delay options",
+        description=(
+            "parachute delay after apogee: 0 = the motor delay grain that ejects at apogee "
+            "(always allowed); a non-zero extra delay must be one of the motor's delay options"
+        ),
     )
 
 
@@ -175,6 +195,11 @@ def _allow(key: str) -> float:
     return float(ALLOWANCES[key]["value"])
 
 
+def tube_count(body_length_m: float, stock_length_m: float) -> int:
+    """Whole stock tubes a body of `body_length_m` needs (1 when it fits one tube)."""
+    return max(1, math.ceil(body_length_m / stock_length_m - 1e-9))
+
+
 def _row(
     part, qty: int = 1, *, mass_kg: float | None = None, category: str = "airframe"
 ) -> BillRow:
@@ -216,8 +241,12 @@ def resolve_amateur(build: AmateurBuild, catalog: PartsCatalog) -> tuple[Amateur
     material = catalog.get(build.fin_material_id, kind="fin_material")
     chute = catalog.get(build.parachute_id, kind="parachute")
     motor = _load_motor(build.motor_id)
+    # A body longer than the stock tube is several tubes joined with couplers (Estes Mean
+    # Machine: three BT-60s); the flown mass is the cut length's, the bill buys whole tubes.
+    # SIMPLIFICATION: coupler mass is not counted (no coupler part kind yet).
+    tube_qty = tube_count(build.body_length_m, tube.length_m)
     rows: list[BillRow] = [
-        _row(tube, mass_kg=tube.mass_kg * build.body_length_m / tube.length_m),
+        _row(tube, tube_qty, mass_kg=tube.mass_kg * build.body_length_m / tube.length_m),
         _row(nose),
         _row(mount),
         BillRow(
@@ -250,7 +279,9 @@ def resolve_amateur(build: AmateurBuild, catalog: PartsCatalog) -> tuple[Amateur
     rows.append(_motor_row(motor))
     notes = [
         f"tube mass pro-rated to {build.body_length_m:.3f} m of the {tube.length_m:.3f} m stock "
-        f"(full tube bought); fins {build.fins.count} x {build.fins.area_m2 * 1e4:.1f} cm2 of "
+        f"({tube_qty} full tube(s) bought"
+        + ("" if tube_qty == 1 else ", joined with couplers whose mass is not counted")
+        + f"); fins {build.fins.count} x {build.fins.area_m2 * 1e4:.1f} cm2 of "
         f"{material.name} ({material.areal_mass_kgpm2:g} kg/m2); glue/paint allowance "
         f"{_allow('adhesive_paint_mass_frac'):.0%} of the part mass (provisional); motor price "
         "from a provisional per-impulse rate",
@@ -388,18 +419,23 @@ def _check_amateur(build: AmateurBuild, catalog: PartsCatalog) -> list[BuildIssu
             "nose_fits_tube",
             f"nose cone {nose.id} fits tube {nose.fits_tube_id!r}, not {tube.id!r}",
         )
-    if build.body_length_m > tube.length_m + 1e-9:
-        err(
+    qty = tube_count(build.body_length_m, tube.length_m)
+    if qty > 1:
+        # Was an error; the Estes Mean Machine (2.0 m of BT-60, three tubes and couplers) is
+        # a real kit, so a long body is a warning about couplers, not an impossibility.
+        warn(
             "body_length_stock",
             f"body length {build.body_length_m:.3f} m exceeds the {tube.length_m:.3f} m stock "
-            f"tube {tube.id}",
+            f"tube {tube.id}: {qty} tubes joined with {qty - 1} coupler(s) (coupler mass not "
+            "counted in the bill)",
         )
-    min_len = motor.length_m + mount.length_m + th["body_length_margin_calibers"] * od
+    bay = max(motor.length_m, mount.length_m)
+    min_len = bay + th["body_length_margin_calibers"] * od
     if build.body_length_m < min_len:
         err(
             "body_length_min",
-            f"body length {build.body_length_m:.3f} m is too short to hold the motor "
-            f"({motor.length_m:.3f} m), the mount ({mount.length_m:.3f} m) and the parachute "
+            f"body length {build.body_length_m:.3f} m is too short to hold the motor bay "
+            f"(motor {motor.length_m:.3f} m in a {mount.length_m:.3f} m mount) and the parachute "
             f"({th['body_length_margin_calibers']:g} x {od * 1e3:.1f} mm): need >= {min_len:.3f} m",
         )
     if fins.span_m > th["fin_span_max_calibers"] * od:
@@ -435,11 +471,20 @@ def _check_amateur(build: AmateurBuild, catalog: PartsCatalog) -> list[BuildIssu
         )
     delays = _numeric_delays(motor)
     if delays:
-        if not any(math.isclose(build.deploy_delay_s, d, abs_tol=1e-6) for d in delays):
+        # deploy_delay_s counts from APOGEE (physics convention); a motor's delay grain counts
+        # from burnout. 0 s therefore means "the delay grain that ejects at apogee" (the Estes
+        # Mean Machine flies an E12-4 for exactly that; the E12 has no 0 s grain), so 0 is
+        # always allowed and the coast time in the sim's metrics (apogee_time_s -
+        # burnout_time_s) tells which grain that is. A non-zero value is extra delay past
+        # apogee and must still be one of the motor's grains.
+        at_apogee = math.isclose(build.deploy_delay_s, 0.0, abs_tol=1e-6)
+        if not at_apogee and not any(
+            math.isclose(build.deploy_delay_s, d, abs_tol=1e-6) for d in delays
+        ):
             err(
                 "deploy_delay",
-                f"deploy delay {build.deploy_delay_s:g} s is not one of motor {motor.id}'s "
-                f"options {delays}",
+                f"deploy delay {build.deploy_delay_s:g} s past apogee is not one of motor "
+                f"{motor.id}'s delay options {delays} (0 = eject at apogee is always allowed)",
             )
     else:
         warn(
@@ -448,11 +493,18 @@ def _check_amateur(build: AmateurBuild, catalog: PartsCatalog) -> list[BuildIssu
             f"{build.deploy_delay_s:g} s deploy delay needs separate deployment electronics",
         )
     margin = stability.static_margin_cal(design, motor.total_mass_kg, motor_length_m=motor.length_m)
-    if margin < th["min_static_margin_cal"]:
+    if margin < th["error_static_margin_cal"]:
         err(
             "static_margin_low",
-            f"static margin {margin:.2f} cal is below {th['min_static_margin_cal']:g} cal at "
+            f"static margin {margin:.2f} cal is below {th['error_static_margin_cal']:g} cal at "
             "liftoff: larger or further-aft fins, a longer body or nose ballast",
+        )
+    elif margin < th["min_static_margin_cal"]:
+        warn(
+            "static_margin_low",
+            f"static margin {margin:.2f} cal is below the flight model's "
+            f"{th['min_static_margin_cal']:g} cal (it will fail the simulation): larger or "
+            "further-aft fins, a longer body or nose ballast",
         )
     elif margin > th["max_static_margin_cal"]:
         warn(

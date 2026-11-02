@@ -354,6 +354,18 @@ parts: &parts
     diameter_m: 0.762
     packed_diameter_m: 0.040
     cd: 1.5
+  - id: topflight_parachute_45in_nylon
+    kind: parachute
+    tier: amateur
+    name: "Top Flight Recovery 45 in (114 cm) thin ripstop nylon parachute (mid-power, 1-3 kg)"
+    mass_kg: 0.060
+    price_jpy: 5850
+    source: "https://wikis.mit.edu/confluence/x/IwCWDQ"
+    provisional: true
+    notes: "Top Flight sells 45 in and 50 in standard nylon chutes (MIT Rocket Team vendor comparison; a retailer lists the 45 in thin ripstop 'TOP-PAR-45TM' at $38.99). Mass not published: 60 g estimated from the Estes 30 in nylon (40 g) scaled by area with the thinner cloth; packed dia 50 mm (fits a 54 mm tube) estimated; cd 1.5 = repository default."
+    diameter_m: 1.143
+    packed_diameter_m: 0.050
+    cd: 1.5
   # --- recovery hardware ---------------------------------------------------------------
   - id: recovery_hardware_shock_cord_set
     kind: recovery_hardware
@@ -378,6 +390,19 @@ parts: &parts
     motor_diameter_m: 0.013
     fits_tube_id: estes_bt20_tube
     fits_tube_ids: [estes_bt20_tube, estes_bt50_tube]
+    length_m: 0.070
+  - id: motor_mount_18mm_bt20
+    kind: motor_mount
+    tier: amateur
+    name: "18 mm minimum-diameter mount for BT-20 (engine hook + thrust ring; the motor sits in the body tube)"
+    mass_kg: 0.002
+    price_jpy: 150
+    source: "https://estesrockets.com/products/engine-hook-pack"
+    provisional: true
+    notes: "BT-20 (ID 18.0 mm) takes an 18 mm motor directly: Estes Wizard / Viking / Hi-Flier kits ship a steel engine hook, a thrust ring and a mylar hook retainer ring, no mount tube. Mass ~2 g and price (hook pack share) estimated. length_m is the motor bay the hook defines (A8-C6 are 70 mm)."
+    motor_diameter_m: 0.018
+    fits_tube_id: estes_bt20_tube
+    fits_tube_ids: [estes_bt20_tube]
     length_m: 0.070
   - id: motor_mount_18mm
     kind: motor_mount
@@ -431,6 +456,19 @@ parts: &parts
     fits_tube_id: loc_tube_54mm
     fits_tube_ids: [loc_tube_54mm, loc_tube_75mm]
     length_m: 0.3556
+  - id: motor_mount_54mm_min_dia
+    kind: motor_mount
+    tier: amateur
+    name: "54 mm minimum-diameter retention for the LOC 2.14 in tube (Aero Pack 54 mm retainer + thrust ring; the motor sits in the airframe)"
+    mass_kg: 0.045
+    price_jpy: 5400
+    source: "https://locprecision.com/products/motor-mount-tubing"
+    provisional: true
+    notes: "LOC: the 54 mm motor tube is 'the same tube as our 2.14 in airframe', so a 54 mm motor fits the airframe directly (minimum-diameter build, like the BT-20 kits). Retention by a screw-on 54 mm retainer (Aero Pack RA54 class, ~$36, ~30 g) plus a plywood thrust ring; mass and price estimated. length_m is the motor bay (a J420 case is 220 mm)."
+    motor_diameter_m: 0.054
+    fits_tube_id: loc_tube_54mm
+    fits_tube_ids: [loc_tube_54mm]
+    length_m: 0.220
   - id: motor_mount_54mm
     kind: motor_mount
     tier: amateur
@@ -439,10 +477,10 @@ parts: &parts
     price_jpy: 1830
     source: "https://locprecision.com/products/motor-mount-tubing"
     provisional: true
-    notes: "LOC page: 54 mm motor tube 14 in $6.18 ('same tube as our 2.14 in airframe', ID 0.054356 OD 0.057404 m). Tube 107 g computed (1121 kg/m3) + ~18 g rings (est.; ring price ~$6 assumed)."
+    notes: "LOC page: 54 mm motor tube 14 in $6.18 ('same tube as our 2.14 in airframe', ID 0.054356 OD 0.057404 m). Tube 107 g computed (1121 kg/m3) + ~18 g rings (est.; ring price ~$6 assumed). Also fits the Estes BT-80 (65.0 mm ID) with 2.56 in -> 54 mm plywood centering rings (LOC sells rings per airframe/motor size; same mass assumed, provisional)."
     motor_diameter_m: 0.054
     fits_tube_id: loc_tube_75mm
-    fits_tube_ids: [loc_tube_75mm]
+    fits_tube_ids: [loc_tube_75mm, estes_bt80_tube]
     length_m: 0.3556
   # --- launch lugs ---------------------------------------------------------------------
   - id: launch_lug_3mm_rod
@@ -590,6 +628,31 @@ parts: &parts
     notes: "Four 80 x 120 mm fins of 0.75 mm PP sheet (PP ~900 kg/m3 -> 0.68 kg/m2) plus tape; mass and price estimated."
     count: 4
     span_m: 0.08
+  # Fin-and-nose sets "as flown" by the two reference papers (catalog/references/bottle.yaml):
+  # the paper's rocket minus the catalog bottle and nozzle. Provisional: the mass is whatever
+  # closes the published (or estimated) empty mass of the rocket, not a measured part.
+  - id: bottle_fin_set_apte_2l
+    kind: bottle_fin_set
+    tier: bottle
+    name: "Apte & Apte 2 L rocket fin/nose set: 3 plastic-folder fins + nose cone cut from a 2 L bottle"
+    mass_kg: 0.051
+    price_jpy: 150
+    source: "https://jhss.scholasticahq.com/api/v1/articles/2101-the-influence-of-different-factors-on-the-maximum-height-reached-of-a-water-powered-rocket.pdf"
+    provisional: true
+    notes: "Paper (Table 1): 3 fins, nose cone 25.4 mm long from a second bottle, body 111 mm dia x 330 mm. The paper gives NO mass; 51 g closes the 0.10 kg dry-mass ESTIMATE of the reference entry (0.100 - 0.044 bottle - 0.005 nozzle seal). Span estimated."
+    count: 3
+    span_m: 0.08
+  - id: bottle_fin_set_fischer_1l
+    kind: bottle_fin_set
+    tier: bottle
+    name: "Fischer et al. 1 L D.I.Y. rocket fin/nose set (3 fins, nose cone, nose ballast)"
+    mass_kg: 0.097
+    price_jpy: 200
+    source: "https://arxiv.org/abs/2001.08828"
+    provisional: true
+    notes: "arXiv:2001.08828 section 9: the finished rocket 'has weight 143 g' (section 6 says 'curb weight of about 1/8 kg'); 97 g = 143 g - 31 g catalog bottle - 15 g Gardena nozzle, i.e. fins + nose cone + whatever ballast the authors used. Fin count and span estimated from the wind-tunnel photo."
+    count: 3
+    span_m: 0.07
   # --- parachutes ----------------------------------------------------------------------
   - id: bottle_parachute_30cm_plastic
     kind: parachute

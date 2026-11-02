@@ -15,6 +15,13 @@ Rules (CLAUDE.md section 2):
   `payload_to_orbit_kg` and `orbit_altitude_m`.
 - `tolerance_frac` is the reproduction error this entry is held to (default 0.30). Raise it only
   with a reason in `notes`.
+- Bottle / amateur entries are **kit-level**: `build` (an `AmateurBuild` / `BottleBuild` of
+  `rocketwright.build`, ids from `catalog/parts.yaml` and `motors/*.eng`) is required there.
+  `reproduce()` resolves it, compares the bill's dry mass with `published.dry_mass_kg` (when the
+  source gives a weight) under `mass_tolerance_frac` (default 0.30) and flies the RESOLVED
+  design. `design` may be omitted for such entries (the loader fills it from the build); when
+  present it is the hand-written fallback used only without a `build`. Parts without a catalog
+  twin are mapped to the nearest part and said so in `notes` (provisional).
 
 ```yaml
 version: 1

@@ -16,6 +16,7 @@ from typing import Any
 from anthropic.types import Message, TextBlock, ThinkingBlock, ToolUseBlock, Usage
 
 __all__ = [
+    "DEMO_ATTEMPT_TOOL",
     "DEMO_PASSING_INDEX",
     "DEMO_REQUIREMENTS",
     "DEMO_TUNE",
@@ -26,6 +27,7 @@ __all__ = [
     "FakeStream",
     "ReviewScriptItem",
     "ScriptItem",
+    "attempt_outcome",
     "build_demo_reviews",
     "build_demo_script",
     "demo_designs",
@@ -227,25 +229,35 @@ DEMO_REQUIREMENTS: dict[str, dict[str, Any]] = {
 
 # The demo story of every tier (CLAUDE.md section 8, reference-based workflow):
 #   classify -> derive_requirements + search_catalog -> find_reference_designs (seed=true) ->
-#   simulate_design on the seed (attempt 1) -> corrected / cheaper variants (attempts 2..N, one
-#   turn) -> run_dispersion on the first passing attempt -> final JSON citing the reference id
-#   and the derive tool id. The seed design is read from the find_reference_designs tool
-#   result at run time, so the script never hard-codes a scaled vehicle; DEMO_VARIANTS maps
-#   that seed to each attempt. Every tier is judged by its real physics model (bottle:
-#   physics.water, amateur: physics.solid, commercial/heavy: physics.multistage).
+#   attempt 1 on the seed -> corrected / cheaper variants (attempts 2..N, one turn) ->
+#   run_dispersion on the first passing attempt -> final JSON citing the reference id and the
+#   derive tool id. The seed is read from the find_reference_designs tool result at run time,
+#   so the script never hard-codes a scaled vehicle; DEMO_VARIANTS maps that seed to each
+#   attempt. Every tier is judged by its real physics model (bottle: physics.water, amateur:
+#   physics.solid, commercial/heavy: physics.multistage).
 #
-# Numbers below were checked on 2026-11-02 with the scenario envs/seeds (scripts/run_scenario.py):
-#   * bottle: seed = Apte 2 L bottle scaled to 30 m (376 kPa, 0.31 m chute) -> the seed sim
-#     passes (32.2 m, 4.8 m/s), attempt 0. Attempt 1 fits it in the 1.5 L bottle the user has
-#     -> 29.7 m, pass (Monte-Carlo 0.99). Attempt 2 moves halfway to the 695 kPa the derive
-#     formula asks for (500 kPa) -> 36.5 m, fails +/-10 %: the simulation wins over the formula
-#     (its provisional energy efficiency is pessimistic for this bottle). Attempt 3: 400 kPa
-#     -> 31.1 m, pass.
-#   * amateur: seed = Estes Alpha III scaled to 1 kg / 2 km (dummy_J420, 60 mm, 196 g dry,
-#     1.79 m chute) -> 2208 m, fails +/-10 % (about a tenth hot). Attempt 1 simulates it as is.
-#     Attempt 2 fixes the cause (too little drag and mass for the J motor): 66 mm airframe,
-#     500 g dry mass, 1.0 m chute -> 1935 m, 5.4 m/s, 3.2 cal, pass (Monte-Carlo 0.94).
-#     Attempt 3: same with a 1.2 m chute -> 4.5 m/s, pass.
+# Bottle and amateur are designed in PART SPACE: the reference is a real kit (its `build`),
+# the seed is a parts build, every attempt is a `design_from_parts` call (parts -> bill ->
+# buildability -> sim) and the final JSON cites the part ids. Commercial/heavy keep
+# `simulate_design` on a geometric design (DEMO_ATTEMPT_TOOL).
+#
+# Numbers below were checked on 2026-11-03 with the scenario envs/seeds (scripts/run_scenario.py):
+#   * bottle: seed = Apte 2 L kit scaled to 30 m (376 kPa, 50 cm chute added for the egg,
+#     bicycle-pump launcher) -> flies (32.0 m, 3.1 m/s) but the bill is 4,280 JPY against the
+#     3,000 JPY budget: the seed fails, attempt 1 confirms it (design_from_parts, the 3,000 JPY
+#     launcher is the cause). Attempt 2: the 1.5 L bottle the user has, the launcher left off
+#     the bill (school equipment, not part of the rocket), 30 cm chute, same 376 kPa -> 29.8 m,
+#     4.9 m/s, 1,200 JPY, pass (Monte-Carlo ~1.0). Attempt 3: 400 kPa and the 50 cm chute for a
+#     softer egg landing -> 31.0 m, 3.0 m/s, 1,250 JPY, pass.
+#   * amateur: seed = Estes Wizard kit scaled x3.07 to 1 kg / 2 km: minimum-diameter 54 mm LOC
+#     airframe on the dummy_J420, balsa fins, 45 in chute -> 2310 m, fails +/-10 % (+15 %,
+#     drag-limited: the 57 mm airframe is too slim) and the scaled 98 x 169 mm fins do not fit
+#     the 76 mm balsa sheet. Attempt 1 is design_from_parts on the seed: buildability error
+#     `fin_sheet`, not simulated (the readable reason). Attempt 2 fixes both causes: a 66 mm
+#     Estes BT-80 airframe (two tubes + coupler) with the 54 mm mount adds the frontal area the
+#     overshoot needs, 3 mm plywood fins 160/70/110 mm cut from a 300 mm sheet, 45 in nylon
+#     chute -> 1943 m, 4.5 m/s, 2.9 cal, 35,344 JPY, pass (Monte-Carlo ~0.9). Attempt 3: the
+#     same airframe with G-10 fins (stiffer at 300 m/s) -> 1939 m, pass.
 #   * commercial: seed = Electron scaled to 150 kg / 400 km (4 + 1 Rutherford, 4,625 + 1,025 kg
 #     propellant), pitch re-tuned by tune=true (~3.5 s) -> 399.5 km circular, 37 kg margin,
 #     5.1 億円, passes: attempt 0. Attempt 1 adopts it as is (Monte-Carlo 0.94). Attempt 2 tries
@@ -259,6 +271,34 @@ DEMO_REQUIREMENTS: dict[str, dict[str, Any]] = {
 #     pass (Monte-Carlo 0.97).
 
 DesignVariant = Callable[[dict[str, Any]], dict[str, Any]]
+
+# The attempt tool per tier: bottle/amateur design in part space (the variant maps the seed
+# BUILD to a build), commercial/heavy simulate a geometric design (seed DESIGN to a design).
+DEMO_ATTEMPT_TOOL: dict[str, str] = {
+    "bottle": "design_from_parts",
+    "amateur": "design_from_parts",
+    "commercial": "simulate_design",
+    "heavy": "simulate_design",
+}
+
+# Attempt 2 of the amateur demo: the seed's motor, chute and hardware in a 66 mm BT-80
+# airframe (the sim says the 57 mm seed is 15 % hot and the 79 mm LOC tube 23 % short).
+_AMATEUR_BT80: dict[str, Any] = {
+    "body_tube_id": "estes_bt80_tube",
+    "body_length_m": 0.55,  # two 14.2 in tubes + coupler (buildability warns, as it should)
+    "nose_cone_id": "estes_pnc80_nose",
+    "motor_mount_id": "motor_mount_54mm",
+    "fin_material_id": "fin_plywood_3mm",
+    "fins": {
+        "count": 3,
+        "root_chord_m": 0.16,
+        "tip_chord_m": 0.07,
+        "span_m": 0.11,
+        "sweep_m": 0.08,
+    },
+    "parachute_id": "topflight_parachute_45in_nylon",
+    "launch_lug_id": "launch_lug_5mm_rod",
+}
 
 
 def _with_stage(design: dict[str, Any], index: int, **changes: Any) -> dict[str, Any]:
@@ -293,24 +333,25 @@ _HEAVY_FIX: dict[str, Any] = {
 # attempt i (1-based) = DEMO_VARIANTS[tier][i - 1](seed design from find_reference_designs)
 DEMO_VARIANTS: dict[str, list[DesignVariant]] = {
     "bottle": [
-        lambda seed: {**seed, "bottle_volume_m3": 0.0015},
-        lambda seed: {**seed, "bottle_volume_m3": 0.0015, "initial_gauge_pressure_pa": 500000},
-        lambda seed: {**seed, "bottle_volume_m3": 0.0015, "initial_gauge_pressure_pa": 400000},
+        lambda seed: dict(seed),  # the seed build as is: over budget (launcher)
+        lambda seed: {
+            **seed,
+            "bottle_id": "pet_bottle_1p5l",
+            "launcher_id": None,
+            "parachute_id": "bottle_parachute_30cm_plastic",
+        },
+        lambda seed: {
+            **seed,
+            "bottle_id": "pet_bottle_1p5l",
+            "launcher_id": None,
+            "parachute_id": "bottle_parachute_50cm_plastic",
+            "initial_gauge_pressure_pa": 400000,
+        },
     ],
     "amateur": [
-        lambda seed: dict(seed),
-        lambda seed: {
-            **seed,
-            "body_diameter_m": 0.066,
-            "dry_mass_kg": 0.5,
-            "parachute_diameter_m": 1.0,
-        },
-        lambda seed: {
-            **seed,
-            "body_diameter_m": 0.066,
-            "dry_mass_kg": 0.5,
-            "parachute_diameter_m": 1.2,
-        },
+        lambda seed: dict(seed),  # the seed build as is: fins do not fit the balsa sheet
+        lambda seed: {**seed, **_AMATEUR_BT80},
+        lambda seed: {**seed, **_AMATEUR_BT80, "fin_material_id": "fin_g10_1p6mm"},
     ],
     "commercial": [
         lambda seed: dict(seed),
@@ -325,7 +366,7 @@ DEMO_VARIANTS: dict[str, list[DesignVariant]] = {
 
 # 0-based index (into DEMO_VARIANTS[tier]) of the first attempt meant to pass: it gets the
 # run_dispersion call and its success rate is quoted in the final answer.
-DEMO_PASSING_INDEX: dict[str, int] = {"bottle": 0, "amateur": 1, "commercial": 0, "heavy": 1}
+DEMO_PASSING_INDEX: dict[str, int] = {"bottle": 1, "amateur": 1, "commercial": 0, "heavy": 1}
 
 # find_reference_designs `tune` per tier (orbit goals only; heavy stays untuned: see above)
 DEMO_TUNE: dict[str, bool] = {"bottle": False, "amateur": False, "commercial": True, "heavy": False}
@@ -333,20 +374,25 @@ DEMO_TUNE: dict[str, bool] = {"bottle": False, "amateur": False, "commercial": T
 # Narration of the simulate turns (thinking blocks), per tier: (attempt 1, attempts 2..N).
 _DEMO_NARRATION: dict[str, tuple[str, str]] = {
     "bottle": (
-        "The seed scaled from the Apte 2 L bottle passed its own simulation (attempt 0). The "
-        "user has a 1.5 L bottle, so attempt 1 keeps the seed's pressure and parachute in the "
-        "1.5 L bottle.",
-        "Attempt 1 passed. The derived gauge pressure (energy formula) is far above the seed's, "
-        "so attempt 2 moves halfway towards it to see which is right; attempt 3 is a small "
-        "pressure increase on the seed for margin.",
+        "The seed is the Apte 2 L kit's parts scaled to 30 m with a 50 cm chute for the egg; "
+        "its own sim flew (32 m) but the bill of 4,280 JPY is over the 3,000 JPY budget. "
+        "Attempt 1 adopts the seed build with design_from_parts to read the bill.",
+        "Attempt 1 failed on cost: the bicycle-pump launcher is 3,000 JPY of the bill and is "
+        "ground equipment the school already has, not part of the rocket. Attempt 2: the "
+        "1.5 L bottle the user has, the launcher left off the bill, the 30 cm chute, same "
+        "pressure. Attempt 3: 400 kPa for margin and the 50 cm chute for a softer egg landing.",
     ),
     "amateur": (
-        "The seed scaled from the Estes Alpha III missed the +/-10 % apogee window (about a "
-        "tenth too high). Attempt 1 simulates it as is with the scenario seed to confirm.",
-        "Attempt 1 failed on apogee (too hot). The cause: the scaled airframe is lighter and "
-        "slimmer than the derived 1.8 kg liftoff estimate assumed, so the J motor overshoots. "
-        "Fix: a 66 mm airframe with a 500 g dry mass and a 1.0 m chute (attempt 2), and the "
-        "same with a 1.2 m chute for a softer landing (attempt 3).",
+        "The seed is the Estes Wizard kit scaled x3 into a minimum-diameter 54 mm airframe on "
+        "the J motor; its own sim overshoots (+15 %) and the scaled fins look too big for a "
+        "balsa sheet. Attempt 1 adopts the seed build with design_from_parts to see what the "
+        "buildability check says.",
+        "Attempt 1 was not simulated: buildability error, the 98 x 169 mm fins do not fit the "
+        "76 mm balsa sheet. The seed sim also says the apogee is drag-limited (a slimmer "
+        "airframe flies higher), so attempt 2 fixes both: a 66 mm BT-80 airframe (two tubes "
+        "and a coupler) with the 54 mm mount for more frontal area, 3 mm plywood fins cut "
+        "from a 300 mm sheet, the 45 in nylon chute. Attempt 3: the same with G-10 fins, "
+        "stiffer at 300 m/s.",
     ),
     "commercial": (
         "The seed scaled from Electron (pitch program re-tuned for 400 km) reached orbit in its "
@@ -388,23 +434,37 @@ def tool_inputs_from_history(history: list[dict[str, Any]]) -> dict[str, dict[st
     return out
 
 
-def _seed_design_from_history(history: list[dict[str, Any]]) -> dict[str, Any]:
+def _seed_from_history(history: list[dict[str, Any]], tier: str) -> dict[str, Any]:
+    """The seed the attempts start from: the parts `build` for the part-space tiers, the
+    `design` otherwise (both from the find_reference_designs tool result)."""
     ref = tool_results_from_history(history).get(_REFERENCE_ID) or {}
     seed = ref.get("seed") or {}
-    design = seed.get("design")
-    if not isinstance(design, dict):
+    key = "build" if DEMO_ATTEMPT_TOOL[tier] == "design_from_parts" else "design"
+    value = seed.get(key)
+    if not isinstance(value, dict):
         raise RuntimeError(
-            "demo script: find_reference_designs returned no seed design "
+            f"demo script: find_reference_designs returned no seed {key} "
             f"(note={ref.get('note')!r}, error={ref.get('error')!r})"
         )
-    return design
+    return value
+
+
+def attempt_outcome(tier: str, result: dict[str, Any]) -> tuple[dict[str, Any], Any]:
+    """(sim result, design) of an attempt tool result of `tier`: the result itself for
+    simulate_design; the embedded `sim` ({} when a buildability error stopped it) and the
+    resolved `design` for design_from_parts."""
+    if DEMO_ATTEMPT_TOOL[tier] == "design_from_parts":
+        sim = result.get("sim")
+        return (sim if isinstance(sim, dict) else {}), result.get("design")
+    return result, result.get("tuned_design")
 
 
 def demo_designs(
     tier: str, env: dict[str, Any] | None = None, requirement_text: str = ""
 ) -> list[dict[str, Any]]:
     """The designs the demo script simulates for `tier`, attempt order, computed the way the
-    script does (seed from the find_reference_designs tool, then DEMO_VARIANTS). For tests that
+    script does (seed from the find_reference_designs tool, then DEMO_VARIANTS; for the
+    part-space tiers each variant build is resolved with design_from_parts). For tests that
     need a concrete demo design; commercial costs a few seconds (tune=true)."""
     from rocketwright.agent.tools import execute_tool
 
@@ -421,10 +481,23 @@ def demo_designs(
         },
         _REFERENCE_ID,
     )
-    seed = (out.get("seed") or {}).get("design")
+    part_space = DEMO_ATTEMPT_TOOL[tier] == "design_from_parts"
+    seed = (out.get("seed") or {}).get("build" if part_space else "design")
     if not isinstance(seed, dict):
-        raise RuntimeError(f"no seed design for tier {tier!r}: {out.get('note') or out}")
-    return [variant(seed) for variant in DEMO_VARIANTS[tier]]
+        raise RuntimeError(f"no seed for tier {tier!r}: {out.get('note') or out}")
+    if not part_space:
+        return [variant(seed) for variant in DEMO_VARIANTS[tier]]
+    designs = []
+    for variant in DEMO_VARIANTS[tier]:
+        res = execute_tool(
+            "design_from_parts",
+            {"build": variant(seed), "env": env or None, "requirement": requirement, "seed": None},
+            "toolu_demo_resolve",
+        )
+        if not isinstance(res.get("design"), dict):
+            raise RuntimeError(f"demo build for {tier!r} did not resolve: {res}")
+        designs.append(res["design"])
+    return designs
 
 
 def _derived_phrase(derive: dict[str, Any], tier: str) -> str:
@@ -462,17 +535,20 @@ def _derived_phrase(derive: dict[str, Any], tier: str) -> str:
 
 _DEMO_STORY: dict[str, str] = {
     "bottle": (
-        "The seed passed as attempt 0; attempt 1 fitted it into the user's 1.5 L bottle and "
-        "passed. Attempt 2 moved towards the derived pressure and overshot the apogee window: "
-        "the simulation is trusted over the formula, whose provisional energy-efficiency "
-        "constant lumps nozzle and drag losses and is pessimistic for this bottle. Attempt 3 "
-        "passed with a slightly higher pressure."
+        "Designed from parts: the seed kit (Apte 2 L) flew but its bill was over budget "
+        "(attempt 1 failed on cost: the 3,000 JPY launcher). Attempt 2 moved to the user's "
+        "1.5 L bottle, left the launcher (school equipment) off the bill and passed; attempt 3 "
+        "added pressure margin and the larger chute for the egg and passed. The derived "
+        "pressure (energy formula) is above the one flown: the simulation is trusted over the "
+        "formula, whose provisional energy-efficiency constant is pessimistic for this bottle."
     ),
     "amateur": (
-        "The seed flew about a tenth too high (attempt 1 failed on apogee): the simulation is "
-        "trusted over the derived impulse, whose drag factor assumes a heavier, draggier "
-        "airframe than the scaled one. Attempts 2 and 3 widened the airframe and added dry "
-        "mass (the cause), and passed."
+        "Designed from parts: the seed kit (Estes Wizard scaled into a 54 mm minimum-diameter "
+        "airframe) could not be built as scaled (attempt 1: the fins do not fit the balsa "
+        "sheet) and its own sim overshot the apogee window, drag-limited. Attempts 2 and 3 "
+        "moved the same motor into a wider 66 mm BT-80 airframe with plywood then G-10 fins "
+        "cut from a 300 mm sheet and the 45 in chute, and passed. The simulation is trusted "
+        "over the derived impulse, whose drag factor assumes a different airframe."
     ),
     "commercial": (
         "The re-tuned seed reached orbit (attempt 0) and was adopted as attempt 1. Attempt 2 "
@@ -495,30 +571,48 @@ def _final_from_results(
     dispersion_ids: dict[int, str] | None = None,
 ):
     """Script item that composes the final JSON from the tool results in history: the designs
-    come from the simulate_design tool_use inputs, the metrics/cost from their results. Only
-    passing designs are reported (CLAUDE.md section 1); if none passed, all attempts are
-    listed with passed=false so the user still sees what was tried. `dispersion_ids` maps an
-    attempt index to the run_dispersion tool_use id whose success_rate it quotes. The final
-    cites `reference_id` (find_reference_designs) and `derived_targets` (derive_requirements)
-    and quotes two derived numbers, so the provenance check must find them in the results."""
+    come from the attempt tool_use inputs (simulate_design) or the resolved `design` of the
+    design_from_parts results, the metrics/cost from the sim results. Only passing designs are
+    reported (CLAUDE.md section 1); if none passed, all attempts are listed with passed=false
+    so the user still sees what was tried. `dispersion_ids` maps an attempt index to the
+    run_dispersion tool_use id whose success_rate it quotes. The final cites `reference_id`
+    (find_reference_designs) and `derived_targets` (derive_requirements) and quotes two derived
+    numbers, so the provenance check must find them in the results. Part-space designs also
+    carry `build` (the part ids) and the bill's part rows."""
     dispersion_ids = dispersion_ids or {}
+    part_space = DEMO_ATTEMPT_TOOL[tier] == "design_from_parts"
 
     def build(history: list[dict[str, Any]]) -> Message:
         results = tool_results_from_history(history)
         inputs = tool_inputs_from_history(history)
         out_designs = []
         for i, sim_id in enumerate(sim_ids):
-            sim = results.get(sim_id, {})
-            design = sim.get("tuned_design") or (inputs.get(sim_id) or {}).get("design")
+            result = results.get(sim_id, {})
+            sim, design = attempt_outcome(tier, result)
+            if design is None:
+                design = (inputs.get(sim_id) or {}).get("design")
             metrics = sim.get("metrics", {})
             cost = sim.get("cost_jpy")
             key = "perigee_m" if "perigee_m" in metrics else "apogee_m"
-            verdict = (
-                "passed"
-                if sim.get("success")
-                else "failed: " + "; ".join(sim.get("failure_reasons", []))
-            )
+            if sim.get("success"):
+                verdict = "passed"
+            elif sim:
+                verdict = "failed: " + "; ".join(sim.get("failure_reasons", []))
+            else:
+                errors = [
+                    it.get("message", "")
+                    for it in result.get("issues", [])
+                    if isinstance(it, dict) and it.get("severity") == "error"
+                ]
+                verdict = "not simulated, buildability error: " + "; ".join(errors)
             explanation = f"{key} = {metrics.get(key)} m, cost {cost} JPY ({verdict})"
+            if part_space and isinstance(result.get("build"), dict):
+                parts = [
+                    v
+                    for k, v in result["build"].items()
+                    if k.endswith("_id") and isinstance(v, str)
+                ]
+                explanation += "; parts: " + ", ".join(parts)
             sources = {**{k: sim_id for k in metrics}, "cost_jpy": sim_id}
             success_rate = None
             disp_id = dispersion_ids.get(i)
@@ -530,17 +624,24 @@ def _final_from_results(
                     f"; Monte-Carlo success_rate = {success_rate} over n = {disp.get('n')} "
                     f"perturbed flights"
                 )
-            out_designs.append(
-                {
-                    "design": design,
-                    "metrics": metrics,
-                    "passed": bool(sim.get("success")),
-                    "cost_jpy": cost,
-                    "success_rate": success_rate,
-                    "sources": sources,
-                    "explanation": explanation,
-                }
-            )
+            row: dict[str, Any] = {
+                "design": design,
+                "metrics": metrics,
+                "passed": bool(sim.get("success")),
+                "cost_jpy": cost,
+                "success_rate": success_rate,
+                "sources": sources,
+                "explanation": explanation,
+            }
+            if part_space:
+                row["build"] = result.get("build")
+                bill = result.get("bill") or {}
+                row["bill"] = [
+                    {k: r.get(k) for k in ("part_id", "qty", "mass_kg", "price_jpy")}
+                    for r in bill.get("parts", [])
+                    if isinstance(r, dict)
+                ]
+            out_designs.append(row)
         passing = [d for d in out_designs if d["passed"]]
         n_failed = len(out_designs) - len(passing)
         model = {"bottle": "water", "amateur": "solid"}.get(tier, "multistage")
@@ -620,9 +721,10 @@ def build_demo_script(
     dispersion: bool = True,
 ) -> list[ScriptItem]:
     """classify -> derive_requirements + search_catalog (one turn) -> find_reference_designs
-    (seed=true) -> simulate_design on the seed-based attempt 1 -> simulate_design x(N-1) in one
-    turn (DEMO_VARIANTS) -> run_dispersion on the first passing attempt (DEMO_PASSING_INDEX,
-    n=100) -> final JSON quoting its success_rate, the reference id and the derive tool id.
+    (seed=true) -> attempt 1 on the seed (DEMO_ATTEMPT_TOOL: design_from_parts for bottle /
+    amateur, simulate_design otherwise) -> attempts 2..N in one turn (DEMO_VARIANTS) ->
+    run_dispersion on the first passing attempt (DEMO_PASSING_INDEX, n=100) -> final JSON
+    quoting its success_rate, the reference id, the derive tool id and (part space) the parts.
     With `reviews=True` the returned DemoScript also carries `build_demo_reviews()` for the
     fake client's reviewer calls; `dispersion=False` drops the run_dispersion turn
     (loop-mechanics tests)."""
@@ -632,13 +734,20 @@ def build_demo_script(
     dispersion_index = DEMO_PASSING_INDEX[tier]
     dispersion_ids = {dispersion_index: _DISPERSION_ID} if dispersion else {}
     narration_first, narration_rest = _DEMO_NARRATION[tier]
+    attempt_tool = DEMO_ATTEMPT_TOOL[tier]
 
-    def simulate(sim_id: str, design: dict[str, Any]):
+    def simulate(sim_id: str, candidate: dict[str, Any]):
+        if attempt_tool == "design_from_parts":
+            return tool_use_block(
+                sim_id,
+                "design_from_parts",
+                {"build": candidate, "env": env, "seed": seed, "requirement": requirement},
+            )
         return tool_use_block(
             sim_id,
             "simulate_design",
             {
-                "design": design,
+                "design": candidate,
                 "env": env,
                 "seed": seed,
                 "requirement": requirement,
@@ -647,19 +756,19 @@ def build_demo_script(
         )
 
     def first_attempt(history: list[dict[str, Any]]) -> Message:
-        design = variants[0](_seed_design_from_history(history))
+        candidate = variants[0](_seed_from_history(history, tier))
         return make_message(
-            [thinking_block(narration_first), simulate(sim_ids[0], design)],
+            [thinking_block(narration_first), simulate(sim_ids[0], candidate)],
             stop_reason="tool_use",
         )
 
     def later_attempts(history: list[dict[str, Any]]) -> Message:
-        seed_design = _seed_design_from_history(history)
+        seed_value = _seed_from_history(history, tier)
         return make_message(
             [
                 thinking_block(narration_rest),
                 *[
-                    simulate(sim_id, variant(seed_design))
+                    simulate(sim_id, variant(seed_value))
                     for sim_id, variant in zip(sim_ids[1:], variants[1:], strict=True)
                 ],
             ],
@@ -667,7 +776,14 @@ def build_demo_script(
         )
 
     def dispersion_turn(history: list[dict[str, Any]]) -> Message:
-        design = variants[dispersion_index](_seed_design_from_history(history))
+        if attempt_tool == "design_from_parts":
+            # the resolved design of the passing attempt, from its design_from_parts result
+            result = tool_results_from_history(history).get(sim_ids[dispersion_index]) or {}
+            design = result.get("design")
+            if not isinstance(design, dict):
+                raise RuntimeError("demo script: the passing attempt has no resolved design")
+        else:
+            design = variants[dispersion_index](_seed_from_history(history, tier))
         return make_message(
             [
                 thinking_block(

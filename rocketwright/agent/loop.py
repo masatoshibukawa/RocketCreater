@@ -4,7 +4,12 @@
   guard check -> [error] | (thinking | text | tool_call | tool_result | candidate | review)* ->
   [warning] final | question | error
 
-Phase 3 reviewers (review.py): every passing simulate_design result (a candidate) is reviewed
+Attempts: a `simulate_design` call (commercial/heavy, or a geometric design) or a
+`design_from_parts` call (bottle/amateur: parts -> buildability -> sim) is one attempt
+(ATTEMPT_TOOLS); a design_from_parts result stopped by a buildability error has `sim: null`
+and is a failed attempt with no candidate.
+
+Phase 3 reviewers (review.py): every passing attempt result (a candidate) is reviewed
 once by the four per-aspect reviewers; their verdicts are emitted as a `review` event, and
 major/blocker findings are appended as a text block AFTER the tool_result blocks of the same
 user message (the API requires tool_result blocks to lead the user turn). A blocker removes the
@@ -55,6 +60,9 @@ from rocketwright.schema import Env
 __all__ = ["AgentConfig", "ReviewerConfig", "models_config_path", "run_design_loop"]
 
 ATTEMPT_TOOL = "simulate_design"
+# design_from_parts is the bottle/amateur attempt: a build resolved, checked and simulated.
+# Both count against the attempt budget and both yield candidates when their sim passes.
+ATTEMPT_TOOLS = (ATTEMPT_TOOL, "design_from_parts")
 REFERENCE_TOOL = "find_reference_designs"
 _TRACE_KEY = "trace"
 
@@ -147,6 +155,18 @@ def _for_model(result: dict[str, Any]) -> dict[str, Any]:
     if isinstance(seed, dict) and isinstance(seed.get("sim"), dict):
         slim = {**slim, "seed": {**seed, "sim": _without_trace(seed["sim"])}}
     return slim
+
+
+def attempt_outcome(
+    name: str, tool_input: dict[str, Any], result: dict[str, Any]
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    """(sim result, design) of an attempt tool result. simulate_design: the result itself and
+    the input design (or the tuned one); design_from_parts: the embedded `sim` (None when a
+    buildability error stopped the simulation) and the resolved `design`."""
+    if name == "design_from_parts":
+        sim = result.get("sim")
+        return (sim if isinstance(sim, dict) else None), result.get("design")
+    return result, result.get("tuned_design") or tool_input.get("design")
 
 
 def _seed_candidate(tool_use_id: str, result: dict[str, Any]) -> dict[str, Any] | None:
@@ -382,11 +402,11 @@ async def run_design_loop(
         feedback_texts: list[str] = []
         for tu in tool_uses:
             tool_input = tu.input if isinstance(tu.input, dict) else {}
-            if tu.name == ATTEMPT_TOOL:
+            if tu.name in ATTEMPT_TOOLS:
                 if attempts >= cfg.max_attempts:
                     result: dict[str, Any] = {
-                        "error": f"attempt budget exhausted ({cfg.max_attempts} simulate_design "
-                        "calls); produce the final answer now",
+                        "error": f"attempt budget exhausted ({cfg.max_attempts} simulate_design / "
+                        "design_from_parts calls); produce the final answer now",
                         "source_id": tu.id,
                     }
                 else:
@@ -405,14 +425,19 @@ async def run_design_loop(
                 seed_candidate = _seed_candidate(tu.id, result)
                 if seed_candidate is not None:
                     yield ev("candidate", seed_candidate)  # attempt 0: free, not reviewed
-            if tu.name == ATTEMPT_TOOL and not is_error and result.get("success"):
+            sim, design = attempt_outcome(tu.name, tool_input, result)
+            if tu.name in ATTEMPT_TOOLS and not is_error and sim and sim.get("success"):
                 candidate = {
                     "source_id": tu.id,
-                    # with tune_pitch the simulated design is the tuned one
-                    "design": result.get("tuned_design") or tool_input.get("design"),
-                    "metrics": result.get("metrics", {}),
-                    "cost_jpy": result.get("cost_jpy"),
+                    # simulate_design: the input design (the tuned one with tune_pitch);
+                    # design_from_parts: the resolved design, plus the parts and the bill
+                    "design": design,
+                    "metrics": sim.get("metrics", {}),
+                    "cost_jpy": sim.get("cost_jpy"),
                 }
+                if tu.name == "design_from_parts":
+                    candidate["build"] = result.get("build")
+                    candidate["bill"] = result.get("bill")
                 yield ev("candidate", candidate)
                 # 4b. per-aspect reviewers, once per candidate (review.py)
                 if (
@@ -424,9 +449,16 @@ async def run_design_loop(
                         api,
                         cfg,
                         candidate,
-                        _for_model(result),
+                        _for_model(sim),  # the sim result (design_from_parts: its `sim`)
                         requirement_text,
-                        extra_context={"requirement": tool_input.get("requirement")},
+                        extra_context={
+                            "requirement": tool_input.get("requirement"),
+                            **(
+                                {"build": result.get("build"), "bill": result.get("bill")}
+                                if tu.name == "design_from_parts"
+                                else {}
+                            ),
+                        },
                     )
                     verdicts = run.verdicts
                     feedback = review_feedback_message(verdicts, source_id=tu.id)
@@ -464,8 +496,8 @@ async def run_design_loop(
                 {
                     "type": "text",
                     "text": f"Attempt budget reached ({attempts}/{cfg.max_attempts} "
-                    "simulate_design calls). Do not simulate again; write the final JSON answer "
-                    "now from the results you already have.",
+                    "simulate_design / design_from_parts calls). Do not simulate again; write "
+                    "the final JSON answer now from the results you already have.",
                 }
             )
         messages.append({"role": "user", "content": results_content})

@@ -53,11 +53,12 @@ is `provisional: true`. `dummy_*.eng` are placeholders used by the tests.
 
 | file | basis |
 | --- | --- |
-| `estes_B6`, `estes_C6`, `estes_D12`, `estes_E12` | Estes product pages |
+| `estes_A8`, `estes_B6`, `estes_C6`, `estes_D12`, `estes_E12` | Estes product pages |
 | `aerotech_F32T` | NAR S&T certification sheet (via thrustcurve.org) |
 | `aerotech_G80T` | thrustcurve.org summary, NAR data sheet |
 | `aerotech_H128W`, `aerotech_I200W` | thrustcurve.org summary (TRA certified); high-power, flag in the checklist |
 
-Not bundled: Estes A8. Its published 2.50 N-s over 0.80 s gives an average thrust of ~3.1 N,
-and `tests/test_solid.py` requires the number after the class letter to be the average thrust
-within 30 %, which the "A8" designation cannot satisfy with the published burn time.
+`estes_A8`: the published 2.50 N-s over 0.80 s gives an average thrust of ~3.1 N, so the "8"
+in its designation is not the average thrust (Estes' historical rating). `tests/test_solid.py`
+exempts this one motor from its label-vs-average-thrust check (`_LABEL_IS_NOT_AVERAGE_THRUST`)
+instead of faking the curve; the integral, peak and burn time still match the Estes page.

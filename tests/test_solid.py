@@ -49,6 +49,12 @@ def _class_bounds_ns(letter: str) -> tuple[float, float]:
     return upper / 2.0, upper
 
 
+# Motors whose designation number is NOT their average thrust: the Estes A8 is 2.50 N-s over a
+# published 0.80 s burn (3.1 N average, 10.7 N peak); the "8" is Estes' historical rating, so
+# the average-thrust check would reject the manufacturer's own numbers (catalog/README.md).
+_LABEL_IS_NOT_AVERAGE_THRUST = {"estes_A8"}
+
+
 @pytest.mark.parametrize("motor_id", solid.list_motor_ids())
 def test_bundled_motor_total_impulse_matches_class_letter(motor_id: str) -> None:
     motor = solid.load_motor(motor_id)
@@ -57,7 +63,10 @@ def test_bundled_motor_total_impulse_matches_class_letter(motor_id: str) -> None
     lo, hi = _class_bounds_ns(m.group(1))
     assert lo < motor.total_impulse_ns <= hi, (motor_id, motor.total_impulse_ns)
     # the number after the letter is the average thrust in N (within 30 %)
-    assert motor.average_thrust_n == pytest.approx(float(m.group(2)), rel=0.30)
+    if motor_id not in _LABEL_IS_NOT_AVERAGE_THRUST:
+        assert motor.average_thrust_n == pytest.approx(float(m.group(2)), rel=0.30)
+    else:
+        assert motor.average_thrust_n < float(m.group(2))  # the known exception, documented
     assert motor.thrust_curve[0][0] == 0.0
     assert motor.thrust_curve[-1][1] == 0.0
     assert all(
