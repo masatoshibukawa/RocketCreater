@@ -9,6 +9,7 @@ compose a final answer whose numbers really come from tool results).
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable
 from typing import Any
 
@@ -17,9 +18,13 @@ from anthropic.types import Message, TextBlock, ThinkingBlock, ToolUseBlock, Usa
 __all__ = [
     "DEMO_DESIGNS",
     "DEMO_REQUIREMENTS",
+    "DemoScript",
     "FakeAnthropicClient",
+    "FakeParsedMessage",
     "FakeStream",
+    "ReviewScriptItem",
     "ScriptItem",
+    "build_demo_reviews",
     "build_demo_script",
     "make_message",
     "text_block",
@@ -77,11 +82,37 @@ class FakeStream:
         return self._message
 
 
+class FakeParsedMessage:
+    """Mimics the `ParsedMessage` returned by `client.messages.parse(...)` (structured output):
+    `parsed_output` is the validated model, `content` holds the same JSON as a text block."""
+
+    def __init__(self, parsed_output: Any) -> None:
+        self.parsed_output = parsed_output
+        self.content = [text_block(parsed_output.model_dump_json())]
+        self.stop_reason = "end_turn"
+
+
+# One scripted reviewer answer: a verdict (model or dict), an exception to raise from the fake
+# API, or a callable receiving the `parse` kwargs (to cite numbers from the request itself).
+ReviewScriptItem = Any
+_REVIEW_HEADER_RE = re.compile(r"^Review aspect: (\w+)\n\nCandidate source_id: (\S+)", re.DOTALL)
+
+
 class _FakeMessages:
-    def __init__(self, script: list[ScriptItem], calls: list[dict[str, Any]]) -> None:
+    def __init__(
+        self,
+        script: list[ScriptItem],
+        calls: list[dict[str, Any]],
+        reviews: list[dict[str, ReviewScriptItem]] | None = None,
+        parse_calls: list[dict[str, Any]] | None = None,
+    ) -> None:
         self._script = list(script)
         self._index = 0
         self.calls = calls
+        # reviews[i][aspect] answers the i-th distinct candidate reviewed; missing -> "ok"
+        self._reviews = list(reviews or [])
+        self._review_ids: list[str] = []
+        self.parse_calls = parse_calls if parse_calls is not None else []
 
     def stream(self, **kwargs: Any) -> FakeStream:
         self.calls.append(kwargs)
@@ -92,13 +123,42 @@ class _FakeMessages:
         message = item(list(kwargs.get("messages", []))) if callable(item) else item
         return FakeStream(message)
 
+    async def parse(self, **kwargs: Any) -> FakeParsedMessage:
+        """Structured-output call used by the reviewers (rocketwright.agent.review)."""
+        from rocketwright.agent.review import ReviewVerdict
+
+        self.parse_calls.append(kwargs)
+        content = kwargs.get("messages", [{}])[0].get("content", "")
+        m = _REVIEW_HEADER_RE.match(content if isinstance(content, str) else "")
+        aspect, source_id = (m.group(1), m.group(2)) if m else ("unknown", "unknown")
+        if source_id not in self._review_ids:
+            self._review_ids.append(source_id)
+        index = self._review_ids.index(source_id)
+        item = self._reviews[index].get(aspect) if index < len(self._reviews) else None
+        if item is None:
+            item = {"aspect": aspect, "severity": "ok", "findings": [], "suggested_changes": []}
+        if isinstance(item, BaseException):
+            raise item
+        if callable(item):
+            item = item(kwargs)
+        verdict = item if isinstance(item, ReviewVerdict) else ReviewVerdict.model_validate(item)
+        return FakeParsedMessage(verdict)
+
 
 class FakeAnthropicClient:
-    """Duck-types the `messages.stream` surface used by rocketwright.agent.loop."""
+    """Duck-types the `messages.stream` and `messages.parse` surfaces used by
+    rocketwright.agent.loop / review. `reviews` scripts the reviewer answers (see
+    _FakeMessages); when omitted, a script built with `build_demo_script(..., reviews=True)`
+    supplies them, else every reviewer answers "ok"."""
 
-    def __init__(self, script: list[ScriptItem]) -> None:
+    def __init__(
+        self, script: list[ScriptItem], reviews: list[dict[str, ReviewScriptItem]] | None = None
+    ) -> None:
         self.calls: list[dict[str, Any]] = []
-        self.messages = _FakeMessages(script, self.calls)
+        self.parse_calls: list[dict[str, Any]] = []
+        if reviews is None:
+            reviews = getattr(script, "reviews", None)
+        self.messages = _FakeMessages(script, self.calls, reviews, self.parse_calls)
 
 
 def tool_results_from_history(history: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
@@ -121,7 +181,7 @@ def tool_results_from_history(history: list[dict[str, Any]]) -> dict[str, dict[s
 DEMO_REQUIREMENTS: dict[str, dict[str, Any]] = {
     "bottle": {
         "goal_kind": "altitude",
-        "target_altitude_m": 25,
+        "target_altitude_m": 30,
         "target_apogee_m": None,
         "payload_mass_kg": 0.06,
         "budget_jpy": 3000,
@@ -163,16 +223,25 @@ DEMO_REQUIREMENTS: dict[str, dict[str, Any]] = {
 
 _FINS = {
     "count": 4,
-    "root_chord_m": 0.12,
-    "tip_chord_m": 0.06,
-    "span_m": 0.07,
+    "root_chord_m": 0.10,
+    "tip_chord_m": 0.05,
+    "span_m": 0.035,
     "sweep_m": 0.03,
     "thickness_m": 0.003,
 }
 
 # The FIRST design of every tier is meant to fail so the demo shows "read the failure reason,
-# fix the cause"; the following ones pass. Bottle/amateur are judged by the dummy physics until
-# phase 3; commercial/heavy by the real multistage model.
+# fix the cause"; the following ones pass. Every tier is judged by its real physics model
+# (bottle: physics.water, amateur: physics.solid, commercial/heavy: physics.multistage).
+#
+# Bottle/amateur numbers came from scripts/tune_suborbital_demo.py (real physics, scenario env):
+#   * bottle attempt 1: 1.5 L, 40 % water, 500 kPa, no parachute -> apogee ~47 m and a 24 m/s
+#     ballistic descent; fails "add a parachute" / "recovery required" / apogee > 33 m.
+#   * bottle attempts 2-3: 0.5 m parachute, 300 kPa (1.5 L -> ~29 m, 2 L -> ~32 m) -> pass.
+#   * amateur attempt 1: dummy_I200 on a 1 kg payload with a 0.6 m chute -> apogee ~1.2 km and a
+#     9.5 m/s descent; fails "larger parachute" and "apogee below target".
+#   * amateur attempt 2: dummy_J420 in a 66 mm airframe with a 1.2 m chute -> ~2.1 km, 5.5 m/s.
+#   * amateur attempt 3: dummy_J420 in a heavier 54 mm airframe -> ~2.2 km, 5.9 m/s, 48 kJPY.
 #
 # Commercial numbers came from scripts/tune_demo_design.py (real physics, scenario env):
 #   * attempt 1: Electron-class, 9 x rutherford + 2 500 kg upper stage -> perigee ~290 km,
@@ -219,56 +288,53 @@ _AMATEUR_BASE = {
     "nose_shape": "ogive",
     "nose_length_m": 0.15,
     "fins": _FINS,
-    "motor_id": "dummy-J700",
-    "dry_mass_kg": 1.5,
+    "motor_id": "dummy_J420",
+    "dry_mass_kg": 1.8,
     "payload_mass_kg": 1.0,
     "parachute_diameter_m": 1.2,
-    "deploy_delay_s": 5.0,
+    "deploy_delay_s": 1.0,
+}
+
+_BOTTLE_BASE = {
+    "tier": "bottle",
+    "bottle_volume_m3": 0.0015,
+    "water_fill_frac": 0.4,
+    "initial_gauge_pressure_pa": 300000,
+    "nozzle_diameter_m": 0.022,
+    "dry_mass_kg": 0.12,
+    "payload_mass_kg": 0.06,
+    "has_fins": True,
+    "has_parachute": True,
+    "parachute_diameter_m": 0.5,
 }
 
 DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
     "bottle": [
-        {  # fails: apogee short of the 25 m target (dummy)
-            "tier": "bottle",
-            "bottle_volume_m3": 0.0015,
-            "water_fill_frac": 0.4,
+        {  # fails: no parachute (24 m/s ballistic descent) and 500 kPa overshoots 30 m
+            **_BOTTLE_BASE,
             "initial_gauge_pressure_pa": 500000,
-            "nozzle_diameter_m": 0.022,
-            "dry_mass_kg": 0.12,
-            "payload_mass_kg": 0.06,
-            "has_fins": True,
-            "has_parachute": True,
-            "parachute_diameter_m": 0.4,
+            "has_parachute": False,
+            "parachute_diameter_m": None,
         },
-        {
-            "tier": "bottle",
-            "bottle_volume_m3": 0.002,
-            "water_fill_frac": 0.35,
-            "initial_gauge_pressure_pa": 600000,
-            "nozzle_diameter_m": 0.022,
-            "dry_mass_kg": 0.14,
-            "payload_mass_kg": 0.06,
-            "has_fins": True,
-            "has_parachute": True,
-            "parachute_diameter_m": 0.5,
-        },
+        _BOTTLE_BASE,
+        {**_BOTTLE_BASE, "bottle_volume_m3": 0.002, "dry_mass_kg": 0.14},
     ],
     "amateur": [
-        {**_AMATEUR_BASE, "parachute_diameter_m": 0.6},  # fails: descent too fast (dummy)
-        _AMATEUR_BASE,
+        {  # fails: motor too small for 2 km (~1.2 km) and 0.6 m chute descends at 9.5 m/s
+            **_AMATEUR_BASE,
+            "motor_id": "dummy_I200",
+            "dry_mass_kg": 1.0,
+            "parachute_diameter_m": 0.6,
+        },
         {
-            "tier": "amateur",
+            **_AMATEUR_BASE,
             "body_diameter_m": 0.066,
             "body_length_m": 1.1,
-            "nose_shape": "ogive",
             "nose_length_m": 0.2,
-            "fins": {**_FINS, "span_m": 0.09},
-            "motor_id": "dummy-J700",
+            "fins": {**_FINS, "span_m": 0.045},
             "dry_mass_kg": 1.4,
-            "payload_mass_kg": 1.0,
-            "parachute_diameter_m": 1.1,
-            "deploy_delay_s": 6.0,
         },
+        _AMATEUR_BASE,
     ],
     "commercial": [
         _commercial(9250, 9, 2500, 12.0, 4.0),  # fails: perigee ~290 km < 400 km
@@ -357,7 +423,8 @@ def _final_from_results(tier: str, designs: list[dict[str, Any]], sim_ids: list[
             )
         passing = [d for d in out_designs if d["passed"]]
         n_failed = len(out_designs) - len(passing)
-        physics = "real multistage physics" if tier in ("commercial", "heavy") else "dummy physics"
+        model = {"bottle": "water", "amateur": "solid"}.get(tier, "multistage")
+        physics = f"real {model} physics"
         final = {
             "designs": passing or out_designs,
             "summary": (
@@ -372,11 +439,57 @@ def _final_from_results(tier: str, designs: list[dict[str, Any]], sim_ids: list[
     return build
 
 
+class DemoScript(list):  # type: ignore[type-arg]
+    """A script list that also carries scripted reviewer answers (`reviews`), picked up by
+    `FakeAnthropicClient(script)` when no explicit `reviews=` is given."""
+
+    reviews: list[dict[str, ReviewScriptItem]] | None = None
+
+
+def _sim_result_from_review_request(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """The simulate_design result embedded in a reviewer request (review.reviewer_request)."""
+    content = kwargs["messages"][0]["content"]
+    marker = "simulate_design result (tool output, cite its numbers only):\n"
+    tail = content.split(marker, 1)[1] if marker in content else "{}"
+    try:
+        return json.loads(tail.split("\n\nAdditional context:", 1)[0])
+    except ValueError:
+        return {}
+
+
+def _demo_cost_major(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """Demo cost verdict: cites the candidate's own cost_jpy (a number from the tool result),
+    states the threshold in words (no invented numbers; see REVIEWER_PROMPTS)."""
+    cost = _sim_result_from_review_request(kwargs).get("cost_jpy")
+    cited = f"cost_jpy {cost:.0f}" if isinstance(cost, (int, float)) else "cost_jpy"
+    return {
+        "aspect": "cost",
+        "severity": "major",
+        "findings": [
+            f"{cited} leaves only a thin margin under the budget; price drift of the "
+            "propulsion part could push it over"
+        ],
+        "suggested_changes": ["move to a cheaper propulsion option or drop optional parts"],
+    }
+
+
+def build_demo_reviews() -> list[dict[str, ReviewScriptItem]]:
+    """Scripted reviewer answers for the demo: the first candidate reviewed gets a "major"
+    cost finding, every later candidate (and every other aspect) is "ok"."""
+    return [{"cost": _demo_cost_major}]
+
+
 def build_demo_script(
-    tier: str, requirement_text: str, env: dict[str, Any], seed: int | None
+    tier: str,
+    requirement_text: str,
+    env: dict[str, Any],
+    seed: int | None,
+    *,
+    reviews: bool = False,
 ) -> list[ScriptItem]:
     """classify -> search_catalog -> simulate_design (first attempt, fails) -> simulate_design
-    x(N-1) in one turn (corrected designs) -> final JSON."""
+    x(N-1) in one turn (corrected designs) -> final JSON. With `reviews=True` the returned
+    DemoScript also carries `build_demo_reviews()` for the fake client's reviewer calls."""
     requirement = {**DEMO_REQUIREMENTS[tier], "text": requirement_text}
     designs = DEMO_DESIGNS[tier]
     sim_ids = [f"toolu_sim_{i + 1}" for i in range(len(designs))]
@@ -394,42 +507,52 @@ def build_demo_script(
             },
         )
 
-    return [
-        make_message(
-            [
-                thinking_block(f"Normalising the request; it looks like the {tier} tier."),
-                tool_use_block(
-                    "toolu_classify", "classify_requirement", {"requirement": requirement}
-                ),
-            ],
-            stop_reason="tool_use",
-        ),
-        make_message(
-            [
-                text_block("Looking up the catalog for this tier."),
-                tool_use_block(
-                    "toolu_search", "search_catalog", {"tier": tier, "query": None, "kind": "all"}
-                ),
-            ],
-            stop_reason="tool_use",
-        ),
-        make_message(
-            [
-                thinking_block("Proposing an initial design and simulating it."),
-                simulate(sim_ids[0], designs[0]),
-            ],
-            stop_reason="tool_use",
-        ),
-        make_message(
-            [
-                thinking_block(
-                    "The first attempt failed. Reading failure_reasons and fixing the cause "
-                    "(not the symptom): adjusting the design variable it points at, then "
-                    "simulating the corrected candidates."
-                ),
-                *[simulate(sim_id, d) for sim_id, d in zip(sim_ids[1:], designs[1:], strict=True)],
-            ],
-            stop_reason="tool_use",
-        ),
-        _final_from_results(tier, designs, sim_ids),
-    ]
+    script = DemoScript(
+        [
+            make_message(
+                [
+                    thinking_block(f"Normalising the request; it looks like the {tier} tier."),
+                    tool_use_block(
+                        "toolu_classify", "classify_requirement", {"requirement": requirement}
+                    ),
+                ],
+                stop_reason="tool_use",
+            ),
+            make_message(
+                [
+                    text_block("Looking up the catalog for this tier."),
+                    tool_use_block(
+                        "toolu_search",
+                        "search_catalog",
+                        {"tier": tier, "query": None, "kind": "all"},
+                    ),
+                ],
+                stop_reason="tool_use",
+            ),
+            make_message(
+                [
+                    thinking_block("Proposing an initial design and simulating it."),
+                    simulate(sim_ids[0], designs[0]),
+                ],
+                stop_reason="tool_use",
+            ),
+            make_message(
+                [
+                    thinking_block(
+                        "The first attempt failed. Reading failure_reasons and fixing the cause "
+                        "(not the symptom): adjusting the design variable it points at, then "
+                        "simulating the corrected candidates."
+                    ),
+                    *[
+                        simulate(sim_id, d)
+                        for sim_id, d in zip(sim_ids[1:], designs[1:], strict=True)
+                    ],
+                ],
+                stop_reason="tool_use",
+            ),
+            _final_from_results(tier, designs, sim_ids),
+        ]
+    )
+    if reviews:
+        script.reviews = build_demo_reviews()
+    return script

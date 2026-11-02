@@ -36,3 +36,43 @@ design:                                          # a rocketwright.schema.Multist
 
 The test replaces `payload_mass_kg` with `payload_to_leo_kg`, tunes the pitch program with
 `multistage.tune_pitch_program`, and simulates with `target_perigee_m = orbit_altitude_m`.
+
+# OpenRocket reference flights for `tests/test_solid.py`
+
+`test_openrocket_reference_flight` loads every `openrocket_*.yaml` file in this directory, runs
+`rocketwright.physics.solid.simulate` on the design it describes and compares the listed metrics
+with the OpenRocket values to within `tolerance_frac` (default 15 %). With no file present the
+test is skipped: a human must build the same vehicle in OpenRocket (https://openrocket.info/) and
+export the numbers. Use a motor whose `.eng` file is bundled under `rocketwright/catalog/motors/`
+(the synthetic `dummy_*` curves can be imported into OpenRocket as custom motors) so that both
+tools fly the same thrust curve.
+
+## Expected YAML format
+
+```yaml
+source: "OpenRocket 23.09, file sim/demo_amateur.ork, simulation 'calm day'"  # required
+notes: "optional: launch rod length, wind model, drag options used"
+tolerance_frac: 0.15                 # optional, relative tolerance per metric
+env:                                 # rocketwright.schema.Env (same site as the OpenRocket sim)
+  launch_altitude_m: 300
+  wind_speed_mps: 0.0
+  rail_length_m: 1.5
+design:                              # rocketwright.schema.AmateurDesign
+  tier: amateur
+  body_diameter_m: 0.054
+  body_length_m: 0.9                 # tube only; overall length = nose_length_m + body_length_m
+  nose_shape: ogive
+  nose_length_m: 0.15
+  fins: {count: 4, root_chord_m: 0.10, tip_chord_m: 0.05, span_m: 0.05, sweep_m: 0.03}
+  motor_id: dummy_G80
+  dry_mass_kg: 0.5                   # airframe without motor and payload
+  payload_mass_kg: 0.2
+  parachute_diameter_m: 0.9
+  deploy_delay_s: 1.0                # the model deploys at apogee + delay (see solid.py)
+expected:                            # any subset of SimResult.metrics keys
+  apogee_m: 550
+  max_speed_mps: 120
+  rail_exit_speed_mps: 17
+  stability_margin_cal: 2.9
+  descent_speed_mps: 3.7
+```

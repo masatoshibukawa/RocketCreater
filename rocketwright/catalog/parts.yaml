@@ -1,4 +1,143 @@
 # Parts catalog for the bottle and amateur tiers (nose cones, tubes, fins, parachutes, ...).
-# Each item: {id, tier, name, mass_kg, price_jpy, source|provisional}. Filled in phase 2/3.
-version: 1
-items: []
+# Each item: {id, tier, kind, name, mass_kg, price_jpy, source|provisional, notes}.
+# Every entry below is `provisional: true`: masses and JPY prices are representative hobby-shop
+# values written from memory, not quoted from a source URL. A human must replace them (CLAUDE.md
+# section 2, principle 4) before any number from this file is shown as a quotation.
+version: 2
+items:
+  # --- bottle tier -------------------------------------------------------------------------
+  - id: pet_bottle_1p5l
+    tier: bottle
+    kind: bottle
+    name: "1.5 L carbonated-drink PET bottle (pressure rated by use, ~90 mm dia.)"
+    mass_kg: 0.045
+    price_jpy: 150
+    provisional: true
+    notes: "bottle_volume_m3 = 0.0015; carbonated-drink bottles only (still-water bottles are thinner)"
+  - id: pet_bottle_2l
+    tier: bottle
+    kind: bottle
+    name: "2 L carbonated-drink PET bottle (~100 mm dia.)"
+    mass_kg: 0.055
+    price_jpy: 180
+    provisional: true
+    notes: "bottle_volume_m3 = 0.002"
+  - id: bottle_nozzle_22mm
+    tier: bottle
+    kind: nozzle
+    name: "Bottle-neck launcher nozzle / release, 22 mm bore (standard PET neck)"
+    mass_kg: 0.0
+    price_jpy: 800
+    provisional: true
+    notes: "nozzle_diameter_m = 0.022; the neck itself is the nozzle, this is the launcher seal"
+  - id: bottle_nozzle_9mm
+    tier: bottle
+    kind: nozzle
+    name: "Reducing nozzle insert, 9 mm bore (longer, gentler burn)"
+    mass_kg: 0.01
+    price_jpy: 400
+    provisional: true
+    notes: "nozzle_diameter_m = 0.009"
+  - id: bottle_fin_set_cardboard
+    tier: bottle
+    kind: fins
+    name: "3-4 corrugated-plastic / cardboard fins with tape"
+    mass_kg: 0.03
+    price_jpy: 200
+    provisional: true
+  - id: bottle_nose_cone_foam
+    tier: bottle
+    kind: nose_cone
+    name: "Foam / second-bottle-top nose cone with egg bay"
+    mass_kg: 0.04
+    price_jpy: 300
+    provisional: true
+  - id: parachute_0p5m_plastic
+    tier: bottle
+    kind: parachute
+    name: "0.5 m plastic-sheet parachute with string"
+    mass_kg: 0.02
+    price_jpy: 300
+    provisional: true
+    notes: "parachute_diameter_m = 0.5, Cd ~1.5 assumed in physics/recovery.py"
+  # --- amateur tier ------------------------------------------------------------------------
+  - id: body_tube_54mm_90cm
+    tier: amateur
+    kind: body_tube
+    name: "54 mm (2.1 in) phenolic / kraft body tube, 90 cm"
+    mass_kg: 0.25
+    price_jpy: 3500
+    provisional: true
+    notes: "body_diameter_m = 0.054"
+  - id: body_tube_66mm_110cm
+    tier: amateur
+    kind: body_tube
+    name: "66 mm (2.6 in) phenolic / kraft body tube, 110 cm"
+    mass_kg: 0.38
+    price_jpy: 4800
+    provisional: true
+    notes: "body_diameter_m = 0.066"
+  - id: nose_cone_54mm_ogive
+    tier: amateur
+    kind: nose_cone
+    name: "54 mm plastic ogive nose cone, 15 cm"
+    mass_kg: 0.06
+    price_jpy: 1500
+    provisional: true
+    notes: "nose_shape = ogive, nose_length_m = 0.15"
+  - id: nose_cone_66mm_ogive
+    tier: amateur
+    kind: nose_cone
+    name: "66 mm plastic ogive nose cone, 20 cm"
+    mass_kg: 0.09
+    price_jpy: 2000
+    provisional: true
+    notes: "nose_shape = ogive, nose_length_m = 0.20"
+  - id: fin_stock_plywood_3mm
+    tier: amateur
+    kind: fin_stock
+    name: "3 mm aircraft plywood sheet, 300 x 300 mm (cuts 4 trapezoidal fins)"
+    mass_kg: 0.12
+    price_jpy: 900
+    provisional: true
+    notes: "FinSet.thickness_m = 0.003"
+  - id: fin_stock_g10_2mm
+    tier: amateur
+    kind: fin_stock
+    name: "2 mm G10 fibreglass sheet, 300 x 300 mm"
+    mass_kg: 0.33
+    price_jpy: 2500
+    provisional: true
+    notes: "FinSet.thickness_m = 0.002"
+  - id: parachute_0p9m_nylon
+    tier: amateur
+    kind: parachute
+    name: "0.9 m ripstop nylon parachute"
+    mass_kg: 0.05
+    price_jpy: 3000
+    provisional: true
+    notes: "parachute_diameter_m = 0.9"
+  - id: parachute_1p2m_nylon
+    tier: amateur
+    kind: parachute
+    name: "1.2 m ripstop nylon parachute"
+    mass_kg: 0.08
+    price_jpy: 4500
+    provisional: true
+    notes: "parachute_diameter_m = 1.2"
+  - id: motor_mount_29mm
+    tier: amateur
+    kind: motor_mount
+    name: "29 mm motor mount tube + centering rings + retainer"
+    mass_kg: 0.08
+    price_jpy: 2000
+    provisional: true
+    notes: "for motors with diameter_m = 0.029 (dummy_F32 / G80 / H128)"
+  - id: motor_mount_54mm
+    tier: amateur
+    kind: motor_mount
+    name: "54 mm motor mount tube + centering rings + retainer"
+    mass_kg: 0.15
+    price_jpy: 3500
+    provisional: true
+    notes: "for motors with diameter_m = 0.054 (dummy_J420); needs a 66 mm+ airframe"

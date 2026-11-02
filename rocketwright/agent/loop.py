@@ -1,8 +1,14 @@
 """Design exploration loop over the Claude API (manual tool-use loop, streaming helper).
 
 `run_design_loop()` is an async generator of AgentEvent:
-  guard check -> [error] | (thinking | text | tool_call | tool_result | candidate)* ->
-  final | question | error
+  guard check -> [error] | (thinking | text | tool_call | tool_result | candidate | review)* ->
+  [warning] final | question | error
+
+Phase 3 reviewers (review.py): every passing simulate_design result (a candidate) is reviewed
+once by the four per-aspect reviewers; their verdicts are emitted as a `review` event, and
+major/blocker findings are appended as a text block AFTER the tool_result blocks of the same
+user message (the API requires tool_result blocks to lead the user turn). A blocker removes the
+design from the final passing list (`_apply_review_gate`).
 
 Facts baked in (anthropic SDK 1.x, claude-opus-5-5 / claude-haiku-5-5):
   * thinking = {"type": "adaptive", "display": "summarized"}; never `budget_tokens`;
@@ -29,11 +35,18 @@ from pydantic import BaseModel, ConfigDict, Field
 from rocketwright.agent.events import AgentEvent
 from rocketwright.agent.prompts import SYSTEM_PROMPT
 from rocketwright.agent.provenance import find_unsourced_numbers
+from rocketwright.agent.review import (
+    SEVERITY_ORDER,
+    ReviewVerdict,
+    needs_redesign,
+    review_candidate_detailed,
+    review_feedback_message,
+)
 from rocketwright.agent.tools import execute_tool, get_tool_definitions
 from rocketwright.guard import check_scope
 from rocketwright.schema import Env
 
-__all__ = ["AgentConfig", "models_config_path", "run_design_loop"]
+__all__ = ["AgentConfig", "ReviewerConfig", "models_config_path", "run_design_loop"]
 
 ATTEMPT_TOOL = "simulate_design"
 _TRACE_KEY = "trace"
@@ -43,16 +56,37 @@ def models_config_path() -> Path:
     return Path(__file__).resolve().parent.parent.parent / "config" / "models.yaml"
 
 
+Effort = Literal["low", "medium", "high", "xhigh", "max"]
+
+
+class ReviewerConfig(BaseModel):
+    """`reviewers:` block of config/models.yaml (per-aspect reviewers, review.py)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    enabled: bool = True
+    model: str | None = None  # None -> AgentConfig.light_model
+    effort: Effort = "low"
+    max_tokens: int = Field(default=4096, gt=0)
+    max_rounds_per_candidate: int = Field(default=1, ge=0)  # 0 disables; a source_id is never
+    # reviewed more than this many times (1 = once)
+
+
 class AgentConfig(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     design_model: str = "claude-opus-5-5"
     light_model: str = "claude-haiku-5-5"
-    effort: Literal["low", "medium", "high", "xhigh", "max"] = "high"
+    effort: Effort = "high"
     thinking_display: str = "summarized"
     max_tokens: int = Field(default=64000, gt=0)
     max_attempts: int = Field(default=40, ge=1)
     max_turns: int = Field(default=80, ge=1)
+    reviewers: ReviewerConfig = Field(default_factory=ReviewerConfig)
+
+    @property
+    def reviewers_enabled(self) -> bool:
+        return self.reviewers.enabled and self.reviewers.max_rounds_per_candidate > 0
 
     @classmethod
     def load(cls, path: Path | None = None) -> AgentConfig:
@@ -118,6 +152,47 @@ def _looks_like_question(text: str) -> bool:
     return "?" in text or "？" in text
 
 
+def _design_source_ids(design: dict[str, Any]) -> set[str]:
+    ids: set[str] = set()
+    sources = design.get("sources")
+    if isinstance(sources, dict):
+        ids.update(str(v) for v in sources.values())
+    if design.get("source_id"):
+        ids.add(str(design["source_id"]))
+    return ids
+
+
+def _apply_review_gate(
+    final_result: dict[str, Any], blocked: dict[str, list[str]]
+) -> tuple[dict[str, Any], list[str]]:
+    """Move every design that cites a review-blocked source_id out of `designs` into
+    `rejected_by_review` (passed=False, review_blocked=True, review_findings). Pure: returns a
+    new dict and the moved source ids; unchanged input is returned as is."""
+    designs = final_result.get("designs")
+    if not blocked or not isinstance(designs, list):
+        return final_result, []
+    kept: list[Any] = []
+    rejected: list[dict[str, Any]] = []
+    moved: list[str] = []
+    for d in designs:
+        hit = sorted(_design_source_ids(d) & set(blocked)) if isinstance(d, dict) else []
+        if not hit:
+            kept.append(d)
+            continue
+        findings = [f for sid in hit for f in blocked[sid]]
+        rejected.append({**d, "passed": False, "review_blocked": True, "review_findings": findings})
+        moved.extend(hit)
+    if not rejected:
+        return final_result, []
+    gated = {**final_result, "designs": kept}
+    gated["rejected_by_review"] = list(final_result.get("rejected_by_review") or []) + rejected
+    return gated, moved
+
+
+def _max_severity(verdicts: list[ReviewVerdict]) -> str:
+    return max((v.severity for v in verdicts), key=lambda s: SEVERITY_ORDER[s], default="ok")
+
+
 # --------------------------------------------------------------------------- loop
 
 
@@ -161,6 +236,8 @@ async def run_design_loop(
     tools = get_tool_definitions()
     tool_results_log: list[dict[str, Any]] = []
     budget_exhausted_told = False
+    review_rounds: dict[str, int] = {}  # source_id -> times reviewed (never above the cap)
+    review_blocked: dict[str, list[str]] = {}  # source_id -> blocker findings
 
     api = client if client is not None else anthropic.AsyncAnthropic()
 
@@ -240,11 +317,23 @@ async def run_design_loop(
                     )
                 return
             violations = find_unsourced_numbers(_explanation_text(parsed), tool_results_log)
+            parsed, rejected_ids = _apply_review_gate(parsed, review_blocked)
+            if rejected_ids:
+                yield ev(
+                    "warning",
+                    {
+                        "kind": "review_gate",
+                        "detail": "designs with a reviewer blocker were moved from `designs` "
+                        "to `rejected_by_review` in the final result",
+                        "rejected_ids": rejected_ids,
+                    },
+                )
             yield ev(
                 "final",
                 {
                     "result": parsed,
                     "provenance_violations": violations,
+                    "review_blocked_ids": sorted(review_blocked),
                     "attempts": attempts,
                     "stop_reason": stop,
                 },
@@ -254,6 +343,7 @@ async def run_design_loop(
         # 4. run every tool of this turn, return all results in ONE user message
         messages.append({"role": "assistant", "content": response.content})
         results_content: list[dict[str, Any]] = []
+        feedback_texts: list[str] = []
         for tu in tool_uses:
             tool_input = tu.input if isinstance(tu.input, dict) else {}
             if tu.name == ATTEMPT_TOOL:
@@ -276,16 +366,46 @@ async def run_design_loop(
                 {"id": tu.id, "name": tu.name, "is_error": is_error, "result": result},
             )
             if tu.name == ATTEMPT_TOOL and not is_error and result.get("success"):
-                yield ev(
-                    "candidate",
-                    {
-                        "source_id": tu.id,
-                        # with tune_pitch the simulated design is the tuned one
-                        "design": result.get("tuned_design") or tool_input.get("design"),
-                        "metrics": result.get("metrics", {}),
-                        "cost_jpy": result.get("cost_jpy"),
-                    },
-                )
+                candidate = {
+                    "source_id": tu.id,
+                    # with tune_pitch the simulated design is the tuned one
+                    "design": result.get("tuned_design") or tool_input.get("design"),
+                    "metrics": result.get("metrics", {}),
+                    "cost_jpy": result.get("cost_jpy"),
+                }
+                yield ev("candidate", candidate)
+                # 4b. per-aspect reviewers, once per candidate (review.py)
+                if (
+                    cfg.reviewers_enabled
+                    and review_rounds.get(tu.id, 0) < cfg.reviewers.max_rounds_per_candidate
+                ):
+                    review_rounds[tu.id] = review_rounds.get(tu.id, 0) + 1
+                    run = await review_candidate_detailed(
+                        api,
+                        cfg,
+                        candidate,
+                        _for_model(result),
+                        requirement_text,
+                        extra_context={"requirement": tool_input.get("requirement")},
+                    )
+                    verdicts = run.verdicts
+                    feedback = review_feedback_message(verdicts, source_id=tu.id)
+                    blockers = [v for v in verdicts if v.severity == "blocker"]
+                    if blockers:
+                        review_blocked[tu.id] = [f for v in blockers for f in v.findings]
+                    if any(needs_redesign(v) for v in verdicts):
+                        feedback_texts.append(feedback)
+                    yield ev(
+                        "review",
+                        {
+                            "source_id": tu.id,
+                            "verdicts": [v.model_dump() for v in verdicts],
+                            "max_severity": _max_severity(verdicts),
+                            "blocked": bool(blockers),
+                            "feedback": feedback or None,
+                            "dropped": run.dropped,  # aspect -> texts with unsourced numbers
+                        },
+                    )
             block: dict[str, Any] = {
                 "type": "tool_result",
                 "tool_use_id": tu.id,
@@ -295,6 +415,9 @@ async def run_design_loop(
                 block["is_error"] = True
             results_content.append(block)
 
+        # text blocks go AFTER every tool_result block of the user turn (API ordering rule)
+        for text in feedback_texts:
+            results_content.append({"type": "text", "text": text})
         if attempts >= cfg.max_attempts and not budget_exhausted_told:
             budget_exhausted_told = True
             results_content.append(

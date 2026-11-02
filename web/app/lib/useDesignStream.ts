@@ -8,9 +8,10 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import { initialState, reduce, type DesignState } from "./designState";
 import { parseSseChunk } from "./sse";
+import { API_BASE } from "./api";
 import { isEventType, type AgentEvent } from "./types";
 
-export const API_BASE: string = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+export { API_BASE };
 
 export interface DesignStream extends DesignState {
   /** Send a request. `seed` is forwarded when given (deterministic demo runs). */

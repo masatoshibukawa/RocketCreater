@@ -1,8 +1,8 @@
 """Regression tests: every scenarios/*.yaml runs end to end with the scripted fake client.
 
 These are the demo scripts (CLAUDE.md section 10: the scenarios working is the top priority).
-The commercial scenario must exercise the REAL multistage physics and show at least one failing
-attempt before the passing ones.
+Every scenario must exercise its REAL physics model (bottle: water, amateur: solid, commercial:
+multistage) and show at least one failing attempt before the passing ones.
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ def _sim_results(events: list[AgentEvent]) -> dict[str, dict[str, Any]]:
 
 def test_scenario_files_exist() -> None:
     assert SCENARIOS, f"no scenarios in {SCENARIO_DIR}"
-    assert {p.stem for p in SCENARIOS} >= {"demo_amateur", "demo_commercial"}
+    assert {p.stem for p in SCENARIOS} >= {"demo_amateur", "demo_bottle", "demo_commercial"}
 
 
 @pytest.mark.anyio
@@ -104,19 +104,30 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
     assert ordered[0]["failure_reasons"]
     assert ordered[-1]["success"] is True
 
+    # real physics for every tier: no dummy placeholder in any simulate result
+    for sim in ordered:
+        assert DUMMY_WARNING not in sim["warnings"]
+        assert not any("DUMMY" in w for w in sim["warnings"])
+        assert sim["cost_jpy"] > 0
+
     if expected_tier == "commercial":
         assert any("perigee" in r for r in ordered[0]["failure_reasons"])
         for d in passing:
-            sim = sims[d["sources"]["perigee_m"]]
-            assert DUMMY_WARNING not in sim["warnings"]
-            assert not any("DUMMY" in w for w in sim["warnings"])
             assert d["metrics"]["perigee_m"] >= 360_000
-            assert sim["cost_jpy"] > 0
-            assert sim["cost_jpy"] <= 2.0e9  # scenario budget
+            assert d["cost_jpy"] <= 2.0e9  # scenario budget
+    elif expected_tier == "amateur":
+        assert any("descent speed" in r for r in ordered[0]["failure_reasons"])
+        for d in passing:
+            assert 1_800 <= d["metrics"]["apogee_m"] <= 2_200  # +-10 % of the 2 km target
+            assert d["metrics"]["stability_margin_cal"] >= 1.5
+            assert d["metrics"]["descent_speed_mps"] <= 6.0
+            assert d["cost_jpy"] <= 50_000
     else:
-        # bottle/amateur are still dummy physics until phase 3
-        for sim in ordered:
-            assert DUMMY_WARNING in sim["warnings"]
+        assert any("parachute" in r for r in ordered[0]["failure_reasons"])
+        for d in passing:
+            assert 27 <= d["metrics"]["apogee_m"] <= 33  # +-10 % of the 30 m target
+            assert d["metrics"]["descent_speed_mps"] <= 6.0  # the egg
+            assert d["cost_jpy"] <= 3_000
 
 
 @pytest.mark.anyio

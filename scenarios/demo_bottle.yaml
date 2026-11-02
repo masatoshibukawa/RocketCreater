@@ -1,0 +1,11 @@
+# Demo scenario (bottle tier). Used by scripts/run_scenario.py and as a regression fixture.
+name: demo_bottle
+request_text: "1.5 L ペットボトルで卵を割らずに 30 m まで上げて回収したい。予算 3,000 円。"
+env:
+  launch_latitude_deg: 35.0     # provisional: schoolyard-in-Japan placeholder
+  launch_altitude_m: 20
+  wind_speed_mps: 2.0
+  wind_direction_deg: 270
+seed: 7
+expected:
+  tier: bottle

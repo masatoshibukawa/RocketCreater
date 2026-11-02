@@ -1,5 +1,6 @@
-"""Tests for the agent tool definitions and their implementations (real multistage physics for
-commercial/heavy, dummy placeholders for bottle/amateur until phase 3)."""
+"""Tests for the agent tool definitions and their implementations (real physics for every tier:
+multistage for commercial/heavy, solid for amateur, water for bottle; dispersion is still a
+dummy spread)."""
 
 import json
 
@@ -15,6 +16,7 @@ from rocketwright.agent.tools import (
 )
 from rocketwright.cost import estimate_cost_jpy
 from rocketwright.physics import multistage as ms
+from rocketwright.physics import solid, water
 from rocketwright.schema import DesignAdapter, DispersionResult, Env, SimResult
 
 AMATEUR_DESIGN = {
@@ -24,11 +26,11 @@ AMATEUR_DESIGN = {
     "nose_shape": "ogive",
     "nose_length_m": 0.15,
     "fins": {"count": 4, "root_chord_m": 0.1, "tip_chord_m": 0.05, "span_m": 0.06},
-    "motor_id": "dummy-F32",
+    "motor_id": "dummy_G80",
     "dry_mass_kg": 0.5,
     "payload_mass_kg": 1.0,
     "parachute_diameter_m": 0.6,
-    "deploy_delay_s": 4.0,
+    "deploy_delay_s": 1.0,
 }
 
 # Electron-class vehicle with catalog engine ids; reaches ~475 x 670 km with this pitch program
@@ -159,23 +161,60 @@ def test_search_catalog_tells_the_model_which_ids_to_use():
     assert "second" in defs["simulate_design"]["description"]
 
 
-@pytest.mark.parametrize(("design", "req"), [(AMATEUR_DESIGN, REQ_AMATEUR), (BOTTLE_DESIGN, None)])
-def test_simulate_design_dummy_suborbital_is_valid_and_deterministic(design, req):
+@pytest.mark.parametrize(
+    ("design", "req", "model"),
+    [(AMATEUR_DESIGN, REQ_AMATEUR, solid), (BOTTLE_DESIGN, None, water)],
+)
+def test_simulate_design_suborbital_uses_real_physics(design, req, model):
     a = _sim(design, req, tool_id="toolu_a")
     b = _sim(design, req, tool_id="toolu_b")
     assert "error" not in a
     sim = SimResult.model_validate(a)
     assert sim.tier == design["tier"]
-    assert DUMMY_WARNING in sim.warnings
+    assert not any("DUMMY" in w for w in sim.warnings)
     assert a["source_id"] == "toolu_a"
     a.pop("source_id")
     b.pop("source_id")
     assert a == b
+    # the nominal models are deterministic and ignore the seed
     c = _sim(design, req, seed=8, tool_id="toolu_c")
     c.pop("source_id")
-    assert c != a
+    assert c == a
     assert len(sim.trace) > 2
     assert sim.cost_jpy > 0
+    # the metrics are the physics module's, judged against the requirement's altitude target
+    parsed = DesignAdapter.validate_python(design)
+    target = req["target_altitude_m"] if req else None
+    ref = model.simulate(parsed, Env.model_validate(ENV), target_apogee_m=target)
+    assert sim.metrics == ref.metrics
+    assert set(ref.failure_reasons) <= set(sim.failure_reasons)
+
+
+def test_amateur_altitude_target_comes_from_requirement():
+    out = _sim(AMATEUR_DESIGN, REQ_AMATEUR)  # a G80 cannot reach 2 km with 1.5 kg
+    assert out["success"] is False
+    assert any("apogee" in r and "2000 m" in r for r in out["failure_reasons"])
+    out2 = _sim(AMATEUR_DESIGN, None)
+    assert not any("2000 m" in r for r in out2["failure_reasons"])
+
+
+def test_judge_payload_and_recovery_rules():
+    light = {**REQ_AMATEUR, "payload_mass_kg": 2.0}  # design carries only 1 kg
+    out = _sim(AMATEUR_DESIGN, light)
+    assert any("payload" in r for r in out["failure_reasons"])
+    no_chute = {**BOTTLE_DESIGN, "has_parachute": False, "parachute_diameter_m": None}
+    req = {"goal_kind": "altitude", "target_altitude_m": 30, "recovery_required": True}
+    out = _sim(no_chute, req)
+    assert any("recovery" in r and "parachute" in r for r in out["failure_reasons"])
+    out = _sim(no_chute, {**req, "recovery_required": False})
+    assert not any("recovery" in r for r in out["failure_reasons"])
+
+
+def test_unknown_motor_id_is_an_error_not_a_crash():
+    out = _sim({**AMATEUR_DESIGN, "motor_id": "no_such_motor"}, REQ_AMATEUR, tool_id="toolu_m")
+    assert "error" in out
+    assert "no_such_motor" in out["error"] and "dummy_G80" in out["error"]
+    assert out["source_id"] == "toolu_m"
 
 
 def test_simulate_design_multistage_uses_real_physics():
@@ -222,7 +261,7 @@ def test_simulate_design_multistage_target_from_requirement():
     assert not any("400 km" in r for r in out2["failure_reasons"])
 
 
-def test_budget_rule_is_shared_by_dummy_and_real_paths():
+def test_budget_rule_is_shared_by_all_tiers():
     tight_orbit = {**REQ_ORBIT, "budget_jpy": 1000.0}
     out = _sim(COMMERCIAL_DESIGN, tight_orbit)
     assert out["success"] is False
@@ -233,13 +272,12 @@ def test_budget_rule_is_shared_by_dummy_and_real_paths():
     assert any("budget" in r for r in out["failure_reasons"])
 
 
-def test_pass_criteria_are_suborbital_only():
-    assert set(PASS_CRITERIA) == {
-        "altitude_tolerance_frac",
-        "min_stability_margin_cal",
-        "max_descent_speed_mps",
-    }
+def test_pass_criteria_hold_only_requirement_level_rules():
+    assert set(PASS_CRITERIA) == {"payload_shortfall_tolerance_kg"}
+    # flight rules live in the physics modules, one PASS_THRESHOLDS dict each
     assert "perigee_tolerance_frac" in ms.PASS_THRESHOLDS
+    assert {"min_rail_exit_speed_mps", "min_stability_margin_cal"} <= set(solid.PASS_THRESHOLDS)
+    assert {"max_gauge_pressure_pa", "apogee_tolerance_frac"} <= set(water.PASS_THRESHOLDS)
 
 
 def test_unknown_engine_id_is_an_error_not_a_crash():
@@ -311,10 +349,66 @@ def test_estimate_cost_tool():
     assert out["provisional"] is True
 
 
-def test_stubs_report_not_implemented():
+def test_render_drawing_stores_svg_artifact():
+    from rocketwright.agent.store import DEFAULT_STORE
+
     out = execute_tool("render_drawing", {"design": AMATEUR_DESIGN}, "toolu_f")
-    assert out["status"] == "not_implemented"
+    assert "error" not in out
+    assert out["source_id"] == "toolu_f"
+    assert out["tier"] == "amateur"
+    assert out["svg_chars"] > 0
+    assert "svg" not in out  # the SVG text is not sent back to the model
+    assert out["download"]["svg"] == f"/artifacts/{out['id']}.svg"
+    art = DEFAULT_STORE.get(f"{out['id']}.svg")
+    assert art is not None and art.content.startswith("<svg")
+
+
+def test_export_report_from_result_json():
+    from rocketwright.agent.store import DEFAULT_STORE
+
+    # A simulate_design result as the model sees it: SimResult fields plus loop extras
+    # (`trace_point_count` replaces the trace); the extras must be ignored.
+    sim = {
+        "tier": "amateur",
+        "success": True,
+        "failure_reasons": [],
+        "metrics": {"apogee_m": 812.0, "max_speed_mps": 120.5, "descent_speed_mps": 5.1},
+        "cost_jpy": 40_000.0,
+        "warnings": [],
+        "source_id": "toolu_sim",
+        "trace_point_count": 60,
+    }
     out = execute_tool(
-        "export_report", {"designs": [AMATEUR_DESIGN], "format": "markdown"}, "toolu_g"
+        "export_report",
+        {
+            "design": AMATEUR_DESIGN,
+            "result_json": json.dumps(sim),
+            "requirement": None,
+            "dispersion_json": None,
+        },
+        "toolu_g",
     )
-    assert out["status"] == "not_implemented"
+    assert "error" not in out, out
+    assert out["source_id"] == "toolu_g"
+    assert out["markdown_chars"] > 0 and out["bom_rows"] >= 3
+    d = out["download"]
+    assert d["report"] == f"/artifacts/{out['id']}.md"
+    assert d["bom"] == f"/artifacts/{out['id']}.csv"
+    assert d["json"] == f"/artifacts/{out['id']}.json"
+    md = DEFAULT_STORE.get(f"{out['id']}.md").content
+    assert "toolu_sim" in md  # provenance id of every metric
+    assert "Checklist" in md
+
+
+def test_export_report_rejects_bad_result_json():
+    out = execute_tool(
+        "export_report",
+        {
+            "design": AMATEUR_DESIGN,
+            "result_json": "not json",
+            "requirement": None,
+            "dispersion_json": None,
+        },
+        "toolu_h",
+    )
+    assert "error" in out and "result_json" in out["error"]

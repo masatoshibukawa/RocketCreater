@@ -6,6 +6,7 @@ import CandidateCards from "./components/CandidateCards";
 import ChatPanel from "./components/ChatPanel";
 import FlightChart from "./components/FlightChart";
 import TierBadge from "./components/TierBadge";
+import { exportInfoFromEvents } from "./lib/api";
 import { useDesignStream } from "./lib/useDesignStream";
 import type { LandingPoint, Tier, TracePoint } from "./lib/types";
 
@@ -35,6 +36,8 @@ export default function Home() {
     [effectiveId, stream.attempts],
   );
   const trace: TracePoint[] = selectedAttempt?.result?.trace ?? [];
+  // Download maps (SVG / report / BOM) collected from export_report / render_drawing results.
+  const exportInfos = useMemo(() => exportInfoFromEvents(stream.events), [stream.events]);
   const landing: LandingPoint | null = useMemo(() => {
     const m = selectedAttempt?.result?.metrics;
     if (!m) return null;
@@ -84,6 +87,7 @@ export default function Home() {
           tier={tier}
           selectedId={effectiveId}
           onSelect={setSelectedId}
+          exports={exportInfos}
         />
         <FlightChart
           tier={tier}

@@ -1,0 +1,15 @@
+;; RocketWright synthetic motor (RASP .eng format)
+; source: none -- SYNTHETIC trapezoid curve written for this repository, not a real motor
+; license: MIT (same as the repository; no manufacturer data was copied)
+; provisional: true
+; notes: class H (160.01-320 Ns); total impulse 225.0 Ns; shape, masses and dimensions are
+; notes: representative of a 29 mm hobby reload and must be replaced by a licensed curve
+; notes: (e.g. thrustcurve.org data whose terms have been checked) before any real use.
+H128 29 240 6-10-14 0.125 0.230 RocketWright-dummy
+0.000 0.0
+0.100 139.0
+0.625 133.4
+1.150 127.9
+1.675 122.3
+1.875 0.0
+;

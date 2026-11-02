@@ -7,3 +7,9 @@ thinking_display: summarized      # thinking: {type: adaptive, display: ...}
 max_tokens: 64000                 # per assistant turn (streaming)
 max_attempts: 40                  # simulate_design calls per request
 max_turns: 80                     # hard cap on API round trips (safety net; must exceed max_attempts)
+reviewers:                        # phase-3 per-aspect reviewers (stability / recovery / cost / safety)
+  enabled: true                   # review every passing candidate once, feed findings back
+  model: claude-haiku-5-5         # structured-output call per aspect (messages.parse)
+  effort: low                     # output_config.effort for the reviewers
+  max_tokens: 4096
+  max_rounds_per_candidate: 1     # a candidate (source_id) is reviewed at most this many times

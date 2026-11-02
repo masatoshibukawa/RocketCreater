@@ -3,8 +3,9 @@
 
     uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml [--dummy]
 
-`--dummy` uses the scripted fake client (rocketwright.agent.fake_client): no network, no API
-key. Without it the real Claude API is used (ANTHROPIC_API_KEY must be set in the environment).
+`--dummy` uses the scripted fake client (rocketwright.agent.fake_client) with scripted reviewer
+answers (the first candidate gets a "major" cost finding): no network, no API key. Without it
+the real Claude API is used (ANTHROPIC_API_KEY must be set in the environment).
 Exit status is 1 when the classified tier differs from `expected.tier` or the loop ends in error.
 """
 
@@ -36,8 +37,29 @@ def _compact(payload: dict[str, Any]) -> str:
     return text if len(text) <= _MAX_LINE else text[: _MAX_LINE - 3] + "..."
 
 
+def _format_review(ev: AgentEvent) -> str:
+    """Review events are printed in full (one line per verdict) instead of being truncated."""
+    p = ev.payload
+    head = (
+        f"source_id={p.get('source_id')} max_severity={p.get('max_severity')} "
+        f"blocked={p.get('blocked')}"
+    )
+    lines = [head]
+    for v in p.get("verdicts", []):
+        lines.append(f"    - [{v['aspect']}/{v['severity']}] " + ("; ".join(v["findings"]) or "-"))
+        if v.get("suggested_changes"):
+            lines.append("      suggested: " + "; ".join(v["suggested_changes"]))
+    for aspect, texts in (p.get("dropped") or {}).items():
+        lines.append(f"    dropped ({aspect}, unsourced numbers): " + " | ".join(texts))
+    if p.get("feedback"):
+        lines.append("    feedback injected into the next user turn (after the tool_results):")
+        lines.extend("      | " + line for line in p["feedback"].splitlines())
+    return "\n".join(lines)
+
+
 def _format(ev: AgentEvent) -> str:
-    return f"[{ev.t_s:7.3f}s] attempt={ev.attempt:2d} {ev.type:<11} {_compact(ev.payload)}"
+    body = _format_review(ev) if ev.type == "review" else _compact(ev.payload)
+    return f"[{ev.t_s:7.3f}s] attempt={ev.attempt:2d} {ev.type:<11} {body}"
 
 
 async def _run(scenario: dict[str, Any], dummy: bool) -> int:
@@ -47,7 +69,9 @@ async def _run(scenario: dict[str, Any], dummy: bool) -> int:
     expected_tier = (scenario.get("expected") or {}).get("tier")
     client = None
     if dummy:
-        client = FakeAnthropicClient(build_demo_script(expected_tier, text, env, seed))
+        client = FakeAnthropicClient(
+            build_demo_script(expected_tier, text, env, seed, reviews=True)
+        )
     cfg = AgentConfig.load()
     print(f"# scenario {scenario.get('name')}  model={cfg.design_model}  dummy={dummy}")
     print(f"# request: {text}")

@@ -210,6 +210,18 @@ export interface FinalPayload {
   parse_error: string;
 }
 
+/**
+ * Download paths produced by the `export_report` / `render_drawing` tools (or a final design
+ * that carries a `download` map). Keys: "svg" | "report" | "bom" | "json"; values are
+ * backend-relative paths such as "/artifacts/rep_1.md" (join with api.ts `apiUrl`).
+ */
+export interface ExportInfo {
+  id: string;
+  source_id: string;
+  design: Design | null;
+  download: Record<string, string>;
+}
+
 export type ChatRole = "user" | "agent" | "thinking" | "question" | "error" | "system";
 
 export interface ChatMessage {

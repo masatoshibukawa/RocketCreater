@@ -9,7 +9,16 @@ from pydantic import BaseModel, ConfigDict, Field
 __all__ = ["AgentEvent", "EventType"]
 
 EventType = Literal[
-    "thinking", "text", "tool_call", "tool_result", "candidate", "final", "error", "question"
+    "thinking",
+    "text",
+    "tool_call",
+    "tool_result",
+    "candidate",
+    "review",  # per-aspect reviewer verdicts for one candidate (payload: source_id, verdicts)
+    "warning",  # non-fatal notice (e.g. a design rejected by the review gate)
+    "final",
+    "error",
+    "question",
 ]
 
 

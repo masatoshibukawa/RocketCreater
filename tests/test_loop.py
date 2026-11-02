@@ -12,7 +12,12 @@ from rocketwright.agent.fake_client import (
     text_block,
     tool_use_block,
 )
-from rocketwright.agent.loop import AgentConfig, run_design_loop
+from rocketwright.agent.loop import (
+    AgentConfig,
+    ReviewerConfig,
+    _apply_review_gate,
+    run_design_loop,
+)
 
 AMATEUR_TEXT = "1 kg の荷物を高度 2 km まで上げてパラシュートで回収したい。予算 5 万円。"
 ENV = {"launch_latitude_deg": 31.25, "launch_altitude_m": 20, "wind_speed_mps": 3.0}
@@ -87,7 +92,7 @@ async def test_scripted_amateur_run_event_sequence():
     assert len(results) == 2
     assert {r["tool_use_id"] for r in results} == {"toolu_sim_2", "toolu_sim_3"}
     assert all(isinstance(r["content"], str) for r in results)
-    assert all("DUMMY" in r["content"] for r in results)  # amateur is dummy until phase 3
+    assert all("apogee_m" in r["content"] for r in results)  # real solid-model results
 
 
 @pytest.mark.anyio
@@ -203,3 +208,176 @@ async def test_unsourced_number_in_final_is_flagged():
     events = await _collect(client)
     assert events[-1].type == "final"
     assert events[-1].payload["provenance_violations"] == ["9876 m"]
+
+
+# --------------------------------------------------------------------------- reviewers (phase 3)
+
+
+def _by_type(events: list[AgentEvent], kind: str) -> list[AgentEvent]:
+    return [e for e in events if e.type == kind]
+
+
+@pytest.mark.anyio
+async def test_review_events_follow_candidates_and_feedback_is_injected():
+    client = FakeAnthropicClient(
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True)
+    )
+    events = await _collect(client, env=ENV, seed=1)
+    types = [e.type for e in events]
+    candidates = _by_type(events, "candidate")
+    reviews = _by_type(events, "review")
+    assert len(candidates) == 2 and len(reviews) == 2
+    # one review per candidate, same source_id, emitted right after the candidate
+    for cand, rev in zip(candidates, reviews, strict=True):
+        assert rev.payload["source_id"] == cand.payload["source_id"]
+        assert types.index("review", types.index("candidate")) > types.index("candidate")
+    aspects = [v["aspect"] for v in reviews[0].payload["verdicts"]]
+    assert aspects == ["stability", "recovery", "cost", "safety"]
+    # demo script: first candidate gets a major cost finding, the second is all ok
+    first = {v["aspect"]: v for v in reviews[0].payload["verdicts"]}
+    assert first["cost"]["severity"] == "major"
+    assert reviews[0].payload["max_severity"] == "major"
+    assert reviews[0].payload["blocked"] is False
+    assert reviews[0].payload["feedback"].startswith("Reviewer findings for candidate toolu_sim_2")
+    assert all(v["severity"] == "ok" for v in reviews[1].payload["verdicts"])
+    assert reviews[1].payload["feedback"] is None
+    # the cited cost is the tool result's own number (no invented numbers survive)
+    sim2 = next(e for e in events if e.type == "tool_result" and e.payload["id"] == "toolu_sim_2")
+    assert f"cost_jpy {sim2.payload['result']['cost_jpy']:.0f}" in first["cost"]["findings"][0]
+    assert reviews[0].payload["dropped"] == {}
+    # 4 reviewer calls per candidate, each reviewed exactly once, on the reviewer model
+    assert len(client.parse_calls) == 8
+    assert {c["model"] for c in client.parse_calls} == {"claude-haiku-5-5"}
+    assert all(c["output_config"] == {"effort": "low"} for c in client.parse_calls)
+    # feedback goes into the NEXT user message: tool_result blocks first, then one text block
+    last_user = client.calls[-1]["messages"][-1]["content"]
+    kinds = [b["type"] for b in last_user]
+    assert kinds == ["tool_result", "tool_result", "text"]
+    assert last_user[-1]["text"].startswith("Reviewer findings for candidate toolu_sim_2")
+    assert "[cost/major]" in last_user[-1]["text"]
+    assert "re-simulating" in last_user[-1]["text"]
+    # the demo still ends with passing designs (major is not a blocker)
+    final = events[-1]
+    assert final.type == "final"
+    assert [d["passed"] for d in final.payload["result"]["designs"]] == [True, True]
+    assert final.payload["result"].get("rejected_by_review", []) == []
+    assert final.payload["review_blocked_ids"] == []
+    assert final.payload["provenance_violations"] == []
+
+
+@pytest.mark.anyio
+async def test_blocker_moves_design_out_of_passing_list():
+    blocker = {
+        "aspect": "safety",
+        "severity": "blocker",
+        "findings": ["the payload description matches an out-of-scope item"],
+        "suggested_changes": ["replace the payload with an inert mass"],
+    }
+    client = FakeAnthropicClient(
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1), reviews=[{"safety": blocker}]
+    )
+    events = await _collect(client, env=ENV, seed=1)
+    reviews = _by_type(events, "review")
+    assert (
+        reviews[0].payload["blocked"] is True and reviews[0].payload["source_id"] == "toolu_sim_2"
+    )
+    assert reviews[1].payload["blocked"] is False
+    warnings = _by_type(events, "warning")
+    assert len(warnings) == 1 and warnings[0].payload["kind"] == "review_gate"
+    assert warnings[0].payload["rejected_ids"] == ["toolu_sim_2"]
+    final = events[-1]
+    assert final.type == "final"
+    result = final.payload["result"]
+    assert final.payload["review_blocked_ids"] == ["toolu_sim_2"]
+    assert [d["sources"]["cost_jpy"] for d in result["designs"]] == ["toolu_sim_3"]
+    assert all(d["passed"] for d in result["designs"])
+    rejected = result["rejected_by_review"]
+    assert len(rejected) == 1
+    assert rejected[0]["sources"]["cost_jpy"] == "toolu_sim_2"
+    assert rejected[0]["passed"] is False
+    assert rejected[0]["review_blocked"] is True
+    assert "out-of-scope" in rejected[0]["review_findings"][0]
+
+
+@pytest.mark.anyio
+async def test_reviewer_findings_with_invented_numbers_are_dropped_before_feedback():
+    invented = {
+        "aspect": "stability",
+        "severity": "major",
+        "findings": [
+            "stability_margin_cal should be at least 2.75 cal but the margin looks thin",
+            "fin span is small for this body length",
+        ],
+        "suggested_changes": ["increase fin span to 0.123 m"],
+    }
+    client = FakeAnthropicClient(
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1), reviews=[{"stability": invented}]
+    )
+    events = await _collect(client, env=ENV, seed=1)
+    review = _by_type(events, "review")[0]
+    stability = next(v for v in review.payload["verdicts"] if v["aspect"] == "stability")
+    assert stability["severity"] == "major"
+    assert stability["findings"] == [
+        "fin span is small for this body length",
+        "[1 finding dropped: it cited numbers absent from the tool results]",
+    ]
+    assert stability["suggested_changes"] == []
+    assert review.payload["dropped"] == {
+        "stability": [
+            "stability_margin_cal should be at least 2.75 cal but the margin looks thin",
+            "increase fin span to 0.123 m",
+        ]
+    }
+    injected = client.calls[-1]["messages"][-1]["content"][-1]
+    assert injected["type"] == "text"
+    assert "2.75" not in injected["text"] and "0.123" not in injected["text"]
+    assert "fin span is small" in injected["text"]
+
+
+@pytest.mark.anyio
+async def test_reviewers_can_be_disabled_and_never_run_on_failed_attempts():
+    client = FakeAnthropicClient(
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True)
+    )
+    cfg = AgentConfig.load().model_copy(update={"reviewers": ReviewerConfig(enabled=False)})
+    events = await _collect(client, env=ENV, seed=1, config=cfg)
+    assert not _by_type(events, "review")
+    assert client.parse_calls == []
+    assert all(b["type"] == "tool_result" for b in client.calls[-1]["messages"][-1]["content"])
+    assert events[-1].type == "final"
+
+    # enabled: the failing first attempt (toolu_sim_1) is never reviewed
+    client = FakeAnthropicClient(
+        build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True)
+    )
+    events = await _collect(client, env=ENV, seed=1)
+    assert {e.payload["source_id"] for e in _by_type(events, "review")} == {
+        "toolu_sim_2",
+        "toolu_sim_3",
+    }
+
+
+def test_config_loads_reviewer_block():
+    cfg = AgentConfig.load()
+    assert cfg.reviewers_enabled is True
+    assert cfg.reviewers.model == "claude-haiku-5-5"
+    assert cfg.reviewers.effort == "low"
+    assert cfg.reviewers.max_rounds_per_candidate == 1
+    assert cfg.reviewers.max_tokens == 4096
+
+
+def test_apply_review_gate_is_pure_and_keeps_order():
+    result = {
+        "designs": [
+            {"design": {}, "passed": True, "sources": {"apogee_m": "a"}},
+            {"design": {}, "passed": True, "sources": {"apogee_m": "b"}},
+            {"design": {}, "passed": True, "sources": {"apogee_m": "c"}},
+        ],
+        "summary": "s",
+    }
+    gated, moved = _apply_review_gate(result, {"b": ["bad"]})
+    assert moved == ["b"]
+    assert [d["sources"]["apogee_m"] for d in gated["designs"]] == ["a", "c"]
+    assert gated["rejected_by_review"][0]["review_findings"] == ["bad"]
+    assert result["designs"][1]["passed"] is True  # input untouched
+    assert _apply_review_gate(result, {}) == (result, [])

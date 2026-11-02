@@ -8,17 +8,16 @@
 * `execute_tool(name, input, tool_use_id)` validates, runs, and stamps `source_id`.
 
 Physics dispatch lives in `_simulate_dispatch` / `_dispersion_dispatch` ONLY. Commercial/heavy
-designs go to rocketwright.physics.multistage (real model); bottle/amateur still use the dummy
-placeholders below until phase 3 wires in physics.solid / physics.water.
+designs go to rocketwright.physics.multistage, amateur to physics.solid and bottle to
+physics.water (all real models). Monte-Carlo dispersion is still a dummy spread around the
+nominal result (tagged DUMMY_WARNING) until rocketwright.dispersion lands.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
-import math
 import random
-import re
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -26,9 +25,10 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ValidationError
 
+from rocketwright.agent.store import store_drawing, store_report
 from rocketwright.classify import classify, load_tiers
 from rocketwright.cost import COST_CONSTANTS, estimate_cost_jpy
-from rocketwright.physics import multistage
+from rocketwright.physics import multistage, solid, water
 from rocketwright.schema import (
     AmateurDesign,
     BottleDesign,
@@ -47,7 +47,6 @@ from rocketwright.schema import (
     Requirement,
     SimResult,
     Tier,
-    TracePoint,
 )
 
 __all__ = [
@@ -71,14 +70,12 @@ TOOL_NAMES: tuple[str, ...] = (
 
 DUMMY_WARNING = "DUMMY PHYSICS: values are placeholders"
 
-# Suborbital (bottle/amateur) pass/fail thresholds used by `_judge` (CLAUDE.md section 6).
-# Orbital rules (perigee/apogee tolerance, liftoff TWR, max-Q) live ONLY in
-# rocketwright.physics.multistage.PASS_THRESHOLDS; the budget rule is shared and lives in
-# `_finalize`. Phase 3 moves these into physics.solid / physics.water.
+# Requirement-vs-design rules judged here (`_judge`, CLAUDE.md section 6). Flight rules live
+# ONLY in the physics modules' PASS_THRESHOLDS (multistage: perigee/apogee tolerance, liftoff
+# TWR, max-Q; solid: rail exit speed, stability margin, descent speed, apogee tolerance; water:
+# apogee tolerance, descent speed, bottle pressure cap). The budget rule lives in `_finalize`.
 PASS_CRITERIA: dict[str, float] = {
-    "altitude_tolerance_frac": 0.10,  # apogee within +-10 % of target
-    "min_stability_margin_cal": 1.5,
-    "max_descent_speed_mps": 6.0,
+    "payload_shortfall_tolerance_kg": 0.0,  # design must carry at least the required payload
 }
 
 # tune_pitch_program budget: ~60 ascents at ~35 ms each, i.e. a few seconds per call.
@@ -240,18 +237,33 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         },
         {
             "name": "render_drawing",
-            "description": "Render a dimensioned SVG side view of a design (phase 3; stub).",
+            "description": (
+                "Render a dimensioned SVG side view of a design (deterministic; commercial/heavy "
+                "are concept sketches). The SVG itself is not returned: the result carries an "
+                "artifact `id`, `svg_chars` and `download.svg` (a path served by the API) that "
+                "you quote in the final answer."
+            ),
             "strict": True,
             "input_schema": _obj({"design": design}),
         },
         {
             "name": "export_report",
-            "description": "Export a design report and bill of materials (phase 3; stub).",
+            "description": (
+                "Export the design report (Markdown + JSON) and the bill of materials (CSV) for "
+                "ONE design. `result_json` is the simulate_design result for that design as JSON "
+                "text (copy the tool result verbatim; its source_id is used as the provenance of "
+                "every metric). `dispersion_json` is the matching run_dispersion result as JSON "
+                "text, or null. `requirement` is the normalised requirement, or null. The report "
+                "text is not returned: the result carries `id`, `markdown_chars`, `bom_rows` and "
+                "a `download` map (report .md, json, bom .csv paths) to quote in the final answer."
+            ),
             "strict": True,
             "input_schema": _obj(
                 {
-                    "designs": {"type": "array", "items": design},
-                    "format": {"type": "string", "enum": ["markdown", "json", "csv"]},
+                    "design": design,
+                    "result_json": {"type": "string"},
+                    "requirement": _nullable(req),
+                    "dispersion_json": _nullable({"type": "string"}),
                 }
             ),
         },
@@ -284,149 +296,43 @@ def _rng_for(design: Design, env: Env, seed: int | None, salt: str) -> random.Ra
     return random.Random(int(digest[:16], 16))
 
 
-def _parabola_trace(apogee_m: float, flight_time_s: float, n: int = 60) -> list[TracePoint]:
-    pts: list[TracePoint] = []
-    for i in range(n):
-        t = flight_time_s * i / (n - 1)
-        frac = t / flight_time_s
-        alt = max(0.0, 4.0 * apogee_m * frac * (1.0 - frac))
-        speed = abs(4.0 * apogee_m * (1.0 - 2.0 * frac) / flight_time_s)
-        pts.append(TracePoint(t_s=t, altitude_m=alt, downrange_m=0.0, speed_mps=speed))
-    return pts
-
-
-# --------------------------------------------------------------------------- dummy physics
-#
-# SIMPLIFICATION: crude closed-form placeholders for bottle/amateur so that the dummy responds
-# monotonically to the design (bigger motor -> higher, bigger chute -> slower) until phase 3
-# wires in physics.solid / physics.water. Every number produced here is marked with
-# DUMMY_WARNING. Constants are provisional.
-
-_G0 = 9.80665
-_RHO_SL = 1.225
-_CHUTE_CD = 1.5
-_DUMMY_DRAG_FACTOR = 0.5  # fraction of the drag-free apogee actually reached
-_DUMMY_WATER_EFFICIENCY = 0.6  # fraction of p*V turned into height
-
-
-def _jitter(rng: random.Random, frac: float = 0.03) -> float:
-    return 1.0 + frac * (2.0 * rng.random() - 1.0)
-
-
-def _motor_class_impulse_ns(motor_id: str) -> float:
-    """Mid-point total impulse of the NAR letter class found in the id (e.g. 'dummy-J700' -> J)."""
-    m = re.search(r"(?:^|[-_ ])([A-Oa-o])\d", motor_id) or re.search(r"([A-Oa-o])", motor_id)
-    letter = (m.group(1) if m else "G").upper()
-    k = ord(letter) - ord("A") + 1
-    return 0.9375 * 2.0**k  # A: 1.875 Ns, G: 120 Ns, J: 960 Ns
-
-
-def _motor_avg_thrust_n(motor_id: str, impulse_ns: float) -> float:
-    m = re.search(r"[A-Oa-o](\d+)", motor_id)
-    return float(m.group(1)) if m else 8.0 * impulse_ns**0.5
-
-
-def _descent_speed_mps(mass_kg: float, chute_diameter_m: float | None) -> float:
-    if not chute_diameter_m:
-        return math.sqrt(2.0 * mass_kg * _G0 / (_RHO_SL * 0.5 * 0.01))  # tumbling body, ~8 cm^2
-    area = math.pi * (chute_diameter_m / 2.0) ** 2
-    return math.sqrt(2.0 * mass_kg * _G0 / (_RHO_SL * _CHUTE_CD * area))
-
-
-def _dummy_suborbital(
-    design: BottleDesign | AmateurDesign, env: Env, seed: int | None, req: Requirement | None
-) -> SimResult:
-    tier = Tier(design.tier)
-    rng = _rng_for(design, env, seed, "sim")
-    metrics: dict[str, float] = {}
-    if isinstance(design, AmateurDesign):
-        impulse = _motor_class_impulse_ns(design.motor_id)
-        motor_mass = impulse / 1000.0  # ~1 kg per 1000 Ns, provisional
-        liftoff_mass = design.dry_mass_kg + design.payload_mass_kg + motor_mass
-        v_burnout = impulse / liftoff_mass  # impulsive burn, no drag
-        apogee = _DUMMY_DRAG_FACTOR * v_burnout**2 / (2.0 * _G0) * _jitter(rng)
-        thrust = _motor_avg_thrust_n(design.motor_id, impulse)
-        accel = max(thrust / liftoff_mass - _G0, 0.1)
-        descent_mass = design.dry_mass_kg + design.payload_mass_kg + 0.5 * motor_mass
-        descent = _descent_speed_mps(descent_mass, design.parachute_diameter_m)
-        span_ratio = design.fins.span_m / design.body_diameter_m
-        metrics["rail_exit_speed_mps"] = round(math.sqrt(2.0 * accel * env.rail_length_m), 1)
-        metrics["stability_margin_cal"] = round(
-            (0.4 + 1.0 * span_ratio + 0.3 * (design.fins.count - 3)) * _jitter(rng), 2
-        )
-        metrics["liftoff_mass_kg"] = round(liftoff_mass, 3)
-    else:
-        water_mass = design.bottle_volume_m3 * design.water_fill_frac * 1000.0
-        air_volume = design.bottle_volume_m3 * (1.0 - design.water_fill_frac)
-        energy = design.initial_gauge_pressure_pa * air_volume * 0.3
-        mass = design.dry_mass_kg + design.payload_mass_kg + 0.5 * water_mass
-        apogee = _DUMMY_WATER_EFFICIENCY * energy / (mass * _G0) * _jitter(rng)
-        descent_mass = design.dry_mass_kg + design.payload_mass_kg
-        chute = design.parachute_diameter_m if design.has_parachute else None
-        descent = _descent_speed_mps(descent_mass, chute)
-        metrics["liftoff_mass_kg"] = round(
-            design.dry_mass_kg + design.payload_mass_kg + water_mass, 3
-        )
-    max_speed = math.sqrt(2.0 * _G0 * apogee / _DUMMY_DRAG_FACTOR)
-    flight_time = math.sqrt(2.0 * apogee / _G0) * 2.0 + apogee / descent
-    drift = env.wind_speed_mps * (apogee / descent) * (0.7 + 0.3 * rng.random())
-    theta = math.radians(env.wind_direction_deg + 180.0)
-    metrics.update(
-        {
-            "apogee_m": round(apogee, 1),
-            "max_speed_mps": round(max_speed, 1),
-            "descent_speed_mps": round(descent, 2),
-            "flight_time_s": round(flight_time, 1),
-            "landing_east_m": round(drift * math.sin(theta), 1),
-            "landing_north_m": round(drift * math.cos(theta), 1),
-        }
-    )
-    reasons = _judge(metrics, req)
-    return SimResult(
-        tier=tier,
-        success=not reasons,
-        failure_reasons=reasons,
-        metrics=metrics,
-        cost_jpy=0.0,  # filled in by _finalize
-        trace=_parabola_trace(apogee, flight_time),
-        warnings=[DUMMY_WARNING],
-    )
-
-
-def _judge(metrics: dict[str, float], req: Requirement | None) -> list[str]:
-    """Suborbital pass/fail against the requirement; thresholds in PASS_CRITERIA. Orbital rules
-    are judged inside physics.multistage; the budget rule is applied by `_finalize`."""
+def _judge(design: Design, req: Requirement | None) -> list[str]:
+    """Requirement-vs-design rules that no physics module owns (payload carried, recovery
+    requested). Flight rules are judged inside physics.multistage / solid / water; the budget
+    rule is applied by `_finalize`."""
     reasons: list[str] = []
-    tol = PASS_CRITERIA["altitude_tolerance_frac"]
-    if req is not None and req.goal_kind is GoalKind.ALTITUDE:
-        apogee = metrics.get("apogee_m", 0.0)
-        if abs(apogee - req.target_altitude_m) > tol * req.target_altitude_m:
-            reasons.append(
-                f"apogee {apogee:.1f} m outside +-{tol:.0%} of target {req.target_altitude_m:.1f} m"
-            )
-    margin = metrics.get("stability_margin_cal")
-    if margin is not None and margin < PASS_CRITERIA["min_stability_margin_cal"]:
+    if req is None:
+        return reasons
+    shortfall = req.payload_mass_kg - design.payload_mass_kg
+    if shortfall > PASS_CRITERIA["payload_shortfall_tolerance_kg"]:
         reasons.append(
-            f"static margin {margin:.2f} cal below {PASS_CRITERIA['min_stability_margin_cal']} cal"
+            f"design carries {design.payload_mass_kg:g} kg but the requirement needs "
+            f"{req.payload_mass_kg:g} kg of payload"
         )
-    descent = metrics.get("descent_speed_mps")
-    if descent is not None and descent > PASS_CRITERIA["max_descent_speed_mps"]:
-        reasons.append(
-            f"descent speed {descent:.2f} m/s above {PASS_CRITERIA['max_descent_speed_mps']} m/s"
-        )
+    if req.recovery_required and isinstance(design, BottleDesign) and not design.has_parachute:
+        reasons.append("recovery is required but the design has no parachute")
     return reasons
 
 
 def _finalize(result: SimResult, design: Design, req: Requirement | None) -> SimResult:
-    """Shared post-processing for the dummy and real paths: cost.py owns the cost estimate and
-    the budget rule lives here once (CLAUDE.md section 6: "within budget")."""
+    """Shared post-processing for every tier: `_judge` adds the requirement-level rules,
+    cost.py owns the cost estimate and the budget rule lives here once (CLAUDE.md section 6:
+    "within budget")."""
     cost_jpy = round(estimate_cost_jpy(design), 0)
-    reasons = list(result.failure_reasons)
+    reasons = list(result.failure_reasons) + _judge(design, req)
     if req is not None and req.budget_jpy is not None and cost_jpy > req.budget_jpy:
         reasons.append(f"cost {cost_jpy:,.0f} JPY exceeds budget {req.budget_jpy:,.0f} JPY")
     return result.model_copy(
         update={"cost_jpy": cost_jpy, "failure_reasons": reasons, "success": not reasons}
     )
+
+
+def _altitude_target(req: Requirement | None) -> float | None:
+    """target_apogee_m for physics.solid / physics.water when the requirement is an altitude
+    goal (the models then apply their +-10 % apogee rule), else None."""
+    if req is None or req.goal_kind is not GoalKind.ALTITUDE:
+        return None
+    return req.target_altitude_m
 
 
 def _orbit_targets(req: Requirement | None) -> tuple[float | None, float | None]:
@@ -440,17 +346,21 @@ def _orbit_targets(req: Requirement | None) -> tuple[float | None, float | None]
 def _simulate_dispatch(
     design: Design, env: Env, seed: int | None, req: Requirement | None = None
 ) -> SimResult:
-    """Single dispatch point. Commercial/heavy -> physics.multistage (real). Bottle/amateur ->
-    dummy until phase 3 routes them to physics.water / physics.solid."""
+    """Single dispatch point. Commercial/heavy -> physics.multistage, amateur -> physics.solid,
+    bottle -> physics.water (all real models, judged against the requirement's target)."""
     if isinstance(design, MultistageDesign):
         perigee_m, apogee_m = _orbit_targets(req)
-        # TODO(phase 3): altitude goals for multistage (e.g. 100 km sounding flights) need a
-        # suborbital judge in physics.multistage; today the model's minimum-perigee rule applies.
+        # TODO: altitude goals for multistage (e.g. 100 km sounding flights) need a suborbital
+        # judge in physics.multistage; today the model's minimum-perigee rule applies.
         result = multistage.simulate(
             design, env, seed, target_perigee_m=perigee_m, target_apogee_m=apogee_m
         )
-    else:
-        result = _dummy_suborbital(design, env, seed, req)
+    elif isinstance(design, AmateurDesign):
+        result = solid.simulate(design, env, seed, target_apogee_m=_altitude_target(req))
+    elif isinstance(design, BottleDesign):
+        result = water.simulate(design, env, seed, target_apogee_m=_altitude_target(req))
+    else:  # pragma: no cover - the discriminated union has no other member
+        raise TypeError(f"unsupported design type {type(design).__name__}")
     return _finalize(result, design, req)
 
 
@@ -675,17 +585,40 @@ def _tool_estimate_cost(inp: dict[str, Any]) -> dict[str, Any]:
 
 
 def _tool_render_drawing(inp: dict[str, Any]) -> dict[str, Any]:
+    """SVG side view -> artifact store; the model gets the id and download path only."""
     design = _parse_design(inp["design"])
-    return {"status": "not_implemented", "tier": design.tier, "svg": None}
+    return store_drawing(design)
+
+
+def _parse_json_model(text: Any, model: type[BaseModel], label: str) -> Any:
+    """Parse JSON text into `model`, keeping only the model's own fields (tool results carry
+    extras such as `source_id`-less `tuned_design` or `trace_point_count`)."""
+    if not isinstance(text, str) or not text.strip():
+        raise ValueError(f"{label} must be JSON text of the corresponding tool result")
+    try:
+        data = json.loads(text)
+    except ValueError as exc:
+        raise ValueError(f"{label} is not valid JSON: {exc}") from exc
+    if not isinstance(data, dict):
+        raise ValueError(f"{label} must be a JSON object")
+    kept = {k: v for k, v in data.items() if k in model.model_fields}
+    return model.model_validate(kept)
 
 
 def _tool_export_report(inp: dict[str, Any]) -> dict[str, Any]:
-    designs = [_parse_design(d) for d in inp.get("designs", [])]
-    return {
-        "status": "not_implemented",
-        "format": inp.get("format", "markdown"),
-        "design_count": len(designs),
-    }
+    """Markdown/JSON report + BOM CSV -> artifact store (ids and download paths returned)."""
+    design = _parse_design(inp["design"])
+    result: SimResult = _parse_json_model(inp.get("result_json"), SimResult, "result_json")
+    if result.tier.value != design.tier:
+        raise ValueError(f"result tier {result.tier.value!r} does not match design {design.tier!r}")
+    req = _parse_optional_requirement(inp.get("requirement"))
+    disp_text = inp.get("dispersion_json")
+    dispersion: DispersionResult | None = (
+        None
+        if disp_text is None
+        else _parse_json_model(disp_text, DispersionResult, "dispersion_json")
+    )
+    return store_report(design, result, requirement=req, dispersion=dispersion)
 
 
 TOOL_REGISTRY: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
