@@ -9,8 +9,9 @@ neighbourhood scan (pitch_start_s +-0.5 s, initial_pitch_deg +-0.2 deg) so a hum
 pitch program that sits inside the passing window rather than on its edge. The numbers hard-coded
 in `rocketwright/agent/fake_client.py` (DEMO_DESIGNS["commercial"]) came from this script.
 
-The open-loop gravity turn is very sensitive: a tenth of a degree can move the perigee by tens
-of kilometres, so the scan matters more than the optimum itself.
+With the coast-and-circularize insertion the perigee is set by the circularization burn, so the
+kick mainly decides the apogee overshoot and the leftover propellant; the scan shows how wide
+the passing window is (it used to be a tenth of a degree).
 """
 
 from __future__ import annotations
@@ -22,9 +23,15 @@ from rocketwright.cost import estimate_cost_jpy
 from rocketwright.physics import multistage as ms
 from rocketwright.schema import Env, MultistageDesign, Requirement, Stage
 
-# Same environment and requirement as scenarios/demo_commercial.yaml.
+# Same environment and requirement as scenarios/demo_commercial.yaml. Orbit goals are flown with
+# Earth rotation on by the agent's dispatch (rocketwright.agent.tools._orbit_env), so it is on
+# here too.
 ENV = Env(
-    launch_latitude_deg=31.25, launch_altitude_m=20, wind_speed_mps=5.0, wind_direction_deg=200
+    launch_latitude_deg=31.25,
+    launch_altitude_m=20,
+    wind_speed_mps=5.0,
+    wind_direction_deg=200,
+    earth_rotation=True,
 )
 REQUIREMENT = Requirement(
     goal_kind="orbit", target_altitude_m=400_000, payload_mass_kg=150, budget_jpy=2.0e9
@@ -35,9 +42,9 @@ REQUIREMENT = Requirement(
 # is physically too strong for a 150 kg payload under the 2e9 JPY budget: with a liftoff mass
 # capped at ~25 t by cost it lifts off at TWR > 3 and exceeds the 60 kPa max-Q limit.
 CANDIDATES: list[tuple[str, float, int, float, tuple[float, float]]] = [
-    ("under-fuelled (expected to FAIL)", 9_250.0, 9, 2_500.0, (12.0, 4.0)),
-    ("design A", 9_250.0, 10, 3_500.0, (25.0, 8.0)),
-    ("design C", 9_000.0, 10, 3_500.0, (38.0, 13.5)),
+    ("under-fuelled (expected to FAIL)", 9_250.0, 9, 1_500.0, (12.0, 4.0)),
+    ("design A", 9_250.0, 9, 2_500.0, (12.0, 4.0)),
+    ("design C", 9_250.0, 10, 3_500.0, (25.0, 8.0)),
 ]
 
 
@@ -74,15 +81,17 @@ def verdict(design: MultistageDesign) -> tuple[bool, dict[str, Any]]:
         "perigee_km": round(m["perigee_m"] / 1e3, 1),
         "apogee_km": round(min(m["apogee_m"], 1e8) / 1e3),
         "max_q_kpa": round(m["max_q_pa"] / 1e3, 1),
+        "propellant_margin_kg": round(m["propellant_margin_kg"]),
+        "payload_margin_kg": round(m["payload_margin_kg"]),
         "reasons": result.failure_reasons,
     }
 
 
 def neighbourhood(design: MultistageDesign) -> None:
-    print("    neighbourhood (ps, pa -> perigee km):")
-    for dps in (-0.5, 0.0, 0.5):
+    print("    neighbourhood (ps, pa -> perigee km, * = pass):")
+    for dps in (-2.0, 0.0, 2.0):
         cells = []
-        for dpa in (-0.2, -0.1, 0.0, 0.1, 0.2):
+        for dpa in (-1.0, -0.5, 0.0, 0.5, 1.0):
             candidate = design.model_copy(
                 update={
                     "pitch_start_s": design.pitch_start_s + dps,

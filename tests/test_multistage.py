@@ -236,12 +236,120 @@ def test_earth_rotation_adds_eastward_speed() -> None:
 def test_tune_pitch_program_returns_new_design_closer_to_target() -> None:
     start = two_stage(pitch_start_s=8.0, initial_pitch_deg=12.0)
     target_m = 250_000.0
-    before = ms.simulate(start, env()).metrics["perigee_m"]
+    before = ms.simulate(start, env(), target_perigee_m=target_m).metrics["perigee_m"]
     tuned = ms.tune_pitch_program(start, env(), target_perigee_m=target_m)
     assert isinstance(tuned, MultistageDesign)
     assert tuned.stages == start.stages
-    after = ms.simulate(tuned, env()).metrics["perigee_m"]
+    result = ms.simulate(tuned, env(), target_perigee_m=target_m)
+    after = result.metrics["perigee_m"]
     assert abs(after - target_m) < abs(before - target_m)
+    assert result.success, result.failure_reasons
+
+
+# --------------------------------------------------------------------------- orbit insertion
+
+
+def test_coast_circularize_is_default_with_a_target_and_hits_it() -> None:
+    target_m = 400_000.0
+    design = two_stage(pitch_start_s=21.5, initial_pitch_deg=4.5)  # tune_pitch_program output
+    result = ms.simulate(design, env(), target_perigee_m=target_m)
+    m = result.metrics
+    assert result.success, result.failure_reasons
+    assert m["perigee_m"] == pytest.approx(target_m, rel=0.05)
+    assert m["apogee_m"] == pytest.approx(target_m, rel=0.10)
+    assert m["coast_time_s"] > 0.0
+    assert m["circularization_dv_mps"] > 0.0
+    assert m["propellant_margin_kg"] > 0.0
+    assert m["payload_margin_kg"] > 0.0
+    assert "max_q_pa" in m
+    # the trace shows the coast: mass is constant while the altitude keeps climbing
+    masses = [p.mass_kg for p in result.trace]
+    assert any(abs(a - b) < 1e-6 for a, b in zip(masses, masses[1:], strict=False))
+    # burn 1 cutoff -> coast -> circularization burn; "burnout" is the final engine cutoff
+    assert m["coast_start_time_s"] < m["circularization_ignition_time_s"]
+    assert m["circularization_cutoff_time_s"] > m["circularization_ignition_time_s"]
+    assert m["burnout_time_s"] == pytest.approx(m["circularization_cutoff_time_s"])
+    assert result.trace[-1].t_s == pytest.approx(m["flight_time_s"])
+    assert m["coast_time_s"] == pytest.approx(
+        m["circularization_ignition_time_s"] - m["coast_start_time_s"]
+    )
+
+
+def test_direct_insertion_keeps_the_single_burn_behaviour() -> None:
+    design = two_stage()
+    direct = ms.simulate(design, env(), target_perigee_m=400_000.0, insertion="direct")
+    plain = ms.simulate(design, env())
+    assert direct.metrics["perigee_m"] == pytest.approx(plain.metrics["perigee_m"])
+    assert direct.metrics["coast_time_s"] == 0.0
+    assert direct.metrics["circularization_dv_mps"] == 0.0
+    assert direct.metrics["propellant_margin_kg"] == 0.0
+    # no target -> no insertion manoeuvre either
+    assert plain.metrics["coast_time_s"] == 0.0
+
+
+def test_coast_circularize_falls_through_when_apogee_is_out_of_reach() -> None:
+    # Single stage with a tiny kick: the osculating apogee never reaches 400 km.
+    result = ms.simulate(single_stage(), env(), target_perigee_m=400_000.0)
+    assert not result.success
+    assert any("apogee" in r for r in result.failure_reasons)
+    assert result.metrics["propellant_margin_kg"] == 0.0
+    assert result.metrics["payload_margin_kg"] < 0.0
+
+
+def test_direct_payload_margin_charges_the_climb_to_the_reference_altitude() -> None:
+    """At a 600 km reference the single-burn trajectory burns out far lower; the margin must
+    charge the climb, so the implied capability stays well under the old +80 % optimism."""
+    design = two_stage()
+    low = ms.simulate(design, env(), target_perigee_m=200_000.0, insertion="direct").metrics
+    high = ms.simulate(design, env(), target_perigee_m=600_000.0, insertion="direct").metrics
+    assert high["payload_margin_kg"] < low["payload_margin_kg"]
+    # Energy of a 600 km circular orbit charged from the burnout radius (see _required_dv_mps)
+    r_b = ms.R_EARTH_M + high["burnout_altitude_m"]
+    r_ref = ms.R_EARTH_M + 600_000.0
+    v_req = math.sqrt(
+        ms.MU_EARTH_M3PS2 / r_ref + 2.0 * ms.MU_EARTH_M3PS2 * (1.0 / r_b - 1.0 / r_ref)
+    )
+    assert v_req > math.sqrt(ms.MU_EARTH_M3PS2 / r_ref)
+    assert high["payload_margin_kg"] < 0.5 * design.payload_mass_kg
+
+
+def test_run_ascent_survives_event_root_finding_edge_case() -> None:
+    """Regression: firefly_alpha with a 200 kg fairing, rotation on and a 16 s / 3 deg kick
+    used to raise `ValueError: f(a) and f(b) must have different signs` from solve_ivp."""
+    from rocketwright.references import get_reference
+
+    entry = get_reference("firefly_alpha")
+    design = entry.design.model_copy(
+        update={
+            "pitch_start_s": 16.0,
+            "initial_pitch_deg": 3.0,
+            "fairing_mass_kg": 200.0,
+            "payload_mass_kg": 1030.0,
+        }
+    )
+    ascent = ms.run_ascent(design, entry.env, ms.AscentOptions())
+    assert ascent.t_s[-1] > 0.0
+    result = ms.simulate(design, entry.env, target_perigee_m=300_000.0)
+    assert math.isfinite(result.metrics["perigee_m"])
+
+
+def test_liftoff_twr_threshold_is_1_1_with_a_warning_below_1_2() -> None:
+    assert ms.PASS_THRESHOLDS["min_liftoff_twr_ratio"] == pytest.approx(1.1)
+    design = two_stage()
+    # 9 Merlins on 400 t is ~1.4; scale the propellant up so the T/W lands between 1.1 and 1.2
+    heavy = design.model_copy(
+        update={
+            "stages": [
+                design.stages[0].model_copy(update={"propellant_mass_kg": 520_000.0}),
+                design.stages[1],
+            ]
+        }
+    )
+    result = ms.simulate(heavy, env())
+    twr = result.metrics["liftoff_twr_ratio"]
+    assert 1.1 <= twr < 1.2, twr
+    assert not any("thrust-to-weight" in r for r in result.failure_reasons)
+    assert any("thrust-to-weight" in w for w in result.warnings)
 
 
 # --------------------------------------------------------------------------- reference vehicles

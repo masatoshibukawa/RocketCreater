@@ -1,7 +1,9 @@
 # Heavy-tier reference vehicles (medium/heavy launchers, with strap-on boosters where fitted).
 # See README.md for the format. Every number has a source URL in `sources`/`notes` or the
 # entry is `provisional: true`. LEO capabilities are compared against a circular orbit at the
-# altitude the source quotes; inclination is ignored by the 2-D model.
+# altitude the source quotes; inclination is ignored by the 2-D model. Reproduction uses the
+# coast-and-circularize insertion (see commercial.yaml); the simulated orbit altitude is the
+# perigee after circularization.
 version: 1
 references:
   - id: falcon_9_ft
@@ -22,18 +24,21 @@ references:
         - {propellant_mass_kg: 107500, structural_fraction: 0.0359, engine_id: merlin_1d_vacuum, engine_count: 1}
       fairing_mass_kg: 1700
       payload_mass_kg: 22800
-      pitch_start_s: 10
-      initial_pitch_deg: 3
+      pitch_start_s: 77.8
+      initial_pitch_deg: 31.9
     published:
       payload_to_orbit_kg: 22800
       orbit_altitude_m: 200000
     env: {launch_latitude_deg: 28.5, launch_altitude_m: 5, earth_rotation: true}
-    tolerance_frac: 0.30
+    tolerance_frac: 0.15
     notes: >-
-      earth_rotation is ON: the 28.5 deg figure assumes an eastward launch from the Cape and
-      the model only reaches the published perigee with the ~409 m/s pad speed (tuned kick
-      about 35 s / 8.5 deg -> perigee 205 km, payload -5 %; with rotation off the best open-loop
-      kick ends descending at burnout and the perigee is -680 km).
+      Coast-and-circularize reproduction with earth_rotation ON (the 28.5 deg figure assumes an
+      eastward launch from the Cape; with rotation off the open-loop turn ends at perigee
+      -823 km): tuned kick about 78 s / 32 deg -> the second stage passes apogee during its burn,
+      so the cutoff (at 321 km, descending) runs straight into the 400 m/s circularization ->
+      200 x 322 km with 524 kg of propellant left; payload +3 %, orbit_altitude_m +0 %; tolerance
+      0.15. The remaining +3 % is within the assumption that the 22,800 kg figure is for a 200 km
+      orbit. Before the coast was modelled: perigee 205 km, payload -5 %.
       Wikipedia infobox: stage 1 empty 22,200 kg, LOX 287,400 + RP-1 123,500 = 410,900 kg
       propellant -> sf 22,200/433,100 = 0.0513; stage 2 empty 4,000 kg, LOX 75,200 + RP-1 32,300
       = 107,500 kg -> sf 4,000/111,500 = 0.0359; fairing 1,700 kg; liftoff 549,000 kg; 22,800 kg
@@ -59,27 +64,38 @@ references:
         - {booster_id: aj_60a, count: 5}
       fairing_mass_kg: 4000
       payload_mass_kg: 18814
-      pitch_start_s: 10
-      initial_pitch_deg: 3
+      pitch_start_s: 5.0
+      initial_pitch_deg: 1.9
     published:
       payload_to_orbit_kg: 18814
       orbit_altitude_m: 200000
     env: {launch_latitude_deg: 28.5, launch_altitude_m: 5, earth_rotation: true}
-    tolerance_frac: 0.40
+    tolerance_frac: 0.3
     notes: >-
-      earth_rotation is ON (28.5 deg eastward launch). With it the tuned kick (about 24 s /
-      12 deg) reaches perigee 234 km / apogee 1,300 km and the payload reads -27 %; both are
-      sensitive to the open-loop kick, hence tolerance 0.40. Core and Centaur as atlas_v_401. Five AJ-60A boosters (gross 46,697 kg, propellant 42,630
+      Coast-and-circularize reproduction with earth_rotation ON (28.5 deg eastward launch; with
+      rotation off the turn ends at perigee -6,370 km): tuned kick about 5 s / 1.9 deg -> the
+      Centaur (T/W 0.44) passes apogee during its burn, so the cutoff (at 574 km, descending) runs
+      straight into a 415 m/s circularization -> 200 x 679 km with 3,340 kg of propellant left;
+      payload +26 %, orbit_altitude_m -0 %; tolerance 0.30. The remaining +26 % is attributed to
+      the 2-D model crediting the whole burn as in-plane while the real 551 LEO figure is limited
+      by the fairing/adapter and flies a lofted, guided Centaur trajectory; the estimated 4,000 kg
+      fairing and the RL10C-1 catalog entry standing in for the RL10A-4-2 also enter. Before the
+      coast was modelled: perigee 234 km, apogee 1,300 km, payload -27 %.
+      Core and Centaur as atlas_v_401. Five AJ-60A boosters (gross 46,697 kg, propellant 42,630
       kg, 279.3 s, 94 s burn, infobox). 18,814 kg to LEO at 28.5 deg (versions table; 200 km is
       an ASSUMPTION). Fairing 4,000 kg is an ESTIMATE (5 m fairing, not on the page). Boosters
       are modelled with a constant mean thrust and jettisoned together.
 
 # ---------------------------------------------------------------------------------------------
 # EXCLUDED until the ascent model can close these orbits (uncomment to re-enable; both load and
-# validate). With the open-loop, no-coast gravity turn the perigee never gets above ~22 km
-# (Atlas V 401; Centaur T/W 0.44, 842 s burn) or ~63 km (Soyuz-2.1b; Block I 270 s burn) for any
-# kick in 1-120 s x 0.5-60 deg, with or without Earth rotation, so orbit_altitude_m fails every
-# tolerance. The payload comparison is fine: Atlas V 401 -7 %, Soyuz-2.1b -4 % (rotation on).
+# validate). Even with the coast-and-circularize insertion the zero-angle-of-attack upper-stage
+# burn cannot hold altitude: these stages must supply ~3.5 km/s from a lofted staging point
+# (Atlas V 401: Centaur T/W 0.44, 842 s burn; Soyuz-2.1b: Block I 270 s burn), pass apogee
+# mid-burn and descend, so the best kick in 5-120 s x 0.5-60 deg (the tuner ends at the
+# 120 s / 27 deg bound for Atlas) leaves perigee -169 km (Atlas V 401) and 25 km (Soyuz-2.1b),
+# with or without Earth rotation. The payload comparison is fine: Atlas V 401 -4 %,
+# Soyuz-2.1b -3 % (rotation on). Closing these needs a pitch program with more than one kick
+# (out of scope: CLAUDE.md section 4 forbids guidance).
 #   - id: atlas_v_401
 #     tier: heavy
 #     name: "ULA Atlas V 401"
@@ -162,7 +178,9 @@ references:
 #       is the Soyuz-page stage value (792.5 kN SL / 990.2 kN vac, 255 / 319 s).
 
 # ---------------------------------------------------------------------------------------------
-# NOT INCLUDED (reproduction error exceeds the 0.6 cap; data kept here for a human to check):
+# NOT INCLUDED (reproduction error exceeds the 0.6 cap; data kept here for a human to check;
+# not re-tried with the coast-and-circularize insertion because the stage masses still need a
+# second source before the comparison means anything):
 # JAXA H3 (https://en.wikipedia.org/wiki/H3_(rocket), https://en.wikipedia.org/wiki/SRB-3).
 #   Stage 1: gross 241 t, propellant 226 t -> sf 15/241 = 0.0622, le_9 x 3 (H3-30) or x 2 (H3-24).
 #   Stage 2: gross 28 t, propellant 24.6 t -> sf 3.4/28 = 0.1214, le_5b_3 x 1.

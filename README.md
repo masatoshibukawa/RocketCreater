@@ -134,14 +134,24 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 - 抗力係数は細長いロケット向けの小さなマッハ数表で、機体固有ではない。
 - エンジン質量は構造比に含まれると仮定（構造比でエンジンすら賄えない場合は警告）。
 - 補助ブースタは最も燃焼時間が短いものが空になった時点で一斉投棄し、残推進剤は捨てる。1 段目より長持ちするブースタは 1 段目と一緒に投棄。
-- 上段は分離と同時に点火（コーストもアレージもなし）。
+- 下段は分離と同時に次段を点火（アレージなし）。最終段の軌道投入（`target_perigee_m` 指定時、既定 `insertion="coast_circularize"`）は
+  「接触軌道の遠地点が目標に達する（かつ近地点が −1000 km 以上）まで燃焼 → 無推力で遠地点までコースト（抗力は大気モデルに従い減衰）→
+  接触軌道の近地点が目標に達するまで再燃焼」。3 つのカットオフは状態量に対する積分イベントで、推力方向は常に速度方向（迎角ゼロ）のまま。
+  誘導則ではなく概念設計で通常使う「目標遠地点でのエンジン停止」であり、CLAUDE.md 4 の開ループの範囲内。
+  遠地点に届かず燃え尽きた場合はそのまま遠地点までコーストして到達軌道を報告（不合格）。`insertion="direct"` で従来の単一燃焼に戻せる。
+  指標に `coast_time_s`・`circularization_dv_mps`・`propellant_margin_kg` を追加。
 - 地球自転オンのとき、共回転大気の面内成分は `ω × cos(緯度)`（軌道面が赤道面であるかのように扱う）。
 - 音速は同じ大気モデルから計算し、極超音速の補正はない。
 - ピッチキックは瞬時に対気速度ベクトルを回転させ、以後は推力が速度方向を向く（迎角ゼロの開ループ重力ターン）。
   このため到達軌道は `pitch_start_s` / `initial_pitch_deg` に非常に敏感で（0.1° で近地点が数十 km 動く）、
   楕円軌道になりやすい。`tune_pitch_program`（scipy）がこの 2 変数を探索する。
 - 理想増速量の計算ではフェアリングを第 1 フェーズ後に投棄したものとする。
-- 積載余裕は、シミュレートした損失を固定したまま、基準近地点の円軌道速度に対して理想ロケット方程式を逆算して求める。
+- 積載余裕（`payload_margin_kg`）：coast_circularize では最終段に残った推進剤（`propellant_margin_kg`）の理想増速量を
+  「機体全体の理想増速量をその分だけ減らす積載増分」に換算する（損失は固定）。近地点が目標に届かなかった分は、
+  到達した接触軌道から基準円軌道への 2 インパルス増速量として差し引く。direct モードでは燃焼終了高度から基準高度への
+  上昇分を含めたエネルギー等価速度 `v_req² = v_circ(r_ref)² + 2μ(1/r_burnout − 1/r_ref)` に対して逆算する。
+- 離昇推重比の合格閾値は 1.1（Atlas V 401 の実機は約 1.17）。1.2 未満は警告。
+- 軌道目標ではエージェントのディスパッチ（`agent/tools.py`）が `earth_rotation` を自動で ON にする（東向き打上げを仮定、警告つき）。
 
 `physics/stability.py`（Barrowman 法、`solid` が使用）：
 
@@ -151,7 +161,10 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 
 `physics/solid.py`（アマチュア）：
 
-- 迎角ゼロの細長いフィン付きホビーロケットとして、前面投影面積に対する一定の抗力係数（`DEFAULT_CD = 0.5`）。
+- 迎角ゼロの細長いフィン付きホビーロケットとして、前面投影面積に対する一定の抗力係数（`DEFAULT_CD = 0.75`）。
+  Estes TR-10 系の高度予測が使う「典型的なモデルロケット」の値（ランチラグ・角のある balsa フィン）。
+  `catalog/references/amateur.yaml` の Estes キット 4 機に対して `scripts/calibrate_small_rockets.py` で較正
+  （頂点高度の RMS 誤差 15.4 %。全長 2 m の Mean Machine だけは摩擦抗力が支配的で +24 %）。
 - 全飛行で `g` 一定。
 - レール上ではレール方向（鉛直）の対気速度だけを数える。レールは鉛直（`Env` に発射角の項目はない）。
   レール離脱後は迎角ゼロの質点で、機体軸は対気速度に追従する。
@@ -160,9 +173,15 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 
 `physics/water.py`（ペットボトル）：
 
-- フィン付きボトルがノーズを前にして飛ぶとして、断面積に対する一定の抗力係数（`DEFAULT_CD = 0.5`）。
+- フィン付きボトルがノーズを前にして飛ぶとして、断面積に対する一定の抗力係数（`DEFAULT_CD = 0.8`）。
+  Apte & Apte 論文が 2 L ボトルに仮定する値で、Fischer らの風洞値 0.6 ± 0.2 の上端。
+  `catalog/references/bottle.yaml` の実験飛行 5 件に対して `AIR_IMPULSE_EFFICIENCY` と同時に
+  `scripts/calibrate_small_rockets.py` で較正（頂点高度の RMS 誤差 18.9 %）。
+  鈍い Apte のボトルと流線形の Fischer のロケットを 1 つの Cd では両立できない（設計ごとの Cd は未実装）。
   フィンなしのボトルは転がるものとし、抗力係数を 2 倍にする（`TUMBLING_DRAG_FACTOR = 2.0`）。
-- 水を使い切った後の空気噴出は、`AIR_IMPULSE_EFFICIENCY = 0.5` × `sqrt(2 m_air W_isentropic)` の瞬時インパルス 1 回で表す。
+- 水を使い切った後の空気噴出は、`AIR_IMPULSE_EFFICIENCY = 0.25` × `sqrt(2 m_air W_isentropic)` の瞬時インパルス 1 回で表す
+  （先細オリフィスからの吹き出しと泡状の排出は理想ジェットに遠く及ばない。参照飛行の較正では
+  どの Cd でも 0.25 が旧値 0.5 より良く、0.0 は質量不明の Apte 飛行だけに合う）。
 - ボトル直径は容積から推定（1.5 L の PET ボトルは直径約 90 mm、容積の立方根でスケール）。
 - 発射前のボトル内空気は周囲温度。
 - レール／迎角の簡易化は `solid.py` と同じ（鉛直ランチャー、迎角ゼロ）。
@@ -260,9 +279,15 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 
 出典のない物理定数：
 
-- `solid.DEFAULT_CD = 0.5` と `water.DEFAULT_CD = 0.5`（機体抗力）、`water.TUMBLING_DRAG_FACTOR = 2.0`（フィンなしボトル）。
+- `solid.DEFAULT_CD = 0.75`（機体抗力）。暫定だが参照飛行 4 件
+  （estes_alpha_iii_c6, estes_alpha_c6, estes_big_bertha_c6, estes_mean_machine_e12）に対して較正済み、RMS 誤差 15.4 %。
+- `water.DEFAULT_CD = 0.8`（機体抗力）。暫定だが参照飛行 5 件
+  （apte_2l_800ml_30psi, apte_2l_800ml_40psi, apte_2l_350ml_40psi, fischer_1l_350ml_2p5bar, fischer_1l_255ml_2bar）
+  に対して較正済み、RMS 誤差 18.9 %。`water.TUMBLING_DRAG_FACTOR = 2.0`（フィンなしボトル）は未較正。
 - `recovery.DEFAULT_PARACHUTE_CD = 1.5`（ホビーパラシュート）。
-- `water.AIR_IMPULSE_EFFICIENCY = 0.5`（空気噴出インパルスの割合）。
+- `water.AIR_IMPULSE_EFFICIENCY = 0.25`（空気噴出インパルスの割合）。暫定だが上の 5 件に対して `water.DEFAULT_CD` と同時に較正済み
+  （`uv run python scripts/calibrate_small_rockets.py` で表を再現できる）。apte_2l_350ml_40psi はなお +33 % で、
+  乾燥質量の推定値と 1 インパルス近似の空気噴出モデルが残る原因。
 - ボトル直径の規則：1.5 L で 90 mm、容積の立方根でスケール（`water.bottle_diameter_m`。図面は別途 3.5 の縦横比を使う）。
 - `deploy_delay_s` の意味：遅延は**頂点から**数える（頂点＋遅延で開傘）。燃焼終了後の放出薬の遅延ではない。
   アマチュアのデモでこの意味でよいか確認してください。

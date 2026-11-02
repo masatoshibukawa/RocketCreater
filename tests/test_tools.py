@@ -34,8 +34,8 @@ AMATEUR_DESIGN = {
     "deploy_delay_s": 1.0,
 }
 
-# Electron-class vehicle with catalog engine ids; reaches ~475 x 670 km with this pitch program
-# (numbers from scripts/tune_demo_design.py).
+# Electron-class vehicle with catalog engine ids; with the coast-and-circularize insertion it
+# reaches 400 km x ~760 km from this pitch program (numbers from scripts/tune_demo_design.py).
 COMMERCIAL_DESIGN = {
     "tier": "commercial",
     "stages": [
@@ -226,8 +226,12 @@ def test_simulate_design_multistage_uses_real_physics():
     assert not any("DUMMY" in w for w in sim.warnings)
     # the metrics are the multistage model's, judged against the requirement's orbit
     design = DesignAdapter.validate_python(COMMERCIAL_DESIGN)
-    ref = ms.simulate(design, Env.model_validate(ENV), target_perigee_m=400_000)
+    # orbit goals are flown with Earth rotation on (eastward launch assumed, see _simulate_dispatch)
+    ref = ms.simulate(
+        design, Env.model_validate({**ENV, "earth_rotation": True}), target_perigee_m=400_000
+    )
     assert sim.metrics == ref.metrics
+    assert any("earth rotation enabled" in w for w in sim.warnings)
     assert sim.success is True, sim.failure_reasons
     assert sim.metrics["perigee_m"] >= 360_000
     # cost comes from cost.py (multistage returns 0.0)
@@ -246,7 +250,7 @@ def test_simulate_design_multistage_target_from_requirement():
         **COMMERCIAL_DESIGN,
         "stages": [
             {**COMMERCIAL_DESIGN["stages"][0], "engine_count": 9},
-            {**COMMERCIAL_DESIGN["stages"][1], "propellant_mass_kg": 2500},
+            {**COMMERCIAL_DESIGN["stages"][1], "propellant_mass_kg": 1500},
         ],
         "pitch_start_s": 12,
         "initial_pitch_deg": 4,
@@ -255,10 +259,9 @@ def test_simulate_design_multistage_target_from_requirement():
     assert "error" not in out
     assert out["success"] is False
     assert any("perigee" in r and "400 km" in r for r in out["failure_reasons"])
-    # without a requirement only the multistage default minimum (150 km) applies, which this
-    # ~290 km perigee clears: the 400 km rule really came from the requirement
+    # without a requirement there is no insertion target and only the multistage default
+    # minimum perigee (150 km) applies: the 400 km rule really came from the requirement
     out2 = _sim(under_fuelled, None)
-    assert out2["success"] is True, out2["failure_reasons"]
     assert not any("400 km" in r for r in out2["failure_reasons"])
 
 
@@ -304,6 +307,28 @@ def test_tune_pitch_returns_tuned_design():
     ref = _sim(tuned, REQ_ORBIT, tool_id="toolu_ref")
     assert ref["metrics"] == out["metrics"]
     assert out["success"] is True, out["failure_reasons"]
+
+
+def test_orbit_goal_enables_earth_rotation_with_a_warning():
+    from rocketwright.agent.tools import _simulate_dispatch
+    from rocketwright.schema import Requirement
+
+    design = DesignAdapter.validate_python(COMMERCIAL_DESIGN)
+    req = Requirement.model_validate(REQ_ORBIT)
+    still = Env.model_validate(ENV)
+    assert still.earth_rotation is False
+    out = _simulate_dispatch(design, still, 1, req)
+    assert any("earth rotation enabled for orbit goal" in w for w in out.warnings)
+    rotating = ms.simulate(
+        design, still.model_copy(update={"earth_rotation": True}), target_perigee_m=400_000
+    )
+    assert out.metrics == rotating.metrics
+    # an explicit earth_rotation=True gets no warning; no requirement -> left alone
+    out2 = _simulate_dispatch(design, still.model_copy(update={"earth_rotation": True}), 1, req)
+    assert not any("earth rotation enabled" in w for w in out2.warnings)
+    out3 = _simulate_dispatch(design, still, 1, None)
+    assert not any("earth rotation enabled" in w for w in out3.warnings)
+    assert out3.metrics == ms.simulate(design, still).metrics
 
 
 def test_tune_pitch_needs_an_orbit_requirement():

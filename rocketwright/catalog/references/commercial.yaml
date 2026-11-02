@@ -1,7 +1,9 @@
 # Commercial-tier reference vehicles (small orbital launchers). See README.md for the format.
 # Every number has a source URL in `sources`/`notes` or the entry is `provisional: true`.
 # Reproduction: the published payload is flown to the published orbit altitude with the pitch
-# program tuned; the simulated payload is published + payload_margin_kg.
+# program tuned and the coast-and-circularize insertion (burn to the target apogee, coast,
+# circularize; leftover propellant is the margin); the simulated payload is published +
+# payload_margin_kg and the simulated orbit altitude is the perigee after circularization.
 version: 1
 references:
   - id: electron
@@ -22,31 +24,29 @@ references:
         - {propellant_mass_kg: 2050, structural_fraction: 0.1087, engine_id: rutherford_vacuum, engine_count: 1}
       fairing_mass_kg: 44
       payload_mass_kg: 300
-      pitch_start_s: 100
-      initial_pitch_deg: 59.5
+      pitch_start_s: 10.4
+      initial_pitch_deg: 4.5
     published:
       payload_to_orbit_kg: 300
       orbit_altitude_m: 500000
     env: {launch_latitude_deg: -39.26, launch_altitude_m: 10}
-    tolerance_frac: 0.60
+    tolerance_frac: 0.15
     notes: >-
-      pitch_start_s / initial_pitch_deg seed the tuner at the kick a 1-120 s x 0.5-60 deg scan
-      found best (100 s / 59.5 deg -> perigee 208 km, apogee 570 km); from the README seed
-      (8 s / 3 deg) the tuner settles at perigee 194 km with apogee 1,200 km. Without a coast
-      the perigee cannot exceed the burnout altitude (about 200 km), so the orbit_altitude_m
-      error is about -58 % against the 500 km reference whatever the kick; tolerance 0.60.
+      Coast-and-circularize reproduction: tuned kick about 10 s / 4.5 deg -> cutoff at 500 km,
+      coast 44 min, 90 m/s circularization -> 500 x 500 km with 19 kg of propellant left; payload
+      +7 %, orbit_altitude_m -0 %; tolerance 0.15. The remaining +7 % is attributed to the catalog
+      sea-level Rutherford carrying the vacuum variant's 343 s vacuum Isp (optimistic stage 1) and
+      to the community-wiki stage masses below. earth_rotation stays OFF: the 300 kg figure is
+      for an unspecified LEO and Mahia launches mostly to high inclinations (with rotation on the
+      payload reads +27 %). Before the coast was modelled the perigee was capped at the burnout
+      altitude (about 209 km, -58 %) and the payload read +17 %.
       Wikipedia: liftoff mass 13.0 t, 9 x Rutherford (224.3 kN SL / 234 kN vac, 311 s) + 1 vacuum
       Rutherford (25.8 kN, 343 s), fairing 44 kg, 300 kg to LEO (updated figure) and 200 kg to a
       500 km SSO. The page gives no altitude for the 300 kg LEO figure: 500 km is an ASSUMPTION
-      (same altitude as the SSO figure). Reproduction gives about +29 %: the model is optimistic
-      for 500 km references because the payload margin uses the circular speed at the reference
-      altitude with losses from a trajectory that burns out lower (no climb term), and the
-      catalog sea-level Rutherford carries the vacuum variant's 343 s vacuum Isp; tolerance 0.40
-      for these reasons. Against the 200 kg SSO figure the error is +83 % (retrograde SSO
-      launch from 39 deg S is not representable in 2-D). Per-stage masses are NOT on the page:
-      stage 1 dry 950 kg / wet 10,200 kg and stage 2 dry 250 kg / wet 2,300 kg come from a
-      community wiki and are estimates -> structural fractions 950/(950+9250) = 0.0931 and
-      250/(250+2050) = 0.1087. Launch site Mahia LC-1.
+      (same altitude as the SSO figure). Per-stage masses are NOT on the page: stage 1 dry 950 kg /
+      wet 10,200 kg and stage 2 dry 250 kg / wet 2,300 kg come from a community wiki and are
+      estimates -> structural fractions 950/(950+9250) = 0.0931 and 250/(250+2050) = 0.1087.
+      Launch site Mahia LC-1.
 
   - id: vega
     tier: commercial
@@ -67,33 +67,32 @@ references:
         - {propellant_mass_kg: 11050, structural_fraction: 0.1168, engine_id: zefiro_9, engine_count: 1}
       fairing_mass_kg: 400
       payload_mass_kg: 1963
-      pitch_start_s: 8
-      initial_pitch_deg: 3
+      pitch_start_s: 86.4
+      initial_pitch_deg: 59.7
     published:
       payload_to_orbit_kg: 1963
       orbit_altitude_m: 200000
     env: {launch_latitude_deg: 5.2, launch_altitude_m: 10}
-    tolerance_frac: 0.60
+    tolerance_frac: 0.3
     notes: >-
-      earth_rotation stays OFF although the 5.4 deg orbit is an eastward launch: with it the
-      payload error grows to +82 % (perigee unchanged at about 101 km). Without a coast the
-      perigee cannot exceed the burnout altitude (110 km, where the fairing also drops), so
-      orbit_altitude_m reads about -48 %; tolerance 0.60.
-      Published figure used: 1,963 kg to a 1,500 km x 200 km, 5.4 deg elliptical orbit
-      (infobox); the reproduction compares against a 200 km circular orbit, which needs about
-      330 m/s less, so the model is expected to read high. Result about +41 %.
-      Against the 1,430 kg / 700 km polar figure the model gives +128 % and against 1,450 kg /
-      400 km SSO +105 %: the payload margin ignores the climb from burnout altitude to the
-      reference altitude (see the deficiency list in the reference report).
+      Coast-and-circularize reproduction: tuned kick about 86 s / 60 deg -> cutoff at 200 km,
+      coast 21 min, 50 m/s circularization -> 200 x 200 km with 296 kg of propellant left; payload
+      +17 %, orbit_altitude_m -0 %; tolerance 0.30. The remaining +17 % is attributed to comparing
+      against a 200 km circular orbit while the published figure is for a 1,500 x 200 km ellipse
+      (about 330 m/s more, which alone explains most of the gap) and to folding the AVUM into
+      stage 3 (see below). earth_rotation stays OFF although the 5.4 deg orbit is an eastward
+      launch: with it the payload reads +54 %. Before the coast was modelled the perigee was
+      capped at the burnout altitude (103 km, -48 %) and the payload read +41 %.
+      Published figure used: 1,963 kg to a 1,500 km x 200 km, 5.4 deg elliptical orbit (infobox).
       All masses from the Wikipedia specification table: P80 gross 95,695 / empty 7,330 /
       propellant 88,365 kg -> sf 7,330/95,695 = 0.0766; Zefiro 23 gross 28,850 / empty 2,850 /
       propellant 24,000 -> sf 2,850/28,850 = 0.0988; Zefiro 9 gross 11,815 / empty 1,315 /
       propellant 10,500; AVUM gross 697 / empty 147 / propellant 550 kg. The schema allows three
       stages, so AVUM is folded into stage 3: propellant 10,500 + 550 = 11,050 kg, dry 1,315 + 147
       = 1,462 kg -> sf 1,462/12,512 = 0.1168 (its 550 kg burn at 296 s instead of 314.6 s, and the
-      Z9 case is not dropped before it: a small pessimistic bias). Fairing 400 kg. Published
-      Liftoff mass check 95,695 + 28,850 + 11,815 + 697 + 400 + 1,430 = 138,887 kg vs 137,000 kg
-      on the page. Launch site Kourou ELV.
+      Z9 case is not dropped before it: a small pessimistic bias). Fairing 400 kg. Liftoff mass
+      check 95,695 + 28,850 + 11,815 + 697 + 400 + 1,430 = 138,887 kg vs 137,000 kg on the page.
+      Launch site Kourou ELV.
 
   - id: firefly_alpha
     tier: commercial
@@ -113,29 +112,31 @@ references:
         - {propellant_mass_kg: 7000, structural_fraction: 0.1149, engine_id: lightning_1, engine_count: 1}
       fairing_mass_kg: 220
       payload_mass_kg: 1030
-      pitch_start_s: 100
-      initial_pitch_deg: 52
+      pitch_start_s: 40.0
+      initial_pitch_deg: 16.1
     published:
       payload_to_orbit_kg: 1030
       orbit_altitude_m: 300000
     env: {launch_latitude_deg: 34.6, launch_altitude_m: 100, earth_rotation: true}
-    tolerance_frac: 0.30
+    tolerance_frac: 0.15
     notes: >-
-      earth_rotation is ON (the 1,030 kg LEO figure is the low-inclination case; Vandenberg
-      SSO performance is the separate 630 kg figure). pitch_start_s / initial_pitch_deg seed
-      the tuner at the kick a 1-120 s x 0.5-60 deg scan found best (100 s / 52 deg -> perigee
-      239 km, apogee 299 km, payload +2 %). With rotation off the open-loop turn ends descending
-      (best perigee -546 km). Fairing 220 kg is an ESTIMATE; 200 kg or 250 kg make the tuner's
-      coarse grid hit a point (16 s / 3 deg) where run_ascent raises ValueError from solve_ivp
-      event root-finding (f(a) and f(b) must have different signs), so 220 kg was kept.
+      Coast-and-circularize reproduction with earth_rotation ON (the 1,030 kg LEO figure is the
+      low-inclination case; Vandenberg SSO performance is the separate 630 kg figure): tuned kick
+      about 40 s / 16 deg -> cutoff at 300 km, coast 42 min, 19 m/s circularization -> 300 x 300 km
+      with 61 kg of propellant left; payload +7 %, orbit_altitude_m -0 %; tolerance 0.15. The
+      remaining +7 % is attributed to the estimated fairing mass and propellant split below. With
+      rotation off the open-loop turn ends descending (perigee -560 km). Before the coast was
+      modelled the perigee was 248 km (-17 %) and the payload +1 %. A 200 kg fairing with a
+      16 s / 3 deg kick used to crash solve_ivp's event root-finding; that case is now a
+      regression test (tests/test_multistage.py).
       Wikipedia/Firefly: liftoff mass 54,000 kg, 4 x Reaver (736.1 kN SL, 801 kN vac, 295.6 s),
       1 x Lightning (70.1 kN, 322 s), 1,030 kg to a 300 km LEO (fireflyspace.com). Stage dry
       masses 2,895 kg and 909 kg are from a secondary source
       (https://thespacebucket.com/firefly-aerospace-will-soon-attempt-to-reach-orbit-again/).
-      The propellant split is an ESTIMATE: total propellant = 54,000 - 2,895 - 909 - 1,030 -
-      220 (fairing, estimate) = 48,946 kg, divided 42,000 / 7,000 so that the second stage
-      ignites at a thrust-to-weight of about 0.8 -> sf 2,895/44,895 = 0.0645 and 909/7,909 =
-      0.1149. Launch site Vandenberg SLC-2W.
+      Fairing 220 kg is an ESTIMATE. The propellant split is an ESTIMATE: total propellant =
+      54,000 - 2,895 - 909 - 1,030 - 220 (fairing, estimate) = 48,946 kg, divided 42,000 / 7,000 so
+      that the second stage ignites at a thrust-to-weight of about 0.8 -> sf 2,895/44,895 = 0.0645
+      and 909/7,909 = 0.1149. Launch site Vandenberg SLC-2W.
 
   - id: epsilon_enhanced
     tier: commercial
@@ -158,23 +159,27 @@ references:
         - {propellant_mass_kg: 2500, structural_fraction: 0.2425, engine_id: km_v2c, engine_count: 1}
       fairing_mass_kg: 800
       payload_mass_kg: 1200
-      pitch_start_s: 10
-      initial_pitch_deg: 3
+      pitch_start_s: 5.0
+      initial_pitch_deg: 1.1
     published:
       payload_to_orbit_kg: 1200
       orbit_altitude_m: 250000
     env: {launch_latitude_deg: 31.25, launch_altitude_m: 220, earth_rotation: true}
-    tolerance_frac: 0.60
+    tolerance_frac: 0.15
     notes: >-
-      earth_rotation is ON: Uchinoura launches east to about 31 deg and only with the pad speed
-      does the open-loop kick close an orbit (tuned about 16 s / 8.3 deg -> perigee 113 km,
-      apogee 311 km, payload +33 %); with rotation off the payload reads -3 % but the perigee is
-      -610 km. Perigee is capped by the burnout altitude (no coast), hence tolerance 0.60.
+      Coast-and-circularize reproduction with earth_rotation ON (Uchinoura launches east to about
+      31 deg; with rotation off the open-loop turn ends at perigee -2,420 km): tuned kick about
+      5 s / 1.1 deg -> cutoff at 250 km, coast 18 min, 95 m/s circularization -> 250 x 250 km with
+      58 kg of propellant left; payload +6 %, orbit_altitude_m -0 %; tolerance 0.15. The remaining
+      +6 % is attributed to the estimated stage 3 dry mass and fairing (below) and to modelling the
+      solid stages with constant average thrust. Before the coast was modelled the perigee was
+      capped at the burnout altitude (113 km, -55 %) and the payload read +33 %.
       JAXA: 1,200 kg to a 250 km x 500 km LEO (standard 3-stage configuration), liftoff mass
       95.4 t. The reproduction compares against a circular 250 km orbit (the reference perigee).
       Stage 1 SRB-A3: propellant 65.9 t, 284 s, 116 s burn (Wikipedia); dry 8.7 t = SRB-A gross
-      75.5 t - 66.8 t (SRB-3 page) -> sf 8,700/74,600 = 0.1166 (0.1167 used so the structure covers the case). Stage 2 M-35: propellant 15,000 kg,
-      launch mass 17,200 kg from spaceflight101 (secondary) -> sf 2,200/17,200 = 0.1279 (0.1280 used). Stage 3
-      KM-V2c: propellant 2.5 t (Wikipedia), dry 800 kg is an ESTIMATE -> sf 0.2424 (0.2425 used). Fairing 800 kg
-      is an ESTIMATE. Mass check 74.6 + 17.2 + 3.3 + 0.8 + 1.2 = 97.1 t vs 95.4 t published.
-      Solid stages are modelled with constant average thrust. Launch site Uchinoura.
+      75.5 t - 66.8 t (SRB-3 page) -> sf 8,700/74,600 = 0.1166 (0.1167 used so the structure covers
+      the case). Stage 2 M-35: propellant 15,000 kg, launch mass 17,200 kg from spaceflight101
+      (secondary) -> sf 2,200/17,200 = 0.1279 (0.1280 used). Stage 3 KM-V2c: propellant 2.5 t
+      (Wikipedia), dry 800 kg is an ESTIMATE -> sf 0.2424 (0.2425 used). Fairing 800 kg is an
+      ESTIMATE. Mass check 74.6 + 17.2 + 3.3 + 0.8 + 1.2 = 97.1 t vs 95.4 t published.
+      Launch site Uchinoura.

@@ -115,6 +115,28 @@ def test_trace_and_result_shape() -> None:
     assert not any("DUMMY" in w for w in res.warnings)
 
 
+def test_cd_and_air_impulse_overrides_default_to_module_constants() -> None:
+    """`cd=None` / `air_impulse_efficiency=None` must reproduce the module defaults exactly
+    (the calibration scan relies on it); more drag or less air impulse must fly lower."""
+    d = design()
+    env = calm_env()
+    nominal = water.simulate(d, env)
+    explicit = water.simulate(
+        d, env, cd=water.DEFAULT_CD, air_impulse_efficiency=water.AIR_IMPULSE_EFFICIENCY
+    )
+    assert explicit.metrics == nominal.metrics
+    draggy = water.simulate(d, env, cd=water.DEFAULT_CD * 1.5)
+    assert draggy.metrics["apogee_m"] < nominal.metrics["apogee_m"]
+    no_air = water.simulate(d, env, air_impulse_efficiency=0.0)
+    assert no_air.metrics["air_impulse_ns"] == 0.0
+    assert no_air.metrics["apogee_m"] < nominal.metrics["apogee_m"]
+    assert nominal.metrics["air_impulse_ns"] > 0.0
+    with pytest.raises(ValueError, match="cd"):
+        water.simulate(d, env, cd=0.0)
+    with pytest.raises(ValueError, match="air_impulse_efficiency"):
+        water.simulate(d, env, air_impulse_efficiency=1.5)
+
+
 def test_one_flight_runs_under_50_ms() -> None:
     d = design()
     env = Env(launch_altitude_m=10.0, wind_speed_mps=2.0, wind_direction_deg=90.0)

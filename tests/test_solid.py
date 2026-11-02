@@ -133,6 +133,21 @@ def test_rail_exit_speed_increases_with_thrust() -> None:
     assert strong.metrics["apogee_m"] > weak.metrics["apogee_m"]
 
 
+def test_cd_override_defaults_to_module_constant_and_scales_drag() -> None:
+    """`cd=None` must be exactly the module default (the calibration scan relies on it) and a
+    higher Cd must fly lower; the OpenRocket-style constant is the single source of truth."""
+    d = design()
+    env = calm_env()
+    nominal = solid.simulate(d, env)
+    explicit = solid.simulate(d, env, cd=solid.DEFAULT_CD)
+    assert explicit.metrics == nominal.metrics
+    draggy = solid.simulate(d, env, cd=solid.DEFAULT_CD * 1.5)
+    assert draggy.metrics["apogee_m"] < nominal.metrics["apogee_m"]
+    assert draggy.metrics["max_speed_mps"] < nominal.metrics["max_speed_mps"]
+    with pytest.raises(ValueError, match="cd"):
+        solid.simulate(d, env, cd=0.0)
+
+
 def test_one_flight_runs_under_50_ms() -> None:
     d = design()
     env = Env(launch_altitude_m=300.0, wind_speed_mps=3.0, wind_direction_deg=270.0)

@@ -77,8 +77,8 @@ PASS_CRITERIA: dict[str, float] = {
     "payload_shortfall_tolerance_kg": 0.0,  # design must carry at least the required payload
 }
 
-# tune_pitch_program budget: ~60 ascents at ~35 ms each, i.e. a few seconds per call.
-_TUNE_MAX_EVALUATIONS = 60
+# tune_pitch_program budget: ~80 ascents at ~50-100 ms each, i.e. a few seconds per call.
+_TUNE_MAX_EVALUATIONS = 80
 
 _CATALOG_DIR = Path(__file__).resolve().parent.parent / "catalog"
 _MAX_ERROR_CHARS = 2000
@@ -352,11 +352,14 @@ def _simulate_dispatch(
     run. Module-level and picklable on purpose (dispersion workers)."""
     if isinstance(design, MultistageDesign):
         perigee_m, apogee_m = _orbit_targets(req)
+        env, rotation_warnings = _orbit_env(env, req)
         # TODO: altitude goals for multistage (e.g. 100 km sounding flights) need a suborbital
         # judge in physics.multistage; today the model's minimum-perigee rule applies.
         result = multistage.simulate(
             design, env, seed, target_perigee_m=perigee_m, target_apogee_m=apogee_m, **scales
         )
+        if rotation_warnings:
+            result = result.model_copy(update={"warnings": result.warnings + rotation_warnings})
     elif isinstance(design, AmateurDesign):
         result = solid.simulate(design, env, seed, target_apogee_m=_altitude_target(req), **scales)
     elif isinstance(design, BottleDesign):
@@ -366,6 +369,19 @@ def _simulate_dispatch(
     return _finalize(result, design, req)
 
 
+ORBIT_ROTATION_WARNING = "earth rotation enabled for orbit goal (eastward launch assumed)"
+
+
+def _orbit_env(env: Env, req: Requirement | None) -> tuple[Env, list[str]]:
+    """Orbit goals are flown with Earth rotation on (the schema default stays off because Env is
+    shared with the suborbital tiers): published LEO capabilities assume an eastward launch, and
+    the open-loop gravity turn needs the pad speed to close an orbit at all for several
+    reference vehicles. Returns the env to use and the warning to attach when it was changed."""
+    if req is None or req.goal_kind is not GoalKind.ORBIT or env.earth_rotation:
+        return env, []
+    return env.model_copy(update={"earth_rotation": True}), [ORBIT_ROTATION_WARNING]
+
+
 def _tune_pitch(design: Design, env: Env, req: Requirement | None) -> MultistageDesign:
     """Run physics.multistage.tune_pitch_program for the requirement's orbit (a few seconds)."""
     if not isinstance(design, MultistageDesign):
@@ -373,6 +389,7 @@ def _tune_pitch(design: Design, env: Env, req: Requirement | None) -> Multistage
     perigee_m, apogee_m = _orbit_targets(req)
     if perigee_m is None:
         raise ValueError("tune_pitch needs a requirement with goal_kind 'orbit'")
+    env, _ = _orbit_env(env, req)
     return multistage.tune_pitch_program(
         design,
         env,

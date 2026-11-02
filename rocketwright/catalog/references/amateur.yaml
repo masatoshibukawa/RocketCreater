@@ -42,11 +42,13 @@ references:
     published:
       apogee_m: 351                    # page: "Max altitude 1150 ft (351 m)"
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 1.0}
-    tolerance_frac: 0.30
+    tolerance_frac: 0.15
     notes: >-
       Page gives altitude/length/diameter/weight/chute/engines only. Nose length and fin
       dimensions are ESTIMATES. The page lists eight recommended engines; 1150 ft is taken to be
       the C6-5 (largest) figure. The published value is an Estes projection, not a measured flight.
+      With the calibrated solid.DEFAULT_CD = 0.75 (scripts/calibrate_small_rockets.py) our model
+      gives 346 m (-1.6 %); tolerance tightened to 0.15.
   - id: estes_alpha_c6
     tier: amateur
     name: "Estes Alpha (balsa fins) on C6-5"
@@ -78,14 +80,15 @@ references:
     published:
       apogee_m: 305                    # page: "Max altitude 1000 ft (305 m)"
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 1.0}
-    tolerance_frac: 0.50
+    tolerance_frac: 0.15
     notes: >-
       Nose length and fin dimensions are ESTIMATES (not on the page). 1000 ft is taken to be the
       C6-5 figure (largest recommended engine). Estes projection, not a measured flight.
-      TOLERANCE RAISED to 0.50: our model gives 446 m (+46 %). Model-side: the constant
-      Cd 0.5 is too low for a 25 mm balsa-finned kit with a launch lug (Cd 0.7-0.8 gives
-      363-334 m); the 22.7 g kit weight may also exclude wadding/chute. The estimated fins give
-      a 1.36 cal Barrowman margin (sim flags it); the real Alpha fin is probably larger.
+      With the calibrated solid.DEFAULT_CD = 0.75 our model gives 348 m (+14.0 %, was +46 % at
+      Cd 0.5); tolerance tightened from 0.50 to 0.15. Remaining attribution: the 22.7 g kit
+      weight probably excludes wadding, chute and engine hook, and the Estes projection method
+      is unknown. The estimated fins give a 1.36 cal Barrowman margin (sim flags it); the real
+      Alpha fin is probably larger (does not affect the apogee comparison).
   - id: estes_big_bertha_c6
     tier: amateur
     name: "Estes Big Bertha on C6-5"
@@ -117,12 +120,14 @@ references:
     published:
       apogee_m: 152                    # page: "Max altitude 500 ft (152 m)"
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 1.0}
-    tolerance_frac: 0.45
+    tolerance_frac: 0.15
     notes: >-
       Nose length and fin dimensions are ESTIMATES. 500 ft is taken to be the C6-5 figure
       (largest recommended engine: B4-2, B4-4, B6-2, B6-4, C6-5). Estes projection.
-      TOLERANCE RAISED to 0.45: our model gives 210 m (+38 %). Model-side: Cd 0.5 is low for
-      this fat, draggy 42 mm kit with large square-edged balsa fins (Cd 0.8 gives 166 m).
+      With the calibrated solid.DEFAULT_CD = 0.75 our model gives 172 m (+13.1 %, was +38 % at
+      Cd 0.5); tolerance tightened from 0.45 to 0.15. Remaining attribution: this fat 42 mm kit
+      with four large square-edged balsa fins is draggier than the fleet-wide 0.75 (Cd 0.9 would
+      give +2.9 %), and the Estes projection method is unknown.
   - id: estes_mean_machine_e12
     tier: amateur
     name: "Estes Mean Machine on E12-4"
@@ -154,11 +159,14 @@ references:
     published:
       apogee_m: 213                    # page: "Projected max altitude 700 ft (213 m)"
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 1.0}
-    tolerance_frac: 0.45
+    tolerance_frac: 0.30
     notes: >-
       Nose length and fin dimensions are ESTIMATES. 700 ft is taken to be the E12 figure
       (recommended engines D12-3, D12-5, E12-4, E12-6). Estes projection, not a measured flight.
-      TOLERANCE RAISED to 0.45: our model gives 298 m (+40 %). Model-side: Cd 0.5 is low for a
-      2 m long 42 mm tube (skin friction dominates; Cd 0.8 gives 258 m). The sim also flags a
-      12 m/s rail-exit speed on the 1.0 m rod (241 g on an E12): Estes sells this kit with the
-      longer Porta-Pad E rod; the apogee comparison is unaffected.
+      With the calibrated solid.DEFAULT_CD = 0.75 our model gives 264 m (+24.0 %, was +40 % at
+      Cd 0.5); tolerance tightened from 0.45 to 0.30 but not further. Remaining attribution:
+      a 2 m long 42 mm tube has a wetted area ~5x the other kits, so skin friction dominates and
+      a frontal-area Cd of 0.75 is too low for it (even Cd 1.0 leaves +12 %); the Estes
+      projection method is unknown. The sim also flags a 12 m/s rail-exit speed on the 1.0 m rod
+      (241 g on an E12): Estes sells this kit with the longer Porta-Pad E rod; the apogee
+      comparison is unaffected.

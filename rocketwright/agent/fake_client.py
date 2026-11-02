@@ -235,21 +235,27 @@ _FINS = {
 # (bottle: physics.water, amateur: physics.solid, commercial/heavy: physics.multistage).
 #
 # Bottle/amateur numbers came from scripts/tune_suborbital_demo.py (real physics, scenario env):
-#   * bottle attempt 1: 1.5 L, 40 % water, 500 kPa, no parachute -> apogee ~47 m and a 24 m/s
+#   * bottle attempt 1: 1.5 L, 40 % water, 500 kPa, no parachute -> apogee ~36 m and a 20 m/s
 #     ballistic descent; fails "add a parachute" / "recovery required" / apogee > 33 m.
-#   * bottle attempts 2-3: 0.5 m parachute, 300 kPa (1.5 L -> ~29 m, 2 L -> ~32 m) -> pass.
-#   * amateur attempt 1: dummy_I200 on a 1 kg payload with a 0.6 m chute -> apogee ~1.2 km and a
+#   * bottle attempt 2: 0.5 m parachute, 1.5 L at 400 kPa -> ~30 m, 3.1 m/s -> pass.
+#   * bottle attempt 3: 0.5 m parachute, 2 L at 350 kPa -> ~29.5 m, 3.3 m/s -> pass.
+#   (re-tuned for water.DEFAULT_CD 0.8 / AIR_IMPULSE_EFFICIENCY 0.25, calibrated 2026-11-02)
+#   * amateur attempt 1: dummy_I200 on a 1 kg payload with a 0.6 m chute -> apogee ~1.1 km and a
 #     9.5 m/s descent; fails "larger parachute" and "apogee below target".
-#   * amateur attempt 2: dummy_J420 in a 66 mm airframe with a 1.2 m chute -> ~2.1 km, 5.5 m/s.
-#   * amateur attempt 3: dummy_J420 in a heavier 54 mm airframe -> ~2.2 km, 5.9 m/s, 48 kJPY.
+#   * amateur attempt 2: dummy_J420 in a 60 mm airframe with a 1.2 m chute -> ~1.94 km, 5.4 m/s.
+#   * amateur attempt 3: dummy_J420 in a heavier 54 mm airframe -> ~1.99 km, 5.7 m/s, 46 kJPY.
+#   (re-tuned for solid.DEFAULT_CD 0.75, calibrated 2026-11-02; a 66 mm airframe no longer
+#   reaches 1.8 km on a J420 with this Cd)
 #
-# Commercial numbers came from scripts/tune_demo_design.py (real physics, scenario env):
-#   * attempt 1: Electron-class, 9 x rutherford + 2 500 kg upper stage -> perigee ~290 km,
-#     fails "perigee below target 400 km" (under-fuelled upper stage, too little burn time).
-#   * attempt 2: +1 000 kg upper-stage propellant, 10 engines, re-tuned pitch program
-#     (25.5 s / 7.95 deg sits inside the +-0.5 s / +-0.2 deg passing window) -> ~475 x 670 km.
-#   * attempt 3: slightly lighter first stage, later/larger kick (37.5 s / 13.55 deg) -> ~440 x
-#     540 km, a more circular insertion.
+# Commercial numbers came from scripts/tune_demo_design.py (real physics, scenario env, Earth
+# rotation on as the orbit-goal dispatch does; coast-and-circularize insertion):
+#   * attempt 1: Electron-class, 9 x rutherford + 1 500 kg upper stage -> the upper stage burns
+#     out before the insertion cutoff (apogee reached but the orbit never closes), fails
+#     "perigee below target 400 km" (under-fuelled upper stage).
+#   * attempt 2: +1 000 kg upper-stage propellant, re-tuned kick (14 s / 5.0 deg, inside a
+#     +-2 s / +-0.5 deg passing window) -> 400 km circularized, Monte-Carlo success 0.87.
+#   * attempt 3: 10 engines and a 3 500 kg upper stage with a later/larger kick (39 s / 14 deg)
+#     -> 400 km circularized with more propellant margin, Monte-Carlo success 0.78.
 # A merlin_1d first stage is too strong for a 150 kg payload under the 2e9 JPY budget (liftoff
 # TWR > 3 and max-Q far above 60 kPa), hence the Rutherford-class vehicle.
 _COMMERCIAL_STAGE_TEMPLATE = {"structural_fraction": 0.08, "engine_id": "rutherford"}
@@ -289,7 +295,7 @@ _AMATEUR_BASE = {
     "nose_length_m": 0.15,
     "fins": _FINS,
     "motor_id": "dummy_J420",
-    "dry_mass_kg": 1.8,
+    "dry_mass_kg": 1.6,
     "payload_mass_kg": 1.0,
     "parachute_diameter_m": 1.2,
     "deploy_delay_s": 1.0,
@@ -299,7 +305,7 @@ _BOTTLE_BASE = {
     "tier": "bottle",
     "bottle_volume_m3": 0.0015,
     "water_fill_frac": 0.4,
-    "initial_gauge_pressure_pa": 300000,
+    "initial_gauge_pressure_pa": 400000,
     "nozzle_diameter_m": 0.022,
     "dry_mass_kg": 0.12,
     "payload_mass_kg": 0.06,
@@ -310,17 +316,22 @@ _BOTTLE_BASE = {
 
 DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
     "bottle": [
-        {  # fails: no parachute (24 m/s ballistic descent) and 500 kPa overshoots 30 m
+        {  # fails: no parachute (20 m/s ballistic descent) and 500 kPa overshoots 30 m
             **_BOTTLE_BASE,
             "initial_gauge_pressure_pa": 500000,
             "has_parachute": False,
             "parachute_diameter_m": None,
         },
         _BOTTLE_BASE,
-        {**_BOTTLE_BASE, "bottle_volume_m3": 0.002, "dry_mass_kg": 0.14},
+        {
+            **_BOTTLE_BASE,
+            "bottle_volume_m3": 0.002,
+            "dry_mass_kg": 0.14,
+            "initial_gauge_pressure_pa": 350000,
+        },
     ],
     "amateur": [
-        {  # fails: motor too small for 2 km (~1.2 km) and 0.6 m chute descends at 9.5 m/s
+        {  # fails: motor too small for 2 km (~1.1 km) and 0.6 m chute descends at 9.5 m/s
             **_AMATEUR_BASE,
             "motor_id": "dummy_I200",
             "dry_mass_kg": 1.0,
@@ -328,21 +339,24 @@ DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
         },
         {
             **_AMATEUR_BASE,
-            "body_diameter_m": 0.066,
-            "body_length_m": 1.1,
-            "nose_length_m": 0.2,
+            "body_diameter_m": 0.060,
+            "body_length_m": 1.0,
+            "nose_length_m": 0.18,
             "fins": {**_FINS, "span_m": 0.045},
-            "dry_mass_kg": 1.4,
+            "dry_mass_kg": 1.3,
         },
         _AMATEUR_BASE,
     ],
     "commercial": [
-        _commercial(9250, 9, 2500, 12.0, 4.0),  # fails: perigee ~290 km < 400 km
-        _commercial(9250, 10, 3500, 25.5, 7.95),
-        _commercial(9000, 10, 3500, 37.5, 13.55),
+        _commercial(9250, 9, 1500, 12.0, 4.0),  # fails: upper stage burns out, no orbit
+        _commercial(9250, 9, 2500, 14.0, 5.0),
+        _commercial(9250, 10, 3500, 39.0, 14.0),
     ],
     "heavy": [
-        # Catalog ids only; not tuned (no heavy demo scenario yet).
+        # Catalog ids only (no heavy demo scenario yet). Attempt 1: a 10 t Centaur-class upper
+        # stage burns out before the insertion cutoff -> fails "perigee below target 500 km";
+        # attempt 2: 25 t upper stage with a 30 s / 12 deg kick -> 500 x ~1,360 km with ~7.8 t
+        # of propellant left, Monte-Carlo success 0.98 (checked 2026-11-02, rotation on).
         {
             "tier": "heavy",
             "stages": [
@@ -353,7 +367,7 @@ DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
                     "engine_count": 1,
                 },
                 {
-                    "propellant_mass_kg": 25000,
+                    "propellant_mass_kg": 10000,
                     "structural_fraction": 0.09,
                     "engine_id": "rl10",
                     "engine_count": 1,
@@ -381,11 +395,11 @@ DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
                     "engine_count": 1,
                 },
             ],
-            "boosters": [{"booster_id": "gem_63", "count": 4}],
+            "boosters": [{"booster_id": "gem_63", "count": 2}],
             "fairing_mass_kg": 2500,
             "payload_mass_kg": 5000,
-            "pitch_start_s": 14,
-            "initial_pitch_deg": 5,
+            "pitch_start_s": 30,
+            "initial_pitch_deg": 12,
         },
     ],
 }

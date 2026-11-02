@@ -37,7 +37,7 @@ references:
       apogee_m: 19.02                  # Table 4, experiment 5 (flight time 3.94 s -> g t^2 / 8)
       flight_time_s: 3.94
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.6}
-    tolerance_frac: 0.50
+    tolerance_frac: 0.15
     notes: >-
       Apogee is the paper's own conversion of the stopwatch flight time (3.94 s) with
       h = g t^2 / 8, i.e. ballistic up-and-down with no drag; a drag-affected real apogee would be
@@ -45,10 +45,10 @@ references:
       ESTIMATE (2 L PET bottle ~50 g + 3 plastic-folder fins + nose cone cut from a second 2 L
       bottle + hot glue); the paper gives no mass. The launcher is a PVC launch tube inside the
       bottle (the model has no launch-tube thrust; rail_length_m 0.6 = the 2 ft PVC pad).
-      TOLERANCE RAISED to 0.50: our model gives 27.2 m (+43 %, flight time 4.8 s vs 3.9 s
-      measured). Likely model-side: the constant Cd 0.5 is too low for a blunt 2 L bottle with a
-      bottle-top nose cone (the paper assumes Cd 0.8; Cd 0.8-1.0 in our model gives 22-20 m).
-      A dry mass of ~0.2 kg instead of 0.1 would also close the gap; a human should weigh in.
+      With the calibrated water.DEFAULT_CD = 0.8 (the paper's own assumption) and
+      AIR_IMPULSE_EFFICIENCY = 0.25 (scripts/calibrate_small_rockets.py) our model gives 20.7 m
+      (+8.7 %, was +43 % at Cd 0.5 / 0.5); tolerance tightened from 0.50 to 0.15. Remaining
+      attribution: the dry-mass ESTIMATE and the stopwatch-derived apogee (+/-0.3 s ~ +/-15 %).
   - id: apte_2l_800ml_40psi
     tier: bottle
     name: "Apte & Apte 2 L soda-bottle rocket, 800 mL water, 40 psig"
@@ -72,13 +72,14 @@ references:
       apogee_m: 22.02                  # Table 4, experiment 6 (flight time 4.24 s)
       flight_time_s: 4.24
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.6}
-    tolerance_frac: 0.60
+    tolerance_frac: 0.30
     notes: >-
       Same rocket and caveats as apte_2l_800ml_30psi; the highest flight of the paper's 3x3
       design of experiments. Apogee derived from flight time by the authors (g t^2 / 8).
-      TOLERANCE RAISED to 0.60: our model gives 34.9 m (+59 %, flight time 5.5 s vs 4.2 s
-      measured). Same suspected causes: Cd 0.5 too low for this blunt bottle (Cd 0.8 -> 28 m)
-      and/or the 0.10 kg dry-mass ESTIMATE being too light. Human decision needed.
+      With the calibrated Cd 0.8 / AIR_IMPULSE_EFFICIENCY 0.25 our model gives 25.6 m (+16.4 %,
+      was +59 %); tolerance tightened from 0.60 to 0.30. Remaining attribution: the 0.10 kg
+      dry-mass ESTIMATE (0.20 kg would give +9 %) and the stopwatch-derived apogee; the model
+      over-predicts more at the higher pressure, which also points at the air-blowdown model.
   - id: apte_2l_350ml_40psi
     tier: bottle
     name: "Apte & Apte 2 L soda-bottle rocket, 350 mL water, 40 psig"
@@ -102,17 +103,17 @@ references:
       apogee_m: 18.44                  # Table 4, experiment 3 (flight time 3.88 s)
       flight_time_s: 3.88
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.6}
-    tolerance_frac: 1.0
+    tolerance_frac: 0.45
     notes: >-
       Same rocket and caveats as apte_2l_800ml_30psi; low-water case, where the residual air
       blowdown carries more of the impulse. Apogee derived from flight time by the authors.
-      NOT REPRODUCED - TOLERANCE SET TO 1.0 SO A HUMAN CAN DECIDE: our model gives 36.1 m
-      (+96 %, flight time 5.5 s vs 3.9 s measured). With only 350 mL of water the air
-      left at 33 psig when the water runs out (paper, Table 4) carries much of the impulse, so
-      the provisional AIR_IMPULSE_EFFICIENCY = 0.5 blowdown model in physics/water.py is the
-      prime suspect, on top of the Cd / dry-mass issues of the 800 mL entries (Cd 1.0 alone
-      still gives 24.6 m). Either fix the air-phase model, confirm the rocket's mass, or drop
-      this entry; do not lower the tolerance without one of those.
+      With the calibrated Cd 0.8 / AIR_IMPULSE_EFFICIENCY 0.25 our model gives 24.6 m (+33.4 %,
+      was +96 % at Cd 0.5 / 0.5); tolerance lowered from 1.0 to 0.45, still the worst entry.
+      With only 350 mL of water the air left at 33 psig when the water runs out (paper, Table 4)
+      carries much of the impulse, so the one-impulse air-blowdown model is the prime suspect
+      (AIR_IMPULSE_EFFICIENCY 0.0 would give +12.8 %, but that leaves the Fischer flights 15-26 %
+      low); the 0.10 kg dry-mass ESTIMATE is the other (0.20 kg would give +7 %). Confirm the
+      rocket's mass or replace the air phase with a time-resolved blowdown before tightening.
   - id: fischer_1l_350ml_2p5bar
     tier: bottle
     name: "Fischer et al. 1 L D.I.Y. rocket, 350 mL water, 2.5 bar gauge"
@@ -135,13 +136,16 @@ references:
     published:
       apogee_m: 17.5                   # Table 2, launch 1: h_mes = 17.5 +/- 0.5 m (video vs rod)
     env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 0.5}
-    tolerance_frac: 0.30
+    tolerance_frac: 0.15
     notes: >-
       All design numbers are stated in the paper; only the launcher length (0.5 m) is an
       ESTIMATE (an indoor "launching device", length not given). The paper's own model with
       Cd = 0.6 (wind-tunnel value) and an air-thrust efficiency factor reproduces 17.2 m.
       "Fins" is assumed: the wind-tunnel photo shows a finned, nose-first rocket. Has fins per the
       paper's streamlined D.I.Y. rocket; gauge pressure = p0 - 1 bar (the paper quotes absolute).
+      With the calibrated Cd 0.8 / AIR_IMPULSE_EFFICIENCY 0.25 our model gives 16.2 m (-7.5 %;
+      +9 % at the old 0.5 / 0.5); tolerance tightened from 0.30 to 0.15. The fleet Cd 0.8 is
+      above this streamlined rocket's measured 0.6, which is why it now under-predicts.
   - id: fischer_1l_255ml_2bar
     tier: bottle
     name: "Fischer et al. 1 L D.I.Y. rocket, 255 mL water, 2.0 bar gauge"
@@ -168,3 +172,8 @@ references:
     notes: >-
       Same rocket as fischer_1l_350ml_2p5bar (the paper's own prediction: 13.3 m; the conclusion
       says the measured lower bound was 13.6 m). Launcher length 0.5 m is an ESTIMATE.
+      With the calibrated Cd 0.8 / AIR_IMPULSE_EFFICIENCY 0.25 our model gives 11.8 m (-16.6 %;
+      -0.5 % at the old 0.5 / 0.5), so the tolerance stays 0.30. Remaining attribution: the
+      fleet Cd 0.8 is above this rocket's wind-tunnel 0.6, and with less water (255 mL) the
+      halved air impulse matters more; with its own Cd 0.6 and air 0.5 the model gives -2.7 %.
+      A per-design Cd (BottleDesign has none) would reconcile the Apte and Fischer rockets.

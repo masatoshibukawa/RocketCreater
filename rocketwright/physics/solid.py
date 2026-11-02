@@ -61,9 +61,13 @@ __all__ = [
 # --------------------------------------------------------------------------- constants
 
 G0_MPS2 = 9.80665
-# SIMPLIFICATION: one constant drag coefficient on the body frontal area for a slender finned
-# hobby rocket at zero angle of attack (OpenRocket typically gives 0.4-0.6 subsonic).
-DEFAULT_CD = 0.5
+# SIMPLIFICATION: one constant drag coefficient on the body frontal area for a small finned
+# hobby rocket at zero angle of attack. 0.75 is the conventional "typical model rocket" value
+# (launch lug, square-edged balsa fins, Re ~ 1e5) used by the Estes TR-10 altitude charts and
+# their derivatives; calibrated against the 4 Estes kits in catalog/references/amateur.yaml
+# (scripts/calibrate_small_rockets.py: RMS apogee error 15.4 %, +24 % on the 2 m long Mean
+# Machine where skin friction dominates). Still provisional: the Estes figures are projections.
+DEFAULT_CD = 0.75
 MOTOR_DIR = Path(__file__).resolve().parents[1] / "catalog" / "motors"
 
 # Single place for the pass/fail rules (CLAUDE.md section 6). `max_*_warn` entries only warn.
@@ -356,6 +360,14 @@ def _event(fn: Callable[..., float], *, terminal: bool, direction: int) -> Calla
     return fn
 
 
+def _resolve_cd(cd: float | None) -> float:
+    if cd is None:
+        return DEFAULT_CD
+    if not cd > 0.0:
+        raise ValueError(f"cd must be > 0, got {cd}")
+    return cd
+
+
 def _check_design(design: Design) -> AmateurDesign:
     if not isinstance(design, AmateurDesign):
         raise ValueError(f"solid.simulate requires a design with tier amateur, got {design.tier!r}")
@@ -518,11 +530,13 @@ def simulate_with_options(
     drag: bool = True,
     target_apogee_m: float | None = None,
     thrust_scale: float = 1.0,
+    cd: float | None = None,
 ) -> SimResult:
-    """`simulate` with physics switches (tests use them to isolate the rocket equation)."""
+    """`simulate` with physics switches (tests use them to isolate the rocket equation).
+    `cd=None` means the module default `DEFAULT_CD`."""
     am_design = _check_design(design)
     motor = load_motor(am_design.motor_id).scaled(thrust_scale)
-    options = FlightOptions(gravity=gravity, drag=drag)
+    options = FlightOptions(gravity=gravity, drag=drag, cd=_resolve_cd(cd))
     flight = run_flight(am_design, env, options, thrust_scale=thrust_scale)
     th = PASS_THRESHOLDS
     failures: list[str] = []
@@ -646,13 +660,16 @@ def simulate(
     *,
     target_apogee_m: float | None = None,
     thrust_scale: float = 1.0,
+    cd: float | None = None,
 ) -> SimResult:
     """Common physics interface (CLAUDE.md section 6). `seed` is accepted for interface
     compatibility; the nominal solid model is deterministic and ignores it. `thrust_scale`
-    (default 1.0) multiplies the motor thrust curve and is what the dispersion perturbs."""
+    (default 1.0) multiplies the motor thrust curve and is what the dispersion perturbs.
+    `cd` overrides the body drag coefficient (None -> `DEFAULT_CD`; used by the calibration
+    scan in scripts/calibrate_small_rockets.py)."""
     del seed
     return simulate_with_options(
-        design, env, target_apogee_m=target_apogee_m, thrust_scale=thrust_scale
+        design, env, target_apogee_m=target_apogee_m, thrust_scale=thrust_scale, cd=cd
     )
 
 
