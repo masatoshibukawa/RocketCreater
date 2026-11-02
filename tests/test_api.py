@@ -1,6 +1,8 @@
 """FastAPI tests: /health and the SSE stream of POST /design (loop monkeypatched, no network)."""
 
 import json
+import re
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 
@@ -135,3 +137,76 @@ def test_report_artifacts_served_with_media_types():
     js = client.get(out["download"]["json"])
     assert js.status_code == 200
     assert js.json()["tier"] == "amateur"
+
+
+# --------------------------------------------------------------------------- SSE framing
+
+_FRAME_RE = re.compile(r"\Aevent: ([a-z_]+)\ndata: ([^\n]+)\n\n\Z")
+
+
+def _ts_event_types() -> list[str]:
+    src = (Path(__file__).resolve().parent.parent / "web/app/lib/types.ts").read_text("utf-8")
+    m = re.search(r"export const EVENT_TYPES\b[^=]*=\s*\[(.*?)\];", src, re.S)
+    assert m
+    return re.findall(r'"([^"]+)"', m.group(1))
+
+
+def test_design_sse_framing_with_fake_client(monkeypatch):
+    """The real loop (scripted fake Claude, real physics) streamed through the API: every frame
+    is `event: <type>\\ndata: <one-line json>\\n\\n`, with types the web client knows."""
+    from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
+    from rocketwright.agent.loop import run_design_loop
+
+    text = "1.5 L ペットボトルで卵を割らずに 30 m まで上げて回収したい。予算 3,000 円。"
+    env = {"launch_latitude_deg": 35.0, "launch_altitude_m": 20, "wind_speed_mps": 2.0}
+
+    def loop_with_fake(request_text: str, **kwargs):
+        client = FakeAnthropicClient(
+            build_demo_script("bottle", request_text, env, 7, reviews=True)
+        )
+        return run_design_loop(request_text, client=client, **kwargs)
+
+    monkeypatch.setattr(main, "run_design_loop", loop_with_fake)
+    with client.stream("POST", "/design", json={"text": text, "seed": 7, "env": env}) as r:
+        assert r.status_code == 200
+        body = "".join(r.iter_text())
+
+    frames = [f + "\n\n" for f in body.split("\n\n") if f]
+    assert len(frames) >= 10
+    allowed = set(_ts_event_types())
+    types: list[str] = []
+    for frame in frames:
+        m = _FRAME_RE.match(frame)
+        assert m, f"bad SSE frame: {frame[:120]!r}"
+        event_type, data = m.group(1), m.group(2)
+        assert "\n" not in data and "\r" not in data
+        parsed = json.loads(data)
+        assert parsed["type"] == event_type
+        assert event_type in allowed, f"web/app/lib/types.ts does not know {event_type!r}"
+        AgentEvent.model_validate(parsed)
+        types.append(event_type)
+    assert types[-1] == "final"
+    assert {"tool_call", "tool_result", "candidate", "review"} <= set(types)
+    final = json.loads(_FRAME_RE.match(frames[-1]).group(2))
+    assert final["payload"]["provenance_violations"] == []
+    assert any(d["passed"] for d in final["payload"]["result"]["designs"])
+
+
+def test_cors_preflight_exposes_methods_and_headers():
+    r = client.options(
+        "/design",
+        headers={
+            "Origin": "http://localhost:3000",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+    assert r.status_code == 200
+    assert r.headers["access-control-allow-origin"] == "http://localhost:3000"
+    assert "POST" in r.headers["access-control-allow-methods"]
+    assert "content-type" in r.headers["access-control-allow-headers"].lower()
+    denied = client.options(
+        "/design",
+        headers={"Origin": "http://evil.example", "Access-Control-Request-Method": "POST"},
+    )
+    assert denied.headers.get("access-control-allow-origin") is None

@@ -118,7 +118,11 @@ def _strictify(node: Any, defs: dict[str, Any]) -> Any:
             continue
         if key in ("properties",):
             out[key] = {k: _strictify(v, defs) for k, v in value.items()}
-        elif key in ("items", "anyOf", "oneOf", "allOf"):
+        elif key == "oneOf":
+            # The strict subset documents anyOf/allOf only (the SDK's own structured-output
+            # transform rewrites oneOf the same way); with const discriminators it is equivalent.
+            out["anyOf"] = _strictify(value, defs)
+        elif key in ("items", "anyOf", "allOf"):
             out[key] = _strictify(value, defs)
         else:
             out[key] = value

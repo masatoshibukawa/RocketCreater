@@ -44,6 +44,15 @@ export function keyMetrics(tier: Tier | null): MetricSpec[] {
       { key: "max_q_pa", label: "最大動圧", format: kpa },
     ];
   }
+  if (tier === "bottle") {
+    // physics/water.py has no Barrowman stability margin; show the landing distance instead
+    return [
+      { key: "apogee_m", label: "到達高度", format: metres },
+      { key: "descent_speed_mps", label: "降下速度", format: mps },
+      { key: "max_speed_mps", label: "最大速度", format: mps },
+      { key: "landing_distance_m", label: "着地距離", format: metres },
+    ];
+  }
   return [
     { key: "apogee_m", label: "到達高度", format: metres },
     { key: "descent_speed_mps", label: "降下速度", format: mps },
@@ -57,12 +66,15 @@ const METRIC_LABELS: Record<string, string> = {
   apogee_m: "到達高度 / 遠地点",
   max_q_pa: "最大動圧",
   payload_margin_kg: "積載余裕",
-  delta_v_ideal_mps: "理想増速量",
-  gravity_loss_mps: "重力損失",
-  drag_loss_mps: "抵抗損失",
+  dv_ideal_mps: "理想増速量",
+  dv_gravity_loss_mps: "重力損失",
+  dv_drag_loss_mps: "抵抗損失",
+  dv_pressure_loss_mps: "圧力損失",
   burnout_speed_mps: "燃焼終了速度",
   liftoff_mass_kg: "離床質量",
-  stage_count_count: "段数",
+  total_liftoff_mass_kg: "離床質量",
+  liftoff_twr_ratio: "離床推力重量比",
+  landing_distance_m: "着地距離",
   rail_exit_speed_mps: "ランチャー離脱速度",
   stability_margin_cal: "静安定余裕",
   max_speed_mps: "最大速度",

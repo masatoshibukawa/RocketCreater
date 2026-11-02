@@ -118,8 +118,10 @@ Models and the reviewer fan-out are configured in `config/models.yaml`:
 | 4 | 11/8 | feature freeze; scenario regression tests, UI polish, README |
 | 5 | 11/9–11/10 | demo video, summary, submission |
 
-Current: phase 3. All four tiers run on their real physics models (`water`, `solid`,
-`multistage`); reviewers, drawings, reports and BOM export are wired in. Dispersion: see phase 3.
+Current: phase 4 (feature freeze). All four tiers run on their real physics models (`water`,
+`solid`, `multistage`); dispersion, reviewers, drawings, reports and BOM export are wired in.
+`uv run python scripts/check_scenarios.py` runs every scenario with the fake client and checks
+the final JSON (passing design, provenance, review and dispersion events, cited tool ids).
 
 ## Simplifications
 
@@ -269,6 +271,27 @@ Pass/fail thresholds (`PASS_THRESHOLDS` in `physics/solid.py` and `physics/water
 | solid, water | apogee tolerance when a target is given | +-10 % |
 | water | maximum initial gauge pressure | 1,000 kPa (PET bottle safety cap) |
 
+Dispersion sigmas (`dispersion.py` `DISPERSION_SPEC`, all provisional; one standard
+deviation, applied per sample with the run's seed):
+
+| Tier | Quantity | Sigma |
+| --- | --- | --- |
+| bottle | initial gauge pressure | 5 % (relative) |
+| bottle | wind speed / direction | 1.0 m/s / 20 deg |
+| amateur | motor thrust (total impulse) | 5 % (relative) |
+| amateur | dry mass | 3 % (relative) |
+| amateur | wind speed / direction | 1.5 m/s / 30 deg |
+| amateur | parachute deploy delay | 0.5 s (clipped at 0) |
+| commercial, heavy | engine Isp | 1 % (relative) |
+| commercial, heavy | engine thrust | 2 % (relative) |
+| commercial, heavy | stage structural fraction | 5 % (relative) |
+
+The success rates shown in the demo (`run_dispersion` with n=100) are computed from these
+sigmas at run time and are not stored anywhere; they change when the sigmas do. Note that the
+open-loop gravity turn of `multistage` makes the commercial success rate very sensitive to these
+sigmas (the demo design passes nominally but most perturbed samples fall short of the target
+perigee), which is a consequence of the no-guidance simplification above.
+
 Physics constants without a source:
 
 - `solid.DEFAULT_CD = 0.5` and `water.DEFAULT_CD = 0.5` (body drag), `water.TUMBLING_DRAG_FACTOR
@@ -322,8 +345,8 @@ Claude が設計案を作り、シミュレータで仮想打ち上げ（シー�
 - 数値はすべてコード（ツール関数）が出し、Claude は考える・選ぶ・説明するだけです。
 - 乱数は必ずシードを受け取り、同じ入力なら同じ結果を返します。
 - 出典のない数値は `provisional: true` を付け、上の「要確認の値」に列挙しています。
-- 現在はフェーズ3：4段階すべてが実物理モデル（`water` / `solid` / `multistage`）で動き、
-  観点別レビュアー（安定性・回収・費用・安全）、図面・レポート・部品表の出力まで繋がっています。
+- 現在はフェーズ4（機能凍結）：4段階すべてが実物理モデル（`water` / `solid` / `multistage`）で動き、
+  多数回試行、観点別レビュアー（安定性・回収・費用・安全）、図面・レポート・部品表の出力まで繋がっています。
 - デモは `uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml --dummy`
   （API キー不要）で再現できます。`--dummy` を外すと実際の Claude API を使います
   （`ANTHROPIC_API_KEY` が必要）。
