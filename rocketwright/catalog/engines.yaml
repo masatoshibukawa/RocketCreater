@@ -1,5 +1,132 @@
-# Engine catalog for the commercial and heavy tiers (representative public values).
-# Each engine: {id, name, thrust_sl_n, thrust_vac_n, isp_sl_s, isp_vac_s, mass_kg, source|provisional}.
-# Filled in phase 1 (prompt 1A).
+# Engine and strap-on booster catalog for the commercial and heavy tiers.
+#
+# Representative public values only; the model never designs engines (CLAUDE.md section 4).
+# Each entry carries either a `source` URL (Wikipedia pages are acceptable) or
+# `provisional: true` (awaiting human confirmation; listed in README "Values to confirm").
+# `notes` may point at the page the numbers were read from even for provisional entries.
+#
+# Engine fields (all SI): id, name, manufacturer, thrust_sl_n, thrust_vac_n, isp_sl_s, isp_vac_s,
+#   mass_kg (dry engine mass), propellant (text), source | provisional.
+# Booster fields: as engines plus propellant_mass_kg (per booster) and mass_kg = dry/structural
+#   mass of one booster (casing, nozzle, attachments). Thrust is a constant mean value.
+#
+# The simulator derives the mass flow from thrust_vac_n / (g0 * isp_vac_s) and interpolates the
+# specific impulse between isp_sl_s and isp_vac_s with ambient pressure; thrust_sl_n is used for
+# the liftoff thrust-to-weight check only.
 version: 1
-engines: []
+engines:
+  - id: merlin_1d
+    name: Merlin 1D (Full Thrust)
+    manufacturer: SpaceX
+    thrust_sl_n: 845000
+    thrust_vac_n: 914000
+    isp_sl_s: 282
+    isp_vac_s: 311
+    mass_kg: 470
+    propellant: RP-1 / LOX
+    source: https://en.wikipedia.org/wiki/SpaceX_Merlin
+  - id: merlin_1d_vacuum
+    name: Merlin 1D Vacuum
+    manufacturer: SpaceX
+    thrust_sl_n: 700000
+    thrust_vac_n: 981000
+    isp_sl_s: 250
+    isp_vac_s: 348
+    mass_kg: 600
+    propellant: RP-1 / LOX
+    provisional: true
+    notes: >-
+      Vacuum thrust and Isp from https://en.wikipedia.org/wiki/SpaceX_Merlin. The engine cannot
+      run at sea level; thrust_sl_n / isp_sl_s are placeholders that only enter the ambient
+      pressure interpolation (the upper stage ignites above ~60 km where p/p0 < 1 %). Dry mass is
+      an estimate.
+  - id: rd_180
+    name: RD-180
+    manufacturer: NPO Energomash
+    thrust_sl_n: 3830000
+    thrust_vac_n: 4150000
+    isp_sl_s: 311
+    isp_vac_s: 338
+    mass_kg: 5480
+    propellant: RP-1 / LOX
+    source: https://en.wikipedia.org/wiki/RD-180
+  - id: rs_25
+    name: RS-25 (Space Shuttle Main Engine, 100 % power)
+    manufacturer: Aerojet Rocketdyne
+    thrust_sl_n: 1860000
+    thrust_vac_n: 2279000
+    isp_sl_s: 366
+    isp_vac_s: 452
+    mass_kg: 3527
+    propellant: LH2 / LOX
+    source: https://en.wikipedia.org/wiki/RS-25
+  - id: rl10
+    name: RL10C-1
+    manufacturer: Aerojet Rocketdyne
+    thrust_sl_n: 60000
+    thrust_vac_n: 101800
+    isp_sl_s: 300
+    isp_vac_s: 450
+    mass_kg: 190
+    propellant: LH2 / LOX
+    provisional: true
+    notes: >-
+      Vacuum values read from https://en.wikipedia.org/wiki/RL10 (RL10C-1 variant); not a
+      sea-level engine, so thrust_sl_n / isp_sl_s are placeholders for the pressure
+      interpolation only.
+  - id: le_9
+    name: LE-9
+    manufacturer: Mitsubishi Heavy Industries / JAXA
+    thrust_sl_n: 1200000
+    thrust_vac_n: 1471000
+    isp_sl_s: 360
+    isp_vac_s: 425
+    mass_kg: 2400
+    propellant: LH2 / LOX
+    provisional: true
+    notes: >-
+      Vacuum thrust and Isp read from https://en.wikipedia.org/wiki/LE-9; sea-level thrust and
+      Isp are estimates (ratio taken from the RS-25, a comparable staged/expander LH2 engine).
+  - id: rutherford
+    name: Rutherford (sea-level variant)
+    manufacturer: Rocket Lab
+    thrust_sl_n: 24000
+    thrust_vac_n: 25000
+    isp_sl_s: 311
+    isp_vac_s: 343
+    mass_kg: 35
+    propellant: RP-1 / LOX
+    provisional: true
+    notes: >-
+      Values read from https://en.wikipedia.org/wiki/Rutherford_(rocket_engine); the sea-level
+      Isp in particular needs confirmation.
+boosters:
+  - id: gem_63
+    name: GEM 63 solid rocket motor
+    manufacturer: Northrop Grumman
+    thrust_sl_n: 1600000
+    thrust_vac_n: 1663000
+    isp_sl_s: 255
+    isp_vac_s: 279
+    mass_kg: 5100
+    propellant_mass_kg: 44200
+    propellant: HTPB solid
+    provisional: true
+    notes: >-
+      Mean thrust, propellant mass and gross mass read from
+      https://en.wikipedia.org/wiki/Graphite-Epoxy_Motor; dry mass = gross - propellant.
+      Sea-level Isp is an estimate; thrust is a constant mean value (real curve is regressive).
+  - id: ariane5_eap
+    name: Ariane 5 EAP (P241) solid booster
+    manufacturer: ArianeGroup
+    thrust_sl_n: 6500000
+    thrust_vac_n: 7080000
+    isp_sl_s: 250
+    isp_vac_s: 274.5
+    mass_kg: 33000
+    propellant_mass_kg: 240000
+    propellant: HTPB solid
+    provisional: true
+    notes: >-
+      Vacuum thrust, Isp and masses read from https://en.wikipedia.org/wiki/Ariane_5;
+      sea-level thrust and Isp are estimates. Thrust is a constant mean value.
