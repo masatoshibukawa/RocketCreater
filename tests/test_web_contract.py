@@ -4,13 +4,14 @@ and the Python backend. The TS sources are read with regexes; nothing is compile
 from __future__ import annotations
 
 import re
+from functools import cache
 from pathlib import Path
 from typing import get_args
 
 import pytest
 
 from rocketwright.agent.events import EventType
-from rocketwright.agent.fake_client import DEMO_DESIGNS, DEMO_REQUIREMENTS
+from rocketwright.agent.fake_client import DEMO_PASSING_INDEX, DEMO_REQUIREMENTS, demo_designs
 from rocketwright.agent.tools import _parse_design, _simulate_dispatch
 from rocketwright.schema import Env, Requirement
 
@@ -49,8 +50,11 @@ def test_tier_list_matches_backend():
     assert _ts_string_array(TYPES_TS, "TIERS") == [t.value for t in Tier]
 
 
+@cache
 def _real_metrics(tier: str) -> set[str]:
-    design = _parse_design(DEMO_DESIGNS[tier][1])  # the first design meant to pass
+    # the first demo design meant to pass (seeded from the reference catalog; commercial tunes
+    # its pitch program once, a few seconds)
+    design = _parse_design(demo_designs(tier)[DEMO_PASSING_INDEX[tier]])
     env = Env(launch_latitude_deg=35.0, launch_altitude_m=20.0, wind_speed_mps=2.0)
     req = Requirement(**{**DEMO_REQUIREMENTS[tier], "text": "x"})
     return set(_simulate_dispatch(design, env, 1, req).metrics)

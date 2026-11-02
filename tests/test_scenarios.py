@@ -2,7 +2,8 @@
 
 These are the demo scripts (CLAUDE.md section 10: the scenarios working is the top priority).
 Every scenario must exercise its REAL physics model (bottle: water, amateur: solid, commercial:
-multistage) and show at least one failing attempt before the passing ones.
+multistage), derive its targets by formula, seed the design from the reference catalog, and
+show at least one failing attempt whose reason is read and fixed.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ import yaml
 from rocketwright.agent.events import AgentEvent
 from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
 from rocketwright.agent.loop import AgentConfig, run_design_loop
+from rocketwright.references import load_references
 
 SCENARIO_DIR = Path(__file__).resolve().parent.parent / "scenarios"
 SCENARIOS = sorted(SCENARIO_DIR.glob("*.yaml"))
@@ -91,6 +93,44 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
     assert passing
     assert final.payload["provenance_violations"] == []
 
+    # the targets were derived by formula and the final cites that tool call
+    derives = _tool_results(events, "derive_requirements")
+    assert len(derives) == 1
+    derive_id, derive = next(iter(derives.items()))
+    assert derive["tier"] == expected_tier and derive["quantities"]
+    assert result["derived_targets"] == derive_id
+
+    # the design was seeded from a catalog reference of this tier and the final cites it
+    refs = _tool_results(events, "find_reference_designs")
+    assert len(refs) == 1
+    ref_id, ref = next(iter(refs.items()))
+    catalog = {entry.id: entry for entry in load_references()}
+    assert result["reference_id"] in catalog
+    assert catalog[result["reference_id"]].tier.value == expected_tier
+    seed = ref["seed"]
+    assert seed["reference_id"] == result["reference_id"]
+    assert seed["notes"] and "trace" not in seed["sim"]
+    assert seed["design"]["tier"] == expected_tier
+    # the first attempt is based on the seed design (same tier and propulsion / bottle)
+    first_call = next(
+        e for e in events if e.type == "tool_call" and e.payload["name"] == "simulate_design"
+    )
+    first_design = first_call.payload["input"]["design"]
+    for key in ("motor_id", "nozzle_diameter_m", "boosters"):
+        if key in seed["design"]:
+            assert first_design[key] == seed["design"][key]
+    # a passing seed is shown as a free candidate (attempt 0) citing the reference tool call
+    seed_candidates = [
+        e for e in events if e.type == "candidate" and e.payload["source_id"] == ref_id
+    ]
+    if seed["sim"]["success"]:
+        assert len(seed_candidates) == 1
+        assert seed_candidates[0].attempt == 0
+        assert seed_candidates[0].payload["seeded_from"] == result["reference_id"]
+        assert seed_candidates[0].payload["metrics"] == seed["sim"]["metrics"]
+    else:
+        assert seed_candidates == []
+
     # every source id maps to a real simulate_design / run_dispersion tool_use id of this run
     sims = _sim_results(events)
     disps = _tool_results(events, "run_dispersion")
@@ -101,6 +141,7 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
         assert d["cost_jpy"] == sim["cost_jpy"]
         assert d["metrics"] == sim["metrics"]
         assert d["passed"] == sim["success"]
+        assert d["design"]["tier"] == expected_tier
 
     # the demo runs the Monte-Carlo dispersion on the first passing design and reports its
     # success rate (real rocketwright.dispersion, n=100, same seed as the scenario)
@@ -123,8 +164,9 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
 
     # the demo's point: a failing attempt whose reason is read and fixed, then passes
     ordered = list(sims.values())
-    assert ordered[0]["success"] is False, "the first attempt must fail"
-    assert ordered[0]["failure_reasons"]
+    failed = [s for s in ordered if not s["success"]]
+    assert failed, "the demo must show at least one failing attempt"
+    assert all(s["failure_reasons"] for s in failed)
     assert ordered[-1]["success"] is True
 
     # real physics for every tier: no dummy placeholder in any simulate result
@@ -133,20 +175,36 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
         assert sim["cost_jpy"] > 0
 
     if expected_tier == "commercial":
-        assert any("perigee" in r for r in ordered[0]["failure_reasons"])
+        # seeded from Electron: the tuned seed passes, the cheaper first-stage cut fails on
+        # perigee, the upper-stage cut passes cheaper
+        assert result["reference_id"] == "electron"
+        assert [s["success"] for s in ordered] == [True, False, True]
+        assert any("perigee" in r for r in ordered[1]["failure_reasons"])
+        assert ordered[2]["cost_jpy"] < ordered[0]["cost_jpy"]
         for d in passing:
             assert d["metrics"]["perigee_m"] >= 360_000
             assert d["cost_jpy"] <= 2.0e9  # scenario budget
     elif expected_tier == "amateur":
-        assert any("descent speed" in r for r in ordered[0]["failure_reasons"])
+        # seeded from the Estes Alpha III: the scaled seed is about a tenth too high, the
+        # wider / heavier airframe fixes it
+        assert result["reference_id"].startswith("estes_")
+        assert [s["success"] for s in ordered] == [False, True, True]
+        assert any("apogee" in r for r in ordered[0]["failure_reasons"])
+        assert ordered[0]["metrics"]["apogee_m"] > 2_200
         for d in passing:
             assert 1_800 <= d["metrics"]["apogee_m"] <= 2_200  # +-10 % of the 2 km target
             assert d["metrics"]["stability_margin_cal"] >= 1.5
             assert d["metrics"]["descent_speed_mps"] <= 6.0
             assert d["cost_jpy"] <= 50_000
     else:
-        assert any("parachute" in r for r in ordered[0]["failure_reasons"])
+        # seeded from the Apte 2 L bottle: the seed passes, the push towards the derived
+        # pressure overshoots, a small pressure increase passes
+        assert result["reference_id"].startswith("apte_")
+        assert [s["success"] for s in ordered] == [True, False, True]
+        assert any("apogee" in r for r in ordered[1]["failure_reasons"])
+        assert ordered[1]["metrics"]["apogee_m"] > 33
         for d in passing:
+            assert d["design"]["bottle_volume_m3"] == 0.0015  # the bottle the user has
             assert 27 <= d["metrics"]["apogee_m"] <= 33  # +-10 % of the 30 m target
             assert d["metrics"]["descent_speed_mps"] <= 6.0  # the egg
             assert d["cost_jpy"] <= 3_000
@@ -167,4 +225,8 @@ async def test_commercial_designs_use_catalog_engine_ids() -> None:
         design = call.payload["input"]["design"]
         for stage in design["stages"]:
             assert stage["engine_id"] in catalog_ids, stage["engine_id"]
-        assert call.payload["input"]["tune_pitch"] is False  # demo uses pre-tuned numbers
+        assert call.payload["input"]["tune_pitch"] is False  # the seed was tuned once
+    ref = next(
+        e for e in events if e.type == "tool_call" and e.payload["name"] == "find_reference_designs"
+    )
+    assert ref.payload["input"]["seed"] is True and ref.payload["input"]["tune"] is True

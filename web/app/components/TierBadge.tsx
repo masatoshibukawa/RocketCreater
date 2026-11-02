@@ -1,11 +1,13 @@
 "use client";
 
 import type { Status } from "../lib/designState";
-import { TIERS, TIER_LABEL, type ClassifyResult, type Tier } from "../lib/types";
+import { TIERS, TIER_LABEL, type ClassifyResult, type ReferenceInfo, type Tier } from "../lib/types";
 
 interface TierBadgeProps {
   tier: Tier | null;
   classify: ClassifyResult | null;
+  /** The reference vehicle the design was seeded from (find_reference_designs), if any. */
+  reference: ReferenceInfo | null;
   attemptCount: number;
   maxAttempts: number;
   status: Status;
@@ -17,6 +19,7 @@ interface TierBadgeProps {
 export default function TierBadge({
   tier,
   classify,
+  reference,
   attemptCount,
   maxAttempts,
   status,
@@ -39,6 +42,11 @@ export default function TierBadge({
           <span className="muted"> / {maxAttempts}</span>
         </span>
         {status === "streaming" && <span className="chip chip-muted">シミュレーション中</span>}
+        {reference !== null && (
+          <span className="chip chip-muted" title={reference.notes.join("\n")}>
+            ベース実機: {reference.name}
+          </span>
+        )}
         <span className="spacer" style={{ flex: 1 }} />
         <span className="tier-select">
           表示

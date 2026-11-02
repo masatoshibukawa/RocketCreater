@@ -11,9 +11,14 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 ## 何をするか
 
 1. 要求を `bottle` / `amateur` / `commercial` / `heavy` のいずれかに分類する。
-2. その規模の物理モデルとカタログを使って、Claude が設計を選び説明する。
-3. 各設計案をシミュレートする（シード付きノイズで n 回の多数回試行も行う）。
-4. 合格した設計案だけを、図面・部品表・飛行解析・成功率つきで返す。
+2. 定量要求を公式で計算する（`derive_requirements`：必要増速量と質量比、総力積とモーター級、ゲージ圧とパラシュート径など。
+   式と代入値つきで返し、Claude はそれを最初の設計の「尺度」として引用する。結果ではない）。
+3. 近い実機を種にして設計する（`find_reference_designs`：`catalog/references/` の実機から要求に最も近いものを選び、
+   仮置きの縮尺規則で要求に合わせた `seed` 設計とそのシミュレーション結果を返す。合格した種は「試行 0」として UI に出る）。
+4. その規模の物理モデルとカタログを使って、Claude が種を起点に設計を選び説明する。公式とシミュレーションが食い違えば
+   シミュレーションを信じ、公式のどの仮定が差を生んだかを述べる。
+5. 各設計案をシミュレートする（シード付きノイズで n 回の多数回試行も行う）。
+6. 合格した設計案だけを、図面・部品表・飛行解析・成功率つきで返す。
 
 | 規模 | 典型的な要求 | 推進 | 物理モデル |
 | --- | --- | --- | --- |
@@ -37,6 +42,8 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 rocketwright/        Python パッケージ（バックエンド）
   schema.py          pydantic モデル：Requirement, Env, Design（tier で判別）, SimResult, DispersionResult
   classify.py        規則ベースの規模分類
+  derive.py          定量要求の公式計算（DERIVE_CONSTANTS はすべて provisional）
+  references.py      実機カタログ（catalog/references/*.yaml）の検索・再現・縮尺（種設計）
   guard.py           スコープ外要求の検出
   physics/           atmosphere, water, solid, multistage, stability, recovery
   dispersion.py      全モデル共通の多数回試行（モンテカルロ）
@@ -50,7 +57,8 @@ web/                 Next.js（App Router, TypeScript）フロントエンド
 config/tiers.yaml    規模の境界値（出典つきか provisional）
 config/models.yaml   Claude のモデル ID、effort、試行上限、レビュアー設定
 scenarios/           回帰テストに使う固定のデモ台本
-scripts/             run_scenario.py（デモ実行）と調整用スクリプト
+scripts/             run_scenario.py（デモ実行）、check_scenarios.py（全台本の検査）、
+                     check_references.py（実機再現の誤差表）、calibrate_small_rockets.py（Cd 較正）、調整用スクリプト
 tests/               pytest
 ```
 
@@ -91,7 +99,19 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 
 `scenarios/demo_amateur.yaml` と `scenarios/demo_bottle.yaml` も同じです。同じ実行を `tests/test_scenarios.py` が
 偽クライアントで行います。`uv run python scripts/check_scenarios.py` は全シナリオを実行し、最終 JSON
-（合格案の有無、出典、レビューと多数回試行のイベント、引用されたツール ID の実在）を検査します。
+（合格案の有無、出典、レビューと多数回試行のイベント、`derive_requirements` と `find_reference_designs` の結果、
+最終 JSON の `reference_id` が実機カタログの id で `derived_targets` が derive の呼び出し ID であること、
+引用されたツール ID の実在）を検査します。
+
+台本の流れはどの規模でも同じです：分類 → 公式で定量要求を算出 → カタログ検索 → 近い実機から種設計
+（企業級は種のピッチ指令を再調整するため数秒かかる）→ 種を起点に試行 1 → 失敗理由を読んで原因を直した試行 2〜3 →
+合格案の多数回試行 → 最終 JSON（`reference_id`, `derived_targets`, 各数値の出典 ID）。
+
+| 台本 | 種（実機） | 試行 0（種） | 試行 1 | 試行 2 | 試行 3 | 成功率（n=100） |
+| --- | --- | --- | --- | --- | --- | --- |
+| demo_bottle | Apte 2 L ボトル → 376 kPa、0.31 m 傘 | 合格 32.2 m | 1.5 L ボトルに収める：合格 29.7 m | 公式の 695 kPa に寄せて 500 kPa：36.5 m で不合格（公式のエネルギー効率が悲観的） | 400 kPa：合格 31.1 m | 0.99（試行 1） |
+| demo_amateur | Estes Alpha III → J420、60 mm、傘 1.79 m | 2,208 m（+10 %）で不合格 | 種のまま：不合格（頂点 +10 %） | 66 mm 胴体・乾燥 500 g・傘 1.0 m：合格 1,935 m | 同じく傘 1.2 m：合格 | 0.94（試行 2） |
+| demo_commercial | Electron → Rutherford 4+1 基、推進剤 4,625+1,025 kg、ピッチ再調整 | 合格 399.5 km | 種のまま：合格（余裕 37 kg、5.1 億円） | 1 段目を 4,000 kg に削減：近地点 -1.9 km で不合格 | 2 段目を 900 kg に削減：合格 400×498 km、5.0 億円 | 0.94（試行 1） |
 
 モデルとレビュアーの設定は `config/models.yaml` にあります：
 
@@ -211,6 +231,46 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
   （bottle：ボトル／ノズル／フィン／パラシュート = 45/10/25/20 %、amateur：ノーズ／胴体／フィン／パラシュート = 15/45/25/10 %。provisional）。
 - すべてのレポートに「物理と費用は簡易化されている」旨の注記を付け、ここを参照させる。
 
+## 設計精度 — 実機再現
+
+`catalog/references/*.yaml` の実機（出典 URL つき、すべて provisional）を同じ物理モデルで再現した誤差です
+（`uv run python scripts/check_references.py`、2026-11-02。軌道機はピッチ指令を再調整して積載能力を求める。
+許容は各項目の `tolerance_frac`、既定 30 %）：
+
+| id | 規模 | 指標 | 公表 | sim | 誤差 |
+| --- | --- | --- | --- | --- | --- |
+| estes_alpha_iii_c6 | amateur | 頂点高度 m | 351.0 | 345.5 | -1.6 % |
+| estes_alpha_c6 | amateur | 頂点高度 m | 305.0 | 347.6 | +14.0 % |
+| estes_big_bertha_c6 | amateur | 頂点高度 m | 152.0 | 171.9 | +13.1 % |
+| estes_mean_machine_e12 | amateur | 頂点高度 m | 213.0 | 264.0 | +24.0 % |
+| apte_2l_800ml_30psi | bottle | 頂点高度 m | 19.0 | 20.7 | +8.7 % |
+| apte_2l_800ml_40psi | bottle | 頂点高度 m | 22.0 | 25.6 | +16.4 % |
+| apte_2l_350ml_40psi | bottle | 頂点高度 m | 18.4 | 24.6 | +33.4 % |
+| fischer_1l_350ml_2p5bar | bottle | 頂点高度 m | 17.5 | 16.2 | -7.5 % |
+| fischer_1l_255ml_2bar | bottle | 頂点高度 m | 14.1 | 11.8 | -16.6 % |
+| electron | commercial | 軌道投入能力 kg | 300 | 321.7 | +7.2 % |
+| vega | commercial | 軌道投入能力 kg | 1,963 | 2,294.4 | +16.9 % |
+| firefly_alpha | commercial | 軌道投入能力 kg | 1,030 | 1,099.7 | +6.8 % |
+| epsilon_enhanced | commercial | 軌道投入能力 kg | 1,200 | 1,279.9 | +6.7 % |
+| falcon_9_ft | heavy | 軌道投入能力 kg | 22,800 | 23,450.1 | +2.9 % |
+| atlas_v_551 | heavy | 軌道投入能力 kg | 18,814 | 23,750.7 | +26.2 % |
+
+軌道機の軌道高度は再調整により公表値の ±0.1 % 以内です。15 項目すべてが許容内（atlas_v_551 は 30 % の許容に対し +26 %：
+固体ブースタの燃焼終了後の推進剤を捨てる簡易化が主因）。較正した定数：
+
+- `solid.DEFAULT_CD = 0.75`（Estes 4 機に対し RMS 誤差 15.4 %）。
+- `water.DEFAULT_CD = 0.8` と `water.AIR_IMPULSE_EFFICIENCY = 0.25`（ボトル 5 件に対し同時較正、RMS 誤差 18.9 %）。
+- `recovery.DEFAULT_PARACHUTE_CD = 1.5` は未較正。
+
+`scripts/calibrate_small_rockets.py` が Cd（と空気噴出効率）の走査表を出します。値をモジュールに書き戻すのは人間です。
+
+種設計（`references.seed_design`）は最も近い実機をこの規則で縮尺します（すべて provisional、下の「要確認の値」も参照）：
+企業級・重工級は各段の推進剤を積載比で線形に縮尺し、構造比とエンジン種は保ち、エンジン基数は同じ比で四捨五入
+（同点は少ない側）、離床推力重量比が 1.2 未満なら 1 段目にエンジンを足し、ブースタは実機のまま、フェアリングは
+積載比^(2/3)。アマチュアは「抗力なしの弾道則」（必要力積 ∝ 離床質量比 × √高度比）で最小の同梱モーターを選び、
+それが収まるよう機体を幾何相似に拡大、パラシュートは着地質量比の平方根。ペットボトルはゲージ圧を頂点比で線形に
+（安全上限でクリップ）、回収要求か積載があれば傘を追加。種はその場でシミュレートされ、合格すれば試行 0 として UI に出ます。
+
 ## 要確認の値
 
 以下はすべてリポジトリ内で `provisional: true`（または出典のないハードコード定数）であり、人間の判断か出典が必要です。
@@ -247,6 +307,39 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 | commercial_jpy_per_kg_liftoff | 80,000 |
 | heavy_jpy_per_kg_liftoff | 25,000 |
 | booster_mass_kg_placeholder | 20,000 kg／本 |
+
+`derive.py`（`DERIVE_CONSTANTS`、公式計算の経験定数。出典 URL があっても代表値の選び方は仮置き）：
+
+| キー | 仮置き | 出典 |
+| --- | --- | --- |
+| orbit_loss_allowance_mps | 1,800 m/s（重力＋抗力＋操舵損失。本モデルの重力ターンでは約 2,800 m/s 出るため楽観的） | Wikipedia Delta-v budget |
+| default_launch_latitude_deg | 31.25°（内之浦） | Wikipedia Uchinoura |
+| representative_isp_s | 300 s（commercial / heavy とも） | Wikipedia Merlin |
+| representative_structural_fraction | 0.08 | なし |
+| typical_payload_fraction_frac | 0.02 | Wikipedia Payload fraction |
+| amateur_airframe_mass_kg | 0.5 kg（空の機体） | なし |
+| amateur_airframe_mass_per_payload_frac | 0.3（積載 1 kg あたりの追加機体質量） | なし |
+| amateur_body_diameter_m | 0.054 m | なし |
+| amateur_burn_time_s | 2.0 s | なし |
+| motor_class_base_impulse_ns | 1.25 Ns（NAR の級の基準。これのみ出典確定） | Wikipedia Model rocket motor classification |
+| bottle_volume_m3 | 1.5 L | なし |
+| bottle_water_fill_frac | 0.4 | arXiv 2001.08828 |
+| bottle_airframe_mass_kg | 0.12 kg | arXiv 2001.08828 |
+| bottle_energy_efficiency_frac | 0.16（m g h / 等エントロピー膨張仕事。参照 5 件の中央値。デモでは悲観的） | catalog/references/bottle.yaml |
+
+種設計の縮尺規則（`references.py`、すべて provisional）：
+
+| 定数 | 仮置き |
+| --- | --- |
+| `_PAYLOAD_FLOOR_KG` | 1 kg（積載比の下駄） |
+| `_SCALE_BOUNDS` | 0.02〜50（積載比のクランプ） |
+| `SEED_MIN_LIFTOFF_TWR` | 1.2（`multistage.PASS_THRESHOLDS` の警告線） |
+| `_MOTOR_CLEARANCE_M` | 6 mm（胴体はモーター径＋これ） |
+| `_BODY_LENGTH_PER_MOTOR_LENGTH` | 1.5（胴長はモーター長のこれ以上） |
+| `_PARACHUTE_SPEED_MARGIN` | 0.8（追加する傘は降下速度上限の 8 割で設計） |
+| 推進剤の縮尺 | 積載比に線形。エンジン基数は同じ比で四捨五入、フェアリングは積載比^(2/3) |
+| アマチュアの力積則 | 必要力積 = 実機の力積 × 離床質量比 × √高度比（抗力なし） |
+| ボトルの圧力則 | ゲージ圧 ∝ 頂点高度（安全上限 1,000 kPa でクリップ） |
 
 合否の閾値（`physics/solid.py` と `physics/water.py` の `PASS_THRESHOLDS`）：
 
@@ -324,9 +417,16 @@ Describe a mission in plain language and RocketWright classifies it into one of 
 (`bottle`, `amateur`, `commercial`, `heavy`), lets Claude propose designs using that tier's
 physics model and parts catalog, launches every candidate in a deterministic simulator
 (including seeded Monte Carlo dispersion), and returns only the designs that pass, with
-drawings, bill of materials, flight analysis and success rate. Everything is simulated; nothing
-is launched. Claude thinks, chooses and explains; every number comes from a tool call and
-carries that call's id as provenance. Values without a source are marked `provisional: true`
+drawings, bill of materials, flight analysis and success rate. Before designing, the agent
+derives quantitative targets by closed formulas (`derive_requirements`: required delta-v,
+total impulse and motor class, gauge pressure, ...) and seeds the design from the nearest real
+vehicle in `catalog/references/` (`find_reference_designs`: Electron, Atlas V, Estes kits,
+published bottle-rocket flights), scaled by provisional rules and simulated on the spot; the
+final answer cites the reference id and the derive call. When a formula and the simulation
+disagree, the simulation wins and the agent names the assumption that explains the gap. The
+reproduction table above (設計精度) shows every reference within its tolerance. Everything is
+simulated; nothing is launched. Claude thinks, chooses and explains; every number comes from a
+tool call and carries that call's id as provenance. Values without a source are marked `provisional: true`
 and listed above under 要確認の値. Built for Built with Claude: Japan 2026, MIT licensed.
 
 Quick start: `uv sync --group dev && uv run pytest`, then

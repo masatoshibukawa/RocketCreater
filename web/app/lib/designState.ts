@@ -10,10 +10,13 @@
  *   tool_call     -> chat system line; the input is kept by id so a result can be tied back
  *                    to the design it was run on
  *   tool_result   -> classify_requirement: tier badge; simulate_design: attempt log row;
+ *                    find_reference_designs: the reference vehicle (TierBadge) and, when it
+ *                    carries a seed with a sim, an attempt-0 row flagged `seededFrom`;
  *                    run_dispersion: stored per candidate (matched by design equality via
  *                    `findAttemptByDesign`) with success rate / scatter / orbit errors;
  *                    errors: chat error line
- *   candidate     -> candidate card (passed/failure_reasons looked up from the attempt log)
+ *   candidate     -> candidate card (passed/failure_reasons looked up from the attempt log;
+ *                    the loop emits one for a passing reference seed too, `seeded_from`)
  *   final         -> final summary, candidate cards merged with designs[], provenance warnings
  *   error         -> chat error line, status "error"
  */
@@ -38,10 +41,12 @@ import {
   type OrbitInsertionStats,
   type OrbitSample,
   type Quantiles,
+  type ReferenceInfo,
   type SimResult,
   type Tier,
   type TracePoint,
 } from "./types";
+import { toolLabel } from "./format";
 
 export type Status = "idle" | "streaming" | "done" | "error";
 
@@ -52,6 +57,8 @@ export interface DesignState {
   messages: ChatMessage[];
   tier: Tier | null;
   classify: ClassifyResult | null;
+  /** The reference vehicle the design was seeded from (find_reference_designs), if any. */
+  reference: ReferenceInfo | null;
   attempts: AttemptRow[];
   attemptCount: number;
   candidates: Candidate[];
@@ -74,6 +81,7 @@ export const initialState: DesignState = {
   messages: [],
   tier: null,
   classify: null,
+  reference: null,
   attempts: [],
   attemptCount: 0,
   candidates: [],
@@ -368,6 +376,8 @@ function toFinalResult(rec: Record<string, unknown>): FinalResult {
     designs,
     summary: asString(rec.summary),
     open_questions: asStringArray(rec.open_questions),
+    reference_id: asString(rec.reference_id) || null,
+    derived_targets: asString(rec.derived_targets) || null,
   };
 }
 
@@ -408,7 +418,7 @@ function applyEvent(state: DesignState, ev: AgentEvent): DesignState {
       const input = asRecord(p.input);
       const withInput: DesignState =
         callId && input ? { ...next, toolInputs: { ...next.toolInputs, [callId]: input } } : next;
-      return push(withInput, "system", `ツール呼び出し: ${asString(p.name)}`);
+      return push(withInput, "system", `ツール呼び出し: ${toolLabel(asString(p.name))}`);
     }
     case "tool_result":
       return applyToolResult(next, ev);
@@ -440,11 +450,19 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
         ...next,
         attempts: [
           ...next.attempts,
-          { id, attempt: ev.attempt, t_s: ev.t_s, result: null, error: errorText, design: null },
+          {
+            id,
+            attempt: ev.attempt,
+            t_s: ev.t_s,
+            result: null,
+            error: errorText,
+            design: null,
+            seededFrom: null,
+          },
         ],
       };
     }
-    return push(next, "error", `ツール ${name} がエラーを返しました: ${errorText}`);
+    return push(next, "error", `ツール ${toolLabel(name)} がエラーを返しました: ${errorText}`);
   }
   if (!result) return state;
 
@@ -461,10 +479,53 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
       const sim = toSimResult(result);
       // with tune_pitch the simulated design is the tuned one the result reports
       const design = toDesign(result.tuned_design) ?? toDesign(state.toolInputs[id]?.design);
-      const row: AttemptRow = { id, attempt: ev.attempt, t_s: ev.t_s, result: sim, error: null, design };
+      const row: AttemptRow = {
+        id,
+        attempt: ev.attempt,
+        t_s: ev.t_s,
+        result: sim,
+        error: null,
+        design,
+        seededFrom: null,
+      };
       let next: DesignState = { ...state, attempts: [...state.attempts, row] };
       if (!state.tier && sim.tier) next = { ...next, tier: sim.tier };
       return next;
+    }
+    case "find_reference_designs": {
+      const seed = asRecord(result.seed);
+      const referenceId = asString(seed?.reference_id);
+      if (!seed || referenceId === "") {
+        const note = asString(result.note);
+        return note ? push(state, "system", `実機データ: ${note}`) : state;
+      }
+      let name = referenceId;
+      if (Array.isArray(result.references)) {
+        for (const item of result.references) {
+          const rec = asRecord(item);
+          if (rec && asString(rec.id) === referenceId && asString(rec.name) !== "") {
+            name = asString(rec.name);
+          }
+        }
+      }
+      const reference: ReferenceInfo = { id: referenceId, name, notes: asStringArray(seed.notes) };
+      let next: DesignState = { ...state, reference };
+      const sim = asRecord(seed.sim);
+      const design = toDesign(seed.design);
+      if (sim && design) {
+        // the seed's own simulation: attempt 0 (free, not a simulate_design call)
+        const row: AttemptRow = {
+          id,
+          attempt: ev.attempt,
+          t_s: ev.t_s,
+          result: toSimResult(sim),
+          error: null,
+          design,
+          seededFrom: referenceId,
+        };
+        next = { ...next, attempts: [...next.attempts, row] };
+      }
+      return push(next, "system", `ベース実機: ${name} (${referenceId})`);
     }
     case "run_dispersion": {
       const input = state.toolInputs[id];
@@ -516,6 +577,7 @@ function applyCandidate(state: DesignState, ev: AgentEvent): DesignState {
     explanation: "",
     failure_reasons: sim ? sim.failure_reasons : [],
     inFinal: false,
+    seededFrom: asString(p.seeded_from) || null,
   };
   return { ...state, candidates: upsertCandidate(state.candidates, candidate) };
 }
@@ -549,6 +611,7 @@ function applyFinal(state: DesignState, ev: AgentEvent): DesignState {
         explanation: fd.explanation,
         failure_reasons: attempt?.result?.failure_reasons ?? [],
         inFinal: true,
+        seededFrom: attempt?.seededFrom ?? null,
       });
     });
     next = { ...next, candidates };

@@ -83,6 +83,7 @@ export default function Home() {
         <TierBadge
           tier={stream.tier}
           classify={stream.classify}
+          reference={stream.reference}
           attemptCount={stream.attemptCount}
           maxAttempts={MAX_ATTEMPTS}
           status={stream.status}

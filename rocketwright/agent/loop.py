@@ -10,6 +10,12 @@ major/blocker findings are appended as a text block AFTER the tool_result blocks
 user message (the API requires tool_result blocks to lead the user turn). A blocker removes the
 design from the final passing list (`_apply_review_gate`).
 
+Reference seeds (references.py): when a `find_reference_designs` result carries a seed whose
+`sim` passed, a `candidate` event is emitted for it (source_id = that tool_use id, payload
+`seeded_from` = reference id) so the UI shows it as attempt 0. The seed is free: it is not a
+simulate_design call, so it is not counted as an attempt and not reviewed; the agent adopts
+it by simulating it (that call is attempt 1 and is reviewed as usual).
+
 Facts baked in (anthropic SDK 1.x, claude-opus-5-5 / claude-haiku-5-5):
   * thinking = {"type": "adaptive", "display": "summarized"}; never `budget_tokens`;
   * depth via output_config={"effort": ...}; no forced tool_choice (prompt steers instead);
@@ -49,6 +55,7 @@ from rocketwright.schema import Env
 __all__ = ["AgentConfig", "ReviewerConfig", "models_config_path", "run_design_loop"]
 
 ATTEMPT_TOOL = "simulate_design"
+REFERENCE_TOOL = "find_reference_designs"
 _TRACE_KEY = "trace"
 
 
@@ -123,13 +130,42 @@ def _explanation_text(result: dict[str, Any]) -> str:
     return "\n".join(parts)
 
 
-def _for_model(result: dict[str, Any]) -> dict[str, Any]:
-    """Tool result as sent to the model: the trace is dropped (the UI gets it via the event)."""
+def _without_trace(result: dict[str, Any]) -> dict[str, Any]:
     if _TRACE_KEY in result and isinstance(result[_TRACE_KEY], list):
         slim = dict(result)
         slim["trace_point_count"] = len(slim.pop(_TRACE_KEY))
         return slim
     return result
+
+
+def _for_model(result: dict[str, Any]) -> dict[str, Any]:
+    """Tool result as sent to the model: the trace is dropped (the UI gets it via the event).
+    A find_reference_designs result carries the seed's sim under `seed.sim`; its trace (if the
+    tool ever includes one) is dropped the same way."""
+    slim = _without_trace(result)
+    seed = slim.get("seed")
+    if isinstance(seed, dict) and isinstance(seed.get("sim"), dict):
+        slim = {**slim, "seed": {**seed, "sim": _without_trace(seed["sim"])}}
+    return slim
+
+
+def _seed_candidate(tool_use_id: str, result: dict[str, Any]) -> dict[str, Any] | None:
+    """The candidate payload for a find_reference_designs result whose seed sim passed, else
+    None. The seed is free: it is not a simulate_design call, so it does not count as an
+    attempt and is not reviewed (the agent re-simulates it to adopt it)."""
+    seed = result.get("seed")
+    if not isinstance(seed, dict):
+        return None
+    sim = seed.get("sim")
+    if not isinstance(sim, dict) or not sim.get("success") or not seed.get("design"):
+        return None
+    return {
+        "source_id": tool_use_id,
+        "design": seed["design"],
+        "metrics": sim.get("metrics", {}),
+        "cost_jpy": sim.get("cost_jpy"),
+        "seeded_from": seed.get("reference_id"),
+    }
 
 
 def _initial_user_message(
@@ -365,6 +401,10 @@ async def run_design_loop(
                 "tool_result",
                 {"id": tu.id, "name": tu.name, "is_error": is_error, "result": result},
             )
+            if tu.name == REFERENCE_TOOL and not is_error:
+                seed_candidate = _seed_candidate(tu.id, result)
+                if seed_candidate is not None:
+                    yield ev("candidate", seed_candidate)  # attempt 0: free, not reviewed
             if tu.name == ATTEMPT_TOOL and not is_error and result.get("success"):
                 candidate = {
                     "source_id": tu.id,

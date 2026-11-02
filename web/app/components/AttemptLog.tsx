@@ -10,7 +10,8 @@ interface AttemptLogProps {
   onSelect: (id: string) => void;
 }
 
-/** One row per simulate_design tool_result: pass/fail chip, key metrics, failure reasons. */
+/** One row per simulate_design tool_result (plus the free attempt-0 row of a reference seed,
+ * flagged 実機ベース): pass/fail chip, key metrics, failure reasons. */
 export default function AttemptLog({ attempts, tier, selectedId, onSelect }: AttemptLogProps) {
   const specs = keyMetrics(tier);
   return (
@@ -56,6 +57,11 @@ export default function AttemptLog({ attempts, tier, selectedId, onSelect }: Att
                         <span className="chip chip-ok">合格</span>
                       ) : (
                         <span className="chip chip-bad">不合格</span>
+                      )}
+                      {row.seededFrom !== null && (
+                        <span className="chip chip-muted" title={`実機 ${row.seededFrom} から縮尺`}>
+                          実機ベース
+                        </span>
                       )}
                     </td>
                     {specs.map((s) => {

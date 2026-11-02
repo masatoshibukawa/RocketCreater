@@ -223,6 +223,17 @@ export interface AttemptRow {
   error: string | null;
   /** The simulated design (tool_call input, or the tuned design the result reports). */
   design: Design | null;
+  /** Reference id when this row is the seed of a find_reference_designs result (attempt 0,
+   * free: not a simulate_design call), else null. */
+  seededFrom: string | null;
+}
+
+/** The reference vehicle a find_reference_designs result seeded the design from. */
+export interface ReferenceInfo {
+  id: string;
+  name: string;
+  /** The tool's notes: one line per scaling step. */
+  notes: string[];
 }
 
 /** A design candidate, merged from `candidate` events and `final.result.designs`. */
@@ -236,6 +247,8 @@ export interface Candidate {
   explanation: string;
   failure_reasons: string[];
   inFinal: boolean;
+  /** Reference id for the free seed candidate (candidate event `seeded_from`), else null. */
+  seededFrom: string | null;
 }
 
 export interface FinalDesign {
@@ -252,6 +265,10 @@ export interface FinalResult {
   designs: FinalDesign[];
   summary: string;
   open_questions: string[];
+  /** Id of the reference vehicle the design was seeded from (catalog/references), or null. */
+  reference_id: string | null;
+  /** source_id of the derive_requirements call the targets came from, or null. */
+  derived_targets: string | null;
 }
 
 export interface FinalPayload {

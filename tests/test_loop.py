@@ -20,7 +20,8 @@ from rocketwright.agent.loop import (
 )
 
 AMATEUR_TEXT = "1 kg の荷物を高度 2 km まで上げてパラシュートで回収したい。予算 5 万円。"
-ENV = {"launch_latitude_deg": 31.25, "launch_altitude_m": 20, "wind_speed_mps": 3.0}
+# the demo_amateur scenario env: the seeded first attempt is about a tenth too high there
+ENV = {"launch_latitude_deg": 36.0, "launch_altitude_m": 300, "wind_speed_mps": 3.0}
 
 
 @pytest.fixture
@@ -49,15 +50,18 @@ async def test_scripted_amateur_run_event_sequence():
     types = [e.type for e in events]
     assert types[0] == "thinking"
     tool_calls = [e.payload["name"] for e in events if e.type == "tool_call"]
-    # first attempt alone (it fails), then two corrected designs in one turn
+    # classify; derive + catalog in one turn; reference seed; the seed-based first attempt
+    # alone (it fails); then two corrected designs in one turn
     assert tool_calls == [
         "classify_requirement",
+        "derive_requirements",
         "search_catalog",
+        "find_reference_designs",
         "simulate_design",
         "simulate_design",
         "simulate_design",
     ]
-    assert types.count("tool_result") == 5
+    assert types.count("tool_result") == 7
     assert types[-1] == "final"
     assert types.count("final") == 1
     assert "candidate" in types
@@ -88,7 +92,7 @@ async def test_scripted_amateur_run_event_sequence():
     last_messages = client.calls[-1]["messages"]
     assert last_messages[0]["role"] == "user"
     roles = [m["role"] for m in last_messages]
-    assert roles == ["user", "assistant"] * 4 + ["user"]
+    assert roles == ["user", "assistant"] * 5 + ["user"]
     last_user = last_messages[-1]["content"]
     results = [b for b in last_user if b["type"] == "tool_result"]
     assert len(results) == 2
@@ -387,3 +391,83 @@ def test_apply_review_gate_is_pure_and_keeps_order():
     assert gated["rejected_by_review"][0]["review_findings"] == ["bad"]
     assert result["designs"][1]["passed"] is True  # input untouched
     assert _apply_review_gate(result, {}) == (result, [])
+
+
+# --------------------------------------------------------------------------- reference seed
+
+
+def _bottle_reference_result(success: bool) -> dict:
+    return {
+        "references": [{"id": "apte_2l_800ml_40psi", "name": "Apte 2 L"}],
+        "seed": {
+            "reference_id": "apte_2l_800ml_40psi",
+            "design": {
+                "tier": "bottle",
+                "bottle_volume_m3": 0.002,
+                "water_fill_frac": 0.4,
+                "initial_gauge_pressure_pa": 376000,
+                "nozzle_diameter_m": 0.0222,
+                "dry_mass_kg": 0.1,
+                "payload_mass_kg": 0.06,
+                "has_fins": True,
+                "has_parachute": True,
+                "parachute_diameter_m": 0.31,
+            },
+            "notes": ["seeded from Apte 2 L"],
+            "env": {},
+            "sim": {
+                "success": success,
+                "failure_reasons": [] if success else ["apogee 12 m not within +/-10%"],
+                "metrics": {"apogee_m": 32.2, "descent_speed_mps": 4.8},
+                "cost_jpy": 2300.0,
+                "trace": [{"t_s": 0.0, "altitude_m": 0.0}],
+                "warnings": [],
+            },
+        },
+        "source_id": "toolu_ref",
+    }
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize("seed_passes", [True, False])
+async def test_passing_reference_seed_is_emitted_as_a_free_candidate(monkeypatch, seed_passes):
+    from rocketwright.agent import loop as loop_module
+
+    def fake_execute(name, tool_input, tool_use_id):
+        assert name == "find_reference_designs"
+        return _bottle_reference_result(seed_passes)
+
+    monkeypatch.setattr(loop_module, "execute_tool", fake_execute)
+    script = [
+        make_message(
+            [
+                tool_use_block(
+                    "toolu_ref",
+                    "find_reference_designs",
+                    {"requirement": {}, "tier": "bottle", "seed": True},
+                )
+            ],
+            stop_reason="tool_use",
+        ),
+        make_message([text_block('{"designs": [], "summary": "s", "open_questions": []}')]),
+    ]
+    client = FakeAnthropicClient(script)
+    events = await _collect(client, text="30 m まで上げたい")
+    candidates = _by_type(events, "candidate")
+    if seed_passes:
+        assert len(candidates) == 1
+        cand = candidates[0]
+        assert cand.attempt == 0  # the seed is free: it does not count as an attempt
+        assert cand.payload["source_id"] == "toolu_ref"
+        assert cand.payload["seeded_from"] == "apte_2l_800ml_40psi"
+        assert cand.payload["design"]["tier"] == "bottle"
+        assert cand.payload["metrics"]["apogee_m"] == 32.2
+        assert cand.payload["cost_jpy"] == 2300.0
+    else:
+        assert candidates == []
+    assert not _by_type(events, "review")  # the seed is never reviewed
+    assert events[-1].type == "final" and events[-1].payload["attempts"] == 0
+    # the seed sim's trace is stripped from what the model sees (like simulate_design)
+    sent = client.calls[-1]["messages"][2]["content"][0]["content"]
+    assert "trace" not in json.loads(sent)["seed"]["sim"]
+    assert json.loads(sent)["seed"]["sim"]["trace_point_count"] == 1

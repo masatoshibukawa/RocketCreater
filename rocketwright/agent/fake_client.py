@@ -16,8 +16,10 @@ from typing import Any
 from anthropic.types import Message, TextBlock, ThinkingBlock, ToolUseBlock, Usage
 
 __all__ = [
-    "DEMO_DESIGNS",
+    "DEMO_PASSING_INDEX",
     "DEMO_REQUIREMENTS",
+    "DEMO_TUNE",
+    "DEMO_VARIANTS",
     "DemoScript",
     "FakeAnthropicClient",
     "FakeParsedMessage",
@@ -26,9 +28,11 @@ __all__ = [
     "ScriptItem",
     "build_demo_reviews",
     "build_demo_script",
+    "demo_designs",
     "make_message",
     "text_block",
     "thinking_block",
+    "tool_inputs_from_history",
     "tool_results_from_history",
     "tool_use_block",
 ]
@@ -221,207 +225,291 @@ DEMO_REQUIREMENTS: dict[str, dict[str, Any]] = {
     },
 }
 
-_FINS = {
-    "count": 4,
-    "root_chord_m": 0.10,
-    "tip_chord_m": 0.05,
-    "span_m": 0.035,
-    "sweep_m": 0.03,
-    "thickness_m": 0.003,
-}
-
-# The FIRST design of every tier is meant to fail so the demo shows "read the failure reason,
-# fix the cause"; the following ones pass. Every tier is judged by its real physics model
-# (bottle: physics.water, amateur: physics.solid, commercial/heavy: physics.multistage).
+# The demo story of every tier (CLAUDE.md section 8, reference-based workflow):
+#   classify -> derive_requirements + search_catalog -> find_reference_designs (seed=true) ->
+#   simulate_design on the seed (attempt 1) -> corrected / cheaper variants (attempts 2..N, one
+#   turn) -> run_dispersion on the first passing attempt -> final JSON citing the reference id
+#   and the derive tool id. The seed design is read from the find_reference_designs tool
+#   result at run time, so the script never hard-codes a scaled vehicle; DEMO_VARIANTS maps
+#   that seed to each attempt. Every tier is judged by its real physics model (bottle:
+#   physics.water, amateur: physics.solid, commercial/heavy: physics.multistage).
 #
-# Bottle/amateur numbers came from scripts/tune_suborbital_demo.py (real physics, scenario env):
-#   * bottle attempt 1: 1.5 L, 40 % water, 500 kPa, no parachute -> apogee ~36 m and a 20 m/s
-#     ballistic descent; fails "add a parachute" / "recovery required" / apogee > 33 m.
-#   * bottle attempt 2: 0.5 m parachute, 1.5 L at 400 kPa -> ~30 m, 3.1 m/s -> pass.
-#   * bottle attempt 3: 0.5 m parachute, 2 L at 350 kPa -> ~29.5 m, 3.3 m/s -> pass.
-#   (re-tuned for water.DEFAULT_CD 0.8 / AIR_IMPULSE_EFFICIENCY 0.25, calibrated 2026-11-02)
-#   * amateur attempt 1: dummy_I200 on a 1 kg payload with a 0.6 m chute -> apogee ~1.1 km and a
-#     9.5 m/s descent; fails "larger parachute" and "apogee below target".
-#   * amateur attempt 2: dummy_J420 in a 60 mm airframe with a 1.2 m chute -> ~1.94 km, 5.4 m/s.
-#   * amateur attempt 3: dummy_J420 in a heavier 54 mm airframe -> ~1.99 km, 5.7 m/s, 46 kJPY.
-#   (re-tuned for solid.DEFAULT_CD 0.75, calibrated 2026-11-02; a 66 mm airframe no longer
-#   reaches 1.8 km on a J420 with this Cd)
-#
-# Commercial numbers came from scripts/tune_demo_design.py (real physics, scenario env, Earth
-# rotation on as the orbit-goal dispatch does; coast-and-circularize insertion):
-#   * attempt 1: Electron-class, 9 x rutherford + 1 500 kg upper stage -> the upper stage burns
-#     out before the insertion cutoff (apogee reached but the orbit never closes), fails
-#     "perigee below target 400 km" (under-fuelled upper stage).
-#   * attempt 2: +1 000 kg upper-stage propellant, re-tuned kick (14 s / 5.0 deg, inside a
-#     +-2 s / +-0.5 deg passing window) -> 400 km circularized, Monte-Carlo success 0.87.
-#   * attempt 3: 10 engines and a 3 500 kg upper stage with a later/larger kick (39 s / 14 deg)
-#     -> 400 km circularized with more propellant margin, Monte-Carlo success 0.78.
-# A merlin_1d first stage is too strong for a 150 kg payload under the 2e9 JPY budget (liftoff
-# TWR > 3 and max-Q far above 60 kPa), hence the Rutherford-class vehicle.
-_COMMERCIAL_STAGE_TEMPLATE = {"structural_fraction": 0.08, "engine_id": "rutherford"}
+# Numbers below were checked on 2026-11-02 with the scenario envs/seeds (scripts/run_scenario.py):
+#   * bottle: seed = Apte 2 L bottle scaled to 30 m (376 kPa, 0.31 m chute) -> the seed sim
+#     passes (32.2 m, 4.8 m/s), attempt 0. Attempt 1 fits it in the 1.5 L bottle the user has
+#     -> 29.7 m, pass (Monte-Carlo 0.99). Attempt 2 moves halfway to the 695 kPa the derive
+#     formula asks for (500 kPa) -> 36.5 m, fails +/-10 %: the simulation wins over the formula
+#     (its provisional energy efficiency is pessimistic for this bottle). Attempt 3: 400 kPa
+#     -> 31.1 m, pass.
+#   * amateur: seed = Estes Alpha III scaled to 1 kg / 2 km (dummy_J420, 60 mm, 196 g dry,
+#     1.79 m chute) -> 2208 m, fails +/-10 % (about a tenth hot). Attempt 1 simulates it as is.
+#     Attempt 2 fixes the cause (too little drag and mass for the J motor): 66 mm airframe,
+#     500 g dry mass, 1.0 m chute -> 1935 m, 5.4 m/s, 3.2 cal, pass (Monte-Carlo 0.94).
+#     Attempt 3: same with a 1.2 m chute -> 4.5 m/s, pass.
+#   * commercial: seed = Electron scaled to 150 kg / 400 km (4 + 1 Rutherford, 4,625 + 1,025 kg
+#     propellant), pitch re-tuned by tune=true (~3.5 s) -> 399.5 km circular, 37 kg margin,
+#     5.1 億円, passes: attempt 0. Attempt 1 adopts it as is (Monte-Carlo 0.94). Attempt 2 tries
+#     a cheaper vehicle by cutting the first stage to 4,000 kg -> perigee -1.9 km, fails.
+#     Attempt 3 cuts the upper stage instead (900 kg) -> 400 x 498 km, 34 kg margin, 5.0 億円,
+#     pass.
+#   * heavy (no scenario file): seed = Atlas V 551 scaled to 5 t / 500 km keeps the five
+#     AJ-60A boosters on a quarter-size core -> max-Q 115 kPa and an early upper-stage burnout,
+#     fails (tune=false: tuning does not rescue it and costs seconds). Attempt 2: two GEM-63
+#     boosters, 280 t RD-180 core, 25 t RL10 upper stage, 30 s / 12 deg kick -> 500 x 1,378 km,
+#     pass (Monte-Carlo 0.97).
+
+DesignVariant = Callable[[dict[str, Any]], dict[str, Any]]
 
 
-def _commercial(
-    prop1_kg: float, engines1: int, prop2_kg: float, pitch_start_s: float, pitch_deg: float
-) -> dict[str, Any]:
-    return {
-        "tier": "commercial",
-        "stages": [
-            {
-                **_COMMERCIAL_STAGE_TEMPLATE,
-                "propellant_mass_kg": prop1_kg,
-                "engine_count": engines1,
-            },
-            {
-                "propellant_mass_kg": prop2_kg,
-                "structural_fraction": 0.10,
-                "engine_id": "rutherford",
-                "engine_count": 1,
-            },
-        ],
-        "boosters": [],
-        "fairing_mass_kg": 50,
-        "payload_mass_kg": 150,
-        "pitch_start_s": pitch_start_s,
-        "initial_pitch_deg": pitch_deg,
-    }
+def _with_stage(design: dict[str, Any], index: int, **changes: Any) -> dict[str, Any]:
+    stages = [dict(st) for st in design["stages"]]
+    stages[index] = {**stages[index], **changes}
+    return {**design, "stages": stages}
 
 
-_AMATEUR_BASE = {
-    "tier": "amateur",
-    "body_diameter_m": 0.054,
-    "body_length_m": 0.9,
-    "nose_shape": "ogive",
-    "nose_length_m": 0.15,
-    "fins": _FINS,
-    "motor_id": "dummy_J420",
-    "dry_mass_kg": 1.6,
-    "payload_mass_kg": 1.0,
-    "parachute_diameter_m": 1.2,
-    "deploy_delay_s": 1.0,
-}
-
-_BOTTLE_BASE = {
-    "tier": "bottle",
-    "bottle_volume_m3": 0.0015,
-    "water_fill_frac": 0.4,
-    "initial_gauge_pressure_pa": 400000,
-    "nozzle_diameter_m": 0.022,
-    "dry_mass_kg": 0.12,
-    "payload_mass_kg": 0.06,
-    "has_fins": True,
-    "has_parachute": True,
-    "parachute_diameter_m": 0.5,
-}
-
-DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
-    "bottle": [
-        {  # fails: no parachute (20 m/s ballistic descent) and 500 kPa overshoots 30 m
-            **_BOTTLE_BASE,
-            "initial_gauge_pressure_pa": 500000,
-            "has_parachute": False,
-            "parachute_diameter_m": None,
-        },
-        _BOTTLE_BASE,
+_HEAVY_FIX: dict[str, Any] = {
+    "tier": "heavy",
+    "stages": [
         {
-            **_BOTTLE_BASE,
-            "bottle_volume_m3": 0.002,
-            "dry_mass_kg": 0.14,
-            "initial_gauge_pressure_pa": 350000,
+            "propellant_mass_kg": 280000,
+            "structural_fraction": 0.07,
+            "engine_id": "rd_180",
+            "engine_count": 1,
         },
+        {
+            "propellant_mass_kg": 25000,
+            "structural_fraction": 0.09,
+            "engine_id": "rl10",
+            "engine_count": 1,
+        },
+    ],
+    "boosters": [{"booster_id": "gem_63", "count": 2}],
+    "fairing_mass_kg": 2500,
+    "payload_mass_kg": 5000,
+    "pitch_start_s": 30,
+    "initial_pitch_deg": 12,
+}
+
+# attempt i (1-based) = DEMO_VARIANTS[tier][i - 1](seed design from find_reference_designs)
+DEMO_VARIANTS: dict[str, list[DesignVariant]] = {
+    "bottle": [
+        lambda seed: {**seed, "bottle_volume_m3": 0.0015},
+        lambda seed: {**seed, "bottle_volume_m3": 0.0015, "initial_gauge_pressure_pa": 500000},
+        lambda seed: {**seed, "bottle_volume_m3": 0.0015, "initial_gauge_pressure_pa": 400000},
     ],
     "amateur": [
-        {  # fails: motor too small for 2 km (~1.1 km) and 0.6 m chute descends at 9.5 m/s
-            **_AMATEUR_BASE,
-            "motor_id": "dummy_I200",
-            "dry_mass_kg": 1.0,
-            "parachute_diameter_m": 0.6,
+        lambda seed: dict(seed),
+        lambda seed: {
+            **seed,
+            "body_diameter_m": 0.066,
+            "dry_mass_kg": 0.5,
+            "parachute_diameter_m": 1.0,
         },
-        {
-            **_AMATEUR_BASE,
-            "body_diameter_m": 0.060,
-            "body_length_m": 1.0,
-            "nose_length_m": 0.18,
-            "fins": {**_FINS, "span_m": 0.045},
-            "dry_mass_kg": 1.3,
+        lambda seed: {
+            **seed,
+            "body_diameter_m": 0.066,
+            "dry_mass_kg": 0.5,
+            "parachute_diameter_m": 1.2,
         },
-        _AMATEUR_BASE,
     ],
     "commercial": [
-        _commercial(9250, 9, 1500, 12.0, 4.0),  # fails: upper stage burns out, no orbit
-        _commercial(9250, 9, 2500, 14.0, 5.0),
-        _commercial(9250, 10, 3500, 39.0, 14.0),
+        lambda seed: dict(seed),
+        lambda seed: _with_stage(seed, 0, propellant_mass_kg=4000.0),
+        lambda seed: _with_stage(seed, 1, propellant_mass_kg=900.0),
     ],
     "heavy": [
-        # Catalog ids only (no heavy demo scenario yet). Attempt 1: a 10 t Centaur-class upper
-        # stage burns out before the insertion cutoff -> fails "perigee below target 500 km";
-        # attempt 2: 25 t upper stage with a 30 s / 12 deg kick -> 500 x ~1,360 km with ~7.8 t
-        # of propellant left, Monte-Carlo success 0.98 (checked 2026-11-02, rotation on).
-        {
-            "tier": "heavy",
-            "stages": [
-                {
-                    "propellant_mass_kg": 280000,
-                    "structural_fraction": 0.07,
-                    "engine_id": "rd_180",
-                    "engine_count": 1,
-                },
-                {
-                    "propellant_mass_kg": 10000,
-                    "structural_fraction": 0.09,
-                    "engine_id": "rl10",
-                    "engine_count": 1,
-                },
-            ],
-            "boosters": [{"booster_id": "gem_63", "count": 2}],
-            "fairing_mass_kg": 2500,
-            "payload_mass_kg": 5000,
-            "pitch_start_s": 12,
-            "initial_pitch_deg": 4,
-        },
-        {
-            "tier": "heavy",
-            "stages": [
-                {
-                    "propellant_mass_kg": 280000,
-                    "structural_fraction": 0.07,
-                    "engine_id": "rd_180",
-                    "engine_count": 1,
-                },
-                {
-                    "propellant_mass_kg": 25000,
-                    "structural_fraction": 0.09,
-                    "engine_id": "rl10",
-                    "engine_count": 1,
-                },
-            ],
-            "boosters": [{"booster_id": "gem_63", "count": 2}],
-            "fairing_mass_kg": 2500,
-            "payload_mass_kg": 5000,
-            "pitch_start_s": 30,
-            "initial_pitch_deg": 12,
-        },
+        lambda seed: dict(seed),
+        lambda seed: dict(_HEAVY_FIX),
     ],
+}
+
+# 0-based index (into DEMO_VARIANTS[tier]) of the first attempt meant to pass: it gets the
+# run_dispersion call and its success rate is quoted in the final answer.
+DEMO_PASSING_INDEX: dict[str, int] = {"bottle": 0, "amateur": 1, "commercial": 0, "heavy": 1}
+
+# find_reference_designs `tune` per tier (orbit goals only; heavy stays untuned: see above)
+DEMO_TUNE: dict[str, bool] = {"bottle": False, "amateur": False, "commercial": True, "heavy": False}
+
+# Narration of the simulate turns (thinking blocks), per tier: (attempt 1, attempts 2..N).
+_DEMO_NARRATION: dict[str, tuple[str, str]] = {
+    "bottle": (
+        "The seed scaled from the Apte 2 L bottle passed its own simulation (attempt 0). The "
+        "user has a 1.5 L bottle, so attempt 1 keeps the seed's pressure and parachute in the "
+        "1.5 L bottle.",
+        "Attempt 1 passed. The derived gauge pressure (energy formula) is far above the seed's, "
+        "so attempt 2 moves halfway towards it to see which is right; attempt 3 is a small "
+        "pressure increase on the seed for margin.",
+    ),
+    "amateur": (
+        "The seed scaled from the Estes Alpha III missed the +/-10 % apogee window (about a "
+        "tenth too high). Attempt 1 simulates it as is with the scenario seed to confirm.",
+        "Attempt 1 failed on apogee (too hot). The cause: the scaled airframe is lighter and "
+        "slimmer than the derived 1.8 kg liftoff estimate assumed, so the J motor overshoots. "
+        "Fix: a 66 mm airframe with a 500 g dry mass and a 1.0 m chute (attempt 2), and the "
+        "same with a 1.2 m chute for a softer landing (attempt 3).",
+    ),
+    "commercial": (
+        "The seed scaled from Electron (pitch program re-tuned for 400 km) reached orbit in its "
+        "own simulation (attempt 0). Attempt 1 adopts it as is under the scenario seed.",
+        "Attempt 1 passed with margin. To use the budget better, attempt 2 cuts the first-stage "
+        "propellant; attempt 3 cuts the upper stage instead. The simulation decides which is "
+        "cheaper AND still closes the orbit.",
+    ),
+    "heavy": (
+        "The seed scaled from Atlas V 551 keeps all five AJ-60A boosters on a quarter-size "
+        "core: attempt 1 simulates it as is.",
+        "Attempt 1 failed: max-Q far above the limit (too much booster thrust for the core) "
+        "and the upper stage burned out early. Fix the causes: two GEM-63 boosters, a larger "
+        "core and a 25 t upper stage with a later kick (attempt 2).",
+    ),
+}
+
+_DISPERSION_ID = "toolu_disp_1"
+_REFERENCE_ID = "toolu_ref"
+_DERIVE_ID = "toolu_derive"
+
+
+def tool_inputs_from_history(history: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """tool_use_id -> tool input, from every assistant message in the history (blocks are SDK
+    objects or dicts)."""
+    out: dict[str, dict[str, Any]] = {}
+    for msg in history:
+        if msg.get("role") != "assistant" or not isinstance(msg.get("content"), list):
+            continue
+        for block in msg["content"]:
+            if isinstance(block, dict):
+                btype, bid, binput = block.get("type"), block.get("id"), block.get("input")
+            else:
+                btype = getattr(block, "type", None)
+                bid = getattr(block, "id", None)
+                binput = getattr(block, "input", None)
+            if btype == "tool_use" and bid and isinstance(binput, dict):
+                out[str(bid)] = binput
+    return out
+
+
+def _seed_design_from_history(history: list[dict[str, Any]]) -> dict[str, Any]:
+    ref = tool_results_from_history(history).get(_REFERENCE_ID) or {}
+    seed = ref.get("seed") or {}
+    design = seed.get("design")
+    if not isinstance(design, dict):
+        raise RuntimeError(
+            "demo script: find_reference_designs returned no seed design "
+            f"(note={ref.get('note')!r}, error={ref.get('error')!r})"
+        )
+    return design
+
+
+def demo_designs(
+    tier: str, env: dict[str, Any] | None = None, requirement_text: str = ""
+) -> list[dict[str, Any]]:
+    """The designs the demo script simulates for `tier`, attempt order, computed the way the
+    script does (seed from the find_reference_designs tool, then DEMO_VARIANTS). For tests that
+    need a concrete demo design; commercial costs a few seconds (tune=true)."""
+    from rocketwright.agent.tools import execute_tool
+
+    requirement = {**DEMO_REQUIREMENTS[tier], "text": requirement_text}
+    out = execute_tool(
+        "find_reference_designs",
+        {
+            "requirement": requirement,
+            "tier": tier,
+            "k": 3,
+            "seed": True,
+            "tune": DEMO_TUNE[tier],
+            "env": env or None,
+        },
+        _REFERENCE_ID,
+    )
+    seed = (out.get("seed") or {}).get("design")
+    if not isinstance(seed, dict):
+        raise RuntimeError(f"no seed design for tier {tier!r}: {out.get('note') or out}")
+    return [variant(seed) for variant in DEMO_VARIANTS[tier]]
+
+
+def _derived_phrase(derive: dict[str, Any], tier: str) -> str:
+    """Two derived numbers quoted verbatim-enough from the derive_requirements result (the
+    provenance check rounds result values to the digits written)."""
+    q = {
+        item.get("key"): item
+        for item in derive.get("quantities", [])
+        if isinstance(item, dict) and item.get("key")
+    }
+
+    def val(key: str) -> float | None:
+        v = (q.get(key) or {}).get("value")
+        return float(v) if isinstance(v, (int, float)) else None
+
+    if tier in ("commercial", "heavy"):
+        dv, m0 = val("required_dv_mps"), val("liftoff_mass_kg")
+        if dv is None or m0 is None:
+            return "required delta-v and liftoff mass (see the tool result)"
+        return f"required delta-v {dv:,.0f} m/s and a liftoff mass of about {m0:,.0f} kg"
+    if tier == "amateur":
+        impulse, chute = val("total_impulse_ns"), val("parachute_diameter_m")
+        letter = (q.get("motor_class_impulse_min_ns") or {}).get("annotation") or "?"
+        if impulse is None or chute is None:
+            return "total impulse and parachute diameter (see the tool result)"
+        return (
+            f"total impulse {impulse:,.0f} Ns (motor class {letter}) and a parachute of "
+            f"{chute:.2f} m"
+        )
+    pressure, water = val("gauge_pressure_pa"), val("water_mass_kg")
+    if pressure is None or water is None:
+        return "gauge pressure and water mass (see the tool result)"
+    return f"gauge pressure {pressure / 1e3:.0f} kPa with {water:.3g} kg of water"
+
+
+_DEMO_STORY: dict[str, str] = {
+    "bottle": (
+        "The seed passed as attempt 0; attempt 1 fitted it into the user's 1.5 L bottle and "
+        "passed. Attempt 2 moved towards the derived pressure and overshot the apogee window: "
+        "the simulation is trusted over the formula, whose provisional energy-efficiency "
+        "constant lumps nozzle and drag losses and is pessimistic for this bottle. Attempt 3 "
+        "passed with a slightly higher pressure."
+    ),
+    "amateur": (
+        "The seed flew about a tenth too high (attempt 1 failed on apogee): the simulation is "
+        "trusted over the derived impulse, whose drag factor assumes a heavier, draggier "
+        "airframe than the scaled one. Attempts 2 and 3 widened the airframe and added dry "
+        "mass (the cause), and passed."
+    ),
+    "commercial": (
+        "The re-tuned seed reached orbit (attempt 0) and was adopted as attempt 1. Attempt 2 "
+        "cut the first stage to save cost and failed on perigee (the upper stage could not "
+        "close the orbit); attempt 3 cut the upper stage instead and passed cheaper. The "
+        "simulated delta-v losses exceed the formula's loss allowance, which is why the "
+        "derived liftoff mass is optimistic."
+    ),
+    "heavy": (
+        "The seed kept the reference's five boosters on a much smaller core and failed on "
+        "max-Q and an early upper-stage burnout (attempt 1); attempt 2 fixed both causes and "
+        "passed."
+    ),
 }
 
 
 def _final_from_results(
     tier: str,
-    designs: list[dict[str, Any]],
     sim_ids: list[str],
     dispersion_ids: dict[int, str] | None = None,
 ):
-    """Script item that composes the final JSON from the simulate_design results in history.
-    Only passing designs are reported (CLAUDE.md section 1); if none passed, all attempts are
-    listed with passed=false so the user still sees what was tried. `dispersion_ids` maps a
-    design index to the run_dispersion tool_use id whose success_rate it quotes."""
+    """Script item that composes the final JSON from the tool results in history: the designs
+    come from the simulate_design tool_use inputs, the metrics/cost from their results. Only
+    passing designs are reported (CLAUDE.md section 1); if none passed, all attempts are
+    listed with passed=false so the user still sees what was tried. `dispersion_ids` maps an
+    attempt index to the run_dispersion tool_use id whose success_rate it quotes. The final
+    cites `reference_id` (find_reference_designs) and `derived_targets` (derive_requirements)
+    and quotes two derived numbers, so the provenance check must find them in the results."""
     dispersion_ids = dispersion_ids or {}
 
     def build(history: list[dict[str, Any]]) -> Message:
         results = tool_results_from_history(history)
+        inputs = tool_inputs_from_history(history)
         out_designs = []
-        for i, (design, sim_id) in enumerate(zip(designs, sim_ids, strict=True)):
+        for i, sim_id in enumerate(sim_ids):
             sim = results.get(sim_id, {})
+            design = sim.get("tuned_design") or (inputs.get(sim_id) or {}).get("design")
             metrics = sim.get("metrics", {})
             cost = sim.get("cost_jpy")
             key = "perigee_m" if "perigee_m" in metrics else "apogee_m"
@@ -456,13 +544,24 @@ def _final_from_results(
         passing = [d for d in out_designs if d["passed"]]
         n_failed = len(out_designs) - len(passing)
         model = {"bottle": "water", "amateur": "solid"}.get(tier, "multistage")
-        physics = f"real {model} physics"
+        ref = results.get(_REFERENCE_ID) or {}
+        seed = ref.get("seed") or {}
+        reference_id = seed.get("reference_id")
+        ref_name = next(
+            (r.get("name") for r in ref.get("references", []) if r.get("id") == reference_id),
+            reference_id,
+        )
+        derive = results.get(_DERIVE_ID) or {}
         final = {
+            "reference_id": reference_id,
+            "derived_targets": _DERIVE_ID if derive else None,
             "designs": passing or out_designs,
             "summary": (
-                f"Tier {tier}: the first attempt failed, its failure reason was read and the "
-                f"cause fixed; {len(passing)} of {len(out_designs)} designs passed "
-                f"({physics}). Attempts that failed: {n_failed}."
+                f"Tier {tier}. Targets derived by formula ({_DERIVE_ID}): "
+                f"{_derived_phrase(derive, tier)}. Design seeded from {ref_name} "
+                f"({reference_id}, {_REFERENCE_ID}), scaled by the tool's provisional rules. "
+                f"{_DEMO_STORY[tier]} {len(passing)} of {len(out_designs)} simulated designs "
+                f"passed (real {model} physics); failed attempts: {n_failed}."
             ),
             "open_questions": [],
         }
@@ -520,16 +619,19 @@ def build_demo_script(
     reviews: bool = False,
     dispersion: bool = True,
 ) -> list[ScriptItem]:
-    """classify -> search_catalog -> simulate_design (first attempt, fails) -> simulate_design
-    x(N-1) in one turn (corrected designs) -> run_dispersion on the first passing design
-    (index 1, n=100) -> final JSON quoting its success_rate. With `reviews=True` the returned
-    DemoScript also carries `build_demo_reviews()` for the fake client's reviewer calls;
-    `dispersion=False` drops the run_dispersion turn (loop-mechanics tests)."""
+    """classify -> derive_requirements + search_catalog (one turn) -> find_reference_designs
+    (seed=true) -> simulate_design on the seed-based attempt 1 -> simulate_design x(N-1) in one
+    turn (DEMO_VARIANTS) -> run_dispersion on the first passing attempt (DEMO_PASSING_INDEX,
+    n=100) -> final JSON quoting its success_rate, the reference id and the derive tool id.
+    With `reviews=True` the returned DemoScript also carries `build_demo_reviews()` for the
+    fake client's reviewer calls; `dispersion=False` drops the run_dispersion turn
+    (loop-mechanics tests)."""
     requirement = {**DEMO_REQUIREMENTS[tier], "text": requirement_text}
-    designs = DEMO_DESIGNS[tier]
-    sim_ids = [f"toolu_sim_{i + 1}" for i in range(len(designs))]
-    dispersion_index = 1  # the first design meant to pass (see DEMO_DESIGNS)
-    dispersion_ids = {dispersion_index: "toolu_disp_1"} if dispersion else {}
+    variants = DEMO_VARIANTS[tier]
+    sim_ids = [f"toolu_sim_{i + 1}" for i in range(len(variants))]
+    dispersion_index = DEMO_PASSING_INDEX[tier]
+    dispersion_ids = {dispersion_index: _DISPERSION_ID} if dispersion else {}
+    narration_first, narration_rest = _DEMO_NARRATION[tier]
 
     def simulate(sim_id: str, design: dict[str, Any]):
         return tool_use_block(
@@ -540,8 +642,51 @@ def build_demo_script(
                 "env": env,
                 "seed": seed,
                 "requirement": requirement,
-                "tune_pitch": False,  # the demo uses pre-tuned numbers (see DEMO_DESIGNS)
+                "tune_pitch": False,  # the seed's pitch program is already tuned (DEMO_TUNE)
             },
+        )
+
+    def first_attempt(history: list[dict[str, Any]]) -> Message:
+        design = variants[0](_seed_design_from_history(history))
+        return make_message(
+            [thinking_block(narration_first), simulate(sim_ids[0], design)],
+            stop_reason="tool_use",
+        )
+
+    def later_attempts(history: list[dict[str, Any]]) -> Message:
+        seed_design = _seed_design_from_history(history)
+        return make_message(
+            [
+                thinking_block(narration_rest),
+                *[
+                    simulate(sim_id, variant(seed_design))
+                    for sim_id, variant in zip(sim_ids[1:], variants[1:], strict=True)
+                ],
+            ],
+            stop_reason="tool_use",
+        )
+
+    def dispersion_turn(history: list[dict[str, Any]]) -> Message:
+        design = variants[dispersion_index](_seed_design_from_history(history))
+        return make_message(
+            [
+                thinking_block(
+                    "A design passed. Running the Monte-Carlo dispersion on it (n=100, same "
+                    "seed) to quote a success rate instead of guessing one."
+                ),
+                tool_use_block(
+                    _DISPERSION_ID,
+                    "run_dispersion",
+                    {
+                        "design": design,
+                        "env": env,
+                        "n": 100,
+                        "seed": seed if seed is not None else 0,
+                        "requirement": requirement,
+                    },
+                ),
+            ],
+            stop_reason="tool_use",
         )
 
     script = DemoScript(
@@ -557,7 +702,19 @@ def build_demo_script(
             ),
             make_message(
                 [
-                    text_block("Looking up the catalog for this tier."),
+                    text_block(
+                        "Deriving the quantitative targets by formula and listing the catalog "
+                        "for this tier."
+                    ),
+                    tool_use_block(
+                        _DERIVE_ID,
+                        "derive_requirements",
+                        {
+                            "requirement": requirement,
+                            "tier": tier,
+                            "launch_latitude_deg": env.get("launch_latitude_deg"),
+                        },
+                    ),
                     tool_use_block(
                         "toolu_search",
                         "search_catalog",
@@ -568,53 +725,29 @@ def build_demo_script(
             ),
             make_message(
                 [
-                    thinking_block("Proposing an initial design and simulating it."),
-                    simulate(sim_ids[0], designs[0]),
-                ],
-                stop_reason="tool_use",
-            ),
-            make_message(
-                [
                     thinking_block(
-                        "The first attempt failed. Reading failure_reasons and fixing the cause "
-                        "(not the symptom): adjusting the design variable it points at, then "
-                        "simulating the corrected candidates."
+                        "Looking for the nearest real vehicle and seeding the design from it "
+                        "(scaled by the tool's rules), with its own simulation as attempt 0."
                     ),
-                    *[
-                        simulate(sim_id, d)
-                        for sim_id, d in zip(sim_ids[1:], designs[1:], strict=True)
-                    ],
+                    tool_use_block(
+                        _REFERENCE_ID,
+                        "find_reference_designs",
+                        {
+                            "requirement": requirement,
+                            "tier": tier,
+                            "k": 3,
+                            "seed": True,
+                            "tune": DEMO_TUNE[tier],
+                            "env": env,
+                        },
+                    ),
                 ],
                 stop_reason="tool_use",
             ),
-            *(
-                [
-                    make_message(
-                        [
-                            thinking_block(
-                                "A corrected design passed. Running the Monte-Carlo dispersion "
-                                "on it (n=100, same seed) to quote a success rate instead of "
-                                "guessing one."
-                            ),
-                            tool_use_block(
-                                dispersion_ids[dispersion_index],
-                                "run_dispersion",
-                                {
-                                    "design": designs[dispersion_index],
-                                    "env": env,
-                                    "n": 100,
-                                    "seed": seed if seed is not None else 0,
-                                    "requirement": requirement,
-                                },
-                            ),
-                        ],
-                        stop_reason="tool_use",
-                    )
-                ]
-                if dispersion
-                else []
-            ),
-            _final_from_results(tier, designs, sim_ids, dispersion_ids),
+            first_attempt,
+            later_attempts,
+            *([dispersion_turn] if dispersion else []),
+            _final_from_results(tier, sim_ids, dispersion_ids),
         ]
     )
     if reviews:

@@ -88,6 +88,24 @@ export function metricLabel(key: string): string {
   return METRIC_LABELS[key] ?? key;
 }
 
+/** Japanese labels of the agent tools (rocketwright/agent/tools.py), shown next to the id. */
+const TOOL_LABELS: Record<string, string> = {
+  classify_requirement: "規模の判定",
+  derive_requirements: "定量要求の算出",
+  find_reference_designs: "実機データの検索",
+  search_catalog: "カタログ検索",
+  simulate_design: "シミュレーション",
+  run_dispersion: "多数回試行",
+  estimate_cost: "費用見積",
+  render_drawing: "図面の描画",
+  export_report: "レポート出力",
+};
+
+export function toolLabel(name: string): string {
+  const label = TOOL_LABELS[name];
+  return label === undefined ? name : `${label} (${name})`;
+}
+
 /** Generic formatter driven by the unit suffix of the metric key. */
 export function formatMetric(key: string, value: number): string {
   if (!Number.isFinite(value)) return "-";
