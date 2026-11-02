@@ -18,6 +18,14 @@ def test_health():
     assert r.json()["status"] == "ok"
 
 
+def test_root_points_to_ui_and_docs():
+    r = client.get("/")
+    assert r.status_code == 200
+    body = r.json()
+    assert "localhost:3000" in body["ui"]
+    assert body["docs"] == "/docs"
+
+
 def test_design_streams_events(monkeypatch):
     seen: dict = {}
 

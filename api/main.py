@@ -31,6 +31,19 @@ class DesignRequest(BaseModel):
     env: Env | None = None
 
 
+@app.get("/")
+def root() -> dict[str, str]:
+    """Orientation for anyone who opens the API port in a browser: the UI lives elsewhere."""
+    return {
+        "name": "RocketWright API",
+        "version": __version__,
+        "ui": "run `cd web && npm run dev` and open http://localhost:3000 (Node >= 18.18)",
+        "docs": "/docs",
+        "health": "/health",
+        "design": "POST /design {text, seed?, env?} -> text/event-stream",
+    }
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok", "version": __version__}
