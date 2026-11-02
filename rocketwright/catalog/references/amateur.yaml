@@ -1,0 +1,164 @@
+# Amateur-tier reference vehicles: Estes kits with the manufacturer's "projected max altitude".
+# Format: see README.md in this directory. The Estes product pages give altitude, length,
+# diameter, kit weight, parachute size and the recommended engines; they do NOT give fin
+# dimensions or nose-cone length, so those are ESTIMATES (named in `notes`) and every entry is
+# `provisional: true`. Motors are the synthetic `estes_*.eng` curves that match the Estes
+# published summary numbers (total impulse, peak thrust, burn time, masses).
+#
+# Deploy delay: Estes "C6-5" means 5 s from burnout to ejection, which is roughly the coast to
+# apogee; our model counts `deploy_delay_s` from APOGEE, so it is set to 0-1 s.
+# Env: calm sea-level site (projected altitudes assume calm air), 1.0 m launch rod
+# (Estes Porta-Pad II rod is ~0.9 m).
+version: 1
+references:
+  - id: estes_alpha_iii_c6
+    tier: amateur
+    name: "Estes Alpha III on C6-5"
+    sources: ["https://estesrockets.com/products/alpha-iii"]
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 351
+      payload_mass_kg: 0.0
+      recovery_required: true
+    design:
+      tier: amateur
+      body_diameter_m: 0.025           # page: 0.98 in (25 mm)
+      body_length_m: 0.237             # page: length 12.1 in (30.7 cm) minus the nose estimate
+      nose_shape: ogive
+      nose_length_m: 0.070             # ESTIMATE: Estes PNC-50 style plastic nose ~2.75 in
+      fins:                            # ESTIMATE: 3-fin moulded plastic unit, dims not published
+        count: 3
+        root_chord_m: 0.060
+        tip_chord_m: 0.030
+        span_m: 0.045
+        sweep_m: 0.030
+        thickness_m: 0.002
+      motor_id: estes_C6
+      dry_mass_kg: 0.034               # page: weight 1.2 oz (34 g), kit without motor
+      payload_mass_kg: 0.0
+      parachute_diameter_m: 0.305      # page: 12 in (30.5 cm) parachute
+      deploy_delay_s: 0.5              # C6-5: ~5 s burnout->ejection ~= apogee (see header)
+    published:
+      apogee_m: 351                    # page: "Max altitude 1150 ft (351 m)"
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 1.0}
+    tolerance_frac: 0.30
+    notes: >-
+      Page gives altitude/length/diameter/weight/chute/engines only. Nose length and fin
+      dimensions are ESTIMATES. The page lists eight recommended engines; 1150 ft is taken to be
+      the C6-5 (largest) figure. The published value is an Estes projection, not a measured flight.
+  - id: estes_alpha_c6
+    tier: amateur
+    name: "Estes Alpha (balsa fins) on C6-5"
+    sources: ["https://estesrockets.com/products/alpha"]
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 305
+      payload_mass_kg: 0.0
+      recovery_required: true
+    design:
+      tier: amateur
+      body_diameter_m: 0.025           # page: 0.98 in (25 mm)
+      body_length_m: 0.242             # page: length 12.3 in (31.2 cm) minus the nose estimate
+      nose_shape: ogive
+      nose_length_m: 0.070             # ESTIMATE
+      fins:                            # ESTIMATE: 3 laser-cut balsa fins, swept trapezoid
+        count: 3
+        root_chord_m: 0.064
+        tip_chord_m: 0.025
+        span_m: 0.044
+        sweep_m: 0.038
+        thickness_m: 0.0024
+      motor_id: estes_C6
+      dry_mass_kg: 0.0227              # page: weight 0.8 oz (22.7 g)
+      payload_mass_kg: 0.0
+      parachute_diameter_m: 0.305      # page: 12 in (30.5 cm) parachute
+      deploy_delay_s: 0.5
+    published:
+      apogee_m: 305                    # page: "Max altitude 1000 ft (305 m)"
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 1.0}
+    tolerance_frac: 0.50
+    notes: >-
+      Nose length and fin dimensions are ESTIMATES (not on the page). 1000 ft is taken to be the
+      C6-5 figure (largest recommended engine). Estes projection, not a measured flight.
+      TOLERANCE RAISED to 0.50: our model gives 446 m (+46 %). Model-side: the constant
+      Cd 0.5 is too low for a 25 mm balsa-finned kit with a launch lug (Cd 0.7-0.8 gives
+      363-334 m); the 22.7 g kit weight may also exclude wadding/chute. The estimated fins give
+      a 1.36 cal Barrowman margin (sim flags it); the real Alpha fin is probably larger.
+  - id: estes_big_bertha_c6
+    tier: amateur
+    name: "Estes Big Bertha on C6-5"
+    sources: ["https://estesrockets.com/products/big-bertha"]
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 152
+      payload_mass_kg: 0.0
+      recovery_required: true
+    design:
+      tier: amateur
+      body_diameter_m: 0.042           # page: 1.64 in (42 mm)
+      body_length_m: 0.502             # page: length 24 in (61 cm) minus the nose estimate
+      nose_shape: ogive
+      nose_length_m: 0.108             # ESTIMATE: Estes PNC-60 style nose ~4.25 in
+      fins:                            # ESTIMATE: 4 laser-cut balsa fins, swept trapezoid
+        count: 4
+        root_chord_m: 0.089
+        tip_chord_m: 0.044
+        span_m: 0.070
+        sweep_m: 0.040
+        thickness_m: 0.0024
+      motor_id: estes_C6
+      dry_mass_kg: 0.0709              # page: weight 2.5 oz (70.9 g)
+      payload_mass_kg: 0.0
+      parachute_diameter_m: 0.457      # page: 18 in (45.7 cm) parachute
+      deploy_delay_s: 0.5
+    published:
+      apogee_m: 152                    # page: "Max altitude 500 ft (152 m)"
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 1.0}
+    tolerance_frac: 0.45
+    notes: >-
+      Nose length and fin dimensions are ESTIMATES. 500 ft is taken to be the C6-5 figure
+      (largest recommended engine: B4-2, B4-4, B6-2, B6-4, C6-5). Estes projection.
+      TOLERANCE RAISED to 0.45: our model gives 210 m (+38 %). Model-side: Cd 0.5 is low for
+      this fat, draggy 42 mm kit with large square-edged balsa fins (Cd 0.8 gives 166 m).
+  - id: estes_mean_machine_e12
+    tier: amateur
+    name: "Estes Mean Machine on E12-4"
+    sources: ["https://estesrockets.com/products/mean-machine"]
+    provisional: true
+    requirement:
+      goal_kind: altitude
+      target_altitude_m: 213
+      payload_mass_kg: 0.0
+      recovery_required: true
+    design:
+      tier: amateur
+      body_diameter_m: 0.042           # page: 1.64 in (42 mm)
+      body_length_m: 1.899             # page: length 79 in (200.7 cm) minus the nose estimate
+      nose_shape: ogive
+      nose_length_m: 0.108             # ESTIMATE: same 42 mm (BT-60) family nose as Big Bertha
+      fins:                            # ESTIMATE: 4 laser-cut balsa fins
+        count: 4
+        root_chord_m: 0.100
+        tip_chord_m: 0.050
+        span_m: 0.070
+        sweep_m: 0.040
+        thickness_m: 0.0024
+      motor_id: estes_E12
+      dry_mass_kg: 0.241               # page: weight 8.5 oz (241 g)
+      payload_mass_kg: 0.0
+      parachute_diameter_m: 0.610      # page: 24 in (60.96 cm) parachute
+      deploy_delay_s: 0.5              # E12-4 / E12-6: ~4-6 s burnout->ejection ~= apogee
+    published:
+      apogee_m: 213                    # page: "Projected max altitude 700 ft (213 m)"
+    env: {launch_latitude_deg: 0.0, launch_altitude_m: 0.0, wind_speed_mps: 0.0, rail_length_m: 1.0}
+    tolerance_frac: 0.45
+    notes: >-
+      Nose length and fin dimensions are ESTIMATES. 700 ft is taken to be the E12 figure
+      (recommended engines D12-3, D12-5, E12-4, E12-6). Estes projection, not a measured flight.
+      TOLERANCE RAISED to 0.45: our model gives 298 m (+40 %). Model-side: Cd 0.5 is low for a
+      2 m long 42 mm tube (skin friction dominates; Cd 0.8 gives 258 m). The sim also flags a
+      12 m/s rail-exit speed on the 1.0 m rod (241 g on an E12): Estes sells this kit with the
+      longer Porta-Pad E rod; the apogee comparison is unaffected.

@@ -1,0 +1,14 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the manufacturer's summary
+; source: https://estesrockets.com/products/e12-4-engines
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: Estes page: total impulse 30.00 N-s, max thrust 30.60 N, thrust duration 2.70 s, propellant 36.9 g, total 61.2 g, 24 x 97 mm.
+; note: curve integral 30.00 N-s, average thrust 11.11 N
+E12 24 97 4-6-8 0.0369 0.0612 Estes
+0.050 12.24
+0.150 30.60
+0.300 10.42
+2.600 10.42
+2.700 0.00
+;

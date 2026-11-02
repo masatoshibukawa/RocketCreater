@@ -1,0 +1,14 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the manufacturer's summary
+; source: https://estesrockets.com/products/d12-5-engines
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: Estes page: total impulse 20.00 N-s, max thrust 32.90 N, thrust duration 1.60 s, propellant 24.2 g, total 45.6 g, 24 x 70 mm. Curve integral set to 19.9 N-s so the D-class bound (<= 20 N-s) holds after rounding.
+; note: curve integral 19.90 N-s, average thrust 12.44 N
+D12 24 70 0-3-5-7 0.0242 0.0456 Estes
+0.050 13.16
+0.150 32.90
+0.300 11.17
+1.500 11.17
+1.600 0.00
+;

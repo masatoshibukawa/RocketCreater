@@ -100,6 +100,182 @@ engines:
     notes: >-
       Values read from https://en.wikipedia.org/wiki/Rutherford_(rocket_engine); the sea-level
       Isp in particular needs confirmation.
+  - id: rutherford_vacuum
+    name: Rutherford (vacuum variant)
+    manufacturer: Rocket Lab
+    thrust_sl_n: 24000
+    thrust_vac_n: 26000
+    isp_sl_s: 300
+    isp_vac_s: 343
+    mass_kg: 35
+    propellant: RP-1 / LOX
+    source: https://en.wikipedia.org/wiki/Rutherford_(rocket_engine)
+    provisional: true
+    notes: >-
+      Vacuum thrust 26 kN, Isp 343 s and dry mass 35 kg from the infobox. Not a sea-level engine:
+      thrust_sl_n / isp_sl_s are placeholders for the pressure interpolation only.
+  - id: reaver_1
+    name: Reaver 1
+    manufacturer: Firefly Aerospace
+    thrust_sl_n: 184000
+    thrust_vac_n: 200250
+    isp_sl_s: 265
+    isp_vac_s: 295.6
+    mass_kg: 200
+    propellant: RP-1 / LOX
+    source: https://en.wikipedia.org/wiki/Firefly_Alpha
+    provisional: true
+    notes: >-
+      Sea-level thrust 736.1 kN / 4 engines and Isp 295.6 s from the Firefly Alpha infobox; vacuum
+      thrust 801 kN / 4 from https://fireflyspace.com/alpha/; sea-level Isp 265 s from
+      https://en.wikipedia.org/wiki/Comparison_of_orbital_rocket_engines. Dry mass is an estimate.
+  - id: lightning_1
+    name: Lightning 1
+    manufacturer: Firefly Aerospace
+    thrust_sl_n: 50000
+    thrust_vac_n: 70100
+    isp_sl_s: 230
+    isp_vac_s: 322
+    mass_kg: 150
+    propellant: RP-1 / LOX
+    source: https://en.wikipedia.org/wiki/Firefly_Alpha
+    provisional: true
+    notes: >-
+      Vacuum thrust 70.1 kN and Isp 322 s from the Firefly Alpha infobox / fireflyspace.com. Not a
+      sea-level engine (placeholders); dry mass is an estimate.
+  - id: p80
+    name: P80FW solid motor (Vega stage 1, modelled as one engine with the average thrust)
+    manufacturer: Avio
+    thrust_sl_n: 2200000
+    thrust_vac_n: 2200000
+    isp_sl_s: 255
+    isp_vac_s: 280
+    mass_kg: 7330
+    propellant: HTPB solid
+    source: https://en.wikipedia.org/wiki/Vega_(rocket)
+    provisional: true
+    notes: >-
+      Average thrust 2,200 kN, Isp 280 s and empty mass 7,330 kg from the Vega page (which does
+      not label SL/vacuum). Check: 88,365 kg x 280 s x g0 / 110 s = 2,206 kN. Sea-level Isp is an
+      estimate. Thrust is held constant (real curve is not).
+  - id: zefiro_23
+    name: Zefiro 23 solid motor (Vega stage 2, average thrust)
+    manufacturer: Avio
+    thrust_sl_n: 800000
+    thrust_vac_n: 871000
+    isp_sl_s: 250
+    isp_vac_s: 287.5
+    mass_kg: 1950
+    propellant: HTPB solid
+    source: https://en.wikipedia.org/wiki/Vega_(rocket)
+    provisional: true
+    notes: >-
+      Average thrust 871 kN, Isp 287.5 s and motor dry mass 1,950 kg from the Vega page.
+      Ignites above 40 km, so the sea-level values are placeholders.
+  - id: zefiro_9
+    name: Zefiro 9 solid motor (Vega stage 3, average thrust)
+    manufacturer: Avio
+    thrust_sl_n: 230000
+    thrust_vac_n: 260000
+    isp_sl_s: 250
+    isp_vac_s: 296
+    mass_kg: 915
+    propellant: HTPB solid
+    source: https://en.wikipedia.org/wiki/Vega_(rocket)
+    provisional: true
+    notes: >-
+      Average thrust 260 kN, Isp 296 s and motor dry mass 915 kg from the Vega page.
+      Ignites in near-vacuum, so the sea-level values are placeholders.
+  - id: srb_a3_stage
+    name: SRB-A3 solid motor (Epsilon stage 1, average thrust)
+    manufacturer: IHI Aerospace
+    thrust_sl_n: 1582000
+    thrust_vac_n: 1582000
+    isp_sl_s: 260
+    isp_vac_s: 284
+    mass_kg: 8700
+    propellant: HTPB solid
+    source: https://en.wikipedia.org/wiki/Epsilon_(rocket)
+    provisional: true
+    notes: >-
+      Propellant 65.9 t, Isp 284 s, burn 116 s from the Epsilon page; average thrust =
+      65,900 kg x 284 s x g0 / 116 s = 1,582 kN (the page gives 2,271 kN maximum). Dry mass
+      8.7 t = SRB-A gross 75.5 t - propellant 66.8 t from https://en.wikipedia.org/wiki/SRB-3.
+      Sea-level Isp is an estimate.
+  - id: m_35
+    name: M-35 solid motor (Enhanced Epsilon stage 2, average thrust)
+    manufacturer: IHI Aerospace
+    thrust_sl_n: 300000
+    thrust_vac_n: 336000
+    isp_sl_s: 250
+    isp_vac_s: 295
+    mass_kg: 2200
+    propellant: HTPB solid
+    source: https://en.wikipedia.org/wiki/Epsilon_(rocket)
+    provisional: true
+    notes: >-
+      Isp 295 s and burn time 129 s from the Epsilon page (445 kN is the maximum thrust);
+      propellant 15,000 kg and launch mass 17,200 kg from
+      https://spaceflight101.com/spacerockets/?p=1807 (secondary source). Average thrust =
+      15,000 x 295 x g0 / 129 = 336 kN; dry mass = 17,200 - 15,000 = 2,200 kg.
+  - id: km_v2c
+    name: KM-V2c solid motor (Enhanced Epsilon stage 3, average thrust)
+    manufacturer: IHI Aerospace
+    thrust_sl_n: 70000
+    thrust_vac_n: 80600
+    isp_sl_s: 250
+    isp_vac_s: 299
+    mass_kg: 800
+    propellant: HTPB solid
+    source: https://en.wikipedia.org/wiki/Epsilon_(rocket)
+    provisional: true
+    notes: >-
+      Propellant 2.5 t, Isp 299 s, burn 91 s from the Epsilon page (99.6 kN is the maximum);
+      average thrust = 2,500 x 299 x g0 / 91 = 80.6 kN. Dry mass 800 kg is an estimate (the
+      page gives no gross mass).
+  - id: le_5b_3
+    name: LE-5B-3
+    manufacturer: Mitsubishi Heavy Industries / JAXA
+    thrust_sl_n: 90000
+    thrust_vac_n: 137200
+    isp_sl_s: 300
+    isp_vac_s: 448
+    mass_kg: 303
+    propellant: LH2 / LOX
+    source: https://en.wikipedia.org/wiki/LE-5
+    provisional: true
+    notes: >-
+      Rated thrust 137.2 kN, Isp 448 s and weight 303 kg from the LE-5 variants table. Not a
+      sea-level engine: thrust_sl_n / isp_sl_s are placeholders.
+  - id: rd_108a
+    name: RD-108A (Soyuz-2 core stage)
+    manufacturer: NPO Energomash
+    thrust_sl_n: 792500
+    thrust_vac_n: 990200
+    isp_sl_s: 255
+    isp_vac_s: 319
+    mass_kg: 1075
+    propellant: RP-1 / LOX
+    source: https://en.wikipedia.org/wiki/Soyuz-2_(rocket)
+    provisional: true
+    notes: >-
+      Thrust and Isp from the Soyuz-2 infobox (Block A); the RD-107 page lists 921.86 kN vacuum
+      for the engine alone. Dry mass 1,075 kg from
+      https://en.wikipedia.org/wiki/Comparison_of_orbital_rocket_engines.
+  - id: rd_0124
+    name: RD-0124 (Soyuz-2.1b Block I)
+    manufacturer: KBKhA
+    thrust_sl_n: 200000
+    thrust_vac_n: 294300
+    isp_sl_s: 250
+    isp_vac_s: 359
+    mass_kg: 572
+    propellant: RP-1 / LOX
+    source: https://en.wikipedia.org/wiki/RD-0124
+    provisional: true
+    notes: >-
+      Vacuum thrust 294.3 kN, Isp 359 s and dry mass 572 kg from the infobox. Upper-stage engine:
+      sea-level values are placeholders.
 boosters:
   - id: gem_63
     name: GEM 63 solid rocket motor
@@ -130,3 +306,53 @@ boosters:
     notes: >-
       Vacuum thrust, Isp and masses read from https://en.wikipedia.org/wiki/Ariane_5;
       sea-level thrust and Isp are estimates. Thrust is a constant mean value.
+  - id: srb_3
+    name: SRB-3 solid rocket booster (H3)
+    manufacturer: IHI Aerospace
+    thrust_sl_n: 1699000
+    thrust_vac_n: 1699000
+    isp_sl_s: 260
+    isp_vac_s: 283.6
+    mass_kg: 9000
+    propellant_mass_kg: 67200
+    propellant: HTPB solid
+    source: https://en.wikipedia.org/wiki/SRB-3
+    provisional: true
+    notes: >-
+      Gross 76.2 t, propellant 67.2 t, Isp 283.6 s, burn 110 s from the infobox (2,300 kN is the
+      maximum thrust). Dry mass = 76.2 - 67.2 = 9.0 t; mean thrust = 67,200 x 283.6 x g0 / 110 s
+      = 1,699 kN, used for both SL and vacuum. Sea-level Isp is an estimate.
+  - id: aj_60a
+    name: AJ-60A solid rocket booster (Atlas V)
+    manufacturer: Aerojet Rocketdyne
+    thrust_sl_n: 1242000
+    thrust_vac_n: 1242000
+    isp_sl_s: 255
+    isp_vac_s: 279.3
+    mass_kg: 4067
+    propellant_mass_kg: 42630
+    propellant: HTPB solid
+    source: https://en.wikipedia.org/wiki/Atlas_V
+    provisional: true
+    notes: >-
+      Gross 46,697 kg, propellant 42,630 kg, Isp 279.3 s, burn 94 s from the Atlas V infobox
+      (1,688.4 kN is the maximum thrust). Dry = 46,697 - 42,630 = 4,067 kg; mean thrust =
+      42,630 x 279.3 x g0 / 94 = 1,242 kN. Sea-level Isp is an estimate.
+  - id: soyuz_blok_bvgd
+    name: Soyuz-2 strap-on booster (Blok B/V/G/D, RD-107A)
+    manufacturer: RKTs Progress / NPO Energomash
+    thrust_sl_n: 838500
+    thrust_vac_n: 1021300
+    isp_sl_s: 262
+    isp_vac_s: 319
+    mass_kg: 5253
+    propellant_mass_kg: 39160
+    propellant: RP-1 / LOX
+    source: https://en.wikipedia.org/wiki/Soyuz-2_(rocket)
+    provisional: true
+    notes: >-
+      Per booster from the Soyuz-2 infobox: propellant LOX 27,900 + RP-1 11,260 = 39,160 kg,
+      gross 44,413 kg, thrust 838.5 kN SL / 1,021.3 kN vac, Isp 262 / 319 s, burn 118 s.
+      mass_kg = gross - propellant = 5,253 kg (the page's empty mass 3,784 kg leaves 1,469 kg
+      unaccounted; the gross figure is kept so the liftoff mass closes). Liquid booster with
+      a constant thrust.
