@@ -1,19 +1,25 @@
-"""Reference-vehicle catalog: validation, nearest-neighbour search and physics reproduction."""
+"""Reference-vehicle catalog: validation, nearest-neighbour search, physics reproduction and
+reference-seeded designs (seed_design + the find_reference_designs tool)."""
 
 from pathlib import Path
 
 import pytest
 import yaml
 
+from rocketwright.agent.tools import TOOL_NAMES, TOOL_REGISTRY, execute_tool, get_tool_definitions
+from rocketwright.physics import multistage, solid, water
 from rocketwright.references import (
     ReferenceEntry,
     find_nearest,
+    find_reference_designs,
+    get_reference,
     load_references,
     load_references_from,
     reproduce,
     requirement_distance,
+    seed_design,
 )
-from rocketwright.schema import GoalKind, Requirement, Tier
+from rocketwright.schema import DesignAdapter, GoalKind, Requirement, SimResult, Tier
 
 _ENTRY = {
     "id": "toy_bottle",
@@ -102,3 +108,241 @@ def test_reproduces_published_performance(entry):
         f"{entry.id}: errors {rep.errors_frac} exceed {rep.tolerance_frac:.0%}; "
         f"failure_reasons={rep.failure_reasons}"
     )
+
+
+# --------------------------------------------------------------------------- design seeds
+
+G0 = 9.80665
+# The three demo scenarios (scenarios/*.yaml, fake_client.DEMO_REQUIREMENTS).
+DEMO_COMMERCIAL = Requirement(
+    goal_kind=GoalKind.ORBIT, target_altitude_m=400_000, payload_mass_kg=150, budget_jpy=2.0e9
+)
+DEMO_AMATEUR = Requirement(
+    goal_kind=GoalKind.ALTITUDE,
+    target_altitude_m=2000,
+    payload_mass_kg=1.0,
+    budget_jpy=50_000,
+    recovery_required=True,
+)
+DEMO_BOTTLE = Requirement(
+    goal_kind=GoalKind.ALTITUDE,
+    target_altitude_m=30,
+    payload_mass_kg=0.06,
+    budget_jpy=3000,
+    recovery_required=True,
+)
+ENV_COMMERCIAL = {"launch_latitude_deg": 31.25, "launch_altitude_m": 20, "wind_speed_mps": 5.0}
+ENV_AMATEUR = {"launch_latitude_deg": 36.0, "launch_altitude_m": 300, "wind_speed_mps": 3.0}
+ENV_BOTTLE = {"launch_latitude_deg": 35.0, "launch_altitude_m": 20, "wind_speed_mps": 2.0}
+
+
+def _liftoff_twr(design) -> float:
+    wet = sum(
+        s.propellant_mass_kg
+        + multistage.structural_mass_kg(s.propellant_mass_kg, s.structural_fraction)
+        for s in design.stages
+    )
+    thrust = (
+        multistage.get_engine(design.stages[0].engine_id).thrust_sl_n
+        * design.stages[0].engine_count
+    )
+    for b in design.boosters:
+        spec = multistage.get_engine(b.booster_id)
+        wet += (spec.mass_kg + spec.propellant_mass_kg) * b.count
+        thrust += spec.thrust_sl_n * b.count
+    return thrust / ((wet + design.fairing_mass_kg + design.payload_mass_kg) * G0)
+
+
+def _valid(design) -> None:
+    DesignAdapter.validate_python(design.model_dump())
+
+
+def test_seed_multistage_scales_payload_and_keeps_twr():
+    entry = get_reference("electron")
+    design, notes = seed_design(entry, DEMO_COMMERCIAL)
+    _valid(design)
+    assert design.tier == "commercial"
+    assert design.payload_mass_kg == 150
+    assert notes and all(isinstance(n, str) and n for n in notes)
+    # propellant scaled by the payload ratio (linear SIMPLIFICATION), stage mass ratios kept
+    ref = entry.design
+    assert design.stages[0].propellant_mass_kg == pytest.approx(
+        ref.stages[0].propellant_mass_kg * 0.5
+    )
+    assert design.stages[1].propellant_mass_kg == pytest.approx(
+        ref.stages[1].propellant_mass_kg * 0.5
+    )
+    assert [s.engine_id for s in design.stages] == [s.engine_id for s in ref.stages]
+    assert _liftoff_twr(design) >= 1.2
+    # the pitch program is the reference's until the caller asks for tuning
+    assert design.pitch_start_s == ref.pitch_start_s
+    assert design.initial_pitch_deg == ref.initial_pitch_deg
+
+
+def test_seed_multistage_keeps_boosters_and_twr_when_payload_grows():
+    entry = get_reference("atlas_v_551")
+    req = Requirement(goal_kind=GoalKind.ORBIT, target_altitude_m=200_000, payload_mass_kg=30_000)
+    design, notes = seed_design(entry, req)
+    _valid(design)
+    assert design.boosters == entry.design.boosters
+    assert design.stages[0].engine_count >= entry.design.stages[0].engine_count
+    assert _liftoff_twr(design) >= 1.2
+    assert any("booster" in n for n in notes)
+
+
+def test_seed_amateur_picks_bigger_motor_when_payload_doubles():
+    entry = get_reference("estes_alpha_iii_c6")
+    req = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=351, payload_mass_kg=0.068)
+    design, notes = seed_design(entry, req)
+    _valid(design)
+    assert design.payload_mass_kg == 0.068
+    ref_motor = solid.load_motor(entry.design.motor_id)
+    new_motor = solid.load_motor(design.motor_id)
+    assert new_motor.total_impulse_ns >= ref_motor.total_impulse_ns
+    # the airframe must hold the motor
+    assert design.body_diameter_m >= new_motor.diameter_m
+    assert design.body_length_m >= new_motor.length_m
+    # parachute grows with the square root of the landing mass
+    assert design.parachute_diameter_m > entry.design.parachute_diameter_m
+    assert design.fins.count == entry.design.fins.count
+    assert any("motor" in n for n in notes)
+
+
+def test_seed_amateur_falls_back_to_largest_motor_with_a_note():
+    entry = get_reference("estes_alpha_iii_c6")
+    req = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=20_000, payload_mass_kg=50.0)
+    design, notes = seed_design(entry, req)
+    _valid(design)
+    biggest = max(solid.list_motor_ids(), key=lambda m: solid.load_motor(m).total_impulse_ns)
+    assert design.motor_id == biggest
+    assert any("largest" in n for n in notes)
+
+
+def test_seed_bottle_clips_pressure_and_adds_parachute_for_an_egg():
+    entry = get_reference("apte_2l_800ml_40psi")
+    assert not entry.design.has_parachute
+    # a 200 m target would need 2.5 MPa: clipped at the safety cap, with a note
+    far = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=200, payload_mass_kg=0.06)
+    design, notes = seed_design(entry, far)
+    _valid(design)
+    assert design.initial_gauge_pressure_pa == water.PASS_THRESHOLDS["max_gauge_pressure_pa"]
+    assert any("cap" in n for n in notes)
+    assert design.has_parachute and design.parachute_diameter_m is not None
+    assert design.payload_mass_kg == 0.06
+    # the bottle itself is kept
+    assert design.bottle_volume_m3 == entry.design.bottle_volume_m3
+    assert design.nozzle_diameter_m == entry.design.nozzle_diameter_m
+    # pressure scales linearly with the apogee ratio below the cap
+    design2, _ = seed_design(entry, DEMO_BOTTLE)
+    assert design2.initial_gauge_pressure_pa == pytest.approx(
+        entry.design.initial_gauge_pressure_pa * 30 / entry.requirement.target_altitude_m
+    )
+    # no payload and no recovery: no parachute added
+    design3, _ = seed_design(
+        entry, Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=25, payload_mass_kg=0.0)
+    )
+    assert not design3.has_parachute
+
+
+def test_find_reference_designs_is_light_and_sorted():
+    rows = find_reference_designs(DEMO_COMMERCIAL, Tier.COMMERCIAL, k=2)
+    assert len(rows) == 2
+    assert rows[0]["id"] == "electron"
+    assert [r["distance"] for r in rows] == sorted(r["distance"] for r in rows)
+    for r in rows:
+        assert set(r) >= {
+            "id",
+            "name",
+            "sources",
+            "distance",
+            "published",
+            "requirement",
+            "provisional",
+            "notes",
+        }
+        assert "design" not in r and "trace" not in r
+        assert len(r["notes"]) <= 300
+    assert find_reference_designs(DEMO_COMMERCIAL, Tier.AMATEUR) == []
+
+
+def test_find_reference_designs_tool_schema_and_registry():
+    assert "find_reference_designs" in TOOL_NAMES
+    assert "find_reference_designs" in TOOL_REGISTRY
+    defs = {d["name"]: d for d in get_tool_definitions()}
+    schema = defs["find_reference_designs"]["input_schema"]
+    assert defs["find_reference_designs"]["strict"] is True
+    assert set(schema["properties"]) == {"requirement", "tier", "k", "seed", "tune", "env"}
+    assert sorted(schema["required"]) == sorted(schema["properties"])
+    assert schema["additionalProperties"] is False
+
+
+def test_find_reference_designs_tool_returns_references_and_seed_sim():
+    inp = {
+        "requirement": DEMO_BOTTLE.model_dump(mode="json"),
+        "tier": "bottle",
+        "k": 2,
+        "seed": True,
+        "tune": None,
+        "env": ENV_BOTTLE,
+    }
+    out = execute_tool("find_reference_designs", inp, "toolu_ref")
+    assert "error" not in out, out
+    assert out["source_id"] == "toolu_ref"
+    assert len(out["references"]) <= 2
+    assert out["references"][0]["id"] == out["seed"]["reference_id"]
+    seed = out["seed"]
+    DesignAdapter.validate_python(seed["design"])
+    assert seed["notes"]
+    sim = seed["sim"]
+    assert "trace" not in sim and sim["trace_point_count"] > 0
+    assert set(sim) >= {"success", "failure_reasons", "metrics", "cost_jpy", "warnings"}
+    assert sim["metrics"]["apogee_m"] > 0
+    # seed=false skips the seed
+    out2 = execute_tool("find_reference_designs", {**inp, "seed": False}, "toolu_ref2")
+    assert out2["seed"] is None and len(out2["references"]) <= 2
+    # no reference for this tier: empty list, seed None, not an error
+    out3 = execute_tool("find_reference_designs", {**inp, "tier": "heavy"}, "toolu_ref3")
+    assert out3["references"] == [] and out3["seed"] is None
+
+
+def _seed_via_tool(req: Requirement, tier: str, env: dict, tune: bool) -> dict:
+    out = execute_tool(
+        "find_reference_designs",
+        {
+            "requirement": req.model_dump(mode="json"),
+            "tier": tier,
+            "k": None,
+            "seed": True,
+            "tune": tune,
+            "env": env,
+        },
+        "toolu_e2e",
+    )
+    assert "error" not in out, out
+    return out["seed"]
+
+
+def test_demo_commercial_seed_passes_simulate_after_tuning():
+    """The point of the catalog: a reference-seeded 150 kg -> 400 km design passes on the
+    first try (perigee >= 360 km) once the pitch program is re-tuned for the new orbit."""
+    seed = _seed_via_tool(DEMO_COMMERCIAL, "commercial", ENV_COMMERCIAL, tune=True)
+    assert seed["reference_id"] == "electron"
+    sim = SimResult.model_validate(
+        {k: v for k, v in seed["sim"].items() if k in SimResult.model_fields}
+    )
+    assert sim.metrics["perigee_m"] >= 360_000, (sim.metrics, sim.failure_reasons)
+    assert sim.success, sim.failure_reasons
+    assert any("tuned" in n for n in seed["notes"])
+
+
+def test_demo_amateur_seed_apogee_within_25_percent():
+    seed = _seed_via_tool(DEMO_AMATEUR, "amateur", ENV_AMATEUR, tune=False)
+    apogee = seed["sim"]["metrics"]["apogee_m"]
+    assert abs(apogee - 2000) <= 0.25 * 2000, (seed["reference_id"], apogee, seed["notes"])
+
+
+def test_demo_bottle_seed_apogee_within_25_percent():
+    seed = _seed_via_tool(DEMO_BOTTLE, "bottle", ENV_BOTTLE, tune=False)
+    apogee = seed["sim"]["metrics"]["apogee_m"]
+    assert abs(apogee - 30) <= 0.25 * 30, (seed["reference_id"], apogee, seed["notes"])
+    assert seed["design"]["has_parachute"]

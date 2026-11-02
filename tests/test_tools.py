@@ -124,6 +124,41 @@ def test_classify_tool():
     assert "error" not in out
 
 
+def test_derive_requirements_tool_classifies_when_tier_is_null():
+    inp = {"requirement": REQ_ORBIT, "tier": None, "launch_latitude_deg": 28.5}
+    out = execute_tool("derive_requirements", inp, "toolu_d1")
+    assert "error" not in out
+    assert out["source_id"] == "toolu_d1"
+    assert out["tier"] == "commercial" and out["tier_from"] == "classify_requirement"
+    assert out["goal_kind"] == "orbit"
+    q = {x["key"]: x for x in out["quantities"]}
+    assert abs(q["circular_speed_mps"]["value"] - 7670.0) < 10.0
+    assert abs(q["rotation_credit_mps"]["value"] - 408.0) < 2.0
+    assert q["required_dv_mps"]["provisional"] is True
+    for x in out["quantities"]:
+        assert x["formula"] and x["inputs"]
+    assert out["summary"]
+    json.dumps(out)
+
+
+def test_derive_requirements_tool_honours_tier_and_default_latitude():
+    inp = {"requirement": REQ_AMATEUR, "tier": "amateur", "launch_latitude_deg": None}
+    out = execute_tool("derive_requirements", inp, "toolu_d2")
+    assert "error" not in out
+    assert out["tier"] == "amateur" and out["tier_from"] == "input"
+    q = {x["key"]: x for x in out["quantities"]}
+    assert abs(q["burnout_speed_vacuum_mps"]["value"] - 198.0) < 0.5
+    assert q["motor_class_impulse_min_ns"]["annotation"]
+    assert set(out["candidates"]["motor_ids"]) <= set(solid.list_motor_ids())
+    # orbit tier on an altitude goal is a ValueError, reported not raised
+    bad = execute_tool(
+        "derive_requirements",
+        {"requirement": REQ_AMATEUR, "tier": "commercial", "launch_latitude_deg": None},
+        "toolu_d3",
+    )
+    assert "error" in bad and bad["source_id"] == "toolu_d3"
+
+
 def test_validation_error_is_reported_not_raised():
     out = execute_tool(
         "classify_requirement", {"requirement": {"goal_kind": "sideways"}}, "toolu_2"

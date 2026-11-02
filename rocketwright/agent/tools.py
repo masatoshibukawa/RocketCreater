@@ -29,7 +29,9 @@ from rocketwright import dispersion as mc
 from rocketwright.agent.store import store_drawing, store_report
 from rocketwright.classify import classify, load_tiers
 from rocketwright.cost import COST_CONSTANTS, estimate_cost_jpy
+from rocketwright.derive import derive
 from rocketwright.physics import multistage, solid, water
+from rocketwright.references import find_nearest, find_reference_designs, seed_design
 from rocketwright.schema import (
     AmateurDesign,
     BottleDesign,
@@ -62,6 +64,8 @@ TOOL_NAMES: tuple[str, ...] = (
     "estimate_cost",
     "render_drawing",
     "export_report",
+    "find_reference_designs",
+    "derive_requirements",
 )
 
 # run_dispersion sample count: default when the model passes null, and the hard cap (the
@@ -277,6 +281,67 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 }
             ),
         },
+        {
+            "name": "find_reference_designs",
+            "description": (
+                "Start the design from the nearest real vehicle. Returns the k (null = 3) "
+                "reference vehicles of the tier closest to the requirement (log distance over "
+                "target altitude and payload; orbit and altitude goals never match): id, name, "
+                "public sources, published performance, the reference's own requirement and "
+                "site, provisional flag, notes. With seed=true (null = true) the nearest one is "
+                "scaled to the requirement by plain provisional rules and `seed` carries the "
+                "resulting design, the notes explaining each scaling step (quote them) and "
+                "`sim`, its simulate_design result in `env` (null = the reference's site) with "
+                "the trace dropped, so you see the seed's real performance before adopting it. "
+                "Rules: commercial/heavy scale stage propellant by the payload ratio, keep "
+                "engine types, round engine counts up for liftoff T/W >= 1.2, keep boosters; "
+                "amateur picks the smallest bundled motor for a ballistic impulse estimate, "
+                "scales the airframe to house it and the parachute for the same descent speed; "
+                "bottle scales gauge pressure with the apogee ratio (clipped at the safety "
+                "cap) and adds a parachute for a payload or required recovery. tune=true "
+                "(orbit goals, a few seconds) re-tunes the seed's pitch program for the target "
+                "perigee; without it the reference's pitch program is kept and usually misses "
+                "a different orbit. Adopt the seed, then iterate with simulate_design."
+            ),
+            "strict": True,
+            "input_schema": _obj(
+                {
+                    "requirement": req,
+                    "tier": tier_enum,
+                    "k": _nullable({"type": "integer"}),
+                    "seed": _nullable({"type": "boolean"}),
+                    "tune": _nullable({"type": "boolean"}),
+                    "env": _nullable(env),
+                }
+            ),
+        },
+        {
+            "name": "derive_requirements",
+            "description": (
+                "Step 2: turn the requirement into quantitative targets by closed formulas "
+                "(deterministic, no simulation). tier null = run classify_requirement first. "
+                "Orbit tiers: circular speed at the target perigee, Earth-rotation credit at "
+                "launch_latitude_deg (null = provisional default site), loss allowance, "
+                "Hohmann apogee-raise term, required delta-v, total and per-stage mass ratio "
+                "for a representative Isp, propellant and payload fraction of a 2-stage vehicle, "
+                "liftoff-mass scale. Amateur: burnout speed sqrt(2 g h) and with drag, liftoff "
+                "mass estimate, total impulse, NAR motor class letter and the bundled motor ids "
+                "in that class or one above, parachute diameter for the descent limit. Bottle: "
+                "gauge pressure for a 1.5 L bottle at 40 % fill from the isentropic expansion "
+                "work (clipped at the safety cap with a warning), water mass, parachute need and "
+                "size. Every quantity carries its formula with numbers substituted, inputs, "
+                "assumptions and a provisional flag; quote the formulas and use the values as "
+                "the scale of the first design, never as a result."
+            ),
+            "strict": True,
+            "input_schema": _obj(
+                {
+                    "requirement": req,
+                    "tier": _nullable(tier_enum),
+                    "launch_latitude_deg": _nullable({"type": "number"}),
+                }
+            ),
+        },
     ]
 
 
@@ -434,6 +499,22 @@ def _tool_classify(inp: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def _tool_derive_requirements(inp: dict[str, Any]) -> dict[str, Any]:
+    """rocketwright.derive.derive: closed-form targets per tier (tier null -> classify first)."""
+    req = Requirement.model_validate(inp["requirement"])
+    tier_in = inp.get("tier")
+    if tier_in is None:
+        tier = classify(req).tier
+        tier_from = "classify_requirement"
+    else:
+        tier = Tier(tier_in)
+        tier_from = "input"
+    lat = inp.get("launch_latitude_deg")
+    out = derive(req, tier, launch_latitude_deg=None if lat is None else float(lat)).as_dict()
+    out["tier_from"] = tier_from
+    return out
+
+
 def _load_yaml_list(name: str, key: str) -> list[dict[str, Any]]:
     path = _CATALOG_DIR / name
     if not path.exists():
@@ -515,6 +596,45 @@ def _tool_search_catalog(inp: dict[str, Any]) -> dict[str, Any]:
             "use each item's `id` verbatim: engines -> Stage.engine_id, boosters -> "
             "Booster.booster_id, motors -> AmateurDesign.motor_id; unknown ids are rejected"
         )
+    return out
+
+
+def _tool_find_reference_designs(inp: dict[str, Any]) -> dict[str, Any]:
+    """Nearest reference vehicles plus, by default, a seed design scaled from the nearest one
+    and its judged simulate result (trace dropped) so the model sees the seed's performance."""
+    req = Requirement.model_validate(inp["requirement"])
+    tier = Tier(inp["tier"])
+    k = 3 if inp.get("k") is None else int(inp["k"])
+    if k < 1:
+        raise ValueError(f"k must be >= 1, got {k}")
+    want_seed = True if inp.get("seed") is None else bool(inp["seed"])
+    tune = bool(inp.get("tune") or False)
+    out: dict[str, Any] = {
+        "references": find_reference_designs(req, tier, k=k),
+        "seed": None,
+    }
+    nearest = find_nearest(req, tier, k=1)
+    if not want_seed or not nearest:
+        if not nearest:
+            out["note"] = f"no {tier.value} reference matches a {req.goal_kind.value} goal"
+        return out
+    entry = nearest[0][1]
+    env = entry.env if inp.get("env") is None else Env.model_validate(inp["env"])
+    # Orbit goals fly with Earth rotation on, exactly as simulate_design does, so the pitch
+    # tuning and the seed's sim agree.
+    env, rotation_warnings = _orbit_env(env, req)
+    design, notes = seed_design(entry, req, env=env, tune=tune)
+    sim = _simulate_dispatch(design, env, None, req).model_dump(mode="json")
+    sim["trace_point_count"] = len(sim.pop("trace"))
+    if rotation_warnings and ORBIT_ROTATION_WARNING not in sim["warnings"]:
+        sim["warnings"] = list(sim["warnings"]) + rotation_warnings
+    out["seed"] = {
+        "reference_id": entry.id,
+        "design": design.model_dump(mode="json"),
+        "notes": notes,
+        "env": env.model_dump(mode="json"),
+        "sim": sim,
+    }
     return out
 
 
@@ -608,6 +728,8 @@ TOOL_REGISTRY: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
     "estimate_cost": _tool_estimate_cost,
     "render_drawing": _tool_render_drawing,
     "export_report": _tool_export_report,
+    "find_reference_designs": _tool_find_reference_designs,
+    "derive_requirements": _tool_derive_requirements,
 }
 
 
