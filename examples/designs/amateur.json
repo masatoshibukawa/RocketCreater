@@ -1,0 +1,20 @@
+{
+  "tier": "amateur",
+  "body_diameter_m": 0.066,
+  "body_length_m": 0.5688,
+  "nose_shape": "ogive",
+  "nose_length_m": 0.168,
+  "fins": {
+    "count": 3,
+    "root_chord_m": 0.144,
+    "tip_chord_m": 0.072,
+    "span_m": 0.108,
+    "sweep_m": 0.072,
+    "thickness_m": 0.0048
+  },
+  "motor_id": "dummy_J420",
+  "dry_mass_kg": 0.5,
+  "payload_mass_kg": 1.0,
+  "parachute_diameter_m": 1.2,
+  "deploy_delay_s": 0.5
+}

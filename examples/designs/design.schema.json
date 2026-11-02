@@ -1,0 +1,339 @@
+{
+  "$defs": {
+    "AmateurDesign": {
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "const": "amateur",
+          "default": "amateur",
+          "title": "Tier",
+          "type": "string"
+        },
+        "body_diameter_m": {
+          "exclusiveMinimum": 0,
+          "title": "Body Diameter M",
+          "type": "number"
+        },
+        "body_length_m": {
+          "exclusiveMinimum": 0,
+          "title": "Body Length M",
+          "type": "number"
+        },
+        "nose_shape": {
+          "default": "ogive",
+          "enum": [
+            "conical",
+            "ogive",
+            "elliptical"
+          ],
+          "title": "Nose Shape",
+          "type": "string"
+        },
+        "nose_length_m": {
+          "exclusiveMinimum": 0,
+          "title": "Nose Length M",
+          "type": "number"
+        },
+        "fins": {
+          "$ref": "#/$defs/FinSet"
+        },
+        "motor_id": {
+          "minLength": 1,
+          "title": "Motor Id",
+          "type": "string"
+        },
+        "dry_mass_kg": {
+          "exclusiveMinimum": 0,
+          "title": "Dry Mass Kg",
+          "type": "number"
+        },
+        "payload_mass_kg": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Payload Mass Kg",
+          "type": "number"
+        },
+        "parachute_diameter_m": {
+          "exclusiveMinimum": 0,
+          "title": "Parachute Diameter M",
+          "type": "number"
+        },
+        "deploy_delay_s": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Deploy Delay S",
+          "type": "number"
+        }
+      },
+      "required": [
+        "body_diameter_m",
+        "body_length_m",
+        "nose_length_m",
+        "fins",
+        "motor_id",
+        "dry_mass_kg",
+        "parachute_diameter_m"
+      ],
+      "title": "AmateurDesign",
+      "type": "object"
+    },
+    "Booster": {
+      "additionalProperties": false,
+      "properties": {
+        "booster_id": {
+          "description": "Strap-on booster id from catalog/engines.yaml `boosters` (e.g. gem_63), as returned by search_catalog.",
+          "minLength": 1,
+          "title": "Booster Id",
+          "type": "string"
+        },
+        "count": {
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "booster_id",
+        "count"
+      ],
+      "title": "Booster",
+      "type": "object"
+    },
+    "BottleDesign": {
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "const": "bottle",
+          "default": "bottle",
+          "title": "Tier",
+          "type": "string"
+        },
+        "bottle_volume_m3": {
+          "exclusiveMinimum": 0,
+          "title": "Bottle Volume M3",
+          "type": "number"
+        },
+        "water_fill_frac": {
+          "exclusiveMaximum": 1,
+          "exclusiveMinimum": 0,
+          "title": "Water Fill Frac",
+          "type": "number"
+        },
+        "initial_gauge_pressure_pa": {
+          "exclusiveMinimum": 0,
+          "title": "Initial Gauge Pressure Pa",
+          "type": "number"
+        },
+        "nozzle_diameter_m": {
+          "exclusiveMinimum": 0,
+          "title": "Nozzle Diameter M",
+          "type": "number"
+        },
+        "dry_mass_kg": {
+          "exclusiveMinimum": 0,
+          "title": "Dry Mass Kg",
+          "type": "number"
+        },
+        "payload_mass_kg": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Payload Mass Kg",
+          "type": "number"
+        },
+        "has_fins": {
+          "default": true,
+          "title": "Has Fins",
+          "type": "boolean"
+        },
+        "has_parachute": {
+          "default": false,
+          "title": "Has Parachute",
+          "type": "boolean"
+        },
+        "parachute_diameter_m": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parachute Diameter M"
+        }
+      },
+      "required": [
+        "bottle_volume_m3",
+        "water_fill_frac",
+        "initial_gauge_pressure_pa",
+        "nozzle_diameter_m",
+        "dry_mass_kg"
+      ],
+      "title": "BottleDesign",
+      "type": "object"
+    },
+    "FinSet": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "maximum": 8,
+          "minimum": 3,
+          "title": "Count",
+          "type": "integer"
+        },
+        "root_chord_m": {
+          "exclusiveMinimum": 0,
+          "title": "Root Chord M",
+          "type": "number"
+        },
+        "tip_chord_m": {
+          "minimum": 0,
+          "title": "Tip Chord M",
+          "type": "number"
+        },
+        "span_m": {
+          "exclusiveMinimum": 0,
+          "title": "Span M",
+          "type": "number"
+        },
+        "sweep_m": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Sweep M",
+          "type": "number"
+        },
+        "thickness_m": {
+          "default": 0.003,
+          "exclusiveMinimum": 0,
+          "title": "Thickness M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "count",
+        "root_chord_m",
+        "tip_chord_m",
+        "span_m"
+      ],
+      "title": "FinSet",
+      "type": "object"
+    },
+    "MultistageDesign": {
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "enum": [
+            "commercial",
+            "heavy"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "stages": {
+          "items": {
+            "$ref": "#/$defs/Stage"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Stages",
+          "type": "array"
+        },
+        "boosters": {
+          "items": {
+            "$ref": "#/$defs/Booster"
+          },
+          "title": "Boosters",
+          "type": "array"
+        },
+        "fairing_mass_kg": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Fairing Mass Kg",
+          "type": "number"
+        },
+        "payload_mass_kg": {
+          "minimum": 0,
+          "title": "Payload Mass Kg",
+          "type": "number"
+        },
+        "pitch_start_s": {
+          "minimum": 0,
+          "title": "Pitch Start S",
+          "type": "number"
+        },
+        "initial_pitch_deg": {
+          "exclusiveMaximum": 90,
+          "exclusiveMinimum": 0,
+          "title": "Initial Pitch Deg",
+          "type": "number"
+        }
+      },
+      "required": [
+        "tier",
+        "stages",
+        "payload_mass_kg",
+        "pitch_start_s",
+        "initial_pitch_deg"
+      ],
+      "title": "MultistageDesign",
+      "type": "object"
+    },
+    "Stage": {
+      "additionalProperties": false,
+      "properties": {
+        "propellant_mass_kg": {
+          "exclusiveMinimum": 0,
+          "title": "Propellant Mass Kg",
+          "type": "number"
+        },
+        "structural_fraction": {
+          "exclusiveMaximum": 1,
+          "exclusiveMinimum": 0,
+          "title": "Structural Fraction",
+          "type": "number"
+        },
+        "engine_id": {
+          "description": "Engine id from catalog/engines.yaml exactly as search_catalog returns it (e.g. merlin_1d, rutherford, rd_180). Unknown ids are rejected.",
+          "minLength": 1,
+          "title": "Engine Id",
+          "type": "string"
+        },
+        "engine_count": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Engine Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "propellant_mass_kg",
+        "structural_fraction",
+        "engine_id"
+      ],
+      "title": "Stage",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "amateur": "#/$defs/AmateurDesign",
+      "bottle": "#/$defs/BottleDesign",
+      "commercial": "#/$defs/MultistageDesign",
+      "heavy": "#/$defs/MultistageDesign"
+    },
+    "propertyName": "tier"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/BottleDesign"
+    },
+    {
+      "$ref": "#/$defs/AmateurDesign"
+    },
+    {
+      "$ref": "#/$defs/MultistageDesign"
+    }
+  ]
+}
