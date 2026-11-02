@@ -197,3 +197,40 @@ def test_summary_requirement_tier_mismatch_raises():
         design_summary(AMATEUR, req)
     ok = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=1500.0)
     assert design_summary(AMATEUR, ok)["tier"] == "amateur"
+
+
+# --------------------------------------------------------------------------- from a parts build
+
+
+def test_design_summary_from_build_uses_the_bill():
+    from pathlib import Path
+
+    from rocketwright.build import AmateurBuild, FinGeometry
+    from rocketwright.parts import load_parts
+    from rocketwright.summary import design_summary_from_build
+
+    cat = load_parts(Path(__file__).resolve().parent / "fixtures" / "parts_v2.yaml")
+    build = AmateurBuild(
+        body_tube_id="estes_bt50",
+        body_length_m=0.24,
+        nose_cone_id="estes_pnc50",
+        motor_mount_id="mount_18mm_bt50",
+        motor_id="estes_C6",
+        fin_material_id="balsa_3_32in",
+        fins=FinGeometry(
+            count=3, root_chord_m=0.064, tip_chord_m=0.025, span_m=0.044, sweep_m=0.038
+        ),
+        parachute_id="chute_12in",
+    )
+    out = design_summary_from_build(build, cat)
+    assert out["tier"] == "amateur"
+    assert out["cost_jpy"] == pytest.approx(out["bill"]["cost_jpy"])
+    assert sum(i["jpy"] for i in out["cost_breakdown"]) == pytest.approx(out["cost_jpy"])
+    assert [r["item_id"] for r in out["bom"]] == [r["part_id"] for r in out["bill"]["parts"]]
+    for row in out["bom"]:
+        assert set(row) == set(BOM_COLUMNS)
+    assert out["mass"]["dry_mass_kg"] == pytest.approx(out["bill"]["dry_mass_kg"])
+    assert out["dimensions"]["diameter_m"] == pytest.approx(0.0246)
+    assert out["design"]["motor_id"] == "estes_C6"
+    assert isinstance(out["issues"], list)
+    json.dumps(out)

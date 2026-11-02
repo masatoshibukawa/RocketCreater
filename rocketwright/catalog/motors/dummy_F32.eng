@@ -2,6 +2,12 @@
 ; source: none -- SYNTHETIC trapezoid curve written for this repository, not a real motor
 ; license: MIT (same as the repository; no manufacturer data was copied)
 ; provisional: true
+; note: synthetic placeholder
+; diameter_m: 0.029
+; length_m: 0.100
+; delays: 4,6,8
+; propellant_mass_kg: 0.030
+; total_mass_kg: 0.085
 ; notes: class F (40.01-80 Ns); total impulse 52.5 Ns; shape, masses and dimensions are
 ; notes: representative of a 29 mm hobby reload and must be replaced by a licensed curve
 ; notes: (e.g. thrustcurve.org data whose terms have been checked) before any real use.

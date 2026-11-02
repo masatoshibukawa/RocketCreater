@@ -1,0 +1,20 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the manufacturer's summary
+; source: https://estesrockets.com/products/b6-4-engines
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: Estes page: total impulse 5.00 N-sec, max thrust 12.10 N, thrust duration 0.80 s, propellant 6.5 g, total 17.9 g, 18 mm x 2.8 in (70 mm). Curve integral set to 4.98 N-s so the B-class bound (<= 5 N-s) holds after rounding.
+; note: curve integral 4.98 N-s, average thrust 6.23 N
+; diameter_m: 0.018
+; length_m: 0.070
+; delays: 0,2,4,6
+; propellant_mass_kg: 0.0065
+; total_mass_kg: 0.0179
+; price_jpy: 700 (Estes 3-pack $13.99 -> per motor at 150 JPY/USD, provisional)
+B6 18 70 0-2-4-6 0.0065 0.0179 Estes
+0.050 4.84
+0.150 12.10
+0.300 5.91
+0.700 5.91
+0.800 0.00
+;

@@ -519,3 +519,167 @@ def test_export_report_rejects_bad_result_json():
         "toolu_h",
     )
     assert "error" in out and "result_json" in out["error"]
+
+
+# --------------------------------------------------------------------------- parts tools
+
+FIXTURE_PARTS = __import__("pathlib").Path(__file__).resolve().parent / "fixtures" / "parts_v2.yaml"
+
+GOOD_BUILD = {
+    "tier": "amateur",
+    "body_tube_id": "estes_bt50",
+    "body_length_m": 0.24,
+    "nose_cone_id": "estes_pnc50",
+    "motor_mount_id": "mount_18mm_bt50",
+    "motor_id": "estes_C6",
+    "fin_material_id": "balsa_3_32in",
+    "fins": {
+        "count": 3,
+        "root_chord_m": 0.064,
+        "tip_chord_m": 0.025,
+        "span_m": 0.044,
+        "sweep_m": 0.038,
+    },
+    "parachute_id": "chute_12in",
+    "recovery_hardware_id": "recovery_kit_small",
+    "launch_lug_id": "launch_lug_1_8in",
+    "payload_mass_kg": 0.0,
+    "deploy_delay_s": 0.0,
+}
+
+BOTTLE_BUILD = {
+    "tier": "bottle",
+    "bottle_id": "pet_bottle_1p5l",
+    "water_fill_frac": 0.4,
+    "initial_gauge_pressure_pa": 400000,
+    "nozzle_id": "nozzle_21p7mm",
+    "fin_set_id": "bottle_fins_cardboard",
+    "parachute_id": "chute_0p5m_plastic",
+    "launcher_id": "launcher_bike_pump",
+    "payload_mass_kg": 0.06,
+}
+
+
+@pytest.fixture
+def fixture_catalog(monkeypatch):
+    from rocketwright import parts
+
+    monkeypatch.setattr(parts, "DEFAULT_PARTS_PATH", FIXTURE_PARTS)
+
+
+def test_parts_tools_are_registered_and_strict():
+    assert "list_parts" in TOOL_NAMES and "design_from_parts" in TOOL_NAMES
+    defs = {d["name"]: d for d in get_tool_definitions()}
+    schema = defs["design_from_parts"]["input_schema"]
+    assert set(schema["properties"]) == {"build", "env", "requirement", "seed"}
+    build = schema["properties"]["build"]
+    tiers = {opt["properties"]["tier"]["const"] for opt in build["anyOf"]}
+    assert tiers == {"amateur", "bottle"}
+    amateur = next(o for o in build["anyOf"] if o["properties"]["tier"]["const"] == "amateur")
+    assert "fins" in amateur["properties"] and amateur["properties"]["fins"]["type"] == "object"
+    assert set(defs["list_parts"]["input_schema"]["properties"]) == {"tier", "kind", "query"}
+
+
+def test_list_parts_rows(fixture_catalog):
+    out = execute_tool("list_parts", {"tier": "amateur", "kind": "body_tube", "query": None}, "t1")
+    assert "error" not in out, out
+    assert {r["id"] for r in out["parts"]} == {"estes_bt50", "estes_bt60"}
+    row = next(r for r in out["parts"] if r["id"] == "estes_bt50")
+    assert set(row) >= {"id", "name", "kind", "mass_kg", "price_jpy", "provisional"}
+    assert row["outer_diameter_m"] == pytest.approx(0.0246)  # key dims are included
+    assert "notes" not in row and "source" not in row
+    out2 = execute_tool("list_parts", {"tier": "bottle", "kind": None, "query": "nozzle"}, "t2")
+    assert {r["id"] for r in out2["parts"]} == {"nozzle_21p7mm", "nozzle_9mm"}
+    out3 = execute_tool("list_parts", {"tier": "amateur", "kind": None, "query": "zzz"}, "t3")
+    assert out3["parts"] == [] and "note" in out3
+    bad = execute_tool("list_parts", {"tier": "commercial", "kind": None, "query": None}, "t4")
+    assert "error" in bad
+
+
+def test_list_parts_caps_rows(fixture_catalog, monkeypatch):
+    from rocketwright.agent import tools
+
+    monkeypatch.setattr(tools, "LIST_PARTS_MAX_ROWS", 2)
+    out = execute_tool("list_parts", {"tier": "amateur", "kind": None, "query": None}, "t5")
+    assert out["count"] == 2 and out["total"] > 2 and "narrow" in out["note"]
+
+
+def test_design_from_parts_happy_path(fixture_catalog):
+    req = {"goal_kind": "altitude", "target_altitude_m": 300, "payload_mass_kg": 0.0}
+    inp = {"build": GOOD_BUILD, "env": {"rail_length_m": 1.0}, "requirement": req, "seed": 3}
+    out = execute_tool("design_from_parts", inp, "toolu_b1")
+    assert "error" not in out, out
+    assert out["source_id"] == "toolu_b1"
+    assert not [i for i in out["issues"] if i["severity"] == "error"], out["issues"]
+    design = DesignAdapter.validate_python(out["design"])
+    assert design.tier == "amateur" and design.body_diameter_m == pytest.approx(0.0246)
+    assert design.dry_mass_kg == pytest.approx(out["bill"]["dry_mass_kg"])
+    sim = SimResult.model_validate(out["sim"])
+    assert sim.metrics["apogee_m"] > 100
+    assert sim.cost_jpy == pytest.approx(round(out["bill"]["cost_jpy"]))
+    assert sim.cost_jpy != pytest.approx(estimate_cost_jpy(design))
+    json.dumps(out)
+
+
+def test_design_from_parts_error_path_returns_no_sim(fixture_catalog):
+    build = dict(GOOD_BUILD, motor_id="dummy_J420")
+    inp = {"build": build, "env": None, "requirement": None, "seed": None}
+    out = execute_tool("design_from_parts", inp, "toolu_b2")
+    assert "error" not in out
+    assert out["sim"] is None
+    codes = {i["code"] for i in out["issues"] if i["severity"] == "error"}
+    assert "motor_mount_diameter" in codes
+    assert out["design"] is not None and out["bill"] is not None
+    assert "error" in out["note"]
+
+
+def test_design_from_parts_unknown_part(fixture_catalog):
+    build = dict(GOOD_BUILD, body_tube_id="nope")
+    out = execute_tool(
+        "design_from_parts", {"build": build, "env": None, "requirement": None, "seed": None}, "b3"
+    )
+    assert out["sim"] is None and out["design"] is None
+    assert out["issues"][0]["code"] == "unknown_part"
+
+
+def test_design_from_parts_bottle_warnings_go_to_sim(fixture_catalog):
+    build = dict(BOTTLE_BUILD, water_fill_frac=0.7)
+    req = {"goal_kind": "altitude", "target_altitude_m": 30, "payload_mass_kg": 0.06}
+    out = execute_tool(
+        "design_from_parts", {"build": build, "env": None, "requirement": req, "seed": 1}, "b4"
+    )
+    assert "error" not in out, out
+    assert out["sim"] is not None
+    assert any(i["code"] == "fill_fraction" for i in out["issues"])
+    assert any(w.startswith("build: ") and "fill" in w for w in out["sim"]["warnings"])
+    assert out["design"]["bottle_volume_m3"] == pytest.approx(0.0015)
+
+
+def test_design_from_parts_rejects_bad_build(fixture_catalog):
+    out = execute_tool(
+        "design_from_parts",
+        {"build": {"tier": "heavy"}, "env": None, "requirement": None, "seed": None},
+        "b5",
+    )
+    assert "error" in out
+
+
+def test_design_from_parts_with_empty_catalog(monkeypatch, tmp_path):
+    """A v1 parts.yaml (no `parts:` key) gives an empty catalog: the tool reports, not crashes."""
+    import warnings
+
+    from rocketwright import parts
+
+    old = tmp_path / "parts.yaml"
+    old.write_text("version: 1\nitems: []\n", encoding="utf-8")
+    monkeypatch.setattr(parts, "DEFAULT_PARTS_PATH", old)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        out = execute_tool(
+            "design_from_parts",
+            {"build": GOOD_BUILD, "env": None, "requirement": None, "seed": None},
+            "b6",
+        )
+        lst = execute_tool("list_parts", {"tier": "amateur", "kind": None, "query": None}, "b7")
+    assert out["issues"][0]["code"] == "unknown_part" and out["sim"] is None
+    assert lst["parts"] == [] and "empty" in lst["note"]

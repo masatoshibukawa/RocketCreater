@@ -12,8 +12,9 @@ from pydantic import BaseModel, Field
 from rocketwright import __version__
 from rocketwright.agent.loop import run_design_loop
 from rocketwright.agent.store import DEFAULT_STORE, MEDIA_TYPES, store_drawing
-from rocketwright.schema import Design, Env, Requirement
-from rocketwright.summary import design_summary
+from rocketwright.build import Build
+from rocketwright.schema import Design, DesignAdapter, Env, Requirement
+from rocketwright.summary import design_summary, design_summary_from_build
 
 CORS_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
@@ -86,17 +87,23 @@ def render_artifact(request: RenderRequest) -> dict[str, object]:
 class SummaryRequest(BaseModel):
     design: Design
     requirement: Requirement | None = None
+    build: Build | None = None  # when given, cost/BOM come from the parts bill (summary.py)
     width_px: int | None = Field(default=None, ge=200, le=4000)
 
 
 @app.post("/artifacts/summary")
 def summary_artifact(request: SummaryRequest) -> dict[str, object]:
     """Cost breakdown, BOM, mass budget, dimensions and a stored side view for one design."""
+    design = request.design
     try:
-        out = design_summary(request.design, request.requirement)
-    except ValueError as exc:
+        if request.build is not None:
+            out = design_summary_from_build(request.build, requirement=request.requirement)
+            design = DesignAdapter.validate_python(out["design"])
+        else:
+            out = design_summary(design, request.requirement)
+    except (KeyError, ValueError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    drawing = store_drawing(request.design, width_px=request.width_px or 800)
+    drawing = store_drawing(design, width_px=request.width_px or 800)
     out["drawing"] = {"id": drawing["id"], "url": drawing["download"]["svg"]}
     return out
 

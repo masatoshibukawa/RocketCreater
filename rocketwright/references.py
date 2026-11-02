@@ -22,6 +22,15 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from rocketwright.build import (
+    AmateurBuild,
+    BottleBuild,
+    Build,
+    BuildBill,
+    resolve_amateur,
+    resolve_bottle,
+)
+from rocketwright.parts import PartsCatalog, load_parts
 from rocketwright.physics import atmosphere as atm
 from rocketwright.physics import multistage, recovery, solid, water
 from rocketwright.schema import (
@@ -57,6 +66,9 @@ class ReferenceEntry(BaseModel):
     provisional: bool = True
     requirement: Requirement
     design: Design
+    # Optional parts build of the same vehicle (bottle/amateur, rocketwright.build): when present
+    # the seed is made in part space (motor/mount/tube swapped, parts snapped to the catalog).
+    build: Build | None = None
     published: dict[str, float]
     env: Env = Env()
     tolerance_frac: float = Field(default=DEFAULT_TOLERANCE_FRAC, gt=0)
@@ -93,6 +105,10 @@ def _check_consistency(entry: ReferenceEntry) -> None:
         raise ValueError(f"{entry.id}: published is missing {missing}")
     if entry.is_orbital and not isinstance(entry.design, MultistageDesign):
         raise ValueError(f"{entry.id}: orbit goals need a MultistageDesign")
+    if entry.build is not None and entry.build.tier != entry.tier.value:
+        raise ValueError(
+            f"{entry.id}: build.tier {entry.build.tier!r} != tier {entry.tier.value!r}"
+        )
 
 
 def load_references_from(directory: Path) -> list[ReferenceEntry]:
@@ -376,10 +392,14 @@ def _seed_multistage(
     return design, notes
 
 
-def _pick_motor(required_ns: float, notes: list[str]) -> solid.Motor:
-    motors = sorted(
-        (solid.load_motor(m) for m in solid.list_motor_ids()), key=lambda m: m.total_impulse_ns
+def _pick_motor(
+    required_ns: float, notes: list[str], candidates: list[solid.Motor] | None = None
+) -> solid.Motor:
+    """Smallest motor (of `candidates`, default every bundled motor) at or above `required_ns`."""
+    pool = (
+        [solid.load_motor(m) for m in solid.list_motor_ids()] if candidates is None else candidates
     )
+    motors = sorted(pool, key=lambda m: m.total_impulse_ns)
     for motor in motors:
         if motor.total_impulse_ns >= required_ns:
             return motor
@@ -547,6 +567,308 @@ def _seed_bottle(
     return ref.model_copy(update=update), notes
 
 
+# --------------------------------------------------------------------------- build-space seeds
+
+
+def _nearest_delay(motor: solid.Motor, wanted_s: float) -> float:
+    numeric = []
+    for d in motor.delays:
+        try:
+            numeric.append(float(d))
+        except ValueError:
+            continue
+    if not numeric:
+        return wanted_s
+    return min(numeric, key=lambda d: abs(d - wanted_s))
+
+
+def _pick_parachute(
+    catalog: PartsCatalog, tier: str, wanted_m: float, *, max_packed_m: float | None = None
+) -> Any:
+    """Smallest catalog parachute of `tier` at or above `wanted_m` (that packs into
+    `max_packed_m` when given); else the largest that packs; None when the tier has none."""
+    chutes = catalog.by_kind("parachute", tier)
+    if max_packed_m is not None:
+        chutes = [c for c in chutes if c.packed_diameter_m <= max_packed_m]
+    if not chutes:
+        return None
+    big_enough = sorted((c for c in chutes if c.diameter_m >= wanted_m), key=lambda c: c.diameter_m)
+    if big_enough:
+        return big_enough[0]
+    return max(chutes, key=lambda c: c.diameter_m)
+
+
+def _seed_amateur_build(
+    entry: ReferenceEntry, req: Requirement, catalog: PartsCatalog
+) -> tuple[AmateurBuild, AmateurDesign, BuildBill, list[str]]:
+    """The amateur scaling rules of `_seed_amateur`, applied in part space: the motor is picked
+    by the same ballistic impulse rule among motors that have a mount in the catalog, the mount
+    and tube follow the motor, the nose follows the tube, the fins scale with the tube diameter
+    and the parachute is the catalog one closest to the same descent speed."""
+    ref_build = entry.build
+    assert isinstance(ref_build, AmateurBuild)
+    notes: list[str] = []
+    ref_design, _ = resolve_amateur(ref_build, catalog)
+    ref_tube = catalog.get(ref_build.body_tube_id, kind="body_tube")
+    ref_nose = catalog.get(ref_build.nose_cone_id, kind="nose_cone")
+    ref_motor = solid.load_motor(ref_build.motor_id)
+    ref_liftoff = ref_design.dry_mass_kg + ref_design.payload_mass_kg + ref_motor.total_mass_kg
+    ref_alt = max(entry.requirement.target_altitude_m, 1.0)
+    alt_ratio = max(req.target_altitude_m, 1.0) / ref_alt
+
+    mounts = catalog.by_kind("motor_mount", "amateur")
+    tubes = {t.id: t for t in catalog.by_kind("body_tube", "amateur")}
+    candidates = [
+        m
+        for m in (solid.load_motor(mid) for mid in solid.list_motor_ids())
+        if any(abs(mt.motor_diameter_m - m.diameter_m) <= 5e-4 for mt in mounts)
+    ]
+    if not candidates:
+        raise ValueError("the parts catalog has no motor mount for any bundled motor")
+
+    def parts_for(motor: solid.Motor) -> tuple[Any, Any, Any]:
+        """(mount, tube, nose) for `motor`: the reference's tube when a mount for the motor
+        fits it, else the narrowest tube that has one."""
+        fitting = [mt for mt in mounts if abs(mt.motor_diameter_m - motor.diameter_m) <= 5e-4]
+        same = [mt for mt in fitting if mt.fits_tube_id == ref_tube.id]
+        mount = (
+            same[0]
+            if same
+            else min(fitting, key=lambda mt: tubes[mt.fits_tube_id].outer_diameter_m)
+        )
+        tube = tubes[mount.fits_tube_id]
+        noses = [n for n in catalog.by_kind("nose_cone", "amateur") if n.fits_tube_id == tube.id]
+        if not noses:
+            raise ValueError(f"no nose cone in the catalog fits tube {tube.id!r}")
+        same_shape = [n for n in noses if n.shape == ref_nose.shape]
+        return mount, tube, (same_shape or noses)[0]
+
+    def build_for(motor: solid.Motor) -> tuple[AmateurBuild, float]:
+        mount, tube, nose = parts_for(motor)
+        g = tube.outer_diameter_m / ref_tube.outer_diameter_m
+        min_len = motor.length_m + mount.length_m + 2.0 * tube.outer_diameter_m
+        body_len = min(max(ref_build.body_length_m * g, min_len), tube.length_m)
+        fins = ref_build.fins.model_copy(
+            update={
+                "root_chord_m": ref_build.fins.root_chord_m * g,
+                "tip_chord_m": ref_build.fins.tip_chord_m * g,
+                "span_m": ref_build.fins.span_m * g,
+                "sweep_m": ref_build.fins.sweep_m * g,
+            }
+        )
+        build = ref_build.model_copy(
+            update={
+                "body_tube_id": tube.id,
+                "body_length_m": body_len,
+                "nose_cone_id": nose.id,
+                "motor_mount_id": mount.id,
+                "motor_id": motor.id,
+                "fins": fins,
+                "payload_mass_kg": req.payload_mass_kg,
+                "deploy_delay_s": _nearest_delay(motor, ref_build.deploy_delay_s),
+            }
+        )
+        return build, g
+
+    motor = ref_motor if ref_motor in candidates else candidates[0]
+    required_ns = ref_motor.total_impulse_ns
+    trial: list[str] = []
+    for _ in range(_MOTOR_PICK_ITERATIONS):
+        build, _ = build_for(motor)
+        design, _ = resolve_amateur(build, catalog)
+        liftoff = design.dry_mass_kg + design.payload_mass_kg + motor.total_mass_kg
+        required_ns = ref_motor.total_impulse_ns * (liftoff / ref_liftoff) * math.sqrt(alt_ratio)
+        trial = []
+        candidate = _pick_motor(required_ns, trial, candidates)
+        if candidate.id == motor.id:
+            break
+        motor = candidate
+    notes.extend(trial)
+    build, g = build_for(motor)
+    design, bill = resolve_amateur(build, catalog)
+    liftoff = design.dry_mass_kg + design.payload_mass_kg + motor.total_mass_kg
+    notes.append(
+        f"motor {ref_motor.id} ({ref_motor.total_impulse_ns:,.0f} Ns) -> {motor.id} "
+        f"({motor.total_impulse_ns:,.0f} Ns): required impulse {required_ns:,.0f} Ns = reference "
+        f"x liftoff-mass ratio {liftoff / ref_liftoff:.2f} x sqrt(altitude ratio {alt_ratio:.2f}) "
+        "(drag-free ballistic rule, SIMPLIFICATION); smallest bundled motor at or above it that "
+        "has a motor mount in the parts catalog"
+    )
+    if (
+        build.body_tube_id != ref_build.body_tube_id
+        or build.motor_mount_id != ref_build.motor_mount_id
+    ):
+        notes.append(
+            f"parts follow the motor: mount {build.motor_mount_id} in tube {build.body_tube_id} "
+            f"({design.body_diameter_m * 1e3:.1f} mm, x{g:.2f} the reference's), nose "
+            f"{build.nose_cone_id}; body {build.body_length_m:.3f} m (reference x{g:.2f}, at least "
+            "motor + mount + 2 diameters, at most the stock tube); fins scaled x"
+            f"{g:.2f}, same material"
+        )
+    if build.deploy_delay_s != ref_build.deploy_delay_s:
+        notes.append(
+            f"deploy delay snapped to the motor's option {build.deploy_delay_s:g} s "
+            f"(reference {ref_build.deploy_delay_s:g} s)"
+        )
+    ref_landing = ref_liftoff - ref_motor.propellant_mass_kg
+    landing = liftoff - motor.propellant_mass_kg
+    wanted = ref_design.parachute_diameter_m * math.sqrt(landing / ref_landing)
+    tube = catalog.get(build.body_tube_id, kind="body_tube")
+    chute = _pick_parachute(catalog, "amateur", wanted, max_packed_m=tube.inner_diameter_m)
+    if chute is not None and chute.id != build.parachute_id:
+        build = build.model_copy(update={"parachute_id": chute.id})
+        design, bill = resolve_amateur(build, catalog)
+    notes.append(
+        f"parachute {ref_design.parachute_diameter_m:.2f} m -> wanted {wanted:.2f} m (diameter x "
+        f"sqrt of the landing-mass ratio {landing / ref_landing:.2f}); catalog part "
+        f"{build.parachute_id} ({design.parachute_diameter_m:.2f} m) is the smallest at or above "
+        "it that packs into the tube"
+        + ("" if chute is not None and chute.diameter_m >= wanted else " (none large enough)")
+    )
+    notes.append(
+        f"dry mass {bill.dry_mass_kg * 1e3:.0f} g and cost {bill.cost_jpy:,.0f} JPY are the bill "
+        "of the chosen parts (design_from_parts recomputes them on every change)"
+    )
+    return build, design, bill, notes
+
+
+def _seed_bottle_build(
+    entry: ReferenceEntry, req: Requirement, env: Env, catalog: PartsCatalog
+) -> tuple[BottleBuild, BottleDesign, BuildBill, list[str]]:
+    """`_seed_bottle` in part space: bottle, nozzle, fins and launcher kept, the gauge pressure
+    scaled with the apogee ratio and clipped at the bottle's, the launcher's and the physics
+    caps, the parachute snapped to the catalog."""
+    ref_build = entry.build
+    assert isinstance(ref_build, BottleBuild)
+    notes: list[str] = []
+    ref_design, _ = resolve_bottle(ref_build, catalog)
+    bottle = catalog.get(ref_build.bottle_id, kind="bottle")
+    th = water.PASS_THRESHOLDS
+    caps = {bottle.id: bottle.max_gauge_pressure_pa, "physics cap": th["max_gauge_pressure_pa"]}
+    if ref_build.launcher_id is not None:
+        launcher = catalog.get(ref_build.launcher_id, kind="launcher")
+        caps[launcher.id] = launcher.max_gauge_pressure_pa
+    binding = min(caps, key=caps.get)  # type: ignore[arg-type]
+    ref_alt = max(entry.requirement.target_altitude_m, 1.0)
+    wanted = ref_build.initial_gauge_pressure_pa * max(req.target_altitude_m, 1.0) / ref_alt
+    pressure = min(wanted, caps[binding])
+    notes.append(
+        f"bottle {bottle.id} ({bottle.volume_m3 * 1e3:.1f} L, {ref_build.water_fill_frac:.0%} "
+        f"water, nozzle {ref_build.nozzle_id}) kept; gauge pressure "
+        f"{ref_build.initial_gauge_pressure_pa / 1e3:.0f} kPa -> {pressure / 1e3:.0f} kPa, linear "
+        f"in the apogee ratio {req.target_altitude_m / ref_alt:.2f} (SIMPLIFICATION)"
+    )
+    if pressure < wanted:
+        notes.append(
+            f"the {wanted / 1e3:.0f} kPa this rule asks for is above the {caps[binding] / 1e3:.0f} "
+            f"kPa limit of {binding}: clipped; expect a shortfall unless the bottle, water fill or "
+            "nozzle change"
+        )
+    update: dict[str, object] = {
+        "initial_gauge_pressure_pa": pressure,
+        "payload_mass_kg": req.payload_mass_kg,
+    }
+    landing = ref_design.dry_mass_kg + req.payload_mass_kg
+    chute_wanted: float | None = None
+    if ref_design.has_parachute and ref_design.parachute_diameter_m is not None:
+        ref_landing = ref_design.dry_mass_kg + ref_design.payload_mass_kg
+        chute_wanted = ref_design.parachute_diameter_m * math.sqrt(landing / ref_landing)
+        why = "to keep the reference's descent speed"
+    elif req.recovery_required or req.payload_mass_kg > 0.0:
+        limit = (
+            th["max_descent_speed_with_payload_mps"]
+            if req.payload_mass_kg > 0.0
+            else th["max_descent_speed_mps"]
+        )
+        speed = _PARACHUTE_SPEED_MARGIN * limit
+        rho = float(atm.density_kgpm3(env.launch_altitude_m))
+        area = 2.0 * landing * G0_MPS2 / (rho * recovery.DEFAULT_PARACHUTE_CD * speed**2)
+        chute_wanted = math.sqrt(4.0 * area / math.pi)
+        why = (
+            "the reference flew ballistic, but "
+            + ("recovery is required" if req.recovery_required else "there is a payload")
+            + f"; sized for {speed:.1f} m/s ({_PARACHUTE_SPEED_MARGIN:.0%} of the {limit:.0f} m/s "
+            "limit)"
+        )
+    if chute_wanted is not None:
+        chute = _pick_parachute(catalog, "bottle", chute_wanted)
+        if chute is None:
+            notes.append(
+                f"a {chute_wanted:.2f} m parachute is wanted ({why}) but the catalog has no "
+                "bottle-tier parachute: none fitted"
+            )
+        else:
+            update["parachute_id"] = chute.id
+            notes.append(
+                f"parachute wanted {chute_wanted:.2f} m ({why}); catalog part {chute.id} "
+                f"({chute.diameter_m:.2f} m) is the smallest at or above it"
+                + ("" if chute.diameter_m >= chute_wanted else " (none large enough)")
+            )
+    build = ref_build.model_copy(update=update)
+    design, bill = resolve_bottle(build, catalog)
+    notes.append(
+        f"dry mass {bill.dry_mass_kg * 1e3:.0f} g and cost {bill.cost_jpy:,.0f} JPY are the bill "
+        "of the chosen parts"
+    )
+    return build, design, bill, notes
+
+
+@dataclass(frozen=True)
+class Seed:
+    """A seed design, its notes and, for build-space seeds, the parts build and bill."""
+
+    design: Design
+    notes: list[str]
+    build: AmateurBuild | BottleBuild | None = None
+    bill: BuildBill | None = None
+
+
+def seed_design_with_build(
+    entry: ReferenceEntry,
+    req: Requirement,
+    *,
+    env: Env | None = None,
+    tune: bool = False,
+    catalog: PartsCatalog | None = None,
+) -> Seed:
+    """`seed_design` that also returns the parts build when the reference carries one (bottle /
+    amateur): the seed is then made in part space with `catalog` (default: the bundled parts
+    catalog) and `design` is the build resolved. Without a build (or with an empty catalog)
+    the geometric scaling of `seed_design` is used and `build` is None."""
+    site = env if env is not None else entry.env
+    build = None
+    bill = None
+    if entry.build is not None:
+        cat = catalog if catalog is not None else load_parts()
+        try:
+            if isinstance(entry.build, AmateurBuild):
+                build, design, bill, notes = _seed_amateur_build(entry, req, cat)
+            else:
+                build, design, bill, notes = _seed_bottle_build(entry, req, site, cat)
+        except (KeyError, ValueError) as exc:
+            # The reference names parts the catalog does not have: fall back to geometry.
+            design, notes = seed_design(entry, req, env=site, tune=tune)
+            notes.append(
+                f"the reference's parts build could not be seeded ({exc}); geometric scaling used"
+            )
+            return Seed(design=design, notes=notes)
+        notes.insert(0, _seed_header(entry, req) + " (seeded in part space)")
+        validated = DesignAdapter.validate_python(design.model_dump())
+        return Seed(design=validated, notes=notes, build=build, bill=bill)
+    design, notes = seed_design(entry, req, env=site, tune=tune)
+    return Seed(design=design, notes=notes)
+
+
+def _seed_header(entry: ReferenceEntry, req: Requirement) -> str:
+    return (
+        f"seeded from {entry.name} ({entry.id}; "
+        f"{'provisional' if entry.provisional else 'checked'} catalog entry): "
+        f"{entry.requirement.payload_mass_kg:g} kg to "
+        f"{entry.requirement.target_altitude_m:g} m -> requirement {req.payload_mass_kg:g} kg "
+        f"to {req.target_altitude_m:g} m"
+    )
+
+
 def seed_design(
     entry: ReferenceEntry,
     req: Requirement,
@@ -558,7 +880,8 @@ def seed_design(
     each scaling step (plain language, every rule provisional). `env` defaults to the
     reference's launch site; it is used for pitch tuning (multistage, only when `tune` is
     true: a few seconds) and for the parachute sizing (bottle). The result validates as a
-    Design but is a starting point, not a judged design: simulate it."""
+    Design but is a starting point, not a judged design: simulate it. Geometric scaling only;
+    `seed_design_with_build` adds the part-space path."""
     site = env if env is not None else entry.env
     if isinstance(entry.design, MultistageDesign):
         if req.goal_kind is not GoalKind.ORBIT:
@@ -571,14 +894,7 @@ def seed_design(
         design, notes = _seed_amateur(entry, req, site)
     else:
         design, notes = _seed_bottle(entry, req, site)
-    notes.insert(
-        0,
-        f"seeded from {entry.name} ({entry.id}; "
-        f"{'provisional' if entry.provisional else 'checked'} catalog entry): "
-        f"{entry.requirement.payload_mass_kg:g} kg to "
-        f"{entry.requirement.target_altitude_m:g} m -> requirement {req.payload_mass_kg:g} kg "
-        f"to {req.target_altitude_m:g} m",
-    )
+    notes.insert(0, _seed_header(entry, req))
     validated = DesignAdapter.validate_python(design.model_dump())
     return validated, notes
 

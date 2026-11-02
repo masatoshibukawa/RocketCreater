@@ -19,7 +19,7 @@ from rocketwright.references import (
     requirement_distance,
     seed_design,
 )
-from rocketwright.schema import DesignAdapter, GoalKind, Requirement, SimResult, Tier
+from rocketwright.schema import DesignAdapter, Env, GoalKind, Requirement, SimResult, Tier
 
 _ENTRY = {
     "id": "toy_bottle",
@@ -346,3 +346,200 @@ def test_demo_bottle_seed_apogee_within_25_percent():
     apogee = seed["sim"]["metrics"]["apogee_m"]
     assert abs(apogee - 30) <= 0.25 * 30, (seed["reference_id"], apogee, seed["notes"])
     assert seed["design"]["has_parachute"]
+
+
+# --------------------------------------------------------------------------- build-space seeds
+
+
+def _fixture_catalog():
+    from pathlib import Path
+
+    from rocketwright.parts import load_parts
+
+    return load_parts(Path(__file__).resolve().parent / "fixtures" / "parts_v2.yaml")
+
+
+def _alpha_build_entry() -> ReferenceEntry:
+    from rocketwright.build import AmateurBuild, FinGeometry, resolve_amateur
+
+    build = AmateurBuild(
+        body_tube_id="estes_bt50",
+        body_length_m=0.24,
+        nose_cone_id="estes_pnc50",
+        motor_mount_id="mount_18mm_bt50",
+        motor_id="estes_C6",
+        fin_material_id="balsa_3_32in",
+        fins=FinGeometry(
+            count=3, root_chord_m=0.064, tip_chord_m=0.025, span_m=0.044, sweep_m=0.038
+        ),
+        parachute_id="chute_12in",
+        recovery_hardware_id="recovery_kit_small",
+        launch_lug_id="launch_lug_1_8in",
+        deploy_delay_s=0.0,
+    )
+    design, _ = resolve_amateur(build, _fixture_catalog())
+    return ReferenceEntry(
+        id="alpha_build",
+        tier=Tier.AMATEUR,
+        name="Alpha-like kit (parts build)",
+        sources=["https://estesrockets.com/products/alpha"],
+        requirement=Requirement(
+            goal_kind=GoalKind.ALTITUDE, target_altitude_m=300, recovery_required=True
+        ),
+        design=design,
+        build=build,
+        published={"apogee_m": 300.0},
+        env=Env(rail_length_m=1.0),
+    )
+
+
+def _bottle_build_entry() -> ReferenceEntry:
+    from rocketwright.build import BottleBuild, resolve_bottle
+
+    build = BottleBuild(
+        bottle_id="pet_bottle_1p5l",
+        water_fill_frac=0.4,
+        initial_gauge_pressure_pa=300000,
+        nozzle_id="nozzle_21p7mm",
+        fin_set_id="bottle_fins_cardboard",
+        launcher_id="launcher_bike_pump",
+    )
+    design, _ = resolve_bottle(build, _fixture_catalog())
+    return ReferenceEntry(
+        id="bottle_build",
+        tier=Tier.BOTTLE,
+        name="1.5 L bottle rocket (parts build)",
+        sources=["https://example.org/bottle"],
+        requirement=Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=30),
+        design=design,
+        build=build,
+        published={"apogee_m": 30.0},
+    )
+
+
+def test_reference_entry_build_tier_must_match():
+    from rocketwright.references import _check_consistency
+
+    entry = _alpha_build_entry()
+    _check_consistency(entry)
+    bad = entry.model_copy(update={"build": _bottle_build_entry().build})
+    with pytest.raises(ValueError, match="build.tier"):
+        _check_consistency(bad)
+
+
+def test_seed_amateur_in_build_space_keeps_parts_for_a_near_requirement():
+    from rocketwright.build import check_buildability, resolve_amateur
+    from rocketwright.references import seed_design_with_build
+
+    cat = _fixture_catalog()
+    entry = _alpha_build_entry()
+    req = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=280, payload_mass_kg=0.0)
+    seed = seed_design_with_build(entry, req, catalog=cat)
+    assert seed.build is not None and seed.bill is not None
+    assert seed.build.motor_id == "estes_C6" and seed.build.body_tube_id == "estes_bt50"
+    design, bill = resolve_amateur(seed.build, cat)
+    assert seed.design == design
+    assert seed.bill.dry_mass_kg == pytest.approx(bill.dry_mass_kg)
+    assert not [i for i in check_buildability(seed.build, cat) if i.severity == "error"]
+    assert seed.notes[0].startswith("seeded from") and "part space" in seed.notes[0]
+    assert any("bill" in n for n in seed.notes)
+
+
+def test_seed_amateur_in_build_space_swaps_motor_mount_and_tube():
+    from rocketwright.build import check_buildability
+    from rocketwright.references import seed_design_with_build
+
+    cat = _fixture_catalog()
+    entry = _alpha_build_entry()
+    req = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=1500, payload_mass_kg=0.1)
+    seed = seed_design_with_build(entry, req, catalog=cat)
+    b = seed.build
+    assert b is not None
+    assert b.motor_id != "estes_C6"
+    motor = solid.load_motor(b.motor_id)
+    mount = cat.get(b.motor_mount_id)
+    assert abs(mount.motor_diameter_m - motor.diameter_m) < 1e-3
+    assert mount.fits_tube_id == b.body_tube_id
+    assert cat.get(b.nose_cone_id).fits_tube_id == b.body_tube_id
+    assert b.payload_mass_kg == 0.1
+    # the catalog has no mount for 38/54 mm motors: they are never picked
+    assert motor.diameter_m <= 0.029
+    issues = check_buildability(b, cat)
+    assert not [
+        i
+        for i in issues
+        if i.code
+        in (
+            "motor_mount_diameter",
+            "mount_fits_tube",
+            "nose_fits_tube",
+            "body_length_min",
+            "body_length_stock",
+            "deploy_delay",
+            "parachute_packed",
+        )
+    ], issues
+    assert any("-> " + b.motor_id in n for n in seed.notes)
+
+
+def test_seed_bottle_in_build_space_adds_catalog_parachute_and_clips_pressure():
+    from rocketwright.build import check_buildability
+    from rocketwright.references import seed_design_with_build
+
+    cat = _fixture_catalog()
+    entry = _bottle_build_entry()
+    req = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=120, payload_mass_kg=0.06)
+    seed = seed_design_with_build(entry, req, catalog=cat)
+    b = seed.build
+    assert b is not None and b.parachute_id == "chute_0p5m_plastic"
+    # 300 kPa x 4 = 1.2 MPa wanted; clipped at the launcher's 600 kPa (the smallest cap)
+    assert b.initial_gauge_pressure_pa == pytest.approx(600000)
+    assert any("launcher_bike_pump" in n for n in seed.notes)
+    assert seed.design.has_parachute and seed.design.payload_mass_kg == 0.06
+    assert not [i for i in check_buildability(b, cat) if i.severity == "error"]
+
+
+def test_seed_without_build_falls_back_to_geometry():
+    from rocketwright.references import seed_design, seed_design_with_build
+
+    entry = get_reference("estes_alpha_iii_c6")
+    req = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=400)
+    seed = seed_design_with_build(entry, req, catalog=_fixture_catalog())
+    design, notes = seed_design(entry, req)
+    assert seed.build is None and seed.bill is None
+    assert seed.design == design and seed.notes == notes
+
+
+def test_seed_with_build_falls_back_when_catalog_lacks_the_parts(tmp_path):
+    from rocketwright.parts import load_parts
+    from rocketwright.references import seed_design_with_build
+
+    empty = tmp_path / "parts.yaml"
+    empty.write_text("version: 2\nparts: []\n", encoding="utf-8")
+    entry = _alpha_build_entry()
+    req = Requirement(goal_kind=GoalKind.ALTITUDE, target_altitude_m=400)
+    seed = seed_design_with_build(entry, req, catalog=load_parts(empty))
+    assert seed.build is None
+    assert any("could not be seeded" in n for n in seed.notes)
+
+
+def test_find_reference_designs_tool_reports_seed_build(monkeypatch):
+    from rocketwright import references
+
+    entry = _alpha_build_entry()
+    monkeypatch.setattr(references, "load_references", lambda: (entry,))
+    monkeypatch.setattr("rocketwright.agent.tools._parts_catalog", lambda: _fixture_catalog())
+    inp = {
+        "requirement": {"goal_kind": "altitude", "target_altitude_m": 280, "payload_mass_kg": 0.0},
+        "tier": "amateur",
+        "k": None,
+        "seed": None,
+        "tune": None,
+        "env": None,
+    }
+    out = execute_tool("find_reference_designs", inp, "toolu_sb")
+    assert "error" not in out, out
+    seed = out["seed"]
+    assert seed["build"]["tier"] == "amateur" and seed["build"]["motor_id"] == "estes_C6"
+    assert seed["bill"]["cost_jpy"] == pytest.approx(seed["sim"]["cost_jpy"], abs=0.5)
+    assert seed["design"]["dry_mass_kg"] == pytest.approx(seed["bill"]["dry_mass_kg"])

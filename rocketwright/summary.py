@@ -19,7 +19,9 @@ from dataclasses import asdict
 from typing import Any
 
 from rocketwright import drawing
-from rocketwright.cost import cost_breakdown, estimate_cost_jpy, liftoff_mass_kg
+from rocketwright.build import AmateurBuild, BottleBuild, BuildBill, check_buildability, resolve
+from rocketwright.cost import CostItem, cost_breakdown, estimate_cost_jpy, liftoff_mass_kg
+from rocketwright.parts import PartsCatalog, load_parts
 from rocketwright.report import bom_rows
 from rocketwright.schema import (
     AmateurDesign,
@@ -29,7 +31,7 @@ from rocketwright.schema import (
     Requirement,
 )
 
-__all__ = ["design_summary"]
+__all__ = ["design_summary", "design_summary_from_build"]
 
 WATER_DENSITY_KGPM3 = 1000.0
 
@@ -148,3 +150,58 @@ def design_summary(design: Design, requirement: Requirement | None = None) -> di
         "dimensions": dims,
         "warnings": warnings,
     }
+
+
+def _bill_cost_items(bill: BuildBill) -> list[CostItem]:
+    return [
+        CostItem(
+            row.name,
+            row.price_jpy,
+            f"{row.part_id} × {row.qty}" + ("（仮置き）" if row.provisional else ""),
+            row.provisional,
+        )
+        for row in bill.parts
+    ]
+
+
+def _bill_bom_rows(bill: BuildBill, catalog: PartsCatalog) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for row in bill.parts:
+        source = "provisional"
+        if not row.provisional:
+            try:
+                source = catalog.get(row.part_id).source or "provisional"
+            except KeyError:
+                source = "catalog"
+        rows.append(
+            {
+                "item_id": row.part_id,
+                "name": row.name,
+                "qty": row.qty,
+                "mass_kg": row.mass_kg,
+                "price_jpy": row.price_jpy,
+                "source_or_provisional": source,
+            }
+        )
+    return rows
+
+
+def design_summary_from_build(
+    build: AmateurBuild | BottleBuild,
+    catalog: PartsCatalog | None = None,
+    requirement: Requirement | None = None,
+) -> dict[str, Any]:
+    """`design_summary` of the build's resolved design, with the cost, the cost breakdown and
+    the BOM taken from the parts bill (exact part rows) instead of cost.py's estimate, plus
+    `build`, `bill` and the buildability `issues`."""
+    cat = catalog if catalog is not None else load_parts()
+    design, bill = resolve(build, cat)
+    out = design_summary(design, requirement)
+    out["design"] = design.model_dump(mode="json")
+    out["build"] = build.model_dump(mode="json")
+    out["bill"] = bill.model_dump(mode="json")
+    out["cost_jpy"] = float(bill.cost_jpy)
+    out["cost_breakdown"] = [asdict(item) for item in _bill_cost_items(bill)]
+    out["bom"] = _bill_bom_rows(bill, cat)
+    out["issues"] = [i.model_dump() for i in check_buildability(build, cat)]
+    return out

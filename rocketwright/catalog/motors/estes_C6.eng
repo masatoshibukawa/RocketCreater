@@ -5,6 +5,12 @@
 ; note: synthetic curve matching published summary values
 ; note: Estes page: total impulse 10.00 N-s, max thrust 15.30 N, thrust duration 1.60 s, propellant 12.2 g, total 24.1 g, 18 x 70 mm. Curve integral set to 9.95 N-s so the C-class bound (<= 10 N-s) holds after rounding.
 ; note: curve integral 9.95 N-s, average thrust 6.22 N
+; diameter_m: 0.018
+; length_m: 0.070
+; delays: 0,3,5,7
+; propellant_mass_kg: 0.0122
+; total_mass_kg: 0.0241
+; price_jpy: 750 (Estes 3-pack $14.99 -> per motor at 150 JPY/USD, provisional)
 C6 18 70 0-3-5-7 0.0122 0.0241 Estes
 0.050 6.12
 0.150 15.30

@@ -1,0 +1,21 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/I200W/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified as I199): 29 mm x 333 mm RMS-29/360 reload, total impulse 324.5 N-s, average thrust 200.0 N, max thrust 463.3 N, burn time 1.7 s, propellant 187 g, total 358 g, delays 4/6/8/10 s.
+; note: high-power (I) motor -- requires HPR certification / permits; the agent must flag this in the checklist.
+; note: curve integral 324.5 N-s, average thrust 190.9 N (the early 463 N spike is the only peaked part of the synthetic shape)
+; diameter_m: 0.029
+; length_m: 0.333
+; delays: 4,6,8,10
+; propellant_mass_kg: 0.187
+; total_mass_kg: 0.358
+; price_jpy: 9000 (reload kit, US retail ~$60, casing not included; at 150 JPY/USD, provisional)
+I200W 29 333 4-6-8-10 0.187 0.358 AeroTech
+0.050 185.32
+0.150 463.30
+0.300 177.33
+1.600 177.33
+1.700 0.00
+;

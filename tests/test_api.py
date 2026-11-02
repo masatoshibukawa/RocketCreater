@@ -282,3 +282,39 @@ def test_cors_preflight_exposes_methods_and_headers():
         headers={"Origin": "http://evil.example", "Access-Control-Request-Method": "POST"},
     )
     assert denied.headers.get("access-control-allow-origin") is None
+
+
+def test_summary_artifact_from_build(monkeypatch):
+    """`build` on /artifacts/summary: cost and BOM come from the parts bill, the drawing from
+    the resolved design."""
+    from rocketwright import parts
+    from rocketwright.agent.fake_client import demo_designs
+
+    monkeypatch.setattr(
+        parts, "DEFAULT_PARTS_PATH", Path(__file__).resolve().parent / "fixtures" / "parts_v2.yaml"
+    )
+    build = {
+        "tier": "amateur",
+        "body_tube_id": "estes_bt50",
+        "body_length_m": 0.24,
+        "nose_cone_id": "estes_pnc50",
+        "motor_mount_id": "mount_18mm_bt50",
+        "motor_id": "estes_C6",
+        "fin_material_id": "balsa_3_32in",
+        "fins": {"count": 3, "root_chord_m": 0.064, "tip_chord_m": 0.025, "span_m": 0.044},
+        "parachute_id": "chute_12in",
+    }
+    # the design field is required by the request model but the build wins
+    placeholder = demo_designs("amateur")[0]
+    r = client.post("/artifacts/summary", json={"design": placeholder, "build": build})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["cost_jpy"] == pytest.approx(body["bill"]["cost_jpy"])
+    assert [row["item_id"] for row in body["bom"]] == [p["part_id"] for p in body["bill"]["parts"]]
+    assert body["design"]["body_diameter_m"] == pytest.approx(0.0246)
+    assert body["drawing"]["url"].endswith(".svg")
+    assert body["issues"] == [] or all("severity" in i for i in body["issues"])
+    bad = client.post(
+        "/artifacts/summary", json={"design": placeholder, "build": dict(build, nose_cone_id="x")}
+    )
+    assert bad.status_code == 400 and "x" in bad.json()["detail"]

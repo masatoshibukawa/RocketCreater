@@ -5,6 +5,12 @@
 ; note: synthetic curve matching published summary values
 ; note: Estes page: total impulse 30.00 N-s, max thrust 30.60 N, thrust duration 2.70 s, propellant 36.9 g, total 61.2 g, 24 x 97 mm.
 ; note: curve integral 30.00 N-s, average thrust 11.11 N
+; diameter_m: 0.024
+; length_m: 0.097
+; delays: 4,6,8
+; propellant_mass_kg: 0.0369
+; total_mass_kg: 0.0612
+; price_jpy: 1400 (Estes 2-pack, US retail ~$19 -> per motor at 150 JPY/USD, provisional)
 E12 24 97 4-6-8 0.0369 0.0612 Estes
 0.050 12.24
 0.150 30.60

@@ -1,9 +1,12 @@
 """Tool definitions (JSON Schema) handed to Claude and their implementations.
 
-* `get_tool_definitions()` returns the 7 tool schemas (strict mode: `additionalProperties:
+* `get_tool_definitions()` returns one strict schema per TOOL_NAMES entry (`additionalProperties:
   false`, every property required, no `$ref`). Input schemas are generated from the pydantic
-  models in rocketwright.schema so the two never drift; numeric constraints are stripped from
-  the exported schema because pydantic re-validates every input anyway.
+  models in rocketwright.schema / rocketwright.build so the two never drift; numeric constraints
+  are stripped from the exported schema because pydantic re-validates every input anyway.
+* Bottle/amateur designs are made from parts: `list_parts` browses rocketwright.parts and
+  `design_from_parts` resolves a build (rocketwright.build), checks buildability and simulates
+  through the same `_simulate_dispatch` / `_finalize` path with the bill's cost.
 * `TOOL_REGISTRY` maps tool name -> implementation (parsed input dict -> JSON-serialisable dict).
 * `execute_tool(name, input, tool_use_id)` validates, runs, and stamps `source_id`.
 
@@ -27,11 +30,13 @@ from pydantic import BaseModel, ValidationError
 
 from rocketwright import dispersion as mc
 from rocketwright.agent.store import store_drawing, store_report
+from rocketwright.build import BuildAdapter, check_buildability, resolve
 from rocketwright.classify import classify, load_tiers
 from rocketwright.cost import COST_CONSTANTS, estimate_cost_jpy
 from rocketwright.derive import derive
+from rocketwright.parts import KINDS, Part, PartsCatalog, load_parts
 from rocketwright.physics import multistage, solid, water
-from rocketwright.references import find_nearest, find_reference_designs, seed_design
+from rocketwright.references import find_nearest, find_reference_designs, seed_design_with_build
 from rocketwright.schema import (
     AmateurDesign,
     BottleDesign,
@@ -66,7 +71,12 @@ TOOL_NAMES: tuple[str, ...] = (
     "export_report",
     "find_reference_designs",
     "derive_requirements",
+    "list_parts",
+    "design_from_parts",
 )
+
+# list_parts row cap (the model browses by kind/query; the whole catalog is not a tool result).
+LIST_PARTS_MAX_ROWS = 60
 
 # run_dispersion sample count: default when the model passes null, and the hard cap (the
 # schema caps the scatter at 5000 points; 500 keeps a commercial run at a few seconds).
@@ -144,6 +154,11 @@ def _schema_of(model: type[BaseModel]) -> dict[str, Any]:
 
 def _design_schema() -> dict[str, Any]:
     raw = DesignAdapter.json_schema()
+    return _strictify(raw, raw.get("$defs", {}))
+
+
+def _build_schema() -> dict[str, Any]:
+    raw = BuildAdapter.json_schema()
     return _strictify(raw, raw.get("$defs", {}))
 
 
@@ -342,6 +357,58 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 }
             ),
         },
+        {
+            "name": "list_parts",
+            "description": (
+                "Browse the parts catalog for the bottle and amateur tiers (catalog/parts.yaml): "
+                "compact rows (id, name, kind, key dimensions, mass_kg, price_jpy, provisional) "
+                "filtered by tier, kind (body_tube, nose_cone, motor_mount, fin_material, "
+                "parachute, recovery_hardware, launch_lug, bottle, nozzle, bottle_fin_set, "
+                f"launcher; null = all) and free-text query, at most {LIST_PARTS_MAX_ROWS} rows. "
+                "Motors are listed by search_catalog (kind=motors). Use the ids verbatim in "
+                "design_from_parts; nose cones and motor mounts say which tube they fit "
+                "(fits_tube_id) and mounts which motor diameter they take."
+            ),
+            "strict": True,
+            "input_schema": _obj(
+                {
+                    "tier": {"type": "string", "enum": ["bottle", "amateur"]},
+                    "kind": _nullable({"type": "string", "enum": list(KINDS)}),
+                    "query": _nullable({"type": "string"}),
+                }
+            ),
+        },
+        {
+            "name": "design_from_parts",
+            "description": (
+                "Design a bottle or amateur rocket by CHOOSING PARTS (the only way to design "
+                "those tiers): the mass, dimensions and cost are computed from the parts, never "
+                "typed in. `build` is an AmateurBuild (body tube id + cut length, nose cone, "
+                "motor mount, motor id, fin material + fin planform, parachute, optional "
+                "recovery hardware / launch lug, payload, deploy delay) or a BottleBuild "
+                "(bottle, water fill, gauge pressure, nozzle, optional fin set / parachute / "
+                "launcher, payload), discriminated by `tier`. Returns `design` (the resolved "
+                "physics design), `bill` (part rows with mass and price, dry_mass_kg, cost_jpy), "
+                "`issues` (buildability: code, message, severity error|warning: motor/mount "
+                "diameter, mount and nose fit the tube, body length within the stock tube and "
+                "long enough for motor + mount + parachute, fin size vs sheet and body, "
+                "parachute packs into the tube, deploy delay is a motor option, static margin, "
+                "liftoff thrust-to-weight, descent speed; bottle: nozzle fits the neck, "
+                "pressure under the bottle/launcher caps, fill fraction, payload needs a "
+                "parachute) and `sim`: the simulate_design result (judged against the "
+                "requirement, cost from the bill) or null when any issue is an error. Fix every "
+                "error issue first (swap parts), then iterate on the warnings and the sim."
+            ),
+            "strict": True,
+            "input_schema": _obj(
+                {
+                    "build": _build_schema(),
+                    "env": _nullable(env),
+                    "requirement": _nullable(req),
+                    "seed": _nullable({"type": "integer"}),
+                }
+            ),
+        },
     ]
 
 
@@ -374,11 +441,17 @@ def _judge(design: Design, req: Requirement | None) -> list[str]:
     return reasons
 
 
-def _finalize(result: SimResult, design: Design, req: Requirement | None) -> SimResult:
+def _finalize(
+    result: SimResult,
+    design: Design,
+    req: Requirement | None,
+    *,
+    cost_jpy: float | None = None,
+) -> SimResult:
     """Shared post-processing for every tier: `_judge` adds the requirement-level rules,
-    cost.py owns the cost estimate and the budget rule lives here once (CLAUDE.md section 6:
-    "within budget")."""
-    cost_jpy = round(estimate_cost_jpy(design), 0)
+    cost.py owns the cost estimate (unless a parts bill gives `cost_jpy`) and the budget rule
+    lives here once (CLAUDE.md section 6: "within budget")."""
+    cost_jpy = round(estimate_cost_jpy(design) if cost_jpy is None else cost_jpy, 0)
     reasons = list(result.failure_reasons) + _judge(design, req)
     if req is not None and req.budget_jpy is not None and cost_jpy > req.budget_jpy:
         reasons.append(f"cost {cost_jpy:,.0f} JPY exceeds budget {req.budget_jpy:,.0f} JPY")
@@ -408,13 +481,16 @@ def _simulate_dispatch(
     env: Env,
     seed: int | None,
     req: Requirement | None = None,
+    *,
+    cost_jpy: float | None = None,
     **scales: float,
 ) -> SimResult:
     """Single dispatch point. Commercial/heavy -> physics.multistage, amateur -> physics.solid,
     bottle -> physics.water (all real models, judged against the requirement's target).
     `scales` are the model's perturbation keywords (multistage: isp_scale / thrust_scale,
     solid: thrust_scale) that rocketwright.dispersion passes per sample; empty for a nominal
-    run. Module-level and picklable on purpose (dispersion workers)."""
+    run. `cost_jpy` replaces the cost.py estimate when a parts bill is known. Module-level and
+    picklable on purpose (dispersion workers)."""
     if isinstance(design, MultistageDesign):
         perigee_m, apogee_m = _orbit_targets(req)
         env, rotation_warnings = _orbit_env(env, req)
@@ -431,7 +507,7 @@ def _simulate_dispatch(
         result = water.simulate(design, env, seed, target_apogee_m=_altitude_target(req), **scales)
     else:  # pragma: no cover - the discriminated union has no other member
         raise TypeError(f"unsupported design type {type(design).__name__}")
-    return _finalize(result, design, req)
+    return _finalize(result, design, req, cost_jpy=cost_jpy)
 
 
 ORBIT_ROTATION_WARNING = "earth rotation enabled for orbit goal (eastward launch assumed)"
@@ -623,18 +699,126 @@ def _tool_find_reference_designs(inp: dict[str, Any]) -> dict[str, Any]:
     # Orbit goals fly with Earth rotation on, exactly as simulate_design does, so the pitch
     # tuning and the seed's sim agree.
     env, rotation_warnings = _orbit_env(env, req)
-    design, notes = seed_design(entry, req, env=env, tune=tune)
-    sim = _simulate_dispatch(design, env, None, req).model_dump(mode="json")
+    seed = seed_design_with_build(entry, req, env=env, tune=tune, catalog=_parts_catalog())
+    design = seed.design
+    cost = None if seed.bill is None else seed.bill.cost_jpy
+    sim = _simulate_dispatch(design, env, None, req, cost_jpy=cost).model_dump(mode="json")
     sim["trace_point_count"] = len(sim.pop("trace"))
     if rotation_warnings and ORBIT_ROTATION_WARNING not in sim["warnings"]:
         sim["warnings"] = list(sim["warnings"]) + rotation_warnings
     out["seed"] = {
         "reference_id": entry.id,
         "design": design.model_dump(mode="json"),
-        "notes": notes,
+        # Bottle/amateur references that carry a parts build are seeded in part space: adopt
+        # `build` with design_from_parts (null for geometric seeds and the orbital tiers).
+        "build": None if seed.build is None else seed.build.model_dump(mode="json"),
+        "bill": None if seed.bill is None else seed.bill.model_dump(mode="json"),
+        "notes": seed.notes,
         "env": env.model_dump(mode="json"),
         "sim": sim,
     }
+    return out
+
+
+# --------------------------------------------------------------------------- parts tools
+
+
+def _parts_catalog() -> PartsCatalog:
+    """The parts catalog the tools use (cached by rocketwright.parts; tests repoint
+    rocketwright.parts.DEFAULT_PARTS_PATH at a fixture)."""
+    return load_parts()
+
+
+_PART_BASE_FIELDS = frozenset(Part.model_fields)
+
+
+def _part_row(part: Part) -> dict[str, Any]:
+    dims = {k: v for k, v in part.model_dump(mode="json").items() if k not in _PART_BASE_FIELDS}
+    return {
+        "id": part.id,
+        "name": part.name,
+        "kind": part.kind,
+        "tier": part.tier,
+        "mass_kg": part.mass_kg,
+        "price_jpy": part.price_jpy,
+        "provisional": part.provisional,
+        **dims,
+    }
+
+
+def _tool_list_parts(inp: dict[str, Any]) -> dict[str, Any]:
+    tier = Tier(inp["tier"]).value
+    if tier not in ("bottle", "amateur"):
+        raise ValueError("list_parts covers the bottle and amateur tiers only")
+    kind = inp.get("kind")
+    if kind is not None and kind not in KINDS:
+        raise ValueError(f"kind must be one of {KINDS} or null, got {kind!r}")
+    query = (inp.get("query") or "").strip().lower() or None
+    catalog = _parts_catalog()
+    rows: list[dict[str, Any]] = []
+    for part in catalog.parts:
+        if part.tier != tier or (kind is not None and part.kind != kind):
+            continue
+        if query and query not in f"{part.id} {part.name} {part.kind} {part.notes}".lower():
+            continue
+        rows.append(_part_row(part))
+    total = len(rows)
+    rows = rows[:LIST_PARTS_MAX_ROWS]
+    out: dict[str, Any] = {"parts": rows, "count": len(rows), "total": total}
+    if total == 0:
+        out["note"] = (
+            "no parts matched"
+            + (" (the parts catalog is empty)" if len(catalog) == 0 else "")
+            + "; widen the kind/query"
+        )
+    elif total > len(rows):
+        out["note"] = f"{total} parts matched; showing {len(rows)}: narrow by kind or query"
+    else:
+        out["note"] = "use `id` verbatim in design_from_parts; motors come from search_catalog"
+    return out
+
+
+def _tool_design_from_parts(inp: dict[str, Any]) -> dict[str, Any]:
+    """resolve -> check_buildability -> (no errors) simulate. The bill's cost is the design's
+    cost; the buildability warnings are appended to the sim's warnings."""
+    build = BuildAdapter.validate_python(inp["build"])
+    env = Env.model_validate(inp.get("env") or {})
+    seed = inp.get("seed")
+    req = _parse_optional_requirement(inp.get("requirement"))
+    catalog = _parts_catalog()
+    issues = check_buildability(build, catalog)
+    out: dict[str, Any] = {
+        "tier": build.tier,
+        "build": build.model_dump(mode="json"),
+        "design": None,
+        "bill": None,
+        "issues": [i.model_dump() for i in issues],
+        "sim": None,
+    }
+    errors = [i for i in issues if i.severity == "error"]
+    if any(i.code == "unknown_part" for i in errors):
+        out["note"] = "unknown or wrong-kind part id: pick ids from list_parts / search_catalog"
+        return out
+    design, bill = resolve(build, catalog)
+    out["design"] = design.model_dump(mode="json")
+    out["bill"] = bill.model_dump(mode="json")
+    if errors:
+        out["note"] = (
+            f"{len(errors)} buildability error(s): the rocket cannot be built as chosen, so it "
+            "was not simulated; fix the `issues` with severity error first"
+        )
+        return out
+    sim = _simulate_dispatch(design, env, seed, req, cost_jpy=bill.cost_jpy)
+    build_warnings = [f"build: {i.message}" for i in issues]
+    out["sim"] = sim.model_copy(
+        update={"warnings": list(sim.warnings) + build_warnings}
+    ).model_dump(mode="json")
+    out["note"] = (
+        "sim.cost_jpy is the bill total; iterate with design_from_parts (never simulate_design "
+        "with hand-typed masses for this tier)"
+        if not issues
+        else "buildability warnings were appended to sim.warnings; judge them with the sim"
+    )
     return out
 
 
@@ -730,6 +914,8 @@ TOOL_REGISTRY: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
     "export_report": _tool_export_report,
     "find_reference_designs": _tool_find_reference_designs,
     "derive_requirements": _tool_derive_requirements,
+    "list_parts": _tool_list_parts,
+    "design_from_parts": _tool_design_from_parts,
 }
 
 

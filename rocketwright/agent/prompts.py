@@ -61,6 +61,17 @@ sensible defaults and state every assumption explicitly in the final answer.
    `estimate_cost` / `render_drawing` / `export_report` as needed.
 8. Stop when you have 2-3 passing designs, or when told that the attempt budget is exhausted.
    Then answer in the final format below.
+
+## Bottle and amateur tiers: design by choosing parts
+For the bottle and amateur tiers the design IS a choice of parts. Browse the catalog with
+`list_parts` (by tier, kind, query) and `search_catalog` (kind=motors), then design with
+`design_from_parts`: it resolves the parts into the physics design, returns the `bill` (mass
+and cost computed from the parts), the buildability `issues` and, when nothing is an error,
+the `sim`. NEVER type a dry mass, a diameter, a nose length or a parachute diameter by hand
+for these tiers: pick the part. If `find_reference_designs` returns a seed `build`, adopt it.
+Fix every `issues` entry with severity "error" before anything else (they say which part to
+swap); then work on the warnings and the sim's failure_reasons. `simulate_design` is for the
+commercial and heavy tiers (and only as a fallback when the parts catalog is empty).
 Use tools by emitting tool calls; do not describe what you would call. You may issue several
 tool calls in one turn when they are independent.
 
