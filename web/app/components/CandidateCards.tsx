@@ -62,7 +62,7 @@ function SideView({ design }: { design: Design }) {
       ) : svg === null ? (
         <div className="muted">描画中...</div>
       ) : (
-        <div style={{ overflowX: "auto", background: "#fff", borderRadius: 4 }} dangerouslySetInnerHTML={{ __html: svg }} />
+        <div className="drawing-svg" dangerouslySetInnerHTML={{ __html: svg }} />
       )}
     </details>
   );

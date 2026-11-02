@@ -234,6 +234,8 @@ export interface ReferenceInfo {
   name: string;
   /** The tool's notes: one line per scaling step. */
   notes: string[];
+  /** The seed design scaled from the reference (shown in 3D until the first attempt exists). */
+  design: Design | null;
 }
 
 /** A design candidate, merged from `candidate` events and `final.result.designs`. */
@@ -298,4 +300,85 @@ export interface ChatMessage {
   key: string;
   role: ChatRole;
   text: string;
+}
+
+// --------------------------------------------------------------------------- derived requirements
+
+/** One quantity of a derive_requirements tool_result (`quantities[]`). */
+export interface DerivedQuantity {
+  key: string;
+  value: number;
+  /** Human-readable formula with the numbers substituted, e.g. "v_circ = sqrt(mu / (R + h)) = ...". */
+  formula: string;
+  inputs: Record<string, number>;
+  assumptions: string[];
+  provisional: boolean;
+  annotation: string;
+}
+
+/** The derive_requirements tool_result (rocketwright/agent/tools.py). */
+export interface DerivedRequirements {
+  source_id: string;
+  tier: Tier | null;
+  goal_kind: string;
+  quantities: DerivedQuantity[];
+  summary: string;
+  warnings: string[];
+  notes: string[];
+}
+
+// --------------------------------------------------------------------------- design summary (POST /artifacts/summary)
+
+export interface CostBreakdownItem {
+  label: string;
+  jpy: number;
+  note: string;
+  provisional: boolean;
+}
+
+export interface BomItem {
+  item_id: string;
+  name: string;
+  qty: number;
+  mass_kg: number | null;
+  price_jpy: number | null;
+  /** Source URL, or the word "provisional" (or a text starting with it) when unsourced. */
+  source_or_provisional: string;
+}
+
+export interface MassSummary {
+  liftoff_mass_kg: number | null;
+  dry_mass_kg: number | null;
+  payload_mass_kg: number | null;
+  propellant_mass_kg: number | null;
+}
+
+export interface DimensionSummary {
+  length_m: number | null;
+  diameter_m: number | null;
+}
+
+/**
+ * Response of `POST /artifacts/summary {design, requirement|null, width_px|null}`:
+ * cost, cost breakdown, BOM, side-view drawing path, masses and overall dimensions for one
+ * design. Every number comes from the backend (cost.py / drawing.py); the UI only formats.
+ */
+export interface DesignSummary {
+  tier: Tier | null;
+  cost_jpy: number;
+  cost_breakdown: CostBreakdownItem[];
+  bom: BomItem[];
+  drawing: { id: string; url: string } | null;
+  mass: MassSummary | null;
+  dimensions: DimensionSummary | null;
+}
+
+/** Which design the centre / right panels show and where it came from. */
+export type DisplayOrigin = "candidate" | "attempt" | "seed";
+
+export interface DisplayedDesign {
+  design: Design;
+  /** source_id of the candidate / attempt (tool_use id), used to look up trace and dispersion. */
+  sourceId: string;
+  origin: DisplayOrigin;
 }

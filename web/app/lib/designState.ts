@@ -6,10 +6,11 @@
  *   thinking      -> chat message (role "thinking")
  *   text          -> chat message (role "agent"); a JSON blob (the model's final answer) is
  *                    collapsed to a system line because `final` carries the parsed version
- *   question      -> chat message (role "question")
+ *   question      -> chat message (role "question") and `pendingQuestion` (the reply box)
  *   tool_call     -> chat system line; the input is kept by id so a result can be tied back
  *                    to the design it was run on
- *   tool_result   -> classify_requirement: tier badge; simulate_design: attempt log row;
+ *   tool_result   -> classify_requirement: tier badge; derive_requirements: the formula list
+ *                    shown under 詳細; simulate_design: attempt log row;
  *                    find_reference_designs: the reference vehicle (TierBadge) and, when it
  *                    carries a seed with a sim, an attempt-0 row flagged `seededFrom`;
  *                    run_dispersion: stored per candidate (matched by design equality via
@@ -30,7 +31,10 @@ import {
   type ChatMessage,
   type ChatRole,
   type ClassifyResult,
+  type DerivedQuantity,
+  type DerivedRequirements,
   type Design,
+  type DisplayedDesign,
   type DispersionResult,
   type Ellipse95,
   type FinalDesign,
@@ -59,6 +63,13 @@ export interface DesignState {
   classify: ClassifyResult | null;
   /** The reference vehicle the design was seeded from (find_reference_designs), if any. */
   reference: ReferenceInfo | null;
+  /** The normalised Requirement from the classify_requirement tool_call input (sent along to
+   * POST /artifacts/summary so the cost model knows the budget / goal). */
+  requirement: Record<string, unknown> | null;
+  /** derive_requirements tool_result: each target quantity with its formula string. */
+  derived: DerivedRequirements | null;
+  /** A clarifying `question` event waiting for the user's answer (null once answered / reset). */
+  pendingQuestion: string | null;
   attempts: AttemptRow[];
   attemptCount: number;
   candidates: Candidate[];
@@ -82,6 +93,9 @@ export const initialState: DesignState = {
   tier: null,
   classify: null,
   reference: null,
+  requirement: null,
+  derived: null,
+  pendingQuestion: null,
   attempts: [],
   attemptCount: 0,
   candidates: [],
@@ -349,6 +363,59 @@ export function findAttemptByDesign(
   return attempt ? attempt.id : null;
 }
 
+function toDerived(rec: Record<string, unknown>, id: string): DerivedRequirements {
+  const quantities: DerivedQuantity[] = [];
+  if (Array.isArray(rec.quantities)) {
+    for (const item of rec.quantities) {
+      const q = asRecord(item);
+      if (!q) continue;
+      const key = asString(q.key);
+      if (key === "") continue;
+      quantities.push({
+        key,
+        value: asNumber(q.value),
+        formula: asString(q.formula),
+        inputs: asNumberMap(q.inputs),
+        assumptions: asStringArray(q.assumptions),
+        provisional: q.provisional === true,
+        annotation: asString(q.annotation),
+      });
+    }
+  }
+  return {
+    source_id: asString(rec.source_id) || id,
+    tier: isTier(rec.tier) ? rec.tier : null,
+    goal_kind: asString(rec.goal_kind),
+    quantities,
+    summary: asString(rec.summary),
+    warnings: asStringArray(rec.warnings),
+    notes: asStringArray(rec.notes),
+  };
+}
+
+/**
+ * The design the centre / right panels show: the latest passing candidate, else the latest
+ * attempt that carries a design, else the reference seed. Pure, so the rule is testable.
+ */
+export function selectDisplayedDesign(
+  state: Pick<DesignState, "candidates" | "attempts" | "reference">,
+): DisplayedDesign | null {
+  for (let i = state.candidates.length - 1; i >= 0; i -= 1) {
+    const c = state.candidates[i];
+    if (c.passed) return { design: c.design, sourceId: c.source_id, origin: "candidate" };
+  }
+  for (let i = state.attempts.length - 1; i >= 0; i -= 1) {
+    const a = state.attempts[i];
+    if (a.design !== null) {
+      return { design: a.design, sourceId: a.id, origin: a.seededFrom !== null ? "seed" : "attempt" };
+    }
+  }
+  if (state.reference !== null && state.reference.design !== null) {
+    return { design: state.reference.design, sourceId: "", origin: "seed" };
+  }
+  return null;
+}
+
 function toFinalDesign(rec: Record<string, unknown>): FinalDesign | null {
   const design = toDesign(rec.design);
   if (!design) return null;
@@ -411,13 +478,19 @@ function applyEvent(state: DesignState, ev: AgentEvent): DesignState {
       if (looksLikeJson(text)) return push(next, "system", "最終回答 (JSON) を受信しました");
       return push(next, "agent", text);
     }
-    case "question":
-      return push(next, "question", asString(p.text));
+    case "question": {
+      const text = asString(p.text);
+      return push({ ...next, pendingQuestion: text || null }, "question", text);
+    }
     case "tool_call": {
       const callId = asString(p.id);
       const input = asRecord(p.input);
-      const withInput: DesignState =
+      let withInput: DesignState =
         callId && input ? { ...next, toolInputs: { ...next.toolInputs, [callId]: input } } : next;
+      if (asString(p.name) === "classify_requirement" && input) {
+        const requirement = asRecord(input.requirement);
+        if (requirement) withInput = { ...withInput, requirement };
+      }
       return push(withInput, "system", `ツール呼び出し: ${toolLabel(asString(p.name))}`);
     }
     case "tool_result":
@@ -475,6 +548,8 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
       for (const w of classify.warnings) next = push(next, "error", `分類の警告: ${w}`);
       return next;
     }
+    case "derive_requirements":
+      return { ...state, derived: toDerived(result, id) };
     case "simulate_design": {
       const sim = toSimResult(result);
       // with tune_pitch the simulated design is the tuned one the result reports
@@ -508,10 +583,10 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
           }
         }
       }
-      const reference: ReferenceInfo = { id: referenceId, name, notes: asStringArray(seed.notes) };
-      let next: DesignState = { ...state, reference };
       const sim = asRecord(seed.sim);
       const design = toDesign(seed.design);
+      const reference: ReferenceInfo = { id: referenceId, name, notes: asStringArray(seed.notes), design };
+      let next: DesignState = { ...state, reference };
       if (sim && design) {
         // the seed's own simulation: attempt 0 (free, not a simulate_design call)
         const row: AttemptRow = {

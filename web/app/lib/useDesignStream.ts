@@ -16,6 +16,12 @@ export { API_BASE };
 export interface DesignStream extends DesignState {
   /** Send a request. `seed` is forwarded when given (deterministic demo runs). */
   start: (text: string, seed?: number | null) => Promise<void>;
+  /**
+   * Answer a clarifying `question` event. POST /design has no conversation memory (it takes a
+   * single `text`), so the answer is appended to the request so far
+   * ("<request>\n\n追加情報: <answer>") and the loop is restarted with the same seed.
+   */
+  answer: (text: string) => Promise<void>;
   /** Abort the in-flight request, keeping what was received so far. */
   stop: () => void;
   /** Abort and clear all state. */
@@ -40,6 +46,9 @@ export function toAgentEvent(raw: unknown, fallbackType: string): AgentEvent | n
 export function useDesignStream(): DesignStream {
   const [state, dispatch] = useReducer(reduce, initialState);
   const abortRef = useRef<AbortController | null>(null);
+  // The request text and seed of the current run, so an answer can restart with them.
+  const requestRef = useRef<string>("");
+  const seedRef = useRef<number | null>(null);
 
   const stop = useCallback(() => {
     const active = abortRef.current;
@@ -66,6 +75,8 @@ export function useDesignStream(): DesignStream {
       stop();
       const controller = new AbortController();
       abortRef.current = controller;
+      requestRef.current = trimmed;
+      seedRef.current = typeof seed === "number" && Number.isFinite(seed) ? seed : null;
       dispatch({ type: "start", text: trimmed });
 
       const handleMessage = (eventName: string, data: string): void => {
@@ -126,5 +137,16 @@ export function useDesignStream(): DesignStream {
     [stop],
   );
 
-  return { ...state, start, stop, reset };
+  const answer = useCallback(
+    async (text: string) => {
+      const trimmed = text.trim();
+      if (trimmed === "") return;
+      const base = requestRef.current;
+      const combined = base === "" ? trimmed : `${base}\n\n追加情報: ${trimmed}`;
+      await start(combined, seedRef.current);
+    },
+    [start],
+  );
+
+  return { ...state, start, answer, stop, reset };
 }

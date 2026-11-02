@@ -4,6 +4,7 @@ import json
 import re
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 import api.main as main
@@ -104,6 +105,69 @@ def test_render_artifact_then_get_svg():
 def test_render_artifact_rejects_bad_design():
     r = client.post("/artifacts/render", json={"design": {"tier": "amateur"}})
     assert r.status_code == 422
+
+
+def test_summary_artifact_for_amateur_demo_design():
+    from rocketwright.agent.fake_client import DEMO_REQUIREMENTS, demo_designs
+    from rocketwright.cost import estimate_cost_jpy
+    from rocketwright.schema import DesignAdapter
+
+    design = demo_designs("amateur")[0]
+    r = client.post(
+        "/artifacts/summary",
+        json={"design": design, "requirement": DEMO_REQUIREMENTS["amateur"], "width_px": 600},
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert set(body) >= {
+        "tier",
+        "cost_jpy",
+        "cost_breakdown",
+        "bom",
+        "drawing",
+        "mass",
+        "dimensions",
+    }
+    assert body["tier"] == "amateur"
+    assert body["cost_jpy"] == pytest.approx(
+        estimate_cost_jpy(DesignAdapter.validate_python(design))
+    )
+    assert sum(i["jpy"] for i in body["cost_breakdown"]) == pytest.approx(body["cost_jpy"])
+    assert all(set(i) == {"label", "jpy", "note", "provisional"} for i in body["cost_breakdown"])
+    assert len(body["bom"]) >= 3
+    assert set(body["bom"][0]) == {
+        "item_id",
+        "name",
+        "qty",
+        "mass_kg",
+        "price_jpy",
+        "source_or_provisional",
+    }
+    assert body["mass"]["liftoff_mass_kg"] > body["mass"]["payload_mass_kg"] == 1.0
+    assert body["mass"]["propellant_mass_kg"] > 0  # dummy_J420 is a catalog motor
+    assert body["dimensions"]["length_m"] == pytest.approx(
+        design["nose_length_m"] + design["body_length_m"]
+    )
+    drawing = body["drawing"]
+    assert drawing["url"] == f"/artifacts/{drawing['id']}.svg"
+    g = client.get(drawing["url"])
+    assert g.status_code == 200
+    assert g.text.startswith("<svg") and 'width="600"' in g.text
+
+    # requirement is optional; a tier override that disagrees with the design is a 400
+    assert client.post("/artifacts/summary", json={"design": design}).status_code == 200
+    bad = client.post(
+        "/artifacts/summary",
+        json={
+            "design": design,
+            "requirement": {**DEMO_REQUIREMENTS["amateur"], "tier_override": "bottle"},
+        },
+    )
+    assert bad.status_code == 400
+    assert "tier" in bad.json()["detail"]
+    assert (
+        client.post("/artifacts/summary", json={"design": {"tier": "amateur"}}).status_code == 422
+    )
 
 
 def test_get_artifact_404_for_unknown_or_bad_ext():

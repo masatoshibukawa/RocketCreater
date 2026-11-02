@@ -32,6 +32,7 @@ __all__ = [
     "CHECKLIST",
     "CONCEPT_NOTE",
     "TIER_LABEL_JA",
+    "bom_rows",
     "display_quantity",
     "export_bom_csv",
     "export_report_json",
@@ -538,6 +539,9 @@ def _fmt_price(price: float | None) -> str:
     return "" if price is None else f"{price:.0f}"
 
 
+BomRow = dict[str, Any]  # BOM_COLUMNS keys; qty int, mass_kg/price_jpy float or None
+
+
 def _row(
     item_id: str,
     name: str,
@@ -545,13 +549,31 @@ def _row(
     mass_kg: float | None,
     price_jpy: float | None,
     source: str,
-) -> list[str]:
-    return [item_id, name, str(qty), _fmt_mass(mass_kg), _fmt_price(price_jpy), source]
+) -> BomRow:
+    return {
+        "item_id": item_id,
+        "name": name,
+        "qty": int(qty),
+        "mass_kg": None if mass_kg is None else float(mass_kg),
+        "price_jpy": None if price_jpy is None else float(price_jpy),
+        "source_or_provisional": source,
+    }
+
+
+def _csv_cells(row: BomRow) -> list[str]:
+    return [
+        row["item_id"],
+        row["name"],
+        str(row["qty"]),
+        _fmt_mass(row["mass_kg"]),
+        _fmt_price(row["price_jpy"]),
+        row["source_or_provisional"],
+    ]
 
 
 def _catalog_row(
     items: list[dict[str, Any]], tier: str, row_id: str, name: str, qty: int, est_mass: float
-) -> list[str]:
+) -> BomRow:
     """A BOM row from the catalog when a matching part exists, else a provisional row."""
     item = _find_part(items, tier, row_id)
     if item is None:
@@ -568,7 +590,7 @@ def _catalog_row(
     )
 
 
-def _motor_row(design: AmateurDesign) -> list[str]:
+def _motor_row(design: AmateurDesign) -> BomRow:
     """Motor mass from physics.solid.load_motor when available (lazy, optional)."""
     mass: float | None = None
     source = "provisional"
@@ -597,7 +619,7 @@ def _motor_row(design: AmateurDesign) -> list[str]:
     return _row("motor", f"Solid motor {design.motor_id}", 1, mass, None, source)
 
 
-def _bom_bottle(design: BottleDesign) -> list[list[str]]:
+def _bom_bottle(design: BottleDesign) -> list[BomRow]:
     items = _load_catalog_parts()
     split = dict(_BOTTLE_MASS_SPLIT)
     if not design.has_fins:
@@ -635,7 +657,7 @@ def _bom_bottle(design: BottleDesign) -> list[list[str]]:
     return rows
 
 
-def _bom_amateur(design: AmateurDesign) -> list[list[str]]:
+def _bom_amateur(design: AmateurDesign) -> list[BomRow]:
     items = _load_catalog_parts()
     masses = {k: design.dry_mass_kg * v for k, v in _AMATEUR_MASS_SPLIT.items()}
     d_mm = design.body_diameter_m * 1000.0
@@ -712,9 +734,9 @@ def _cost_estimate_jpy(design: Design) -> float | None:
         return None
 
 
-def _bom_multistage(design: MultistageDesign) -> list[list[str]]:
+def _bom_multistage(design: MultistageDesign) -> list[BomRow]:
     note = "concept-level estimate"
-    rows: list[list[str]] = []
+    rows: list[BomRow] = []
     for i, stage in enumerate(design.stages, start=1):
         structure = (
             stage.propellant_mass_kg * stage.structural_fraction / (1.0 - stage.structural_fraction)
@@ -777,18 +799,22 @@ def _bom_multistage(design: MultistageDesign) -> list[list[str]]:
     return rows
 
 
+def bom_rows(design: Design) -> list[BomRow]:
+    """Bill of materials as dicts keyed by BOM_COLUMNS (`qty` int; `mass_kg` / `price_jpy`
+    float or None when unknown / provisional). `export_bom_csv` writes exactly these rows."""
+    if isinstance(design, BottleDesign):
+        return _bom_bottle(design)
+    if isinstance(design, AmateurDesign):
+        return _bom_amateur(design)
+    if isinstance(design, MultistageDesign):
+        return _bom_multistage(design)
+    raise TypeError(f"unsupported design type {type(design).__name__}")
+
+
 def export_bom_csv(design: Design) -> str:
     """Bill of materials as CSV text with the BOM_COLUMNS header."""
-    if isinstance(design, BottleDesign):
-        rows = _bom_bottle(design)
-    elif isinstance(design, AmateurDesign):
-        rows = _bom_amateur(design)
-    elif isinstance(design, MultistageDesign):
-        rows = _bom_multistage(design)
-    else:
-        raise TypeError(f"unsupported design type {type(design).__name__}")
     buf = io.StringIO()
     writer = csv.writer(buf, lineterminator="\n")
     writer.writerow(BOM_COLUMNS)
-    writer.writerows(rows)
+    writer.writerows(_csv_cells(row) for row in bom_rows(design))
     return buf.getvalue()
