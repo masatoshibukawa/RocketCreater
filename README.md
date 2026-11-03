@@ -157,6 +157,38 @@ validation against independent references answer different questions. Record mod
 uncertainty, compare candidates on a compatible basis, and avoid treating a higher-fidelity
 solver as automatically more trustworthy without suitable inputs and validation.
 
+### Context-dependent analysis modes
+
+**Proposed architecture:** choose an analysis mode from both the current variables and the
+state of adjacent levels, rather than mapping each variable permanently to one solver.
+A mode packages the model, numerical method, fidelity, assumptions, and evaluation rules
+appropriate to the current question.
+
+Selection inputs should include upstream mission/configuration choices, downstream geometry
+and material values, the relevant flight/environment regime, design maturity, required
+accuracy, available evidence, and compute budget. An updated value at any linked level can
+make the current mode invalid and require reselection and reevaluation.
+
+Illustrative hypotheses to validate, not implemented switching rules:
+
+- Early architecture exploration may use inexpensive aggregate models; selected candidates
+  may justify more detailed subsystem analysis once the needed inputs exist.
+- A change in configuration, geometry, material, or operating regime may invalidate a
+  model's assumptions even when the variable names are unchanged.
+- A nominal comparison and an uncertainty/robustness assessment may require different
+  evaluation modes; neither replaces the other.
+
+Each mode should declare its supported input domain, required inputs, limitations, expected
+cost, validation evidence, and output contract. Selection should produce a traceable record
+of the input context, chosen mode/version, selection reason, rejected alternatives, and
+uncertainty. Never invent numerical switching thresholds without evidence.
+
+An AI agent may propose a mode, but applicability checks and validation against references
+must verify that choice. If no validated mode applies, report the analysis as unsupported or
+request human review instead of silently extrapolating. Test boundary cases, transitions,
+cross-mode consistency, and recomputation after changed inputs before relying on automatic
+mode selection. This is a future design goal, not a claim about the current tier selector.
+
 ### Candidate-generation and evaluation loop
 
 1. **Define the design space.** Separate requirements, hard constraints, controllable
