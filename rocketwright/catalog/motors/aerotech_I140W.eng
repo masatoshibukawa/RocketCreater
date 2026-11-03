@@ -1,0 +1,22 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/HP-I140W/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 38 mm x 203 mm DMS single-use motor, total impulse 336 N-s, average thrust 140 N, max thrust 181 N, burn time 2.4 s, propellant 183 g, total 356 g, delays 6/8/10/12/14 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 2.400 s so the average thrust matches the summary.
+; note: high-power (I) motor -- NAR/TRA Level 1 (H, I) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: curve integral 336.0 N-s, average thrust 140.0 N
+; diameter_m: 0.038
+; length_m: 0.203
+; delays: 6,8,10,12,14
+; propellant_mass_kg: 0.183
+; total_mass_kg: 0.356
+; price_jpy: 9750 (DMS single-use motor $64.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+I140W 38 203 6-8-10-12-14 0.183 0.356 AeroTech
+0.072 150.11
+0.192 181.00
+0.600 150.11
+2.040 150.11
+2.400 0.00
+;

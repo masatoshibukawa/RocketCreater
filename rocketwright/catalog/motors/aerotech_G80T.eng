@@ -10,7 +10,7 @@
 ; delays: 6,7,8,9,10,11,12,13,14
 ; propellant_mass_kg: 0.063
 ; total_mass_kg: 0.128
-; price_jpy: 4500 (single-use, US retail ~$30; at 150 JPY/USD, provisional)
+; price_jpy: 5850 (DMS single-use G80T-14A $38.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
 G80T 29 124 6-7-8-9-10-11-12-13-14 0.063 0.128 AeroTech
 0.050 43.40
 0.150 108.50

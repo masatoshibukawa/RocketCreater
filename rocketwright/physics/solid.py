@@ -109,6 +109,12 @@ class Motor:
     source: str | None
     license: str | None
     provisional: bool
+    # Retail price of one motor (single-use) or reload kit, and of the reusable hardware a reload
+    # needs (`; price_jpy:` / `; hardware:` / `; hardware_price_jpy:` header comments; None when the
+    # file has none -- the build layer then falls back to its per-impulse rate).
+    price_jpy: float | None = None
+    hardware: str | None = None
+    hardware_price_jpy: float | None = None
     _times: tuple[float, ...] = field(default=(), repr=False, compare=False)
     _thrusts: tuple[float, ...] = field(default=(), repr=False, compare=False)
     _cumulative_ns: tuple[float, ...] = field(default=(), repr=False, compare=False)
@@ -171,6 +177,9 @@ class Motor:
             source=self.source,
             license=self.license,
             provisional=self.provisional,
+            price_jpy=self.price_jpy,
+            hardware=self.hardware,
+            hardware_price_jpy=self.hardware_price_jpy,
         )
 
     def impulse_ns(self, t_s: float) -> float:
@@ -190,6 +199,19 @@ def list_motor_ids(motor_dir: Path = MOTOR_DIR) -> list[str]:
     return sorted(p.stem for p in motor_dir.glob("*.eng"))
 
 
+_META_KEYS = ("source", "license", "provisional", "price_jpy", "hardware", "hardware_price_jpy")
+
+
+def _leading_number(text: str | None) -> float | None:
+    """`"14400 (reload kit ...)"` -> 14400.0; None when absent or not a number."""
+    if not text:
+        return None
+    try:
+        return float(text.split()[0])
+    except ValueError:
+        return None
+
+
 def _parse_eng(motor_id: str, text: str) -> Motor:
     meta: dict[str, str] = {}
     header: list[str] | None = None
@@ -201,7 +223,7 @@ def _parse_eng(motor_id: str, text: str) -> Motor:
         if line.startswith(";"):
             body = line.lstrip(";").strip()
             key, sep, value = body.partition(":")
-            if sep and key.strip().lower() in ("source", "license", "provisional"):
+            if sep and key.strip().lower() in _META_KEYS:
                 meta[key.strip().lower()] = value.strip()
             continue
         if header is None:
@@ -236,6 +258,9 @@ def _parse_eng(motor_id: str, text: str) -> Motor:
         source=source,
         license=license_,
         provisional=provisional,
+        price_jpy=_leading_number(meta.get("price_jpy")),
+        hardware=meta.get("hardware") or None,
+        hardware_price_jpy=_leading_number(meta.get("hardware_price_jpy")),
     )
 
 

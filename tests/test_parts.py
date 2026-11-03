@@ -178,3 +178,44 @@ def test_motor_mount_accepts_extra_fitting_tubes(tmp_path):
     with pytest.raises(ValueError, match="bt99"):
         (tmp_path / "b").mkdir()
         load_parts(_write(tmp_path / "b", {"version": 2, "parts": [bt50, bad]}))
+
+
+def test_couplers_and_power_ratings_parse(catalog):
+    coupler = catalog.coupler_for("estes_bt50")
+    assert coupler is not None and coupler.kind == "coupler" and coupler.length_m > 0
+    assert catalog.coupler_for("estes_bt60") is None
+    tube = catalog.get("estes_bt50", kind="body_tube")
+    assert tube.max_motor_impulse_ns == pytest.approx(10.0)
+    assert catalog.get("balsa_3_32in").max_motor_impulse_ns == pytest.approx(40.0)
+    assert catalog.get("recovery_kit_small").max_rocket_mass_kg == pytest.approx(0.68)
+
+
+def test_coupler_must_reference_a_tube(tmp_path):
+    data = {
+        "version": 2,
+        "parts": [
+            {
+                "id": "c1",
+                "kind": "coupler",
+                "tier": "amateur",
+                "name": "orphan coupler",
+                "mass_kg": 0.001,
+                "price_jpy": 100,
+                "provisional": True,
+                "fits_tube_id": "no_such_tube",
+                "length_m": 0.03,
+            }
+        ],
+    }
+    path = tmp_path / "orphan.yaml"
+    path.write_text(yaml.safe_dump(data), encoding="utf-8")
+    with pytest.raises(ValueError, match="no_such_tube"):
+        load_parts(path)
+
+
+def test_project_catalog_has_a_coupler_for_every_tube():
+    cat = load_parts()
+    for tube in cat.by_kind("body_tube", "amateur"):
+        if tube.id == "estes_bt5_tube":  # no mount puts a motor in it; no coupler listed
+            continue
+        assert cat.coupler_for(tube.id) is not None, tube.id

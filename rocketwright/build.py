@@ -6,10 +6,12 @@ physics consumes (`resolve_*`), with the mass, dimensions and cost computed from
 (`BuildBill`), and checks that the chosen parts can actually be assembled
 (`check_buildability`). The physics models are untouched: they still see a plain design.
 
-Mass roll-up (amateur): body tube mass x (chosen length / stock length) + nose cone + motor
-mount + fins (trapezoid area x areal mass x count) + parachute + recovery hardware + launch lug,
-plus an adhesive/paint allowance (`ALLOWANCES`, provisional). The motor is listed on the bill but
-is not part of the dry mass (the design's `dry_mass_kg` excludes motor and payload, schema.py).
+Mass roll-up (amateur): body tube mass x (chosen length / stock length) + couplers (one per
+extra stock tube) + nose cone + motor mount + fins (trapezoid area x areal mass x count) +
+parachute + recovery hardware + launch lug, plus an adhesive/paint allowance (`ALLOWANCES`,
+provisional). The motor is listed on the bill but is not part of the dry mass (the design's
+`dry_mass_kg` excludes motor and payload, schema.py); its price is the retail price in the `.eng`
+header (`; price_jpy:`), plus the reusable case (`; hardware_price_jpy:`) a reload kit needs.
 Bottle: bottle + nozzle + fin set + parachute; the launcher is bought but stays on the ground.
 
 Buildability rules (`BUILD_THRESHOLDS`, each one a test in tests/test_build.py) are reported as
@@ -40,6 +42,11 @@ __all__ = [
     "BuildIssue",
     "FinGeometry",
     "check_buildability",
+    "min_body_length_m",
+    "motor_class_letter",
+    "motor_price_jpy",
+    "parachute_bay_length_m",
+    "payload_bay_length_m",
     "resolve",
     "resolve_amateur",
     "resolve_bottle",
@@ -58,6 +65,10 @@ ALLOWANCES: dict[str, dict[str, float | bool]] = {
     # 56,000 JPY, three to four times retail.
     "motor_price_jpy_per_ns": {"value": 25.0, "provisional": True},
     "motor_price_min_jpy": {"value": 600.0, "provisional": True},
+    # The two lines above are the FALLBACK for motor files without a `; price_jpy:` header (the
+    # synthetic dummy_* placeholders). Every real motor file carries its retail price (AeroTech
+    # order form rev 03/26/25 for the AeroTech motors, Estes pages for the Estes engines), and a
+    # reload kit also bills its reusable case (`; hardware_price_jpy:`): a first flight buys it.
 }
 
 # Single place for the buildability rules. Flight thresholds are the physics modules' own.
@@ -66,11 +77,31 @@ ALLOWANCES: dict[str, dict[str, float | bool]] = {
 # (tests/test_references.py::test_reference_builds_have_no_buildability_error).
 BUILD_THRESHOLDS: dict[str, float] = {
     "diameter_tolerance_m": 0.0005,  # motor-vs-mount and nozzle-vs-neck matching
-    # The tube must hold the motor bay (the motor sits INSIDE the mount, so the longer of the
-    # two, not their sum: the Estes Baby Bertha's 204 mm BT-60 body holds a 70 mm C6 in a
-    # 70 mm mount and the sum rule rejected it) plus this many body diameters of parachute and
-    # wadding space.
-    "body_length_margin_calibers": 2.0,
+    # Body length (error `body_length_min`): the tube must hold, end to end,
+    # * the motor bay: the longer of motor and mount (the motor sits INSIDE the mount: the Estes
+    #   Baby Bertha's 204 mm BT-60 body holds a 70 mm C6 in a 70 mm mount);
+    # * the parachute bay: the packed canopy volume over the tube bore, plus
+    #   `shock_cord_bay_calibers` body diameters of shock cord and wadding (provisional);
+    # * the payload bay: `payload_length_m`, or the payload mass at
+    #   `payload_packing_density_kgpm3` over the tube bore.
+    # Packed canopy volume = canopy area x `parachute_packed_thickness_m`: Fruity Chutes' tight
+    # packing volumes, 36 in elliptical 21.2 cu in and 48 in 37.2 cu in (1.1 oz ripstop;
+    # https://shop.fruitychutes.com/products/48-elliptical-parachute-8-6lb-20fps), both give
+    # 0.52-0.53 mm per unit canopy area. The Estes BT-20 kits (Hi-Flier, Wizard, Viking in
+    # catalog/references/amateur.yaml) pack a 12 in plastic chute plus 1 cal of shock cord into
+    # the 149-151 mm above their 70 mm motor bay, which bounds the figure at <= 0.52 mm for the
+    # catalog's mix of plastic and nylon chutes: 0.50 mm is used (provisional).
+    "parachute_packed_thickness_m": 5.0e-4,
+    "shock_cord_bay_calibers": 1.0,
+    # SIMPLIFICATION: a mixed payload (electronics, battery, ballast, padding) packed at 600
+    # kg/m3 fills the bore as a cylinder; the nose cone's shoulder is not used. Provisional.
+    "payload_packing_density_kgpm3": 600.0,
+    # NAR / Tripoli: a model rocket motor has <= 160 Ns (G); H and above is high power and needs a
+    # Level 1 (H, I) or Level 2 (J, K, L) certification to buy and fly
+    # (https://en.wikipedia.org/wiki/High-power_rocketry; AeroTech order form rev 03/26/25,
+    # https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+    "high_power_min_impulse_ns": 160.0,
+    "level2_min_impulse_ns": 640.0,
     "fin_span_max_calibers": 2.5,  # wider fins are hard to build and to launch (warning)
     # Below `min_static_margin_cal` (the flight model's 1.5 cal) the build is a WARNING: the
     # Estes Baby Bertha (short, fat BT-60 kit, flown on C6-5 for decades) comes out at ~1.3
@@ -134,6 +165,14 @@ class AmateurBuild(_Frozen):
     recovery_hardware_id: str | None = Field(default=None, description="recovery_hardware part id")
     launch_lug_id: str | None = Field(default=None, description="launch_lug part id")
     payload_mass_kg: float = Field(default=0.0, ge=0)
+    payload_length_m: float | None = Field(
+        default=None,
+        ge=0,
+        description=(
+            "length of the payload bay inside the body tube; None = the payload mass packed at "
+            "BUILD_THRESHOLDS payload_packing_density_kgpm3 over the tube bore"
+        ),
+    )
     deploy_delay_s: float = Field(
         default=0.0,
         ge=0,
@@ -175,6 +214,8 @@ class BillRow(_Frozen):
     provisional: bool
     # airframe: counted in the dry mass; motor: flown but not dry mass; allowance: glue/paint;
     # ground: bought but stays on the pad (bottle launcher).
+    # motor rows also carry the reusable motor case of a reload kit (mass 0: the case is in the
+    # motor's loaded mass).
     category: Literal["airframe", "motor", "allowance", "ground"] = "airframe"
 
 
@@ -214,19 +255,81 @@ def _row(
     )
 
 
-def _motor_row(motor: solid.Motor) -> BillRow:
-    price = max(
+def motor_price_jpy(motor: solid.Motor) -> float:
+    """Retail price of the motor (or reload kit) from its `.eng` header; the provisional
+    per-impulse rate (ALLOWANCES) for files without one."""
+    if motor.price_jpy is not None:
+        return motor.price_jpy
+    return max(
         _allow("motor_price_min_jpy"), _allow("motor_price_jpy_per_ns") * motor.total_impulse_ns
     )
-    return BillRow(
-        part_id=motor.id,
-        name=f"motor {motor.name} ({motor.manufacturer})",
-        qty=1,
-        mass_kg=motor.total_mass_kg,
-        price_jpy=price,
-        provisional=True,
-        category="motor",
+
+
+def _motor_rows(motor: solid.Motor) -> list[BillRow]:
+    rows = [
+        BillRow(
+            part_id=motor.id,
+            name=f"motor {motor.name} ({motor.manufacturer})",
+            qty=1,
+            mass_kg=motor.total_mass_kg,
+            price_jpy=motor_price_jpy(motor),
+            provisional=True,
+            category="motor",
+        )
+    ]
+    if motor.hardware_price_jpy is not None:
+        rows.append(
+            BillRow(
+                part_id=f"{motor.id}_hardware",
+                name=f"reusable motor case {motor.hardware or ''} for {motor.name} (bought once)",
+                qty=1,
+                mass_kg=0.0,  # in the motor's loaded mass
+                price_jpy=motor.hardware_price_jpy,
+                provisional=True,
+                category="motor",
+            )
+        )
+    return rows
+
+
+def payload_bay_length_m(payload_mass_kg: float, payload_length_m: float | None, tube) -> float:
+    """The payload bay: the given length, or the mass packed at the provisional density over the
+    tube bore."""
+    if payload_length_m is not None:
+        return payload_length_m
+    if payload_mass_kg <= 0.0:
+        return 0.0
+    bore = math.pi / 4.0 * tube.inner_diameter_m**2
+    return payload_mass_kg / BUILD_THRESHOLDS["payload_packing_density_kgpm3"] / bore
+
+
+def parachute_bay_length_m(chute, tube) -> float:
+    """Packed canopy (area x packed thickness) over the tube bore plus the shock-cord calibers."""
+    th = BUILD_THRESHOLDS
+    canopy = math.pi / 4.0 * chute.diameter_m**2
+    bore = math.pi / 4.0 * tube.inner_diameter_m**2
+    return (
+        canopy * th["parachute_packed_thickness_m"] / bore
+        + th["shock_cord_bay_calibers"] * tube.outer_diameter_m
     )
+
+
+def min_body_length_m(
+    motor: solid.Motor,
+    mount,
+    tube,
+    chute,
+    payload_mass_kg: float = 0.0,
+    payload_length_m: float | None = None,
+) -> tuple[float, dict[str, float]]:
+    """(minimum body length, its bays): motor bay + parachute bay + payload bay
+    (BUILD_THRESHOLDS; check_buildability's `body_length_min` and the design chain's default)."""
+    bays = {
+        "motor_bay_m": max(motor.length_m, mount.length_m),
+        "parachute_bay_m": parachute_bay_length_m(chute, tube),
+        "payload_bay_m": payload_bay_length_m(payload_mass_kg, payload_length_m, tube),
+    }
+    return sum(bays.values()), bays
 
 
 # --------------------------------------------------------------------------- resolve
@@ -242,11 +345,16 @@ def resolve_amateur(build: AmateurBuild, catalog: PartsCatalog) -> tuple[Amateur
     chute = catalog.get(build.parachute_id, kind="parachute")
     motor = _load_motor(build.motor_id)
     # A body longer than the stock tube is several tubes joined with couplers (Estes Mean
-    # Machine: three BT-60s); the flown mass is the cut length's, the bill buys whole tubes.
-    # SIMPLIFICATION: coupler mass is not counted (no coupler part kind yet).
+    # Machine: three BT-60s); the flown mass is the cut length's, the bill buys whole tubes and
+    # one coupler per joint (mass and price; check_buildability errors when none fits).
     tube_qty = tube_count(build.body_length_m, tube.length_m)
     rows: list[BillRow] = [
         _row(tube, tube_qty, mass_kg=tube.mass_kg * build.body_length_m / tube.length_m),
+    ]
+    coupler = catalog.coupler_for(tube.id) if tube_qty > 1 else None
+    if coupler is not None:
+        rows.append(_row(coupler, tube_qty - 1))
+    rows += [
         _row(nose),
         _row(mount),
         BillRow(
@@ -276,15 +384,25 @@ def resolve_amateur(build: AmateurBuild, catalog: PartsCatalog) -> tuple[Amateur
         )
     )
     dry_mass = sum(r.mass_kg for r in rows)
-    rows.append(_motor_row(motor))
+    rows += _motor_rows(motor)
+    if tube_qty == 1:
+        joints = ""
+    elif coupler is None:
+        joints = f", {tube_qty - 1} joint(s) but no coupler for this tube in the catalog"
+    else:
+        joints = f", joined with {tube_qty - 1} x {coupler.id}"
+    price_basis = (
+        "retail price from the motor file"
+        + (" plus its reusable case" if motor.hardware_price_jpy is not None else "")
+        if motor.price_jpy is not None
+        else "a provisional per-impulse rate (no price in the motor file)"
+    )
     notes = [
         f"tube mass pro-rated to {build.body_length_m:.3f} m of the {tube.length_m:.3f} m stock "
-        f"({tube_qty} full tube(s) bought"
-        + ("" if tube_qty == 1 else ", joined with couplers whose mass is not counted")
-        + f"); fins {build.fins.count} x {build.fins.area_m2 * 1e4:.1f} cm2 of "
-        f"{material.name} ({material.areal_mass_kgpm2:g} kg/m2); glue/paint allowance "
-        f"{_allow('adhesive_paint_mass_frac'):.0%} of the part mass (provisional); motor price "
-        "from a provisional per-impulse rate",
+        f"({tube_qty} full tube(s) bought{joints}); fins {build.fins.count} x "
+        f"{build.fins.area_m2 * 1e4:.1f} cm2 of {material.name} ({material.areal_mass_kgpm2:g} "
+        f"kg/m2); glue/paint allowance {_allow('adhesive_paint_mass_frac'):.0%} of the part mass "
+        f"(provisional); motor price: {price_basis}",
     ]
     bill = BuildBill(
         parts=rows,
@@ -369,6 +487,12 @@ def resolve(build: AmateurBuild | BottleBuild, catalog: PartsCatalog):
 # --------------------------------------------------------------------------- buildability
 
 
+def motor_class_letter(impulse_ns: float) -> str:
+    """NAR/TRA total-impulse class: A = 1.26-2.5 Ns, each letter doubles (2.5 Ns x 2^k)."""
+    k = max(0, math.ceil(math.log2(max(impulse_ns, 1e-9) / 2.5) - 1e-9))
+    return chr(ord("A") + k) if k < 26 else "?"
+
+
 def _issue(code: str, severity: str, message: str) -> BuildIssue:
     return BuildIssue(code=code, message=message, severity=severity)  # type: ignore[arg-type]
 
@@ -419,24 +543,70 @@ def _check_amateur(build: AmateurBuild, catalog: PartsCatalog) -> list[BuildIssu
             "nose_fits_tube",
             f"nose cone {nose.id} fits tube {nose.fits_tube_id!r}, not {tube.id!r}",
         )
+    # Power rating (error): an airframe or fin stock rated for a smaller motor class than the
+    # motor's total impulse (parts.yaml `max_motor_impulse_ns`, evidence in `rating_note`).
+    impulse = motor.total_impulse_ns
+    letter = motor_class_letter(impulse)
+    for code, part, what in (
+        ("tube_power_rating", tube, "airframe"),
+        ("fin_power_rating", material, "fin stock"),
+    ):
+        rating = part.max_motor_impulse_ns
+        if rating is None:
+            warn(
+                code,
+                f"{what} {part.id} has no power rating in the catalog: check it is built for a "
+                f"{impulse:.0f} Ns ({letter}) motor",
+            )
+        elif impulse > rating * (1.0 + 1e-9):
+            err(
+                code,
+                f"{what} {part.id} is rated for motors up to {rating:.0f} Ns "
+                f"({motor_class_letter(rating)} class); motor {motor.id} is {impulse:.0f} Ns "
+                f"({letter}): pick a stronger {what} or a smaller motor",
+            )
+    if impulse > th["high_power_min_impulse_ns"]:
+        level = "Level 2 (J-L)" if impulse > th["level2_min_impulse_ns"] else "Level 1 (H, I)"
+        warn(
+            "high_power_motor",
+            f"motor {motor.id} ({impulse:.0f} Ns, {letter}) is a high-power motor: buying and "
+            f"flying it needs a NAR/Tripoli {level} certification and a high-power launch",
+        )
     qty = tube_count(build.body_length_m, tube.length_m)
     if qty > 1:
         # Was an error; the Estes Mean Machine (2.0 m of BT-60, three tubes and couplers) is
         # a real kit, so a long body is a warning about couplers, not an impossibility.
-        warn(
-            "body_length_stock",
-            f"body length {build.body_length_m:.3f} m exceeds the {tube.length_m:.3f} m stock "
-            f"tube {tube.id}: {qty} tubes joined with {qty - 1} coupler(s) (coupler mass not "
-            "counted in the bill)",
-        )
-    bay = max(motor.length_m, mount.length_m)
-    min_len = bay + th["body_length_margin_calibers"] * od
-    if build.body_length_m < min_len:
+        coupler = catalog.coupler_for(tube.id)
+        if coupler is None:
+            err(
+                "no_coupler",
+                f"body length {build.body_length_m:.3f} m needs {qty} stock tubes of {tube.id} "
+                "but the catalog has no coupler for that tube",
+            )
+        else:
+            warn(
+                "body_length_stock",
+                f"body length {build.body_length_m:.3f} m exceeds the {tube.length_m:.3f} m "
+                f"stock tube {tube.id}: {qty} tubes joined with {qty - 1} x {coupler.id} "
+                "(on the bill)",
+            )
+    min_len, bays = min_body_length_m(
+        motor, mount, tube, chute, build.payload_mass_kg, build.payload_length_m
+    )
+    if build.body_length_m < min_len - 1e-9:
         err(
             "body_length_min",
-            f"body length {build.body_length_m:.3f} m is too short to hold the motor bay "
-            f"(motor {motor.length_m:.3f} m in a {mount.length_m:.3f} m mount) and the parachute "
-            f"({th['body_length_margin_calibers']:g} x {od * 1e3:.1f} mm): need >= {min_len:.3f} m",
+            f"body length {build.body_length_m:.3f} m is too short: motor bay "
+            f"{bays['motor_bay_m']:.3f} m (motor {motor.length_m:.3f} m in a "
+            f"{mount.length_m:.3f} m mount) + parachute bay {bays['parachute_bay_m']:.3f} m "
+            f"({chute.id} packed + {th['shock_cord_bay_calibers']:g} cal of shock cord) + payload "
+            f"bay {bays['payload_bay_m']:.3f} m ({build.payload_mass_kg:g} kg"
+            + (
+                ""
+                if build.payload_length_m is not None
+                else f" at {th['payload_packing_density_kgpm3']:g} kg/m3"
+            )
+            + f"): need >= {min_len:.3f} m",
         )
     if fins.span_m > th["fin_span_max_calibers"] * od:
         warn(
@@ -513,6 +683,17 @@ def _check_amateur(build: AmateurBuild, catalog: PartsCatalog) -> list[BuildIssu
             "over-stable, it will weathercock into the wind",
         )
     liftoff = design.dry_mass_kg + design.payload_mass_kg + motor.total_mass_kg
+    if build.recovery_hardware_id is not None:
+        # The shock cord / mount is sold for rockets up to a mass (parts.yaml
+        # max_rocket_mass_kg, LOC's ratings): a heavier rocket can snap it at deployment.
+        hw = catalog.get(build.recovery_hardware_id, kind="recovery_hardware")
+        if hw.max_rocket_mass_kg is not None and liftoff > hw.max_rocket_mass_kg:
+            err(
+                "recovery_hardware_rating",
+                f"recovery hardware {hw.id} is sold for rockets up to "
+                f"{hw.max_rocket_mass_kg:.2f} kg; this one weighs {liftoff:.2f} kg at liftoff: "
+                "a stronger shock cord and mount",
+            )
     twr = motor.average_thrust_n / (liftoff * _G0)
     if twr < th["liftoff_twr_error"]:
         err(

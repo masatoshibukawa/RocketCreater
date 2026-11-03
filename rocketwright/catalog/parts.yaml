@@ -34,6 +34,8 @@ parts: &parts
     outer_diameter_m: 0.013741
     inner_diameter_m: 0.013081
     length_m: 0.4572
+    max_motor_impulse_ns: 2.5   # A class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes 13 mm mini-engine kits (BT-5 airframes) fly A10/A3 mini engines (A class, <= 2.5 Ns); no catalog mount puts a larger motor in this tube."
   - id: estes_bt20_tube
     kind: body_tube
     tier: amateur
@@ -46,6 +48,8 @@ parts: &parts
     outer_diameter_m: 0.018694
     inner_diameter_m: 0.018034
     length_m: 0.4572
+    max_motor_impulse_ns: 10.0   # C class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes BT-20 kits fly 18 mm A8-C6 engines (Hi-Flier, Wizard, Viking in catalog/references/amateur.yaml: largest recommended C6, 10 Ns)."
   - id: estes_bt50_tube
     kind: body_tube
     tier: amateur
@@ -58,6 +62,8 @@ parts: &parts
     outer_diameter_m: 0.024790
     inner_diameter_m: 0.024130
     length_m: 0.4572
+    max_motor_impulse_ns: 10.0   # C class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes BT-50 kits fly 18 mm A8-C6 engines (Alpha III, Crossfire ISX in catalog/references/amateur.yaml: largest recommended C6, 10 Ns)."
   - id: estes_bt55_tube
     kind: body_tube
     tier: amateur
@@ -70,6 +76,8 @@ parts: &parts
     outer_diameter_m: 0.033655
     inner_diameter_m: 0.032588
     length_m: 0.4572
+    max_motor_impulse_ns: 40.0   # E class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes D and E Engine Mount Kit (https://estesrockets.com/products/d-and-e-engine-mount-kit) is 'designed specifically for 24 mm D and E engines' and lists BT-55: up to E (40 Ns)."
   - id: estes_bt60_tube
     kind: body_tube
     tier: amateur
@@ -82,6 +90,8 @@ parts: &parts
     outer_diameter_m: 0.041580
     inner_diameter_m: 0.040513
     length_m: 0.4572
+    max_motor_impulse_ns: 80.0   # F class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes BT-60 29 mm Engine Mount Kit (https://estesrockets.com/products/bt-60-29mm-engine-mount-kit) with the Pro Series II 29 mm retainer 'for E16 or F15' (https://estesrockets.com/product/009750-pro-series-ii-29-mm-motor-retainer-set/); the Mean Machine (E12) is the largest BT-60 reference kit: up to F (80 Ns)."
   - id: estes_bt80_tube
     kind: body_tube
     tier: amateur
@@ -94,6 +104,8 @@ parts: &parts
     outer_diameter_m: 0.066040
     inner_diameter_m: 0.065024
     length_m: 0.3607
+    max_motor_impulse_ns: 80.0   # F class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes BT-80 page (https://edu.estesrockets.com/products/bt-80-body-tube): BT-80 rockets 'can also accommodate select 24 mm and 29 mm motor configurations ... C11, D12, E12, E16, and F15'; the BT-80 Super Big Bertha (Pro Series II) recommends E16-4, F15-6 (https://estesrockets.com/es/products/super-big-bertha): up to F (80 Ns)."
   - id: loc_tube_54mm
     kind: body_tube
     tier: amateur
@@ -106,6 +118,8 @@ parts: &parts
     outer_diameter_m: 0.057404
     inner_diameter_m: 0.054356
     length_m: 0.8636
+    max_motor_impulse_ns: 1280.0   # J class upper bound (NAR/TRA); see rating_note
+    rating_note: "LOC Nuke Pro Max (https://locprecision.com/collections/rockets-skill-level/products/nuke-pro-max): 2.26 in airframe (this tube), 38 mm mount, 'designed to handle the Cesaroni Pro 38 line of motors - all of them' (largest Pro38 is a J): up to J (1280 Ns)."
   - id: loc_tube_75mm
     kind: body_tube
     tier: amateur
@@ -118,6 +132,22 @@ parts: &parts
     outer_diameter_m: 0.078740
     inner_diameter_m: 0.076200
     length_m: 0.8636
+    max_motor_impulse_ns: 1280.0   # J class upper bound (NAR/TRA); see rating_note
+    rating_note: "LOC LaserLOC 313 (https://locprecision.com/products/laserloc-313/): 3.1 in LOC airframe with a 54 mm mount and LOC Pro motor retainer, rated Expert; no motor list is published, so J (1280 Ns) is assumed (provisional)."
+  - id: loc_tube_98mm
+    kind: body_tube
+    tier: amateur
+    name: "LOC Precision 3.90 in (98 mm) kraft airframe tube, 34 in"
+    mass_kg: 0.293
+    price_jpy: 2670
+    source: "https://locprecision.com/product/cardboard-airframes"
+    provisional: true
+    notes: "LOC page: 3.90 in (98 mm) Airframe Tubing, 3.9 in ID x 4.0 in OD, 34 in, $17.77. Mass computed from OpenRocket LocPrecision-legacy.orc LOC BT-3.9 (ID 0.09906 OD 0.1016 m, Spiral/Glassine 849 kg/m3) -> 293 g. The LOC IV (4 in, 38 mm mount) and HyperLOC 835 (4 in, 54 mm) kits use this airframe."
+    outer_diameter_m: 0.101600
+    inner_diameter_m: 0.099060
+    length_m: 0.8636
+    max_motor_impulse_ns: 1280.0   # J class upper bound; see rating_note
+    rating_note: "LOC HyperLOC 835 (https://locprecision.com/collections/rockets-skill-level/products/hyperloc-835): 4 in airframe, 54 mm mount, 'originally designed for the HyperTek 835cc J motor': up to J (1280 Ns)."
   # --- nose cones ----------------------------------------------------------------------
   # Shapes, exposed lengths, shoulder lengths and masses: OpenRocket Estes-legacy.orc (public
   # component database, https://github.com/openrocket/openrocket, file
@@ -201,10 +231,10 @@ parts: &parts
     tier: amateur
     name: "LOC Precision PNC-2.14 plastic ogive nose cone for 54 mm tube"
     mass_kg: 0.1134
-    price_jpy: 1800
+    price_jpy: 2620
     source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/LocPrecision-legacy.orc"
     provisional: true
-    notes: "OpenRocket LOC PNC-2.14: OGIVE, length 0.2413 m, shoulder 0.0635 m, mass 113.4 g, polystyrene. Price not retrieved (LOC site); $12 assumed."
+    notes: "OpenRocket LOC PNC-2.14: OGIVE, length 0.2413 m, shoulder 0.0635 m, mass 113.4 g, polystyrene. Price: LOC nose cone page PNC-2.14 $17.46 (https://locprecision.com/collections/rocket-components/products/nose-cones, 2026-11-03; was $12 assumed)."
     fits_tube_id: loc_tube_54mm
     shape: ogive
     length_m: 0.2413
@@ -214,13 +244,26 @@ parts: &parts
     tier: amateur
     name: "LOC Precision PNC-3.00 plastic ogive nose cone for 75 mm tube"
     mass_kg: 0.1417
-    price_jpy: 2300
+    price_jpy: 3670
     source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/LocPrecision-legacy.orc"
     provisional: true
-    notes: "OpenRocket LOC PNC-3.00: OGIVE, length 0.28448 m, shoulder 0.09525 m, mass 141.7 g. Price not retrieved; $15 assumed."
+    notes: "OpenRocket LOC PNC-3.00: OGIVE, length 0.28448 m, shoulder 0.09525 m, mass 141.7 g. Price: LOC nose cone page PNC-3.00 $24.47 (https://locprecision.com/collections/rocket-components/products/nose-cones, 2026-11-03; was $15 assumed)."
     fits_tube_id: loc_tube_75mm
     shape: ogive
     length_m: 0.2845
+    shoulder_length_m: 0.0953
+  - id: loc_pnc_98mm_nose
+    kind: nose_cone
+    tier: amateur
+    name: "LOC Precision PNC-3.90 plastic ogive nose cone for 98 mm tube"
+    mass_kg: 0.1417
+    price_jpy: 4080
+    source: "https://locprecision.com/collections/rocket-components/products/nose-cones"
+    provisional: true
+    notes: "LOC page: PNC-3.90 $27.18, 16.5 in total, 5 oz. OpenRocket LOC PNC-3.90: OGIVE, length 0.32512 m, shoulder 0.09525 m, mass 141.7 g (= 5 oz)."
+    fits_tube_id: loc_tube_98mm
+    shape: ogive
+    length_m: 0.3251
     shoulder_length_m: 0.0953
   # --- fin material --------------------------------------------------------------------
   # areal_mass_kgpm2 = density x thickness. Densities: balsa ~160 kg/m3 (Wikipedia, Ochroma),
@@ -238,6 +281,8 @@ parts: &parts
     areal_mass_kgpm2: 0.254
     sheet_width_m: 0.0762
     sheet_height_m: 0.9144
+    max_motor_impulse_ns: 10.0   # C class upper bound; see rating_note
+    rating_note: "1/16 in balsa is the fin stock of the Estes BT-20 kits flying up to C6 (Hi-Flier, Wizard; amateur.yaml) -- provisional, no strength model."
   - id: fin_balsa_2p4mm
     kind: fin_material
     tier: amateur
@@ -251,6 +296,8 @@ parts: &parts
     areal_mass_kgpm2: 0.381
     sheet_width_m: 0.0762
     sheet_height_m: 0.9144
+    max_motor_impulse_ns: 40.0   # E class upper bound; see rating_note
+    rating_note: "3/32 in laser-cut balsa flies the Estes Mean Machine on E12 (amateur.yaml) -- provisional: up to E (40 Ns)."
   - id: fin_balsa_3p2mm
     kind: fin_material
     tier: amateur
@@ -264,6 +311,8 @@ parts: &parts
     areal_mass_kgpm2: 0.508
     sheet_width_m: 0.0762
     sheet_height_m: 0.9144
+    max_motor_impulse_ns: 80.0   # F class upper bound; see rating_note
+    rating_note: "1/8 in balsa: Estes BT-80 kits fly up to F15 (https://edu.estesrockets.com/products/bt-80-body-tube) -- provisional: up to F (80 Ns)."
   - id: fin_plywood_3mm
     kind: fin_material
     tier: amateur
@@ -277,6 +326,8 @@ parts: &parts
     areal_mass_kgpm2: 1.86
     sheet_width_m: 0.3
     sheet_height_m: 0.3
+    max_motor_impulse_ns: 1280.0   # J class upper bound; see rating_note
+    rating_note: "LOC Nuke Pro Max uses 'high-grade precision-cut plywood fins', 1/8 in thick, for all Pro38 motors (largest 38 mm J) (https://locprecision.com/collections/rockets-skill-level/products/nuke-pro-max): up to J (1280 Ns)."
   - id: fin_g10_1p6mm
     kind: fin_material
     tier: amateur
@@ -290,6 +341,8 @@ parts: &parts
     areal_mass_kgpm2: 2.94
     sheet_width_m: 0.3048
     sheet_height_m: 0.3048
+    max_motor_impulse_ns: 640.0   # I class upper bound; see rating_note
+    rating_note: "PML Bull Puppy (https://locprecision.com/products/bull-puppy-missile): G-10 fins 0.06 in thick, 'can be flown on G through I motors' (the spec line says J; the lower figure is used): up to I (640 Ns)."
   # --- parachutes ----------------------------------------------------------------------
   # Masses: OpenRocket Estes-legacy.orc (12 in 2.04 g, 18 in 5.90 g, 24 in 7.77 g plastic). cd 1.5 is the
   # repository's DEFAULT_PARACHUTE_CD (physics/recovery.py), not a manufacturer value. packed_diameter_m
@@ -375,6 +428,30 @@ parts: &parts
     price_jpy: 500
     provisional: true
     notes: "No single retailer SKU; mass is an estimate for ~60 cm of 1/8 in elastic plus paper mount and a few wadding sheets; price assumed."
+    max_rocket_mass_kg: 0.68   # see rating_note
+    rating_note: "LOC shock cord page (https://locprecision.com/collections/rocket-components/products/shock-cords): 'Elastic is great for light weight (for 1-24oz weight rockets) applications' -> 24 oz = 0.68 kg liftoff mass."
+  - id: recovery_hardware_nylon_3_16in
+    kind: recovery_hardware
+    tier: amateur
+    name: "Recovery harness: LOC 3/16 in tubular nylon shock cord 12 ft + Kevlar mount (SCM-1) + swivel"
+    mass_kg: 0.040
+    price_jpy: 2050
+    source: "https://locprecision.com/collections/rocket-components/products/shock-cords"
+    provisional: true
+    notes: "LOC prices: 3/16 in tubular nylon 12 ft $9.15; SCM-1 Kevlar shock cord mount $0.89 (https://locprecision.com/collections/rocket-components/products/eye-bolt-set); nickel plated swivel from $3.65 -> $13.69. Mass estimated (~30 g cord + 10 g mount/swivel)."
+    max_rocket_mass_kg: 0.91   # see rating_note
+    rating_note: "LOC: 'Our 3/16 in (2-32oz rockets) tubular nylon'; SCM-1 'for rockets up to 2.2 lbs' -> 32 oz = 0.91 kg."
+  - id: recovery_hardware_nylon_3_8in
+    kind: recovery_hardware
+    tier: amateur
+    name: "Recovery harness: LOC 3/8 in tubular nylon shock cord 15 ft + 1/4-20 eyebolt (SCM-3) + swivel"
+    mass_kg: 0.110
+    price_jpy: 3160
+    source: "https://locprecision.com/collections/rocket-components/products/shock-cords"
+    provisional: true
+    notes: "LOC prices: 3/8 in tubular nylon 15 ft $14.45; SCM-3 1/4 x 20 eyebolt with washers and nuts $2.95 (https://locprecision.com/collections/rocket-components/products/eye-bolt-set); swivel from $3.65 -> $21.05. Mass estimated (~70 g cord, ~30 g eyebolt, ~10 g swivel)."
+    max_rocket_mass_kg: 3.18   # see rating_note
+    rating_note: "LOC: 'Our 3/8 in tubular nylon (1-7 pound rockets) comes in with a 1020# tensile strength'; SCM-3 'for rockets up to 9 lbs' -> 7 lb = 3.18 kg."
   # --- motor mounts --------------------------------------------------------------------
   # mass_kg = mount tube + centering rings + hook/retainer. Tube masses computed with OpenRocket's
   # Estes/LOC tube materials; ring and hook masses are estimates -> every mount is provisional.
@@ -482,6 +559,127 @@ parts: &parts
     fits_tube_id: loc_tube_75mm
     fits_tube_ids: [loc_tube_75mm, estes_bt80_tube]
     length_m: 0.3556
+  - id: motor_mount_38mm_98
+    kind: motor_mount
+    tier: amateur
+    name: "LOC 38 mm motor mount tube 14 in + two 1/4 in plywood centering rings for the 98 mm airframe"
+    mass_kg: 0.120
+    price_jpy: 2240
+    source: "https://locprecision.com/collections/rocket-components/products/390rings"
+    provisional: true
+    notes: "LOC 38 mm motor tube 14 in $4.78 (https://locprecision.com/products/motor-mount-tubing), 70 g computed (1121 kg/m3); 'Centering Rings for 3.90 in Airframe' from $5.06 each (x2). Ring mass computed: 1/4 in plywood (620 kg/m3), 99.1 mm OD x 41.5 mm ID -> 25 g each."
+    motor_diameter_m: 0.038
+    fits_tube_id: loc_tube_98mm
+    fits_tube_ids: [loc_tube_98mm]
+    length_m: 0.3556
+  - id: motor_mount_54mm_98
+    kind: motor_mount
+    tier: amateur
+    name: "LOC 54 mm motor mount tube 14 in + two 1/4 in plywood centering rings for the 98 mm airframe"
+    mass_kg: 0.147
+    price_jpy: 2450
+    source: "https://locprecision.com/collections/rocket-components/products/390rings"
+    provisional: true
+    notes: "LOC 54 mm motor tube 14 in $6.18 (https://locprecision.com/products/motor-mount-tubing), 107 g computed; 'Centering Rings for 3.90 in Airframe' from $5.06 each (x2). Ring mass computed: 1/4 in plywood, 99.1 mm OD x 57.4 mm ID -> 20 g each."
+    motor_diameter_m: 0.054
+    fits_tube_id: loc_tube_98mm
+    fits_tube_ids: [loc_tube_98mm]
+    length_m: 0.3556
+  # --- couplers -----------------------------------------------------------------------
+  # A body longer than one stock tube is several tubes joined by couplers (qty = tubes - 1, on
+  # the bill and in the dry mass). Dimensions: OpenRocket Estes-legacy.orc / LocPrecision-legacy.orc;
+  # masses computed rho * pi/4 * (OD^2 - ID^2) * L (Estes paper 609 kg/m3, LOC kraft phenolic 943 kg/m3,
+  # OpenRocket materials) -> provisional. Estes prices: Large Tube Coupler Pack (SKU 003196, $7.99 for
+  # 2 x BT-55, 2 x BT-56, 2 x BT-60 and 1 x BT-80 couplers, https://estesrockets.com/products/large-tube-coupler-pack)
+  # -> ~$1.15 each; the small-tube pack is assumed the same per coupler.
+  - id: estes_jt20c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-20C tube coupler for BT-20 (0.75 in)"
+    mass_kg: 0.0005
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-20C: OD 17.9 ID 16.4 mm, 19 mm long, paper; mass computed 0.48 g. Price per coupler from the Estes coupler packs (assumed)."
+    fits_tube_id: estes_bt20_tube
+    length_m: 0.0191
+  - id: estes_jt50c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-50C tube coupler for BT-50 (1 in)"
+    mass_kg: 0.0009
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-50C: OD 24.0 ID 22.5 mm, 25 mm long, paper; mass computed 0.86 g. Price assumed (small coupler pack)."
+    fits_tube_id: estes_bt50_tube
+    length_m: 0.0254
+  - id: estes_jt55c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-55C tube coupler for BT-55 (1.25 in)"
+    mass_kg: 0.0015
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-55C: OD 32.4 ID 30.9 mm, 32 mm long, paper; mass computed 1.5 g. Price: Large Tube Coupler Pack $7.99 / 7."
+    fits_tube_id: estes_bt55_tube
+    length_m: 0.0318
+  - id: estes_jt60c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-60C tube coupler for BT-60 (1.5 in)"
+    mass_kg: 0.0022
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-60C: OD 40.4 ID 38.9 mm, 38 mm long, paper; mass computed 2.2 g. Price: Large Tube Coupler Pack $7.99 / 7."
+    fits_tube_id: estes_bt60_tube
+    length_m: 0.0381
+  - id: estes_jt80c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-80C tube coupler for BT-80 (3 in)"
+    mass_kg: 0.0094
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-80C: OD 64.8 ID 62.7 mm, 76 mm long, paper; mass computed 9.4 g. Price: Large Tube Coupler Pack $7.99 / 7."
+    fits_tube_id: estes_bt80_tube
+    length_m: 0.0762
+  - id: loc_tc214_coupler
+    kind: coupler
+    tier: amateur
+    name: "LOC TC-2.14 tube coupler for the 2.14 in (54 mm) airframe, 5.5 in"
+    mass_kg: 0.0306
+    price_jpy: 430
+    source: "https://locprecision.com/collections/rocket-components/products/tube-coupler"
+    provisional: true
+    notes: "LOC page: TC-2.14 $2.84, 5.5 in. OpenRocket TC-2.14: OD 54.4 ID 51.6 mm, kraft phenolic; mass computed 30.6 g for 5.5 in."
+    fits_tube_id: loc_tube_54mm
+    length_m: 0.1397
+  - id: loc_tc300_coupler
+    kind: coupler
+    tier: amateur
+    name: "LOC TC-3.00 tube coupler for the 3.00 in (75 mm) airframe, 6 in"
+    mass_kg: 0.0302
+    price_jpy: 710
+    source: "https://locprecision.com/collections/rocket-components/products/tube-coupler"
+    provisional: true
+    notes: "LOC page: TC-3.00 $4.71, 6 in. OpenRocket TC-3.00: OD 76.2 ID 74.4 mm, kraft phenolic; mass computed 30.2 g."
+    fits_tube_id: loc_tube_75mm
+    length_m: 0.1524
+  - id: loc_tc390_coupler
+    kind: coupler
+    tier: amateur
+    name: "LOC TC-3.90L tube coupler for the 3.90 in (98 mm) airframe, 8 in"
+    mass_kg: 0.0526
+    price_jpy: 1200
+    source: "https://locprecision.com/collections/rocket-components/products/tube-coupler"
+    provisional: true
+    notes: "LOC page: TC-3.90L $8.02, 8 in. OpenRocket TC-3.90: OD 99.1 ID 97.3 mm, kraft phenolic; mass computed 52.6 g for 8 in."
+    fits_tube_id: loc_tube_98mm
+    length_m: 0.2032
   # --- launch lugs ---------------------------------------------------------------------
   - id: launch_lug_3mm_rod
     kind: launch_lug

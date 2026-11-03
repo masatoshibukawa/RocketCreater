@@ -28,6 +28,7 @@ from rocketwright.build import (
     Build,
     BuildAdapter,
     BuildBill,
+    min_body_length_m,
     resolve,
     resolve_amateur,
     resolve_bottle,
@@ -677,18 +678,36 @@ def _seed_amateur_build(
 
     mounts = catalog.by_kind("motor_mount", "amateur")
     tubes = {t.id: t for t in catalog.by_kind("body_tube", "amateur")}
-    candidates = [
-        m
-        for m in (solid.load_motor(mid) for mid in solid.list_motor_ids())
-        if any(abs(mt.motor_diameter_m - m.diameter_m) <= 5e-4 for mt in mounts)
+
+    def rated(part: Any, motor: solid.Motor) -> bool:
+        cap = part.max_motor_impulse_ns
+        return cap is None or motor.total_impulse_ns <= cap * (1.0 + 1e-9)
+
+    def has_airframe(m: solid.Motor) -> bool:
+        return any(
+            abs(mt.motor_diameter_m - m.diameter_m) <= 5e-4 and rated(tubes[mt.fits_tube_id], m)
+            for mt in mounts
+        )
+
+    # Certified motors with a mount in a tube rated for them; the synthetic dummy_* curves
+    # only when no certified motor has one (design_chain.SYNTHETIC_MOTOR_PREFIX).
+    bundled = [solid.load_motor(mid) for mid in solid.list_motor_ids()]
+    candidates = [m for m in bundled if not m.id.startswith("dummy_") and has_airframe(m)] or [
+        m for m in bundled if has_airframe(m)
     ]
     if not candidates:
         raise ValueError("the parts catalog has no motor mount for any bundled motor")
 
     def parts_for(motor: solid.Motor) -> tuple[Any, Any, Any]:
         """(mount, tube, nose) for `motor`: the reference's tube when a mount for the motor
-        fits it, else the narrowest tube that has one."""
-        fitting = [mt for mt in mounts if abs(mt.motor_diameter_m - motor.diameter_m) <= 5e-4]
+        fits it and the tube is rated for the motor, else the narrowest rated tube that has
+        one."""
+        fitting = [
+            mt
+            for mt in mounts
+            if abs(mt.motor_diameter_m - motor.diameter_m) <= 5e-4
+            and rated(tubes[mt.fits_tube_id], motor)
+        ] or [mt for mt in mounts if abs(mt.motor_diameter_m - motor.diameter_m) <= 5e-4]
         same = [mt for mt in fitting if mt.fits_tube_id == ref_tube.id]
         mount = (
             same[0]
@@ -702,11 +721,24 @@ def _seed_amateur_build(
         same_shape = [n for n in noses if n.shape == ref_nose.shape]
         return mount, tube, (same_shape or noses)[0]
 
+    def fin_stock_for(motor: solid.Motor) -> str:
+        """The reference's fin stock when it is rated for the motor, else the lightest rated
+        one (parts.yaml max_motor_impulse_ns)."""
+        ref_mat = catalog.get(ref_build.fin_material_id, kind="fin_material")
+        if rated(ref_mat, motor):
+            return ref_mat.id
+        mats = [m for m in catalog.by_kind("fin_material", "amateur") if rated(m, motor)]
+        return min(mats, key=lambda m: (m.areal_mass_kgpm2, m.id)).id if mats else ref_mat.id
+
     def build_for(motor: solid.Motor) -> tuple[AmateurBuild, float]:
         mount, tube, nose = parts_for(motor)
         g = tube.outer_diameter_m / ref_tube.outer_diameter_m
-        min_len = motor.length_m + mount.length_m + 2.0 * tube.outer_diameter_m
-        body_len = min(max(ref_build.body_length_m * g, min_len), tube.length_m)
+        # at least the buildability minimum (motor bay + packed reference chute + shock cord +
+        # payload bay, build.min_body_length_m); at most the stock tube unless that minimum
+        # needs more (couplers)
+        chute = catalog.get(ref_build.parachute_id, kind="parachute")
+        min_len, _ = min_body_length_m(motor, mount, tube, chute, req.payload_mass_kg)
+        body_len = max(min(ref_build.body_length_m * g, tube.length_m), min_len)
         fins = ref_build.fins.model_copy(
             update={
                 "root_chord_m": ref_build.fins.root_chord_m * g,
@@ -722,6 +754,7 @@ def _seed_amateur_build(
                 "nose_cone_id": nose.id,
                 "motor_mount_id": mount.id,
                 "motor_id": motor.id,
+                "fin_material_id": fin_stock_for(motor),
                 "fins": fins,
                 "payload_mass_kg": req.payload_mass_kg,
                 "deploy_delay_s": _nearest_delay(motor, ref_build.deploy_delay_s),
@@ -760,9 +793,15 @@ def _seed_amateur_build(
         notes.append(
             f"parts follow the motor: mount {build.motor_mount_id} in tube {build.body_tube_id} "
             f"({design.body_diameter_m * 1e3:.1f} mm, x{g:.2f} the reference's), nose "
-            f"{build.nose_cone_id}; body {build.body_length_m:.3f} m (reference x{g:.2f}, at least "
-            "motor + mount + 2 diameters, at most the stock tube); fins scaled x"
-            f"{g:.2f}, same material"
+            f"{build.nose_cone_id}; body {build.body_length_m:.3f} m (reference x{g:.2f} up to "
+            "the stock tube, at least the buildability minimum: motor bay + packed parachute + "
+            f"shock cord + payload bay); fins scaled x{g:.2f}, "
+            + (
+                "same material"
+                if build.fin_material_id == ref_build.fin_material_id
+                else f"fin stock {build.fin_material_id} (the reference's "
+                f"{ref_build.fin_material_id} is not rated for the motor)"
+            )
         )
     if build.deploy_delay_s != ref_build.deploy_delay_s:
         notes.append(
@@ -776,6 +815,15 @@ def _seed_amateur_build(
     chute = _pick_parachute(catalog, "amateur", wanted, max_packed_m=tube.inner_diameter_m)
     if chute is not None and chute.id != build.parachute_id:
         build = build.model_copy(update={"parachute_id": chute.id})
+        need, _ = min_body_length_m(
+            motor,
+            catalog.get(build.motor_mount_id, kind="motor_mount"),
+            tube,
+            chute,
+            req.payload_mass_kg,
+        )
+        if build.body_length_m < need:  # the larger chute's packed bay
+            build = build.model_copy(update={"body_length_m": need})
         design, bill = resolve_amateur(build, catalog)
     notes.append(
         f"parachute {ref_design.parachute_diameter_m:.2f} m -> wanted {wanted:.2f} m (diameter x "

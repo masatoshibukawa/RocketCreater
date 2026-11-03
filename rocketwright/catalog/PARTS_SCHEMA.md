@@ -42,3 +42,12 @@ parts:
 - `motor_mount.motor_diameter_m` に `0.013`（ミニモーター）を追加。
 - `source` を持つ部品でも、質量・収納径などが推定なら `provisional: true` を併記し、推定方法を `notes` に書く（CLAUDE.md 2 章 4）。
 - `.eng` ヘッダの追加行：`; propellant_mass_kg`, `; total_mass_kg`, `; price_jpy`（換算・暫定）。`solid.load_motor` は RASP 行から直径・長さ・遅延・質量を読む（コメント行の `; delays:` は読み手向けの情報）。
+
+## 追記（2026-11-03、現実性の強化で追加したフィールド・種類）
+
+- `body_tube.max_motor_impulse_ns`（float、任意）／`body_tube.rating_note`（文字列）：その胴体が想定するモーターの総力積の上限（NAR/TRA 等級の上限値：A 2.5、C 10、E 40、F 80、G 160、I 640、J 1280 Ns）。`rating_note` に根拠（その胴体を使うキットの推奨モーター、メーカーのページ）を書く。モーターの総力積がこれを超えると `check_buildability` のエラー `tube_power_rating`。未設定は警告（同じコード）。Estes の紙胴体は低出力（BT-20/50 は C、BT-55 は E、BT-60/80 は F）、LOC の胴体は J まで。
+- `fin_material.max_motor_impulse_ns`／`fin_material.rating_note`：同じ意味のフィン材の上限。超えるとエラー `fin_power_rating`（設計チェーンの旧「柔らかい材料」ヒューリスティックを置き換え）。
+- `recovery_hardware.max_rocket_mass_kg`／`rating_note`：ショックコードと取付金具が売られている機体質量（打ち上げ時）の上限（LOC の表示：ゴム 24 oz、3/16 in ナイロン 32 oz、3/8 in ナイロン 7 lb）。超えるとエラー `recovery_hardware_rating`。
+- 新しい種類 `coupler`（tier amateur）：`fits_tube_id`, `length_m`。胴長が stock 長を超えると、胴体本数 − 1 個のカプラーを部品表に載せ、乾燥質量に含める。その胴体に合うカプラーがカタログに無ければエラー `no_coupler`。
+- `AmateurBuild.payload_length_m`（任意）：積載物の収納長。未指定なら積載質量 ÷ 600 kg/m³（provisional）÷ 胴体内径の断面積。胴長 ≥ モーター区画（モーターとマウントの長い方）＋ パラシュート区画（傘面積 × 0.50 mm ÷ 内径断面積 ＋ ショックコード 1 口径）＋ 積載区画、を満たさないとエラー `body_length_min`（`build.min_body_length_m`）。
+- `.eng` ヘッダの `; price_jpy:`（先頭の数値を読む）は部品表のモーター価格になる（無い場合だけ従来の 25 JPY/Ns の暫定レート）。再装填式は `; hardware:`（ケース名）と `; hardware_price_jpy:`（再使用ケースの価格、初回に一度買う）を持ち、部品表に別行（質量 0：ケースはモーターの装填質量に含まれる）で載る。

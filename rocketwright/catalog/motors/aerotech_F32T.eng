@@ -11,7 +11,7 @@
 ; delays: 4,6,8
 ; propellant_mass_kg: 0.0258
 ; total_mass_kg: 0.064
-; price_jpy: 2000 (single-use 1-pack, US retail ~$13; at 150 JPY/USD, provisional)
+; price_jpy: 3820 (single-use F32-xT $25.49 each, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
 F32T 24 90 4-6-8 0.0258 0.064 AeroTech
 0.050 24.52
 0.150 61.30

@@ -10,6 +10,7 @@ import pytest
 
 from rocketwright.build import (
     ALLOWANCES,
+    BUILD_THRESHOLDS,
     AmateurBuild,
     BottleBuild,
     BuildAdapter,
@@ -17,6 +18,11 @@ from rocketwright.build import (
     BuildIssue,
     FinGeometry,
     check_buildability,
+    min_body_length_m,
+    motor_class_letter,
+    motor_price_jpy,
+    parachute_bay_length_m,
+    payload_bay_length_m,
     resolve,
     resolve_amateur,
     resolve_bottle,
@@ -188,7 +194,8 @@ def test_nose_must_fit_tube():
 
 def test_body_length_within_stock_and_long_enough():
     # longer than one stock tube: several tubes + couplers (Estes Mean Machine), a WARNING that
-    # names the tube count; the bill buys that many tubes but flies the cut length's mass
+    # names the tube count; the bill buys that many tubes and one coupler per joint (mass and
+    # price), and flies the cut length's tube mass
     too_long = GOOD_AMATEUR.model_copy(update={"body_length_m": 0.6})
     issues = check_buildability(too_long, CATALOG)
     assert "body_length_stock" in _codes(issues, "warning")
@@ -199,19 +206,214 @@ def test_body_length_within_stock_and_long_enough():
     tube = CATALOG.get("estes_bt50")
     assert tube_row.qty == 2 and tube_row.price_jpy == pytest.approx(2 * tube.price_jpy)
     assert tube_row.mass_kg == pytest.approx(tube.mass_kg * 0.6 / tube.length_m)
-    assert any("coupler" in n for n in bill.notes)
-    # the motor sits INSIDE the mount: the bay is the longer of the two, not their sum
-    # (Estes Baby Bertha: 204 mm BT-60 body, 70 mm C6 in a 70 mm mount)
+    coupler_row = next(r for r in bill.parts if r.part_id == "coupler_bt50")
+    assert coupler_row.qty == 1 and coupler_row.category == "airframe"
+    assert coupler_row.mass_kg == pytest.approx(CATALOG.get("coupler_bt50").mass_kg)
+    _, short_bill = resolve_amateur(GOOD_AMATEUR, CATALOG)
+    assert not any(r.part_id == "coupler_bt50" for r in short_bill.parts)
+    assert any("coupler_bt50" in n for n in bill.notes)
+    # the motor sits INSIDE the mount: the motor bay is the longer of the two, not their sum
+    # (Estes Baby Bertha: 204 mm BT-60 body, 70 mm C6 in a 70 mm mount); then the packed
+    # parachute plus one caliber of shock cord, then the payload bay
     motor, mount = solid.load_motor("estes_C6"), CATALOG.get("mount_18mm_bt50")
-    od = CATALOG.get("estes_bt50").outer_diameter_m
-    min_len = max(motor.length_m, mount.length_m) + 2.0 * od
+    chute = CATALOG.get("chute_12in")
+    min_len, bays = min_body_length_m(motor, mount, tube, chute)
+    assert bays["motor_bay_m"] == pytest.approx(max(motor.length_m, mount.length_m))
+    assert bays["parachute_bay_m"] == pytest.approx(parachute_bay_length_m(chute, tube))
+    assert bays["payload_bay_m"] == 0.0
+    assert min_len == pytest.approx(sum(bays.values()))
     just_ok = GOOD_AMATEUR.model_copy(update={"body_length_m": min_len + 1e-3})
     assert "body_length_min" not in _codes(check_buildability(just_ok, CATALOG))
     too_short = GOOD_AMATEUR.model_copy(update={"body_length_m": min_len - 5e-3})
     issues = check_buildability(too_short, CATALOG)
     assert "body_length_min" in _codes(issues, "error")
     msg = next(i.message for i in issues if i.code == "body_length_min")
-    assert "motor" in msg and "parachute" in msg
+    assert "motor" in msg and "parachute" in msg and "payload" in msg
+
+
+def test_body_needs_a_coupler_part():
+    # the fixture has no BT-60 coupler: a two-tube BT-60 body cannot be joined
+    long60 = GOOD_AMATEUR.model_copy(
+        update={
+            "body_tube_id": "estes_bt60",
+            "nose_cone_id": "estes_pnc60",
+            "motor_mount_id": "mount_24mm_bt60",
+            "motor_id": "estes_E12",
+            "body_length_m": 0.6,
+            "parachute_id": "chute_18in",
+        }
+    )
+    issues = check_buildability(long60, CATALOG)
+    assert "no_coupler" in _codes(issues, "error")
+    assert "no_coupler" not in _codes(
+        check_buildability(long60.model_copy(update={"body_length_m": 0.4}), CATALOG)
+    )
+
+
+def test_parachute_bay_is_packed_canopy_over_the_bore_plus_one_caliber():
+    tube, chute = CATALOG.get("estes_bt50"), CATALOG.get("chute_12in")
+    canopy = math.pi / 4 * chute.diameter_m**2
+    bore = math.pi / 4 * tube.inner_diameter_m**2
+    expected = (
+        canopy * BUILD_THRESHOLDS["parachute_packed_thickness_m"] / bore
+        + BUILD_THRESHOLDS["shock_cord_bay_calibers"] * tube.outer_diameter_m
+    )
+    assert parachute_bay_length_m(chute, tube) == pytest.approx(expected)
+    # a bigger canopy needs a longer bay
+    assert parachute_bay_length_m(CATALOG.get("chute_18in"), tube) > expected
+
+
+def test_payload_bay_from_mass_or_given_length():
+    tube = CATALOG.get("estes_bt60")
+    bore = math.pi / 4 * tube.inner_diameter_m**2
+    rho = BUILD_THRESHOLDS["payload_packing_density_kgpm3"]
+    assert payload_bay_length_m(0.0, None, tube) == 0.0
+    assert payload_bay_length_m(0.1, None, tube) == pytest.approx(0.1 / rho / bore)
+    assert payload_bay_length_m(0.1, 0.05, tube) == pytest.approx(0.05)
+    # a 100 g payload (130 mm of BT-60 at 600 kg/m3) does not fit a body sized for no payload
+    base = GOOD_AMATEUR.model_copy(
+        update={
+            "body_tube_id": "estes_bt60",
+            "nose_cone_id": "estes_pnc60",
+            "motor_mount_id": "mount_24mm_bt60",
+            "motor_id": "estes_E12",
+            "parachute_id": "chute_18in",
+            "fins": FinGeometry(count=3, root_chord_m=0.08, tip_chord_m=0.04, span_m=0.06),
+        }
+    )
+    motor = solid.load_motor("estes_E12")
+    mount, chute = CATALOG.get("mount_24mm_bt60"), CATALOG.get("chute_18in")
+    empty, _ = min_body_length_m(motor, mount, tube, chute)
+    fits_empty = base.model_copy(update={"body_length_m": round(empty + 0.01, 3)})
+    assert "body_length_min" not in _codes(check_buildability(fits_empty, CATALOG))
+    loaded = fits_empty.model_copy(update={"payload_mass_kg": 0.1})
+    assert "body_length_min" in _codes(check_buildability(loaded, CATALOG), "error")
+    # a compact payload declared by length fits again
+    compact = loaded.model_copy(update={"payload_length_m": 0.005})
+    assert "body_length_min" not in _codes(check_buildability(compact, CATALOG))
+
+
+def _rated_catalog(tmp_path, **ratings):
+    import yaml
+
+    data = yaml.safe_load(FIXTURE.read_text(encoding="utf-8"))
+    for part in data["parts"]:
+        if part["id"] in ratings:
+            part["max_motor_impulse_ns"] = ratings[part["id"]]
+    # load_parts caches by path: one file per rating set
+    path = tmp_path / (
+        "parts_" + "_".join(f"{k}{v:g}" for k, v in sorted(ratings.items())) + ".yaml"
+    )
+    path.write_text(yaml.safe_dump(data), encoding="utf-8")
+    return load_parts(path)
+
+
+def test_airframe_and_fin_power_rating(tmp_path):
+    # the C6 (10 Ns) is within the BT-50 (C, 10 Ns) and 3/32 balsa (E, 40 Ns) ratings
+    assert not _codes(check_buildability(GOOD_AMATEUR, CATALOG)) & {
+        "tube_power_rating",
+        "fin_power_rating",
+    }
+    # a tube or fin stock rated below the motor's impulse is an error
+    cat = _rated_catalog(tmp_path, estes_bt50=5.0)
+    issues = check_buildability(GOOD_AMATEUR, cat)
+    assert "tube_power_rating" in _codes(issues, "error")
+    assert "fin_power_rating" not in _codes(issues)
+    msg = next(i.message for i in issues if i.code == "tube_power_rating")
+    assert "5 Ns" in msg and "(B class)" in msg and "(C)" in msg
+    cat = _rated_catalog(tmp_path, balsa_3_32in=5.0)
+    assert "fin_power_rating" in _codes(check_buildability(GOOD_AMATEUR, cat), "error")
+    # an unrated part is a warning, not an error
+    import yaml
+
+    data = yaml.safe_load(FIXTURE.read_text(encoding="utf-8"))
+    for part in data["parts"]:
+        part.pop("max_motor_impulse_ns", None)
+    path = tmp_path / "unrated.yaml"
+    path.write_text(yaml.safe_dump(data), encoding="utf-8")
+    issues = check_buildability(GOOD_AMATEUR, load_parts(path))
+    assert {"tube_power_rating", "fin_power_rating"} <= _codes(issues, "warning")
+    assert not {"tube_power_rating", "fin_power_rating"} & _codes(issues, "error")
+
+
+def test_class_letters_follow_nar_tra():
+    assert motor_class_letter(2.5) == "A"
+    assert motor_class_letter(10.0) == "C"
+    assert motor_class_letter(160.0) == "G"
+    assert motor_class_letter(160.1) == "H"
+    assert motor_class_letter(700.0) == "J"
+
+
+def test_project_catalog_ratings_reject_a_j_motor_in_an_estes_tube():
+    """The product owner's complaint: a J motor in a cardboard Estes BT-80. Every Estes tube
+    is rated low power (<= F, Estes pages), LOC airframes up to J (LOC kit pages)."""
+    cat = load_parts()
+    for tube in cat.by_kind("body_tube", "amateur"):
+        assert tube.max_motor_impulse_ns is not None and tube.rating_note, tube.id
+        if tube.id.startswith("estes_"):
+            assert tube.max_motor_impulse_ns <= 80.0
+    for mat in cat.by_kind("fin_material", "amateur"):
+        assert mat.max_motor_impulse_ns is not None and mat.rating_note, mat.id
+    bt80 = AmateurBuild(
+        body_tube_id="estes_bt80_tube",
+        body_length_m=0.70,
+        nose_cone_id="estes_pnc80_nose",
+        motor_mount_id="motor_mount_54mm",
+        motor_id="aerotech_J415W",
+        fin_material_id="fin_balsa_3p2mm",
+        fins=FinGeometry(count=3, root_chord_m=0.12, tip_chord_m=0.05, span_m=0.08),
+        parachute_id="topflight_parachute_45in_nylon",
+    )
+    issues = check_buildability(bt80, cat)
+    assert {"tube_power_rating", "fin_power_rating"} <= _codes(issues, "error")
+    assert "high_power_motor" in _codes(issues, "warning")
+    assert "Level 2" in next(i.message for i in issues if i.code == "high_power_motor")
+    loc = bt80.model_copy(
+        update={
+            "body_tube_id": "loc_tube_98mm",
+            "nose_cone_id": "loc_pnc_98mm_nose",
+            "motor_mount_id": "motor_mount_54mm_98",
+            "fin_material_id": "fin_plywood_3mm",
+            "body_length_m": 0.80,
+        }
+    )
+    assert not {"tube_power_rating", "fin_power_rating"} & _codes(check_buildability(loc, cat))
+
+
+def test_motor_price_from_the_motor_file_and_reload_case_on_the_bill():
+    cat = load_parts()
+    j350 = solid.load_motor("aerotech_J350W")
+    assert j350.price_jpy == pytest.approx(14400) and j350.hardware == "RMS-38/720"
+    assert motor_price_jpy(j350) == pytest.approx(14400)
+    build = AmateurBuild(
+        body_tube_id="loc_tube_98mm",
+        body_length_m=0.80,
+        nose_cone_id="loc_pnc_98mm_nose",
+        motor_mount_id="motor_mount_38mm_98",
+        motor_id="aerotech_J350W",
+        fin_material_id="fin_plywood_3mm",
+        fins=FinGeometry(count=3, root_chord_m=0.12, tip_chord_m=0.05, span_m=0.08),
+        parachute_id="topflight_parachute_45in_nylon",
+    )
+    _, bill = resolve_amateur(build, cat)
+    motor_rows = [r for r in bill.parts if r.category == "motor"]
+    assert [r.price_jpy for r in motor_rows] == pytest.approx([14400, 25200])
+    assert motor_rows[1].mass_kg == 0.0 and "RMS-38/720" in motor_rows[1].name
+    # a single-use motor has no case row; a file without a price uses the provisional rate
+    single = solid.load_motor("aerotech_J435WS")
+    assert single.hardware_price_jpy is None
+    dummy = solid.load_motor("dummy_J420")
+    assert dummy.price_jpy is None
+    rate = ALLOWANCES["motor_price_jpy_per_ns"]["value"]
+    assert motor_price_jpy(dummy) == pytest.approx(rate * dummy.total_impulse_ns)
+
+
+def test_recovery_hardware_rating():
+    # the fixture's elastic kit is sold for rockets up to 0.68 kg (LOC: 1-24 oz)
+    ok = check_buildability(GOOD_AMATEUR, CATALOG)
+    assert "recovery_hardware_rating" not in _codes(ok)
+    heavy = GOOD_AMATEUR.model_copy(update={"payload_mass_kg": 0.7})
+    assert "recovery_hardware_rating" in _codes(check_buildability(heavy, CATALOG), "error")
 
 
 def test_fin_span_warning_and_root_chord_error():

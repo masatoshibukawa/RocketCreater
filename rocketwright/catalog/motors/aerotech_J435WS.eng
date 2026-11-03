@@ -1,0 +1,22 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/J435WS/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 38 mm x 366 mm DMS single-use motor, total impulse 742.8 N-s, average thrust 441.6 N, max thrust 712.9 N, burn time 1.6 s, propellant 352 g, total 616 g, delays 6/8/10/12/14 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 1.682 s so the average thrust matches the summary.
+; note: high-power (J) motor -- NAR/TRA Level 2 (J, K, L) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: curve integral 742.8 N-s, average thrust 441.6 N
+; diameter_m: 0.038
+; length_m: 0.366
+; delays: 6,8,10,12,14
+; propellant_mass_kg: 0.352
+; total_mass_kg: 0.616
+; price_jpy: 15450 (DMS single-use motor $102.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+J435WS 38 366 6-8-10-12-14 0.352 0.616 AeroTech
+0.050 453.98
+0.135 712.90
+0.421 453.98
+1.430 453.98
+1.682 0.00
+;

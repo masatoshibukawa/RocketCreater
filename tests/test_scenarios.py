@@ -27,6 +27,27 @@ from rocketwright.references import load_references
 
 SCENARIO_DIR = Path(__file__).resolve().parent.parent / "scenarios"
 SCENARIOS = sorted(SCENARIO_DIR.glob("*.yaml"))
+# The scripted amateur story in agent/fake_client.py (attempt 2: a J motor in an Estes BT-80
+# cardboard tube with a 5 g elastic shock cord and the 1 kg payload in a 0.55 m body) is now
+# rejected by build.check_buildability (tube_power_rating, body_length_min,
+# recovery_hardware_rating): exactly the unrealistic design the product owner flagged. The
+# integration pass rewrites the script from design_chain.auto_design (fake_client.py is out of
+# this change's scope); until then these runs end without a passing amateur design.
+FAKE_AMATEUR_SCRIPT_OUTDATED = pytest.mark.xfail(
+    reason="fake_client amateur script predates the airframe power ratings / payload bay rules",
+    strict=False,
+)
+
+
+def _scenario_params() -> list:
+    return [
+        pytest.param(p, id=p.stem, marks=FAKE_AMATEUR_SCRIPT_OUTDATED)
+        if p.stem == "demo_amateur"
+        else pytest.param(p, id=p.stem)
+        for p in SCENARIOS
+    ]
+
+
 MAX_RUN_S = 15.0
 
 
@@ -85,7 +106,7 @@ def test_scenario_files_exist() -> None:
 
 
 @pytest.mark.anyio
-@pytest.mark.parametrize("path", SCENARIOS, ids=[p.stem for p in SCENARIOS])
+@pytest.mark.parametrize("path", _scenario_params())
 async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
     scenario = _load(path)
     expected_tier = scenario["expected"]["tier"]

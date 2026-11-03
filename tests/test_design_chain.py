@@ -11,16 +11,24 @@ from pathlib import Path
 import pytest
 import yaml
 
-from rocketwright.build import BUILD_THRESHOLDS, check_buildability, resolve
+from rocketwright.build import (
+    AmateurBuild,
+    check_buildability,
+    min_body_length_m,
+    payload_bay_length_m,
+    resolve,
+)
 from rocketwright.design_chain import (
     AMATEUR_STAGES,
     BOTTLE_STAGES,
     CHAIN_RULES,
+    SYNTHETIC_MOTOR_WARNING,
     auto_design,
     candidates_for,
     complete_build,
     design_stage,
     invalidated_stages,
+    is_synthetic_motor,
 )
 from rocketwright.parts import load_parts
 from rocketwright.physics import recovery, solid, stability
@@ -111,7 +119,9 @@ def test_changing_the_motor_invalidates_everything_downstream(amateur_result):
 # --------------------------------------------------------------------------- compatibility
 
 
-@pytest.mark.parametrize("motor_id", ["estes_C6", "estes_E12", "aerotech_G80T", "dummy_J420"])
+@pytest.mark.parametrize(
+    "motor_id", ["estes_C6", "estes_E12", "aerotech_G80T", "aerotech_J350W", "dummy_J420"]
+)
 def test_mount_candidates_take_the_motor_diameter(motor_id):
     cands = candidates_for("mount", AMATEUR_REQ, AMATEUR_ENV, {"motor": motor_id}, CATALOG)
     assert cands
@@ -177,20 +187,39 @@ def test_complete_build_defaults_amateur():
     motor = solid.load_motor("estes_C6")
     tube = CATALOG.get(build.body_tube_id)
     mount = CATALOG.get(build.motor_mount_id)
-    # narrowest tube that takes an 18 mm mount
-    assert build.body_tube_id == "estes_bt20_tube"
-    # body = buildability minimum + 1 caliber
-    min_len = (
-        max(motor.length_m, mount.length_m)
-        + BUILD_THRESHOLDS["body_length_margin_calibers"] * tube.outer_diameter_m
-    )
-    assert build.body_length_m == pytest.approx(min_len + tube.outer_diameter_m, abs=1.5e-3)
+    chute = CATALOG.get(build.parachute_id)
+    # the airframe is the best of the beam: a tube the mount fits, rated for the C6
+    assert tube.id in mount.fits_tubes
+    assert tube.max_motor_impulse_ns >= motor.total_impulse_ns
+    # body = buildability minimum (motor bay + packed chute + shock cord + payload) + 1 caliber,
+    # clipped to one stock tube when the minimum fits in one
+    min_len, _ = min_body_length_m(motor, mount, tube, chute)
+    expected = min(min_len + tube.outer_diameter_m, tube.length_m)
+    assert build.body_length_m == pytest.approx(expected, abs=1.5e-3)
     margin = stability.static_margin_cal(design, motor.total_mass_kg, motor_length_m=motor.length_m)
     assert margin >= CHAIN_RULES["default_static_margin_cal"]
     landing = bill.dry_mass_kg + motor.total_mass_kg - motor.propellant_mass_kg
     v = recovery.descend(landing, design.parachute_diameter_m, env, 100.0).descent_speed_mps
     assert v <= CHAIN_RULES["default_descent_speed_mps"] + 0.2
     assert build.deploy_delay_s == 0.0
+
+
+def test_default_body_holds_the_payload():
+    """The payload bay (mass at the packing density over the bore) is part of the default body
+    and of the body_length grid's minimum; the product owner's 1 kg in a short BT-80 is gone."""
+    req = Requirement(goal_kind="altitude", target_altitude_m=1000, payload_mass_kg=1.0)
+    chosen = {"motor": "aerotech_I284W"}
+    build = complete_build(req, Env(), chosen, CATALOG, tier="amateur")
+    motor = solid.load_motor(build.motor_id)
+    tube, mount = CATALOG.get(build.body_tube_id), CATALOG.get(build.motor_mount_id)
+    chute = CATALOG.get(build.parachute_id)
+    min_len, bays = min_body_length_m(motor, mount, tube, chute, 1.0)
+    assert bays["payload_bay_m"] == pytest.approx(payload_bay_length_m(1.0, None, tube), rel=1e-9)
+    assert bays["payload_bay_m"] > 0.1
+    assert build.body_length_m >= min_len - 1e-9
+    assert "body_length_min" not in {i.code for i in check_buildability(build, CATALOG)}
+    grid = candidates_for("body_length", req, Env(), dict(chosen), CATALOG, tier="amateur")
+    assert min(c.value for c in grid) >= min_len - 1.5e-3
 
 
 def test_complete_build_drops_the_launcher_when_the_budget_excludes_it():
@@ -250,10 +279,13 @@ def test_auto_design_is_fast(req, env, tier):
 
 
 def test_one_stage_is_fast():
+    # the motor stage runs the airframe beam of every motor (up to beam_max_sims flights each
+    # inside derive's class window): 2 s; every other stage 1 s
     for stage in AMATEUR_STAGES:
         t0 = time.perf_counter()
         design_stage(AMATEUR_REQ, AMATEUR_ENV, {}, stage, CATALOG, tier="amateur")
-        assert time.perf_counter() - t0 < 1.0, stage
+        limit = 2.0 if stage == "motor" else 1.0
+        assert time.perf_counter() - t0 < limit, stage
 
 
 def test_motor_stage_ranks_the_derived_class_first():
@@ -262,15 +294,23 @@ def test_motor_stage_ranks_the_derived_class_first():
     assert res.simulated == sum(
         1 for c in res.candidates if not any(i.severity == "error" for i in c.issues)
     )  # the motor stage is never pruned
-    # derive: 2 km with 1 kg is class J; the window is I..K
+    # derive: 2 km with 1 kg is class J; the window is I..K (certified motors only: a real
+    # motor passes, so the synthetic placeholders are not offered)
     assert res.derived_targets["motor_class_letter"] == "J"
     window = {c.value for c in res.candidates if c.in_class_window}
-    assert window == {"aerotech_I200W", "dummy_I200", "dummy_J420"}
-    # within the same pass status, every in-window motor ranks before every other motor
+    letters = {solid.load_motor(m).name[0] for m in window}
+    assert letters <= {"I", "J", "K"} and {"I", "J"} <= letters
+    assert not any(is_synthetic_motor(c.value) for c in res.candidates)
+    # within the same pass status and tube count, every in-window motor ranks before the others
     buildable = [c for c in res.candidates if not any(i.severity == "error" for i in c.issues)]
     for status in (True, False):
-        flags = [c.in_class_window for c in buildable if c.passed is status]
-        assert flags == sorted(flags, reverse=True)
+        for joints in (0, 1):
+            flags = [
+                c.in_class_window
+                for c in buildable
+                if (c.passed, min(1, _couplers(c.build))) == (status, joints)
+            ]
+            assert flags == sorted(flags, reverse=True)
     assert res.candidates[0].in_class_window
     assert "derive: class J" in res.candidates[0].why
     # a passing motor outside the window still beats a failing one inside it
@@ -278,6 +318,70 @@ def test_motor_stage_ranks_the_derived_class_first():
     low = design_stage(small, Env(), {}, "motor", CATALOG, tier="amateur", k=None)
     first = low.candidates[0]
     assert first.passed or not any(c.passed for c in low.candidates)
+
+
+def _couplers(build) -> int:
+    from rocketwright.build import tube_count
+
+    tube = CATALOG.get(build.body_tube_id)
+    return tube_count(build.body_length_m, tube.length_m) - 1
+
+
+def test_synthetic_motors_only_when_no_real_motor_passes():
+    # 1 kg to 2 km: a certified J passes, the dummy_* placeholders are held back
+    res = design_stage(AMATEUR_REQ, AMATEUR_ENV, {}, "motor", CATALOG, tier="amateur", k=None)
+    assert any(c.passed for c in res.candidates)
+    n_dummy = sum(is_synthetic_motor(m) for m in solid.list_motor_ids())
+    assert res.rejected[f"{SYNTHETIC_MOTOR_WARNING} (a certified motor passes)"] == n_dummy
+    # 5 kg to 3 km: nothing certified passes -> the placeholders are evaluated, labelled
+    hard = Requirement(goal_kind="altitude", target_altitude_m=3000, payload_mass_kg=5.0)
+    res = design_stage(hard, AMATEUR_ENV, {}, "motor", CATALOG, tier="amateur", k=None)
+    real = [c for c in res.candidates if not is_synthetic_motor(c.value)]
+    dummies = [c for c in res.candidates if is_synthetic_motor(c.value)]
+    assert not any(c.passed for c in real)
+    assert len(dummies) == n_dummy
+    assert all(SYNTHETIC_MOTOR_WARNING in c.label for c in dummies)
+
+
+def test_motor_scored_on_its_best_airframe_not_the_narrowest():
+    """Beam: a motor that passes in a wider tube ranks as passing. 1 kg to 1 km on the J435WS
+    overshoots in the narrowest (54 mm) LOC tube that takes it and passes in the 98 mm one."""
+    req = Requirement(goal_kind="altitude", target_altitude_m=1000, payload_mass_kg=1.0)
+    cands = candidates_for("motor", req, AMATEUR_ENV, {}, CATALOG, tier="amateur")
+    by_id = {c.value: c for c in cands}
+    motor = solid.load_motor("aerotech_J435WS")
+    best = by_id[motor.id]
+    assert best.passed
+    narrow = complete_build(
+        req,
+        AMATEUR_ENV,
+        {"motor": motor.id, "mount": "motor_mount_38mm", "body_tube": "loc_tube_54mm"},
+        CATALOG,
+        tier="amateur",
+    )
+    assert best.build.body_tube_id != narrow.body_tube_id
+    sim = solid.simulate(resolve(narrow, CATALOG)[0], AMATEUR_ENV, target_apogee_m=1000)
+    assert not sim.success
+
+
+def test_couplers_rank_below_single_tube_bodies():
+    """Same pass state: a body that needs a coupler scores below one that fits one stock tube
+    (the coupler is also on the bill: mass and price)."""
+    from rocketwright.design_chain import _Chain
+
+    req = Requirement(goal_kind="altitude", target_altitude_m=400, payload_mass_kg=0.1)
+    chain = _Chain(req, AMATEUR_ENV, CATALOG, "amateur")
+    base = {"motor": "aerotech_F32T", "mount": "motor_mount_24mm", "body_tube": "estes_bt60_tube"}
+    tube = CATALOG.get("estes_bt60_tube")
+    single = chain.evaluate(chain.complete({**base, "body_length": 0.45}))
+    double = chain.evaluate(chain.complete({**base, "body_length": 0.47}))
+    assert single.build.body_length_m <= tube.length_m < double.build.body_length_m
+    assert (single.has_error, single.passed) == (double.has_error, double.passed)
+    assert chain.couplers(single.build) == 0 and chain.couplers(double.build) == 1
+    assert chain.score(single, None, "x") < chain.score(double, None, "x")
+    row = next(r for r in double.bill.parts if r.part_id == "estes_jt60c_coupler")
+    assert row.qty == 1 and row.mass_kg > 0 and row.price_jpy > 0
+    assert not any(r.part_id == "estes_jt60c_coupler" for r in single.bill.parts)
 
 
 def test_funnel_counts_are_consistent(amateur_result):
@@ -311,3 +415,61 @@ def test_ground_truth_kits_with_their_motor_fixed():
         within_15 += err <= 0.15
         assert err <= max(0.15, entry.tolerance_frac), (entry.id, res.sim.metrics["apogee_m"])
     assert within_15 >= len(kits) - 1
+
+
+# --------------------------------------------------------------------------- feasibility
+
+
+def test_auto_design_says_when_the_budget_cannot_be_met():
+    """1 kg to 2 km for 30,000 JPY: the cheapest passing design costs more; auto_design must
+    say so, name that design and its cost, and the best design within the budget with the
+    reasons it fails (the constants are not bent to make it fit)."""
+    req = AMATEUR_REQ.model_copy(update={"budget_jpy": 30000})
+    t0 = time.perf_counter()
+    res = auto_design(req, AMATEUR_ENV, CATALOG, tier="amateur")
+    assert time.perf_counter() - t0 < 3.0
+    assert not res.sim.success
+    f = res.feasibility
+    assert f is not None and f["passing_design_exists"]
+    cheapest = f["cheapest_passing"]
+    assert cheapest["cost_jpy"] > 30000 and not cheapest["failure_reasons"]
+    assert "no passing design within the 30,000 JPY budget" in f["verdict"]
+    assert f"{cheapest['cost_jpy']:,.0f} JPY" in f["verdict"]
+    within = f["best_within_budget"]
+    assert within is not None and within["cost_jpy"] <= 30000 and within["failure_reasons"]
+    assert f["verdict"] in res.warnings
+    # every number in the report is a bill / sim number of a real chain design
+    b = AmateurBuild.model_validate(cheapest["build"])
+    _, bill = resolve(b, CATALOG)
+    assert round(bill.cost_jpy) == cheapest["cost_jpy"]
+
+
+def test_auto_design_without_a_feasibility_question(amateur_result):
+    # a passing design needs no feasibility report
+    assert amateur_result.sim.success and amateur_result.feasibility is None
+    assert not any(SYNTHETIC_MOTOR_WARNING in w for w in amateur_result.warnings)
+    assert not is_synthetic_motor(amateur_result.build.motor_id)
+
+
+@pytest.mark.parametrize(
+    ("target_m", "payload_kg", "budget_jpy"),
+    [(2000, 1.0, 50000), (1000, 1.0, 50000), (500, 0.2, 20000)],
+)
+def test_amateur_requirements_get_real_buildable_designs(target_m, payload_kg, budget_jpy):
+    """The product owner's requirements: certified motors, rated airframe and fins, the payload
+    inside the body, and a pass within the budget (2026-11-03 catalog)."""
+    req = Requirement(
+        goal_kind="altitude",
+        target_altitude_m=target_m,
+        payload_mass_kg=payload_kg,
+        budget_jpy=budget_jpy,
+        recovery_required=True,
+    )
+    res = auto_design(req, AMATEUR_ENV, CATALOG, tier="amateur")
+    _assert_passing(res, req)
+    assert not is_synthetic_motor(res.build.motor_id)
+    codes = {i.code for i in res.issues}
+    assert not codes & {"tube_power_rating", "fin_power_rating", "body_length_min"}
+    motor = solid.load_motor(res.build.motor_id)
+    tube = CATALOG.get(res.build.body_tube_id)
+    assert motor.total_impulse_ns <= tube.max_motor_impulse_ns

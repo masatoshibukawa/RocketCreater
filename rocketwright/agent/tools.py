@@ -914,6 +914,10 @@ def _tool_auto_design(inp: dict[str, Any]) -> dict[str, Any]:
         "trace": [t.as_dict() for t in res.trace],
         "derived_targets": res.derived_targets,
         "derived_vs_chain": res.derived_vs_chain,
+        "warnings": list(res.warnings),
+        # set when nothing passes within the budget: the cheapest passing design (if any) and
+        # the best design within the budget with its failure reasons
+        "feasibility": res.feasibility,
         "note": (
             "baseline from the staged chain; confirm or edit it with design_from_parts and "
             "revisit a stage with design_stage (later stages are then redone)"

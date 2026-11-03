@@ -335,10 +335,23 @@ def test_demo_commercial_seed_passes_simulate_after_tuning():
     assert any("tuned" in n for n in seed["notes"])
 
 
-def test_demo_amateur_seed_apogee_within_25_percent():
+def test_demo_amateur_seed_apogee_within_50_percent():
+    """The seed is the drag-free scaling of a C6 kit (references._seed_amateur_build). With
+    certified motors only (the synthetic dummy_J420 that used to land it within 25 % is no
+    longer offered) the rule asks for ~1,250 Ns and the only certified motor at or above it,
+    the J415W (1,232 Ns), overshoots in the 54 mm airframe (~+40 %). The seed is a starting
+    point; design_chain.auto_design is the designer (test_design_chain). It must still be a
+    certified motor in an airframe and fin stock rated for it."""
     seed = _seed_via_tool(DEMO_AMATEUR, "amateur", ENV_AMATEUR, tune=False)
     apogee = seed["sim"]["metrics"]["apogee_m"]
-    assert abs(apogee - 2000) <= 0.25 * 2000, (seed["reference_id"], apogee, seed["notes"])
+    assert abs(apogee - 2000) <= 0.50 * 2000, (seed["reference_id"], apogee, seed["notes"])
+    from rocketwright.build import AmateurBuild, check_buildability
+    from rocketwright.parts import load_parts
+
+    build = AmateurBuild.model_validate(seed["build"])
+    assert not build.motor_id.startswith("dummy_")
+    codes = {i.code for i in check_buildability(build, load_parts()) if i.severity == "error"}
+    assert not codes & {"tube_power_rating", "fin_power_rating", "body_length_min"}, codes
 
 
 def test_demo_bottle_seed_apogee_within_25_percent():

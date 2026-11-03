@@ -57,6 +57,12 @@ is `provisional: true`. `dummy_*.eng` are placeholders used by the tests.
 | `aerotech_F32T` | NAR S&T certification sheet (via thrustcurve.org) |
 | `aerotech_G80T` | thrustcurve.org summary, NAR data sheet |
 | `aerotech_H128W`, `aerotech_I200W` | thrustcurve.org summary (TRA certified); high-power, flag in the checklist |
+| `aerotech_H180W`, `aerotech_I161W`, `aerotech_I284W`, `aerotech_J350W`, `aerotech_J415W` (RMS reloads), `aerotech_I205W`, `aerotech_I140W`, `aerotech_I280DM`, `aerotech_J435WS`, `aerotech_J250W` (DMS single-use) | thrustcurve.org summaries (TRA certified); burn time = total impulse / published average thrust; high-power |
+
+Prices: every real motor file carries `; price_jpy:` (AeroTech order form rev 03/26/25,
+https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf, at 150 JPY/USD;
+Estes pages); reload kits also carry `; hardware:` / `; hardware_price_jpy:` (the reusable RMS case,
+billed once). The design chain offers `dummy_*` only when no certified motor passes.
 
 `estes_A8`: the published 2.50 N-s over 0.80 s gives an average thrust of ~3.1 N, so the "8"
 in its designation is not the average thrust (Estes' historical rating). `tests/test_solid.py`

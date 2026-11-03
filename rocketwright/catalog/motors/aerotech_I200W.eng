@@ -11,7 +11,9 @@
 ; delays: 4,6,8,10
 ; propellant_mass_kg: 0.187
 ; total_mass_kg: 0.358
-; price_jpy: 9000 (reload kit, US retail ~$60, casing not included; at 150 JPY/USD, provisional)
+; price_jpy: 8850 (RMS-29/360 reload kit I200W-14A $58.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+; hardware: RMS-29/360
+; hardware_price_jpy: 25350 (RMS-29/360 motor hardware $168.99 incl. forward seal disc, reusable, bought once; same order form; at 150 JPY/USD, provisional)
 I200W 29 333 4-6-8-10 0.187 0.358 AeroTech
 0.050 185.32
 0.150 463.30

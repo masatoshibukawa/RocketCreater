@@ -11,7 +11,9 @@
 ; delays: 4,6,8,10
 ; propellant_mass_kg: 0.094
 ; total_mass_kg: 0.206
-; price_jpy: 6000 (reload kit, US retail ~$40, casing not included; at 150 JPY/USD, provisional)
+; price_jpy: 5250 (RMS-29/180 reload kit H128W-14A $34.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+; hardware: RMS-29/180
+; hardware_price_jpy: 20400 (RMS-29/180 motor hardware $135.99, reusable, bought once; same order form; at 150 JPY/USD, provisional)
 H128W 29 194 4-6-8-10 0.094 0.206 AeroTech
 0.050 67.48
 0.150 168.70

@@ -23,6 +23,7 @@ parts:
     outer_diameter_m: 0.0246
     inner_diameter_m: 0.0241
     length_m: 0.457
+    max_motor_impulse_ns: 10.0   # C class
   - id: estes_bt60
     kind: body_tube
     tier: amateur
@@ -33,6 +34,7 @@ parts:
     outer_diameter_m: 0.0418
     inner_diameter_m: 0.0405
     length_m: 0.457
+    max_motor_impulse_ns: 80.0   # F class
   # --- amateur: nose cones -----------------------------------------------------------------
   - id: estes_pnc50
     kind: nose_cone
@@ -87,6 +89,16 @@ parts:
     motor_diameter_m: 0.029
     fits_tube_id: estes_bt60
     length_m: 0.125
+  # --- amateur: couplers (BT-50 only: the BT-60 has none, for the no_coupler rule) ---------
+  - id: coupler_bt50
+    kind: coupler
+    tier: amateur
+    name: "BT-50 tube coupler"
+    mass_kg: 0.001
+    price_jpy: 170
+    provisional: true
+    fits_tube_id: estes_bt50
+    length_m: 0.025
   # --- amateur: fin material ---------------------------------------------------------------
   - id: balsa_3_32in
     kind: fin_material
@@ -99,6 +111,7 @@ parts:
     areal_mass_kgpm2: 0.384
     sheet_width_m: 0.076
     sheet_height_m: 0.914
+    max_motor_impulse_ns: 40.0   # E class
   # --- amateur: recovery -------------------------------------------------------------------
   - id: chute_12in
     kind: parachute
@@ -127,6 +140,7 @@ parts:
     mass_kg: 0.004
     price_jpy: 300
     provisional: true
+    max_rocket_mass_kg: 0.68
   - id: launch_lug_1_8in
     kind: launch_lug
     tier: amateur

@@ -1,0 +1,24 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/I161W/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 38 mm x 191 mm RMS-38/360 reload kit, total impulse 328.7 N-s, average thrust 161 N, max thrust 266.6 N, burn time 1.8 s, propellant 193 g, total 366 g, delays 6/8/10/12/14 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 2.042 s so the average thrust matches the summary.
+; note: high-power (I) motor -- NAR/TRA Level 1 (H, I) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: curve integral 328.7 N-s, average thrust 161.0 N
+; diameter_m: 0.038
+; length_m: 0.191
+; delays: 6,8,10,12,14
+; propellant_mass_kg: 0.193
+; total_mass_kg: 0.366
+; price_jpy: 9300 (RMS-38/360 reload kit $61.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+; hardware: RMS-38/360
+; hardware_price_jpy: 21300 (RMS-38/360 motor hardware $141.99, reusable, bought once; same order form; at 150 JPY/USD, provisional)
+I161W 38 191 6-8-10-12-14 0.193 0.366 AeroTech
+0.061 164.59
+0.163 266.60
+0.510 164.59
+1.735 164.59
+2.042 0.00
+;

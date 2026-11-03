@@ -29,6 +29,7 @@ __all__ = [
     "BodyTube",
     "Bottle",
     "BottleFinSet",
+    "Coupler",
     "FinMaterial",
     "LaunchLug",
     "Launcher",
@@ -75,6 +76,11 @@ class BodyTube(Part):
     outer_diameter_m: float = Field(gt=0)
     inner_diameter_m: float = Field(gt=0)
     length_m: float = Field(gt=0)  # stock length; mass_kg is the mass at this length
+    # Power rating: the largest motor total impulse the airframe is built for (the upper bound
+    # of the largest NAR/TRA class its kits fly, `rating_note` names the evidence). None =
+    # unrated (buildability warns instead of checking).
+    max_motor_impulse_ns: float | None = Field(default=None, gt=0)
+    rating_note: str = ""
 
     @model_validator(mode="after")
     def _id_lt_od(self) -> BodyTube:
@@ -109,6 +115,8 @@ class FinMaterial(Part):
     areal_mass_kgpm2: float = Field(gt=0)
     sheet_width_m: float = Field(gt=0)
     sheet_height_m: float = Field(gt=0)
+    max_motor_impulse_ns: float | None = Field(default=None, gt=0)  # as BodyTube
+    rating_note: str = ""
 
 
 class Parachute(Part):
@@ -118,8 +126,21 @@ class Parachute(Part):
     cd: float = Field(default=1.5, gt=0)
 
 
+class Coupler(Part):
+    """Tube coupler joining two stock tubes of `fits_tube_id` (a body longer than one stock tube
+    needs tubes - 1 of them)."""
+
+    kind: Literal["coupler"]
+    fits_tube_id: str
+    length_m: float = Field(gt=0)
+
+
 class RecoveryHardware(Part):
     kind: Literal["recovery_hardware"]
+    # The heaviest rocket (liftoff mass) the shock cord and its mount are sold for; None =
+    # unrated.
+    max_rocket_mass_kg: float | None = Field(default=None, gt=0)
+    rating_note: str = ""
 
 
 class LaunchLug(Part):
@@ -163,6 +184,7 @@ AnyPart = Annotated[
         Parachute,
         RecoveryHardware,
         LaunchLug,
+        Coupler,
         Bottle,
         Nozzle,
         BottleFinSet,
@@ -180,13 +202,14 @@ KINDS: tuple[str, ...] = (
     "parachute",
     "recovery_hardware",
     "launch_lug",
+    "coupler",
     "bottle",
     "nozzle",
     "bottle_fin_set",
     "launcher",
 )
 # Which kinds reference a body tube through `fits_tube_id`.
-_TUBE_REFERENCING_KINDS = ("nose_cone", "motor_mount")
+_TUBE_REFERENCING_KINDS = ("nose_cone", "motor_mount", "coupler")
 
 
 class PartsCatalog:
@@ -223,6 +246,11 @@ class PartsCatalog:
 
     def by_kind(self, kind: str, tier: str | None = None) -> list[Any]:
         return [p for p in self._parts if p.kind == kind and (tier is None or p.tier == tier)]
+
+    def coupler_for(self, tube_id: str) -> Any | None:
+        """The lightest coupler that fits `tube_id` (ties: cheapest, id), or None."""
+        fits = [c for c in self.by_kind("coupler") if c.fits_tube_id == tube_id]
+        return min(fits, key=lambda c: (c.mass_kg, c.price_jpy, c.id), default=None)
 
 
 def _validate_catalog(parts: list[Part]) -> None:
