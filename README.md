@@ -129,6 +129,34 @@ This does not require every solver to run at the same time: dependencies, model 
 available evidence determine the order. A change in geometry or material must invalidate
 the dependent results rather than leave stale evaluations attached to a candidate.
 
+### Match methods to variables within each level
+
+A layer should not be assigned one universal simulator. Within the same layer, different
+variables need different models, evaluation criteria, and search strategies. The examples
+below are **options to assess**, not implemented integrations or validated predictions.
+
+| Variable or decision | Candidate calculation / analysis method | Evaluation and constraints | Exploration and fidelity considerations |
+| --- | --- | --- | --- |
+| External shape and dimensions | Geometric checks and simplified aerodynamic estimates; higher-fidelity flow analysis only if justified | Packaging, model applicability, drag estimates, and uncertainty | Screen inexpensive geometric alternatives first; re-evaluate selected candidates with consistent assumptions |
+| Material choice and structural dimensions | Material-property lookup, mass accounting, simplified structural/thermal checks; finite-element analysis as a possible later tool | Mass, stiffness, strength/thermal margins, compatibility, and evidence quality | Discrete material choices and continuous dimensions require different handling; retain property sources and applicable conditions |
+| Catalog propulsion choice and system mass allocation | Catalog lookup, mass/energy budgets, and the existing simplified ascent models | Mission compatibility, estimated performance, mass/cost constraints, and provisional-data warnings | Compare catalog-level alternatives only; no internal engine or propellant design |
+| Recovery configuration | Simplified descent model and sensitivity/dispersion analysis | Recovery requirements, descent metrics, and uncertainty under environmental variation | Use nominal checks to screen candidates before more expensive robustness evaluation |
+| Mission target and architecture | Requirements consistency checks and system-level feasibility models | Whether the supported mission can be represented and evaluated at all | Unsupported missions require a scope decision, not a more detailed-looking result from an unsuitable solver |
+
+Separate the **analysis model** from the **search algorithm** and the **execution platform**.
+MATLAB, for example, could host an analysis or search routine, but its use alone does not
+specify the physics, fidelity, validation, or appropriate optimizer.
+
+Track a dependency map from each variable to affected models, outputs, constraints, and other
+variables. For example, a material change can alter mass and structural assumptions, while a
+shape change can alter both mass and aerodynamic inputs. Recompute the affected chain and
+propagate its consequences upward and sideways before comparing candidates.
+
+Use multiple fidelities deliberately: inexpensive screening, targeted refinement, and
+validation against independent references answer different questions. Record model cost and
+uncertainty, compare candidates on a compatible basis, and avoid treating a higher-fidelity
+solver as automatically more trustworthy without suitable inputs and validation.
+
 ### Candidate-generation and evaluation loop
 
 1. **Define the design space.** Separate requirements, hard constraints, controllable
