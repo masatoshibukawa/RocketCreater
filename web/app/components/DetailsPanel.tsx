@@ -5,6 +5,7 @@ import type {
   AgentEvent,
   AttemptRow,
   Candidate,
+  ChainStep,
   ClassifyResult,
   DerivedRequirements,
   DispersionResult,
@@ -14,6 +15,7 @@ import type {
 } from "../lib/types";
 import AttemptLog from "./AttemptLog";
 import CandidateCards from "./CandidateCards";
+import DesignChainPanel from "./DesignChainPanel";
 import DispersionPanel from "./DispersionPanel";
 import ReviewPanel from "./ReviewPanel";
 import { ClassifyNotes } from "./TierBadge";
@@ -24,6 +26,8 @@ interface DetailsPanelProps {
   derived: DerivedRequirements | null;
   attempts: AttemptRow[];
   candidates: Candidate[];
+  /** auto_design / design_stage results in time order (「設計の決定順」). */
+  chain: ChainStep[];
   events: AgentEvent[];
   dispersion: DispersionResult | null;
   landing: LandingPoint | null;
@@ -81,7 +85,8 @@ function DerivedList({ derived }: { derived: DerivedRequirements | null }) {
 }
 
 /**
- * 詳細（エンジニア向け）: collapsed by default. Attempt log, candidate cards, reviewer verdicts,
+ * 詳細（エンジニア向け）: collapsed by default. The design-chain decision order (auto_design
+ * baseline and design_stage revisions), attempt log, candidate cards, reviewer verdicts,
  * the Monte-Carlo dispersion (success rate, landing scatter / insertion errors) and the
  * derived-requirement formulas. Nothing here navigates away from the page.
  */
@@ -91,6 +96,7 @@ export default function DetailsPanel({
   derived,
   attempts,
   candidates,
+  chain,
   events,
   dispersion,
   landing,
@@ -103,12 +109,13 @@ export default function DetailsPanel({
       <summary className="details-summary">
         詳細（エンジニア向け）
         <span className="muted details-hint">
-          試行ログ {attempts.length} 件 · 設計案 {candidates.length} 件 · 多数回試行
+          決定順 {chain.length} 件 · 試行ログ {attempts.length} 件 · 設計案 {candidates.length} 件 · 多数回試行
           {dispersion ? ` n=${dispersion.n}` : " -"}
         </span>
       </summary>
       <div className="details-body">
         <ClassifyNotes tier={tier} classify={classify} />
+        <DesignChainPanel chain={chain} selectedId={selectedId} onSelect={onSelect} />
         <div className="panel">
           <div className="panel-header">
             <h2 className="panel-title">仮想打ち上げ（多数回試行）</h2>

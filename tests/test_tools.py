@@ -793,3 +793,17 @@ def test_auto_design_tool_bottle_demo():
     assert out["derived_targets"]["gauge_pressure_pa"] > 0
     assert any(r["key"] == "gauge_pressure_pa" for r in out["derived_vs_chain"])
     json.dumps(out)
+
+
+def test_run_dispersion_judges_the_budget_with_the_parts_bill():
+    """A part-space design's cost is its bill (design_from_parts / auto_design), not the
+    geometric cost.py estimate: run_dispersion takes it as `cost_jpy` for every sample."""
+    req = {**REQ_AMATEUR, "budget_jpy": 1000.0}
+    base = {"design": AMATEUR_DESIGN, "env": ENV, "n": 6, "seed": 3, "requirement": req}
+    over = execute_tool("run_dispersion", {**base, "cost_jpy": 5000.0}, "toolu_d")
+    assert any("budget" in k for k in over["failure_counts"])
+    within = execute_tool("run_dispersion", {**base, "cost_jpy": 900.0}, "toolu_d")
+    assert not any("budget" in k for k in within["failure_counts"])
+    assert within["nominal"]["metrics"] == over["nominal"]["metrics"]
+    defs = {d["name"]: d for d in get_tool_definitions()}
+    assert "cost_jpy" in defs["run_dispersion"]["input_schema"]["required"]

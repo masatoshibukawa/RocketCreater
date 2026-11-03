@@ -99,7 +99,7 @@ def reviewer_request(
             "User requirement (verbatim):\n" + requirement_text.strip(),
             "Candidate design (tool input):\n"
             + json.dumps(candidate.get("design"), ensure_ascii=False),
-            "simulate_design result (tool output, cite its numbers only):\n"
+            "Simulation result (tool output, cite its numbers only):\n"
             + json.dumps(_slim(sim_result), ensure_ascii=False),
         ]
         + (
@@ -253,7 +253,8 @@ def review_feedback_message(verdicts: list[ReviewVerdict], *, source_id: str) ->
     if any(needs_redesign(v) for v in items):
         lines.append(
             "Address every blocker and major finding by re-designing and re-simulating "
-            "(simulate_design) before the final answer, or explain in the final answer why "
+            "(design_stage / design_from_parts for bottle and amateur, simulate_design for "
+            "commercial and heavy) before the final answer, or explain in the final answer why "
             "you did not. A candidate with a blocker will not be reported as passing."
         )
     else:

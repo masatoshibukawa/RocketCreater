@@ -4,10 +4,14 @@
   guard check -> [error] | (thinking | text | tool_call | tool_result | candidate | review)* ->
   [warning] final | question | error
 
-Attempts: a `simulate_design` call (commercial/heavy, or a geometric design) or a
-`design_from_parts` call (bottle/amateur: parts -> buildability -> sim) is one attempt
-(ATTEMPT_TOOLS); a design_from_parts result stopped by a buildability error has `sim: null`
-and is a failed attempt with no candidate.
+Attempts: a `simulate_design` call (commercial/heavy, or a geometric design), a
+`design_from_parts` call (bottle/amateur: parts -> buildability -> sim) or an `auto_design` call
+(bottle/amateur: the staged chain's baseline build, judged like design_from_parts) is one
+attempt (ATTEMPT_TOOLS); a design_from_parts result stopped by a buildability error has
+`sim: null` and is a failed attempt with no candidate. A passing part-space attempt's candidate
+carries `build`, `bill` and `origin` (the tool name). `design_stage` is exploration: one stage's
+ranked candidates, not an attempt and no candidate event (the UI reads its candidates from the
+tool_result).
 
 Phase 3 reviewers (review.py): every passing attempt result (a candidate) is reviewed
 once by the four per-aspect reviewers; their verdicts are emitted as a `review` event, and
@@ -60,11 +64,14 @@ from rocketwright.schema import Env
 __all__ = ["AgentConfig", "ReviewerConfig", "models_config_path", "run_design_loop"]
 
 ATTEMPT_TOOL = "simulate_design"
-# design_from_parts is the bottle/amateur attempt: a build resolved, checked and simulated.
-# Both count against the attempt budget and both yield candidates when their sim passes.
-ATTEMPT_TOOLS = (ATTEMPT_TOOL, "design_from_parts")
+# design_from_parts / auto_design are the bottle/amateur attempts: a build resolved, checked and
+# simulated (auto_design: the build the staged chain chose). All three count against the attempt
+# budget and yield candidates when their sim passes.
+PART_ATTEMPT_TOOLS = ("design_from_parts", "auto_design")
+ATTEMPT_TOOLS = (ATTEMPT_TOOL, *PART_ATTEMPT_TOOLS)
 REFERENCE_TOOL = "find_reference_designs"
 _TRACE_KEY = "trace"
+_ATTEMPT_NAMES = "simulate_design / design_from_parts / auto_design calls"
 
 
 def models_config_path() -> Path:
@@ -146,24 +153,42 @@ def _without_trace(result: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _strip_sim_traces(node: Any) -> Any:
+    """Copy of `node` where every nested `sim` object has its time-series trace replaced by
+    `trace_point_count` (design_from_parts / auto_design `sim`, find_reference_designs
+    `seed.sim`, any candidate or feasibility entry that carries one)."""
+    if isinstance(node, list):
+        return [_strip_sim_traces(v) for v in node]
+    if not isinstance(node, dict):
+        return node
+    out: dict[str, Any] = {}
+    for k, v in node.items():
+        if k == "sim" and isinstance(v, dict):
+            out[k] = _without_trace(_strip_sim_traces(v))
+        else:
+            out[k] = _strip_sim_traces(v)
+    return out
+
+
 def _for_model(result: dict[str, Any]) -> dict[str, Any]:
-    """Tool result as sent to the model: the trace is dropped (the UI gets it via the event).
-    A find_reference_designs result carries the seed's sim under `seed.sim`; its trace (if the
-    tool ever includes one) is dropped the same way."""
-    slim = _without_trace(result)
-    seed = slim.get("seed")
-    if isinstance(seed, dict) and isinstance(seed.get("sim"), dict):
-        slim = {**slim, "seed": {**seed, "sim": _without_trace(seed["sim"])}}
-    return slim
+    """Tool result as sent to the model: the simulation traces are dropped (the UI gets them
+    via the tool_result event): the top-level one (simulate_design) and every nested `sim`
+    (design_from_parts, auto_design, the find_reference_designs seed). auto_design's own
+    `trace` (its per-stage decisions, a list of dicts without a time axis) is kept."""
+    trace = result.get(_TRACE_KEY)
+    is_stage_trace = isinstance(trace, list) and any(
+        isinstance(p, dict) and "stage" in p for p in trace
+    )
+    return _strip_sim_traces(result if is_stage_trace else _without_trace(result))
 
 
 def attempt_outcome(
     name: str, tool_input: dict[str, Any], result: dict[str, Any]
 ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     """(sim result, design) of an attempt tool result. simulate_design: the result itself and
-    the input design (or the tuned one); design_from_parts: the embedded `sim` (None when a
-    buildability error stopped the simulation) and the resolved `design`."""
-    if name == "design_from_parts":
+    the input design (or the tuned one); design_from_parts / auto_design: the embedded `sim`
+    (None when a buildability error stopped the simulation) and the resolved `design`."""
+    if name in PART_ATTEMPT_TOOLS:
         sim = result.get("sim")
         return (sim if isinstance(sim, dict) else None), result.get("design")
     return result, result.get("tuned_design") or tool_input.get("design")
@@ -405,8 +430,8 @@ async def run_design_loop(
             if tu.name in ATTEMPT_TOOLS:
                 if attempts >= cfg.max_attempts:
                     result: dict[str, Any] = {
-                        "error": f"attempt budget exhausted ({cfg.max_attempts} simulate_design / "
-                        "design_from_parts calls); produce the final answer now",
+                        "error": f"attempt budget exhausted ({cfg.max_attempts} "
+                        f"{_ATTEMPT_NAMES}); produce the final answer now",
                         "source_id": tu.id,
                     }
                 else:
@@ -430,12 +455,14 @@ async def run_design_loop(
                 candidate = {
                     "source_id": tu.id,
                     # simulate_design: the input design (the tuned one with tune_pitch);
-                    # design_from_parts: the resolved design, plus the parts and the bill
+                    # design_from_parts / auto_design: the resolved design, plus the parts and
+                    # the bill
                     "design": design,
                     "metrics": sim.get("metrics", {}),
                     "cost_jpy": sim.get("cost_jpy"),
+                    "origin": tu.name,
                 }
-                if tu.name == "design_from_parts":
+                if tu.name in PART_ATTEMPT_TOOLS:
                     candidate["build"] = result.get("build")
                     candidate["bill"] = result.get("bill")
                 yield ev("candidate", candidate)
@@ -449,13 +476,13 @@ async def run_design_loop(
                         api,
                         cfg,
                         candidate,
-                        _for_model(sim),  # the sim result (design_from_parts: its `sim`)
+                        _for_model(sim),  # the sim result (part-space tools: their `sim`)
                         requirement_text,
                         extra_context={
                             "requirement": tool_input.get("requirement"),
                             **(
                                 {"build": result.get("build"), "bill": result.get("bill")}
-                                if tu.name == "design_from_parts"
+                                if tu.name in PART_ATTEMPT_TOOLS
                                 else {}
                             ),
                         },
@@ -496,8 +523,8 @@ async def run_design_loop(
                 {
                     "type": "text",
                     "text": f"Attempt budget reached ({attempts}/{cfg.max_attempts} "
-                    "simulate_design / design_from_parts calls). Do not simulate again; write "
-                    "the final JSON answer now from the results you already have.",
+                    f"{_ATTEMPT_NAMES}). Do not simulate again; write the final JSON answer "
+                    "now from the results you already have.",
                 }
             )
         messages.append({"role": "user", "content": results_content})

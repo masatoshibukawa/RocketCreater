@@ -140,3 +140,72 @@ def test_single_chart_library():
         if lib in ("recharts", "plotly.js", "react-plotly.js")
     }
     assert libs == {"recharts"}
+
+
+def _ts(path: str) -> str:
+    return (WEB_APP / path).read_text(encoding="utf-8")
+
+
+def test_chain_tools_are_labelled_and_reduced():
+    """The staged design chain reaches the UI: tool labels, auto_design as an attempt row with
+    its resolved design, design_stage results kept in time order for 「設計の決定順」."""
+    from rocketwright.agent.tools import TOOL_NAMES
+
+    labels = dict(
+        re.findall(
+            r"^\s*(\w+): \"([^\"]+)\",$",
+            FORMAT_TS[FORMAT_TS.index("const TOOL_LABELS") :].split("};", 1)[0],
+            re.M,
+        )
+    )
+    assert set(labels) == set(TOOL_NAMES), set(TOOL_NAMES) ^ set(labels)
+    assert labels["auto_design"] == "自動設計"
+    assert labels["design_stage"] == "段階の候補"
+    assert labels["design_from_parts"] == "部品から設計"
+    state = _ts("lib/designState.ts")
+    for case in ('case "auto_design"', 'case "design_stage"', 'case "design_from_parts"'):
+        assert case in state, case
+    assert "chain: ChainStep[]" in state
+    assert "export function certificationNotes" in state
+    assert "ChainStep" in TYPES_TS and "ChainCandidate" in TYPES_TS
+    details = _ts("components/DetailsPanel.tsx")
+    assert "DesignChainPanel" in details
+    chain_panel = _ts("components/DesignChainPanel.tsx")
+    assert "設計の決定順" in chain_panel
+    for field in ("funnel", "alternatives", "invalidated", "why"):
+        assert field in chain_panel, field
+    assert "notes={" in PAGE_TSX and "chain={" in PAGE_TSX
+    assert "notes" in _ts("components/ModelViewer.tsx")
+
+
+def test_certification_notes_match_backend_warning_texts():
+    """The amber note under the 3D view picks the build warnings by these fragments; they must
+    occur in the real build.check_buildability messages."""
+    state = _ts("lib/designState.ts")
+    body = state[state.index("export function certificationNotes") :]
+    frags = re.findall(r'"([^"]+)"', body[: body.index("\n}\n")])
+    assert {"Level 1", "Level 2", "coupler"} <= set(frags)
+    src = (ROOT / "rocketwright" / "build.py").read_text(encoding="utf-8")
+    assert "certification" in src and "coupler" in src and "Level 2 (J-L)" in src
+
+
+def test_ogive_nose_points_up_in_the_3d_model():
+    """model3d.noseProfile runs from the base (x = 0) to the tip (x = L): the ogive radius must
+    fall monotonically from R to 0, so noses and fairings point away from the body (the old
+    profile put r = 0 at the base: an upside-down fairing). The TS expression is evaluated."""
+    import math
+
+    src = _ts("lib/model3d.ts")
+    body = src[src.index("function noseProfile") :]
+    body = body[body.index("tangent ogive") :]
+    expr = re.search(r"\br = (Math\.sqrt\(.*?);\n", body).group(1)
+    py = expr.replace("Math.sqrt", "math.sqrt").replace("Math.max", "max")
+    radius, length = 0.5, 1.4
+    rho = (radius * radius + length * length) / (2 * radius)
+    rs = [
+        max(0.0, eval(py, {"math": math, "max": max, "rho": rho, "radius": radius, "x": x}))
+        for x in (length * i / 20 for i in range(21))
+    ]
+    assert math.isclose(rs[0], radius, rel_tol=1e-9)
+    assert rs[-1] < 1e-9
+    assert all(a >= b for a, b in zip(rs, rs[1:], strict=False))

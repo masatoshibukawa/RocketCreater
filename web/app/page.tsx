@@ -10,7 +10,7 @@ import FlightChart from "./components/FlightChart";
 import ModelViewer from "./components/ModelViewer";
 import StatusStrip from "./components/StatusStrip";
 import { exportInfoFromEvents, exportsForDesign } from "./lib/api";
-import { selectDisplayedDesign } from "./lib/designState";
+import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
 import { useDesignStream } from "./lib/useDesignStream";
 import { useDesignSummary } from "./lib/useDesignSummary";
 import type { DispersionResult, DisplayedDesign, LandingPoint, TracePoint } from "./lib/types";
@@ -23,6 +23,7 @@ export default function Home() {
 
   // Displayed design: the user's pick when it resolves, else the latest passing candidate,
   // else the latest attempt, else the reference seed (designState.selectDisplayedDesign).
+  // Part-space attempts (auto_design / design_from_parts) carry the resolved design.
   const displayed = useMemo<DisplayedDesign | null>(() => {
     if (selectedId !== null) {
       const c = stream.candidates.find((x) => x.source_id === selectedId);
@@ -41,6 +42,11 @@ export default function Home() {
     [displayedId, stream.attempts],
   );
   const trace: TracePoint[] = displayedAttempt?.result?.trace ?? [];
+  // Certification / coupler warnings of the displayed build (amber note under the 3D view).
+  const notes: string[] = useMemo(
+    () => certificationNotes(displayedAttempt?.result?.warnings ?? []),
+    [displayedAttempt],
+  );
   const fallbackCost = displayedAttempt?.result?.cost_jpy ?? null;
 
   const landing: LandingPoint | null = useMemo(() => {
@@ -116,6 +122,7 @@ export default function Home() {
               origin={displayed?.origin ?? null}
               reference={stream.reference}
               dimensions={summary?.dimensions ?? null}
+              notes={notes}
             />
             <CostPanel
               summary={summary}
@@ -134,6 +141,7 @@ export default function Home() {
               derived={stream.derived}
               attempts={stream.attempts}
               candidates={stream.candidates}
+              chain={stream.chain}
               events={stream.events}
               dispersion={dispersion}
               landing={landing}

@@ -54,3 +54,23 @@ def test_extract_numbers_handles_units():
     assert values["95%"] == (95.0, "%")
     assert values["1,234.5 kg"] == (1234.5, "kg")
     assert values["1.2e3 m"] == (1200.0, "m")
+
+
+def test_numbers_quoted_from_tool_text_are_sourced():
+    """design_stage `why` strings and buildability messages are code-written text: a number
+    quoted from them (with its unit or tolerance) is sourced, an invented one still is not."""
+    results = [
+        {
+            "candidates": [
+                {
+                    "option": "motor_mount_38mm_98",
+                    "why": "motor_mount_38mm_98: 38 mm motor, 356 mm: apogee 941 m (target "
+                    "2,000 m +-10%), 2.1 cal, 34,720 JPY; fails: apogee off target",
+                    "metrics": {"apogee_m": 941.2},
+                }
+            ]
+        }
+    ]
+    quoted = "The 98 mm option (38 mm motor, 356 mm mount) fails: 941 m vs 2,000 m +-10%."
+    assert find_unsourced_numbers(quoted.replace("98 mm option", "option"), results) == []
+    assert find_unsourced_numbers("It needs 4,400 mm of tube.", results) == ["4,400"]

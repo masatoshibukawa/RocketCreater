@@ -214,19 +214,90 @@ export interface DispersionResult {
   target_apogee_m: number | null;
 }
 
-/** One row of the attempt log: a simulate_design tool_result (or its error). */
+/** One row of the attempt log: a simulate_design / design_from_parts / auto_design tool_result
+ * (or its error). */
 export interface AttemptRow {
   id: string;
   attempt: number;
   t_s: number;
   result: SimResult | null;
   error: string | null;
-  /** The simulated design (tool_call input, or the tuned design the result reports). */
+  /** The simulated design (tool_call input, the tuned design the result reports, or the
+   * resolved design of a parts build). */
   design: Design | null;
   /** Reference id when this row is the seed of a find_reference_designs result (attempt 0,
    * free: not a simulate_design call), else null. */
   seededFrom: string | null;
+  /** The tool that produced the row ("auto_design" rows are the staged chain's baseline). */
+  tool: string;
 }
+
+// --------------------------------------------------------------------------- design chain
+
+/** The candidate funnel of one stage (design_chain StageTrace / StageResult). */
+export interface ChainFunnel {
+  enumerated: number;
+  compatible: number | null;
+  simulated: number;
+  passed: number;
+  /** Rejection reason -> number of candidates. */
+  rejected: Record<string, number>;
+}
+
+/** One candidate of a design_stage result, or an alternative in an auto_design trace entry. */
+export interface ChainCandidate {
+  option: string;
+  label: string;
+  passed: boolean;
+  /** The code's one-line reason (metrics, cost, pass / fail) - quoted, never recomputed. */
+  why: string;
+  metrics: Record<string, number>;
+  cost_jpy: number | null;
+  failure_reasons: string[];
+  issues: string[];
+}
+
+/** One stage of the auto_design trace: the adopted option, why, the funnel, top alternatives. */
+export interface ChainStageTrace {
+  stage: string;
+  chosen: string;
+  label: string;
+  why: string;
+  /** Given by the caller, not ranked. */
+  fixed: boolean;
+  funnel: ChainFunnel;
+  alternatives: ChainCandidate[];
+}
+
+/** An auto_design result: the baseline walked through the fixed stage order. */
+export interface ChainAutoStep {
+  kind: "auto";
+  source_id: string;
+  t_s: number;
+  passed: boolean;
+  trace: ChainStageTrace[];
+  /** Build warnings of the baseline (certification, coupler, margin) and the chain's own. */
+  warnings: string[];
+  /** feasibility.verdict when no design passes within the budget, else null. */
+  feasibility: string | null;
+}
+
+/** A design_stage result: one stage ranked given the upstream decisions. */
+export interface ChainStageStep {
+  kind: "stage";
+  source_id: string;
+  t_s: number;
+  stage: string;
+  /** Upstream decisions passed in (`stage=option`). */
+  chosen: string[];
+  funnel: ChainFunnel;
+  candidates: ChainCandidate[];
+  /** Downstream stages the call dropped (redone by their default rules). */
+  invalidated: string[];
+  next_stage: string | null;
+}
+
+export type ChainStep = ChainAutoStep | ChainStageStep;
 
 /** The reference vehicle a find_reference_designs result seeded the design from. */
 export interface ReferenceInfo {

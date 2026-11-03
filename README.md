@@ -13,10 +13,15 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 1. 要求を `bottle` / `amateur` / `commercial` / `heavy` のいずれかに分類する。
 2. 定量要求を公式で計算する（`derive_requirements`：必要増速量と質量比、総力積とモーター級、ゲージ圧とパラシュート径など。
    式と代入値つきで返し、Claude はそれを最初の設計の「尺度」として引用する。結果ではない）。
-3. 近い実機を種にして設計する（`find_reference_designs`：`catalog/references/` の実機から要求に最も近いものを選び、
-   仮置きの縮尺規則で要求に合わせた `seed` 設計とそのシミュレーション結果を返す。合格した種は「試行 0」として UI に出る）。
-4. その規模の物理モデルとカタログを使って、Claude が種を起点に設計を選び説明する。公式とシミュレーションが食い違えば
-   シミュレーションを信じ、公式のどの仮定が差を生んだかを述べる。
+3. 設計する。
+   - **ペットボトル・アマチュア：段階チェーン。** 部品を決まった順（モーター → マウント → 胴体チューブ → … → 開傘遅延）で
+     選ぶ。各段階の候補はコードがカタログから列挙し、組立可否を検査し、シミュレートして順位を付ける（`auto_design` が
+     全段階を通した基準案、`design_stage` が 1 段階ぶんの候補と絞り込みの内訳）。Claude は基準案を説明し、ユーザーの
+     優先事項（安く・軽く・資格なし・手持ちの部品）に合わせて**最も上流の変える必要がある段階から**選び直し、
+     `design_from_parts` で最終構成を確かめる。近い実機キット（`find_reference_designs`）は「どのキットに近いか」の文脈として引用する。
+   - **企業級・重工級：近い実機を種にする。** `find_reference_designs` が `catalog/references/` から最も近い実機を選び、
+     仮置きの縮尺規則で要求に合わせた `seed` 設計とそのシミュレーション結果を返す（合格した種は「試行 0」として UI に出る）。
+4. 公式とシミュレーションが食い違えばシミュレーションを信じ、公式のどの仮定が差を生んだかを述べる。
 5. 各設計案をシミュレートする（シード付きノイズで n 回の多数回試行も行う）。
 6. 合格した設計案だけを、図面・部品表・飛行解析・成功率つきで返す。
 
@@ -44,6 +49,8 @@ rocketwright/        Python パッケージ（バックエンド）
   classify.py        規則ベースの規模分類
   derive.py          定量要求の公式計算（DERIVE_CONSTANTS はすべて provisional）
   references.py      実機カタログ（catalog/references/*.yaml）の検索・再現・縮尺（種設計）
+  parts.py, build.py 部品カタログの読み込みと、部品の構成 → 設計・部品表・組立可否の検査（定格、室の長さ、カプラ、資格）
+  design_chain.py    段階チェーン：段階ごとの候補の列挙・検証・順位付け（design_stage）と基準案（auto_design）
   guard.py           スコープ外要求の検出
   physics/           atmosphere, water, solid, multistage, stability, recovery
   dispersion.py      全モデル共通の多数回試行（モンテカルロ）
@@ -97,31 +104,98 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml --dummy
 uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 ```
 
-`scenarios/demo_amateur.yaml` と `scenarios/demo_bottle.yaml` も同じです。同じ実行を `tests/test_scenarios.py` が
-偽クライアントで行います。`uv run python scripts/check_scenarios.py` は全シナリオを実行し、最終 JSON
-（合格案の有無、出典、レビューと多数回試行のイベント、`derive_requirements` と `find_reference_designs` の結果、
-最終 JSON の `reference_id` が実機カタログの id で `derived_targets` が derive の呼び出し ID であること、
-引用されたツール ID の実在）を検査します。
+`scenarios/` には 4 本の台本があります（`demo_bottle`, `demo_amateur`, `demo_model_rocket`, `demo_commercial`）。
+同じ実行を `tests/test_scenarios.py` が偽クライアントで行います。`uv run python scripts/check_scenarios.py` は全シナリオを実行し
+（各 10 秒以内）、最終 JSON（合格案の有無、出典、レビューと多数回試行のイベント、`derive_requirements` と
+`find_reference_designs` の結果、最終 JSON の `reference_id` が実機カタログの id で `derived_targets` が derive の呼び出し ID
+であること、引用されたツール ID の実在）を検査します。台本の各選択は実行時にツールの戻り値から読み取ります（数値の手書きなし）。
+シナリオ YAML の `story:` で台本を選びます（省略時は規模の既定の台本）。
 
-台本の流れはどの規模でも同じです：分類 → 公式で定量要求を算出 → カタログ検索 → 近い実機から種設計
-（企業級は種のピッチ指令を再調整するため数秒かかる）→ 種を起点に試行 1 → 失敗理由を読んで原因を直した試行 2〜3 →
-合格案の多数回試行 → 最終 JSON（`reference_id`, `derived_targets`, 各数値の出典 ID）。
+ペットボトルとアマチュアの台本は段階チェーンです：分類 → 公式で定量要求を算出＋最も近い実機キット（文脈）→
+`auto_design`（基準案、試行 1）→ `design_stage` で選び直し（各呼び出しは、変える段階のうち最も上流から。テストで検査）→
+`design_from_parts` で最終構成を確認（試行 2）→ 多数回試行（部品表の費用で予算判定）→ 最終 JSON。
+企業級の台本は従来どおり実機の種から：分類 → 定量要求 → 近い実機から種設計（ピッチ指令を再調整するため数秒）→
+試行 1〜3 → 多数回試行 → 最終 JSON。
 
-| 台本 | 種（実機） | 試行 0（種） | 試行 1 | 試行 2 | 試行 3 | 成功率（n=100） |
-| --- | --- | --- | --- | --- | --- | --- |
-| demo_bottle | Apte 2 L ボトル → 376 kPa、0.31 m 傘 | 合格 32.2 m | 1.5 L ボトルに収める：合格 29.7 m | 公式の 695 kPa に寄せて 500 kPa：36.5 m で不合格（公式のエネルギー効率が悲観的） | 400 kPa：合格 31.1 m | 0.99（試行 1） |
-| demo_amateur | Estes Alpha III → J420、60 mm、傘 1.79 m | 2,208 m（+10 %）で不合格 | 種のまま：不合格（頂点 +10 %） | 66 mm 胴体・乾燥 500 g・傘 1.0 m：合格 1,935 m | 同じく傘 1.2 m：合格 | 0.94（試行 2） |
-| demo_commercial | Electron → Rutherford 4+1 基、推進剤 4,625+1,025 kg、ピッチ再調整 | 合格 399.5 km | 種のまま：合格（余裕 37 kg、5.1 億円） | 1 段目を 4,000 kg に削減：近地点 -1.9 km で不合格 | 2 段目を 900 kg に削減：合格 400×498 km、5.0 億円 | 0.94（試行 1） |
+| 台本（要求） | 基準案（auto_design） | 選び直し（design_stage、上流から） | 最終（design_from_parts） | 成功率（n=100） |
+| --- | --- | --- | --- | --- |
+| demo_bottle（卵、30 m、3,000 円、1.5 L） | 1.0 L ボトル・15 mm ノズル・水 25 %・500 kPa（上限）：29.9 m、730 円、合格 | ① `bottle`：ユーザーの 1.5 L（合格 29.9 m、364 kPa）② `pressure`：合格する最低圧 350 kPa（29.1 m、上限まで余裕） | 1.5 L・22 mm ノズル・350 kPa・30 cm 傘：29.1 m、1,150 円、合格 | 0.98 |
+| demo_amateur（1 kg、2 km、5 万円） | J435WS（24 本列挙、13 本検証、1 本合格）・LOC 54 mm・胴 1,363 mm＝2 本＋カプラ・5.5 cal（過安定警告）・Level 2 警告：1,871 m、33,930 円、合格 | ① `mount`：カプラを避ける 98 mm 一本胴（motor_mount_38mm_98）は 948 m で不合格 → 上位候補（54 mm）を維持 ② `fins`：合格する翼のうち余裕が最小の後退翼 5.3 cal（胴が長く 2〜3 cal には届かない） | 同構成・後退翼：1,871 m、33,930 円、合格（Level 2・カプラ・過安定を明示） | 0.71 |
+| demo_model_rocket（200 g、500 m、2 万円、資格なし） | F32T（57 Ns、低出力・資格不要）・Estes BT-60・2 本＋カプラ：502 m、9,340 円、合格 | 資格：高出力警告なし → 選び直し不要 ① `body_tube`：一本胴の BT-80 は 301 m で不合格、BT-55 は F 級に非対応 → BT-60 を維持 | 基準案を確認：502 m、9,340 円、合格 | 0.87 |
+| demo_commercial（150 kg、400 km、20 億円） | （実機の種）Electron を縮尺、ピッチ再調整：合格 399.5 km | 試行 2：1 段目を 4,000 kg に削減 → 近地点 -1.9 km で不合格／試行 3：2 段目を 900 kg に削減 | 400×498 km、5.0 億円、合格 | 0.94（試行 1） |
+
+成功率は `scripts/check_scenarios.py` の実行値（2026-11-03）。σ や部品を変えると変わります。
 
 モデルとレビュアーの設定は `config/models.yaml` にあります：
 
 - `design_model`（`claude-opus-5-5`、adaptive thinking、`effort: high`）が設計判断を行い、
   `light_model`（`claude-haiku-5-5`）が軽い処理を担当します。
-- `max_attempts`（40）は `simulate_design` の呼び出し回数の上限、`max_turns`（80）は API 往復回数の上限です。
+- `max_attempts`（40）は試行（`simulate_design` / `design_from_parts` / `auto_design`）の呼び出し回数の上限、
+  `max_turns`（80）は API 往復回数の上限です。`design_stage` は探索で、試行に数えません（候補は UI の「設計の決定順」に出ます）。
 - `reviewers`：安定性・回収・費用・安全の 4 観点のレビュアーが、合格した設計案ごとに並列で動きます
   （`enabled`, `model`, `effort`, `max_tokens`, `max_rounds_per_candidate`）。判定は `review` イベントとして
   配信され、major / blocker の指摘は設計役に返されます。blocker が付いた案は最終の合格一覧から外れます
   （`review_gate` 種別の `warning` イベントで通知）。ツール結果に無い数値を引用した指摘はコードで除外します。
+
+## 段階チェーン（ペットボトル・アマチュアの設計の決定順）
+
+ペットボトルとアマチュアの設計は「部品の選択」で、決まった順に決めます。各段階はそれより前の段階だけに依存し、
+ある段階を変えるとそれより後の段階はすべて既定の規則でやり直しになります（`rocketwright/design_chain.py`）。
+
+| 規模 | 段階の順序 |
+| --- | --- |
+| amateur | `motor` → `mount` → `body_tube` → `nose_cone` → `body_length` → `fins`（材料＋平面形）→ `parachute` → `deploy_delay` |
+| bottle | `bottle` → `nozzle` → `water_fill` → `pressure` → `fins` → `parachute` |
+
+**候補の絞り込み（funnel）。** 1 段階ぶんの候補（`design_stage`）は、上流の決定と両立するカタログの全選択肢を列挙し、
+それぞれを下流の既定の規則で完全な構成に仕上げ、`design_from_parts` と同じ手順（部品の解決 → 組立可否の検査 →
+エラーが無ければシミュレーション → 要求との照合 → 採点）で評価します。結果は「列挙 → 適合 → 検証 → 合格」の件数と
+除外理由の内訳（「頂点高度が目標外」「予算超過」「非認定の代替モーター」など）として返り、UI の「設計の決定順」に並びます。
+候補が多い段階（フィンの平面形は 1,800 通り）は、シミュレーション前の安価な順位で上位だけを検証します。
+`auto_design` は各段階の最良候補を順に採る貪欲な歩みで、決定的です（同じ入力なら同じ基準案）。
+
+既定の規則（`CHAIN_RULES`、すべて provisional）：
+
+| 段階 | 既定の規則 |
+| --- | --- |
+| motor | `derive_requirements` の総力積以上で、取り付けられるマウントがある最小の**認定モーター**（`dummy_*` の合成代替は、認定モーターが 1 本も合格しない時だけ候補になり警告が付く） |
+| mount / body_tube / fin material | 小さなビーム探索：両立するマウント × 入るチューブ × モーターに対応する軽いフィン材 2 種を、下の規則で仕上げてシミュレートし採点 |
+| nose_cone | チューブに合う最軽量 |
+| body_length | 組立可能な最小長（モーター室＋畳んだパラシュート＋ショックコード＋積載室）＋1 径。最小長が在庫チューブ 1 本に収まるなら 1 本に切り詰め |
+| fins | 選んだ材料で、静安定余裕 2.0 cal 以上になる最小の平面形（`FIN_GRID`） |
+| parachute | 畳んで胴に収まり、降下速度 5 m/s 以下になる最小の傘 |
+| deploy_delay | 0 s（頂点で開傘。滑空時間に最も近い遅延グレインを説明に示す） |
+| bottle | `derive` の 1.5 L に最も近いボトル |
+| nozzle / water_fill | 首に入る最大のノズル／`derive` の 40 % |
+| pressure | 目標頂点高度に対して `brentq` で解いた圧（kPa 単位、ボトルと物理の上限でクリップ）＋切りの良い 50 kPa 刻みの候補 |
+| fins / parachute (bottle) | 最軽量のフィン／積載か回収要求があれば降下 5 m/s 以下の最小の傘（なければなし） |
+
+採点（辞書式、小さいほど良い）：組立エラーなし ＞ 要求を満たす（頂点 ±10 %、降下速度、安定余裕、レール離脱速度、予算）＞
+在庫チューブ 1 本（カプラ不要）＞ derive のモーター級 ±1 級（motor 段のみ。公式が合格したシミュレーションに勝たないように）＞
+失敗理由が少ない ＞ 頂点高度の誤差（1 % 刻み）＞ 費用 ＞ 離床質量 ＞ 選択肢 id（決定性のため）。
+
+**現実性の規則（`build.check_buildability`）。** 机上で飛ぶだけの機体を避けるため、組立可否の検査が次を強制します：
+
+- **定格**：胴体チューブとフィン材はカタログに対応できる最大総力積（`max_motor_impulse_ns`、根拠は `rating_note`）を持ち、
+  超えるとエラー（`tube_power_rating` / `fin_power_rating`）。例：Estes BT-55 は 40 Ns（E 級）、BT-60/BT-80 は 80 Ns（F 級）、
+  LOC 54/75/98 mm は 1,280 Ns、合板 3 mm は 1,280 Ns、G-10 1.6 mm は 640 Ns、バルサ 3.2 mm は 80 Ns。
+  回収金具（ショックコード）は機体質量の上限を持つ（エラスティック 0.68 kg、ナイロン 3/16 in 0.91 kg、3/8 in 3.18 kg）。
+- **室の長さ**：胴はモーター室（モーター長とマウント長の長い方）＋畳んだパラシュート（傘面積 × 0.50 mm）＋ショックコード 1 径＋
+  積載室（積載質量を 600 kg/m³ で内径に詰めた長さ、または `payload_length_m`）を収める（エラー `body_length_min`）。
+- **カプラ**：在庫チューブより長い胴は、チューブを継ぎ手（カプラ）でつないで作る。部品表に本数分のチューブとカプラが載り、
+  警告 `body_length_stock` が付く（カタログに合うカプラが無ければエラー）。
+- **認定モーター**：実在のモーター 19 本（AeroTech 14、Estes 5）は公表値（総力積・寸法・質量・遅延・価格）に合わせた推力曲線を持つ。
+  `dummy_*` の合成代替は認定モーターで合格しない時だけ使い、警告が付く。
+- **資格**：160 Ns（G 級）を超えるモーターは高出力で、NAR/Tripoli の **Level 1**（H, I）または **Level 2**（J〜L、640 Ns 超）
+  の資格と高出力の打ち上げ会が必要（警告 `high_power_motor`）。エージェントは最終回答でユーザーに必ず伝える。
+
+**予算に正直に。** 予算内に合格案が無いとき、`auto_design` は定数を曲げずにそう言います（`feasibility`）：予算を外した
+費用優先の歩みで見つけた「最も安い合格案」とその超過額、予算内で最も良い案とその失敗理由。エージェントはその数値を
+そのまま伝え、最も安い合格案か要求の緩和（高度・積載・予算）を提案します（聞き返しは 3 問まで）。
+
+**UI。** 「詳細」の「設計の決定順」に、基準案の各段階（段階 → 採用部品 → 理由 → 絞り込みの件数 → 次点 3 件）と、
+各 `design_stage` の結果（段階、合否つきの候補と理由、やり直しになった下流の段階）を時系列で表示します。表示中の機体に
+資格（Level 1/2）やカプラの警告があれば、3D 表示の上部に琥珀色の注記を出します。
 
 ## 進捗
 
@@ -239,7 +313,8 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 
 **ペットボトルとアマチュアの基準値はキット単位になりました。** 各項目は `build:`（`catalog/parts.yaml` の部品 id と
 モーター id）を持ち、再現では部品を解決して得た乾燥質量を公表重量と比べ、その解決済み設計を飛ばして頂点高度を比べます
-（手書きの `design` は `build` が無いときの予備）。エージェントの種設計もこのキットの部品から始まります。
+（手書きの `design` は `build` が無いときの予備）。このキット群が組立規則と段階チェーンの検証データで、エージェントは
+最も近いキットを「どのキットに近いか」の文脈として引用します（ペットボトル・アマチュアの設計の起点は `auto_design`）。
 フィン寸法とノーズ長はキットの公表値に無いため推定（各項目の `notes` に明記）。
 
 | id | 規模 | 公表 頂点高度 / 乾燥質量 | sim 頂点高度 / 乾燥質量 | 誤差 (高度 / 質量) | 許容 (高度 / 質量) |
@@ -312,6 +387,26 @@ Fischer の質量 0 % は、論文の 143 g を閉じるよう部品 `bottle_fin
 | adhesive_paint_mass_frac | 10 % | Estes の公表重量は塗装込みか不明 |
 | motor_price_jpy_per_ns | 25 円/Ns（旧 60） | 米国小売 × 150 円/USD（G80 約 $30、H128 リロード約 $40、J420 リロード約 $80）。旧値は J を 5.6 万円と見積もり実売の 3〜4 倍 |
 | motor_price_min_jpy | 600 円 | Estes C6 |
+| payload_packing_density_kgpm3 | 600 kg/m³ | 積載（電子機器・電池・錘・緩衝材）を内径いっぱいの円柱に詰めた密度。ノーズの肩は使わない（SIMPLIFICATION） |
+| parachute_packed_thickness_m | 0.50 mm（傘面積あたり） | Fruity Chutes の畳んだ体積（36/48 in で 0.52〜0.53 mm）と Estes BT-20 キットの傘室から上限 0.52 mm |
+| shock_cord_bay_calibers | 1.0 径 | ショックコードと耐熱紙の室 |
+| high_power_min_impulse_ns / level2_min_impulse_ns | 160 / 640 Ns | NAR/Tripoli の区分（G 以下は資格不要、H・I は Level 1、J〜L は Level 2）。出典は AeroTech 注文書 |
+| 定格 `max_motor_impulse_ns`（parts.yaml） | チューブ・フィン材ごと（上の「現実性の規則」） | 各部品の `rating_note`（キットの最大モーターから推定、provisional） |
+| 定格 `max_rocket_mass_kg`（回収金具） | 0.68 / 0.91 / 3.18 kg | LOC のショックコードの対応重量 |
+
+`design_chain.py`（`CHAIN_RULES`、段階チェーンの既定の規則と列挙の制御、すべて provisional）：
+
+| キー | 仮置き |
+| --- | --- |
+| default_static_margin_cal | 2.0 cal（フィンの既定：これ以上になる最小の平面形） |
+| default_descent_speed_mps | 5.0 m/s（傘の既定：これ以下になる最小の傘） |
+| default_body_extra_calibers | 1.0 径（胴長の既定：組立可能な最小長＋これ） |
+| fill_min/max/step_frac | 0.25 / 0.55 / 0.05（水量の候補） |
+| pressure_round_pa / pressure_lattice_pa | 50 kPa 刻みの候補 / 解いた圧は 1 kPa 単位 |
+| apogee_error_bin_frac | 1 %（頂点誤差はこの刻みで比べ、次に費用） |
+| max_sims_per_stage / max_sims_fins_stage | 16 / 10（これを超える候補はシミュレーション前の順位で間引く） |
+| motor_class_window | ±1 級 |
+| beam_fin_materials / beam_class_window / beam_max_sims | 2 / ±1 級 / 12 |
 
 `config/tiers.yaml`：
 
@@ -322,7 +417,7 @@ Fischer の質量 0 % は、論文の 143 g を閉じるよう部品 `bottle_fin
 | bottle | budget_min | 1,000 円 |
 | amateur | target_altitude_max | 5,000 m（国内のクラブ・法規の慣行による） |
 | amateur | payload_mass_max | 5 kg |
-| amateur | budget_min | 30,000 円 |
+| amateur | budget_min | 5,000 円（旧 30,000 円。部品表では 200 g を 500 m に上げる低出力機が約 9,000 円で、旧値はこれをペットボトルに落とした） |
 | commercial | target_altitude_min | 100 km（カーマンライン。FAI を出典にできる） |
 | commercial | target_altitude_max | 2,000 km |
 | commercial | payload_mass_max | 1,000 kg |
@@ -425,9 +520,10 @@ Fischer の質量 0 % は、論文の 143 g を閉じるよう部品 `bottle_fin
 
 カタログ（`rocketwright/catalog/`）：
 
-- `motors/*.eng`：5 本の推力曲線（`dummy_F32`, `dummy_G80`, `dummy_H128`, `dummy_I200`, `dummy_J420`）はすべて
-  **このリポジトリ用に作った合成の台形**で、実在のモーターではありません。出典とライセンスのある曲線に置き換えるまで、
-  `solid` の結果には警告が付きます。
+- `motors/*.eng`：実在のモーター 19 本（AeroTech F32T〜J435WS の 14 本、Estes A8〜E12 の 5 本）は、総力積・平均推力・
+  寸法・質量・遅延・価格を公表値（thrustcurve.org の認定要約、Estes の製品ページ、AeroTech 注文書）に合わせた
+  **合成の推力曲線**（曲線データは複製していない）で、provisional。`dummy_F32`〜`dummy_J420` の 5 本は実在しない合成の代替で、
+  認定モーターが合格しない時だけ候補になります。出典とライセンスのある曲線に置き換えるまで、`solid` の結果には警告が付きます。
 - `parts.yaml`：17 項目（ボトル、ノズル、ノーズコーン、胴体チューブ、フィンとフィン材、モーターマウント、パラシュート）は
   ホビーショップの代表的な質量と価格で、すべて provisional。
 - `engines.yaml`：`merlin_1d_vacuum`, `rl10`（RL10C-1）, `le_9`, `rutherford`, `gem_63`, `ariane5_eap` は provisional
@@ -452,22 +548,43 @@ Fischer の質量 0 % は、論文の 143 g を閉じるよう部品 `bottle_fin
 ## English summary
 
 Describe a mission in plain language and RocketWright classifies it into one of four tiers
-(`bottle`, `amateur`, `commercial`, `heavy`), lets Claude propose designs using that tier's
-physics model and parts catalog, launches every candidate in a deterministic simulator
-(including seeded Monte Carlo dispersion), and returns only the designs that pass, with
-drawings, bill of materials, flight analysis and success rate. Before designing, the agent
-derives quantitative targets by closed formulas (`derive_requirements`: required delta-v,
-total impulse and motor class, gauge pressure, ...) and seeds the design from the nearest real
-vehicle in `catalog/references/` (`find_reference_designs`: Electron, Atlas V, Estes kits,
-published bottle-rocket flights), scaled by provisional rules and simulated on the spot; the
-final answer cites the reference id and the derive call. When a formula and the simulation
-disagree, the simulation wins and the agent names the assumption that explains the gap. The
-reproduction table above (設計精度) shows every reference within its tolerance. Everything is
-simulated; nothing is launched. Claude thinks, chooses and explains; every number comes from a
-tool call and carries that call's id as provenance. Values without a source are marked `provisional: true`
-and listed above under 要確認の値. Built for Built with Claude: Japan 2026, MIT licensed.
+(`bottle`, `amateur`, `commercial`, `heavy`), lets Claude design with that tier's physics model
+and parts catalog, launches every candidate in a deterministic simulator (including seeded
+Monte Carlo dispersion), and returns only the designs that pass, with drawings, bill of
+materials, flight analysis and success rate. Before designing, the agent derives quantitative
+targets by closed formulas (`derive_requirements`: required delta-v, total impulse and motor
+class, gauge pressure, ...).
+
+Bottle and amateur rockets are designed by a **staged design chain**: parts are decided in a
+fixed order (amateur: motor -> mount -> body tube -> nose cone -> body length -> fins ->
+parachute -> deploy delay; bottle: bottle -> nozzle -> water fill -> pressure -> fins ->
+parachute). For each stage the code enumerates every compatible catalog option, completes it
+into a full build with default rules, checks buildability and simulates it; the candidate
+funnel (enumerated / compatible / simulated / passed, with rejection reasons) is shown to the
+user. `auto_design` walks all stages greedily for a deterministic baseline; the agent then
+revises with `design_stage` starting at the most upstream stage that must change (motor before
+tube before fins), quotes each candidate's `why`, and confirms the final build with
+`design_from_parts`. Realism rules reject paper rockets: power ratings of tubes, fin stock and
+shock cords, motor / parachute / payload bays, joined tubes with couplers, certified motors
+only (synthetic placeholders as a last resort), and NAR/Tripoli Level 1/2 certification
+warnings above 160 Ns. When nothing passes within the budget the agent says so with the
+cheapest passing design and the best one within budget. Commercial and heavy designs are seeded
+from the nearest real vehicle in `catalog/references/` (Electron, Atlas V, ...), scaled by
+provisional rules; for the small tiers the nearest real kit is cited as context.
+
+Four demo scenarios run end to end without an API key (`scenarios/`): a 1.5 L bottle lifting
+an egg to 30 m, 1 kg to 2 km on a 50,000 JPY budget (J motor, Level 2), a 200 g / 500 m
+model rocket without certification (F motor), and a 150 kg smallsat to a 400 km orbit.
+When a formula and the simulation disagree, the simulation wins and the agent names the
+assumption that explains the gap. The reproduction table above (設計精度) shows every reference
+within its tolerance. Everything is simulated; nothing is launched. Claude thinks, chooses and
+explains; every number comes from a tool call and carries that call's id as provenance. Values
+without a source are marked `provisional: true` and listed above under 要確認の値 (including the
+chain rules, payload packing density 600 kg/m3, parachute packing 0.50 mm per unit canopy area
+and the part ratings). Built for Built with Claude: Japan 2026, MIT licensed.
 
 Quick start: `uv sync --group dev && uv run pytest`, then
-`uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml --dummy` (no API key) or
-without `--dummy` for the live Claude API (`ANTHROPIC_API_KEY`). The web UI (`web/`, Node >= 18.18)
+`uv run python scripts/run_scenario.py scenarios/demo_amateur.yaml --dummy` (no API key) or
+without `--dummy` for the live Claude API (`ANTHROPIC_API_KEY`); `uv run python
+scripts/check_scenarios.py` checks all four scenarios. The web UI (`web/`, Node >= 18.18)
 talks to `uv run uvicorn api.main:app --port 8000`.

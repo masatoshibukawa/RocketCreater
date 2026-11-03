@@ -40,7 +40,9 @@ async def _collect(scenario: dict[str, Any]) -> list[AgentEvent]:
     env = scenario.get("env") or {}
     seed = scenario.get("seed")
     tier = (scenario.get("expected") or {}).get("tier")
-    client = FakeAnthropicClient(build_demo_script(tier, text, env, seed, reviews=True))
+    client = FakeAnthropicClient(
+        build_demo_script(tier, text, env, seed, reviews=True, story=scenario.get("story"))
+    )
     cfg = AgentConfig.load()
     return [ev async for ev in run_design_loop(text, client=client, config=cfg, env=env, seed=seed)]
 

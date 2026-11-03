@@ -19,17 +19,6 @@ from rocketwright.agent.loop import (
     run_design_loop,
 )
 
-# The scripted amateur story in agent/fake_client.py (attempt 2: a J motor in an Estes BT-80
-# cardboard tube with a 5 g elastic shock cord and the 1 kg payload in a 0.55 m body) is now
-# rejected by build.check_buildability (tube_power_rating, body_length_min,
-# recovery_hardware_rating): exactly the unrealistic design the product owner flagged. The
-# integration pass rewrites the script from design_chain.auto_design (fake_client.py is out of
-# this change's scope); until then these runs end without a passing amateur design.
-FAKE_AMATEUR_SCRIPT_OUTDATED = pytest.mark.xfail(
-    reason="fake_client amateur script predates the airframe power ratings / payload bay rules",
-    strict=False,
-)
-
 AMATEUR_TEXT = "1 kg の荷物を高度 2 km まで上げてパラシュートで回収したい。予算 5 万円。"
 # the demo_amateur scenario env: the seeded first attempt is about a tenth too high there
 ENV = {"launch_latitude_deg": 36.0, "launch_altitude_m": 300, "wind_speed_mps": 3.0}
@@ -52,7 +41,6 @@ def test_config_loads_from_yaml():
     assert cfg.max_tokens == 64000
 
 
-@FAKE_AMATEUR_SCRIPT_OUTDATED
 @pytest.mark.anyio
 async def test_scripted_amateur_run_event_sequence():
     client = FakeAnthropicClient(
@@ -62,25 +50,31 @@ async def test_scripted_amateur_run_event_sequence():
     types = [e.type for e in events]
     assert types[0] == "thinking"
     tool_calls = [e.payload["name"] for e in events if e.type == "tool_call"]
-    # classify; derive + catalog in one turn; reference seed; the seed-based first attempt
-    # alone (it fails: buildability error); then two corrected part builds in one turn
+    # classify; derive + the nearest real kit in one turn; the auto_design baseline; two
+    # design_stage revisions (mount, then fins: upstream first); the final build confirmed
     assert tool_calls == [
         "classify_requirement",
         "derive_requirements",
-        "search_catalog",
         "find_reference_designs",
-        "design_from_parts",
-        "design_from_parts",
+        "auto_design",
+        "design_stage",
+        "design_stage",
         "design_from_parts",
     ]
+    stages = [
+        e.payload["input"]["stage"]
+        for e in events
+        if e.type == "tool_call" and e.payload["name"] == "design_stage"
+    ]
+    assert stages == ["mount", "fins"]
     assert types.count("tool_result") == 7
     assert types[-1] == "final"
     assert types.count("final") == 1
-    assert "candidate" in types
+    assert types.count("candidate") == 2  # auto_design and design_from_parts
 
-    # attempts = number of design_from_parts (or simulate_design) calls
+    # attempts = auto_design + design_from_parts (design_stage is exploration)
     final = events[-1]
-    assert final.attempt == 3
+    assert final.attempt == 2
     assert all(e.t_s >= 0 for e in events)
 
     # the final payload is parsed JSON with sources and provenance info
@@ -100,17 +94,25 @@ async def test_scripted_amateur_run_event_sequence():
         assert all(t["strict"] is True for t in call["tools"])
         assert "budget_tokens" not in json.dumps(call["thinking"])
 
-    # both design_from_parts results of one assistant turn went back in ONE user message
+    # both tool results of the derive turn went back in ONE user message; the model never
+    # sees a simulation trace
     last_messages = client.calls[-1]["messages"]
     assert last_messages[0]["role"] == "user"
     roles = [m["role"] for m in last_messages]
-    assert roles == ["user", "assistant"] * 5 + ["user"]
-    last_user = last_messages[-1]["content"]
-    results = [b for b in last_user if b["type"] == "tool_result"]
-    assert len(results) == 2
-    assert {r["tool_use_id"] for r in results} == {"toolu_sim_2", "toolu_sim_3"}
-    assert all(isinstance(r["content"], str) for r in results)
-    assert all("apogee_m" in r["content"] for r in results)  # real solid-model results
+    assert roles == ["user", "assistant"] * 6 + ["user"]
+    derive_turn = last_messages[4]["content"]
+    results = [b for b in derive_turn if b["type"] == "tool_result"]
+    assert {r["tool_use_id"] for r in results} == {"toolu_derive", "toolu_ref"}
+    sent = {
+        b["tool_use_id"]: json.loads(b["content"])
+        for m in last_messages
+        if m["role"] == "user" and isinstance(m["content"], list)
+        for b in m["content"]
+        if b["type"] == "tool_result"
+    }
+    for tid in ("toolu_auto", "toolu_parts"):
+        assert "trace" not in sent[tid]["sim"] and "apogee_m" in sent[tid]["sim"]["metrics"]
+    assert [t["stage"] for t in sent["toolu_auto"]["trace"]][0] == "motor"
 
 
 @pytest.mark.anyio
@@ -130,12 +132,14 @@ async def test_attempt_budget_is_enforced():
     cfg = AgentConfig.load().model_copy(update={"max_attempts": 1})
     events = await _collect(client, env=ENV, seed=1, config=cfg)
     results = [e for e in events if e.type == "tool_result"]
-    sim_results = [e for e in results if e.payload["name"] == "design_from_parts"]
-    assert len(sim_results) == 3
-    assert sim_results[0].payload["is_error"] is False
-    assert sim_results[1].payload["is_error"] is True
-    assert sim_results[2].payload["is_error"] is True
-    assert "attempt" in sim_results[1].payload["result"]["error"]
+    attempts = [e for e in results if e.payload["name"] in ("auto_design", "design_from_parts")]
+    assert [e.payload["name"] for e in attempts] == ["auto_design", "design_from_parts"]
+    assert attempts[0].payload["is_error"] is False
+    assert attempts[1].payload["is_error"] is True
+    assert "attempt" in attempts[1].payload["result"]["error"]
+    # design_stage is exploration: it still runs after the budget is spent
+    stage_results = [e for e in results if e.payload["name"] == "design_stage"]
+    assert stage_results and not any(e.payload["is_error"] for e in stage_results)
     # the loop told the model to wrap up (once, right after the budget was reached)
     user_turns = [m["content"] for m in client.calls[-1]["messages"] if m["role"] == "user"]
     told = [
@@ -146,9 +150,17 @@ async def test_attempt_budget_is_enforced():
         if b["type"] == "text" and "final" in b["text"].lower()
     ]
     assert len(told) == 1
-    assert any(b in user_turns[-2] for b in told)  # sent with the first simulate result
+    auto_turn = next(
+        content
+        for content in user_turns
+        if isinstance(content, list) and any(b.get("tool_use_id") == "toolu_auto" for b in content)
+    )
+    assert told[0] in auto_turn  # sent with the first attempt's result
     assert events[-1].type == "final"
     assert events[-1].attempt == 1
+    # the final still reports the baseline that passed
+    designs = events[-1].payload["result"]["designs"]
+    assert [d["sources"]["cost_jpy"] for d in designs] == ["toolu_auto"]
 
 
 @pytest.mark.anyio
@@ -237,7 +249,15 @@ def _by_type(events: list[AgentEvent], kind: str) -> list[AgentEvent]:
     return [e for e in events if e.type == kind]
 
 
-@FAKE_AMATEUR_SCRIPT_OUTDATED
+def _user_turn_after(client, tool_use_id: str) -> list[dict]:
+    """The user message that carries the tool_result of `tool_use_id`."""
+    for m in client.calls[-1]["messages"]:
+        if m["role"] == "user" and isinstance(m["content"], list):
+            if any(b.get("tool_use_id") == tool_use_id for b in m["content"]):
+                return m["content"]
+    raise AssertionError(f"no user turn answers {tool_use_id}")
+
+
 @pytest.mark.anyio
 async def test_review_events_follow_candidates_and_feedback_is_injected():
     client = FakeAnthropicClient(
@@ -252,6 +272,7 @@ async def test_review_events_follow_candidates_and_feedback_is_injected():
     for cand, rev in zip(candidates, reviews, strict=True):
         assert rev.payload["source_id"] == cand.payload["source_id"]
         assert types.index("review", types.index("candidate")) > types.index("candidate")
+    assert [c.payload["source_id"] for c in candidates] == ["toolu_auto", "toolu_parts"]
     aspects = [v["aspect"] for v in reviews[0].payload["verdicts"]]
     assert aspects == ["stability", "recovery", "cost", "safety"]
     # demo script: first candidate gets a major cost finding, the second is all ok
@@ -259,13 +280,13 @@ async def test_review_events_follow_candidates_and_feedback_is_injected():
     assert first["cost"]["severity"] == "major"
     assert reviews[0].payload["max_severity"] == "major"
     assert reviews[0].payload["blocked"] is False
-    assert reviews[0].payload["feedback"].startswith("Reviewer findings for candidate toolu_sim_2")
+    assert reviews[0].payload["feedback"].startswith("Reviewer findings for candidate toolu_auto")
     assert all(v["severity"] == "ok" for v in reviews[1].payload["verdicts"])
     assert reviews[1].payload["feedback"] is None
     # the cited cost is the tool result's own number (no invented numbers survive)
-    sim2 = next(e for e in events if e.type == "tool_result" and e.payload["id"] == "toolu_sim_2")
-    cost2 = sim2.payload["result"]["sim"]["cost_jpy"]  # design_from_parts: the embedded sim
-    assert f"cost_jpy {cost2:.0f}" in first["cost"]["findings"][0]
+    auto = next(e for e in events if e.type == "tool_result" and e.payload["id"] == "toolu_auto")
+    cost = auto.payload["result"]["sim"]["cost_jpy"]  # auto_design: the embedded sim
+    assert f"cost_jpy {cost:.0f}" in first["cost"]["findings"][0]
     # part-space candidates carry the parts and the bill for the UI and the reviewers
     assert candidates[0].payload["build"]["tier"] == "amateur"
     assert candidates[0].payload["bill"]["dry_mass_kg"] > 0
@@ -274,13 +295,12 @@ async def test_review_events_follow_candidates_and_feedback_is_injected():
     assert len(client.parse_calls) == 8
     assert {c["model"] for c in client.parse_calls} == {"claude-haiku-5-5"}
     assert all(c["output_config"] == {"effort": "low"} for c in client.parse_calls)
-    # feedback goes into the NEXT user message: tool_result blocks first, then one text block
-    last_user = client.calls[-1]["messages"][-1]["content"]
-    kinds = [b["type"] for b in last_user]
-    assert kinds == ["tool_result", "tool_result", "text"]
-    assert last_user[-1]["text"].startswith("Reviewer findings for candidate toolu_sim_2")
-    assert "[cost/major]" in last_user[-1]["text"]
-    assert "re-simulating" in last_user[-1]["text"]
+    # feedback goes into the NEXT user message: tool_result block first, then one text block
+    auto_turn = _user_turn_after(client, "toolu_auto")
+    assert [b["type"] for b in auto_turn] == ["tool_result", "text"]
+    assert auto_turn[-1]["text"].startswith("Reviewer findings for candidate toolu_auto")
+    assert "[cost/major]" in auto_turn[-1]["text"]
+    assert "re-simulating" in auto_turn[-1]["text"]
     # the demo still ends with passing designs (major is not a blocker)
     final = events[-1]
     assert final.type == "final"
@@ -290,7 +310,6 @@ async def test_review_events_follow_candidates_and_feedback_is_injected():
     assert final.payload["provenance_violations"] == []
 
 
-@FAKE_AMATEUR_SCRIPT_OUTDATED
 @pytest.mark.anyio
 async def test_blocker_moves_design_out_of_passing_list():
     blocker = {
@@ -305,28 +324,25 @@ async def test_blocker_moves_design_out_of_passing_list():
     )
     events = await _collect(client, env=ENV, seed=1)
     reviews = _by_type(events, "review")
-    assert (
-        reviews[0].payload["blocked"] is True and reviews[0].payload["source_id"] == "toolu_sim_2"
-    )
+    assert reviews[0].payload["blocked"] is True and reviews[0].payload["source_id"] == "toolu_auto"
     assert reviews[1].payload["blocked"] is False
     warnings = _by_type(events, "warning")
     assert len(warnings) == 1 and warnings[0].payload["kind"] == "review_gate"
-    assert warnings[0].payload["rejected_ids"] == ["toolu_sim_2"]
+    assert warnings[0].payload["rejected_ids"] == ["toolu_auto"]
     final = events[-1]
     assert final.type == "final"
     result = final.payload["result"]
-    assert final.payload["review_blocked_ids"] == ["toolu_sim_2"]
-    assert [d["sources"]["cost_jpy"] for d in result["designs"]] == ["toolu_sim_3"]
+    assert final.payload["review_blocked_ids"] == ["toolu_auto"]
+    assert [d["sources"]["cost_jpy"] for d in result["designs"]] == ["toolu_parts"]
     assert all(d["passed"] for d in result["designs"])
     rejected = result["rejected_by_review"]
     assert len(rejected) == 1
-    assert rejected[0]["sources"]["cost_jpy"] == "toolu_sim_2"
+    assert rejected[0]["sources"]["cost_jpy"] == "toolu_auto"
     assert rejected[0]["passed"] is False
     assert rejected[0]["review_blocked"] is True
     assert "out-of-scope" in rejected[0]["review_findings"][0]
 
 
-@FAKE_AMATEUR_SCRIPT_OUTDATED
 @pytest.mark.anyio
 async def test_reviewer_findings_with_invented_numbers_are_dropped_before_feedback():
     invented = {
@@ -357,13 +373,12 @@ async def test_reviewer_findings_with_invented_numbers_are_dropped_before_feedba
             "increase fin span to 0.123 m",
         ]
     }
-    injected = client.calls[-1]["messages"][-1]["content"][-1]
+    injected = _user_turn_after(client, "toolu_auto")[-1]
     assert injected["type"] == "text"
     assert "2.75" not in injected["text"] and "0.123" not in injected["text"]
     assert "fin span is small" in injected["text"]
 
 
-@FAKE_AMATEUR_SCRIPT_OUTDATED
 @pytest.mark.anyio
 async def test_reviewers_can_be_disabled_and_never_run_on_failed_attempts():
     client = FakeAnthropicClient(
@@ -376,14 +391,14 @@ async def test_reviewers_can_be_disabled_and_never_run_on_failed_attempts():
     assert all(b["type"] == "tool_result" for b in client.calls[-1]["messages"][-1]["content"])
     assert events[-1].type == "final"
 
-    # enabled: the failing first attempt (toolu_sim_1) is never reviewed
+    # enabled: only the attempts are reviewed, never the design_stage exploration
     client = FakeAnthropicClient(
         build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True, dispersion=False)
     )
     events = await _collect(client, env=ENV, seed=1)
     assert {e.payload["source_id"] for e in _by_type(events, "review")} == {
-        "toolu_sim_2",
-        "toolu_sim_3",
+        "toolu_auto",
+        "toolu_parts",
     }
 
 
@@ -491,3 +506,128 @@ async def test_passing_reference_seed_is_emitted_as_a_free_candidate(monkeypatch
     sent = client.calls[-1]["messages"][2]["content"][0]["content"]
     assert "trace" not in json.loads(sent)["seed"]["sim"]
     assert json.loads(sent)["seed"]["sim"]["trace_point_count"] == 1
+
+
+# --------------------------------------------------------------------------- design chain tools
+
+
+def _chain_result(name: str, tool_use_id: str) -> dict:
+    sim = {
+        "tier": "amateur",
+        "success": True,
+        "failure_reasons": [],
+        "metrics": {"apogee_m": 1870.6, "stability_margin_cal": 5.49},
+        "cost_jpy": 33930.0,
+        "trace": [{"t_s": 0.0, "altitude_m": 0.0}, {"t_s": 1.0, "altitude_m": 50.0}],
+        "warnings": [],
+    }
+    build = {"tier": "amateur", "motor_id": "aerotech_J435WS"}
+    bill = {"parts": [], "dry_mass_kg": 1.2, "cost_jpy": 33930.0}
+    if name == "design_stage":
+        return {
+            "stage": "fins",
+            "candidates": [{"option": "fin_plywood_3mm", "passed": True, "build": build}],
+            "source_id": tool_use_id,
+        }
+    return {
+        "tier": "amateur",
+        "build": build,
+        "design": {"tier": "amateur", "motor_id": "aerotech_J435WS"},
+        "bill": bill,
+        "issues": [],
+        "sim": sim,
+        "trace": [{"stage": "motor", "chosen": "aerotech_J435WS"}]
+        if name == "auto_design"
+        else None,
+        "source_id": tool_use_id,
+    }
+
+
+@pytest.mark.anyio
+async def test_auto_design_is_an_attempt_and_design_stage_is_exploration(monkeypatch):
+    from rocketwright.agent import loop as loop_module
+
+    monkeypatch.setattr(loop_module, "execute_tool", lambda n, i, t: _chain_result(n, t))
+    script = [
+        make_message(
+            [tool_use_block("toolu_auto", "auto_design", {"tier": "amateur"})],
+            stop_reason="tool_use",
+        ),
+        make_message(
+            [tool_use_block("toolu_stage", "design_stage", {"tier": "amateur", "stage": "fins"})],
+            stop_reason="tool_use",
+        ),
+        make_message(
+            [tool_use_block("toolu_parts", "design_from_parts", {"build": {}})],
+            stop_reason="tool_use",
+        ),
+        make_message([text_block('{"designs": [], "summary": "s", "open_questions": []}')]),
+    ]
+    client = FakeAnthropicClient(script)
+    events = await _collect(client, text="1 kg を 2 km まで")
+    candidates = _by_type(events, "candidate")
+    assert [c.payload["source_id"] for c in candidates] == ["toolu_auto", "toolu_parts"]
+    auto, parts = candidates
+    assert auto.attempt == 1 and parts.attempt == 2  # design_stage is not an attempt
+    assert auto.payload["origin"] == "auto_design"
+    assert parts.payload["origin"] == "design_from_parts"
+    for cand in candidates:
+        assert cand.payload["build"]["motor_id"] == "aerotech_J435WS"
+        assert cand.payload["bill"]["cost_jpy"] == 33930.0
+        assert cand.payload["metrics"]["apogee_m"] == 1870.6
+    # both part-space candidates are reviewed; the design_stage exploration is not
+    assert [r.payload["source_id"] for r in _by_type(events, "review")] == [
+        "toolu_auto",
+        "toolu_parts",
+    ]
+    assert events[-1].type == "final" and events[-1].payload["attempts"] == 2
+    # the UI still gets the full sim (trace included) through the tool_result event
+    auto_result = next(
+        e for e in events if e.type == "tool_result" and e.payload["id"] == "toolu_auto"
+    )
+    assert len(auto_result.payload["result"]["sim"]["trace"]) == 2
+    # ...but the model never sees a sim trace: auto_design / design_from_parts are stripped
+    sent = {
+        b["tool_use_id"]: json.loads(b["content"])
+        for m in client.calls[-1]["messages"]
+        if m["role"] == "user" and isinstance(m["content"], list)
+        for b in m["content"]
+        if b["type"] == "tool_result"
+    }
+    for tid in ("toolu_auto", "toolu_parts"):
+        assert "trace" not in sent[tid]["sim"] and sent[tid]["sim"]["trace_point_count"] == 2
+    assert sent["toolu_auto"]["trace"] == [{"stage": "motor", "chosen": "aerotech_J435WS"}]
+    assert sent["toolu_stage"]["candidates"][0]["option"] == "fin_plywood_3mm"
+
+
+def test_for_model_strips_nested_sim_traces():
+    from rocketwright.agent.loop import _for_model
+
+    result = {
+        "sim": {"trace": [{"t_s": 0.0}], "metrics": {}},
+        "candidates": [{"option": "a", "sim": {"trace": [{}, {}], "metrics": {}}}],
+        "feasibility": {"cheapest_passing": {"sim": {"trace": [{}], "metrics": {}}}},
+    }
+    slim = _for_model(result)
+    assert slim["sim"] == {"metrics": {}, "trace_point_count": 1}
+    assert slim["candidates"][0]["sim"] == {"metrics": {}, "trace_point_count": 2}
+    assert slim["feasibility"]["cheapest_passing"]["sim"]["trace_point_count"] == 1
+    assert result["sim"]["trace"] == [{"t_s": 0.0}]  # input untouched
+
+
+def test_system_prompt_describes_the_staged_chain_workflow():
+    from rocketwright.agent.prompts import SYSTEM_PROMPT
+    from rocketwright.design_chain import AMATEUR_STAGES, BOTTLE_STAGES
+
+    text = " ".join(SYSTEM_PROMPT.split())
+    # bottle / amateur: auto_design baseline, then design_stage from the most upstream stage
+    for word in ("auto_design", "design_stage", "design_from_parts", "run_dispersion"):
+        assert word in text
+    assert "MOST UPSTREAM" in text and "funnel" in text and "`why`" in text
+    assert " -> ".join(AMATEUR_STAGES) in text and " -> ".join(BOTTLE_STAGES) in text
+    # honest budget, certification and coupler warnings, the reference as context only
+    assert "feasibility" in text and "cheapest passing" in text
+    assert "Level 1" in text and "Level 2" in text and "coupler" in text
+    assert "closest to" in text
+    # the orbital tiers keep the reference-seeded workflow
+    assert "tune=true" in text and "simulate_design" in text

@@ -251,7 +251,10 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "metric), failure_counts, landing scatter with a 95 % ellipse (bottle/amateur) or "
                 "orbit-insertion errors (commercial/heavy), warnings and `nominal`. "
                 f"n: null = {DISPERSION_DEFAULT_N}, max {DISPERSION_MAX_N}. Run it on passing "
-                "designs only and quote success_rate from it."
+                "designs only and quote success_rate from it. cost_jpy: the parts bill total "
+                "(bill.cost_jpy of the design_from_parts / auto_design result) for a "
+                "bottle/amateur parts design, so the budget is judged on the bill; null = the "
+                "cost.py estimate."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -261,6 +264,7 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                     "n": _nullable({"type": "integer"}),
                     "seed": {"type": "integer"},
                     "requirement": _nullable(req),
+                    "cost_jpy": _nullable({"type": "number"}),
                 }
             ),
         },
@@ -436,9 +440,12 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "Baseline bottle/amateur design: walk every design_stage in order adopting the "
                 "best candidate (deterministic, 1-2 s). Returns build (confirm or edit with "
                 "design_from_parts), design, bill, issues, sim (judged, trace omitted), trace "
-                "per stage (chosen option, why, funnel, top-3 alternatives), derived_targets and "
-                "derived_vs_chain (formula vs chosen part / simulation). Call it after "
-                "derive_requirements, explain the trace, then revisit stages with design_stage."
+                "per stage (chosen option, why, funnel, top-3 alternatives), derived_targets, "
+                "derived_vs_chain (formula vs chosen part / simulation), warnings and "
+                "feasibility (set when nothing passes within the budget: the cheapest passing "
+                "design and the best one within the budget, to tell the user plainly). It "
+                "counts as an attempt. Call it after derive_requirements, explain the trace, "
+                "then revisit stages with design_stage from the most upstream one that changes."
             ),
             "strict": True,
             "input_schema": _obj({"tier": part_tier, "requirement": req, "env": _nullable(env)}),
@@ -575,11 +582,17 @@ def _tune_pitch(design: Design, env: Env, req: Requirement | None) -> Multistage
 
 
 def _dispersion_dispatch(
-    design: Design, env: Env, n: int, seed: int, req: Requirement | None = None
+    design: Design,
+    env: Env,
+    n: int,
+    seed: int,
+    req: Requirement | None = None,
+    cost_jpy: float | None = None,
 ) -> mc.DispersionRun:
     """Single dispatch point for Monte-Carlo runs: rocketwright.dispersion with the tier's
     perturbation spec, every sample simulated and judged by `_simulate_dispatch` (so the
-    requirement's target / payload / recovery / budget rules apply to each sample)."""
+    requirement's target / payload / recovery / budget rules apply to each sample).
+    `cost_jpy` (a parts bill total) replaces the cost.py estimate, as in design_from_parts."""
     perturb, summarize = mc.components_for(design.tier)
     return mc.run_dispersion_detailed(
         design,
@@ -587,7 +600,7 @@ def _dispersion_dispatch(
         n,
         seed,
         perturb=perturb,
-        simulate=functools.partial(_simulate_dispatch, req=req),
+        simulate=functools.partial(_simulate_dispatch, req=req, cost_jpy=cost_jpy),
         tier=Tier(design.tier),
         summarize=summarize,
     )
@@ -950,7 +963,10 @@ def _tool_dispersion(inp: dict[str, Any]) -> dict[str, Any]:
     if not 1 <= n <= DISPERSION_MAX_N:
         raise ValueError(f"n must be between 1 and {DISPERSION_MAX_N}, got {n}")
     req = _parse_optional_requirement(inp.get("requirement"))
-    run = _dispersion_dispatch(design, env, n, seed, req)
+    cost = inp.get("cost_jpy")
+    if cost is not None and (not isinstance(cost, (int, float)) or cost < 0):
+        raise ValueError(f"cost_jpy must be a non-negative number or null, got {cost!r}")
+    run = _dispersion_dispatch(design, env, n, seed, req, None if cost is None else float(cost))
     out = run.result.model_dump(mode="json")
     out["nominal"] = {
         "success": run.nominal.success,

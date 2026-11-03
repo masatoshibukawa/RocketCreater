@@ -86,7 +86,9 @@ function cylinder(
 
 /**
  * Nose profile as lathe points (radius, y) from the base (y0, radius R) to the tip
- * (y0 + L, 0). `shape` follows AmateurDesign.nose_shape (Barrowman shapes).
+ * (y0 + L, 0): the radius decreases monotonically upwards, so every nose / fairing points UP
+ * (+Y), away from the stages. Points are ordered by increasing y, which gives LatheGeometry
+ * outward-facing triangles. `shape` follows AmateurDesign.nose_shape (Barrowman shapes).
  */
 function noseProfile(shape: string, radius: number, length: number, y0: number, steps = 24): THREE.Vector2[] {
   const pts: THREE.Vector2[] = [];
@@ -101,9 +103,12 @@ function noseProfile(shape: string, radius: number, length: number, y0: number, 
       const u = Math.min(1, x / length);
       r = radius * Math.sqrt(Math.max(0, 1 - u * u));
     } else {
-      // ogive: y(x') = sqrt(rho^2 - (L - x')^2) + R - rho, with x' measured from the tip side
-      const xp = length - x;
-      r = Math.sqrt(Math.max(0, rho * rho - xp * xp)) + radius - rho;
+      // tangent ogive: r(t) = sqrt(rho^2 - (L - t)^2) + R - rho with t measured from the TIP
+      // (r = 0 at t = 0, r = R and tangent to the body at t = L). Here x runs from the base,
+      // so t = L - x and (L - t)^2 = x^2: r = R at the base (x = 0), 0 at the tip (x = L).
+      // (The former code used (L - x)^2, which put r = 0 at the base and R at the tip: an
+      // ogive pointing DOWN into the body, the "upside-down fairing" of the 3D view.)
+      r = Math.sqrt(Math.max(0, rho * rho - x * x)) + radius - rho;
     }
     pts.push(new THREE.Vector2(Math.max(0, r), y0 + x));
   }

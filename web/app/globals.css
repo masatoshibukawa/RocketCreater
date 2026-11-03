@@ -1174,3 +1174,92 @@ a {
 .review-gate {
   margin: 0 0 8px;
 }
+
+/* ---------------------------------------------------------------- 3D notes (certification) */
+
+.model-notes {
+  position: absolute;
+  top: 42px;
+  left: 10px;
+  max-width: min(70%, 440px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.model-note {
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--warn-soft);
+  border: 1px solid #f0d79a;
+  color: #6b4a05;
+}
+
+/* ---------------------------------------------------------------- design chain */
+
+.chain-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chain-step {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--panel-2);
+  min-width: 0;
+}
+
+.chain-step-selected {
+  border-color: var(--accent);
+}
+
+.chain-step-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.chain-funnel {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.chain-why {
+  font-size: 12px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.chain-alts,
+.chain-candidates {
+  margin: 2px 0 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: 12px;
+}
+
+.chain-candidate + .chain-candidate {
+  margin-top: 6px;
+}
+
+.chain-upstream {
+  font-size: 12px;
+  margin: 2px 0 6px;
+  overflow-wrap: anywhere;
+}
+
+.chain-table td {
+  vertical-align: top;
+}

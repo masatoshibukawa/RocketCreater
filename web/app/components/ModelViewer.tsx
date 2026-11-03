@@ -22,6 +22,8 @@ interface ModelViewerProps {
   origin: DisplayOrigin | null;
   reference: ReferenceInfo | null;
   dimensions: DimensionSummary | null;
+  /** Build warnings to flag under the overlay (motor certification Level 1/2, coupler). */
+  notes: string[];
 }
 
 const BACKGROUND = 0xf6f8fb;
@@ -80,7 +82,7 @@ function fitToView(s: Scene3D, model: THREE.Object3D): void {
   cam.updateProjectionMatrix();
 }
 
-export default function ModelViewer({ design, tier, origin, reference, dimensions }: ModelViewerProps) {
+export default function ModelViewer({ design, tier, origin, reference, dimensions, notes }: ModelViewerProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<Scene3D | null>(null);
   const designKey = design === null ? "" : canonicalJson(design);
@@ -203,6 +205,15 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
         )}
         {origin !== null && <span className="chip chip-accent">{ORIGIN_LABEL[origin]}</span>}
       </div>
+      {design !== null && notes.length > 0 && (
+        <div className="model-notes" role="note">
+          {notes.map((n) => (
+            <div key={n} className="model-note">
+              {n}
+            </div>
+          ))}
+        </div>
+      )}
       <div className="model-overlay model-overlay-bottom">
         {dimText !== null && <span className="model-dims">{dimText}</span>}
         {design !== null && tier !== null && (

@@ -10,7 +10,10 @@
  *   tool_call     -> chat system line; the input is kept by id so a result can be tied back
  *                    to the design it was run on
  *   tool_result   -> classify_requirement: tier badge; derive_requirements: the formula list
- *                    shown under 詳細; simulate_design: attempt log row;
+ *                    shown under 詳細; simulate_design / design_from_parts: attempt log
+ *                    row (parts: the resolved design); auto_design: attempt log row and the
+ *                    baseline trace of 「設計の決定順」; design_stage: one ranked stage of
+ *                    「設計の決定順」 (exploration, not an attempt);
  *                    find_reference_designs: the reference vehicle (TierBadge) and, when it
  *                    carries a seed with a sim, an attempt-0 row flagged `seededFrom`;
  *                    run_dispersion: stored per candidate (matched by design equality via
@@ -28,6 +31,12 @@ import {
   type AgentEvent,
   type AttemptRow,
   type Candidate,
+  type ChainAutoStep,
+  type ChainCandidate,
+  type ChainFunnel,
+  type ChainStageStep,
+  type ChainStageTrace,
+  type ChainStep,
   type ChatMessage,
   type ChatRole,
   type ClassifyResult,
@@ -72,6 +81,8 @@ export interface DesignState {
   pendingQuestion: string | null;
   attempts: AttemptRow[];
   attemptCount: number;
+  /** The staged design chain in time order: auto_design baselines and design_stage results. */
+  chain: ChainStep[];
   candidates: Candidate[];
   /** The most recent run_dispersion result (fallback when the selection has none). */
   dispersion: DispersionResult | null;
@@ -98,6 +109,7 @@ export const initialState: DesignState = {
   pendingQuestion: null,
   attempts: [],
   attemptCount: 0,
+  chain: [],
   candidates: [],
   dispersion: null,
   dispersions: {},
@@ -393,6 +405,79 @@ function toDerived(rec: Record<string, unknown>, id: string): DerivedRequirement
   };
 }
 
+function toFunnel(value: unknown): ChainFunnel {
+  const rec = asRecord(value);
+  const rejected: Record<string, number> = {};
+  const raw = asRecord(rec?.rejected);
+  if (raw) {
+    for (const [k, v] of Object.entries(raw)) rejected[k] = asNumber(v, 0);
+  }
+  return {
+    enumerated: asNumber(rec?.enumerated, 0),
+    compatible: asNumberOrNull(rec?.compatible),
+    simulated: asNumber(rec?.simulated, 0),
+    passed: asNumber(rec?.passed, 0),
+    rejected,
+  };
+}
+
+function toChainCandidates(value: unknown): ChainCandidate[] {
+  const out: ChainCandidate[] = [];
+  if (!Array.isArray(value)) return out;
+  for (const item of value) {
+    const rec = asRecord(item);
+    if (!rec) continue;
+    const option = asString(rec.option);
+    if (option === "") continue;
+    out.push({
+      option,
+      label: asString(rec.label) || option,
+      passed: rec.passed === true,
+      why: asString(rec.why),
+      metrics: asNumberMap(rec.metrics),
+      cost_jpy: asNumberOrNull(rec.cost_jpy),
+      failure_reasons: asStringArray(rec.failure_reasons),
+      issues: asStringArray(rec.issues),
+    });
+  }
+  return out;
+}
+
+function toStageTrace(value: unknown): ChainStageTrace[] {
+  const out: ChainStageTrace[] = [];
+  if (!Array.isArray(value)) return out;
+  for (const item of value) {
+    const rec = asRecord(item);
+    if (!rec) continue;
+    const stage = asString(rec.stage);
+    if (stage === "") continue;
+    out.push({
+      stage,
+      chosen: asString(rec.chosen),
+      label: asString(rec.label),
+      why: asString(rec.why),
+      fixed: rec.fixed === true,
+      funnel: toFunnel(rec.funnel),
+      alternatives: toChainCandidates(rec.alternatives),
+    });
+  }
+  return out;
+}
+
+/** The build warnings worth a note under the 3D view: motor certification (NAR/Tripoli Level 1
+ * or 2) and joined tubes (coupler). Matched on fragments of build.check_buildability messages;
+ * the "build: " prefix design_from_parts adds is dropped. */
+export function certificationNotes(warnings: string[]): string[] {
+  const fragments = ["Level 1", "Level 2", "certification", "coupler"];
+  const out: string[] = [];
+  for (const w of warnings) {
+    if (!fragments.some((f) => w.includes(f))) continue;
+    const text = w.startsWith("build: ") ? w.slice("build: ".length) : w;
+    if (!out.includes(text)) out.push(text);
+  }
+  return out;
+}
+
 /**
  * The design the centre / right panels show: the latest passing candidate, else the latest
  * attempt that carries a design, else the reference seed. Pure, so the rule is testable.
@@ -518,7 +603,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
 
   if (errorText !== null) {
     let next = state;
-    if (name === "simulate_design" || name === "design_from_parts") {
+    if (name === "simulate_design" || name === "design_from_parts" || name === "auto_design") {
       next = {
         ...next,
         attempts: [
@@ -531,6 +616,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
             error: errorText,
             design: null,
             seededFrom: null,
+            tool: name,
           },
         ],
       };
@@ -562,14 +648,17 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
         error: null,
         design,
         seededFrom: null,
+        tool: name,
       };
       let next: DesignState = { ...state, attempts: [...state.attempts, row] };
       if (!state.tier && sim.tier) next = { ...next, tier: sim.tier };
       return next;
     }
-    case "design_from_parts": {
+    case "design_from_parts":
+    case "auto_design": {
       // bottle/amateur attempt: the parts were resolved into `design`; `sim` is null when a
-      // buildability error stopped the simulation (the error issues are the row's error text)
+      // buildability error stopped the simulation (the error issues are the row's error text).
+      // auto_design is the staged chain's baseline: its trace also feeds 「設計の決定順」.
       const design = toDesign(result.design);
       const simRecord = asRecord(result.sim);
       const issues = Array.isArray(result.issues) ? result.issues : [];
@@ -585,13 +674,71 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
         error: simRecord ? null : errors.join("; ") || asString(result.note) || "buildability error",
         design,
         seededFrom: null,
+        tool: name,
       };
       let next: DesignState = { ...state, attempts: [...state.attempts, row] };
       if (!state.tier && simRecord) {
         const sim = toSimResult(simRecord);
         if (sim.tier) next = { ...next, tier: sim.tier };
       }
+      if (name === "auto_design") {
+        const sim = simRecord ? toSimResult(simRecord) : null;
+        const feasibility = asRecord(result.feasibility);
+        const issueTexts = issues
+          .map((it) => asRecord(it))
+          .filter((it) => it !== null)
+          .map((it) => asString(it?.message))
+          .filter((t) => t !== "");
+        const step: ChainAutoStep = {
+          kind: "auto",
+          source_id: id,
+          t_s: ev.t_s,
+          passed: sim !== null && sim.success,
+          trace: toStageTrace(result.trace),
+          warnings: [...issueTexts, ...asStringArray(result.warnings)],
+          feasibility: feasibility ? asString(feasibility.verdict) || null : null,
+        };
+        next = { ...next, chain: [...next.chain, step] };
+        next = push(
+          next,
+          "system",
+          `自動設計: ${step.trace.map((t) => `${t.stage}=${t.chosen}`).join(" → ")} (${
+            step.passed ? "合格" : "不合格"
+          })`,
+        );
+        if (step.feasibility) next = push(next, "error", `予算内の合格案なし: ${step.feasibility}`);
+      }
       return next;
+    }
+    case "design_stage": {
+      // exploration: one stage ranked for the upstream decisions; not an attempt
+      const stage = asString(result.stage);
+      const input = state.toolInputs[id];
+      const rawChosen: unknown = input ? input.chosen : undefined;
+      const chosen: string[] = [];
+      if (Array.isArray(rawChosen)) {
+        for (const item of rawChosen) {
+          const rec = asRecord(item);
+          if (rec) chosen.push(`${asString(rec.stage)}=${asString(rec.value)}`);
+        }
+      }
+      const step: ChainStageStep = {
+        kind: "stage",
+        source_id: id,
+        t_s: ev.t_s,
+        stage,
+        chosen,
+        funnel: toFunnel(result),
+        candidates: toChainCandidates(result.candidates),
+        invalidated: asStringArray(result.invalidated),
+        next_stage: asString(result.next_stage) || null,
+      };
+      const passedCount = step.candidates.filter((c) => c.passed).length;
+      return push(
+        { ...state, chain: [...state.chain, step] },
+        "system",
+        `段階の候補 (${stage}): ${step.funnel.enumerated} 件を列挙、${step.funnel.simulated} 件を検証、上位 ${step.candidates.length} 件中 合格 ${passedCount} 件`,
+      );
     }
     case "find_reference_designs": {
       const seed = asRecord(result.seed);
@@ -623,6 +770,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
           error: null,
           design,
           seededFrom: referenceId,
+          tool: "find_reference_designs",
         };
         next = { ...next, attempts: [...next.attempts, row] };
       }
