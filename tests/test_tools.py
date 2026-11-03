@@ -683,3 +683,113 @@ def test_design_from_parts_with_empty_catalog(monkeypatch, tmp_path):
         lst = execute_tool("list_parts", {"tier": "amateur", "kind": None, "query": None}, "b7")
     assert out["issues"][0]["code"] == "unknown_part" and out["sim"] is None
     assert lst["parts"] == [] and "empty" in lst["note"]
+
+
+# --------------------------------------------------------------------------- design chain tools
+
+CHAIN_REQ = {
+    "goal_kind": "altitude",
+    "target_altitude_m": 300,
+    "target_apogee_m": None,
+    "payload_mass_kg": 0.0,
+    "budget_jpy": None,
+    "recovery_required": False,
+    "tier_override": None,
+    "text": "",
+}
+EGG_REQ = dict(
+    CHAIN_REQ, target_altitude_m=30, payload_mass_kg=0.06, budget_jpy=3000, recovery_required=True
+)
+
+
+def test_chain_tools_are_registered_strict_and_the_tool_list_stays_small():
+    from rocketwright.design_chain import AMATEUR_STAGES, BOTTLE_STAGES
+
+    assert "design_stage" in TOOL_NAMES and "auto_design" in TOOL_NAMES
+    defs = {d["name"]: d for d in get_tool_definitions()}
+    schema = defs["design_stage"]["input_schema"]
+    assert set(schema["properties"]) == {"tier", "requirement", "env", "chosen", "stage", "k"}
+    item = schema["properties"]["chosen"]["items"]
+    assert set(item["properties"]) == {"stage", "value"}
+    assert item["additionalProperties"] is False and item["required"] == ["stage", "value"]
+    assert set(schema["properties"]["stage"]["enum"]) == set(AMATEUR_STAGES) | set(BOTTLE_STAGES)
+    assert set(defs["auto_design"]["input_schema"]["properties"]) == {"tier", "requirement", "env"}
+    # every definition is sent on every turn: keep the list under ~10k tokens (len/4 estimate)
+    assert len(json.dumps(get_tool_definitions())) / 4 < 10_000
+
+
+def test_design_stage_tool_ranks_and_invalidates_downstream():
+    chosen = [
+        {"stage": "motor", "value": "estes_C6"},
+        {"stage": "mount", "value": "motor_mount_18mm"},
+        {"stage": "fins", "value": "fin_balsa_2p4mm"},
+    ]
+    inp = {
+        "tier": "amateur",
+        "requirement": CHAIN_REQ,
+        "env": {"rail_length_m": 1.0},
+        "chosen": chosen,
+        "stage": "body_tube",
+        "k": 3,
+    }
+    out = execute_tool("design_stage", inp, "toolu_c1")
+    assert "error" not in out, out
+    assert out["source_id"] == "toolu_c1"
+    assert out["invalidated"] == ["fins"] and "fins" in out["note"]
+    assert out["next_stage"] == "nose_cone"
+    assert 1 <= len(out["candidates"]) <= 3
+    for c in out["candidates"]:
+        assert c["build"]["motor_mount_id"] == "motor_mount_18mm"
+        assert c["build"]["body_tube_id"] == c["option"]
+        assert c["why"] and isinstance(c["passed"], bool)
+    assert out["enumerated"] >= out["compatible"] >= len(out["candidates"])
+    assert out["rejected"]["mount does not fit the tube"] > 0
+    assert out["derived_targets"]["motor_class_letter"]
+    json.dumps(out)
+
+
+@pytest.mark.parametrize(
+    ("patch", "fragment"),
+    [
+        ({"stage": "nozzle"}, "not a amateur stage"),
+        ({"chosen": [{"stage": "motor", "value": "a"}, {"stage": "motor", "value": "b"}]}, "twice"),
+        ({"k": 0}, "k must be"),
+        ({"tier": "commercial"}, "bottle and amateur"),
+    ],
+)
+def test_design_stage_tool_rejects_bad_input(patch, fragment):
+    inp = {
+        "tier": "amateur",
+        "requirement": CHAIN_REQ,
+        "env": None,
+        "chosen": [],
+        "stage": "motor",
+        "k": None,
+    }
+    out = execute_tool("design_stage", {**inp, **patch}, "toolu_c2")
+    assert "error" in out and fragment in out["error"], out
+
+
+def test_auto_design_tool_bottle_demo():
+    inp = {"tier": "bottle", "requirement": EGG_REQ, "env": {"launch_altitude_m": 20}}
+    out = execute_tool("auto_design", inp, "toolu_c3")
+    assert "error" not in out, out
+    sim = out["sim"]
+    assert sim["success"], sim["failure_reasons"]
+    assert "trace" not in sim and sim["trace_point_count"] > 2
+    assert sim["cost_jpy"] == pytest.approx(round(out["bill"]["cost_jpy"]))
+    assert [t["stage"] for t in out["trace"]] == [
+        "bottle",
+        "nozzle",
+        "water_fill",
+        "pressure",
+        "fins",
+        "parachute",
+    ]
+    for t in out["trace"]:
+        assert t["why"] and t["chosen"] and len(t["alternatives"]) <= 3
+        assert t["funnel"]["enumerated"] >= 1
+    assert out["build"]["parachute_id"] is not None
+    assert out["derived_targets"]["gauge_pressure_pa"] > 0
+    assert any(r["key"] == "gauge_pressure_pa" for r in out["derived_vs_chain"])
+    json.dumps(out)

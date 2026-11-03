@@ -34,6 +34,7 @@ from rocketwright.build import BuildAdapter, check_buildability, resolve
 from rocketwright.classify import classify, load_tiers
 from rocketwright.cost import COST_CONSTANTS, estimate_cost_jpy
 from rocketwright.derive import derive
+from rocketwright.design_chain import ALL_STAGES, auto_design, design_stage
 from rocketwright.parts import KINDS, Part, PartsCatalog, load_parts
 from rocketwright.physics import multistage, solid, water
 from rocketwright.references import find_nearest, find_reference_designs, seed_design_with_build
@@ -73,6 +74,8 @@ TOOL_NAMES: tuple[str, ...] = (
     "derive_requirements",
     "list_parts",
     "design_from_parts",
+    "design_stage",
+    "auto_design",
 )
 
 # list_parts row cap (the model browses by kind/query; the whole catalog is not a tool result).
@@ -176,10 +179,17 @@ def _obj(properties: dict[str, Any]) -> dict[str, Any]:
 
 
 def get_tool_definitions() -> list[dict[str, Any]]:
-    req = _schema_of(Requirement)
-    env = _schema_of(Env)
+    # The Requirement / Env docstrings are shown once (classify_requirement /
+    # simulate_design); the other tools reuse the bare schemas to keep the tool list
+    # small (every tool definition is sent on every turn).
+    req_full = _schema_of(Requirement)
+    env_full = _schema_of(Env)
+    req = {k: v for k, v in req_full.items() if k != "description"}
+    env = {k: v for k, v in env_full.items() if k != "description"}
     design = _design_schema()
     tier_enum = {"type": "string", "enum": [t.value for t in Tier]}
+    part_tier = {"type": "string", "enum": ["bottle", "amateur"]}
+    stage_enum = {"type": "string", "enum": list(ALL_STAGES)}
     return [
         {
             "name": "classify_requirement",
@@ -189,7 +199,7 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "fallback requirement, warnings and reasons. Call this first."
             ),
             "strict": True,
-            "input_schema": _obj({"requirement": req}),
+            "input_schema": _obj({"requirement": req_full}),
         },
         {
             "name": "search_catalog",
@@ -211,22 +221,20 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "simulate_design",
             "description": (
-                "Simulate one flight of a design in the given environment. Pass the requirement "
-                "so pass/fail is judged against it (orbit goals: perigee >= target - 10 %, "
-                "budget). Returns SimResult: success, failure_reasons, metrics (unit-suffixed "
-                "keys), cost_jpy, trace, warnings, source_id. Commercial/heavy designs use the "
-                "real multistage model and need engine ids from search_catalog "
-                "(catalog/engines.yaml, e.g. merlin_1d). Set tune_pitch=true (orbit goals "
-                "only) to let scipy search pitch_start_s / initial_pitch_deg for the target "
-                "orbit before simulating: it costs a few seconds and the result then includes "
-                "`tuned_design`, which you should adopt as your design. The open-loop gravity "
-                "turn is sensitive: a tenth of a degree can change the perigee by tens of km."
+                "Simulate one flight of a design in `env`. Pass the requirement so pass/fail is "
+                "judged against it (apogee +-10 %, orbit perigee, payload, budget). Returns "
+                "SimResult: success, failure_reasons, metrics (unit-suffixed keys), cost_jpy, "
+                "trace, warnings, source_id. Commercial/heavy need engine ids from "
+                "search_catalog. tune_pitch=true (orbit goals, a few seconds) searches "
+                "pitch_start_s / initial_pitch_deg for the target orbit and returns "
+                "`tuned_design` to adopt; the open-loop gravity turn is sensitive (0.1 deg can "
+                "move the perigee by tens of km)."
             ),
             "strict": True,
             "input_schema": _obj(
                 {
                     "design": design,
-                    "env": env,
+                    "env": env_full,
                     "seed": _nullable({"type": "integer"}),
                     "requirement": _nullable(req),
                     "tune_pitch": {"type": "boolean"},
@@ -236,16 +244,14 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "run_dispersion",
             "description": (
-                "Monte-Carlo dispersion: n perturbed flights of a design (bottle: pressure and "
-                "wind; amateur: motor impulse, dry mass, wind, deploy delay; commercial/heavy: "
-                "Isp, thrust, structural fraction; sigmas are provisional) judged by the same "
-                "rules as simulate_design when the requirement is passed. Returns success_rate "
-                "(fraction of samples that pass), quantiles (p05/p50/p95 of every metric), "
-                "failure_counts (reason -> samples), landing scatter with a 95 % ellipse "
-                "(bottle/amateur) or orbit-insertion error statistics about the nominal run "
-                "(commercial/heavy), warnings, and `nominal` (the unperturbed result). "
+                "Monte-Carlo dispersion: n perturbed flights (bottle: pressure, wind; amateur: "
+                "motor impulse, dry mass, wind, deploy delay; commercial/heavy: Isp, thrust, "
+                "structural fraction; provisional sigmas), judged like simulate_design when the "
+                "requirement is passed. Returns success_rate, quantiles (p05/p50/p95 of every "
+                "metric), failure_counts, landing scatter with a 95 % ellipse (bottle/amateur) or "
+                "orbit-insertion errors (commercial/heavy), warnings and `nominal`. "
                 f"n: null = {DISPERSION_DEFAULT_N}, max {DISPERSION_MAX_N}. Run it on passing "
-                "designs only (a few seconds each) and quote success_rate from it."
+                "designs only and quote success_rate from it."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -299,24 +305,16 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "find_reference_designs",
             "description": (
-                "Start the design from the nearest real vehicle. Returns the k (null = 3) "
-                "reference vehicles of the tier closest to the requirement (log distance over "
-                "target altitude and payload; orbit and altitude goals never match): id, name, "
-                "public sources, published performance, the reference's own requirement and "
-                "site, provisional flag, notes. With seed=true (null = true) the nearest one is "
-                "scaled to the requirement by plain provisional rules and `seed` carries the "
-                "resulting design, the notes explaining each scaling step (quote them) and "
-                "`sim`, its simulate_design result in `env` (null = the reference's site) with "
-                "the trace dropped, so you see the seed's real performance before adopting it. "
-                "Rules: commercial/heavy scale stage propellant by the payload ratio, keep "
-                "engine types, round engine counts up for liftoff T/W >= 1.2, keep boosters; "
-                "amateur picks the smallest bundled motor for a ballistic impulse estimate, "
-                "scales the airframe to house it and the parachute for the same descent speed; "
-                "bottle scales gauge pressure with the apogee ratio (clipped at the safety "
-                "cap) and adds a parachute for a payload or required recovery. tune=true "
-                "(orbit goals, a few seconds) re-tunes the seed's pitch program for the target "
-                "perigee; without it the reference's pitch program is kept and usually misses "
-                "a different orbit. Adopt the seed, then iterate with simulate_design."
+                "Nearest real vehicles of the tier (log distance over target altitude and "
+                "payload; k null = 3): id, name, sources, published performance, their "
+                "requirement and site, provisional flag, notes and, for bottle/amateur kits, "
+                "their parts `build` (ground truth for the design chain). With seed=true (null = "
+                "true) the nearest one is scaled to the requirement by plain provisional rules: "
+                "`seed` carries the design (build and bill for kits), notes explaining each step "
+                "(quote them) and `sim`, its simulate_design result in `env` (null = the "
+                "reference's site, trace dropped). Commercial/heavy scale propellant by the "
+                "payload ratio and keep engine types; tune=true (orbit goals, a few seconds) "
+                "re-tunes the seed's pitch program for the target perigee."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -333,20 +331,16 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "derive_requirements",
             "description": (
-                "Step 2: turn the requirement into quantitative targets by closed formulas "
-                "(deterministic, no simulation). tier null = run classify_requirement first. "
-                "Orbit tiers: circular speed at the target perigee, Earth-rotation credit at "
-                "launch_latitude_deg (null = provisional default site), loss allowance, "
-                "Hohmann apogee-raise term, required delta-v, total and per-stage mass ratio "
-                "for a representative Isp, propellant and payload fraction of a 2-stage vehicle, "
-                "liftoff-mass scale. Amateur: burnout speed sqrt(2 g h) and with drag, liftoff "
-                "mass estimate, total impulse, NAR motor class letter and the bundled motor ids "
-                "in that class or one above, parachute diameter for the descent limit. Bottle: "
-                "gauge pressure for a 1.5 L bottle at 40 % fill from the isentropic expansion "
-                "work (clipped at the safety cap with a warning), water mass, parachute need and "
-                "size. Every quantity carries its formula with numbers substituted, inputs, "
-                "assumptions and a provisional flag; quote the formulas and use the values as "
-                "the scale of the first design, never as a result."
+                "Closed-form quantitative targets (deterministic, no simulation); tier null = "
+                "classify first. Orbit tiers: circular speed, rotation credit at "
+                "launch_latitude_deg (null = provisional default), losses, Hohmann term, "
+                "required delta-v, mass ratios, propellant and payload fractions, liftoff-mass "
+                "scale. Amateur: burnout speed (vacuum and with drag), liftoff mass, total "
+                "impulse, NAR motor class and the bundled motors in it or one above, parachute "
+                "diameter. Bottle: gauge pressure for 1.5 L at 40 % fill (clipped at the safety "
+                "cap), water mass, parachute need and size. Each quantity has its formula with "
+                "numbers, inputs, assumptions and a provisional flag: quote the formulas, use "
+                "the values as a scale, never as a result."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -381,23 +375,17 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "design_from_parts",
             "description": (
-                "Design a bottle or amateur rocket by CHOOSING PARTS (the only way to design "
-                "those tiers): the mass, dimensions and cost are computed from the parts, never "
-                "typed in. `build` is an AmateurBuild (body tube id + cut length, nose cone, "
-                "motor mount, motor id, fin material + fin planform, parachute, optional "
+                "Design a bottle or amateur rocket by CHOOSING PARTS: mass, dimensions and cost "
+                "come from the parts, never typed in. `build` is an AmateurBuild (tube id + cut "
+                "length, nose, mount, motor, fin material + planform, parachute, optional "
                 "recovery hardware / launch lug, payload, deploy delay) or a BottleBuild "
-                "(bottle, water fill, gauge pressure, nozzle, optional fin set / parachute / "
-                "launcher, payload), discriminated by `tier`. Returns `design` (the resolved "
-                "physics design), `bill` (part rows with mass and price, dry_mass_kg, cost_jpy), "
-                "`issues` (buildability: code, message, severity error|warning: motor/mount "
-                "diameter, mount and nose fit the tube, body length within the stock tube and "
-                "long enough for motor + mount + parachute, fin size vs sheet and body, "
-                "parachute packs into the tube, deploy delay is a motor option, static margin, "
-                "liftoff thrust-to-weight, descent speed; bottle: nozzle fits the neck, "
-                "pressure under the bottle/launcher caps, fill fraction, payload needs a "
-                "parachute) and `sim`: the simulate_design result (judged against the "
-                "requirement, cost from the bill) or null when any issue is an error. Fix every "
-                "error issue first (swap parts), then iterate on the warnings and the sim."
+                "(bottle, fill, gauge pressure, nozzle, optional fin set / parachute / "
+                "launcher, payload), by `tier`. Returns `design`, `bill` (rows, dry_mass_kg, "
+                "cost_jpy), `issues` (buildability, severity error|warning: part fits, body "
+                "length, fin sheet, chute packing, delay options, static margin, thrust-to-"
+                "weight, descent; bottle: neck, pressure caps, fill, payload chute) and `sim` "
+                "(judged, cost from the bill; null when any issue is an error). Fix errors "
+                "first, then iterate on the warnings and the sim."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -408,6 +396,52 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                     "seed": _nullable({"type": "integer"}),
                 }
             ),
+        },
+        {
+            "name": "design_stage",
+            "description": (
+                "Staged bottle/amateur design: rank every catalog option of ONE stage, each "
+                "completed into a full build by default rules, checked and simulated (all numbers "
+                "from code). Order: amateur motor, mount, body_tube, nose_cone, body_length, "
+                "fins, parachute, deploy_delay; bottle bottle, nozzle, water_fill, pressure, "
+                "fins, parachute. `chosen`: upstream decisions as {stage, value = a candidate's "
+                "`option`}; entries downstream of `stage` are dropped (listed in `invalidated`), "
+                "missing upstream stages use the defaults. Returns the top k (null = "
+                f"{DESIGN_STAGE_DEFAULT_K}) candidates (option, label, why, passed, metrics, "
+                "cost_jpy, failure_reasons, issues, build), the funnel (enumerated, compatible, "
+                "simulated, passed, rejected reason -> count), next_stage, derived_targets. "
+                "Ranking: buildable > passes > derive's motor class +-1 > |apogee error| > cost "
+                "> mass."
+            ),
+            "strict": True,
+            "input_schema": _obj(
+                {
+                    "tier": part_tier,
+                    "requirement": req,
+                    "env": _nullable(env),
+                    "chosen": {
+                        "type": "array",
+                        "items": _obj(
+                            {"stage": stage_enum, "value": {"type": "string"}},
+                        ),
+                    },
+                    "stage": stage_enum,
+                    "k": _nullable({"type": "integer"}),
+                }
+            ),
+        },
+        {
+            "name": "auto_design",
+            "description": (
+                "Baseline bottle/amateur design: walk every design_stage in order adopting the "
+                "best candidate (deterministic, 1-2 s). Returns build (confirm or edit with "
+                "design_from_parts), design, bill, issues, sim (judged, trace omitted), trace "
+                "per stage (chosen option, why, funnel, top-3 alternatives), derived_targets and "
+                "derived_vs_chain (formula vs chosen part / simulation). Call it after "
+                "derive_requirements, explain the trace, then revisit stages with design_stage."
+            ),
+            "strict": True,
+            "input_schema": _obj({"tier": part_tier, "requirement": req, "env": _nullable(env)}),
         },
     ]
 
@@ -822,6 +856,71 @@ def _tool_design_from_parts(inp: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+# --------------------------------------------------------------------------- design chain
+
+# design_stage default top-k when the model passes null (rocketwright.design_chain.CHAIN_RULES).
+DESIGN_STAGE_DEFAULT_K = 5
+DESIGN_STAGE_MAX_K = 20
+
+
+def _chain_inputs(inp: dict[str, Any]) -> tuple[str, Requirement, Env]:
+    tier = Tier(inp["tier"]).value
+    if tier not in ("bottle", "amateur"):
+        raise ValueError("the design chain covers the bottle and amateur tiers only")
+    req = Requirement.model_validate(inp["requirement"])
+    env = Env.model_validate(inp.get("env") or {})
+    return tier, req, env
+
+
+def _tool_design_stage(inp: dict[str, Any]) -> dict[str, Any]:
+    """rocketwright.design_chain.design_stage: one stage's ranked candidates and funnel."""
+    tier, req, env = _chain_inputs(inp)
+    chosen: dict[str, str] = {}
+    for pair in inp.get("chosen") or []:
+        stage = pair["stage"]
+        if stage in chosen:
+            raise ValueError(f"stage {stage!r} appears twice in chosen")
+        chosen[stage] = pair["value"]
+    k = DESIGN_STAGE_DEFAULT_K if inp.get("k") is None else int(inp["k"])
+    if not 1 <= k <= DESIGN_STAGE_MAX_K:
+        raise ValueError(f"k must be between 1 and {DESIGN_STAGE_MAX_K}, got {k}")
+    res = design_stage(req, env, chosen, inp["stage"], _parts_catalog(), tier=tier, k=k)
+    out = res.as_dict()
+    out["note"] = (
+        "pass a candidate's `option` back in `chosen` and continue with next_stage; every "
+        "number is from the bill and the simulation of that candidate's full build"
+        + (f"; dropped downstream choices: {res.invalidated}" if res.invalidated else "")
+    )
+    return out
+
+
+def _tool_auto_design(inp: dict[str, Any]) -> dict[str, Any]:
+    """rocketwright.design_chain.auto_design, with the final build judged through the same
+    `_simulate_dispatch` as design_from_parts (trace dropped, buildability warnings appended)."""
+    tier, req, env = _chain_inputs(inp)
+    res = auto_design(req, env, _parts_catalog(), tier=tier)
+    sim = _simulate_dispatch(res.design, env, None, req, cost_jpy=res.bill.cost_jpy)
+    sim = sim.model_copy(
+        update={"warnings": list(sim.warnings) + [f"build: {i.message}" for i in res.issues]}
+    ).model_dump(mode="json")
+    sim["trace_point_count"] = len(sim.pop("trace"))
+    return {
+        "tier": tier,
+        "build": res.build.model_dump(mode="json"),
+        "design": res.design.model_dump(mode="json"),
+        "bill": res.bill.model_dump(mode="json"),
+        "issues": [i.model_dump() for i in res.issues],
+        "sim": sim,
+        "trace": [t.as_dict() for t in res.trace],
+        "derived_targets": res.derived_targets,
+        "derived_vs_chain": res.derived_vs_chain,
+        "note": (
+            "baseline from the staged chain; confirm or edit it with design_from_parts and "
+            "revisit a stage with design_stage (later stages are then redone)"
+        ),
+    }
+
+
 def _tool_simulate(inp: dict[str, Any]) -> dict[str, Any]:
     design = _parse_design(inp["design"])
     env = Env.model_validate(inp.get("env") or {})
@@ -916,6 +1015,8 @@ TOOL_REGISTRY: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
     "derive_requirements": _tool_derive_requirements,
     "list_parts": _tool_list_parts,
     "design_from_parts": _tool_design_from_parts,
+    "design_stage": _tool_design_stage,
+    "auto_design": _tool_auto_design,
 }
 
 
