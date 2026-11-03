@@ -215,6 +215,50 @@ request human review instead of silently extrapolating. Test boundary cases, tra
 cross-mode consistency, and recomputation after changed inputs before relying on automatic
 mode selection. This is a future design goal, not a claim about the current tier selector.
 
+#### Select tools within an analysis domain, and ask when context is missing
+
+**Proposed behavior, not implemented:** "vibration analysis", "aerodynamics", or "thermal
+analysis" is not enough information to select a tool or library. Selection should use the
+physical applicability of a model as well as the software's supported capabilities.
+The following are illustrative context checks, not validated solver recommendations.
+
+| Analysis domain | Context and required inputs to resolve | Selection and constraint checks |
+| --- | --- | --- |
+| Vibration | Characteristic size, geometry, material properties, supports/connections, mass distribution, excitation, operating conditions, and the response of interest | Check whether the candidate model's dimensionality, linearity, boundary conditions, and frequency range suit the question; justify a reduced-order model or a more detailed method rather than selecting solely by the domain label |
+| Aerodynamics | Speed and environment, characteristic size, shape, relevant flow regime, and required outputs | Match the model and implementation to the applicable flow regime and geometry; speed or size changes can require revisiting assumptions, tool/library choice, and evidence |
+| Thermal | The specific part and material, mission destination/environment, operating phase and duration, heat inputs, interfaces, and the temperature quantity being evaluated | Establish relevant thermal processes and boundary conditions; check whether the intended model/tool can represent them and whether steady or transient evaluation answers the question |
+
+For thermal constraints, distinguish a component's operating limits, survival/storage limits,
+material limits, and any validated exposure-duration conditions. Upper and lower temperature
+limits must come from applicable component specifications, material data, mission
+requirements, or an explicitly reviewed assumption, with source, version, and conditions
+recorded. A destination or part name alone is not evidence for a numerical limit. Missing
+limits remain unknown; do not invent universal temperature thresholds.
+
+The LLM's role is to **propose a supported selection or ask the user**, not to silently fill
+critical gaps:
+
+1. Identify which missing inputs could change applicability, tool choice, or acceptance.
+   Ask focused questions about those inputs (for example, which component and operating
+   phase, what environment/speed range, or what specification supplies the limits).
+2. Use the confirmed context to propose a model, calculation method, and available
+   tool/library. Explain the selection reason, alternatives, required inputs, known
+   limitations, and unresolved uncertainty.
+3. Verify the tool/version capabilities and model assumptions against their documentation
+   and suitable validation evidence. A plausible LLM explanation is not validation, and
+   a runnable tool is not proof that its physics applies.
+4. Record the context, sources, assumptions, selected mode/tool/version, and validation
+   status with the result. Reopen the selection when the part, mission, scale, speed,
+   environment, or adjacent-layer decisions change.
+5. If necessary inputs or applicable evidence remain unavailable, label the result
+   exploratory or unsupported and ask for review. Human reviewers retain final judgment
+   on the modeling choice and whether the evidence supports the design decision.
+
+日本語の補足：同じ振動・空力解析でも、速度・大きさ・環境・境界条件によって適切なモデルや
+ツール／ライブラリを選び直す構想です。熱設計も部品・飛行先・運用段階に応じて必要な解析と
+温度制約の根拠を確認します。LLMは根拠付きで選択案を示すか、不足情報を人に質問し、
+適用範囲・不確かさ・検証状況を明示した上で、最終判断を人に委ねます。
+
 ### Candidate-generation and evaluation loop
 
 1. **Define the design space.** Separate requirements, hard constraints, controllable
