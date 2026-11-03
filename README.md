@@ -103,18 +103,57 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
   配信され、major / blocker の指摘は設計役に返されます。blocker が付いた案は最終の合格一覧から外れます
   （`review_gate` 種別の `warning` イベントで通知）。ツール結果に無い数値を引用した指摘はコードで除外します。
 
-## 進捗
+## Progress and submission plan / 進捗・提出計画
 
-| フェーズ | 期間 | 完了条件 |
+**Submission deadline: 2026-11-08 (Sun) 20:00 JST / 11:00 UTC.**
+This follows the organizer's November 2 update for **Built with Claude: Japan 2026**.
+The previous November 9–10 submission schedule is obsolete; do not use the final judging
+date as the submission deadline. The older deadline and phase table in `CLAUDE.md` have
+not yet been synchronized; use the deadline above for submission planning.
+
+日本語の要点：**提出締切は2026年11月8日（日）20:00（日本時間）**です。
+旧記載の「11月9〜10日に動画・概要文を作成して提出」では間に合いません。
+以下は公開済みコードの実装状況と、提出に向けた確認事項・計画案を分けて記載しています。
+
+### Repository status (reviewed 2026-11-03)
+
+The following describes code present on `main`, not a claim that live API calls, the web
+build, or every user input have passed end-to-end validation. Unpushed work is not covered.
+
+| Area | Present in the repository | Verification boundary |
 | --- | --- | --- |
-| 1 | 11/2–11/3 | schema・classify・guard・最小の multistage とテスト。エージェントがダミー物理で一周する |
-| 2 | 11/4–11/5 | solid・stability・recovery。エージェント＋UI が commercial と amateur で端から端まで動く |
-| 3 | 11/6–11/7 | water、全規模の多数回試行、レビュアー、図面・部品表の出力 |
-| 4 | 11/8 | 機能凍結。scenarios の回帰テスト、UI の磨き込み、README |
-| 5 | 11/9–11/10 | デモ動画、概要文、提出 |
+| Design and simulation | Four tiers, `water` / `solid` / `multistage` models, seeded dispersion, and reviewer integration | Simplifications and provisional data remain documented below; simulation results are not real-world flight certification |
+| API and UI | FastAPI SSE design endpoint and Next.js candidate/review/flight displays | Live Claude API → browser → artifact download must be checked on the submission build |
+| Exports | SVG side view, Markdown/JSON report, and BOM CSV | These are the formats exposed by `api/main.py` and `rocketwright/agent/store.py`; do not present them as completed 3D/STL export |
+| Regression tests | `tests/test_scenarios.py` exercises physics and the agent loop with a scripted fake Claude client | A fake-client test pass is not evidence of live Claude behavior; this documentation update does not establish a new test pass |
+| Frontend build | `web/package.json` provides `npm run build` | `web/README.md` still notes an unverified build; record a successful build against the final submission commit |
 
-現在：フェーズ 4（機能凍結）。4 つの規模すべてが実物理モデル（`water` / `solid` / `multistage`）で動き、
-多数回試行、レビュアー、図面、レポート、部品表の出力まで繋がっています。
+Artifact downloads are held in backend memory and expire after a restart or store eviction.
+Save the files needed for the demo before stopping the API.
+
+### Proposed workback plan (not completed milestones)
+
+These are working targets to review with the team, not organizer requirements or additional
+commitments. Prioritize a reproducible existing end-to-end demo over adding unverified scope.
+
+| Target (JST) | Work | Exit criterion |
+| --- | --- | --- |
+| November 3–5 | Agree on the design inputs, supported mission scope, candidate comparison, and UI/backend interface; verify the existing end-to-end path | One documented live-API demo reaches the UI and downloads the expected artifacts; open issues are recorded |
+| November 6 | Stabilize the demo and provisionally freeze submission scope | Regression/lint/build results and remaining limitations are recorded against a commit; unresolved extras are explicitly deferred |
+| November 7 | Prepare the demo video (within 3 minutes), short summary, and public GitHub repository | Draft submission package is ready and links are accessible without private credentials |
+| November 8, before 20:00 | Recheck the package, submit with time to spare, and retain the submission confirmation | All required items are submitted by **20:00 JST / 11:00 UTC**, not merely prepared |
+
+### Submission readiness checklist
+
+Unchecked items are verification tasks, not claims that the implementation is missing or broken.
+
+- [ ] Run `uv run pytest`, `uv run ruff check .`, and `uv run python scripts/check_scenarios.py`; record results and any skipped tests.
+- [ ] Run `npm run build` in `web/`; verify the browser flow against the same backend commit.
+- [ ] Check live Claude behavior on supported demo inputs, including rejected/out-of-scope requests, unsuccessful candidates, and retry/error handling.
+- [ ] Review candidate geometry, labels, units, and download contents; agree on whether 3D visualization/export is in submission scope before describing it as available.
+- [ ] Ensure the video and summary distinguish simulated results, provisional values, and unverified capabilities.
+- [ ] Check the public repository, video, and summary links; exclude credentials and private development data.
+- [ ] Submit by the organizer's deadline and retain confirmation.
 
 ## 簡易化した箇所
 
