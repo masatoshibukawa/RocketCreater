@@ -103,6 +103,64 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
   配信され、major / blocker の指摘は設計役に返されます。blocker が付いた案は最終の合格一覧から外れます
   （`review_gate` 種別の `warning` イベントで通知）。ツール結果に無い数値を引用した指摘はコードで除外します。
 
+## Design direction: hierarchical exploration / 階層的な設計探索
+
+**Proposal, not an implemented capability or a commitment for the competition deadline.**
+The current implementation uses tier-specific schemas and Python simulation tools. The
+following describes a direction for extending that loop; MATLAB integration and a general
+multi-level shape/material optimizer are not claimed to be available.
+
+日本語の要点：設計変数は一列の入力項目ではなく、ミッション・機体全体・各部の形状や材質が
+相互に制約を与える階層として整理します。候補生成→解析→評価→上位要求へのフィードバックを
+繰り返し、設計と検証を一体で進める構想です。MATLAB等の解析手法も選択肢ですが、未実装です。
+
+### Coupled levels, rather than a one-way pipeline
+
+| Level | Decisions and variables to represent | Feedback to exchange |
+| --- | --- | --- |
+| Mission / requirements | Purpose, payload, target altitude or orbit, recovery needs, budget, and acceptance criteria | Feasibility, uncertainty, and trade-offs may require revisiting the requirements |
+| System / architecture | Tier, overall configuration, interfaces, and allocations of mass, cost, and performance | Lower-level results update system feasibility and available margins |
+| Subsystem / geometry / materials | Allowed external geometry, material choices and their properties, structural assumptions, and component selection | Mass, compatibility, uncertainty, and verification needs constrain the system-level choices |
+| Analysis / evidence | Model fidelity, solver, assumptions, input/output units, and validation references | Results and model limits determine which candidates can be compared and which need further investigation |
+
+Higher and lower levels should be co-designed through iterative feedback, rather than
+permanently fixing all upper-level choices before exploring lower-level alternatives.
+This does not require every solver to run at the same time: dependencies, model cost, and
+available evidence determine the order. A change in geometry or material must invalidate
+the dependent results rather than leave stale evaluations attached to a candidate.
+
+### Candidate-generation and evaluation loop
+
+1. **Define the design space.** Separate requirements, hard constraints, controllable
+   variables, derived quantities, and uncertain assumptions. Identify which level owns
+   each decision and which other levels depend on it.
+2. **Generate alternatives.** Choose an exploration method suited to the variables and
+   model cost. Catalog selection, parameter sweeps, or constrained search are possible
+   approaches to assess, not a claim that all are implemented.
+3. **Analyze each candidate.** Use the appropriate model and fidelity for the question.
+   Existing Python tools are the starting point; a MATLAB simulation adapter is a future
+   option. Any adapter needs a defined input/output contract, units, model/version identity,
+   reproducibility settings, and failure reporting before its results can be compared.
+4. **Evaluate constraints and trade-offs.** First check required constraints, then compare
+   objectives such as mission fit, mass, cost, robustness, and confidence in the evidence.
+   Report trade-offs or non-dominated alternatives instead of hiding them in an unexplained
+   single score. Model uncertainty is distinct from candidate performance.
+5. **Feed results back across levels.** An infeasible or weak lower-level choice can trigger
+   changes to allocations, architecture, or an explicitly reconsidered mission requirement.
+   Record what changed, why, and which analyses must be rerun.
+6. **Stop and review.** Define an evaluation budget and completion criteria; retain candidate
+   lineage, assumptions, model provenance, and reasons for rejection for human review.
+
+The evaluation method must evolve with the design question: a visual geometry preview,
+a simplified system simulation, and a higher-fidelity material/structural analysis are not
+interchangeable evidence. A successful model run alone does not establish feasibility.
+
+For the competition, first document the design variables and interfaces actually supported
+by the existing demo. Broader hierarchical optimization, MATLAB coupling, and 3D export need
+separate scope decisions and validation. All extensions must preserve the project limits in
+`CLAUDE.md`: simulation/concept design only, no propulsion internals, manufacturing-ready
+vehicle design, targeting, or guidance/control implementation.
+
 ## Progress and submission plan / 進捗・提出計画
 
 **Submission deadline: 2026-11-08 (Sun) 20:00 JST / 11:00 UTC.**
