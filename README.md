@@ -129,6 +129,32 @@ This does not require every solver to run at the same time: dependencies, model 
 available evidence determine the order. A change in geometry or material must invalidate
 the dependent results rather than leave stale evaluations attached to a candidate.
 
+### Co-design the intermediate design space
+
+**Future direction:** the middle layer's search space is itself a design decision, not a
+fixed list of variables supplied once at the start. Design its variable set,
+parameterization, bounds, and constraints using both upstream requirements and downstream
+realizability. Optimizing values inside a fixed space and revising that space are different
+operations; the loop needs to support both explicitly.
+
+- Upstream requirements determine which distinctions matter, what must remain fixed, and
+  which objectives or constraints the middle layer must expose.
+- Downstream component, geometry, material, and model feasibility determines which
+  combinations can actually be represented and evaluated.
+- When either side changes, reconsider whether to add, remove, split, combine, or
+  reparameterize variables; revise justified bounds and coupling constraints accordingly.
+- Keep design variables separate from derived quantities and uncertainty parameters.
+  Do not make an infeasible design appear feasible by silently relaxing a requirement.
+- Version each design-space definition and its rationale. Map retained candidates to the
+  new representation where valid, invalidate incompatible results, and rerun affected
+  analyses before comparison.
+- Validate the revised representation with both neighboring layers. If feasibility or
+  parameter bounds lack evidence, record that uncertainty and request review rather than
+  inventing precise limits.
+
+日本語の補足：中間レイヤーでは値を探すだけでなく、**何を変数にするか、どう表現するか、
+どの範囲・制約で探索するか**も上位要求と下位の実現可能性に合わせて更新する構想です。
+
 ### Match methods to variables within each level
 
 A layer should not be assigned one universal simulator. Within the same layer, different
