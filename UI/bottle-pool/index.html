@@ -35,7 +35,7 @@
 <dt>積載質量 <code>payload_mass_kg</code></dt><dd>卵などの質量。同じミッションでは固定。</dd>
 </dl><span class="status future">自作予定</span><dl>
 <dt>実測した胴体外径 <code>measured_body_diameter_m</code></dt><dd>風洞試験や文献機体と比較するときの基準面積に使う。</dd>
-</dl><p><a href="#flight">公称飛行</a>で高度を、<a href="#vertical_flight_replay">実測高度の再現</a>でモデル誤差を確認。</p><a class="ref" href="#ref-R03">R03</a> <a class="ref" href="#ref-R14">R14</a></div></details>
+</dl><p><a href="#flight">公称飛行</a>で高度を、<a href="#vertical_flight_replay">実測高度の再現</a>でモデル誤差を確認。 <a href="#phase_static_margin">組立時の重心・圧力中心も確認</a>。</p><a class="ref" href="#ref-R03">R03</a> <a class="ref" href="#ref-R14">R14</a></div></details>
 <details id="part-nozzle"><summary>ノズル・整流器</summary><div class="details-body"><p>噴出口の太さと、その上流の整流器は別の変数です。</p><span class="status now">現行モデル</span><dl>
 <dt>噴出口の内径 <code>nozzle_diameter_m</code></dt><dd>nozzle_id で部品を選び、その内径を飛行計算に渡す。出口面積は内径から求める。</dd>
 </dl><span class="status future">自作予定</span><dl>
@@ -53,7 +53,7 @@
 <dt>張り出し・後退 <code>fins.span_m / fins.sweep_m</code></dt><dd>胴体表面から翼端までの距離と、翼端前縁の後方へのずれ。</dd>
 <dt>板厚・取り付け位置 <code>fins.thickness_m / fins.root_le_from_nose_m</code></dt><dd>板面に垂直な厚さと、機首から翼根前縁までの軸方向距離。</dd>
 <dt>取り付け方式 <code>fins.mount_type</code></dt><dd>標準・補強を比較。各仕様で剛性と質量を測る。</dd>
-</dl><p><a href="#aerodynamic_polars">風洞条件での空力評価</a>へ。CADは形状の出典、風洞試験は解析の照合先。</p><a class="ref" href="#ref-D09">D09</a> <a class="ref" href="#ref-R03">R03</a></div></details>
+</dl><p><a href="#aerodynamic_polars">風洞条件での空力評価</a>へ。CADは形状の出典、風洞試験は解析の照合先。 <a href="#phase_static_margin">組立時の重心・圧力中心も確認</a>。</p><a class="ref" href="#ref-D09">D09</a> <a class="ref" href="#ref-R03">R03</a></div></details>
 <details id="part-nose"><summary>ノーズ・表面処理</summary><div class="details-body"><p>組み合わせは風洞試験の試験体と照らして選びます。</p><span class="status future">自作予定</span><dl>
 <dt>ノーズ形状 <code>nose_profile</code></dt><dd>円錐型と半球型。</dd>
 <dt>表面処理 <code>surface_treatment</code></dt><dd>基準面、渦発生器、ディンプル。原論文の表1で形状との組み合わせを確認。</dd>
@@ -88,7 +88,25 @@
 <dt>高度逸脱量の95パーセンタイル <code>minimize_altitude_band_violation_p95</code></dt><dd>失敗の頻度が似る案で、外したときの大きさを比較。</dd>
 <dt>着地距離の95パーセンタイル <code>minimize_recovery_distance_p95</code></dt><dd>発射地点からの水平距離（m）。回収範囲の比較に使う。</dd>
 </dl></div></details></section>
-<section id="research"><p class="eyebrow">04 / モデル開発</p><h2>自作シミュレータの候補</h2><p class="lead">6つの開発仕様です。それぞれに必要な条件、評価関数、検証先を対応させています。</p><div class="grid"><details id="humid_air_expansion"><summary>湿り空気の膨張</summary><div class="details-body"><span class="status future">自作予定</span><p><code>humid_air_expansion</code></p><dl><dt>入力と比較条件</dt><dd>内部の初期温度・湿度・圧力と気体体積</dd><dt>解析</dt><dd>圧力と体積の推移を求め、実効ポリトロープ指数を推定する。</dd><dt>評価関数</dt><dd><code>polytropic_exponent_error</code><br>指数の実測値との絶対差。固定容器で検証してから飛行条件への適用を検討する。</dd></dl><a class="ref" href="#ref-R13">R13</a></div></details>
+<section id="research"><p class="eyebrow">04 / モデル開発</p><h2>自作シミュレータの候補</h2><p class="lead">7つの開発仕様です。それぞれに必要な条件、評価関数、検証先を対応させています。</p><div class="grid"><details id="humid_air_expansion"><summary>湿り空気の膨張</summary><div class="details-body"><span class="status future">自作予定</span><p><code>humid_air_expansion</code></p><dl><dt>入力と比較条件</dt><dd>内部の初期温度・湿度・圧力と気体体積</dd><dt>解析</dt><dd>圧力と体積の推移を求め、実効ポリトロープ指数を推定する。</dd><dt>評価関数</dt><dd><code>polytropic_exponent_error</code><br>指数の実測値との絶対差。固定容器で検証してから飛行条件への適用を検討する。</dd></dl><a class="ref" href="#ref-R13">R13</a></div></details>
+<details id="phase_static_margin">
+<summary>重心と圧力中心の位置関係</summary>
+<div class="details-body"><span class="status future">自作予定</span>
+<p>フィン・積載物・水を組み付けた状態で、小さな迎角のずれに対して機首を戻す向きのモーメントが生じるかを調べます。</p>
+<figure class="stability-figure">
+<svg viewBox="0 0 320 108" role="img" aria-labelledby="cgcp-title">
+<title id="cgcp-title">復元側の模式例。機首から後方へ測ると、丸で示すCGの後方に、ひし形で示すCPがある。</title>
+<path d="M15 49 Q40 32 68 32 H249 L270 40 H288 V58 H270 L249 66 H68 Q40 66 15 49Z" fill="#deeee7" stroke="#34675a"/>
+<path d="M220 32L250 15H264L254 35M220 66L250 83H264L254 63" fill="#c4e3d7" stroke="#34675a"/>
+<circle cx="118" cy="49" r="6" fill="#13584a"/><path d="M185 42l7 7-7 7-7-7z" fill="#894911"/>
+<g fill="#153b35" text-anchor="middle" font-size="13" font-family="sans-serif"><text x="118" y="25">CG 重心</text><text x="185" y="25">CP 圧力中心</text><text x="75" y="97">機首を原点</text><text x="224" y="97">後方が正 →</text></g>
+</svg><figcaption>位置関係の模式図。点の位置は説明用です。</figcaption></figure>
+<dl><dt>座標をそろえる</dt><dd>乾燥機体・積載物・残水などの質量と位置から <code>xCG = Σ(mᵢ xᵢ) / Σmᵢ</code>。<code>xCP</code> は同じ形状・流れでの微小迎角に対する法線力とモーメントの変化から求めます。</dd>
+<dt>位置の差と静安定余裕</dt><dd><code>Δx = xCP − xCG</code>（m）、<code>SM = Δx / D</code>（胴体径何個分か）。通常の正の法線力傾斜をもつ場合、正なら復元側、0なら一次近似で中立、負なら不安定側です。Dには同じ基準胴体外径を使います。</dd>
+<dt>どの時点で評価するか</dt><dd>発射前は所定充填量で重心を測定。ガイド離脱後は、噴射途中の残水量、水切れ、惰性上昇を追い、有効な自由飛行区間の最小値 <code>minimum_static_margin_cal</code> と、その時刻・CG・CPを返します。</dd>
+<dt>判定を保留する条件</dt><dd>低動圧などでCPを同定できない、評価区間が抜ける、または誤差を含めると符号が決まらない場合です。必要な余裕は機体・ミッション別に検証します。動的な揺れの収束や飛行全体の合否は別項目です。</dd></dl>
+<p><a href="https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/conditions-for-rocket-stability/">NASA Glennの静安定の解説</a> ／ <a href="#ref-R03">R03 風洞条件とモーメントの照合</a></p>
+</div></details>
 <details id="transient_nozzle_flow"><summary>水から空気に移る噴射過程</summary><div class="details-body"><span class="status future">自作予定</span><p><code>transient_nozzle_flow</code></p><dl><dt>入力と比較条件</dt><dd>整流器の有無・開口比・穴数／同期した推力・内圧データ</dd><dt>解析</dt><dd>同じ治具条件で通常ノズルと整流ノズルの推力・内圧履歴を比較する。</dd><dt>評価関数</dt><dd><code>thrust_curve_rmse_n</code><br>共通の時間軸・噴射区間での推力の二乗平均平方根誤差（N）。</dd></dl><a class="ref" href="#ref-R02">R02</a></div></details>
 <details id="aerodynamic_polars"><summary>迎角ごとの空力特性</summary><div class="details-body"><span class="status future">自作予定</span><p><code>aerodynamic_polars</code></p><dl><dt>入力と比較条件</dt><dd>フィン形状・取り付け、ノーズ・表面処理／風速・重心・迎角</dd><dt>解析</dt><dd>揚力・抗力・縦揺れモーメントを算出。まず論文の試験体を再現してからCAD形状を比較する。</dd><dt>評価関数</dt><dd><code>moment_slope_per_rad</code><br>重心まわりのモーメント係数の傾き。機首上げ正の定義では、微小迎角域の負の傾きが復元方向。</dd></dl><a class="ref" href="#ref-R03">R03</a> <a class="ref" href="#ref-D09">D09</a></div></details>
 <details id="canopy_deployment"><summary>放出から完全開傘まで</summary><div class="details-body"><span class="status future">自作予定</span><p><code>canopy_deployment</code></p><dl><dt>入力と比較条件</dt><dd>放出機構、収納条件、開傘時間、質量、頂点での姿勢・風</dd><dt>解析</dt><dd>放出・膨張・定常降下を分け、完全に開かなかった試行も記録する。</dd><dt>評価関数</dt><dd><code>full_open_altitude_m</code><br>完全開傘時の対地高度。未開傘は失敗として別に数える。</dd></dl><a class="ref" href="#ref-P09">P09</a></div></details>

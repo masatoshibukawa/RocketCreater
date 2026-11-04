@@ -54,6 +54,9 @@ summary { padding: .95rem 1.1rem; font-weight: 750; cursor: pointer; }
 summary:hover { color: var(--teal); }
 .details-body { padding: 0 1.1rem 1rem; }
 .details-body p { margin: .2rem 0 .7rem; }
+.stability-figure { margin: .8rem 0; }
+.stability-figure svg { display: block; width: min(100%, 24rem); height: auto; }
+.stability-figure figcaption { color: var(--soft); font-size: .85rem; }
 ul { padding-left: 1.3em; }
 dl { margin: .3rem 0 .8rem; }
 dt { padding-top: .52rem; font-weight: 650; }
