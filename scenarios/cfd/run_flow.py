@@ -29,7 +29,8 @@ def main():
     p.add_argument("--volume", action="store_true", help="save a 3-D sampled wake for plotting")
     p.add_argument(
         "--paired-samples",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=True,
         help="average adjacent lattice steps to check odd/even force sampling bias",
     )
     args = p.parse_args()
