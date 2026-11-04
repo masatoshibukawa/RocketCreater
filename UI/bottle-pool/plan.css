@@ -1,0 +1,18 @@
+.plan { padding-top: 2.1rem; }
+.plan > h1 { font-size: clamp(2rem, 5vw, 3.25rem); }
+.plan > .lead { max-width: 47em; }
+.plan figure { margin: 1rem 0; }
+.diagram { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: .65rem; }
+.chart { display: block; width: min(100%, 57rem); min-width: 43rem; margin: auto; padding: .6rem 0; }
+.chart text { fill: var(--ink); font: 15px system-ui, sans-serif; }
+.chart .edge-label { font-size: 14px; paint-order: stroke; stroke: white; stroke-width: 4px; stroke-linejoin: round; }
+.chart .arrow { fill: none; stroke: #34675a; stroke-width: 1.6; }
+.chart .lane { stroke: #97aca6; stroke-dasharray: 4 4; }
+.chart .node rect { fill: #edf6f0; stroke: #a5c3b6; }
+.chart .main-node rect { fill: #154e43; }
+.chart .main-node text { fill: white; }
+.plan figcaption { color: var(--soft); font-size: .9rem; margin: .4rem 0; }
+.notes { padding-left: 1.65rem; }
+.notes li { margin-block: .6rem; }
+.notes li::marker { font-weight: 750; color: var(--teal); }
+.plan section[id] { scroll-margin-top: 1.5rem; }
