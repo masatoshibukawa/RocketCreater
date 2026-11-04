@@ -126,8 +126,9 @@ def dispersion(design: Design, env: Env, n: int, seed: int) -> DispersionResult:
 ## 8. エージェント（`rocketwright/agent/`）
 
 - Claude API のツール使用で実装する。設計判断：`claude-opus-5-5`（拡張思考を有効化）。カタログ検索の要約など軽い処理：`claude-haiku-5-5`。モデル名は設定ファイルで切り替えられるようにする。
-- ツール：`classify_requirement`, `search_catalog`, `simulate_design`, `run_dispersion`, `estimate_cost`, `render_drawing`, `export_report`。
-- ループ：要求の不足を最大3問まで聞き返す → 分類 → 初期案 → シミュレート → 失敗理由を読んで原因から修正 → 合格案が2〜3件そろうか試行上限（既定 40 回）で終了。
+- ツール：`classify_requirement`, `derive_requirements`, `find_reference_designs`, `search_catalog`, `simulate_design`, `run_dispersion`, `estimate_cost`, `render_drawing`, `export_report`。
+- ループ：要求の不足を最大3問まで聞き返す → 分類 → 定量要求を公式で算出（`derive_requirements`）→ 近い実機を種に初期案を作る（`find_reference_designs`、`rocketwright/catalog/references/`）→ シミュレート → 失敗理由を読んで原因から修正 → 合格案が2〜3件そろうか試行上限（既定 40 回）で終了。
+- 設計精度の根拠：実機データ（出典つき）を自前の物理で再現するテスト（`tests/test_references.py`, `scripts/check_references.py`）。公式の値とシミュレーションが食い違うときはシミュレーションを採り、公式のどの仮定が原因かを説明する。
 - 観点別レビュアー（安定性・回収・費用・安全）を並列サブエージェントとして呼び、指摘を設計役に返す（フェーズ3）。
 - 最終出力は JSON：設計案ごとに設計変数、主要指標、合否、費用、成功率、各数値の出典ツール呼び出し ID、説明文。説明文に出典のない数値が含まれていないかをコードで検査する。
 - 途中経過（試行回数、試した案、合否、思考の要約）を SSE で UI に流す。デモの見せ場になる。

@@ -1,0 +1,24 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/H180W/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 29 mm x 238 mm RMS-29/240 reload kit, total impulse 217.7 N-s, average thrust 180 N, max thrust 228.5 N, burn time 1.3 s, propellant 124 g, total 252 g, delays 4/6/8/10 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 1.209 s so the average thrust matches the summary.
+; note: high-power (H) motor -- NAR/TRA Level 1 (H, I) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: curve integral 217.7 N-s, average thrust 180.0 N
+; diameter_m: 0.029
+; length_m: 0.238
+; delays: 4,6,8,10
+; propellant_mass_kg: 0.124
+; total_mass_kg: 0.252
+; price_jpy: 6300 (RMS-29/240 reload kit $41.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+; hardware: RMS-29/240
+; hardware_price_jpy: 22350 (RMS-29/240 motor hardware $148.99, reusable, bought once; same order form; at 150 JPY/USD, provisional)
+H180W 29 238 4-6-8-10 0.124 0.252 AeroTech
+0.036 193.58
+0.097 228.50
+0.302 193.58
+1.028 193.58
+1.209 0.00
+;

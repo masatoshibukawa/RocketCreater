@@ -1,0 +1,13 @@
+# Demo scenario (amateur tier, low-power model rocket). Used by scripts/run_scenario.py and as a
+# regression fixture. `story` picks the scripted demo in rocketwright/agent/fake_client.py.
+name: demo_model_rocket
+request_text: "200 g の荷物を 500 m まで上げて回収したい。予算 2 万円。資格なしで飛ばしたい。"
+story: model_rocket
+env:
+  launch_latitude_deg: 36.0     # provisional: inland Japan test range placeholder
+  launch_altitude_m: 300
+  wind_speed_mps: 3.0
+  wind_direction_deg: 270
+seed: 11
+expected:
+  tier: amateur

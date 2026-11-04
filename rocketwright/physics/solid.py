@@ -61,9 +61,13 @@ __all__ = [
 # --------------------------------------------------------------------------- constants
 
 G0_MPS2 = 9.80665
-# SIMPLIFICATION: one constant drag coefficient on the body frontal area for a slender finned
-# hobby rocket at zero angle of attack (OpenRocket typically gives 0.4-0.6 subsonic).
-DEFAULT_CD = 0.5
+# SIMPLIFICATION: one constant drag coefficient on the body frontal area for a small finned
+# hobby rocket at zero angle of attack. 0.75 is the conventional "typical model rocket" value
+# (launch lug, square-edged balsa fins, Re ~ 1e5) used by the Estes TR-10 altitude charts and
+# their derivatives; calibrated against the 4 Estes kits in catalog/references/amateur.yaml
+# (scripts/calibrate_small_rockets.py: RMS apogee error 15.4 %, +24 % on the 2 m long Mean
+# Machine where skin friction dominates). Still provisional: the Estes figures are projections.
+DEFAULT_CD = 0.75
 MOTOR_DIR = Path(__file__).resolve().parents[1] / "catalog" / "motors"
 
 # Single place for the pass/fail rules (CLAUDE.md section 6). `max_*_warn` entries only warn.
@@ -105,6 +109,12 @@ class Motor:
     source: str | None
     license: str | None
     provisional: bool
+    # Retail price of one motor (single-use) or reload kit, and of the reusable hardware a reload
+    # needs (`; price_jpy:` / `; hardware:` / `; hardware_price_jpy:` header comments; None when the
+    # file has none -- the build layer then falls back to its per-impulse rate).
+    price_jpy: float | None = None
+    hardware: str | None = None
+    hardware_price_jpy: float | None = None
     _times: tuple[float, ...] = field(default=(), repr=False, compare=False)
     _thrusts: tuple[float, ...] = field(default=(), repr=False, compare=False)
     _cumulative_ns: tuple[float, ...] = field(default=(), repr=False, compare=False)
@@ -167,6 +177,9 @@ class Motor:
             source=self.source,
             license=self.license,
             provisional=self.provisional,
+            price_jpy=self.price_jpy,
+            hardware=self.hardware,
+            hardware_price_jpy=self.hardware_price_jpy,
         )
 
     def impulse_ns(self, t_s: float) -> float:
@@ -186,6 +199,19 @@ def list_motor_ids(motor_dir: Path = MOTOR_DIR) -> list[str]:
     return sorted(p.stem for p in motor_dir.glob("*.eng"))
 
 
+_META_KEYS = ("source", "license", "provisional", "price_jpy", "hardware", "hardware_price_jpy")
+
+
+def _leading_number(text: str | None) -> float | None:
+    """`"14400 (reload kit ...)"` -> 14400.0; None when absent or not a number."""
+    if not text:
+        return None
+    try:
+        return float(text.split()[0])
+    except ValueError:
+        return None
+
+
 def _parse_eng(motor_id: str, text: str) -> Motor:
     meta: dict[str, str] = {}
     header: list[str] | None = None
@@ -197,7 +223,7 @@ def _parse_eng(motor_id: str, text: str) -> Motor:
         if line.startswith(";"):
             body = line.lstrip(";").strip()
             key, sep, value = body.partition(":")
-            if sep and key.strip().lower() in ("source", "license", "provisional"):
+            if sep and key.strip().lower() in _META_KEYS:
                 meta[key.strip().lower()] = value.strip()
             continue
         if header is None:
@@ -232,6 +258,9 @@ def _parse_eng(motor_id: str, text: str) -> Motor:
         source=source,
         license=license_,
         provisional=provisional,
+        price_jpy=_leading_number(meta.get("price_jpy")),
+        hardware=meta.get("hardware") or None,
+        hardware_price_jpy=_leading_number(meta.get("hardware_price_jpy")),
     )
 
 
@@ -354,6 +383,14 @@ def _event(fn: Callable[..., float], *, terminal: bool, direction: int) -> Calla
     fn.terminal = terminal
     fn.direction = direction
     return fn
+
+
+def _resolve_cd(cd: float | None) -> float:
+    if cd is None:
+        return DEFAULT_CD
+    if not cd > 0.0:
+        raise ValueError(f"cd must be > 0, got {cd}")
+    return cd
 
 
 def _check_design(design: Design) -> AmateurDesign:
@@ -518,11 +555,13 @@ def simulate_with_options(
     drag: bool = True,
     target_apogee_m: float | None = None,
     thrust_scale: float = 1.0,
+    cd: float | None = None,
 ) -> SimResult:
-    """`simulate` with physics switches (tests use them to isolate the rocket equation)."""
+    """`simulate` with physics switches (tests use them to isolate the rocket equation).
+    `cd=None` means the module default `DEFAULT_CD`."""
     am_design = _check_design(design)
     motor = load_motor(am_design.motor_id).scaled(thrust_scale)
-    options = FlightOptions(gravity=gravity, drag=drag)
+    options = FlightOptions(gravity=gravity, drag=drag, cd=_resolve_cd(cd))
     flight = run_flight(am_design, env, options, thrust_scale=thrust_scale)
     th = PASS_THRESHOLDS
     failures: list[str] = []
@@ -646,13 +685,16 @@ def simulate(
     *,
     target_apogee_m: float | None = None,
     thrust_scale: float = 1.0,
+    cd: float | None = None,
 ) -> SimResult:
     """Common physics interface (CLAUDE.md section 6). `seed` is accepted for interface
     compatibility; the nominal solid model is deterministic and ignores it. `thrust_scale`
-    (default 1.0) multiplies the motor thrust curve and is what the dispersion perturbs."""
+    (default 1.0) multiplies the motor thrust curve and is what the dispersion perturbs.
+    `cd` overrides the body drag coefficient (None -> `DEFAULT_CD`; used by the calibration
+    scan in scripts/calibrate_small_rockets.py)."""
     del seed
     return simulate_with_options(
-        design, env, target_apogee_m=target_apogee_m, thrust_scale=thrust_scale
+        design, env, target_apogee_m=target_apogee_m, thrust_scale=thrust_scale, cd=cd
     )
 
 

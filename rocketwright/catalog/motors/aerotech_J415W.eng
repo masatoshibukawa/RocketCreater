@@ -1,0 +1,24 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/J415W/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 54 mm x 314 mm RMS-54/1280 reload kit, total impulse 1231.7 N-s, average thrust 415 N, max thrust 732.8 N, burn time 2.9 s, propellant 693 g, total 1168 g, delays 6/8/10/12/14 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 2.968 s so the average thrust matches the summary.
+; note: high-power (J) motor -- NAR/TRA Level 2 (J, K, L) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: curve integral 1231.7 N-s, average thrust 415.0 N
+; diameter_m: 0.054
+; length_m: 0.314
+; delays: 6,8,10,12,14
+; propellant_mass_kg: 0.693
+; total_mass_kg: 1.168
+; price_jpy: 20400 (RMS-54/1280 reload kit $135.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+; hardware: RMS-54/1280
+; hardware_price_jpy: 34950 (RMS-54/1280 motor hardware $232.99, reusable, bought once; same order form; at 150 JPY/USD, provisional)
+J415W 54 314 6-8-10-12-14 0.693 1.168 AeroTech
+0.089 417.99
+0.237 732.80
+0.742 417.99
+2.523 417.99
+2.968 0.00
+;

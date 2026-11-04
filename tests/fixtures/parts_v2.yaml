@@ -1,0 +1,210 @@
+# Test fixture: a small parts.yaml in the v2 format (rocketwright/catalog/PARTS_SCHEMA.md).
+# Every value here is provisional (representative hobby-shop numbers written for the tests);
+# it is NOT the project catalog. An `items:` block is kept on purpose to check that loaders
+# ignore the v1 key when `parts:` is present.
+version: 2
+items:
+  - id: legacy_v1_item
+    tier: amateur
+    kind: body_tube
+    name: "v1 entry that must be ignored"
+    mass_kg: 1.0
+    price_jpy: 1
+    provisional: true
+parts:
+  # --- amateur: body tubes -----------------------------------------------------------------
+  - id: estes_bt50
+    kind: body_tube
+    tier: amateur
+    name: "Estes BT-50 body tube (18 in)"
+    mass_kg: 0.0125
+    price_jpy: 400
+    provisional: true
+    outer_diameter_m: 0.0246
+    inner_diameter_m: 0.0241
+    length_m: 0.457
+    max_motor_impulse_ns: 10.0   # C class
+  - id: estes_bt60
+    kind: body_tube
+    tier: amateur
+    name: "Estes BT-60 body tube (18 in)"
+    mass_kg: 0.028
+    price_jpy: 600
+    provisional: true
+    outer_diameter_m: 0.0418
+    inner_diameter_m: 0.0405
+    length_m: 0.457
+    max_motor_impulse_ns: 80.0   # F class
+  # --- amateur: nose cones -----------------------------------------------------------------
+  - id: estes_pnc50
+    kind: nose_cone
+    tier: amateur
+    name: "Estes PNC-50 plastic nose cone"
+    mass_kg: 0.008
+    price_jpy: 350
+    provisional: true
+    fits_tube_id: estes_bt50
+    shape: ogive
+    length_m: 0.070
+    shoulder_length_m: 0.020
+  - id: estes_pnc60
+    kind: nose_cone
+    tier: amateur
+    name: "Estes PNC-60 plastic nose cone"
+    mass_kg: 0.020
+    price_jpy: 500
+    provisional: true
+    fits_tube_id: estes_bt60
+    shape: ogive
+    length_m: 0.120
+    shoulder_length_m: 0.030
+  # --- amateur: motor mounts ---------------------------------------------------------------
+  - id: mount_18mm_bt50
+    kind: motor_mount
+    tier: amateur
+    name: "18 mm motor mount kit for BT-50"
+    mass_kg: 0.006
+    price_jpy: 450
+    provisional: true
+    motor_diameter_m: 0.018
+    fits_tube_id: estes_bt50
+    length_m: 0.070
+  - id: mount_24mm_bt60
+    kind: motor_mount
+    tier: amateur
+    name: "24 mm motor mount kit for BT-60"
+    mass_kg: 0.012
+    price_jpy: 600
+    provisional: true
+    motor_diameter_m: 0.024
+    fits_tube_id: estes_bt60
+    length_m: 0.100
+  - id: mount_29mm_bt60
+    kind: motor_mount
+    tier: amateur
+    name: "29 mm motor mount kit for BT-60"
+    mass_kg: 0.015
+    price_jpy: 800
+    provisional: true
+    motor_diameter_m: 0.029
+    fits_tube_id: estes_bt60
+    length_m: 0.125
+  # --- amateur: couplers (BT-50 only: the BT-60 has none, for the no_coupler rule) ---------
+  - id: coupler_bt50
+    kind: coupler
+    tier: amateur
+    name: "BT-50 tube coupler"
+    mass_kg: 0.001
+    price_jpy: 170
+    provisional: true
+    fits_tube_id: estes_bt50
+    length_m: 0.025
+  # --- amateur: fin material ---------------------------------------------------------------
+  - id: balsa_3_32in
+    kind: fin_material
+    tier: amateur
+    name: "Balsa sheet 3/32 in x 3 in x 36 in"
+    mass_kg: 0.027
+    price_jpy: 300
+    provisional: true
+    thickness_m: 0.0024
+    areal_mass_kgpm2: 0.384
+    sheet_width_m: 0.076
+    sheet_height_m: 0.914
+    max_motor_impulse_ns: 40.0   # E class
+  # --- amateur: recovery -------------------------------------------------------------------
+  - id: chute_12in
+    kind: parachute
+    tier: amateur
+    name: "12 in plastic parachute"
+    mass_kg: 0.006
+    price_jpy: 400
+    provisional: true
+    diameter_m: 0.305
+    packed_diameter_m: 0.018
+    cd: 1.5
+  - id: chute_18in
+    kind: parachute
+    tier: amateur
+    name: "18 in plastic parachute"
+    mass_kg: 0.010
+    price_jpy: 500
+    provisional: true
+    diameter_m: 0.457
+    packed_diameter_m: 0.022
+    cd: 1.5
+  - id: recovery_kit_small
+    kind: recovery_hardware
+    tier: amateur
+    name: "Shock cord, mount and wadding"
+    mass_kg: 0.004
+    price_jpy: 300
+    provisional: true
+    max_rocket_mass_kg: 0.68
+  - id: launch_lug_1_8in
+    kind: launch_lug
+    tier: amateur
+    name: "1/8 in launch lug"
+    mass_kg: 0.0005
+    price_jpy: 50
+    provisional: true
+    fits_rod_diameter_m: 0.0032
+  # --- bottle --------------------------------------------------------------------------------
+  - id: pet_bottle_1p5l
+    kind: bottle
+    tier: bottle
+    name: "1.5 L carbonated-drink PET bottle"
+    mass_kg: 0.045
+    price_jpy: 150
+    provisional: true
+    volume_m3: 0.0015
+    body_diameter_m: 0.090
+    length_m: 0.320
+    neck_diameter_m: 0.0217
+    max_gauge_pressure_pa: 700000
+  - id: nozzle_21p7mm
+    kind: nozzle
+    tier: bottle
+    name: "Full-bore neck nozzle, 21.7 mm"
+    mass_kg: 0.0
+    price_jpy: 800
+    provisional: true
+    diameter_m: 0.0217
+    fits_neck_diameter_m: 0.0217
+  - id: nozzle_9mm
+    kind: nozzle
+    tier: bottle
+    name: "Reducing nozzle insert, 9 mm"
+    mass_kg: 0.010
+    price_jpy: 400
+    provisional: true
+    diameter_m: 0.009
+    fits_neck_diameter_m: 0.0217
+  - id: bottle_fins_cardboard
+    kind: bottle_fin_set
+    tier: bottle
+    name: "3 corrugated-plastic fins with tape"
+    mass_kg: 0.030
+    price_jpy: 200
+    provisional: true
+    count: 3
+    span_m: 0.080
+  - id: chute_0p5m_plastic
+    kind: parachute
+    tier: bottle
+    name: "0.5 m plastic-sheet parachute"
+    mass_kg: 0.020
+    price_jpy: 300
+    provisional: true
+    diameter_m: 0.5
+    packed_diameter_m: 0.05
+    cd: 1.5
+  - id: launcher_bike_pump
+    kind: launcher
+    tier: bottle
+    name: "Bike-pump launcher with release"
+    mass_kg: 0.8
+    price_jpy: 3000
+    provisional: true
+    max_gauge_pressure_pa: 600000
+    rail_length_m: 0.6

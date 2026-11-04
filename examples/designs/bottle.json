@@ -1,0 +1,12 @@
+{
+  "tier": "bottle",
+  "bottle_volume_m3": 0.0015,
+  "water_fill_frac": 0.4,
+  "initial_gauge_pressure_pa": 400000,
+  "nozzle_diameter_m": 0.0222,
+  "dry_mass_kg": 0.1,
+  "payload_mass_kg": 0.06,
+  "has_fins": true,
+  "has_parachute": true,
+  "parachute_diameter_m": 0.30721019546409367
+}

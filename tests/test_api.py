@@ -4,6 +4,7 @@ import json
 import re
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 import api.main as main
@@ -104,6 +105,69 @@ def test_render_artifact_then_get_svg():
 def test_render_artifact_rejects_bad_design():
     r = client.post("/artifacts/render", json={"design": {"tier": "amateur"}})
     assert r.status_code == 422
+
+
+def test_summary_artifact_for_amateur_demo_design():
+    from rocketwright.agent.fake_client import DEMO_REQUIREMENTS, demo_designs
+    from rocketwright.cost import estimate_cost_jpy
+    from rocketwright.schema import DesignAdapter
+
+    design = demo_designs("amateur")[0]
+    r = client.post(
+        "/artifacts/summary",
+        json={"design": design, "requirement": DEMO_REQUIREMENTS["amateur"], "width_px": 600},
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert set(body) >= {
+        "tier",
+        "cost_jpy",
+        "cost_breakdown",
+        "bom",
+        "drawing",
+        "mass",
+        "dimensions",
+    }
+    assert body["tier"] == "amateur"
+    assert body["cost_jpy"] == pytest.approx(
+        estimate_cost_jpy(DesignAdapter.validate_python(design))
+    )
+    assert sum(i["jpy"] for i in body["cost_breakdown"]) == pytest.approx(body["cost_jpy"])
+    assert all(set(i) == {"label", "jpy", "note", "provisional"} for i in body["cost_breakdown"])
+    assert len(body["bom"]) >= 3
+    assert set(body["bom"][0]) == {
+        "item_id",
+        "name",
+        "qty",
+        "mass_kg",
+        "price_jpy",
+        "source_or_provisional",
+    }
+    assert body["mass"]["liftoff_mass_kg"] > body["mass"]["payload_mass_kg"] == 1.0
+    assert body["mass"]["propellant_mass_kg"] > 0  # dummy_J420 is a catalog motor
+    assert body["dimensions"]["length_m"] == pytest.approx(
+        design["nose_length_m"] + design["body_length_m"]
+    )
+    drawing = body["drawing"]
+    assert drawing["url"] == f"/artifacts/{drawing['id']}.svg"
+    g = client.get(drawing["url"])
+    assert g.status_code == 200
+    assert g.text.startswith("<svg") and 'width="600"' in g.text
+
+    # requirement is optional; a tier override that disagrees with the design is a 400
+    assert client.post("/artifacts/summary", json={"design": design}).status_code == 200
+    bad = client.post(
+        "/artifacts/summary",
+        json={
+            "design": design,
+            "requirement": {**DEMO_REQUIREMENTS["amateur"], "tier_override": "bottle"},
+        },
+    )
+    assert bad.status_code == 400
+    assert "tier" in bad.json()["detail"]
+    assert (
+        client.post("/artifacts/summary", json={"design": {"tier": "amateur"}}).status_code == 422
+    )
 
 
 def test_get_artifact_404_for_unknown_or_bad_ext():
@@ -218,3 +282,49 @@ def test_cors_preflight_exposes_methods_and_headers():
         headers={"Origin": "http://evil.example", "Access-Control-Request-Method": "POST"},
     )
     assert denied.headers.get("access-control-allow-origin") is None
+
+
+def test_summary_artifact_from_build(monkeypatch):
+    """`build` on /artifacts/summary: cost and BOM come from the parts bill, the drawing from
+    the resolved design."""
+    from rocketwright import parts
+
+    monkeypatch.setattr(
+        parts, "DEFAULT_PARTS_PATH", Path(__file__).resolve().parent / "fixtures" / "parts_v2.yaml"
+    )
+    build = {
+        "tier": "amateur",
+        "body_tube_id": "estes_bt50",
+        "body_length_m": 0.24,
+        "nose_cone_id": "estes_pnc50",
+        "motor_mount_id": "mount_18mm_bt50",
+        "motor_id": "estes_C6",
+        "fin_material_id": "balsa_3_32in",
+        "fins": {"count": 3, "root_chord_m": 0.064, "tip_chord_m": 0.025, "span_m": 0.044},
+        "parachute_id": "chute_12in",
+    }
+    # the design field is required by the request model but the build wins (a literal
+    # placeholder: the demo designs are seeded from kit builds the fixture catalog lacks)
+    placeholder = {
+        "tier": "amateur",
+        "body_diameter_m": 0.05,
+        "body_length_m": 0.6,
+        "nose_shape": "ogive",
+        "nose_length_m": 0.15,
+        "fins": {"count": 3, "root_chord_m": 0.1, "tip_chord_m": 0.05, "span_m": 0.06},
+        "motor_id": "estes_C6",
+        "dry_mass_kg": 0.3,
+        "parachute_diameter_m": 0.6,
+    }
+    r = client.post("/artifacts/summary", json={"design": placeholder, "build": build})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["cost_jpy"] == pytest.approx(body["bill"]["cost_jpy"])
+    assert [row["item_id"] for row in body["bom"]] == [p["part_id"] for p in body["bill"]["parts"]]
+    assert body["design"]["body_diameter_m"] == pytest.approx(0.0246)
+    assert body["drawing"]["url"].endswith(".svg")
+    assert body["issues"] == [] or all("severity" in i for i in body["issues"])
+    bad = client.post(
+        "/artifacts/summary", json={"design": placeholder, "build": dict(build, nose_cone_id="x")}
+    )
+    assert bad.status_code == 400 and "x" in bad.json()["detail"]

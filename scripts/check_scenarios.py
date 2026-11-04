@@ -5,9 +5,12 @@
 
 For each scenario the design loop is run with the scripted fake client and the event log is
 checked for: a `final` event with at least one passing design, no provenance violations, at
-least one `review` event, a `run_dispersion` tool result, and that every tool_use id cited in
-a final design's `sources` map (and `source_id`) is the id of a `tool_call` event seen earlier.
-Wall time per scenario is printed; `--json-dir` writes the final payload of each scenario.
+least one `review` event, `derive_requirements` / `find_reference_designs` / `run_dispersion`
+tool results, a final `reference_id` that is a catalog reference id and `derived_targets` that
+is the derive_requirements tool_use id, and that every tool_use id cited in a final design's
+`sources` map (and `source_id`) is the id of a `tool_call` event seen earlier.
+Wall time per scenario is printed (the commercial seed is pitch-tuned: a few seconds);
+`--json-dir` writes the final payload of each scenario.
 Exit status is 1 when any check fails.
 """
 
@@ -26,9 +29,10 @@ import yaml
 from rocketwright.agent.events import AgentEvent
 from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
 from rocketwright.agent.loop import AgentConfig, run_design_loop
+from rocketwright.references import load_references
 
 ROOT = Path(__file__).resolve().parent.parent
-MAX_WALL_S = 5.0
+MAX_WALL_S = 10.0
 
 
 async def _collect(scenario: dict[str, Any]) -> list[AgentEvent]:
@@ -36,7 +40,9 @@ async def _collect(scenario: dict[str, Any]) -> list[AgentEvent]:
     env = scenario.get("env") or {}
     seed = scenario.get("seed")
     tier = (scenario.get("expected") or {}).get("tier")
-    client = FakeAnthropicClient(build_demo_script(tier, text, env, seed, reviews=True))
+    client = FakeAnthropicClient(
+        build_demo_script(tier, text, env, seed, reviews=True, story=scenario.get("story"))
+    )
     cfg = AgentConfig.load()
     return [ev async for ev in run_design_loop(text, client=client, config=cfg, env=env, seed=seed)]
 
@@ -66,8 +72,22 @@ def check_events(events: list[AgentEvent], expected_tier: str | None) -> list[st
         if e.type == "tool_call":
             tool_ids_before.add(str(e.payload.get("id")))
     results = [e for e in events if e.type == "tool_result"]
-    if not any(e.payload.get("name") == "run_dispersion" for e in results):
-        problems.append("no run_dispersion tool_result")
+    for tool in ("derive_requirements", "find_reference_designs", "run_dispersion"):
+        if not any(e.payload.get("name") == tool for e in results):
+            problems.append(f"no {tool} tool_result")
+    derive_ids = [
+        e.payload.get("id") for e in results if e.payload.get("name") == "derive_requirements"
+    ]
+    if result.get("derived_targets") not in derive_ids:
+        problems.append(
+            f"final.derived_targets {result.get('derived_targets')!r} is not a derive_requirements "
+            f"tool_use id {derive_ids}"
+        )
+    catalog_ids = {entry.id for entry in load_references()}
+    if result.get("reference_id") not in catalog_ids:
+        problems.append(
+            f"final.reference_id {result.get('reference_id')!r} is not a catalog reference id"
+        )
     if any(e.payload.get("is_error") for e in results):
         bad = [e.payload.get("name") for e in results if e.payload.get("is_error")]
         problems.append(f"tool errors: {bad}")

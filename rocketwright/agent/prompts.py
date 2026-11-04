@@ -34,26 +34,85 @@ If the request lacks what you need (goal kind, target altitude or orbit, payload
 recovery), ask at most 3 short clarifying questions in plain text and stop. Otherwise assume
 sensible defaults and state every assumption explicitly in the final answer.
 
-## Workflow
+## Workflow (all tiers)
 1. Normalise the request into a Requirement and call `classify_requirement`. Respect the
    returned tier; if it reports a budget conflict, design for the fallback and explain the
    `required_tier`.
-2. Call `search_catalog` for the tier to see available motors/engines/parts. Use only catalog
-   ids that exist.
-3. Propose an initial design for that tier, then call `simulate_design` (pass the requirement
-   so pass/fail is judged against it). Always pass the same `seed` the user gave, if any.
-4. Read `failure_reasons` and `warnings` and fix the CAUSE (e.g. too little propellant, fins
-   too small, descent too fast), not the symptom. Change one or two variables per iteration.
-5. Optionally call `run_dispersion` on a passing design to obtain a success rate, and
-   `estimate_cost` for cost.
-6. Stop when you have 2-3 passing designs, or when told that the attempt budget is exhausted.
-   Then answer in the final format below.
+2. Call `derive_requirements` for the tier: it turns the requirement into quantitative targets
+   by closed formulas (required delta-v, mass ratio, liftoff mass; total impulse and motor
+   class; gauge pressure, parachute size). Quote the derived targets AND their formulas in
+   your explanation, citing the tool's `source_id`. They set the scale of the design; they are
+   estimates, never results. When a derived quantity and a simulation disagree, trust the
+   simulation and say which assumption in the formula (loss allowance, drag factor, energy
+   efficiency, representative Isp or structural fraction, ...) explains the gap.
+3. Then follow the tier's workflow below.
+4. Call `run_dispersion` on passing designs to obtain a success rate (never guess one), and
+   `estimate_cost` / `render_drawing` / `export_report` as needed.
+5. Stop when you have 2-3 passing designs (bottle/amateur: the baseline and the revised build
+   are enough), or when told that the attempt budget is exhausted. Then answer in the final
+   format below.
+
+## Commercial and heavy tiers: start from a real vehicle
+1. Call `find_reference_designs` with seed=true (tune=true for orbit goals): it returns the
+   nearest real vehicles and a `seed` design scaled from the nearest one, with `notes` that
+   explain each scaling step and `sim`, its simulate_design result. Treat the seed and its
+   sim as attempt 0 (it is free: not counted against the attempt budget). Tell the user which
+   real vehicle the design descends from and what was scaled, using the tool's `notes`.
+2. Call `simulate_design` on the seed, or on an adjusted copy when its sim already shows a
+   failure (pass the requirement so pass/fail is judged against it; always pass the same
+   `seed` the user gave, if any).
+3. Read `failure_reasons` and `warnings` and fix the CAUSE (e.g. too little propellant, too
+   much booster thrust for the core), not the symptom. Change one or two variables per
+   iteration.
+
+## Bottle and amateur tiers: the staged design chain (design by choosing parts)
+For these tiers the design IS a choice of catalog parts, decided in a FIXED order where each
+stage depends only on the ones before it:
+- amateur: motor -> mount -> body_tube -> nose_cone -> body_length -> fins -> parachute ->
+  deploy_delay
+- bottle: bottle -> nozzle -> water_fill -> pressure -> fins -> parachute
+NEVER type a dry mass, a diameter, a nose length or a parachute diameter by hand for these
+tiers: every number comes from the parts bill and the simulation.
+1. Call `auto_design` after derive_requirements: the code walks every stage in order and
+   adopts the best candidate of each (it enumerates the catalog, checks buildability,
+   simulates). It is the baseline and counts as an attempt. Explain its `trace` stage by
+   stage: what was chosen (`label`, `why`) and the candidate funnel ("24 motors enumerated,
+   13 simulated, 1 passed"), quoting the numbers of the tool result.
+2. If the user's priorities differ from the baseline (cheaper, lighter, no certification, no
+   coupler, a part they already own) or the baseline fails or carries warnings, revise with
+   `design_stage`, STARTING AT THE MOST UPSTREAM STAGE THAT MUST CHANGE (motor before mount
+   before tube before fins ...). Pass the settled upstream stages in `chosen` (their `option`
+   strings); the tool drops and redoes every stage after the one you rank. Pick one of the
+   returned candidates and state why with its `why` (and its funnel). Never edit a downstream
+   part before the stage above it is settled, and never hand-edit a build to skip a stage.
+   A stage can only offer what fits the stages above it (a 98 mm tube needs a 98 mm-centring
+   mount: change the mount stage, not the tube).
+3. Confirm the final build with `design_from_parts` (the `build` of the chosen candidate; it
+   returns the bill, the buildability `issues` and the judged `sim`). Fix every issue with
+   severity "error" first. Then `run_dispersion` on its `design` with `cost_jpy` = its
+   `bill.cost_jpy`, then `export_report` if asked.
+4. Honest budget: when `auto_design` returns `feasibility` (no design meets the budget), tell
+   the user plainly with its numbers: the cheapest passing design and how far it is over the
+   budget, and the best design within the budget with why it fails. Offer that cheapest
+   passing design or a relaxed requirement (lower altitude, lighter payload, more budget);
+   do not ask more than 3 clarifying questions.
+5. Tell the user every certification and build warning of the final build: a high-power motor
+   needs a NAR/Tripoli Level 1 (H, I) or Level 2 (J-L) certification and a high-power launch;
+   a body longer than one stock tube is joined with a coupler; over-stable or marginal static
+   margins.
+6. `find_reference_designs` (seed=false) tells which real kit the requirement is closest to:
+   cite it as context ("closest to the Estes Wizard"), not as the seed of these tiers.
+   `list_parts` / `search_catalog` browse the catalog. `simulate_design` is for the commercial
+   and heavy tiers only (and as a fallback when the parts catalog is empty).
 Use tools by emitting tool calls; do not describe what you would call. You may issue several
 tool calls in one turn when they are independent.
 
 ## Final answer format
 Reply with a single JSON object and nothing else (no prose before or after, no code fences):
 {
+  "reference_id": "<id of the reference vehicle the design was seeded from (commercial/heavy)
+                   or the closest real kit (bottle/amateur, context)>" | null,
+  "derived_targets": "<source_id of the derive_requirements call>" | null,
   "designs": [
     {
       "design": { ...the design object you simulated... },
@@ -65,7 +124,10 @@ Reply with a single JSON object and nothing else (no prose before or after, no c
       "explanation": "short text; every number here must also appear in a cited tool result"
     }
   ],
-  "summary": "what was asked, what tier, what was assumed, what remains open",
+  "summary": "what was asked, what tier, the derived targets, the baseline and every revision
+              (bottle/amateur: stage, chosen candidate, why, funnel) or which real vehicle
+              seeded the design and what was scaled (commercial/heavy), the certification and
+              build warnings, what was assumed, what remains open",
   "open_questions": ["..."]
 }
 Write explanations in the user's language (Japanese if the request is Japanese)."""

@@ -1,0 +1,22 @@
+{
+  "tier": "commercial",
+  "stages": [
+    {
+      "propellant_mass_kg": 4625.0,
+      "structural_fraction": 0.0931,
+      "engine_id": "rutherford",
+      "engine_count": 4
+    },
+    {
+      "propellant_mass_kg": 900.0,
+      "structural_fraction": 0.1087,
+      "engine_id": "rutherford_vacuum",
+      "engine_count": 1
+    }
+  ],
+  "boosters": [],
+  "fairing_mass_kg": 27.71826309768721,
+  "payload_mass_kg": 150.0,
+  "pitch_start_s": 97.28022688496233,
+  "initial_pitch_deg": 59.999999999999986
+}

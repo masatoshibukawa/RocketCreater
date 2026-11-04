@@ -1,0 +1,22 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/J250W/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 54 mm x 218 mm DMS single-use motor, total impulse 704 N-s, average thrust 260 N, max thrust 338 N, burn time 2.7 s, propellant 363 g, total 708 g, delays 6/8/10/12/14 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 2.708 s so the average thrust matches the summary.
+; note: high-power (J) motor -- NAR/TRA Level 2 (J, K, L) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: curve integral 704.0 N-s, average thrust 260.0 N
+; diameter_m: 0.054
+; length_m: 0.218
+; delays: 6,8,10,12,14
+; propellant_mass_kg: 0.363
+; total_mass_kg: 0.708
+; price_jpy: 19350 (DMS single-use motor $128.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+J250W 54 218 6-8-10-12-14 0.363 0.708 AeroTech
+0.081 278.52
+0.217 338.00
+0.677 278.52
+2.302 278.52
+2.708 0.00
+;

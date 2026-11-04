@@ -4,11 +4,26 @@
   guard check -> [error] | (thinking | text | tool_call | tool_result | candidate | review)* ->
   [warning] final | question | error
 
-Phase 3 reviewers (review.py): every passing simulate_design result (a candidate) is reviewed
+Attempts: a `simulate_design` call (commercial/heavy, or a geometric design), a
+`design_from_parts` call (bottle/amateur: parts -> buildability -> sim) or an `auto_design` call
+(bottle/amateur: the staged chain's baseline build, judged like design_from_parts) is one
+attempt (ATTEMPT_TOOLS); a design_from_parts result stopped by a buildability error has
+`sim: null` and is a failed attempt with no candidate. A passing part-space attempt's candidate
+carries `build`, `bill` and `origin` (the tool name). `design_stage` is exploration: one stage's
+ranked candidates, not an attempt and no candidate event (the UI reads its candidates from the
+tool_result).
+
+Phase 3 reviewers (review.py): every passing attempt result (a candidate) is reviewed
 once by the four per-aspect reviewers; their verdicts are emitted as a `review` event, and
 major/blocker findings are appended as a text block AFTER the tool_result blocks of the same
 user message (the API requires tool_result blocks to lead the user turn). A blocker removes the
 design from the final passing list (`_apply_review_gate`).
+
+Reference seeds (references.py): when a `find_reference_designs` result carries a seed whose
+`sim` passed, a `candidate` event is emitted for it (source_id = that tool_use id, payload
+`seeded_from` = reference id) so the UI shows it as attempt 0. The seed is free: it is not a
+simulate_design call, so it is not counted as an attempt and not reviewed; the agent adopts
+it by simulating it (that call is attempt 1 and is reviewed as usual).
 
 Facts baked in (anthropic SDK 1.x, claude-opus-5-5 / claude-haiku-5-5):
   * thinking = {"type": "adaptive", "display": "summarized"}; never `budget_tokens`;
@@ -49,7 +64,14 @@ from rocketwright.schema import Env
 __all__ = ["AgentConfig", "ReviewerConfig", "models_config_path", "run_design_loop"]
 
 ATTEMPT_TOOL = "simulate_design"
+# design_from_parts / auto_design are the bottle/amateur attempts: a build resolved, checked and
+# simulated (auto_design: the build the staged chain chose). All three count against the attempt
+# budget and yield candidates when their sim passes.
+PART_ATTEMPT_TOOLS = ("design_from_parts", "auto_design")
+ATTEMPT_TOOLS = (ATTEMPT_TOOL, *PART_ATTEMPT_TOOLS)
+REFERENCE_TOOL = "find_reference_designs"
 _TRACE_KEY = "trace"
+_ATTEMPT_NAMES = "simulate_design / design_from_parts / auto_design calls"
 
 
 def models_config_path() -> Path:
@@ -123,13 +145,72 @@ def _explanation_text(result: dict[str, Any]) -> str:
     return "\n".join(parts)
 
 
-def _for_model(result: dict[str, Any]) -> dict[str, Any]:
-    """Tool result as sent to the model: the trace is dropped (the UI gets it via the event)."""
+def _without_trace(result: dict[str, Any]) -> dict[str, Any]:
     if _TRACE_KEY in result and isinstance(result[_TRACE_KEY], list):
         slim = dict(result)
         slim["trace_point_count"] = len(slim.pop(_TRACE_KEY))
         return slim
     return result
+
+
+def _strip_sim_traces(node: Any) -> Any:
+    """Copy of `node` where every nested `sim` object has its time-series trace replaced by
+    `trace_point_count` (design_from_parts / auto_design `sim`, find_reference_designs
+    `seed.sim`, any candidate or feasibility entry that carries one)."""
+    if isinstance(node, list):
+        return [_strip_sim_traces(v) for v in node]
+    if not isinstance(node, dict):
+        return node
+    out: dict[str, Any] = {}
+    for k, v in node.items():
+        if k == "sim" and isinstance(v, dict):
+            out[k] = _without_trace(_strip_sim_traces(v))
+        else:
+            out[k] = _strip_sim_traces(v)
+    return out
+
+
+def _for_model(result: dict[str, Any]) -> dict[str, Any]:
+    """Tool result as sent to the model: the simulation traces are dropped (the UI gets them
+    via the tool_result event): the top-level one (simulate_design) and every nested `sim`
+    (design_from_parts, auto_design, the find_reference_designs seed). auto_design's own
+    `trace` (its per-stage decisions, a list of dicts without a time axis) is kept."""
+    trace = result.get(_TRACE_KEY)
+    is_stage_trace = isinstance(trace, list) and any(
+        isinstance(p, dict) and "stage" in p for p in trace
+    )
+    return _strip_sim_traces(result if is_stage_trace else _without_trace(result))
+
+
+def attempt_outcome(
+    name: str, tool_input: dict[str, Any], result: dict[str, Any]
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    """(sim result, design) of an attempt tool result. simulate_design: the result itself and
+    the input design (or the tuned one); design_from_parts / auto_design: the embedded `sim`
+    (None when a buildability error stopped the simulation) and the resolved `design`."""
+    if name in PART_ATTEMPT_TOOLS:
+        sim = result.get("sim")
+        return (sim if isinstance(sim, dict) else None), result.get("design")
+    return result, result.get("tuned_design") or tool_input.get("design")
+
+
+def _seed_candidate(tool_use_id: str, result: dict[str, Any]) -> dict[str, Any] | None:
+    """The candidate payload for a find_reference_designs result whose seed sim passed, else
+    None. The seed is free: it is not a simulate_design call, so it does not count as an
+    attempt and is not reviewed (the agent re-simulates it to adopt it)."""
+    seed = result.get("seed")
+    if not isinstance(seed, dict):
+        return None
+    sim = seed.get("sim")
+    if not isinstance(sim, dict) or not sim.get("success") or not seed.get("design"):
+        return None
+    return {
+        "source_id": tool_use_id,
+        "design": seed["design"],
+        "metrics": sim.get("metrics", {}),
+        "cost_jpy": sim.get("cost_jpy"),
+        "seeded_from": seed.get("reference_id"),
+    }
 
 
 def _initial_user_message(
@@ -346,11 +427,11 @@ async def run_design_loop(
         feedback_texts: list[str] = []
         for tu in tool_uses:
             tool_input = tu.input if isinstance(tu.input, dict) else {}
-            if tu.name == ATTEMPT_TOOL:
+            if tu.name in ATTEMPT_TOOLS:
                 if attempts >= cfg.max_attempts:
                     result: dict[str, Any] = {
-                        "error": f"attempt budget exhausted ({cfg.max_attempts} simulate_design "
-                        "calls); produce the final answer now",
+                        "error": f"attempt budget exhausted ({cfg.max_attempts} "
+                        f"{_ATTEMPT_NAMES}); produce the final answer now",
                         "source_id": tu.id,
                     }
                 else:
@@ -365,14 +446,25 @@ async def run_design_loop(
                 "tool_result",
                 {"id": tu.id, "name": tu.name, "is_error": is_error, "result": result},
             )
-            if tu.name == ATTEMPT_TOOL and not is_error and result.get("success"):
+            if tu.name == REFERENCE_TOOL and not is_error:
+                seed_candidate = _seed_candidate(tu.id, result)
+                if seed_candidate is not None:
+                    yield ev("candidate", seed_candidate)  # attempt 0: free, not reviewed
+            sim, design = attempt_outcome(tu.name, tool_input, result)
+            if tu.name in ATTEMPT_TOOLS and not is_error and sim and sim.get("success"):
                 candidate = {
                     "source_id": tu.id,
-                    # with tune_pitch the simulated design is the tuned one
-                    "design": result.get("tuned_design") or tool_input.get("design"),
-                    "metrics": result.get("metrics", {}),
-                    "cost_jpy": result.get("cost_jpy"),
+                    # simulate_design: the input design (the tuned one with tune_pitch);
+                    # design_from_parts / auto_design: the resolved design, plus the parts and
+                    # the bill
+                    "design": design,
+                    "metrics": sim.get("metrics", {}),
+                    "cost_jpy": sim.get("cost_jpy"),
+                    "origin": tu.name,
                 }
+                if tu.name in PART_ATTEMPT_TOOLS:
+                    candidate["build"] = result.get("build")
+                    candidate["bill"] = result.get("bill")
                 yield ev("candidate", candidate)
                 # 4b. per-aspect reviewers, once per candidate (review.py)
                 if (
@@ -384,9 +476,16 @@ async def run_design_loop(
                         api,
                         cfg,
                         candidate,
-                        _for_model(result),
+                        _for_model(sim),  # the sim result (part-space tools: their `sim`)
                         requirement_text,
-                        extra_context={"requirement": tool_input.get("requirement")},
+                        extra_context={
+                            "requirement": tool_input.get("requirement"),
+                            **(
+                                {"build": result.get("build"), "bill": result.get("bill")}
+                                if tu.name in PART_ATTEMPT_TOOLS
+                                else {}
+                            ),
+                        },
                     )
                     verdicts = run.verdicts
                     feedback = review_feedback_message(verdicts, source_id=tu.id)
@@ -424,7 +523,7 @@ async def run_design_loop(
                 {
                     "type": "text",
                     "text": f"Attempt budget reached ({attempts}/{cfg.max_attempts} "
-                    "simulate_design calls). Do not simulate again; write the final JSON answer "
+                    f"{_ATTEMPT_NAMES}). Do not simulate again; write the final JSON answer "
                     "now from the results you already have.",
                 }
             )

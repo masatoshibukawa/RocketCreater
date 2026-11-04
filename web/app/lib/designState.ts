@@ -6,14 +6,21 @@
  *   thinking      -> chat message (role "thinking")
  *   text          -> chat message (role "agent"); a JSON blob (the model's final answer) is
  *                    collapsed to a system line because `final` carries the parsed version
- *   question      -> chat message (role "question")
+ *   question      -> chat message (role "question") and `pendingQuestion` (the reply box)
  *   tool_call     -> chat system line; the input is kept by id so a result can be tied back
  *                    to the design it was run on
- *   tool_result   -> classify_requirement: tier badge; simulate_design: attempt log row;
+ *   tool_result   -> classify_requirement: tier badge; derive_requirements: the formula list
+ *                    shown under 詳細; simulate_design / design_from_parts: attempt log
+ *                    row (parts: the resolved design); auto_design: attempt log row and the
+ *                    baseline trace of 「設計の決定順」; design_stage: one ranked stage of
+ *                    「設計の決定順」 (exploration, not an attempt);
+ *                    find_reference_designs: the reference vehicle (TierBadge) and, when it
+ *                    carries a seed with a sim, an attempt-0 row flagged `seededFrom`;
  *                    run_dispersion: stored per candidate (matched by design equality via
  *                    `findAttemptByDesign`) with success rate / scatter / orbit errors;
  *                    errors: chat error line
- *   candidate     -> candidate card (passed/failure_reasons looked up from the attempt log)
+ *   candidate     -> candidate card (passed/failure_reasons looked up from the attempt log;
+ *                    the loop emits one for a passing reference seed too, `seeded_from`)
  *   final         -> final summary, candidate cards merged with designs[], provenance warnings
  *   error         -> chat error line, status "error"
  */
@@ -24,10 +31,19 @@ import {
   type AgentEvent,
   type AttemptRow,
   type Candidate,
+  type ChainAutoStep,
+  type ChainCandidate,
+  type ChainFunnel,
+  type ChainStageStep,
+  type ChainStageTrace,
+  type ChainStep,
   type ChatMessage,
   type ChatRole,
   type ClassifyResult,
+  type DerivedQuantity,
+  type DerivedRequirements,
   type Design,
+  type DisplayedDesign,
   type DispersionResult,
   type Ellipse95,
   type FinalDesign,
@@ -38,10 +54,12 @@ import {
   type OrbitInsertionStats,
   type OrbitSample,
   type Quantiles,
+  type ReferenceInfo,
   type SimResult,
   type Tier,
   type TracePoint,
 } from "./types";
+import { toolLabel } from "./format";
 
 export type Status = "idle" | "streaming" | "done" | "error";
 
@@ -52,8 +70,19 @@ export interface DesignState {
   messages: ChatMessage[];
   tier: Tier | null;
   classify: ClassifyResult | null;
+  /** The reference vehicle the design was seeded from (find_reference_designs), if any. */
+  reference: ReferenceInfo | null;
+  /** The normalised Requirement from the classify_requirement tool_call input (sent along to
+   * POST /artifacts/summary so the cost model knows the budget / goal). */
+  requirement: Record<string, unknown> | null;
+  /** derive_requirements tool_result: each target quantity with its formula string. */
+  derived: DerivedRequirements | null;
+  /** A clarifying `question` event waiting for the user's answer (null once answered / reset). */
+  pendingQuestion: string | null;
   attempts: AttemptRow[];
   attemptCount: number;
+  /** The staged design chain in time order: auto_design baselines and design_stage results. */
+  chain: ChainStep[];
   candidates: Candidate[];
   /** The most recent run_dispersion result (fallback when the selection has none). */
   dispersion: DispersionResult | null;
@@ -74,8 +103,13 @@ export const initialState: DesignState = {
   messages: [],
   tier: null,
   classify: null,
+  reference: null,
+  requirement: null,
+  derived: null,
+  pendingQuestion: null,
   attempts: [],
   attemptCount: 0,
+  chain: [],
   candidates: [],
   dispersion: null,
   dispersions: {},
@@ -341,6 +375,132 @@ export function findAttemptByDesign(
   return attempt ? attempt.id : null;
 }
 
+function toDerived(rec: Record<string, unknown>, id: string): DerivedRequirements {
+  const quantities: DerivedQuantity[] = [];
+  if (Array.isArray(rec.quantities)) {
+    for (const item of rec.quantities) {
+      const q = asRecord(item);
+      if (!q) continue;
+      const key = asString(q.key);
+      if (key === "") continue;
+      quantities.push({
+        key,
+        value: asNumber(q.value),
+        formula: asString(q.formula),
+        inputs: asNumberMap(q.inputs),
+        assumptions: asStringArray(q.assumptions),
+        provisional: q.provisional === true,
+        annotation: asString(q.annotation),
+      });
+    }
+  }
+  return {
+    source_id: asString(rec.source_id) || id,
+    tier: isTier(rec.tier) ? rec.tier : null,
+    goal_kind: asString(rec.goal_kind),
+    quantities,
+    summary: asString(rec.summary),
+    warnings: asStringArray(rec.warnings),
+    notes: asStringArray(rec.notes),
+  };
+}
+
+function toFunnel(value: unknown): ChainFunnel {
+  const rec = asRecord(value);
+  const rejected: Record<string, number> = {};
+  const raw = asRecord(rec?.rejected);
+  if (raw) {
+    for (const [k, v] of Object.entries(raw)) rejected[k] = asNumber(v, 0);
+  }
+  return {
+    enumerated: asNumber(rec?.enumerated, 0),
+    compatible: asNumberOrNull(rec?.compatible),
+    simulated: asNumber(rec?.simulated, 0),
+    passed: asNumber(rec?.passed, 0),
+    rejected,
+  };
+}
+
+function toChainCandidates(value: unknown): ChainCandidate[] {
+  const out: ChainCandidate[] = [];
+  if (!Array.isArray(value)) return out;
+  for (const item of value) {
+    const rec = asRecord(item);
+    if (!rec) continue;
+    const option = asString(rec.option);
+    if (option === "") continue;
+    out.push({
+      option,
+      label: asString(rec.label) || option,
+      passed: rec.passed === true,
+      why: asString(rec.why),
+      metrics: asNumberMap(rec.metrics),
+      cost_jpy: asNumberOrNull(rec.cost_jpy),
+      failure_reasons: asStringArray(rec.failure_reasons),
+      issues: asStringArray(rec.issues),
+    });
+  }
+  return out;
+}
+
+function toStageTrace(value: unknown): ChainStageTrace[] {
+  const out: ChainStageTrace[] = [];
+  if (!Array.isArray(value)) return out;
+  for (const item of value) {
+    const rec = asRecord(item);
+    if (!rec) continue;
+    const stage = asString(rec.stage);
+    if (stage === "") continue;
+    out.push({
+      stage,
+      chosen: asString(rec.chosen),
+      label: asString(rec.label),
+      why: asString(rec.why),
+      fixed: rec.fixed === true,
+      funnel: toFunnel(rec.funnel),
+      alternatives: toChainCandidates(rec.alternatives),
+    });
+  }
+  return out;
+}
+
+/** The build warnings worth a note under the 3D view: motor certification (NAR/Tripoli Level 1
+ * or 2) and joined tubes (coupler). Matched on fragments of build.check_buildability messages;
+ * the "build: " prefix design_from_parts adds is dropped. */
+export function certificationNotes(warnings: string[]): string[] {
+  const fragments = ["Level 1", "Level 2", "certification", "coupler"];
+  const out: string[] = [];
+  for (const w of warnings) {
+    if (!fragments.some((f) => w.includes(f))) continue;
+    const text = w.startsWith("build: ") ? w.slice("build: ".length) : w;
+    if (!out.includes(text)) out.push(text);
+  }
+  return out;
+}
+
+/**
+ * The design the centre / right panels show: the latest passing candidate, else the latest
+ * attempt that carries a design, else the reference seed. Pure, so the rule is testable.
+ */
+export function selectDisplayedDesign(
+  state: Pick<DesignState, "candidates" | "attempts" | "reference">,
+): DisplayedDesign | null {
+  for (let i = state.candidates.length - 1; i >= 0; i -= 1) {
+    const c = state.candidates[i];
+    if (c.passed) return { design: c.design, sourceId: c.source_id, origin: "candidate" };
+  }
+  for (let i = state.attempts.length - 1; i >= 0; i -= 1) {
+    const a = state.attempts[i];
+    if (a.design !== null) {
+      return { design: a.design, sourceId: a.id, origin: a.seededFrom !== null ? "seed" : "attempt" };
+    }
+  }
+  if (state.reference !== null && state.reference.design !== null) {
+    return { design: state.reference.design, sourceId: "", origin: "seed" };
+  }
+  return null;
+}
+
 function toFinalDesign(rec: Record<string, unknown>): FinalDesign | null {
   const design = toDesign(rec.design);
   if (!design) return null;
@@ -368,6 +528,8 @@ function toFinalResult(rec: Record<string, unknown>): FinalResult {
     designs,
     summary: asString(rec.summary),
     open_questions: asStringArray(rec.open_questions),
+    reference_id: asString(rec.reference_id) || null,
+    derived_targets: asString(rec.derived_targets) || null,
   };
 }
 
@@ -401,14 +563,20 @@ function applyEvent(state: DesignState, ev: AgentEvent): DesignState {
       if (looksLikeJson(text)) return push(next, "system", "最終回答 (JSON) を受信しました");
       return push(next, "agent", text);
     }
-    case "question":
-      return push(next, "question", asString(p.text));
+    case "question": {
+      const text = asString(p.text);
+      return push({ ...next, pendingQuestion: text || null }, "question", text);
+    }
     case "tool_call": {
       const callId = asString(p.id);
       const input = asRecord(p.input);
-      const withInput: DesignState =
+      let withInput: DesignState =
         callId && input ? { ...next, toolInputs: { ...next.toolInputs, [callId]: input } } : next;
-      return push(withInput, "system", `ツール呼び出し: ${asString(p.name)}`);
+      if (asString(p.name) === "classify_requirement" && input) {
+        const requirement = asRecord(input.requirement);
+        if (requirement) withInput = { ...withInput, requirement };
+      }
+      return push(withInput, "system", `ツール呼び出し: ${toolLabel(asString(p.name))}`);
     }
     case "tool_result":
       return applyToolResult(next, ev);
@@ -435,16 +603,25 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
 
   if (errorText !== null) {
     let next = state;
-    if (name === "simulate_design") {
+    if (name === "simulate_design" || name === "design_from_parts" || name === "auto_design") {
       next = {
         ...next,
         attempts: [
           ...next.attempts,
-          { id, attempt: ev.attempt, t_s: ev.t_s, result: null, error: errorText, design: null },
+          {
+            id,
+            attempt: ev.attempt,
+            t_s: ev.t_s,
+            result: null,
+            error: errorText,
+            design: null,
+            seededFrom: null,
+            tool: name,
+          },
         ],
       };
     }
-    return push(next, "error", `ツール ${name} がエラーを返しました: ${errorText}`);
+    return push(next, "error", `ツール ${toolLabel(name)} がエラーを返しました: ${errorText}`);
   }
   if (!result) return state;
 
@@ -457,14 +634,147 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
       for (const w of classify.warnings) next = push(next, "error", `分類の警告: ${w}`);
       return next;
     }
+    case "derive_requirements":
+      return { ...state, derived: toDerived(result, id) };
     case "simulate_design": {
       const sim = toSimResult(result);
       // with tune_pitch the simulated design is the tuned one the result reports
       const design = toDesign(result.tuned_design) ?? toDesign(state.toolInputs[id]?.design);
-      const row: AttemptRow = { id, attempt: ev.attempt, t_s: ev.t_s, result: sim, error: null, design };
+      const row: AttemptRow = {
+        id,
+        attempt: ev.attempt,
+        t_s: ev.t_s,
+        result: sim,
+        error: null,
+        design,
+        seededFrom: null,
+        tool: name,
+      };
       let next: DesignState = { ...state, attempts: [...state.attempts, row] };
       if (!state.tier && sim.tier) next = { ...next, tier: sim.tier };
       return next;
+    }
+    case "design_from_parts":
+    case "auto_design": {
+      // bottle/amateur attempt: the parts were resolved into `design`; `sim` is null when a
+      // buildability error stopped the simulation (the error issues are the row's error text).
+      // auto_design is the staged chain's baseline: its trace also feeds 「設計の決定順」.
+      const design = toDesign(result.design);
+      const simRecord = asRecord(result.sim);
+      const issues = Array.isArray(result.issues) ? result.issues : [];
+      const errors = issues
+        .map((it) => asRecord(it))
+        .filter((it) => it !== null && asString(it.severity) === "error")
+        .map((it) => asString(it?.message));
+      const row: AttemptRow = {
+        id,
+        attempt: ev.attempt,
+        t_s: ev.t_s,
+        result: simRecord ? toSimResult(simRecord) : null,
+        error: simRecord ? null : errors.join("; ") || asString(result.note) || "buildability error",
+        design,
+        seededFrom: null,
+        tool: name,
+      };
+      let next: DesignState = { ...state, attempts: [...state.attempts, row] };
+      if (!state.tier && simRecord) {
+        const sim = toSimResult(simRecord);
+        if (sim.tier) next = { ...next, tier: sim.tier };
+      }
+      if (name === "auto_design") {
+        const sim = simRecord ? toSimResult(simRecord) : null;
+        const feasibility = asRecord(result.feasibility);
+        const issueTexts = issues
+          .map((it) => asRecord(it))
+          .filter((it) => it !== null)
+          .map((it) => asString(it?.message))
+          .filter((t) => t !== "");
+        const step: ChainAutoStep = {
+          kind: "auto",
+          source_id: id,
+          t_s: ev.t_s,
+          passed: sim !== null && sim.success,
+          trace: toStageTrace(result.trace),
+          warnings: [...issueTexts, ...asStringArray(result.warnings)],
+          feasibility: feasibility ? asString(feasibility.verdict) || null : null,
+        };
+        next = { ...next, chain: [...next.chain, step] };
+        next = push(
+          next,
+          "system",
+          `自動設計: ${step.trace.map((t) => `${t.stage}=${t.chosen}`).join(" → ")} (${
+            step.passed ? "合格" : "不合格"
+          })`,
+        );
+        if (step.feasibility) next = push(next, "error", `予算内の合格案なし: ${step.feasibility}`);
+      }
+      return next;
+    }
+    case "design_stage": {
+      // exploration: one stage ranked for the upstream decisions; not an attempt
+      const stage = asString(result.stage);
+      const input = state.toolInputs[id];
+      const rawChosen: unknown = input ? input.chosen : undefined;
+      const chosen: string[] = [];
+      if (Array.isArray(rawChosen)) {
+        for (const item of rawChosen) {
+          const rec = asRecord(item);
+          if (rec) chosen.push(`${asString(rec.stage)}=${asString(rec.value)}`);
+        }
+      }
+      const step: ChainStageStep = {
+        kind: "stage",
+        source_id: id,
+        t_s: ev.t_s,
+        stage,
+        chosen,
+        funnel: toFunnel(result),
+        candidates: toChainCandidates(result.candidates),
+        invalidated: asStringArray(result.invalidated),
+        next_stage: asString(result.next_stage) || null,
+      };
+      const passedCount = step.candidates.filter((c) => c.passed).length;
+      return push(
+        { ...state, chain: [...state.chain, step] },
+        "system",
+        `段階の候補 (${stage}): ${step.funnel.enumerated} 件を列挙、${step.funnel.simulated} 件を検証、上位 ${step.candidates.length} 件中 合格 ${passedCount} 件`,
+      );
+    }
+    case "find_reference_designs": {
+      const seed = asRecord(result.seed);
+      const referenceId = asString(seed?.reference_id);
+      if (!seed || referenceId === "") {
+        const note = asString(result.note);
+        return note ? push(state, "system", `実機データ: ${note}`) : state;
+      }
+      let name = referenceId;
+      if (Array.isArray(result.references)) {
+        for (const item of result.references) {
+          const rec = asRecord(item);
+          if (rec && asString(rec.id) === referenceId && asString(rec.name) !== "") {
+            name = asString(rec.name);
+          }
+        }
+      }
+      const sim = asRecord(seed.sim);
+      const design = toDesign(seed.design);
+      const reference: ReferenceInfo = { id: referenceId, name, notes: asStringArray(seed.notes), design };
+      let next: DesignState = { ...state, reference };
+      if (sim && design) {
+        // the seed's own simulation: attempt 0 (free, not a simulate_design call)
+        const row: AttemptRow = {
+          id,
+          attempt: ev.attempt,
+          t_s: ev.t_s,
+          result: toSimResult(sim),
+          error: null,
+          design,
+          seededFrom: referenceId,
+          tool: "find_reference_designs",
+        };
+        next = { ...next, attempts: [...next.attempts, row] };
+      }
+      return push(next, "system", `ベース実機: ${name} (${referenceId})`);
     }
     case "run_dispersion": {
       const input = state.toolInputs[id];
@@ -516,6 +826,7 @@ function applyCandidate(state: DesignState, ev: AgentEvent): DesignState {
     explanation: "",
     failure_reasons: sim ? sim.failure_reasons : [],
     inFinal: false,
+    seededFrom: asString(p.seeded_from) || null,
   };
   return { ...state, candidates: upsertCandidate(state.candidates, candidate) };
 }
@@ -549,6 +860,7 @@ function applyFinal(state: DesignState, ev: AgentEvent): DesignState {
         explanation: fd.explanation,
         failure_reasons: attempt?.result?.failure_reasons ?? [],
         inFinal: true,
+        seededFrom: attempt?.seededFrom ?? null,
       });
     });
     next = { ...next, candidates };

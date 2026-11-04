@@ -1,0 +1,25 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/J350W/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 38 mm x 337 mm RMS-38/720 reload kit, total impulse 700 N-s, average thrust 445 N, max thrust 822.5 N, burn time 1.5 s, propellant 375 g, total 665 g, delays 4/6/8/10/12/14 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 1.573 s so the average thrust matches the summary.
+; note: high-power (J) motor -- NAR/TRA Level 2 (J, K, L) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: the designation number (350) is below the summary's 445 N average; the curve follows the summary (within the 30 % label check of tests/test_solid.py).
+; note: curve integral 700.0 N-s, average thrust 445.0 N
+; diameter_m: 0.038
+; length_m: 0.337
+; delays: 4,6,8,10,12,14
+; propellant_mass_kg: 0.375
+; total_mass_kg: 0.665
+; price_jpy: 14400 (RMS-38/720 reload kit $95.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+; hardware: RMS-38/720
+; hardware_price_jpy: 25200 (RMS-38/720 motor hardware $167.99, reusable, bought once; same order form; at 150 JPY/USD, provisional)
+J350W 38 337 4-6-8-10-12-14 0.375 0.665 AeroTech
+0.047 443.16
+0.126 822.50
+0.393 443.16
+1.337 443.16
+1.573 0.00
+;

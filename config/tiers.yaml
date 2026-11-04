@@ -23,7 +23,10 @@ tiers:
     notes: "Certified commercial solid motors, hundreds of metres to a few km, ~1 kg payload, parachute recovery."
     target_altitude_max: {value: 5000, unit: m, provisional: true, source: null}
     payload_mass_max: {value: 5.0, unit: kg, provisional: true, source: null}
-    budget_min: {value: 30000, unit: jpy, provisional: true, source: null}
+    # 5,000 JPY: a low-power model rocket on one F/G motor is ~9,000 JPY by the parts bill
+    # (design_chain.auto_design, 200 g to 500 m); the former 30,000 JPY floor sent such requests
+    # to the bottle tier. Still provisional.
+    budget_min: {value: 5000, unit: jpy, provisional: true, source: null}
     orbit_capable: {value: false, unit: bool, provisional: false, source: "CLAUDE.md section 3"}
   commercial:
     notes: "Multistage, 100 km+ and small satellites to LEO. Concept-level design only."

@@ -1,0 +1,20 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/G80T/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (NAR certified; data sheet https://www.nar.org/SandT/pdf/Aerotech/G80-20071207.pdf): 29 mm x 124 mm, total impulse 136.6 N-s, average thrust 77.6 N, max thrust 108.5 N, burn time 1.7 s, propellant 63 g, total 128 g, delays 6-14 s.
+; note: curve integral 136.6 N-s, average thrust 80.4 N
+; diameter_m: 0.029
+; length_m: 0.124
+; delays: 6,7,8,9,10,11,12,13,14
+; propellant_mass_kg: 0.063
+; total_mass_kg: 0.128
+; price_jpy: 5850 (DMS single-use G80T-14A $38.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+G80T 29 124 6-7-8-9-10-11-12-13-14 0.063 0.128 AeroTech
+0.050 43.40
+0.150 108.50
+0.300 84.06
+1.600 84.06
+1.700 0.00
+;

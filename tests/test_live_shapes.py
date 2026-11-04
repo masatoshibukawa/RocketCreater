@@ -13,6 +13,7 @@ import pytest
 from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
 from rocketwright.agent.loop import AgentConfig, run_design_loop
 from rocketwright.agent.review import ReviewVerdict
+from rocketwright.agent.tools import TOOL_NAMES
 
 TEXT = "1 kg の荷物を高度 2 km まで上げてパラシュートで回収したい。予算 5 万円。"
 ENV = {"launch_latitude_deg": 36.0, "launch_altitude_m": 300, "wind_speed_mps": 3.0}
@@ -68,7 +69,7 @@ def test_design_stream_kwargs(captured):
             isinstance(system, list) and all(b.get("type") == "text" for b in system)
         )
         assert all(t["strict"] is True for t in kw["tools"])
-        assert len(kw["tools"]) == 7
+        assert len(kw["tools"]) == len(TOOL_NAMES)
 
 
 def test_message_history_alternates_and_tool_results_lead_the_user_turn(captured):

@@ -1,12 +1,21 @@
 /**
  * Backend URL helpers and the artifact endpoints (api/main.py):
  *   POST /artifacts/render            {design} -> {id, download: {svg}}
+ *   POST /artifacts/summary           {design, requirement|null, width_px|null} -> DesignSummary
  *   GET  /artifacts/{id}.{svg|md|csv|json}
  * Tool results of `export_report` / `render_drawing` carry the same `download` map, so the UI
  * only ever joins a path from the backend onto API_BASE.
  */
 
-import type { AgentEvent, Design, ExportInfo } from "./types";
+import {
+  isTier,
+  type AgentEvent,
+  type BomItem,
+  type CostBreakdownItem,
+  type Design,
+  type DesignSummary,
+  type ExportInfo,
+} from "./types";
 
 export const API_BASE: string = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
 
@@ -48,6 +57,103 @@ export async function renderDrawing(design: Design, signal?: AbortSignal): Promi
   const svg = await fetch(apiUrl(path), { signal });
   if (!svg.ok) throw new Error(`svg fetch failed: HTTP ${svg.status}`);
   return svg.text();
+}
+
+/** GET a backend-relative text artifact (an SVG drawing). */
+export async function fetchArtifactText(path: string, signal?: AbortSignal): Promise<string> {
+  const res = await fetch(apiUrl(path), { signal });
+  if (!res.ok) throw new Error(`artifact fetch failed: HTTP ${res.status}`);
+  return res.text();
+}
+
+function numOrNull(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function toCostBreakdown(value: unknown): CostBreakdownItem[] {
+  if (!Array.isArray(value)) return [];
+  const out: CostBreakdownItem[] = [];
+  for (const item of value) {
+    const rec = asRecord(item);
+    if (!rec) continue;
+    const jpy = numOrNull(rec.jpy);
+    if (jpy === null) continue;
+    out.push({
+      label: typeof rec.label === "string" ? rec.label : "",
+      jpy,
+      note: typeof rec.note === "string" ? rec.note : "",
+      provisional: rec.provisional === true,
+    });
+  }
+  return out;
+}
+
+function toBom(value: unknown): BomItem[] {
+  if (!Array.isArray(value)) return [];
+  const out: BomItem[] = [];
+  for (const item of value) {
+    const rec = asRecord(item);
+    if (!rec) continue;
+    out.push({
+      item_id: typeof rec.item_id === "string" ? rec.item_id : "",
+      name: typeof rec.name === "string" ? rec.name : String(rec.item_id ?? ""),
+      qty: numOrNull(rec.qty) ?? 1,
+      mass_kg: numOrNull(rec.mass_kg),
+      price_jpy: numOrNull(rec.price_jpy),
+      source_or_provisional:
+        typeof rec.source_or_provisional === "string" ? rec.source_or_provisional : "",
+    });
+  }
+  return out;
+}
+
+/** Parse a POST /artifacts/summary body defensively (missing blocks become null / empty). */
+export function toDesignSummary(raw: unknown): DesignSummary {
+  const rec = asRecord(raw) ?? {};
+  const drawing = asRecord(rec.drawing);
+  const mass = asRecord(rec.mass);
+  const dims = asRecord(rec.dimensions);
+  return {
+    tier: isTier(rec.tier) ? rec.tier : null,
+    cost_jpy: numOrNull(rec.cost_jpy) ?? Number.NaN,
+    cost_breakdown: toCostBreakdown(rec.cost_breakdown),
+    bom: toBom(rec.bom),
+    drawing:
+      drawing && typeof drawing.url === "string"
+        ? { id: typeof drawing.id === "string" ? drawing.id : "", url: drawing.url }
+        : null,
+    mass: mass
+      ? {
+          liftoff_mass_kg: numOrNull(mass.liftoff_mass_kg),
+          dry_mass_kg: numOrNull(mass.dry_mass_kg),
+          payload_mass_kg: numOrNull(mass.payload_mass_kg),
+          propellant_mass_kg: numOrNull(mass.propellant_mass_kg),
+        }
+      : null,
+    dimensions: dims
+      ? { length_m: numOrNull(dims.length_m), diameter_m: numOrNull(dims.diameter_m) }
+      : null,
+  };
+}
+
+/**
+ * POST /artifacts/summary for one design. `requirement` is the normalised Requirement from the
+ * classify_requirement tool_call (or null before classification).
+ */
+export async function fetchDesignSummary(
+  design: Design,
+  requirement: Record<string, unknown> | null,
+  signal?: AbortSignal,
+  widthPx: number | null = null,
+): Promise<DesignSummary> {
+  const res = await fetch(apiUrl("/artifacts/summary"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ design, requirement, width_px: widthPx }),
+    signal,
+  });
+  if (!res.ok) throw new Error(`summary failed: HTTP ${res.status}`);
+  return toDesignSummary(await res.json());
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {

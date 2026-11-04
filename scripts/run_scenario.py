@@ -70,7 +70,9 @@ async def _run(scenario: dict[str, Any], dummy: bool) -> int:
     client = None
     if dummy:
         client = FakeAnthropicClient(
-            build_demo_script(expected_tier, text, env, seed, reviews=True)
+            build_demo_script(
+                expected_tier, text, env, seed, reviews=True, story=scenario.get("story")
+            )
         )
     cfg = AgentConfig.load()
     print(f"# scenario {scenario.get('name')}  model={cfg.design_model}  dummy={dummy}")

@@ -1,111 +1,157 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import AttemptLog from "./components/AttemptLog";
-import CandidateCards from "./components/CandidateCards";
+import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
+import CostPanel from "./components/CostPanel";
+import DetailsPanel from "./components/DetailsPanel";
+import DrawingPanel from "./components/DrawingPanel";
 import FlightChart from "./components/FlightChart";
-import ReviewPanel from "./components/ReviewPanel";
-import TierBadge from "./components/TierBadge";
-import { exportInfoFromEvents } from "./lib/api";
+import ModelViewer from "./components/ModelViewer";
+import StatusStrip from "./components/StatusStrip";
+import { exportInfoFromEvents, exportsForDesign } from "./lib/api";
+import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
 import { useDesignStream } from "./lib/useDesignStream";
-import type { DispersionResult, LandingPoint, Tier, TracePoint } from "./lib/types";
-
-/** Mirrors config/models.yaml `max_attempts` (display only; the backend enforces the budget). */
-const MAX_ATTEMPTS = 40;
+import { useDesignSummary } from "./lib/useDesignSummary";
+import type { DispersionResult, DisplayedDesign, LandingPoint, TracePoint } from "./lib/types";
 
 export default function Home() {
   const stream = useDesignStream();
-  const { start, stop, reset } = stream;
+  const { start, answer, stop, reset } = stream;
+  // Manual pick from 詳細 (attempt log / cards / reviews); null = follow the display rule.
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [viewTier, setViewTier] = useState<Tier | null>(null);
 
-  // The right panel follows the classified tier unless the user overrides the view.
-  const tier: Tier | null = viewTier ?? stream.tier;
+  // Displayed design: the user's pick when it resolves, else the latest passing candidate,
+  // else the latest attempt, else the reference seed (designState.selectDisplayedDesign).
+  // Part-space attempts (auto_design / design_from_parts) carry the resolved design.
+  const displayed = useMemo<DisplayedDesign | null>(() => {
+    if (selectedId !== null) {
+      const c = stream.candidates.find((x) => x.source_id === selectedId);
+      if (c) return { design: c.design, sourceId: c.source_id, origin: "candidate" };
+      const a = stream.attempts.find((x) => x.id === selectedId);
+      if (a && a.design !== null) {
+        return { design: a.design, sourceId: a.id, origin: a.seededFrom !== null ? "seed" : "attempt" };
+      }
+    }
+    return selectDisplayedDesign(stream);
+  }, [selectedId, stream]);
 
-  // Selection falls back to the newest candidate, then the newest attempt.
-  const effectiveId: string | null = useMemo(() => {
-    if (selectedId !== null) return selectedId;
-    const lastCandidate = stream.candidates[stream.candidates.length - 1];
-    if (lastCandidate) return lastCandidate.source_id;
-    const lastAttempt = stream.attempts[stream.attempts.length - 1];
-    return lastAttempt ? lastAttempt.id : null;
-  }, [selectedId, stream.candidates, stream.attempts]);
-
-  const selectedAttempt = useMemo(
-    () => (effectiveId === null ? undefined : stream.attempts.find((a) => a.id === effectiveId)),
-    [effectiveId, stream.attempts],
+  const displayedId = displayed?.sourceId ?? null;
+  const displayedAttempt = useMemo(
+    () => (displayedId ? stream.attempts.find((a) => a.id === displayedId) : undefined),
+    [displayedId, stream.attempts],
   );
-  const trace: TracePoint[] = selectedAttempt?.result?.trace ?? [];
-  // Download maps (SVG / report / BOM) collected from export_report / render_drawing results.
-  const exportInfos = useMemo(() => exportInfoFromEvents(stream.events), [stream.events]);
+  const trace: TracePoint[] = displayedAttempt?.result?.trace ?? [];
+  // Certification / coupler warnings of the displayed build (amber note under the 3D view).
+  const notes: string[] = useMemo(
+    () => certificationNotes(displayedAttempt?.result?.warnings ?? []),
+    [displayedAttempt],
+  );
+  const fallbackCost = displayedAttempt?.result?.cost_jpy ?? null;
+
   const landing: LandingPoint | null = useMemo(() => {
-    const m = selectedAttempt?.result?.metrics;
+    const m = displayedAttempt?.result?.metrics;
     if (!m) return null;
     const east = m.landing_east_m;
     const north = m.landing_north_m;
     return typeof east === "number" && typeof north === "number" ? { east_m: east, north_m: north } : null;
-  }, [selectedAttempt]);
+  }, [displayedAttempt]);
 
-  // run_dispersion result of the selected candidate; otherwise the latest run (its panel says
-  // which candidate it belongs to).
+  // run_dispersion result of the displayed design; otherwise the latest run.
   const dispersion: DispersionResult | null = useMemo(() => {
-    const own = effectiveId === null ? undefined : stream.dispersions[effectiveId];
+    const own = displayedId ? stream.dispersions[displayedId] : undefined;
     return own ?? stream.dispersion;
-  }, [effectiveId, stream.dispersions, stream.dispersion]);
+  }, [displayedId, stream.dispersions, stream.dispersion]);
+
+  // Download maps from export_report / render_drawing results; the BOM CSV for the displayed
+  // design when the agent exported it (else any exported BOM, else none).
+  const exportInfos = useMemo(() => exportInfoFromEvents(stream.events), [stream.events]);
+  const csvUrl: string | null = useMemo(() => {
+    if (!displayed) return null;
+    const own = exportsForDesign(exportInfos, displayed.design).find((e) => typeof e.download.bom === "string");
+    if (own) return own.download.bom;
+    const any = exportInfos.find((e) => typeof e.download.bom === "string");
+    return any ? any.download.bom : null;
+  }, [displayed, exportInfos]);
+
+  // /artifacts/summary for the displayed design (debounced, cached by design JSON).
+  const summaryState = useDesignSummary(displayed?.design ?? null, stream.requirement);
+  const summary = summaryState.summary;
+
+  const tier = stream.tier ?? displayed?.design.tier ?? null;
 
   const handleStart = useCallback(
     (text: string, seed: number | null) => {
       setSelectedId(null);
-      setViewTier(null);
       void start(text, seed);
     },
     [start],
   );
+  const handleAnswer = useCallback(
+    (text: string) => {
+      setSelectedId(null);
+      void answer(text);
+    },
+    [answer],
+  );
   const handleReset = useCallback(() => {
     setSelectedId(null);
-    setViewTier(null);
     reset();
   }, [reset]);
 
   return (
     <main className="app">
-      <section className="column column-left">
-        <ChatPanel
-          messages={stream.messages}
-          status={stream.status}
-          onStart={handleStart}
-          onStop={stop}
-          onReset={handleReset}
-        />
-      </section>
-      <section className="column column-right">
-        <TierBadge
-          tier={stream.tier}
-          classify={stream.classify}
-          attemptCount={stream.attemptCount}
-          maxAttempts={MAX_ATTEMPTS}
-          status={stream.status}
-          viewTier={viewTier}
-          onViewTierChange={setViewTier}
-        />
-        <AttemptLog attempts={stream.attempts} tier={tier} selectedId={effectiveId} onSelect={setSelectedId} />
-        <ReviewPanel events={stream.events} selectedId={effectiveId} onSelect={setSelectedId} />
-        <CandidateCards
-          candidates={stream.candidates}
-          tier={tier}
-          selectedId={effectiveId}
-          onSelect={setSelectedId}
-          exports={exportInfos}
-        />
-        <FlightChart
-          tier={tier}
-          trace={trace}
-          landing={landing}
-          dispersion={dispersion}
-          selectedId={effectiveId}
-        />
-      </section>
+      <StatusStrip status={stream.status} attemptCount={stream.attemptCount} />
+      <div className="app-columns">
+        <section className="column column-chat">
+          <ChatPanel
+            messages={stream.messages}
+            status={stream.status}
+            pendingQuestion={stream.pendingQuestion}
+            onStart={handleStart}
+            onAnswer={handleAnswer}
+            onStop={stop}
+            onReset={handleReset}
+          />
+        </section>
+        <div className="column-rest">
+          <section className="column column-center">
+            <ModelViewer
+              design={displayed?.design ?? null}
+              tier={tier}
+              origin={displayed?.origin ?? null}
+              reference={stream.reference}
+              dimensions={summary?.dimensions ?? null}
+              notes={notes}
+            />
+            <CostPanel
+              summary={summary}
+              fallbackCostJpy={fallbackCost}
+              loading={summaryState.loading}
+              error={summaryState.error}
+            />
+          </section>
+          <section className="column column-right">
+            <DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading} />
+            <FlightChart tier={tier} trace={trace} sourceId={displayedId} />
+            <BomPanel bom={summary?.bom ?? []} csvUrl={csvUrl} loading={summaryState.loading} />
+            <DetailsPanel
+              tier={tier}
+              classify={stream.classify}
+              derived={stream.derived}
+              attempts={stream.attempts}
+              candidates={stream.candidates}
+              chain={stream.chain}
+              events={stream.events}
+              dispersion={dispersion}
+              landing={landing}
+              exports={exportInfos}
+              selectedId={displayedId}
+              onSelect={setSelectedId}
+            />
+          </section>
+        </div>
+      </div>
     </main>
   );
 }

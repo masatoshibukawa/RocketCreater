@@ -1,0 +1,21 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the NAR certification summary
+; source: https://thrustcurve.org/motors/cert/62d80bc3ac50e90004732de6/F32T.pdf
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: NAR S&T certification sheet (Jan 14, 2009): total impulse 56.9 N-s, peak thrust 61.3 N, average thrust 34.1 N, burn time 1.659 s, propellant 25.8 g, initial mass 64 g, casing 24 x 90 mm, delays 4/6/8 s, Blue Thunder propellant.
+; note: AeroTech product page lists the single-use motor as 24 x 95 mm (https://aerotech-rocketry.com/products/product_5dff856f-8322-895f-9254-4bb51aa368ed); the certified casing length 90 mm is used here.
+; note: curve integral 56.9 N-s, average thrust 34.3 N
+; diameter_m: 0.024
+; length_m: 0.090
+; delays: 4,6,8
+; propellant_mass_kg: 0.0258
+; total_mass_kg: 0.064
+; price_jpy: 3820 (single-use F32-xT $25.49 each, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+F32T 24 90 4-6-8 0.0258 0.064 AeroTech
+0.050 24.52
+0.150 61.30
+0.300 34.25
+1.559 34.25
+1.659 0.00
+;

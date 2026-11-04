@@ -5,7 +5,9 @@
 anywhere in the tool results. A written number matches a result value when the value, rounded
 to the number of significant digits written, equals it, after trying unit scalings
 (m <-> km, kg <-> t, fraction <-> %, JPY 万/億). Small integers (0-10, counts/ordinals), years
-and digits glued to identifiers (toolu_01..., #7) are ignored.
+and digits glued to identifiers (toolu_01..., #7) are ignored. Numbers written inside the text
+of a tool result (a design_stage candidate's `why`, a buildability message, a formula) are
+code-produced too: quoting them (as written, or in another unit) counts as sourced.
 """
 
 from __future__ import annotations
@@ -15,7 +17,13 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
-__all__ = ["NumberMention", "extract_numbers", "find_unsourced_numbers", "collect_result_values"]
+__all__ = [
+    "NumberMention",
+    "collect_result_values",
+    "collect_text_values",
+    "extract_numbers",
+    "find_unsourced_numbers",
+]
 
 _NUMBER_RE = re.compile(
     r"(?<![\w.#])"  # not glued to an identifier, decimal, or ordinal marker
@@ -101,6 +109,25 @@ def collect_result_values(obj: Any, acc: set[float] | None = None) -> set[float]
     return acc
 
 
+def collect_text_values(obj: Any, acc: set[float] | None = None) -> set[float]:
+    """Numbers written inside the string leaves of nested dicts/lists, as written and scaled to
+    the tool-result unit of their written unit (e.g. "941 m", "+-10%" -> -10 and -0.1)."""
+    if acc is None:
+        acc = set()
+    if isinstance(obj, str):
+        for mention in extract_numbers(obj):
+            acc.add(mention.value)
+            for scale in _UNIT_SCALES.get(mention.unit or "", ()):
+                acc.add(mention.value * scale)
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            collect_text_values(v, acc)
+    elif isinstance(obj, (list, tuple)):
+        for v in obj:
+            collect_text_values(v, acc)
+    return acc
+
+
 def _round_sig(x: float, sig: int) -> float:
     if x == 0:
         return 0.0
@@ -132,7 +159,7 @@ def _ignorable(mention: NumberMention) -> bool:
 
 def find_unsourced_numbers(text: str, tool_results: list[dict[str, Any]]) -> list[str]:
     """Return the numbers (as written) in `text` that do not appear in any tool result."""
-    values = collect_result_values(tool_results)
+    values = collect_result_values(tool_results) | collect_text_values(tool_results)
     bad: list[str] = []
     for mention in extract_numbers(text):
         if _ignorable(mention):

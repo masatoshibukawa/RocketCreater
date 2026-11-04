@@ -1,0 +1,22 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/HP-I280DM/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 38 mm x 356 mm DMS single-use motor, total impulse 561 N-s, average thrust 280 N, max thrust 386 N, burn time 1.9 s, propellant 355 g, total 616 g, delays 6/8/10/12/14 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 2.004 s so the average thrust matches the summary.
+; note: high-power (I) motor -- NAR/TRA Level 1 (H, I) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: curve integral 561.0 N-s, average thrust 280.0 N
+; diameter_m: 0.038
+; length_m: 0.356
+; delays: 6,8,10,12,14
+; propellant_mass_kg: 0.355
+; total_mass_kg: 0.616
+; price_jpy: 14550 (DMS single-use motor $96.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+I280DM 38 356 6-8-10-12-14 0.355 0.616 AeroTech
+0.060 296.93
+0.160 386.00
+0.501 296.93
+1.703 296.93
+2.004 0.00
+;

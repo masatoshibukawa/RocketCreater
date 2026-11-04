@@ -1,0 +1,22 @@
+;; RocketWright synthetic motor (RASP .eng format) matching the certification summary
+; source: https://www.thrustcurve.org/motors/AeroTech/HP-I205W/
+; license: MIT (same as the repository; curve shape is synthetic, no curve data was copied)
+; provisional: true
+; note: synthetic curve matching published summary values
+; note: thrustcurve.org summary (TRA certified): 29 mm x 305 mm DMS single-use motor, total impulse 345 N-s, average thrust 205 N, max thrust 253 N, burn time 1.7 s, propellant 188 g, total 315 g, delays 6/8/10/12/14 s (adjustable).
+; note: the synthetic burn time is total impulse / average thrust = 1.683 s so the average thrust matches the summary.
+; note: high-power (I) motor -- NAR/TRA Level 1 (H, I) certification required to buy and fly it (AeroTech order form, https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf).
+; note: curve integral 345.0 N-s, average thrust 205.0 N
+; diameter_m: 0.029
+; length_m: 0.305
+; delays: 6,8,10,12,14
+; propellant_mass_kg: 0.188
+; total_mass_kg: 0.315
+; price_jpy: 9600 (DMS single-use motor $63.99, AeroTech order form rev 03/26/25 https://cdn.shopify.com/s/files/1/0615/7592/1878/files/Model_and_HP_03.26.25.pdf; at 150 JPY/USD, provisional)
+I205W 29 305 6-8-10-12-14 0.188 0.315 AeroTech
+0.050 221.46
+0.135 253.00
+0.421 221.46
+1.430 221.46
+1.683 0.00
+;

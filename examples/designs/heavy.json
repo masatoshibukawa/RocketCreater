@@ -1,0 +1,27 @@
+{
+  "tier": "heavy",
+  "stages": [
+    {
+      "propellant_mass_kg": 280000,
+      "structural_fraction": 0.07,
+      "engine_id": "rd_180",
+      "engine_count": 1
+    },
+    {
+      "propellant_mass_kg": 25000,
+      "structural_fraction": 0.09,
+      "engine_id": "rl10",
+      "engine_count": 1
+    }
+  ],
+  "boosters": [
+    {
+      "booster_id": "gem_63",
+      "count": 2
+    }
+  ],
+  "fairing_mass_kg": 2500,
+  "payload_mass_kg": 5000,
+  "pitch_start_s": 30,
+  "initial_pitch_deg": 12
+}

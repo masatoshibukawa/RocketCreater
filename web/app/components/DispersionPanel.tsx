@@ -10,6 +10,7 @@ import {
   YAxis,
   ZAxis,
 } from "recharts";
+import { AXIS_STYLE, GRID_STROKE, SERIES, TOOLTIP_STYLE } from "../lib/chartTheme";
 import { fmt, fmtPercent } from "../lib/format";
 import { isOrbital, type DispersionResult, type Ellipse95, type LandingPoint, type Quantiles, type Tier } from "../lib/types";
 
@@ -23,14 +24,6 @@ interface DispersionPanelProps {
   selectedId: string | null;
 }
 
-const AXIS_STYLE = { fill: "#9aa3ad", fontSize: 11 };
-const GRID_STROKE = "#343941";
-const TOOLTIP_STYLE = {
-  backgroundColor: "#1e2127",
-  border: "1px solid #343941",
-  borderRadius: 6,
-  fontSize: 12,
-};
 const ELLIPSE_SEGMENTS = 64;
 const MAX_FAILURE_ROWS = 4;
 
@@ -54,10 +47,10 @@ export function ellipsePolygon(e: Ellipse95, segments = ELLIPSE_SEGMENTS): Landi
 
 /** Colour of the big success-rate number (inline so globals.css stays untouched). */
 function rateColor(rate: number): string {
-  if (!Number.isFinite(rate)) return "#9aa3ad";
-  if (rate >= 0.9) return "#3fbf7f";
-  if (rate >= 0.6) return "#f5a623";
-  return "#ff6b6b";
+  if (!Number.isFinite(rate)) return "#6b7684";
+  if (rate >= 0.9) return "#2a9d6f";
+  if (rate >= 0.6) return "#c7810f";
+  return "#d64545";
 }
 
 /** Success rate as a large number plus the run's n / seed / matched candidate. */
@@ -151,12 +144,12 @@ function LandingScatterChart({ dispersion, landing }: { dispersion: DispersionRe
                   data={ellipse}
                   zAxisId="line"
                   fill="none"
-                  line={{ stroke: "#f5a623", strokeWidth: 1.5, strokeDasharray: "5 3" }}
+                  line={{ stroke: SERIES.ellipse, strokeWidth: 1.5, strokeDasharray: "5 3" }}
                   isAnimationActive={false}
                 />
               )}
-              <Scatter name="着地点" data={points} zAxisId="dots" fill="#3fbf7f" isAnimationActive={false} />
-              <Scatter name="発射台" data={pad} zAxisId="pad" fill="#ff6b6b" shape="cross" isAnimationActive={false} />
+              <Scatter name="着地点" data={points} zAxisId="dots" fill={SERIES.landing} isAnimationActive={false} />
+              <Scatter name="発射台" data={pad} zAxisId="pad" fill={SERIES.pad} shape="cross" isAnimationActive={false} />
             </ScatterChart>
           </ResponsiveContainer>
         </div>
@@ -236,12 +229,12 @@ function OrbitScatterChart({ dispersion }: { dispersion: DispersionResult }) {
                 cursor={{ strokeDasharray: "3 3" }}
                 formatter={(v): [string, string] => [`${toFixed1(v)} km`, ""]}
               />
-              <Scatter name="試行" data={rows} zAxisId="dots" fill="#a78bfa" isAnimationActive={false} />
+              <Scatter name="試行" data={rows} zAxisId="dots" fill={SERIES.samples} isAnimationActive={false} />
               {nominal.length > 0 && (
-                <Scatter name="公称" data={nominal} zAxisId="marks" fill="#5ab0ff" shape="diamond" isAnimationActive={false} />
+                <Scatter name="公称" data={nominal} zAxisId="marks" fill={SERIES.nominal} shape="diamond" isAnimationActive={false} />
               )}
               {target.length > 0 && (
-                <Scatter name="目標" data={target} zAxisId="marks" fill="#ff6b6b" shape="cross" isAnimationActive={false} />
+                <Scatter name="目標" data={target} zAxisId="marks" fill={SERIES.target} shape="cross" isAnimationActive={false} />
               )}
             </ScatterChart>
           </ResponsiveContainer>

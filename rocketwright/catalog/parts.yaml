@@ -1,143 +1,902 @@
-# Parts catalog for the bottle and amateur tiers (nose cones, tubes, fins, parachutes, ...).
-# Each item: {id, tier, kind, name, mass_kg, price_jpy, source|provisional, notes}.
-# Every entry below is `provisional: true`: masses and JPY prices are representative hobby-shop
-# values written from memory, not quoted from a source URL. A human must replace them (CLAUDE.md
-# section 2, principle 4) before any number from this file is shown as a quotation.
+# RocketWright parts catalog, v2 format (see PARTS_SCHEMA.md and README.md in this directory).
+#
+# Rules (CLAUDE.md section 2, principle 4): every part carries a `source` URL or `provisional: true`
+# with the estimate explained in `notes`. A part with a `source` may still be `provisional: true`
+# when one of its numbers (usually mass or packed diameter) is derived rather than quoted.
+#
+# Prices: no Japanese retailer page listing these parts in JPY was found (searched 2026-11-03). Every
+# `price_jpy` is the retailer's USD price converted at the fixed rate below and rounded; treat all
+# prices as provisional until a JPY quotation replaces them.
+#
+# `items:` is a YAML alias of `parts:` so the v1 readers (`_load_yaml_list(..., "items")` in
+# agent/tools.py and `_load_catalog_parts` in report.py) keep working; they only use id / tier /
+# name / mass_kg / price_jpy / source / provisional. Readers of the v2 format should use `parts:`.
 version: 2
-items:
-  # --- bottle tier -------------------------------------------------------------------------
-  - id: pet_bottle_1p5l
-    tier: bottle
-    kind: bottle
-    name: "1.5 L carbonated-drink PET bottle (pressure rated by use, ~90 mm dia.)"
-    mass_kg: 0.045
-    price_jpy: 150
+price_jpy_basis: "USD x 150 JPY (fixed, provisional, 2026-11-03); converted retailer price per single unit"
+parts: &parts
+  # ===================================================================================
+  # AMATEUR TIER -- Estes-standard model rocket parts, LOC Precision mid-power tubes
+  # ===================================================================================
+  # --- body tubes --------------------------------------------------------------------
+  # Dimensions: Estes retailer listings (hobbyetc / pbtech / pmhobbycraft) and the OpenRocket
+  # Estes component database (same ID/OD). Masses are NOT published by Estes; they are computed as
+  # rho * pi/4 * (OD^2 - ID^2) * L with rho = 849 kg/m3 (OpenRocket's spiral kraft tube material;
+  # it reproduces LOC's published 7.8 oz for the 3.0" tube to within 3 %). Hence provisional.
+  - id: estes_bt5_tube
+    kind: body_tube
+    tier: amateur
+    name: "Estes BT-5 body tube, 18 in (13.8 mm OD)"
+    mass_kg: 0.0054
+    price_jpy: 420
+    source: "https://estesrockets.com/products/bt-5-body-tube"
     provisional: true
-    notes: "bottle_volume_m3 = 0.0015; carbonated-drink bottles only (still-water bottles are thinner)"
-  - id: pet_bottle_2l
-    tier: bottle
-    kind: bottle
-    name: "2 L carbonated-drink PET bottle (~100 mm dia.)"
-    mass_kg: 0.055
+    notes: "ID .518 in / OD .544 in / 18 in (https://store.hobbyetc.com/parts/view/123059); OpenRocket Estes-legacy.orc EST 3084 ID 0.013081 OD 0.0137414 m. Mass computed (wall 0.33 mm, rho 849 kg/m3). Price: $11.29 per 4-pack -> per tube."
+    outer_diameter_m: 0.013741
+    inner_diameter_m: 0.013081
+    length_m: 0.4572
+    max_motor_impulse_ns: 2.5   # A class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes 13 mm mini-engine kits (BT-5 airframes) fly A10/A3 mini engines (A class, <= 2.5 Ns); no catalog mount puts a larger motor in this tube."
+  - id: estes_bt20_tube
+    kind: body_tube
+    tier: amateur
+    name: "Estes BT-20 body tube, 18 in (18.7 mm OD, 18 mm motor fits inside)"
+    mass_kg: 0.0074
+    price_jpy: 390
+    source: "https://estesrockets.com/products/bt-20-body-tube"
+    provisional: true
+    notes: "ID .710 in (18 mm) / OD .736 in (18.7 mm) / 18 in (https://www.pbtech.com/product/RKTEST0303085/Estes-BT-20---Body-Tubes---450mm-x-19mm---4-Pieces); OpenRocket EST 3085. Mass computed (wall 0.33 mm). Price: $10.29 per 4-pack -> per tube."
+    outer_diameter_m: 0.018694
+    inner_diameter_m: 0.018034
+    length_m: 0.4572
+    max_motor_impulse_ns: 10.0   # C class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes BT-20 kits fly 18 mm A8-C6 engines (Hi-Flier, Wizard, Viking in catalog/references/amateur.yaml: largest recommended C6, 10 Ns)."
+  - id: estes_bt50_tube
+    kind: body_tube
+    tier: amateur
+    name: "Estes BT-50 body tube, 18 in (24.8 mm OD, 24 mm motor fits inside)"
+    mass_kg: 0.0099
+    price_jpy: 510
+    source: "https://estesrockets.com/products/bt-50-body-tube"
+    provisional: true
+    notes: "ID .950 in / OD .976 in / 18 in (https://store.hobbyetc.com/parts/view/123061); OpenRocket EST 3086 ID 0.02413 OD 0.0247904 m. Mass computed (wall 0.33 mm). Price: $10.29 per 3-pack -> per tube."
+    outer_diameter_m: 0.024790
+    inner_diameter_m: 0.024130
+    length_m: 0.4572
+    max_motor_impulse_ns: 10.0   # C class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes BT-50 kits fly 18 mm A8-C6 engines (Alpha III, Crossfire ISX in catalog/references/amateur.yaml: largest recommended C6, 10 Ns)."
+  - id: estes_bt55_tube
+    kind: body_tube
+    tier: amateur
+    name: "Estes BT-55 body tube, 18 in (33.7 mm OD)"
+    mass_kg: 0.0215
+    price_jpy: 560
+    source: "https://estesrockets.com/products/bt-55-body-tube"
+    provisional: true
+    notes: "ID 1.283 in (32.6 mm) / OD 1.325-1.33 in (34 mm) (https://www.pmhobbycraft.ca/products/estes-rockets-bt-55-body-tube-3pc); OpenRocket EST 3087 ID 0.0325882 OD 0.033655 m, 18 in. Mass computed (wall 0.53 mm). Price: $11.29 per 3-pack -> per tube."
+    outer_diameter_m: 0.033655
+    inner_diameter_m: 0.032588
+    length_m: 0.4572
+    max_motor_impulse_ns: 40.0   # E class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes D and E Engine Mount Kit (https://estesrockets.com/products/d-and-e-engine-mount-kit) is 'designed specifically for 24 mm D and E engines' and lists BT-55: up to E (40 Ns)."
+  - id: estes_bt60_tube
+    kind: body_tube
+    tier: amateur
+    name: "Estes BT-60 body tube, 18 in (41.6 mm OD)"
+    mass_kg: 0.0267
+    price_jpy: 560
+    source: "https://estesrockets.com/products/bt-60-body-tube"
+    provisional: true
+    notes: "ID 1.595 in (40.5 mm) / OD 1.637-1.64 in (42 mm) / 18 in (https://store.hobbyetc.com/parts/view/123063); OpenRocket EST 3089 ID 0.040513 OD 0.0415798 m. Mass computed (wall 0.53 mm). Price: $11.29 per 3-pack -> per tube."
+    outer_diameter_m: 0.041580
+    inner_diameter_m: 0.040513
+    length_m: 0.4572
+    max_motor_impulse_ns: 80.0   # F class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes BT-60 29 mm Engine Mount Kit (https://estesrockets.com/products/bt-60-29mm-engine-mount-kit) with the Pro Series II 29 mm retainer 'for E16 or F15' (https://estesrockets.com/product/009750-pro-series-ii-29-mm-motor-retainer-set/); the Mean Machine (E12) is the largest BT-60 reference kit: up to F (80 Ns)."
+  - id: estes_bt80_tube
+    kind: body_tube
+    tier: amateur
+    name: "Estes BT-80 body tube, 14.2 in (66.0 mm OD)"
+    mass_kg: 0.0320
+    price_jpy: 850
+    source: "https://estesrockets.com/products/bt-80-body-tube"
+    provisional: true
+    notes: "ID 2.56 in (65.02 mm) / OD 2.60 in (66.04 mm) / wall 0.02 in (https://store.hobbyetc.com/parts/view/123065); Estes page: 14.2 in long, 2 per pack $11.29. OpenRocket EST 3090 gives the same OD. Mass computed (wall 0.51 mm, rho 849 kg/m3)."
+    outer_diameter_m: 0.066040
+    inner_diameter_m: 0.065024
+    length_m: 0.3607
+    max_motor_impulse_ns: 80.0   # F class upper bound (NAR/TRA); see rating_note
+    rating_note: "Estes BT-80 page (https://edu.estesrockets.com/products/bt-80-body-tube): BT-80 rockets 'can also accommodate select 24 mm and 29 mm motor configurations ... C11, D12, E12, E16, and F15'; the BT-80 Super Big Bertha (Pro Series II) recommends E16-4, F15-6 (https://estesrockets.com/es/products/super-big-bertha): up to F (80 Ns)."
+  - id: loc_tube_54mm
+    kind: body_tube
+    tier: amateur
+    name: "LOC Precision 2.14 in (54 mm) kraft airframe tube, 34 in"
+    mass_kg: 0.196
+    price_jpy: 1840
+    source: "https://locprecision.com/product/cardboard-airframes"
+    provisional: true
+    notes: "LOC page: 2.14 in ID x 2.26 in OD, 34 in, $12.28. Mass not published for this size; computed from OpenRocket LocPrecision-legacy.orc (LOC BT-2.14, ID 0.054356 OD 0.057404 m, Spiral/Glassine 849 kg/m3) -> 196 g. Mid-power (29/38 mm motors)."
+    outer_diameter_m: 0.057404
+    inner_diameter_m: 0.054356
+    length_m: 0.8636
+    max_motor_impulse_ns: 1280.0   # J class upper bound (NAR/TRA); see rating_note
+    rating_note: "LOC Nuke Pro Max (https://locprecision.com/collections/rockets-skill-level/products/nuke-pro-max): 2.26 in airframe (this tube), 38 mm mount, 'designed to handle the Cesaroni Pro 38 line of motors - all of them' (largest Pro38 is a J): up to J (1280 Ns)."
+  - id: loc_tube_75mm
+    kind: body_tube
+    tier: amateur
+    name: "LOC Precision 3.00 in (75 mm) kraft airframe tube, 34 in"
+    mass_kg: 0.221
+    price_jpy: 3480
+    source: "https://locprecision.com/product/cardboard-airframes"
+    provisional: true
+    notes: "LOC page: 3.0 in ID x 3.1 in OD x 34 in, 7.8 oz (221 g) -- mass is sourced. Price provisional: listed Sold Out; the LOC 75 mm 34 in motor tube price ($23.18, https://locprecision.com/products/motor-mount-tubing) is used as a stand-in."
+    outer_diameter_m: 0.078740
+    inner_diameter_m: 0.076200
+    length_m: 0.8636
+    max_motor_impulse_ns: 1280.0   # J class upper bound (NAR/TRA); see rating_note
+    rating_note: "LOC LaserLOC 313 (https://locprecision.com/products/laserloc-313/): 3.1 in LOC airframe with a 54 mm mount and LOC Pro motor retainer, rated Expert; no motor list is published, so J (1280 Ns) is assumed (provisional)."
+  - id: loc_tube_98mm
+    kind: body_tube
+    tier: amateur
+    name: "LOC Precision 3.90 in (98 mm) kraft airframe tube, 34 in"
+    mass_kg: 0.293
+    price_jpy: 2670
+    source: "https://locprecision.com/product/cardboard-airframes"
+    provisional: true
+    notes: "LOC page: 3.90 in (98 mm) Airframe Tubing, 3.9 in ID x 4.0 in OD, 34 in, $17.77. Mass computed from OpenRocket LocPrecision-legacy.orc LOC BT-3.9 (ID 0.09906 OD 0.1016 m, Spiral/Glassine 849 kg/m3) -> 293 g. The LOC IV (4 in, 38 mm mount) and HyperLOC 835 (4 in, 54 mm) kits use this airframe."
+    outer_diameter_m: 0.101600
+    inner_diameter_m: 0.099060
+    length_m: 0.8636
+    max_motor_impulse_ns: 1280.0   # J class upper bound; see rating_note
+    rating_note: "LOC HyperLOC 835 (https://locprecision.com/collections/rockets-skill-level/products/hyperloc-835): 4 in airframe, 54 mm mount, 'originally designed for the HyperTek 835cc J motor': up to J (1280 Ns)."
+  # --- nose cones ----------------------------------------------------------------------
+  # Shapes, exposed lengths, shoulder lengths and masses: OpenRocket Estes-legacy.orc (public
+  # component database, https://github.com/openrocket/openrocket, file
+  # core/src/main/resources/datafiles/components/internal/Estes-legacy.orc). Prices: Estes pages.
+  - id: estes_pnc5_nose
+    kind: nose_cone
+    tier: amateur
+    name: "Estes PNC-5A plastic nose cone for BT-5"
+    mass_kg: 0.00283
     price_jpy: 180
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
     provisional: true
-    notes: "bottle_volume_m3 = 0.002"
-  - id: bottle_nozzle_22mm
+    notes: "OpenRocket PNC-5A: PARABOLIC, length 0.053975 m, shoulder 0.0127 m, mass 2.83 g (listed as ogive here; schema has no parabolic). Price: Estes NC-5 5-pack $5.99 (https://edu.estesrockets.com/products/nc-5-nose-cone-5-pk) -> per cone, different SKU, hence provisional."
+    fits_tube_id: estes_bt5_tube
+    shape: ogive
+    length_m: 0.0540
+    shoulder_length_m: 0.0127
+  - id: estes_pnc20_nose
+    kind: nose_cone
+    tier: amateur
+    name: "Estes PNC-20 plastic ogive nose cone for BT-20"
+    mass_kg: 0.00335
+    price_jpy: 150
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    notes: "OpenRocket PNC-20: OGIVE, length 0.06731 m, shoulder 0.0127 m, mass 3.35 g. Price: Estes PNC-20A $1.00 (https://estesrockets.com/products/pnc-20a-nose-cone)."
+    fits_tube_id: estes_bt20_tube
+    shape: ogive
+    length_m: 0.0673
+    shoulder_length_m: 0.0127
+  - id: estes_pnc50_nose
+    kind: nose_cone
+    tier: amateur
+    name: "Estes PNC-50-4L / PNC-50YR plastic ogive nose cone for BT-50 (4.125 in)"
+    mass_kg: 0.00850
+    price_jpy: 300
+    source: "https://estesrockets.com/products/pnc-50-4-nose-cone"
+    notes: "Estes page: 'Aerodynamic ogive profile', 4.125 in (10.48 cm), ABS, $2.00. Shoulder 0.01905 m and mass 8.50 g from OpenRocket Estes-legacy.orc PNC-50YR (length 0.104775 m)."
+    fits_tube_id: estes_bt50_tube
+    shape: ogive
+    length_m: 0.1048
+    shoulder_length_m: 0.0191
+  - id: estes_pnc55_nose
+    kind: nose_cone
+    tier: amateur
+    name: "Estes PNC-55AC plastic ogive nose cone for BT-55"
+    mass_kg: 0.01134
+    price_jpy: 230
+    source: "https://estesrockets.com/products/pnc-55ac-nose-cone"
+    notes: "Estes page: 1.33 in (34 mm) dia, blow-moulded HIPS, $1.50. OpenRocket PNC-55AC: OGIVE, length 0.137236 m, shoulder 0.01905 m, mass 11.34 g."
+    fits_tube_id: estes_bt55_tube
+    shape: ogive
+    length_m: 0.1372
+    shoulder_length_m: 0.0191
+  - id: estes_pnc60_nose
+    kind: nose_cone
+    tier: amateur
+    name: "Estes PNC-60A plastic ogive nose cone for BT-60"
+    mass_kg: 0.02438
+    price_jpy: 190
+    source: "https://estesrockets.com/products/pnc-60-nose-cone"
+    notes: "Estes page: blow-moulded HIPS, fits BT-60, $1.25 (no length given). OpenRocket PNC-60A: OGIVE, length 0.12065 m, shoulder 0.01905 m, mass 24.38 g."
+    fits_tube_id: estes_bt60_tube
+    shape: ogive
+    length_m: 0.1207
+    shoulder_length_m: 0.0191
+  - id: estes_pnc80_nose
+    kind: nose_cone
+    tier: amateur
+    name: "Estes PNC-80K plastic ogive nose cone for BT-80"
+    mass_kg: 0.04763
+    price_jpy: 750
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket PNC-80K: OGIVE, length 0.20701 m, shoulder 0.0254 m, mass 47.63 g. Price: Estes NC-80B (BT-80, blunt, $4.99, https://estesrockets.com/products/nc-80b-nose-cone) used as a stand-in, hence provisional."
+    fits_tube_id: estes_bt80_tube
+    shape: ogive
+    length_m: 0.2070
+    shoulder_length_m: 0.0254
+  - id: loc_pnc_54mm_nose
+    kind: nose_cone
+    tier: amateur
+    name: "LOC Precision PNC-2.14 plastic ogive nose cone for 54 mm tube"
+    mass_kg: 0.1134
+    price_jpy: 2620
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/LocPrecision-legacy.orc"
+    provisional: true
+    notes: "OpenRocket LOC PNC-2.14: OGIVE, length 0.2413 m, shoulder 0.0635 m, mass 113.4 g, polystyrene. Price: LOC nose cone page PNC-2.14 $17.46 (https://locprecision.com/collections/rocket-components/products/nose-cones, 2026-11-03; was $12 assumed)."
+    fits_tube_id: loc_tube_54mm
+    shape: ogive
+    length_m: 0.2413
+    shoulder_length_m: 0.0635
+  - id: loc_pnc_75mm_nose
+    kind: nose_cone
+    tier: amateur
+    name: "LOC Precision PNC-3.00 plastic ogive nose cone for 75 mm tube"
+    mass_kg: 0.1417
+    price_jpy: 3670
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/LocPrecision-legacy.orc"
+    provisional: true
+    notes: "OpenRocket LOC PNC-3.00: OGIVE, length 0.28448 m, shoulder 0.09525 m, mass 141.7 g. Price: LOC nose cone page PNC-3.00 $24.47 (https://locprecision.com/collections/rocket-components/products/nose-cones, 2026-11-03; was $15 assumed)."
+    fits_tube_id: loc_tube_75mm
+    shape: ogive
+    length_m: 0.2845
+    shoulder_length_m: 0.0953
+  - id: loc_pnc_98mm_nose
+    kind: nose_cone
+    tier: amateur
+    name: "LOC Precision PNC-3.90 plastic ogive nose cone for 98 mm tube"
+    mass_kg: 0.1417
+    price_jpy: 4080
+    source: "https://locprecision.com/collections/rocket-components/products/nose-cones"
+    provisional: true
+    notes: "LOC page: PNC-3.90 $27.18, 16.5 in total, 5 oz. OpenRocket LOC PNC-3.90: OGIVE, length 0.32512 m, shoulder 0.09525 m, mass 141.7 g (= 5 oz)."
+    fits_tube_id: loc_tube_98mm
+    shape: ogive
+    length_m: 0.3251
+    shoulder_length_m: 0.0953
+  # --- fin material --------------------------------------------------------------------
+  # areal_mass_kgpm2 = density x thickness. Densities: balsa ~160 kg/m3 (Wikipedia, Ochroma),
+  # plywood (mixed) ~620 kg/m3 (Wikipedia, Plywood), G-10/FR-4 1850 kg/m3 (Wikipedia, FR-4).
+  - id: fin_balsa_1p6mm
+    kind: fin_material
+    tier: amateur
+    name: "Balsa sheet 1/16 in (1.6 mm) x 3 in x 36 in"
+    mass_kg: 0.0177
+    price_jpy: 300
+    source: "https://en.wikipedia.org/wiki/Ochroma"
+    provisional: true
+    notes: "Density 'around 160 kg/m3' (Wikipedia) x 1.5875 mm = 0.254 kg/m2; sheet 3 x 36 in is the standard hobby size (e.g. Midwest Products, https://www.schoolspecialty.com/midwest-products-balsa-sheet-116-x-3-x-36-inches-pack-of-10-2090779). Sheet mass computed; price assumed."
+    thickness_m: 0.0015875
+    areal_mass_kgpm2: 0.254
+    sheet_width_m: 0.0762
+    sheet_height_m: 0.9144
+    max_motor_impulse_ns: 10.0   # C class upper bound; see rating_note
+    rating_note: "1/16 in balsa is the fin stock of the Estes BT-20 kits flying up to C6 (Hi-Flier, Wizard; amateur.yaml) -- provisional, no strength model."
+  - id: fin_balsa_2p4mm
+    kind: fin_material
+    tier: amateur
+    name: "Balsa sheet 3/32 in (2.4 mm) x 3 in x 36 in"
+    mass_kg: 0.0265
+    price_jpy: 350
+    source: "https://en.wikipedia.org/wiki/Ochroma"
+    provisional: true
+    notes: "160 kg/m3 x 2.381 mm = 0.381 kg/m2; sheet mass computed; price assumed."
+    thickness_m: 0.002381
+    areal_mass_kgpm2: 0.381
+    sheet_width_m: 0.0762
+    sheet_height_m: 0.9144
+    max_motor_impulse_ns: 40.0   # E class upper bound; see rating_note
+    rating_note: "3/32 in laser-cut balsa flies the Estes Mean Machine on E12 (amateur.yaml) -- provisional: up to E (40 Ns)."
+  - id: fin_balsa_3p2mm
+    kind: fin_material
+    tier: amateur
+    name: "Balsa sheet 1/8 in (3.2 mm) x 3 in x 36 in"
+    mass_kg: 0.0354
+    price_jpy: 400
+    source: "https://en.wikipedia.org/wiki/Ochroma"
+    provisional: true
+    notes: "160 kg/m3 x 3.175 mm = 0.508 kg/m2; sheet size per https://store.hobbyetc.com/parts/view/2035 (1/8 x 3 x 36); sheet mass computed; price assumed."
+    thickness_m: 0.003175
+    areal_mass_kgpm2: 0.508
+    sheet_width_m: 0.0762
+    sheet_height_m: 0.9144
+    max_motor_impulse_ns: 80.0   # F class upper bound; see rating_note
+    rating_note: "1/8 in balsa: Estes BT-80 kits fly up to F15 (https://edu.estesrockets.com/products/bt-80-body-tube) -- provisional: up to F (80 Ns)."
+  - id: fin_plywood_3mm
+    kind: fin_material
+    tier: amateur
+    name: "Plywood sheet 3 mm x 300 mm x 300 mm (mid-power fins)"
+    mass_kg: 0.167
+    price_jpy: 900
+    source: "https://en.wikipedia.org/wiki/Plywood"
+    provisional: true
+    notes: "Mixed-species plywood density ~620 kg/m3 (Wikipedia; birch 680) x 3 mm = 1.86 kg/m2; sheet size and price assumed (hobby-shop 300 mm square)."
+    thickness_m: 0.003
+    areal_mass_kgpm2: 1.86
+    sheet_width_m: 0.3
+    sheet_height_m: 0.3
+    max_motor_impulse_ns: 1280.0   # J class upper bound; see rating_note
+    rating_note: "LOC Nuke Pro Max uses 'high-grade precision-cut plywood fins', 1/8 in thick, for all Pro38 motors (largest 38 mm J) (https://locprecision.com/collections/rockets-skill-level/products/nuke-pro-max): up to J (1280 Ns)."
+  - id: fin_g10_1p6mm
+    kind: fin_material
+    tier: amateur
+    name: "G-10 glass-epoxy sheet 1/16 in (1.6 mm) x 12 in x 12 in (mid-power fins)"
+    mass_kg: 0.273
+    price_jpy: 2500
+    source: "https://en.wikipedia.org/wiki/FR-4"
+    provisional: true
+    notes: "FR-4/G-10 density 1.850 g/cm3 (Wikipedia, one manufacturer's value) x 1.5875 mm = 2.94 kg/m2; 12 x 12 in sheet size and price assumed."
+    thickness_m: 0.0015875
+    areal_mass_kgpm2: 2.94
+    sheet_width_m: 0.3048
+    sheet_height_m: 0.3048
+    max_motor_impulse_ns: 640.0   # I class upper bound; see rating_note
+    rating_note: "PML Bull Puppy (https://locprecision.com/products/bull-puppy-missile): G-10 fins 0.06 in thick, 'can be flown on G through I motors' (the spec line says J; the lower figure is used): up to I (640 Ns)."
+  # --- parachutes ----------------------------------------------------------------------
+  # Masses: OpenRocket Estes-legacy.orc (12 in 2.04 g, 18 in 5.90 g, 24 in 7.77 g plastic). cd 1.5 is the
+  # repository's DEFAULT_PARACHUTE_CD (physics/recovery.py), not a manufacturer value. packed_diameter_m
+  # is an estimate of the rolled chute (fits the named tube's ID) -- provisional for every chute.
+  - id: estes_parachute_12in
+    kind: parachute
+    tier: amateur
+    name: "Estes 12 in (30 cm) printed plastic parachute"
+    mass_kg: 0.0020
+    price_jpy: 820
+    source: "https://estesrockets.com/products/12-inch-printed-parachute"
+    provisional: true
+    notes: "Estes page: 12 in (30.5 cm), preassembled, $5.49. Mass 2.04 g from OpenRocket Estes 302264. packed dia 18 mm (rolls into BT-20) estimated; cd 1.5 = repository default."
+    diameter_m: 0.3048
+    packed_diameter_m: 0.018
+    cd: 1.5
+  - id: estes_parachute_15in
+    kind: parachute
+    tier: amateur
+    name: "Estes 15 in (38 cm) printed plastic parachute"
+    mass_kg: 0.0035
+    price_jpy: 970
+    source: "https://estesrockets.com/products/15-inch-printed-parachute"
+    provisional: true
+    notes: "Estes page: 15 in (38 cm), $6.49. Mass interpolated between the 12 in (2.0 g) and 18 in (5.9 g) OpenRocket values; packed dia 22 mm estimated."
+    diameter_m: 0.381
+    packed_diameter_m: 0.022
+    cd: 1.5
+  - id: estes_parachute_18in
+    kind: parachute
+    tier: amateur
+    name: "Estes 18 in (46 cm) printed LDPE plastic parachute"
+    mass_kg: 0.0059
+    price_jpy: 970
+    source: "https://estesrockets.com/products/18-inch-printed-parachute"
+    provisional: true
+    notes: "Estes page: 18 in (46 cm), LDPE, $6.49. Mass 5.90 g from OpenRocket Estes 302267. packed dia 24 mm (BT-50) estimated."
+    diameter_m: 0.4572
+    packed_diameter_m: 0.024
+    cd: 1.5
+  - id: estes_parachute_24in
+    kind: parachute
+    tier: amateur
+    name: "Estes 24 in (61 cm) printed LDPE plastic parachute"
+    mass_kg: 0.0078
+    price_jpy: 1050
+    source: "https://estesrockets.com/products/24-inch-printed-parachute"
+    provisional: true
+    notes: "Estes page: 24 in (61 cm), die-cut LDPE, $6.99. Mass 7.77 g from OpenRocket Estes 302271. packed dia 32 mm (BT-55) estimated."
+    diameter_m: 0.6096
+    packed_diameter_m: 0.032
+    cd: 1.5
+  - id: estes_parachute_30in_nylon
+    kind: parachute
+    tier: amateur
+    name: "Estes Pro Series II 30 in (76 cm) nylon parachute"
+    mass_kg: 0.040
+    price_jpy: 3000
+    source: "https://estesrockets.com/products/pro-series-ii%E2%84%A2-30-inch-nylon-parachute"
+    provisional: true
+    notes: "Estes page: 30 in (76 cm), red nylon, braided nylon shrouds, $19.99. Mass 1.41 oz (40 g) from a retailer listing (https://store.hobbyetc.com/parts/view/125289). packed dia 40 mm (BT-60) estimated."
+    diameter_m: 0.762
+    packed_diameter_m: 0.040
+    cd: 1.5
+  - id: topflight_parachute_45in_nylon
+    kind: parachute
+    tier: amateur
+    name: "Top Flight Recovery 45 in (114 cm) thin ripstop nylon parachute (mid-power, 1-3 kg)"
+    mass_kg: 0.060
+    price_jpy: 5850
+    source: "https://wikis.mit.edu/confluence/x/IwCWDQ"
+    provisional: true
+    notes: "Top Flight sells 45 in and 50 in standard nylon chutes (MIT Rocket Team vendor comparison; a retailer lists the 45 in thin ripstop 'TOP-PAR-45TM' at $38.99). Mass not published: 60 g estimated from the Estes 30 in nylon (40 g) scaled by area with the thinner cloth; packed dia 50 mm (fits a 54 mm tube) estimated; cd 1.5 = repository default."
+    diameter_m: 1.143
+    packed_diameter_m: 0.050
+    cd: 1.5
+  # --- recovery hardware ---------------------------------------------------------------
+  - id: recovery_hardware_shock_cord_set
+    kind: recovery_hardware
+    tier: amateur
+    name: "Recovery hardware set: elastic shock cord, cord mount, swivel, recovery wadding"
+    mass_kg: 0.005
+    price_jpy: 500
+    provisional: true
+    notes: "No single retailer SKU; mass is an estimate for ~60 cm of 1/8 in elastic plus paper mount and a few wadding sheets; price assumed."
+    max_rocket_mass_kg: 0.68   # see rating_note
+    rating_note: "LOC shock cord page (https://locprecision.com/collections/rocket-components/products/shock-cords): 'Elastic is great for light weight (for 1-24oz weight rockets) applications' -> 24 oz = 0.68 kg liftoff mass."
+  - id: recovery_hardware_nylon_3_16in
+    kind: recovery_hardware
+    tier: amateur
+    name: "Recovery harness: LOC 3/16 in tubular nylon shock cord 12 ft + Kevlar mount (SCM-1) + swivel"
+    mass_kg: 0.040
+    price_jpy: 2050
+    source: "https://locprecision.com/collections/rocket-components/products/shock-cords"
+    provisional: true
+    notes: "LOC prices: 3/16 in tubular nylon 12 ft $9.15; SCM-1 Kevlar shock cord mount $0.89 (https://locprecision.com/collections/rocket-components/products/eye-bolt-set); nickel plated swivel from $3.65 -> $13.69. Mass estimated (~30 g cord + 10 g mount/swivel)."
+    max_rocket_mass_kg: 0.91   # see rating_note
+    rating_note: "LOC: 'Our 3/16 in (2-32oz rockets) tubular nylon'; SCM-1 'for rockets up to 2.2 lbs' -> 32 oz = 0.91 kg."
+  - id: recovery_hardware_nylon_3_8in
+    kind: recovery_hardware
+    tier: amateur
+    name: "Recovery harness: LOC 3/8 in tubular nylon shock cord 15 ft + 1/4-20 eyebolt (SCM-3) + swivel"
+    mass_kg: 0.110
+    price_jpy: 3160
+    source: "https://locprecision.com/collections/rocket-components/products/shock-cords"
+    provisional: true
+    notes: "LOC prices: 3/8 in tubular nylon 15 ft $14.45; SCM-3 1/4 x 20 eyebolt with washers and nuts $2.95 (https://locprecision.com/collections/rocket-components/products/eye-bolt-set); swivel from $3.65 -> $21.05. Mass estimated (~70 g cord, ~30 g eyebolt, ~10 g swivel)."
+    max_rocket_mass_kg: 3.18   # see rating_note
+    rating_note: "LOC: 'Our 3/8 in tubular nylon (1-7 pound rockets) comes in with a 1020# tensile strength'; SCM-3 'for rockets up to 9 lbs' -> 7 lb = 3.18 kg."
+  # --- motor mounts --------------------------------------------------------------------
+  # mass_kg = mount tube + centering rings + hook/retainer. Tube masses computed with OpenRocket's
+  # Estes/LOC tube materials; ring and hook masses are estimates -> every mount is provisional.
+  # fits_tube_id is the primary airframe; fits_tube_ids lists every airframe the kit's rings fit.
+  - id: motor_mount_13mm_mini
+    kind: motor_mount
+    tier: amateur
+    name: "13 mm mini motor mount (BT-5 tube 70 mm + rings for BT-20/BT-50)"
+    mass_kg: 0.003
+    price_jpy: 300
+    provisional: true
+    notes: "Estes sells no 13 mm kit as a separate SKU; built from a 70 mm length of BT-5 (0.8 g computed) plus two paper rings and a hook (~2 g est.). Mini motors (A10/A3 13 x 45 mm) are not in motors/ yet."
+    motor_diameter_m: 0.013
+    fits_tube_id: estes_bt20_tube
+    fits_tube_ids: [estes_bt20_tube, estes_bt50_tube]
+    length_m: 0.070
+  - id: motor_mount_18mm_bt20
+    kind: motor_mount
+    tier: amateur
+    name: "18 mm minimum-diameter mount for BT-20 (engine hook + thrust ring; the motor sits in the body tube)"
+    mass_kg: 0.002
+    price_jpy: 150
+    source: "https://estesrockets.com/products/engine-hook-pack"
+    provisional: true
+    notes: "BT-20 (ID 18.0 mm) takes an 18 mm motor directly: Estes Wizard / Viking / Hi-Flier kits ship a steel engine hook, a thrust ring and a mylar hook retainer ring, no mount tube. Mass ~2 g and price (hook pack share) estimated. length_m is the motor bay the hook defines (A8-C6 are 70 mm)."
+    motor_diameter_m: 0.018
+    fits_tube_id: estes_bt20_tube
+    fits_tube_ids: [estes_bt20_tube]
+    length_m: 0.070
+  - id: motor_mount_18mm
+    kind: motor_mount
+    tier: amateur
+    name: "Estes Regular Engine Mount Kit (18 mm, BT-20 tube) for BT-50/55/60"
+    mass_kg: 0.006
+    price_jpy: 1200
+    source: "https://estesrockets.com/products/regular-engine-mount-kit"
+    provisional: true
+    notes: "Estes page: BT-20 (0.74 in / 19 mm) engine mount tubes, compatible with BT-50, BT-55, BT-56, BT-60, $7.99 (SKU 003158). Tube length 70 mm (A8-C6 are 70 mm long) assumed; mass = 1.5 g tube + ~4.5 g rings/hook/block (est.)."
+    motor_diameter_m: 0.018
+    fits_tube_id: estes_bt50_tube
+    fits_tube_ids: [estes_bt50_tube, estes_bt55_tube, estes_bt60_tube]
+    length_m: 0.070
+  - id: motor_mount_24mm
+    kind: motor_mount
+    tier: amateur
+    name: "Estes D and E Engine Mount Kit (24 mm, BT-50 tube) for BT-55/60/80"
+    mass_kg: 0.012
+    price_jpy: 1800
+    source: "https://estesrockets.com/products/d-and-e-engine-mount-kit"
+    provisional: true
+    notes: "Estes page: 'designed specifically for 24 mm D and E engines', works with BT-55, BT-60, BT-80; contents: BT-50 engine mounting tube, laser-cut centering rings, D and E engine hooks, $11.99 (SKU 003159). Tube length 110 mm (E12 is 97 mm) assumed; mass = 3 g tube + ~9 g rings/hooks (est.)."
+    motor_diameter_m: 0.024
+    fits_tube_id: estes_bt60_tube
+    fits_tube_ids: [estes_bt55_tube, estes_bt60_tube, estes_bt80_tube]
+    length_m: 0.110
+  - id: motor_mount_29mm
+    kind: motor_mount
+    tier: amateur
+    name: "Estes BT-80 29 mm Engine Mount Kit (8 in tube, 3 rings, retainer)"
+    mass_kg: 0.035
+    price_jpy: 1650
+    source: "https://estesrockets.com/products/bt-80-29mm-engine-mount-kit"
+    provisional: true
+    notes: "Estes page: thick-walled 8 in tube, 1.140 in ID x 1.210 in OD, three laser-cut BT-80 centering rings, one 29 mm retainer, $10.99 (SKU 009743). A BT-60 version exists at the same price (https://estesrockets.com/products/bt-60-29mm-engine-mount-kit). Mass = 19 g tube (computed, 1121 kg/m3) + ~16 g rings/retainer (est.)."
+    motor_diameter_m: 0.029
+    fits_tube_id: estes_bt80_tube
+    fits_tube_ids: [estes_bt80_tube, estes_bt60_tube, loc_tube_54mm]
+    length_m: 0.2032
+  - id: motor_mount_38mm
+    kind: motor_mount
+    tier: amateur
+    name: "LOC 38 mm motor mount tube 14 in + plywood centering rings for 54 mm airframe"
+    mass_kg: 0.085
+    price_jpy: 1470
+    source: "https://locprecision.com/products/motor-mount-tubing"
+    provisional: true
+    notes: "LOC page: 38 mm motor tube 14 in $4.78 (ID 0.038735 OD 0.041529 m per OpenRocket LOC MMT-1.52). Tube 70 g computed (1121 kg/m3) + ~15 g for two plywood rings (est.; ring price ~$5 assumed)."
+    motor_diameter_m: 0.038
+    fits_tube_id: loc_tube_54mm
+    fits_tube_ids: [loc_tube_54mm, loc_tube_75mm]
+    length_m: 0.3556
+  - id: motor_mount_54mm_min_dia
+    kind: motor_mount
+    tier: amateur
+    name: "54 mm minimum-diameter retention for the LOC 2.14 in tube (Aero Pack 54 mm retainer + thrust ring; the motor sits in the airframe)"
+    mass_kg: 0.045
+    price_jpy: 5400
+    source: "https://locprecision.com/products/motor-mount-tubing"
+    provisional: true
+    notes: "LOC: the 54 mm motor tube is 'the same tube as our 2.14 in airframe', so a 54 mm motor fits the airframe directly (minimum-diameter build, like the BT-20 kits). Retention by a screw-on 54 mm retainer (Aero Pack RA54 class, ~$36, ~30 g) plus a plywood thrust ring; mass and price estimated. length_m is the motor bay (a J420 case is 220 mm)."
+    motor_diameter_m: 0.054
+    fits_tube_id: loc_tube_54mm
+    fits_tube_ids: [loc_tube_54mm]
+    length_m: 0.220
+  - id: motor_mount_54mm
+    kind: motor_mount
+    tier: amateur
+    name: "LOC 54 mm motor mount tube 14 in + plywood centering rings for 75 mm airframe"
+    mass_kg: 0.125
+    price_jpy: 1830
+    source: "https://locprecision.com/products/motor-mount-tubing"
+    provisional: true
+    notes: "LOC page: 54 mm motor tube 14 in $6.18 ('same tube as our 2.14 in airframe', ID 0.054356 OD 0.057404 m). Tube 107 g computed (1121 kg/m3) + ~18 g rings (est.; ring price ~$6 assumed). Also fits the Estes BT-80 (65.0 mm ID) with 2.56 in -> 54 mm plywood centering rings (LOC sells rings per airframe/motor size; same mass assumed, provisional)."
+    motor_diameter_m: 0.054
+    fits_tube_id: loc_tube_75mm
+    fits_tube_ids: [loc_tube_75mm, estes_bt80_tube]
+    length_m: 0.3556
+  - id: motor_mount_38mm_98
+    kind: motor_mount
+    tier: amateur
+    name: "LOC 38 mm motor mount tube 14 in + two 1/4 in plywood centering rings for the 98 mm airframe"
+    mass_kg: 0.120
+    price_jpy: 2240
+    source: "https://locprecision.com/collections/rocket-components/products/390rings"
+    provisional: true
+    notes: "LOC 38 mm motor tube 14 in $4.78 (https://locprecision.com/products/motor-mount-tubing), 70 g computed (1121 kg/m3); 'Centering Rings for 3.90 in Airframe' from $5.06 each (x2). Ring mass computed: 1/4 in plywood (620 kg/m3), 99.1 mm OD x 41.5 mm ID -> 25 g each."
+    motor_diameter_m: 0.038
+    fits_tube_id: loc_tube_98mm
+    fits_tube_ids: [loc_tube_98mm]
+    length_m: 0.3556
+  - id: motor_mount_54mm_98
+    kind: motor_mount
+    tier: amateur
+    name: "LOC 54 mm motor mount tube 14 in + two 1/4 in plywood centering rings for the 98 mm airframe"
+    mass_kg: 0.147
+    price_jpy: 2450
+    source: "https://locprecision.com/collections/rocket-components/products/390rings"
+    provisional: true
+    notes: "LOC 54 mm motor tube 14 in $6.18 (https://locprecision.com/products/motor-mount-tubing), 107 g computed; 'Centering Rings for 3.90 in Airframe' from $5.06 each (x2). Ring mass computed: 1/4 in plywood, 99.1 mm OD x 57.4 mm ID -> 20 g each."
+    motor_diameter_m: 0.054
+    fits_tube_id: loc_tube_98mm
+    fits_tube_ids: [loc_tube_98mm]
+    length_m: 0.3556
+  # --- couplers -----------------------------------------------------------------------
+  # A body longer than one stock tube is several tubes joined by couplers (qty = tubes - 1, on
+  # the bill and in the dry mass). Dimensions: OpenRocket Estes-legacy.orc / LocPrecision-legacy.orc;
+  # masses computed rho * pi/4 * (OD^2 - ID^2) * L (Estes paper 609 kg/m3, LOC kraft phenolic 943 kg/m3,
+  # OpenRocket materials) -> provisional. Estes prices: Large Tube Coupler Pack (SKU 003196, $7.99 for
+  # 2 x BT-55, 2 x BT-56, 2 x BT-60 and 1 x BT-80 couplers, https://estesrockets.com/products/large-tube-coupler-pack)
+  # -> ~$1.15 each; the small-tube pack is assumed the same per coupler.
+  - id: estes_jt20c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-20C tube coupler for BT-20 (0.75 in)"
+    mass_kg: 0.0005
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-20C: OD 17.9 ID 16.4 mm, 19 mm long, paper; mass computed 0.48 g. Price per coupler from the Estes coupler packs (assumed)."
+    fits_tube_id: estes_bt20_tube
+    length_m: 0.0191
+  - id: estes_jt50c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-50C tube coupler for BT-50 (1 in)"
+    mass_kg: 0.0009
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-50C: OD 24.0 ID 22.5 mm, 25 mm long, paper; mass computed 0.86 g. Price assumed (small coupler pack)."
+    fits_tube_id: estes_bt50_tube
+    length_m: 0.0254
+  - id: estes_jt55c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-55C tube coupler for BT-55 (1.25 in)"
+    mass_kg: 0.0015
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-55C: OD 32.4 ID 30.9 mm, 32 mm long, paper; mass computed 1.5 g. Price: Large Tube Coupler Pack $7.99 / 7."
+    fits_tube_id: estes_bt55_tube
+    length_m: 0.0318
+  - id: estes_jt60c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-60C tube coupler for BT-60 (1.5 in)"
+    mass_kg: 0.0022
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-60C: OD 40.4 ID 38.9 mm, 38 mm long, paper; mass computed 2.2 g. Price: Large Tube Coupler Pack $7.99 / 7."
+    fits_tube_id: estes_bt60_tube
+    length_m: 0.0381
+  - id: estes_jt80c_coupler
+    kind: coupler
+    tier: amateur
+    name: "Estes JT-80C tube coupler for BT-80 (3 in)"
+    mass_kg: 0.0094
+    price_jpy: 170
+    source: "https://raw.githubusercontent.com/openrocket/openrocket/unstable/core/src/main/resources/datafiles/components/internal/Estes-legacy.orc"
+    provisional: true
+    notes: "OpenRocket JT-80C: OD 64.8 ID 62.7 mm, 76 mm long, paper; mass computed 9.4 g. Price: Large Tube Coupler Pack $7.99 / 7."
+    fits_tube_id: estes_bt80_tube
+    length_m: 0.0762
+  - id: loc_tc214_coupler
+    kind: coupler
+    tier: amateur
+    name: "LOC TC-2.14 tube coupler for the 2.14 in (54 mm) airframe, 5.5 in"
+    mass_kg: 0.0306
+    price_jpy: 430
+    source: "https://locprecision.com/collections/rocket-components/products/tube-coupler"
+    provisional: true
+    notes: "LOC page: TC-2.14 $2.84, 5.5 in. OpenRocket TC-2.14: OD 54.4 ID 51.6 mm, kraft phenolic; mass computed 30.6 g for 5.5 in."
+    fits_tube_id: loc_tube_54mm
+    length_m: 0.1397
+  - id: loc_tc300_coupler
+    kind: coupler
+    tier: amateur
+    name: "LOC TC-3.00 tube coupler for the 3.00 in (75 mm) airframe, 6 in"
+    mass_kg: 0.0302
+    price_jpy: 710
+    source: "https://locprecision.com/collections/rocket-components/products/tube-coupler"
+    provisional: true
+    notes: "LOC page: TC-3.00 $4.71, 6 in. OpenRocket TC-3.00: OD 76.2 ID 74.4 mm, kraft phenolic; mass computed 30.2 g."
+    fits_tube_id: loc_tube_75mm
+    length_m: 0.1524
+  - id: loc_tc390_coupler
+    kind: coupler
+    tier: amateur
+    name: "LOC TC-3.90L tube coupler for the 3.90 in (98 mm) airframe, 8 in"
+    mass_kg: 0.0526
+    price_jpy: 1200
+    source: "https://locprecision.com/collections/rocket-components/products/tube-coupler"
+    provisional: true
+    notes: "LOC page: TC-3.90L $8.02, 8 in. OpenRocket TC-3.90: OD 99.1 ID 97.3 mm, kraft phenolic; mass computed 52.6 g for 8 in."
+    fits_tube_id: loc_tube_98mm
+    length_m: 0.2032
+  # --- launch lugs ---------------------------------------------------------------------
+  - id: launch_lug_3mm_rod
+    kind: launch_lug
+    tier: amateur
+    name: "Estes 1/8 in x 1 1/4 in paper launch lug (for 1/8 in = 3.2 mm rod)"
+    mass_kg: 0.0001
+    price_jpy: 70
+    source: "https://estesrockets.com/products/launch-lug-pack"
+    provisional: true
+    notes: "Estes Launch Lug Pack (SKU 002320): 16 spiral-wound paper lugs incl. 1/8 x 1 1/4 in, $6.99 -> ~$0.44 each. Mass 0.06 g computed from OpenRocket ESTES 1/8 (OD 4.064 ID 3.556 L 31.75 mm, paper 609 kg/m3), rounded up."
+    fits_rod_diameter_m: 0.003175
+  - id: launch_lug_5mm_rod
+    kind: launch_lug
+    tier: amateur
+    name: "Estes 3/16 in x 2 in paper launch lug (for 3/16 in = 4.8 mm Maxi rod)"
+    mass_kg: 0.00015
+    price_jpy: 70
+    source: "https://estesrockets.com/products/launch-lug-pack"
+    provisional: true
+    notes: "Same pack (3/16 x 2 in lugs). Mass 0.15 g computed from OpenRocket ESTES 3/16 (OD 6.096 ID 5.563 L 50.8 mm)."
+    fits_rod_diameter_m: 0.0047625
+  # ===================================================================================
+  # BOTTLE TIER -- water rockets from carbonated-drink PET bottles
+  # ===================================================================================
+  # --- bottles -------------------------------------------------------------------------
+  # Carbonated-drink bottles only: JAXA Space Education Center water-rocket manual (English, PDF):
+  # "the PET bottles must be for carbonated drinks, as these can withstand greater pressure than
+  # bottles used for non-carbonated drinks ... the air pressure should not exceed 7 atmospheres.
+  # For the sake of safety, we recommend 4~5 atmospheres." -> max_gauge_pressure_pa = 500 kPa
+  # (5 atm gauge, rounded down; 7 atm ~ 700 kPa is the hard limit). Neck: PCO 1881 is the 28 mm
+  # carbonated finish (Wikipedia, PCO 1881); its bore ~22 mm is the 'full-bore' nozzle of water
+  # rocketry (Wikipedia, Water rocket) -- 21.7 mm is the commonly quoted bore (provisional).
+  # Masses: METI PET-bottle light-weighting criterion for pressure-resistant (carbonated) bottles,
+  # mass_g = 0.0136 x volume_mL + 17.2 (search excerpt of the METI PDF; not opened) -> provisional.
+  # Body diameter / length: typical values, Fischer et al. (arXiv:2001.08828) give bottle radius
+  # 'about 4 to 5 cm'; provisional.
+  - id: pet_bottle_1p5l
+    kind: bottle
     tier: bottle
+    name: "1.5 L carbonated-drink PET bottle (PCO 1881 neck)"
+    mass_kg: 0.038
+    price_jpy: 150
+    source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
+    provisional: true
+    notes: "JAXA manual: 1.5 L round carbonated bottles are the usual choice; <= 7 atm, 4-5 atm recommended. Mass 0.0136*1500+17.2 = 37.6 g (METI criterion). Diameter ~90 mm, height ~310 mm typical (est.). Price = drink purchase (est.)."
+    volume_m3: 0.0015
+    body_diameter_m: 0.090
+    length_m: 0.310
+    neck_diameter_m: 0.0217
+    max_gauge_pressure_pa: 500000
+  - id: pet_bottle_2l
+    kind: bottle
+    tier: bottle
+    name: "2 L carbonated-drink PET bottle (PCO 1881 neck)"
+    mass_kg: 0.044
+    price_jpy: 180
+    source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
+    provisional: true
+    notes: "Mass 0.0136*2000+17.2 = 44.4 g (METI criterion; a consumer article quotes 50-55 g for 2 L, https://macaro-ni.jp/163939). Diameter ~100 mm, height ~330 mm typical (est.). Pressure limit as JAXA (<= 7 atm, 4-5 atm recommended)."
+    volume_m3: 0.002
+    body_diameter_m: 0.100
+    length_m: 0.330
+    neck_diameter_m: 0.0217
+    max_gauge_pressure_pa: 500000
+  - id: pet_bottle_1l
+    kind: bottle
+    tier: bottle
+    name: "1 L carbonated-drink PET bottle (PCO 1881 neck)"
+    mass_kg: 0.031
+    price_jpy: 130
+    source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
+    provisional: true
+    notes: "Mass 0.0136*1000+17.2 = 30.8 g (METI criterion). Fischer et al. arXiv:2001.08828 flew a 1000 mL bottle rocket of 143 g all-up at ~3 bar. Diameter ~80 mm, height ~270 mm typical (est.)."
+    volume_m3: 0.001
+    body_diameter_m: 0.080
+    length_m: 0.270
+    neck_diameter_m: 0.0217
+    max_gauge_pressure_pa: 500000
+  - id: pet_bottle_500ml
+    kind: bottle
+    tier: bottle
+    name: "500 mL carbonated-drink PET bottle (PCO 1881 neck)"
+    mass_kg: 0.024
+    price_jpy: 120
+    source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
+    provisional: true
+    notes: "JAXA manual: 'smaller 500-milliliter bottles can also be used'. Mass 0.0136*500+17.2 = 24.0 g (METI criterion). Diameter ~65 mm, height ~210 mm typical (est.)."
+    volume_m3: 0.0005
+    body_diameter_m: 0.065
+    length_m: 0.210
+    neck_diameter_m: 0.0217
+    max_gauge_pressure_pa: 500000
+  # --- nozzles -------------------------------------------------------------------------
+  - id: bottle_nozzle_full_bore_22mm
     kind: nozzle
-    name: "Bottle-neck launcher nozzle / release, 22 mm bore (standard PET neck)"
-    mass_kg: 0.0
+    tier: bottle
+    name: "Full-bore nozzle: open PET neck (~22 mm) with launcher seal"
+    mass_kg: 0.005
     price_jpy: 800
+    source: "https://en.wikipedia.org/wiki/Water_rocket"
     provisional: true
-    notes: "nozzle_diameter_m = 0.022; the neck itself is the nozzle, this is the launcher seal"
-  - id: bottle_nozzle_9mm
-    tier: bottle
+    notes: "Wikipedia: 'open'/'full-bore' nozzle, inside diameter ~22 mm = standard soda bottle neck opening. The neck itself is the nozzle; mass is the O-ring/seal collar (est.); price = launcher head share (est.)."
+    diameter_m: 0.0217
+    fits_neck_diameter_m: 0.0217
+  - id: bottle_nozzle_gardena_9mm
     kind: nozzle
-    name: "Reducing nozzle insert, 9 mm bore (longer, gentler burn)"
-    mass_kg: 0.01
+    tier: bottle
+    name: "Gardena-type restricted nozzle, 9 mm bore (garden-hose quick connector in the cap)"
+    mass_kg: 0.015
+    price_jpy: 500
+    source: "https://arxiv.org/abs/2001.08828"
+    provisional: true
+    notes: "Fischer et al. 2020: 'Our nozzle has a diameter of about 9 mm'; Wikipedia (Water rocket): 9 mm 'Gardena nozzle'. Mass of cap + connector and price estimated."
+    diameter_m: 0.009
+    fits_neck_diameter_m: 0.0217
+  - id: bottle_nozzle_15mm
+    kind: nozzle
+    tier: bottle
+    name: "Restricted nozzle, 15 mm bore (drilled cap insert)"
+    mass_kg: 0.012
     price_jpy: 400
     provisional: true
-    notes: "nozzle_diameter_m = 0.009"
-  - id: bottle_fin_set_cardboard
+    notes: "Intermediate restriction between full-bore (22 mm) and Gardena (9 mm); a drilled PET cap with a bushing. Mass and price estimated."
+    diameter_m: 0.015
+    fits_neck_diameter_m: 0.0217
+  # --- fin sets ------------------------------------------------------------------------
+  - id: bottle_fin_set_cardboard_3
+    kind: bottle_fin_set
     tier: bottle
-    kind: fins
-    name: "3-4 corrugated-plastic / cardboard fins with tape"
-    mass_kg: 0.03
+    name: "3 corrugated-cardboard fins, taped to the bottle"
+    mass_kg: 0.025
+    price_jpy: 100
+    provisional: true
+    notes: "Three 80 x 120 mm trapezoids of 3 mm corrugated board (~0.5 kg/m2 est.) plus tape; mass and price estimated."
+    count: 3
+    span_m: 0.08
+  - id: bottle_fin_set_pp_sheet_4
+    kind: bottle_fin_set
+    tier: bottle
+    name: "4 polypropylene-sheet (PP 板 / 0.75 mm) fins, taped to the bottle"
+    mass_kg: 0.030
+    price_jpy: 300
+    provisional: true
+    notes: "Four 80 x 120 mm fins of 0.75 mm PP sheet (PP ~900 kg/m3 -> 0.68 kg/m2) plus tape; mass and price estimated."
+    count: 4
+    span_m: 0.08
+  # Fin-and-nose sets "as flown" by the two reference papers (catalog/references/bottle.yaml):
+  # the paper's rocket minus the catalog bottle and nozzle. Provisional: the mass is whatever
+  # closes the published (or estimated) empty mass of the rocket, not a measured part.
+  - id: bottle_fin_set_apte_2l
+    kind: bottle_fin_set
+    tier: bottle
+    name: "Apte & Apte 2 L rocket fin/nose set: 3 plastic-folder fins + nose cone cut from a 2 L bottle"
+    mass_kg: 0.051
+    price_jpy: 150
+    source: "https://jhss.scholasticahq.com/api/v1/articles/2101-the-influence-of-different-factors-on-the-maximum-height-reached-of-a-water-powered-rocket.pdf"
+    provisional: true
+    notes: "Paper (Table 1): 3 fins, nose cone 25.4 mm long from a second bottle, body 111 mm dia x 330 mm. The paper gives NO mass; 51 g closes the 0.10 kg dry-mass ESTIMATE of the reference entry (0.100 - 0.044 bottle - 0.005 nozzle seal). Span estimated."
+    count: 3
+    span_m: 0.08
+  - id: bottle_fin_set_fischer_1l
+    kind: bottle_fin_set
+    tier: bottle
+    name: "Fischer et al. 1 L D.I.Y. rocket fin/nose set (3 fins, nose cone, nose ballast)"
+    mass_kg: 0.097
     price_jpy: 200
+    source: "https://arxiv.org/abs/2001.08828"
     provisional: true
-  - id: bottle_nose_cone_foam
-    tier: bottle
-    kind: nose_cone
-    name: "Foam / second-bottle-top nose cone with egg bay"
-    mass_kg: 0.04
-    price_jpy: 300
-    provisional: true
-  - id: parachute_0p5m_plastic
-    tier: bottle
+    notes: "arXiv:2001.08828 section 9: the finished rocket 'has weight 143 g' (section 6 says 'curb weight of about 1/8 kg'); 97 g = 143 g - 31 g catalog bottle - 15 g Gardena nozzle, i.e. fins + nose cone + whatever ballast the authors used. Fin count and span estimated from the wind-tunnel photo."
+    count: 3
+    span_m: 0.07
+  # --- parachutes ----------------------------------------------------------------------
+  - id: bottle_parachute_30cm_plastic
     kind: parachute
-    name: "0.5 m plastic-sheet parachute with string"
-    mass_kg: 0.02
-    price_jpy: 300
+    tier: bottle
+    name: "30 cm plastic-sheet parachute with string (homemade or Estes 12 in equivalent)"
+    mass_kg: 0.003
+    price_jpy: 100
     provisional: true
-    notes: "parachute_diameter_m = 0.5, Cd ~1.5 assumed in physics/recovery.py"
-  # --- amateur tier ------------------------------------------------------------------------
-  - id: body_tube_54mm_90cm
-    tier: amateur
-    kind: body_tube
-    name: "54 mm (2.1 in) phenolic / kraft body tube, 90 cm"
-    mass_kg: 0.25
-    price_jpy: 3500
-    provisional: true
-    notes: "body_diameter_m = 0.054"
-  - id: body_tube_66mm_110cm
-    tier: amateur
-    kind: body_tube
-    name: "66 mm (2.6 in) phenolic / kraft body tube, 110 cm"
-    mass_kg: 0.38
-    price_jpy: 4800
-    provisional: true
-    notes: "body_diameter_m = 0.066"
-  - id: nose_cone_54mm_ogive
-    tier: amateur
-    kind: nose_cone
-    name: "54 mm plastic ogive nose cone, 15 cm"
-    mass_kg: 0.06
-    price_jpy: 1500
-    provisional: true
-    notes: "nose_shape = ogive, nose_length_m = 0.15"
-  - id: nose_cone_66mm_ogive
-    tier: amateur
-    kind: nose_cone
-    name: "66 mm plastic ogive nose cone, 20 cm"
-    mass_kg: 0.09
-    price_jpy: 2000
-    provisional: true
-    notes: "nose_shape = ogive, nose_length_m = 0.20"
-  - id: fin_stock_plywood_3mm
-    tier: amateur
-    kind: fin_stock
-    name: "3 mm aircraft plywood sheet, 300 x 300 mm (cuts 4 trapezoidal fins)"
-    mass_kg: 0.12
-    price_jpy: 900
-    provisional: true
-    notes: "FinSet.thickness_m = 0.003"
-  - id: fin_stock_g10_2mm
-    tier: amateur
-    kind: fin_stock
-    name: "2 mm G10 fibreglass sheet, 300 x 300 mm"
-    mass_kg: 0.33
-    price_jpy: 2500
-    provisional: true
-    notes: "FinSet.thickness_m = 0.002"
-  - id: parachute_0p9m_nylon
-    tier: amateur
+    notes: "Mass comparable to the Estes 12 in plastic chute (2 g, OpenRocket) plus string; packed dia 30 mm (fits a bottle-top nose cone); cd 1.5 = repository default."
+    diameter_m: 0.30
+    packed_diameter_m: 0.030
+    cd: 1.5
+  - id: bottle_parachute_50cm_plastic
     kind: parachute
-    name: "0.9 m ripstop nylon parachute"
-    mass_kg: 0.05
+    tier: bottle
+    name: "50 cm plastic-sheet parachute with string"
+    mass_kg: 0.010
+    price_jpy: 150
+    provisional: true
+    notes: "Scaled from Estes 18 in / 24 in plastic chute masses (6-8 g, OpenRocket) plus string; packed dia 40 mm; cd 1.5 = repository default."
+    diameter_m: 0.50
+    packed_diameter_m: 0.040
+    cd: 1.5
+  # --- launchers -----------------------------------------------------------------------
+  - id: launcher_bicycle_pump
+    kind: launcher
+    tier: bottle
+    name: "Bicycle-pump launcher (hand pump with gauge, neck clamp release, 0.6 m guide rail)"
+    mass_kg: 1.5
     price_jpy: 3000
+    source: "https://sciencetoymaker.org/overhead-water-rocket-launcher-home/water-rocket-safety-faqs/"
     provisional: true
-    notes: "parachute_diameter_m = 0.9"
-  - id: parachute_1p2m_nylon
-    tier: amateur
-    kind: parachute
-    name: "1.2 m ripstop nylon parachute"
-    mass_kg: 0.08
-    price_jpy: 4500
+    notes: "Hand pumps top out around 90 psi (620 kPa) ('difficult to do anyhow with an ordinary bicycle pump'); max set to 600 kPa. JAXA manual recommends a pump with a pressure gauge and guide rails 60-80 cm. Launcher mass and price estimated."
+    max_gauge_pressure_pa: 600000
+    rail_length_m: 0.6
+  - id: launcher_jaxa_style_rails
+    kind: launcher
+    tier: bottle
+    name: "JAXA / association-style launcher with 60-80 cm guide rails and adjustable angle"
+    mass_kg: 2.5
+    price_jpy: 8000
+    source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
     provisional: true
-    notes: "parachute_diameter_m = 1.2"
-  - id: motor_mount_29mm
-    tier: amateur
-    kind: motor_mount
-    name: "29 mm motor mount tube + centering rings + retainer"
-    mass_kg: 0.08
-    price_jpy: 2000
-    provisional: true
-    notes: "for motors with diameter_m = 0.029 (dummy_F32 / G80 / H128)"
-  - id: motor_mount_54mm
-    tier: amateur
-    kind: motor_mount
-    name: "54 mm motor mount tube + centering rings + retainer"
-    mass_kg: 0.15
-    price_jpy: 3500
-    provisional: true
-    notes: "for motors with diameter_m = 0.054 (dummy_J420); needs a 66 mm+ airframe"
+    notes: "JAXA manual: 'launcher be equipped with guide rails (each 60~80cm in length) and designed to be adjustable'; 'Pressure equivalent to 7 atmospheres at maximum is advised', 4-5 atm recommended -> max 700 kPa (hard limit; design to the bottle's 500 kPa). Mass and price estimated (commercial kit)."
+    max_gauge_pressure_pa: 700000
+    rail_length_m: 0.7
+# v1 alias (same list object): keeps agent/tools.py `_load_yaml_list("parts.yaml", "items")` and
+# report.py `_load_catalog_parts()` working until they switch to `parts:`.
+items: *parts

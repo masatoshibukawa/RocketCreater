@@ -61,14 +61,22 @@ GAMMA_AIR = atm.GAMMA_AIR
 R_AIR_JPKGK = atm.R_SPECIFIC_AIR_JPKGK
 WATER_DENSITY_KGPM3 = 1000.0
 # SIMPLIFICATION: one constant drag coefficient on the bottle cross-section for a finned bottle
-# rocket flying nose first (provisional; blunt bottles are often quoted at 0.3-0.5).
-DEFAULT_CD = 0.5
+# rocket flying nose first. 0.8 is the value the Apte & Apte paper assumes for a 2 L bottle with
+# a bottle-top nose cone and the upper end of Fischer et al.'s wind-tunnel 0.6 +/- 0.2 for a
+# streamlined 1 L rocket; calibrated with AIR_IMPULSE_EFFICIENCY against the 5 flights in
+# catalog/references/bottle.yaml (scripts/calibrate_small_rockets.py: RMS apogee error 18.9 %).
+# Provisional: one Cd cannot fit both the blunt Apte bottle and the streamlined Fischer rocket.
+DEFAULT_CD = 0.8
 # SIMPLIFICATION: a bottle without fins tumbles; modelled as a doubled drag coefficient.
 TUMBLING_DRAG_FACTOR = 2.0
 # SIMPLIFICATION: the air-blowdown phase is one instantaneous impulse equal to this fraction
 # of sqrt(2 m_air W_isentropic), i.e. of the impulse a uniform jet carrying the whole isentropic
-# expansion work would give (provisional efficiency).
-AIR_IMPULSE_EFFICIENCY = 0.5
+# expansion work would give. A plain choked orifice with no diverging section, and air escaping
+# as foam with the last of the water, deliver well under that ideal; the reference scan
+# (scripts/calibrate_small_rockets.py) prefers 0.25 over the earlier provisional 0.5 at every
+# Cd (0.0 fits the mass-uncertain Apte flights better still but leaves the fully documented
+# Fischer flights 15-26 % low). Provisional.
+AIR_IMPULSE_EFFICIENCY = 0.25
 # SIMPLIFICATION: the bottle diameter is estimated from the volume (a 1.5 L PET bottle is about
 # 90 mm across); provisional.
 _DIAMETER_1P5L_M = 0.09
@@ -131,11 +139,19 @@ class Flight:
 class _Dynamics:
     """ODE right-hand side; state = [x, y, z, vx, vy, vz, m_water]."""
 
-    def __init__(self, design: BottleDesign, env: Env) -> None:
+    def __init__(
+        self,
+        design: BottleDesign,
+        env: Env,
+        *,
+        cd: float = DEFAULT_CD,
+        air_impulse_efficiency: float = AIR_IMPULSE_EFFICIENCY,
+    ) -> None:
         self.p_atm = atm.state_scalar(env.launch_altitude_m, env.temperature_offset_k)[1]
         self.nozzle_area_m2 = math.pi * (design.nozzle_diameter_m / 2.0) ** 2
         self.area_m2 = math.pi * (bottle_diameter_m(design.bottle_volume_m3) / 2.0) ** 2
-        self.cd = DEFAULT_CD * (1.0 if design.has_fins else TUMBLING_DRAG_FACTOR)
+        self.cd = cd * (1.0 if design.has_fins else TUMBLING_DRAG_FACTOR)
+        self.air_impulse_efficiency = air_impulse_efficiency
         self.volume_m3 = design.bottle_volume_m3
         self.air_volume0_m3 = design.bottle_volume_m3 * (1.0 - design.water_fill_frac)
         self.p0 = self.p_atm + design.initial_gauge_pressure_pa
@@ -230,7 +246,7 @@ class _Dynamics:
             / (GAMMA_AIR - 1.0)
             * (1.0 - (self.p_atm / p_end) ** ((GAMMA_AIR - 1.0) / GAMMA_AIR))
         )
-        return AIR_IMPULSE_EFFICIENCY * math.sqrt(2.0 * m_air * work_j)
+        return self.air_impulse_efficiency * math.sqrt(2.0 * m_air * work_j)
 
 
 def _event(fn: Callable[..., float], *, terminal: bool, direction: int) -> Callable[..., float]:
@@ -245,10 +261,31 @@ def _check_design(design: Design) -> BottleDesign:
     return design
 
 
-def run_flight(design: BottleDesign, env: Env) -> Flight:
+def _resolve_constants(
+    cd: float | None, air_impulse_efficiency: float | None
+) -> tuple[float, float]:
+    """None -> module default; otherwise range-checked overrides (calibration scans)."""
+    cd = DEFAULT_CD if cd is None else cd
+    eff = AIR_IMPULSE_EFFICIENCY if air_impulse_efficiency is None else air_impulse_efficiency
+    if not cd > 0.0:
+        raise ValueError(f"cd must be > 0, got {cd}")
+    if not 0.0 <= eff <= 1.0:
+        raise ValueError(f"air_impulse_efficiency must be within [0, 1], got {eff}")
+    return cd, eff
+
+
+def run_flight(
+    design: BottleDesign,
+    env: Env,
+    *,
+    cd: float | None = None,
+    air_impulse_efficiency: float | None = None,
+) -> Flight:
     """Integrate launch -> rail exit -> water exhausted (+ air impulse) -> apogee, and on to
-    the ground when there is no parachute."""
-    dyn = _Dynamics(design, env)
+    the ground when there is no parachute. `cd` / `air_impulse_efficiency` override the module
+    constants (None -> default)."""
+    cd, eff = _resolve_constants(cd, air_impulse_efficiency)
+    dyn = _Dynamics(design, env, cd=cd, air_impulse_efficiency=eff)
     water_mass = design.bottle_volume_m3 * design.water_fill_frac * WATER_DENSITY_KGPM3
     m0 = dyn.dry_mass_kg + water_mass
     state = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, water_mass])
@@ -406,13 +443,21 @@ def _build_trace(flight: Flight, descent: recovery.DescentResult | None) -> list
 
 
 def simulate(
-    design: Design, env: Env, seed: int | None = None, *, target_apogee_m: float | None = None
+    design: Design,
+    env: Env,
+    seed: int | None = None,
+    *,
+    target_apogee_m: float | None = None,
+    cd: float | None = None,
+    air_impulse_efficiency: float | None = None,
 ) -> SimResult:
     """Common physics interface (CLAUDE.md section 6). `seed` is accepted for interface
-    compatibility; the nominal water model is deterministic and ignores it."""
+    compatibility; the nominal water model is deterministic and ignores it. `cd` and
+    `air_impulse_efficiency` override the module constants (None -> `DEFAULT_CD` /
+    `AIR_IMPULSE_EFFICIENCY`; used by scripts/calibrate_small_rockets.py)."""
     del seed
     bd = _check_design(design)
-    flight = run_flight(bd, env)
+    flight = run_flight(bd, env, cd=cd, air_impulse_efficiency=air_impulse_efficiency)
     th = PASS_THRESHOLDS
     failures: list[str] = []
     warnings: list[str] = []
