@@ -1,0 +1,36 @@
+{
+  "file": "outputs/rocketwright_wan22_test.mp4",
+  "sha256": "67ec24b34cedaf0e8c7041bb43e7fdcf1af113eb4dce314c6380d7b9bea0d32b",
+  "bytes": 195118,
+  "video": {
+    "width": 832,
+    "height": 480,
+    "fps": 24.0,
+    "decoded_frames": 49,
+    "duration_seconds": 2.0416666666666665,
+    "codec": "h264",
+    "audio_streams": 0
+  },
+  "generation_seconds": 30.09,
+  "frame_change_mean_absolute_pixel_difference": {
+    "consecutive_mean": 0.552,
+    "first_to_last": 5.723
+  },
+  "metadata": {
+    "major_brand": "isom",
+    "minor_version": "512",
+    "compatible_brands": "isomiso2avc1mp41",
+    "title": "RocketWright Fairing AI Video Test",
+    "encoder": "Lavf63.1.102",
+    "comment": "AI-generated with Wan2.2 TI2V-5B from an original Blender concept render; no engineering validation"
+  },
+  "checks": {
+    "full_decode": "passed",
+    "dimensions_fps_and_frames": "passed",
+    "nonblank_and_changing_frames": "passed",
+    "metadata_paths_and_working_labels": "passed"
+  },
+  "visual_review": "Contact sheet created; review separately. No exact geometry preservation claim.",
+  "watermark": "No service watermark or logo compositing step is used. Inspect the generated image for unwanted text separately.",
+  "audio": "Silent model output; no generated audio added."
+}

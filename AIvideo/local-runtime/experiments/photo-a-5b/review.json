@@ -1,0 +1,10 @@
+{
+  "decision": "candidate",
+  "notes": "6時点で写真調の工場と金属を保ち、小さなカメラ移動を確認。開始画像を変える効果が見えるが、3つの前向きノズル等の開始画像の不整合も残る。",
+  "reviewed_artifacts": [
+    "six-frame contact sheet"
+  ],
+  "full_real_time_playback_review": false,
+  "visible_service_watermark_found_in_reviewed_frames": false,
+  "geometry_equivalence_to_original": false
+}

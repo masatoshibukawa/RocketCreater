@@ -1,0 +1,10 @@
+{
+  "decision": "candidate",
+  "notes": "金属の微細な反射、床の跡、工場設備は自然に見える。一方、3つの前向きノズルと楕円形の殻になり、元の機体構造とは異なる。",
+  "reviewed_artifacts": [
+    "full-resolution generated image"
+  ],
+  "full_real_time_playback_review": false,
+  "visible_service_watermark_found_in_reviewed_frames": false,
+  "geometry_equivalence_to_original": false
+}
