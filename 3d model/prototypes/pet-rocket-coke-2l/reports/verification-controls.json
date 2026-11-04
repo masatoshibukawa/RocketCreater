@@ -1,0 +1,8 @@
+{
+  "sat_positive_controls": 2,
+  "sat_negative_controls": 2,
+  "valid_solid_volume_control": true,
+  "open_mesh_rejected": true,
+  "crossing_detected": true,
+  "invalid_cli_exit_code": 1
+}

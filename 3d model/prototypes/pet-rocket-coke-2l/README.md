@@ -34,6 +34,8 @@
 
 ゲージの凸面を下に置く試案も、初期層の大きな張り出しがレビューで見つかり、平らな円弧端面を下にする姿勢へ修正した。基準版の[baseline/](baseline/)は比較用に保持している。
 
+[独立レビューと改善結果](REVIEW.md)に、3視点の指摘・修正・残課題をまとめた。[幾何の検査結果](reports/geometry-verification.json)は全5STL合格、[実スライス](reports/printing/README.md)は4部品ともベッド内・途中欠層なし・支持経路なし。フィンの局所的な張り出しなど、実機で確認する箇所も記録している。
+
 ## 一般的なFDMで試す順序
 
 機種不明のため、220×220×250 mmの造形域、0.4 mmノズル、0.2 mm層、0.45 mm線幅、PLAでの形状試作を検討条件とした。これは特定機種の校正済みプロファイルではない。温度・速度・材料プロファイルは実機のメーカー設定を使う。
@@ -55,5 +57,11 @@ blender --background --factory-startup --python-exit-code 1 --python build.py --
 ```
 
 `parameters.json`の値を変更した場合、STL・Blender・検査結果をまとめて作り直す。再生成は数値的な微小継ぎ目を0.00001 mm以内で処理し、体積変化の上限、単一連結、閉じた面、非多様体、ゼロ面積面、非隣接面の交差を検査する。これらは幾何の検査であり、印刷成功・保持強度・飛行安定性の合格判定ではない。
+
+独立STL検査はnumpy/scipyのあるPythonで次を実行する。直下のbinary STL全件を読み、修復せず検査し、不合格は終了コード1になる。スライスの再現手順は[印刷記録](reports/printing/README.md#再現)を参照する。
+
+```powershell
+python verify_stl.py --directory improved --out reports/geometry-verification.json
+```
 
 ![仮定したボトル輪郭での配置参照。実物形状ではない](improved/assembly.png)

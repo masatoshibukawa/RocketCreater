@@ -48,7 +48,9 @@
         114.0,
         103.87489318847656
       ],
-      "numeric_seam_cleanup_volume_delta_mm3": 0.0002165639161830768
+      "numeric_seam_cleanup_volume_delta_mm3": 0.0002165639161830768,
+      "filename": "nose_cone.stl",
+      "coordinate_frame": "part_local_z_up"
     },
     "fin": {
       "vertices": 449,
@@ -82,7 +84,9 @@
         20.64982032775879,
         100.00000000531794
       ],
-      "numeric_seam_cleanup_volume_delta_mm3": -1.2969601812073961e-05
+      "numeric_seam_cleanup_volume_delta_mm3": -1.2969601812073961e-05,
+      "filename": "fin_assembly.stl",
+      "coordinate_frame": "bottle_axis_local"
     },
     "fit_ring": {
       "vertices": 800,
@@ -116,7 +120,9 @@
         114.0,
         18.0
       ],
-      "numeric_seam_cleanup_volume_delta_mm3": 6.896272680023685e-06
+      "numeric_seam_cleanup_volume_delta_mm3": 6.896272680023685e-06,
+      "filename": "fit_ring.stl",
+      "coordinate_frame": "part_local_z_up"
     },
     "fin_print": {
       "vertices": 449,
@@ -149,7 +155,9 @@
         97.59527587890625,
         20.64982032775879,
         72.62693786621094
-      ]
+      ],
+      "filename": "fin.stl",
+      "coordinate_frame": "print_pose_y45_min_xyz_zero"
     },
     "mount_gauge": {
       "vertices": 132,
@@ -182,7 +190,9 @@
         100.0,
         5.4101104736328125,
         20.310625076293945
-      ]
+      ],
+      "filename": "mount_gauge.stl",
+      "coordinate_frame": "print_pose_radial_end_face_down_long_axis_horizontal"
     }
   }
 }
