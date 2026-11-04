@@ -1,0 +1,36 @@
+{
+  "source_commit": "ecb270ead537073bfa38b110ac4e37f91de7161b",
+  "source_branch": "research/ai-3d-print-workflow",
+  "user_selection": "Existing 2L PET prototype v2; unmeasured values explicitly identified",
+  "files": [
+    {
+      "path": "source-data/assembly.json",
+      "bytes": 593,
+      "sha256": "fe24d8e66e3077ce47e9935cbe736e057a1903ce0a2162fb82fb4fff0f157403"
+    },
+    {
+      "path": "source-data/geometry.json",
+      "bytes": 5124,
+      "sha256": "26b3c19fc55b9cedab2aae3b471959ae368ea9828b3a6e682906852c39e10fb3"
+    },
+    {
+      "path": "source-data/parameters.json",
+      "bytes": 1500,
+      "sha256": "ea3ab67822fdb1ca11119b94279a1dd0975e0a020a463db1e2ebacbc29dc8d33"
+    },
+    {
+      "path": "assets/fin_assembly.stl",
+      "bytes": 45184,
+      "sha256": "6935cb062afa3e92c703370d36aab22fef6c58fe6dcbb6f20e35f9e8917699ce"
+    },
+    {
+      "path": "assets/nose_cone.stl",
+      "bytes": 880084,
+      "sha256": "4dead51a76bd63b54a48efba3a41aaef200536084742098922fe8f1b0073d097"
+    }
+  ],
+  "mesh_blobs": {
+    "assets/nose_cone.stl": "038ee61fffacc2782159a486f26336d7f4e3b9be",
+    "assets/fin_assembly.stl": "095467465043daaf143b26abdcf7b0f9942832a6"
+  }
+}
