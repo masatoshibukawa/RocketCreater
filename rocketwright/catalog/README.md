@@ -68,3 +68,7 @@ billed once). The design chain offers `dummy_*` only when no certified motor pas
 in its designation is not the average thrust (Estes' historical rating). `tests/test_solid.py`
 exempts this one motor from its label-vs-average-thrust check (`_LABEL_IS_NOT_AVERAGE_THRUST`)
 instead of faking the curve; the integral, peak and burn time still match the Estes page.
+
+## ペットボトルの部材・材料・機材
+
+ペットボトルロケットの[部材・材料・機材の候補表と使い方](bottle_resources.md)。
