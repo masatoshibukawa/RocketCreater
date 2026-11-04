@@ -31,7 +31,7 @@
 <text x="410" y="293" text-anchor="middle" class="edge-label">6　指標・単位・不確かさ・出典</text><path class="arrow" marker-end="url(#s-arr)" d="M717 300H103"/>
 <text x="310.5" y="335" text-anchor="middle" class="edge-label">7　全要求で判定し、未達なら根拠と履歴を返す</text><path class="arrow" marker-end="url(#s-arr)" d="M103 342H518"/>
 </svg></div>
-<figcaption>同じ探索空間では手順3〜7を反復。層やモデル版を変えたら手順2で候補を再選定します。公称合格案は別条件で確認し、上限到達・候補枯渇時は試した範囲と未達条件を返します。</figcaption></figure>
+<figcaption>変数の値・依存データ・モデル版・残予算が変わるたびに、手順2から使える組を再選定します。公称合格案は別条件で確認し、上限到達・候補枯渇時は試した範囲と未達条件を返します。<a href="selection.html#rules">候補を絞る条件とLLMが選ぶ手順</a></figcaption></figure>
 <ol class="notes">
 <li><strong>比較の条件を記録する。</strong> 要求・固定部品・変数と単位・環境・モデル版・根拠の図表をひと組にします。R14表2は実測、表3は著者の計算。絶対圧から周囲圧を引き、同じ試行IDで照合します。<a href="index.html#ref-R14">R14 表2–3</a></li>
 <li><strong>機体の改善とモデルの検証を分岐させる。</strong> 文献機体すら再現できず原因が分からない場合は、測定条件・モデルの適用域を調べます。新しい解析は「検証待ち」として入力・出力・照合先を登録し、実装・照合が済んだ版から探索に使います。許容誤差は測定誤差、対象条件、用途を踏まえて試験前に定めます。</li>
