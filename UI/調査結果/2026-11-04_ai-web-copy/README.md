@@ -8,7 +8,10 @@
 | --- | --- |
 | [現象と根拠](01_findings.md) | 実証研究、実務ガイド、今回の文体方針の区別 |
 | [多言語の比較と探索方法](02_multilingual-research.md) | 8言語の検索と対処、確認範囲 |
+| [編集と配置の実践](03_editing-playbook.md) | 書き換え、条件の置き場所、多言語の具体化例 |
 | [出典台帳](sources.csv) | 原題、言語、発行主体、URL、根拠の種類 |
+
+適用先は [文章とコピーのスキル](../../web-design-skills/categories/web-design-copy/SKILL.md)。索引、基礎、文字配置、実装、SF、AI活用、レビューにも接続しています。
 
 ## 今回の編集方針
 
