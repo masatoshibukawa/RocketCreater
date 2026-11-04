@@ -29,7 +29,7 @@
 | [無印良品ネットストア](https://www.muji.com/jp/ja/store)（S46） | 日本語のカテゴリと商品の整理 | 名称、写真、価格、選択肢の関係を観察する | ECには在庫・購入条件など固有の要件がある |
 | [Pentagram](https://www.pentagram.com/)（S47） | 分野・媒体を横断する制作事例 | Web以外の編集・サイン・書体も参考にする | 掲載作品ごとの作者・権利を区別する |
 
-映画UIの具体例は、続くSFデザインの章で扱います。制作者の説明が読める [Territory Studio](https://territorystudio.com/project/blade-runner-2049/)（S35）と [GMUNK](https://gmunk.com/OBLIVION-GFX)（S36）を優先してください。
+映画UIの具体例は [SFデザイン](06_scifi-interfaces.md) で扱います。制作者の説明が読める [Territory Studio](https://territorystudio.com/project/blade-runner-2049/)（S35）と [GMUNK](https://gmunk.com/OBLIVION-GFX)（S36）を優先してください。
 
 ## 3. ギャラリーを使い分ける
 
