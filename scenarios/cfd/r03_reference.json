@@ -1,0 +1,12 @@
+{
+  "key": "R03-model-1-approximation",
+  "source": "https://doi.org/10.2322/jjsass.52.449",
+  "basis": "Figure 4(a), table 3, 20 m/s. Approximate the drawn rounded nose by a half ellipsoid. Assume four rigid thin fins. No support wires or fixtures.",
+  "dimensions_mm": {
+    "overall": 463, "body_diameter": 92, "nose_length": 163, "fin_root": 100, "fin_tip": 100,
+    "fin_span": 70, "fin_sweep": 0, "fin_tail_inset": 0, "skirt_length": 0
+  },
+  "loaded_cg_mm": 183,
+  "measured_cd": 0.253,
+  "axial_cd": null
+}

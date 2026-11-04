@@ -14,7 +14,8 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("assembly", type=Path)
     p.add_argument("output", type=Path, help="new directory for this case")
-    p.add_argument("--shape", choices=["empty", "sphere", "flat", "recess"], default="recess")
+    shapes = ["empty", "sphere", "flat", "recess", "rounded_flat"]
+    p.add_argument("--shape", choices=shapes, default="recess")
     p.add_argument("--cells", type=int, default=16, help="cells per body diameter")
     p.add_argument("--width", type=float, default=8, help="periodic transverse width in diameters")
     p.add_argument("--upstream", type=float, default=3, help="inlet-to-nose distance in diameters")
@@ -23,7 +24,14 @@ def main():
     p.add_argument("--cant", type=float, default=0, help="equal-handed fin cant in degrees")
     p.add_argument("--times", type=float, default=36, help="duration in D/U; average last half")
     p.add_argument("--speed", type=float, default=15, help="rocket free-stream speed, m/s")
+    p.add_argument("--nu", type=float, default=1.5e-5, help="physical kinematic viscosity, m²/s")
     p.add_argument("--lattice-speed", type=float, default=0.075)
+    p.add_argument("--volume", action="store_true", help="save a 3-D sampled wake for plotting")
+    p.add_argument(
+        "--paired-samples",
+        action="store_true",
+        help="average adjacent lattice steps to check odd/even force sampling bias",
+    )
     args = p.parse_args()
     if (
         not 6 <= args.cells <= 64
@@ -70,9 +78,11 @@ def main():
         p.error("grid exceeds 32-bit indexing")
     if n * 19 * 4 * 2 > 0.80 * cp.cuda.runtime.memGetInfo()[0]:
         p.error("grid exceeds available GPU memory")
-    shape = ["empty", "sphere", "flat", "recess"].index(args.shape)
+    shape = shapes.index(args.shape)
+    if not 0 < args.nu < 0.001:
+        p.error("--nu must be a positive physical kinematic viscosity below 0.001")
     # Isothermal standard-air approximation. Sphere is a separate Re=100 benchmark.
-    reynolds = args.sphere_re if shape == 1 else args.speed * (diameter / 1000) / 1.5e-5
+    reynolds = args.sphere_re if shape == 1 else args.speed * (diameter / 1000) / args.nu
     tau = 0.5 + 3 * speed * d / reynolds
     cs = 0 if shape == 1 and reynolds <= 200 else 0.16
     angle = math.radians(args.angle)
@@ -99,8 +109,10 @@ def main():
     forces = cp.zeros((steps // sample_every, 6), cp.float32)
     args.output.mkdir(parents=True, exist_ok=False)
     start = time.monotonic()
+    checkpoint = max(1, steps // 4)
     for step in range(steps):
-        sample = (step + 1) % sample_every == 0
+        phase = (step + 1) % sample_every
+        sample = phase == 0 or (args.paired_samples and phase == sample_every - 1)
         advance(
             blocks,
             threads,
@@ -109,7 +121,13 @@ def main():
         src, dst = dst, src
         if step % 250 == 0:
             cp.cuda.Stream.null.synchronize()
+        if (step + 1) % checkpoint == 0 and (step + 1) < steps:
+            print(f"{args.output.name}: {100 * (step + 1) / steps:.0f}%", flush=True)
+    del dst
+    cp.get_default_memory_pool().free_all_blocks()
     coeff = forces.get().astype(float) / (0.5 * speed**2 * math.pi * d * d / 4)
+    if args.paired_samples:
+        coeff /= 2
     cd = coeff[:, 0] * along + coeff[:, 1] * across
     cl = -coeff[:, 0] * across + coeff[:, 1] * along
     times = np.arange(1, len(cd) + 1) * sample_every * speed / d
@@ -134,6 +152,22 @@ def main():
         pressure_coeff=2 * dr / (3 * speed**2),
         solid=solid.astype(bool),
     )
+    if args.volume:
+        stride = max(1, d // 8)
+        shape_zyx = tuple(math.ceil(s / stride) for s in (nz, ny, nx))
+        vol = cp.empty((2, *shape_zyx), cp.float32)
+        module.get_function("volume")(
+            ((math.prod(shape_zyx) + 127) // 128,),
+            threads,
+            (src, mask, vol, *sizes[:3], np.int32(stride)),
+        )
+        velocity, inside = vol.get()
+        np.savez_compressed(
+            args.output / "volume.npz",
+            ux_U=velocity / speed,
+            solid=inside.astype(bool),
+            stride=stride,
+        )
     result = dict(
         shape=args.shape,
         assembly=model["key"],
@@ -152,6 +186,7 @@ def main():
         angle_deg=args.angle,
         cant_deg=args.cant,
         steps=steps,
+        paired_samples=args.paired_samples,
         averaging_tU_D=[times[-1] / 2, times[-1]],
         mean=dict(zip(names[1:], mean, strict=True)),
         split_window_difference=dict(zip(names[1:], last.mean(0) - prev.mean(0), strict=True)),
