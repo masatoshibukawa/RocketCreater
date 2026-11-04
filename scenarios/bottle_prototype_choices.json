@@ -1,0 +1,34 @@
+[
+  {
+    "id": "component/D02/9/300/25/carton_plain",
+    "reason": "Start with the published recovery pattern and unmodified reference fins; inspect wet margin and ringdown."
+  },
+  {
+    "id": "component/D02/9/300/25/carton_damped",
+    "reason": "Keep the fin and choose the alternate mount to isolate the settling bound."
+  },
+  {
+    "id": "component/D02/9/300/25/carton_wide",
+    "reason": "The mount now settles but wet CG is aft of CP. Increase the span and recompute fin mass and CP."
+  },
+  {
+    "id": "flight/D02/9/300/25/carton_wide",
+    "reason": "Propagate the assembled layout and both drag bounds before considering a change in operating point."
+  },
+  {
+    "id": "component/D02/9/400/25/carton_wide",
+    "reason": "The first model underflew at both drag extremes. Keep the structure and fill fixed; test the listed higher operating point."
+  },
+  {
+    "id": "flight/D02/9/400/25/carton_wide",
+    "reason": "Check the revised nominal height and the assembled drag interval."
+  },
+  {
+    "id": "screen/D02/9/400/25/carton_wide",
+    "reason": "The nominal height and both drag extremes fit 27\u201333 m. Check the predeclared variation sample."
+  },
+  {
+    "id": "confirm/D02/9/400/25/carton_wide",
+    "reason": "Lock this cut pattern, mount, nozzle hypothesis and operating point. Emit the build packet if confirmation passes."
+  }
+]
