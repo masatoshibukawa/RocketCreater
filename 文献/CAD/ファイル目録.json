@@ -1,0 +1,346 @@
+[
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/bottle.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/bottle.scad",
+    "sha256": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/fins.scad",
+    "sha256": "5a852ae48cc98e648ae24f18c5b14926d2e9ab7a9c2a324fa91bfd4f9c2f0c64"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/gardena.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/gardena.scad",
+    "sha256": "2f4b5f879eed0879973b24ae6848f7cf89e07be740244e39c3bdda74df8940ba"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/pco-1881.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/pco-1881.scad",
+    "sha256": "e2620b331c5c6f8d1e703a8512dd8d568f8c1844da9d978e675cb43fe171eb08"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/PN1_3_narrow_fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/PN1_3_narrow_fins.scad",
+    "sha256": "931d2e02ead434db1209bd2ce87408fac00846077fa0de22896454f52ec774a3"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/PN2_3_broad_fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/PN2_3_broad_fins.scad",
+    "sha256": "39e1a027bc3220db628ef640cf745259698e9a5b7a68cddac723177542fc4cc5"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/PN3_5_narrow_fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/PN3_5_narrow_fins.scad",
+    "sha256": "cb73021b71881d773a02a0775b8b6d09e6a06c94090e365d1373f9a8a611ad86"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/releases/1A.stl",
+    "url": "https://github.com/adrianschlatter/RocketFins/releases/download/1A/1A.stl",
+    "sha256": "9a8f3d7921e7bf99f17047c52a8430f20ec2250169fefc1474a155292c9bede7",
+    "triangles": 36234
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/releases/2B.stl",
+    "url": "https://github.com/adrianschlatter/RocketFins/releases/download/2B/2B.stl",
+    "sha256": "0a44395cfbf2b7f2fd48ae010fe0f39bb1a3ab111f8613619c3c768e15489867",
+    "triangles": 66310
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/releases/3B.stl",
+    "url": "https://github.com/adrianschlatter/RocketFins/releases/download/3B/3B.stl",
+    "sha256": "a97bdd94f14f5af81a0a47287d29e11a5d6ec184a049ca721863862fcf9c4233",
+    "triangles": 69050
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/rocket.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/rocket.scad",
+    "sha256": "3a385691387e35a640e8a49d80672b7d5c55f85fc0e0b55cfc5e46dcf0c0667d"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/rocket_fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/rocket_fins.scad",
+    "sha256": "8ad2dc36aca07834209b4e20ed5c84e7cc4efd05d875155b6c2268e2db71d93d"
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Battery Mount.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Battery%20Mount.stl",
+    "sha256": "249339ecac9f7db57850220dead5cecb37f74fefa75aece87d73dfda71709e1f",
+    "triangles": 96
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Bottle Connector.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Bottle%20Connector.stl",
+    "sha256": "be19a68bf329156902b2757ded166ab3e18a8c0b3caca207689a19593c6cee66",
+    "triangles": 15462
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 A.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20A.stl",
+    "sha256": "9e6a8c9cf41dfabddfbae338e41bf5c77b92951e7bada24a7538450f05f079be",
+    "triangles": 130
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 B.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20B.stl",
+    "sha256": "f03d093caf9d86e573c6ca85dd6858f90a997fe081f9bcd52e544dd40b2212b7",
+    "triangles": 4920
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 C Large.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20C%20Large.stl",
+    "sha256": "45ca934b3dbaeb25cd3bf646fa36bca13b8315fc700ca70fbcbf30d79d57e754",
+    "triangles": 2266
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 C.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20C.stl",
+    "sha256": "1f1dbebef0efee02fc842cd1ad4731455607cf15d3efc83ba8b5a67497886b26",
+    "triangles": 1906
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 D.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20D.stl",
+    "sha256": "fa15e03259aaa473719d9ee84ad7d2b0539226ca1f13f51d112f5dbd87d3bc01",
+    "triangles": 1638
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fins Ring Type 1 Heavy.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fins%20Ring%20Type%201%20Heavy.stl",
+    "sha256": "4fa9d5eb66b34f155f2a3681a58443dc300f941f5236a010d97f639a3c7447d3",
+    "triangles": 1448
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fins Ring Type 1 Light.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fins%20Ring%20Type%201%20Light.stl",
+    "sha256": "d9743c94a4fc85b2a850d78f7650485fd1365d2965e47d955e7144dc066e003e",
+    "triangles": 1448
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Flight Computer Mount.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Flight%20Computer%20Mount.stl",
+    "sha256": "3782072bde8ce58b16e660c8ba6135d9731f34aeb31410dc25724e9140102d8e",
+    "triangles": 308
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Hose Connector Compressed Air Pomp.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Hose%20Connector%20Compressed%20Air%20Pomp.stl",
+    "sha256": "5322fd27e20345644b9aa716123cc1fc73f1aca3dba8df66ec45f421a018c67e",
+    "triangles": 19706
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Air pressure Cable Tie Holder.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Air%20pressure%20Cable%20Tie%20Holder.stl",
+    "sha256": "43ae3faca647b8841c0e574be729cd001f392c07f3204df58d4973c1a379258d",
+    "triangles": 2156
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Air pressure Cable Tie Slider.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Air%20pressure%20Cable%20Tie%20Slider.stl",
+    "sha256": "efacd59ddff1f9d17eeed54a61a9da7c659a08a43c206f904f96be64c08246da",
+    "triangles": 1562
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Air pressure Cable Tie Trigger.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Air%20pressure%20Cable%20Tie%20Trigger.stl",
+    "sha256": "4d3f30997e11353ef54532bab1b3a937448615be56f5affa94446347fc505c62",
+    "triangles": 1090
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Air pressure Quick release Trigger.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Air%20pressure%20Quick%20release%20Trigger.stl",
+    "sha256": "c7d4fc35fc5cc67511ad19436123e8d01147a168e7179d76fde5dbea8ef3f387",
+    "triangles": 9828
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Base Air pressure Cable Tie.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Base%20Air%20pressure%20Cable%20Tie.stl",
+    "sha256": "ab678940acbed6719b1aac4cef76e86ac962c8d565a2e5faa55c4cd8704f0d4d",
+    "triangles": 8810
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Base Air pressure Quick release.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Base%20Air%20pressure%20Quick%20release.stl",
+    "sha256": "ec0e696722aad3cc1e32654329e964436cdce876cb4fdfc6ed2b7425b6fbe7d8",
+    "triangles": 11942
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Foot.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Foot.stl",
+    "sha256": "dc6ee3fec4975cf325627f64def93b65eed4caf74c1ab868c1df77855328a323",
+    "triangles": 876
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Leg.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Leg.stl",
+    "sha256": "d9b65642ec4e1669059a3133ebd4ba74efc97f5b708b1ea3b6424ca610072c0a",
+    "triangles": 1904
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Nose Cone Body Type A.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Nose%20Cone%20Body%20Type%20A.stl",
+    "sha256": "dd7439dbeb185b0300beba71a97e811d6fdd15172c202c760c6e53d332907756",
+    "triangles": 7900
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Nose Cone Body Type B.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Nose%20Cone%20Body%20Type%20B.stl",
+    "sha256": "96e77b2d15922cf3483b1ac82d6318db29c185549b65a6208ccb45f03fdcd4eb",
+    "triangles": 9546
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Nose Cone Ejection Hatch.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Nose%20Cone%20Ejection%20Hatch.stl",
+    "sha256": "f7f54170f81e004a8d9e3dc22d9cd646d525a72f7413ca3890c21b9a71794205",
+    "triangles": 3860
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Nose Cone Tip.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Nose%20Cone%20Tip.stl",
+    "sha256": "aee65087b7059d9efc30b3f96cbf378442046b59068127c62e4715f877018e51",
+    "triangles": 2854
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Parachute Mechanical Trigger Part 1.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Parachute%20Mechanical%20Trigger%20Part%201.stl",
+    "sha256": "dc5829bbe01fcdaf3ae3b9fdeb87ae9230b272470f234cf89029ffa64bf8221d",
+    "triangles": 246
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Parachute Mechanical Trigger Part 2.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Parachute%20Mechanical%20Trigger%20Part%202.stl",
+    "sha256": "ad82ebe2666ec9fe25ad3276f156b8d3f997960a7617dff5f3aaf0cb05c32f90",
+    "triangles": 300
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Payload Body.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Payload%20Body.stl",
+    "sha256": "c33512a5692a25fe647aecc1486404ccbb06b833cf11e83ffa78644f4e3a3a26",
+    "triangles": 14526
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Payload Bottle Connector Type A.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Payload%20Bottle%20Connector%20Type%20A.stl",
+    "sha256": "7ab192e56321a3d2b68c62563518986417115cfb43fa37c7ddd936a6ecfb0352",
+    "triangles": 10354
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Payload Bottle Connector Type B.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Payload%20Bottle%20Connector%20Type%20B.stl",
+    "sha256": "ca4277307487618059af93475163e20dc630d2c96130517826f7bcc898ce11eb",
+    "triangles": 4952
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Payload Nose Connector.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Payload%20Nose%20Connector.stl",
+    "sha256": "a3e98acded15880bd03b878e6b026394e1ecb90e81481097b4b359fa7f27a451",
+    "triangles": 7488
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Rail Guide Mount Foot.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Rail%20Guide%20Mount%20Foot.stl",
+    "sha256": "966417ab0ec80664559a25963a96137cf6cb47e94f45b3c71e3fa7456ad9f990",
+    "triangles": 1140
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Rail Guide Mount Ring.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Rail%20Guide%20Mount%20Ring.stl",
+    "sha256": "f94696c9b88f5774c746a695b96dbafc5c65700db219b717e3227f3b5a15fb65",
+    "triangles": 1056
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Rail Guide Mount Slider.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Rail%20Guide%20Mount%20Slider.stl",
+    "sha256": "44b6a345d1fcd69c24657e90b3915b04704bc23cf671cb00d237c0bc020cce33",
+    "triangles": 54
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Servo Motor Arm Type 1.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Servo%20Motor%20Arm%20Type%201.stl",
+    "sha256": "e57fb64cacf2e417c36652907a0f3d068faf8963d221f45bd116cf6f74fdb6f1",
+    "triangles": 8202
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Servo Motor Arm Type 2.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Servo%20Motor%20Arm%20Type%202.stl",
+    "sha256": "0e1fcb2db542ab71301427913a61d4f665cc883f6c7fa6dd9228db1b07e11a9e",
+    "triangles": 6668
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Valve Connector.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Valve%20Connector.stl",
+    "sha256": "371033109fd793dbc232e6f783026a8ba98ba043b26b42c5d64546a41f327aa0",
+    "triangles": 11438
+  },
+  {
+    "source_id": "D22",
+    "path": "D22-FreeCAD/physics-water-rocket-nose-macroFCMacro.FCMacro",
+    "url": "https://raw.githubusercontent.com/JustThatRandomCoder/physics-water-rocket-project/c047014fdfa9b1004959c10a114613ec0f1979e8/physics-water-rocket-nose-macroFCMacro.FCMacro",
+    "sha256": "fdb4ed2a35bafc5882bbba83d616571cb7844600cdf333de84bccfa50cae6bf7"
+  },
+  {
+    "source_id": "D22",
+    "path": "D22-FreeCAD/physics-water-rocket-tail-ring-macro.FCMacro",
+    "url": "https://raw.githubusercontent.com/JustThatRandomCoder/physics-water-rocket-project/c047014fdfa9b1004959c10a114613ec0f1979e8/physics-water-rocket-tail-ring-macro.FCMacro",
+    "sha256": "fbe3bd77d602f3b00b4d355c6bfd005b4490db0ad8cce36d2e0945ed7a66d620"
+  },
+  {
+    "source_id": "D22",
+    "path": "D22-FreeCAD/water-rocket-nose-ring.FCStd",
+    "url": "https://raw.githubusercontent.com/JustThatRandomCoder/physics-water-rocket-project/c047014fdfa9b1004959c10a114613ec0f1979e8/water-rocket-nose-ring.FCStd",
+    "sha256": "a5073c73701f3f4d4cfddf37fb9bb092e1f9166c7c80849d9b65759696af2e9c"
+  },
+  {
+    "source_id": "D22",
+    "path": "D22-FreeCAD/water-rocket-tail-ring.FCStd",
+    "url": "https://raw.githubusercontent.com/JustThatRandomCoder/physics-water-rocket-project/c047014fdfa9b1004959c10a114613ec0f1979e8/water-rocket-tail-ring.FCStd",
+    "sha256": "547a992b0c94fae52367a080791ad4fae3c8ff9791f68b8c45fededa34eaea80"
+  }
+]
