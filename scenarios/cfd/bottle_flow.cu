@@ -17,8 +17,11 @@ __device__ bool solid(int shape,float x,float y,float z,float dx,const float *g)
     if(shape==0) return false;
     if(shape==1) return (x-.5f)*(x-.5f)+r2 < .25f;
     if(x<0 || x>g[0] || r2>=.25f) return false;
-    if(x<g[1]) return r2 < .25f*x*x/(g[1]*g[1]);
-    if(shape==2 || x<g[0]-g[7]) return true;
+    if(x<g[1]) {
+        float s=x/g[1];
+        return r2 < .25f*(shape==4 ? s*(2.f-s) : s*s);
+    }
+    if(shape==2 || shape==4 || x<g[0]-g[7]) return true;
     float s=(g[0]-x)/g[7];
     float radius=.15f+.35f*s;
     return r2 < radius*radius || r2 > (.5f-dx)*(.5f-dx);
@@ -123,4 +126,17 @@ extern "C" __global__ void cut(const float *src,const unsigned *mask,float *slic
     for(int i=0;i<19;++i) {float h=src[i*n+k]; dr+=h; mx+=ex[i]*h; my+=ey[i]*h;}
     slice[j]=mx/(1+dr); slice[j+plane]=my/(1+dr); slice[j+2*plane]=dr;
     slice[j+3*plane]=mask[k]>>31;
+}
+
+// Strided end-of-run sample for viewing a three-dimensional wake.
+extern "C" __global__ void volume(const float *src,const unsigned *mask,float *out,
+                                  int nx,int ny,int nz,int stride) {
+    int sx=(nx+stride-1)/stride,sy=(ny+stride-1)/stride,sz=(nz+stride-1)/stride;
+    int j=blockIdx.x*blockDim.x+threadIdx.x;
+    if(j>=sx*sy*sz) return;
+    int k=stride*((j%sx)+nx*((j/sx)%sy)+nx*ny*(j/(sx*sy))),n=nx*ny*nz;
+    float dr=0,mx=0;
+    for(int i=0;i<19;++i) {float h=src[i*n+k]; dr+=h; mx+=ex[i]*h;}
+    out[j]=mx/(1+dr);
+    out[j+sx*sy*sz]=mask[k]>>31;
 }
