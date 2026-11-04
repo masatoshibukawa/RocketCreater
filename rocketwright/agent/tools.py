@@ -178,14 +178,20 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "List catalog items: engines and strap-on boosters (commercial/heavy, "
                 "catalog/engines.yaml), parts (bottle/amateur) and solid motors (amateur, RASP "
                 ".eng files). Filter by tier and/or free-text query. Use the returned `id` "
-                "values verbatim as engine_id / booster_id / motor_id in designs."
+                "values verbatim as engine_id / booster_id / motor_id in designs. For water "
+                "rockets use kind=resources to find candidate materials, components and "
+                "equipment by model, shelf or role (e.g. fins, vibration, mass_measurement). "
+                "Resource ids identify planning candidates, not simulator inputs or inventory."
             ),
             "strict": True,
             "input_schema": _obj(
                 {
                     "tier": _nullable(tier_enum),
                     "query": _nullable({"type": "string"}),
-                    "kind": {"type": "string", "enum": ["engines", "parts", "motors", "all"]},
+                    "kind": {
+                        "type": "string",
+                        "enum": ["engines", "parts", "motors", "resources", "all"],
+                    },
                 }
             ),
         },
@@ -471,8 +477,8 @@ def _tool_search_catalog(inp: dict[str, Any]) -> dict[str, Any]:
         tier = Tier(tier).value
     query = inp.get("query") or None
     kind = inp.get("kind") or "all"
-    if kind not in ("engines", "parts", "motors", "all"):
-        raise ValueError(f"kind must be engines|parts|motors|all, got {kind!r}")
+    if kind not in ("engines", "parts", "motors", "resources", "all"):
+        raise ValueError(f"kind must be engines|parts|motors|resources|all, got {kind!r}")
     out: dict[str, Any] = {"engines": [], "parts": [], "motors": []}
     if kind in ("engines", "all"):
         out["engines"] = [
@@ -488,8 +494,24 @@ def _tool_search_catalog(inp: dict[str, Any]) -> dict[str, Any]:
         ]
     if kind in ("motors", "all"):
         out["motors"] = [m for m in _load_motors() if _item_matches(m, tier, query, {"amateur"})]
+    if kind == "resources" or (kind == "all" and tier in (None, "bottle")):
+        out["resources"] = [
+            row
+            for row in _load_yaml_list("bottle_resources.yaml", "items")
+            if _item_matches(row, tier, query, {"bottle"})
+        ]
+        out["resource_scope"] = (
+            "Planning candidates only. Source facts apply to the named object. 'needs' lists "
+            "evidence to collect for the intended use. Stock, compatibility, pressure rating "
+            "and measured properties are not implied. Resource ids do not go into BottleDesign."
+        )
     out["count"] = sum(len(v) for v in out.values() if isinstance(v, list))
-    if out["count"] == 0:
+    if kind == "resources":
+        out["note"] = (
+            "Select a resource id and plan its checks." if out["resources"]
+            else "No registered resource matched. Broaden the query or request a sourced entry."
+        )
+    elif out["count"] == 0:
         out["note"] = (
             "catalog is empty or nothing matched; propose representative values and say so"
         )

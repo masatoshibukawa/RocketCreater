@@ -1,0 +1,180 @@
+# scope describes which physical object the data belongs to. No stock is asserted here.
+# An anchor reuses only the source URL or checklist, never the physical properties.
+version: 1
+items:
+  - id: carbonated_pet
+    shelf: component
+    level: family
+    name: 炭酸飲料用 PET ボトル
+    roles: [bottle]
+    source: &d01 https://www.yac-j.com/wp-content/uploads/2024/11/1-1.pdf
+    basis: D01 の基本型は 1.5 L。2 L への変更は別設計。
+    needs: &bottle_checks [lot_or_label, empty_mass_g, internal_volume_ml, body_diameter_mm, neck_geometry, condition, documented_launcher_compatibility]
+  - id: coke_jp_1500
+    shelf: component
+    level: product
+    parent_id: carbonated_pet
+    name: 日本コカ・コーラ コカ・コーラ 1.5 L PET
+    aliases: [コカコーラ 1.5L, Coca-Cola 1.5L]
+    roles: [bottle]
+    part_family_id: pet_bottle_1p5l
+    source: &coke https://www.coca-cola.com/jp/ja/media-center/news-20230301-11
+    facts: {market: JP, nominal_beverage_ml: 1500}
+    needs: *bottle_checks
+  - id: coke_jp_2000
+    shelf: component
+    level: product
+    parent_id: carbonated_pet
+    name: 日本コカ・コーラ コカ・コーラ 2 L PET
+    aliases: [コカコーラ 2L, コカコーラの2リットルボトル, Coca-Cola 2L]
+    roles: [bottle]
+    part_family_id: pet_bottle_2l
+    source: *coke
+    facts: {market: JP, nominal_beverage_ml: 2000}
+    needs: *bottle_checks
+  - id: takagi_a401
+    shelf: component
+    level: product
+    name: タカギ A401 ロケット機体セットⅡ
+    roles: [airframe_kit, fins, nozzle]
+    source: https://prd1.takagi-member.jp/store/products/detail/249
+    basis: P02。機体側セット。発射台込みの A400 と区別。
+    needs: [kit_revision, installed_part_masses_g, nozzle_bore_mm, actual_launcher_model]
+
+  - id: pp_fin_075
+    shelf: material
+    level: specification
+    name: 尾翼用ポリプロピレン板（PP シート）
+    roles: [fins]
+    source: *d01
+    facts: {document_nominal_thickness_mm: 0.75}
+    needs: [cut_fin_mass_g, measured_thickness_mm, bending_stiffness, root_attachment]
+  - id: carton_fin
+    shelf: material
+    level: specification
+    name: 尾翼用の牛乳パック板紙
+    roles: [fins]
+    source: *d01
+    basis: D01 で PP 板と選択可能。組立後の形を比較する。
+    needs: [fold_geometry, bending_direction, cut_fin_mass_g, root_attachment]
+  - id: nose_paper
+    shelf: material
+    level: specification
+    name: ノーズコーン用の色画用紙
+    roles: [nose]
+    source: *d01
+    needs: [cone_mass_g, finished_geometry, ballast_position_mm]
+  - id: canopy_film
+    shelf: material
+    level: specification
+    name: 回収傘用の薄膜（袋）
+    roles: [canopy]
+    source: &d02 https://www.yac-j.com/wp-content/uploads/2024/11/1-2.pdf
+    facts: {document_nominal_thickness_mm: 0.03}
+    needs: [areal_mass_g_m2, packed_volume_ml, opening_repeatability]
+  - id: canopy_cloth
+    shelf: material
+    level: specification
+    name: 回収傘用の軽い布
+    roles: [canopy]
+    source: *d02
+    needs: [areal_mass_g_m2, permeability, packed_volume_ml, opening_repeatability]
+  - id: carbon_fiber
+    shelf: material
+    level: family
+    name: 炭素繊維（カーボン原糸）
+    roles: [reinforcement]
+    source: &toray https://toray-cfe.com/en/products/torayca-carbon-fibers/product-selector/
+    needs: [fiber_grade, tow_size, sizing]
+  - id: toray_t300_1k_50a
+    shelf: material
+    level: grade
+    parent_id: carbon_fiber
+    name: 東レ TORAYCA T300 1K 50A
+    aliases: [カーボン原糸, 炭素繊維]
+    roles: [reinforcement]
+    facts: {fiber_grade: T300, tow_filaments: 1000, sizing: 50A}
+    source: *toray
+    needs: &laminate_checks [matrix, layup, cured_thickness_mm, laminate_properties]
+  - id: toray_t700sc_12k_50c
+    shelf: material
+    level: grade
+    parent_id: carbon_fiber
+    name: 東レ TORAYCA T700SC 12K 50C
+    aliases: [カーボン原糸, 炭素繊維]
+    roles: [reinforcement]
+    facts: {fiber_grade: T700SC, tow_filaments: 12000, sizing: 50C}
+    source: *toray
+    needs: *laminate_checks
+  - id: cfrp_plate
+    shelf: material
+    level: family
+    name: 炭素繊維強化プラスチック（CFRP 積層板）
+    roles: [fins, support_plate]
+    source: &plate https://cfrp-plate.com/products/sn-t-010
+    needs: [plate_specification, layup, directional_bending_stiffness]
+  - id: sn010_t_g
+    shelf: material
+    level: product
+    parent_id: cfrp_plate
+    name: 蕨山Carbon SN010-T-G カーボン板（綾織・グロス）
+    roles: [fins, support_plate]
+    facts: {nominal_thickness_mm: 1.0, surface_weave: twill, finish: gloss}
+    source: *plate
+    basis: 表面柄の仕様。内部の積層順や東レの繊維品番は特定していない。
+    needs: [cut_mass_g, actual_thickness_mm, directional_bending_stiffness, root_attachment]
+
+  - id: takagi_a400
+    shelf: equipment
+    level: product
+    name: タカギ A400 製作キットⅡ の発射台
+    roles: [launch_fixture]
+    source: &takagi https://prd1.takagi-member.jp/store/products/detail/248
+    basis: P01。A400 はキット品番。地上の発射台を飛翔質量に含めない。
+    needs: [actual_manual_revision, compatible_bottle_and_nozzle, condition]
+  - id: hand_pump
+    shelf: equipment
+    level: specification
+    name: 手動の自転車用空気入れ
+    roles: [ground_supply]
+    source: *takagi
+    needs: [pump_model, launcher_connection, gauge_range_and_accuracy]
+  - id: fin_alignment_template
+    shelf: equipment
+    level: specification
+    name: 尾翼の取付位置をそろえる治具・型紙
+    roles: [fabrication, fins, fin_alignment]
+    source: *d01
+    needs: [actual_body_diameter_mm, fin_count, angular_repeatability_deg]
+  - id: and_hl_200i
+    shelf: equipment
+    level: product
+    name: A&D HL-200i はかり
+    roles: [mass_measurement]
+    source: &scale https://www.aandd.co.jp/products/weighing/balance/bal-digital/hl/
+    facts: {capacity_g: 200, readability_g: 0.1}
+    needs: &weigh_checks [instrument_id, calibration_check, fixture_mass_g, measurement_uncertainty_g]
+  - id: and_hl_2000i
+    shelf: equipment
+    level: product
+    name: A&D HL-2000i はかり
+    roles: [mass_measurement]
+    source: *scale
+    facts: {capacity_g: 2000, readability_g: 1}
+    needs: *weigh_checks
+  - id: mitutoyo_cd_15ax
+    shelf: equipment
+    level: product
+    name: ミツトヨ CD-15AX デジタルノギス
+    roles: [length_measurement, bottle, fins, nozzle]
+    source: https://www.mitutoyo.co.jp/useful/catalog-13-52/pdf/238.pdf
+    facts: {code: 500-151-30, range_max_mm: 150, readability_mm: 0.01}
+    needs: [instrument_id, calibration_check, contact_geometry, measurement_uncertainty_mm]
+  - id: bosch_bmi270
+    shelf: equipment
+    level: product
+    name: Bosch BMI270 六軸 IMU（センサ単体）
+    roles: [angular_rate, acceleration, vibration]
+    source: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf
+    basis: 完成した記録計ではない。搭載時は基板・電池・固定具を含む質量と搭載位置が変わる。
+    needs: [logger_board, sample_rate_hz, usable_bandwidth_hz, full_scale, timestamp_check, sensor_mount, installed_mass_g]
