@@ -1,0 +1,4 @@
+interface:
+  display_name: "3D制作の記録と検収"
+  short_description: "制作条件と試作結果を既存テンプレートで記録し、受け渡し資料を揃える"
+  default_prompt: "$3d-model-records を使い、この制作のモデル・設定・試作結果を整理し、再現と受け渡しに必要な記録を作ってください。"

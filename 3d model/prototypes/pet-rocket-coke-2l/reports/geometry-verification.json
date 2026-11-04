@@ -1,0 +1,261 @@
+{
+  "valid": true,
+  "units_assumed": "mm",
+  "verifier_sha256": "73b01dd42564d995c5a678d1f7f3b9a2f8a726d843997fbe6941af09fcb94e0e",
+  "dependencies": {
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "tolerances": {
+    "intersection_epsilon_mm": 1e-09,
+    "minimum_triangle_area_mm2": 1e-09
+  },
+  "method": "Exact-coordinate vertex weld; edge incidence/direction; single-cycle vertex links; signed tetrahedral volume; AABB broad phase and separating-axis triangle intersection test",
+  "limitations": [
+    "Binary STL only; unit metadata is absent from STL and millimetres are assumed.",
+    "Each file is required to contain one connected positive-volume solid.",
+    "Only exactly equal STL vertices are welded; no gap repair is performed.",
+    "Intersection tests skip any pair of triangles sharing a vertex; overlaps beyond the shared feature in such pairs are not exhaustively tested.",
+    "SAT epsilon expands projection intervals; contacts within epsilon may be reported as intersections. Float32 export precision is inherited.",
+    "Zero stored normals are counted but not rejected; topology and face-direction checks use geometry.",
+    "This does not check different files against one another or qualify printing, material strength, physical fit, attachment, stability or flight."
+  ],
+  "errors": [],
+  "files": [
+    {
+      "file": "fin.stl",
+      "sha256": "fdb04dfeb5d7c6407ed21dd9432004daf8d922b2466ce02dc257c5f9dd3c7a21",
+      "valid": true,
+      "errors": [],
+      "vertices": 449,
+      "triangles": 902,
+      "edges": 1353,
+      "connected_components": 1,
+      "euler_characteristic": -2,
+      "non_two_incidence_edges": 0,
+      "inconsistent_directed_edges": 0,
+      "nonmanifold_vertex_links": 0,
+      "degenerate_triangles": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "nonadjacent_bbox_candidates": 8636,
+      "intersection_pair_indices": [],
+      "zero_length_stored_normals": 0,
+      "volume_mm3": 12510.122617647092,
+      "surface_area_mm2": 11164.800213920105,
+      "volume_centroid_mm": [
+        50.244845481772415,
+        10.324910085009437,
+        29.392411846512964
+      ],
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          97.59527587890625,
+          20.64982032775879,
+          72.62693786621094
+        ]
+      ],
+      "dimensions_mm": [
+        97.59527587890625,
+        20.64982032775879,
+        72.62693786621094
+      ],
+      "minimum_triangle_area_mm2": 1.0720512364059687e-05,
+      "minimum_edge_length_mm": 0.011024263901321017
+    },
+    {
+      "file": "fin_assembly.stl",
+      "sha256": "6935cb062afa3e92c703370d36aab22fef6c58fe6dcbb6f20e35f9e8917699ce",
+      "valid": true,
+      "errors": [],
+      "vertices": 449,
+      "triangles": 902,
+      "edges": 1353,
+      "connected_components": 1,
+      "euler_characteristic": -2,
+      "non_two_incidence_edges": 0,
+      "inconsistent_directed_edges": 0,
+      "nonmanifold_vertex_links": 0,
+      "degenerate_triangles": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "nonadjacent_bbox_candidates": 3176,
+      "intersection_pair_indices": [],
+      "zero_length_stored_normals": 0,
+      "volume_mm3": 12510.124973548265,
+      "surface_area_mm2": 11164.80163273207,
+      "volume_centroid_mm": [
+        70.5898980180013,
+        -1.385469886482498e-09,
+        54.9570449795815
+      ],
+      "bounds_mm": [
+        [
+          54.48999786376953,
+          -10.324910163879395,
+          -5.317942974869538e-09
+        ],
+        [
+          107.19999694824219,
+          10.324910163879395,
+          100.0
+        ]
+      ],
+      "dimensions_mm": [
+        52.709999084472656,
+        20.64982032775879,
+        100.00000000531794
+      ],
+      "minimum_triangle_area_mm2": 1.0654228390194476e-05,
+      "minimum_edge_length_mm": 0.011022757030049395
+    },
+    {
+      "file": "fit_ring.stl",
+      "sha256": "5fa93eca2a7e1c8530b40331d3b6eb44279ae92652f6fb2d9b94282b87af1c5a",
+      "valid": true,
+      "errors": [],
+      "vertices": 800,
+      "triangles": 1600,
+      "edges": 2400,
+      "connected_components": 1,
+      "euler_characteristic": 0,
+      "non_two_incidence_edges": 0,
+      "inconsistent_directed_edges": 0,
+      "nonmanifold_vertex_links": 0,
+      "degenerate_triangles": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "nonadjacent_bbox_candidates": 2032,
+      "intersection_pair_indices": [],
+      "zero_length_stored_normals": 0,
+      "volume_mm3": 10139.193680452234,
+      "surface_area_mm2": 13759.660658511035,
+      "volume_centroid_mm": [
+        1.5977971114767882e-15,
+        -2.854362925363298e-14,
+        9.024404659130555
+      ],
+      "bounds_mm": [
+        [
+          -57.0,
+          -57.0,
+          0.0
+        ],
+        [
+          57.0,
+          57.0,
+          18.0
+        ]
+      ],
+      "dimensions_mm": [
+        114.0,
+        114.0,
+        18.0
+      ],
+      "minimum_triangle_area_mm2": 0.6152378995905878,
+      "minimum_edge_length_mm": 0.5656833622925318
+    },
+    {
+      "file": "mount_gauge.stl",
+      "sha256": "a9d3989eb341a5c0936cb1daac9005509ca2ddecb5c75d94e8e4b0925e41b7e1",
+      "valid": true,
+      "errors": [],
+      "vertices": 132,
+      "triangles": 260,
+      "edges": 390,
+      "connected_components": 1,
+      "euler_characteristic": 2,
+      "non_two_incidence_edges": 0,
+      "inconsistent_directed_edges": 0,
+      "nonmanifold_vertex_links": 0,
+      "degenerate_triangles": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "nonadjacent_bbox_candidates": 369,
+      "intersection_pair_indices": [],
+      "zero_length_stored_normals": 0,
+      "volume_mm3": 3678.5686577999286,
+      "surface_area_mm2": 4520.936245593996,
+      "volume_centroid_mm": [
+        50.000000000000014,
+        3.2858942455903266,
+        10.107503644315644
+      ],
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          100.0,
+          5.4101104736328125,
+          20.310625076293945
+        ]
+      ],
+      "dimensions_mm": [
+        100.0,
+        5.4101104736328125,
+        20.310625076293945
+      ],
+      "minimum_triangle_area_mm2": 0.5655850389084662,
+      "minimum_edge_length_mm": 0.6284390107969308
+    },
+    {
+      "file": "nose_cone.stl",
+      "sha256": "4dead51a76bd63b54a48efba3a41aaef200536084742098922fe8f1b0073d097",
+      "valid": true,
+      "errors": [],
+      "vertices": 8800,
+      "triangles": 17600,
+      "edges": 26400,
+      "connected_components": 1,
+      "euler_characteristic": 0,
+      "non_two_incidence_edges": 0,
+      "inconsistent_directed_edges": 0,
+      "nonmanifold_vertex_links": 0,
+      "degenerate_triangles": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "nonadjacent_bbox_candidates": 41356,
+      "intersection_pair_indices": [],
+      "zero_length_stored_normals": 0,
+      "volume_mm3": 45487.271685751766,
+      "surface_area_mm2": 57539.23088135247,
+      "volume_centroid_mm": [
+        -4.482514248432848e-15,
+        4.674531625066737e-15,
+        42.32375710327925
+      ],
+      "bounds_mm": [
+        [
+          -57.0,
+          -57.0,
+          0.0
+        ],
+        [
+          57.0,
+          57.0,
+          103.87489318847656
+        ]
+      ],
+      "dimensions_mm": [
+        114.0,
+        114.0,
+        103.87489318847656
+      ],
+      "minimum_triangle_area_mm2": 0.04158711265645956,
+      "minimum_edge_length_mm": 0.20340948675369808
+    }
+  ]
+}

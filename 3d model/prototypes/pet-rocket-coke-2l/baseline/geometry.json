@@ -1,0 +1,101 @@
+{
+  "revision": "v1",
+  "units": "mm",
+  "generator": "Blender 5.2.2 LTS",
+  "bottle_fit_measured": false,
+  "physical_print_completed": false,
+  "nose_analytic": {
+    "fit_inner_diameter_mm": 110.8,
+    "outer_diameter_mm": 114.0,
+    "normal_cone_wall_mm": 1.4535847242857194,
+    "tip_radius_mm": 6.0,
+    "height_mm": 137.55573435914746,
+    "cylindrical_fit_depth_mm": 22.0
+  },
+  "parts": {
+    "nose_cone": {
+      "vertices": 8322,
+      "triangles": 16640,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 46829.43284986859,
+      "solid_mass_g_at_assumed_density": 58.06849673383706,
+      "bounds_mm": [
+        [
+          -57.0,
+          -57.0,
+          0.0
+        ],
+        [
+          57.0,
+          57.0,
+          137.5557403564453
+        ]
+      ],
+      "dimensions_mm": [
+        114.0,
+        114.0,
+        137.5557403564453
+      ]
+    },
+    "fin": {
+      "vertices": 176,
+      "triangles": 356,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 11701.489800369674,
+      "solid_mass_g_at_assumed_density": 14.509847352458397,
+      "bounds_mm": [
+        [
+          54.48999786376953,
+          -10.324910163879395,
+          0.0
+        ],
+        [
+          107.19999694824219,
+          10.324910163879395,
+          100.0
+        ]
+      ],
+      "dimensions_mm": [
+        52.709999084472656,
+        20.64982032775879,
+        100.0
+      ]
+    },
+    "fit_ring": {
+      "vertices": 640,
+      "triangles": 1280,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 2259.3556883489673,
+      "solid_mass_g_at_assumed_density": 2.8016010535527194,
+      "bounds_mm": [
+        [
+          -57.0,
+          -57.0,
+          0.0
+        ],
+        [
+          57.0,
+          57.0,
+          4.0
+        ]
+      ],
+      "dimensions_mm": [
+        114.0,
+        114.0,
+        4.0
+      ]
+    }
+  }
+}

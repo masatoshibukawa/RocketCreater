@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dモデルの制作レシピ"
+  short_description: "置物・寸法付き部品・浮き彫りのレシピを、依頼の条件に合わせて具体化する"
+  default_prompt: "$3d-model-recipes を使い、作りたいものに合うレシピを選び、寸法と印刷条件に合わせて制作を具体化してください。"

@@ -1,0 +1,39 @@
+{
+  "revision": "v1",
+  "units": "mm",
+  "bottle": {
+    "description": "Coca-Cola 2 L reference; dimensions are assumptions, not manufacturer specifications",
+    "body_diameter": 110.0,
+    "height": 315.0,
+    "radial_clearance": 0.4,
+    "fit_measured": false
+  },
+  "nose": {
+    "skirt_height": 22.0,
+    "wall": 1.6,
+    "wall_mode": "radial",
+    "slope": 0.46,
+    "tip_radius": 6.0
+  },
+  "fin": {
+    "count": 3,
+    "root_chord": 100.0,
+    "span": 50.0,
+    "tip_chord": 36.0,
+    "tip_trailing_offset": 50.0,
+    "thickness": 2.4,
+    "saddle_width": 20.0,
+    "saddle_wall": 1.8,
+    "root_fillet": 0.0,
+    "corner_radius": 0.0,
+    "slot_width": 3.6,
+    "slot_height": 8.0,
+    "slot_centers": [20.0, 78.0],
+    "slot_round": false,
+    "mount_tail_z": 85.0
+  },
+  "fit_ring": {"height": 4.0, "wall": 1.6},
+  "resolution": 160,
+  "mass_density_g_cm3": 1.24,
+  "print_assumption": {"technology": "FDM", "bed_mm": [220, 220, 250], "nozzle_mm": 0.4, "layer_mm": 0.2, "line_width_mm": 0.45, "material": "generic PLA geometry trial"}
+}

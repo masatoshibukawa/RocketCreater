@@ -1,0 +1,4 @@
+interface:
+  display_name: "3D制作の全体工程"
+  short_description: "用途と寸法から制作経路を選び、試作と出力までの合格条件を整理する"
+  default_prompt: "$3d-model-overview を使い、作りたいものの用途と寸法から、制作経路と工程ごとの確認条件を決めてください。"

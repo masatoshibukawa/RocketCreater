@@ -1,0 +1,50 @@
+{
+  "revision": "v2",
+  "units": "mm",
+  "bottle": {
+    "description": "Coca-Cola 2 L reference; dimensions are assumptions, not manufacturer specifications",
+    "body_diameter": 110.0,
+    "height": 315.0,
+    "radial_clearance": 0.4,
+    "fit_measured": false,
+    "cylinder_start_z": 100.0,
+    "cylinder_end_z": 280.0,
+    "neck_radius": 15.0,
+    "neck_height": 35.0
+  },
+  "nose": {
+    "skirt_height": 28.0,
+    "insertion_depth": 18.0,
+    "wall": 1.6,
+    "wall_mode": "normal",
+    "slope": 0.6,
+    "tip_radius": 16.0,
+    "tip_opening_diameter": 16.0,
+    "entry_chamfer": 0.4,
+    "soft_cap_required": true
+  },
+  "fin": {
+    "count": 3,
+    "root_chord": 100.0,
+    "span": 50.0,
+    "tip_chord": 36.0,
+    "tip_trailing_offset": 50.0,
+    "thickness": 2.4,
+    "saddle_width": 20.0,
+    "saddle_wall": 1.8,
+    "root_web": 3.0,
+    "corner_radius": 2.0,
+    "slot_width": 3.6,
+    "slot_height": 8.0,
+    "slot_root_offset": 4.0,
+    "slot_centers": [20.0, 78.0],
+    "slot_round": true,
+    "mount_tail_z": 100.0,
+    "print_rotation_y_deg": 45.0
+  },
+  "fit_ring": {"height": 18.0, "wall": 1.6, "entry_chamfer": 0.4},
+  "resolution": 160,
+  "mass_density_g_cm3": 1.24,
+  "print_assumption": {"technology": "FDM", "bed_mm": [220, 220, 250], "nozzle_mm": 0.4, "layer_mm": 0.2, "line_width_mm": 0.45, "material": "generic PLA geometry trial", "supports": false, "outer_brim_mm": 8.0},
+  "flight_status": "not_released_fit_retention_recovery_and_whole_vehicle_stability_unverified"
+}
