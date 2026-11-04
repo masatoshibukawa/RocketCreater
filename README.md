@@ -8,6 +8,8 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 **Built with Claude: Japan 2026** 向けに開発。すべてシミュレーション上で完結し、実機は打ち上げません。
 ライセンスは MIT です。
 
+ペットボトルロケットの設計変数・解析手法・評価指標は、[ブラウザで読める設計ガイド](UI/bottle-pool/README.md)にまとめています。
+
 ## 何をするか
 
 1. 要求を `bottle` / `amateur` / `commercial` / `heavy` のいずれかに分類する。
