@@ -1,0 +1,62 @@
+{
+  "id": "cg-short-prompt-safe",
+  "fingerprint": "e4b1c589686cc41be5aa52fdc51cbfa5b323a3a36b50ae2639abada3a3ed8571",
+  "config": {
+    "width": 832,
+    "height": 480,
+    "frames": 49,
+    "fps": 24,
+    "steps": 20,
+    "seed": 20261104,
+    "positive": "A slow smooth camera dolly to the right, revealing subtle natural parallax. The spacecraft assembly remains stationary and rigid on its support fixture. Soft practical ceiling lights create natural reflections on the metal. A continuous documentary inspection shot.",
+    "negative": "text, subtitles, logos, watermark, animation, cartoon, plastic, oversaturated, oversharpened, blurry, morphing, bending metal, moving machinery, duplicate engines, flicker, jitter, abrupt cut, flames, smoke, people",
+    "id": "cg-short-prompt-safe",
+    "backend": "wan5b",
+    "runtime_profile": "standard-offload",
+    "source": "../Test project/renders/frames/frame_0170.png",
+    "hypothesis": "Retry the interrupted short-prompt take with standard model offloading. This changes the runtime memory profile; retain the interrupted record."
+  },
+  "input_sha256": "e1228b2dc7c620cf354da41e1a9e01b2850d6081f7dae8fd2cd4013c511aaa4d",
+  "models": [
+    {
+      "file": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "sha256": "c3355d30191f1f066b26d93fba017ae9809dce6c627dda5f6a66eaa651204f68"
+    },
+    {
+      "file": "wan2.2_ti2v_5B_fp16.safetensors",
+      "sha256": "456f901338bd9eadbded3828b819109a9b68e8a525ca5cf8d0049a69fcfeca1e"
+    },
+    {
+      "file": "wan2.2_vae.safetensors",
+      "sha256": "e40321bd36b9709991dae2530eb4ac303dd168276980d3e9bc4b6e2b75fed156"
+    }
+  ],
+  "created_utc": "2026-11-04T09:10:28.147685+00:00",
+  "status": "completed",
+  "runtime_profile": "standard-offload",
+  "prompt_id": "dd2d614f-23fa-4b1c-8b5c-b6db6c3dfe59",
+  "server_seconds": 55.689,
+  "output": "outputs/experiments/cg-short-prompt-safe/video.mp4",
+  "output_sha256": "05433f0acfd5802b32d3a5033cfd8b455d2a6eeae7806f463c84046b91a58414",
+  "metrics": {
+    "width": 832,
+    "height": 480,
+    "frames": 49,
+    "fps": 24.0,
+    "seconds": 2.0416666666666665,
+    "full_decode": true,
+    "mean_frame_change": 0.7661,
+    "metadata": {
+      "major_brand": "isom",
+      "minor_version": "512",
+      "compatible_brands": "isomiso2avc1mp41",
+      "title": "RocketWright Local Video Experiment",
+      "encoder": "Lavf63.1.102",
+      "comment": "AI-generated concept visualization; no engineering validation"
+    },
+    "note": "Frame change is a motion/consistency diagnostic, not a realism score."
+  },
+  "polling_session_seconds": 58.31,
+  "sampled_device_memory_peak_mib": 20444,
+  "memory_note": "Whole-device usage sampled every few seconds; includes other applications, may miss peaks."
+}

@@ -25,6 +25,7 @@
     {
       "id": "photo-a",
       "backend": "photo",
+      "runtime_profile": "standard-offload",
       "width": 1024,
       "height": 576,
       "positive": "A documentary photograph inside a working spacecraft assembly workshop. An exposed small upper-stage propulsion module on a low yellow steel assembly stand, centered in the foreground. Two tall curved black carbon-composite payload fairing shell halves stand upright to its left and right, open toward the camera, their interior stiffener ribs and silver bolted flanges visible. Between them a compact triangular silver tubular truss holds two black bell-shaped rocket engine nozzles. A real industrial environment with roof beams, cable trays, suspended practical lights, metal work benches, tool carts, coiled cables and distant shelving. Worn painted concrete floor with subtle oil marks and grounded contact shadows. Close inspection photograph at human eye level, 50mm lens, f5.6, natural cool window light mixed with warm practical ceiling lighting, restrained colors, detailed brushed metal, carbon fiber texture, tiny scratches, believable uneven roughness. The whole assembly is visible, two fairing halves frame the central hardware. No people, no text or labels.",
@@ -33,6 +34,7 @@
     {
       "id": "photo-b",
       "backend": "photo",
+      "runtime_profile": "standard-offload",
       "width": 1024,
       "height": 576,
       "seed": 20261105,
@@ -42,12 +44,14 @@
     {
       "id": "photo-a-5b",
       "backend": "wan5b",
+      "runtime_profile": "standard-offload",
       "source": "outputs/experiments/photo-a/image.png",
       "hypothesis": "Change the start image only versus cg-short-prompt, retaining the same Wan5B prompt, seed, dimensions, steps, and fps."
     },
     {
       "id": "photo-a-14b",
       "backend": "wan14b",
+      "runtime_profile": "standard-offload",
       "source": "outputs/experiments/photo-a/image.png",
       "fps": 16,
       "cfg": 3.5,
@@ -59,6 +63,7 @@
     {
       "id": "photo-a-14b-720",
       "backend": "wan14b",
+      "runtime_profile": "standard-offload",
       "source": "outputs/experiments/photo-a/image.png",
       "width": 1280,
       "height": 720,
@@ -67,7 +72,50 @@
       "shift": 5,
       "sampler": "euler",
       "split_step": 10,
-      "hypothesis": "Change video resolution only from photo-a-14b to 1280x720 to inspect retained fine detail at higher compute cost. The 14B workflow accepts multiples of 16."
+      "hypothesis": "Change video resolution only from photo-a-14b to 1280x720 to inspect retained fine detail at higher compute cost. The 14B workflow accepts multiples of 16.",
+      "enabled": false
+    },
+    {
+      "id": "cg-short-prompt-safe",
+      "backend": "wan5b",
+      "runtime_profile": "standard-offload",
+      "source": "../Test project/renders/frames/frame_0170.png",
+      "hypothesis": "Retry the interrupted short-prompt take with standard model offloading. This changes the runtime memory profile; retain the interrupted record."
+    },
+    {
+      "id": "photo-c",
+      "backend": "photo",
+      "runtime_profile": "standard-offload",
+      "width": 1024,
+      "height": 576,
+      "positive": "A real documentary photograph of an upright rocket upper-stage assembly being inspected inside an aerospace factory. The central rocket stage is vertical: a polished cylindrical propellant tank on top, a silver tubular triangular spaceframe below it, and exactly two large dark metallic bell-shaped engine nozzles at the very bottom pointing straight down toward the concrete floor. Their circular openings face the floor, not the camera. A heavy yellow bolted steel assembly fixture supports the stage above the floor. On either side of the stage, two very tall and narrow black carbon-fiber payload fairing halves are held upright in separate grounded steel cradles. Each fairing half has a long cylindrical lower section and a sharply tapered ogive nose at its top, with silver bolted separation flanges, curved black interior skin and thin reinforcing ribs. Both halves open toward the central stage. Full assembly in frame, symmetrical wide composition, photographed at waist level with a 50mm lens. Worn epoxy floor, small tool carts, cable trays, work benches, shelves and overhead steel beams. Cool daylight from high windows mixed with warm practical overhead lights. Natural soft contact shadows, restrained colors, fine scratches and machining marks on brushed metal, realistic carbon fiber, slight uneven material roughness. Professional industrial photography, f5.6, no people, no text.",
+      "hypothesis": "Revise only the image prompt after photo-a and photo-b: ask for tapered fairings, grounded cradles and downward-facing nozzles. Counts and mechanical geometry still need visual review."
+    },
+    {
+      "id": "photo-c-14b",
+      "backend": "wan14b",
+      "runtime_profile": "standard-offload",
+      "source": "outputs/experiments/photo-c/image.png",
+      "fps": 16,
+      "cfg": 3.5,
+      "shift": 5,
+      "sampler": "euler",
+      "split_step": 10,
+      "hypothesis": "Animate the revised concept with the same 14B settings as photo-a-14b; compare source-image geometry and material appearance."
+    },
+    {
+      "id": "photo-c-14b-720",
+      "backend": "wan14b",
+      "runtime_profile": "standard-offload",
+      "source": "outputs/experiments/photo-c/image.png",
+      "width": 1280,
+      "height": 720,
+      "fps": 16,
+      "cfg": 3.5,
+      "shift": 5,
+      "sampler": "euler",
+      "split_step": 10,
+      "hypothesis": "Change resolution only from photo-c-14b for the selected source; inspect edges, contact, frame stability and texture detail."
     }
   ]
 }
