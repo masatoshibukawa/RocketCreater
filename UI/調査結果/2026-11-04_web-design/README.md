@@ -15,10 +15,30 @@
 | [フォントと文字配置](04_typography-and-layout.md) | 日本語と欧文、文字階層、行長、行間、CSS例 |
 | [Webサイトの作り方](05_building-websites.md) | 技術の役割、制作工程、最小HTML、状態設計、検証 |
 | [SF映画のUIをWebに生かす](06_scifi-interfaces.md) | 一次資料、世界観、情報の層、CSS、動きの条件 |
+| [AIと独自性](07_ai-and-originality.md) | 定型的に見える原因、改善例、AIへの具体的な指示 |
+| [実践計画と応用案](08_practice-and-project-application.md) | 学習順序、練習、チェックリスト、RocketWrightへの提案 |
+| [原資料の読書ガイド](09_reading-guide.md) | 8言語の入口、目的別の深掘り、調査の限界 |
 | [出典台帳](sources.csv) | 原題、発行主体、言語、URL、確認方法、用途 |
 | [配色の計算結果](palette-contrast.csv) | 独自パレット24組のコントラスト比 |
 
-基礎から実装とSF表現までを整理しました。続いて、AIによる定型化の避け方と、制作・学習の実践資料を追加します。
+基礎から順番に読むなら01→03→04→05、表現を深めるなら02→06→07、すぐ試作へ進むなら08を入口にしてください。外部資料は50件を台帳に記録しています。確認の粒度は資料ごとに異なります。
+
+## 配色を見比べる
+
+![独自の4パレット。本文・補助文・主操作・境界線の色の見本](palette-preview.png)
+
+画像は本資料で作成した配色見本です。実在サイトのスクリーンショットではありません。各色とコントラスト値は [配色の章](03_color.md) と [計算結果](palette-contrast.csv) にあります。
+
+## 計算と画像を再現する
+
+このディレクトリで実行します。コントラスト確認はPython標準ライブラリのみ、画像の再生成はWindows PowerShellとSystem.Drawingを使用します。
+
+```powershell
+python examples/check_contrast.py
+& ./examples/render-palettes.ps1
+```
+
+[計算スクリプト](examples/check_contrast.py) は24組の公開値と基準色を確認します。[画像生成スクリプト](examples/render-palettes.ps1) はCSVから配色見本を作ります。Webページ全体を監査するツールではありません。
 
 ## 先に持っておきたい判断軸
 
@@ -37,6 +57,16 @@
 
 資料本文・実例画像・映画画面の転載集ではありません。文章は要約と独自の考察で、元の画像や映像はリンク先で確認してください。
 
+## 確認したことと限界
+
+- 11本のMarkdownについて、ローカルリンク26箇所、コードブロックの対応、出典IDの整合を確認しました。
+- 出典台帳50件のID、URL形式、確認日、確認方法を検査しました。本文・該当説明の確認43件、転送先確認4件、検索抜粋2件、本文取得が不十分な候補1件を区別しています。
+- 配色24組を再計算し、CSVの値と一致すること、各組の参照閾値を満たすことを確認しました。白黒と同色の基準例も確認しました。
+- HTML学習例のIDと内部リンク、補助スクリプトの構文を確認し、配色見本画像を生成して目視確認しました。
+- HTML例のブラウザ表示、既存アプリの動作、参考サイトの全画面幅・実機操作は検証していません。今回の変更にアプリ実装は含めていません。
+
+この資料から実装へ進む際は、実際の内容・操作・端末であらためて確認してください。
+
 ## English summary
 
-A Japanese research notebook on web design, based on sources explored in eight languages. It separates accessibility requirements, design-system conventions, and original practical recommendations. Sources and retrieval limitations are recorded in the accompanying CSV.
+A Japanese research notebook on web design, based on 50 source entries explored in eight languages. It covers foundations, discovery, color, typography, implementation, sci-fi interfaces, AI-assisted design, and practice. Accessibility requirements, design-system conventions, and original recommendations are distinguished. Retrieval limitations, contrast data, and reproducible palette examples are included.
