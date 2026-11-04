@@ -8,6 +8,7 @@ Reusable production skills, research notes, source references, and templates for
 
 - [動画制作スキルの索引](skills/video-production/SKILL.md) — 入口のスキルと、その下の7カテゴリのスキル
 - [フェアリング映像の再現プロジェクト](Test%20project/README.md) — Blenderの3D、カメラ、HUD、音を組み合わせる制作例
+- [ローカルAI動画生成](local-runtime/README.md) — ComfyUI＋Wan2.2の分離導入、ロケット画像からの短い動画生成と実測記録
 - [2026年11月4日の調査結果](research/2026-11-04/README.md)
 - [このPCに合う生成方法](research/2026-11-04/04_local_pc.ja.md)
 - [実践手順とSF予告編の制作案](research/2026-11-04/05_production_recipes.ja.md)
