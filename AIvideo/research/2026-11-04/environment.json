@@ -13,6 +13,7 @@
   "commands_not_found_on_path": ["ollama", "lmstudio", "lms", "uv", "ffmpeg"],
   "common_model_locations_checked": ["~/.ollama/models/manifests", "~/.lmstudio/models", "~/.cache/lm-studio/models"],
   "common_comfyui_locations_checked": ["~/ComfyUI", "C:/ComfyUI", "~/Documents/ComfyUI"],
+  "additional_cache_locations_checked": ["%LOCALAPPDATA%/Comfy-Desktop/ComfyUI-Installs", "%LOCALAPPDATA%/Comfy-Desktop/ComfyUI-Shared", "~/ComfyUI-Installs", "~/ComfyUI-Shared", "~/.cache/huggingface/hub", "~/.cache/torch/hub"],
   "models_found_in_checked_locations": [],
   "other_virtualenvs_drives_and_custom_locations": "not exhaustively searched",
   "generation_test": "not run",
