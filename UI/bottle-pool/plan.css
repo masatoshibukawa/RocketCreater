@@ -16,3 +16,17 @@
 .notes li { margin-block: .6rem; }
 .notes li::marker { font-weight: 750; color: var(--teal); }
 .plan section[id] { scroll-margin-top: 1.5rem; }
+.decisions { width: 100%; border-collapse: collapse; margin-bottom: 1.4rem; background: var(--panel); }
+.decisions caption { text-align: left; font-weight: 650; padding-block: .5rem; }
+.decisions th, .decisions td { text-align: left; vertical-align: top; padding: .75rem; border-bottom: 1px solid var(--line); }
+.decisions thead th { background: #19564a; color: white; }
+.decisions tbody th { width: 19%; color: var(--teal); }
+.decisions td:nth-child(2) { width: 32%; }
+@media(max-width: 650px) {
+  .decisions, .decisions tbody, .decisions tr, .decisions tbody th, .decisions td { display: block; }
+  .decisions thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .decisions caption { display: block; }
+  .decisions tbody th, .decisions td:nth-child(2) { width: auto; }
+  .decisions tbody th { background: #e4efe8; }
+  .decisions td { padding: .55rem .75rem; }
+}
