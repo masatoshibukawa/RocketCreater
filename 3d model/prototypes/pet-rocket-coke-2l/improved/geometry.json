@@ -1,0 +1,188 @@
+{
+  "revision": "v2",
+  "units": "mm",
+  "generator": "Blender 5.2.2 LTS",
+  "bottle_fit_measured": false,
+  "physical_print_completed": false,
+  "nose_analytic": {
+    "fit_inner_diameter_mm": 110.8,
+    "outer_diameter_mm": 114.0,
+    "normal_cone_wall_mm": 1.6,
+    "tip_radius_mm": 16.0,
+    "height_mm": 103.87489353183501,
+    "cylindrical_fit_depth_mm": 27.556825656082506,
+    "entry_lip_wall_mm": 1.2000000000000002,
+    "top_opening_diameter_mm": 16.0,
+    "soft_cap_required": true
+  },
+  "parts": {
+    "nose_cone": {
+      "vertices": 8800,
+      "triangles": 17600,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 45487.271685755644,
+      "solid_mass_g_at_assumed_density": 56.404216890337,
+      "centroid_mm": [
+        -8.974007869255729e-06,
+        2.4431417841697112e-05,
+        42.32386016845703
+      ],
+      "bounds_mm": [
+        [
+          -57.0,
+          -57.0,
+          0.0
+        ],
+        [
+          57.0,
+          57.0,
+          103.87489318847656
+        ]
+      ],
+      "dimensions_mm": [
+        114.0,
+        114.0,
+        103.87489318847656
+      ],
+      "numeric_seam_cleanup_volume_delta_mm3": 0.0002165639161830768
+    },
+    "fin": {
+      "vertices": 449,
+      "triangles": 902,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 12510.12497354827,
+      "solid_mass_g_at_assumed_density": 15.512554967199856,
+      "centroid_mm": [
+        70.58982849121094,
+        8.556301622775209e-07,
+        54.95704650878906
+      ],
+      "bounds_mm": [
+        [
+          54.48999786376953,
+          -10.324910163879395,
+          -5.317942974869538e-09
+        ],
+        [
+          107.19999694824219,
+          10.324910163879395,
+          100.0
+        ]
+      ],
+      "dimensions_mm": [
+        52.709999084472656,
+        20.64982032775879,
+        100.00000000531794
+      ],
+      "numeric_seam_cleanup_volume_delta_mm3": -1.2969601812073961e-05
+    },
+    "fit_ring": {
+      "vertices": 800,
+      "triangles": 1600,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 10139.193680452174,
+      "solid_mass_g_at_assumed_density": 12.572600163760695,
+      "centroid_mm": [
+        3.3710462048475165e-06,
+        1.5401091104649822e-06,
+        9.02422046661377
+      ],
+      "bounds_mm": [
+        [
+          -57.0,
+          -57.0,
+          0.0
+        ],
+        [
+          57.0,
+          57.0,
+          18.0
+        ]
+      ],
+      "dimensions_mm": [
+        114.0,
+        114.0,
+        18.0
+      ],
+      "numeric_seam_cleanup_volume_delta_mm3": 6.896272680023685e-06
+    },
+    "fin_print": {
+      "vertices": 449,
+      "triangles": 902,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 12510.1226176471,
+      "solid_mass_g_at_assumed_density": 15.512552045882403,
+      "centroid_mm": [
+        50.244834899902344,
+        10.3248929977417,
+        29.392396926879883
+      ],
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          97.59527587890625,
+          20.64982032775879,
+          72.62693786621094
+        ]
+      ],
+      "dimensions_mm": [
+        97.59527587890625,
+        20.64982032775879,
+        72.62693786621094
+      ]
+    },
+    "mount_gauge": {
+      "vertices": 132,
+      "triangles": 260,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 3678.56865779993,
+      "solid_mass_g_at_assumed_density": 4.561425135671913,
+      "centroid_mm": [
+        50.000030517578125,
+        3.2858946323394775,
+        10.10750675201416
+      ],
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          100.0,
+          5.4101104736328125,
+          20.310625076293945
+        ]
+      ],
+      "dimensions_mm": [
+        100.0,
+        5.4101104736328125,
+        20.310625076293945
+      ]
+    }
+  }
+}
