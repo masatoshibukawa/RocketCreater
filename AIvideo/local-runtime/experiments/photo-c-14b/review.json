@@ -1,0 +1,10 @@
+{
+  "decision": "candidate",
+  "notes": "工場、金属タンク、支持具を写真調に保ち、6時点で小さなカメラ移動を確認。元CGより自然に見える素材だが、ノズルの向きと元設計との相違は残る。720p候補として比較する。",
+  "reviewed_artifacts": [
+    "six-frame contact sheet"
+  ],
+  "full_real_time_playback_review": false,
+  "visible_service_watermark_found_in_reviewed_frames": false,
+  "geometry_equivalence_to_original": false
+}

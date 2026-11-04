@@ -1,0 +1,70 @@
+{
+  "id": "photo-a-14b",
+  "fingerprint": "31b63de02f75e428a648672444639c82a121f0fe9384871426287585aa7bdb88",
+  "config": {
+    "width": 832,
+    "height": 480,
+    "frames": 49,
+    "fps": 16,
+    "steps": 20,
+    "seed": 20261104,
+    "positive": "A slow smooth camera dolly to the right, revealing subtle natural parallax. The spacecraft assembly remains stationary and rigid on its support fixture. Soft practical ceiling lights create natural reflections on the metal. A continuous documentary inspection shot.",
+    "negative": "text, subtitles, logos, watermark, animation, cartoon, plastic, oversaturated, oversharpened, blurry, morphing, bending metal, moving machinery, duplicate engines, flicker, jitter, abrupt cut, flames, smoke, people",
+    "id": "photo-a-14b",
+    "backend": "wan14b",
+    "runtime_profile": "standard-offload",
+    "source": "outputs/experiments/photo-a/image.png",
+    "cfg": 3.5,
+    "shift": 5,
+    "sampler": "euler",
+    "split_step": 10,
+    "hypothesis": "Test the 14B dual-expert FP8 workflow. This changes the backend, VAE, sampler, CFG and native playback fps; it is a production candidate, not a model-only controlled comparison."
+  },
+  "input_sha256": "ccfdb08dee778433db17ef758408511d4f04da2b0893f9f57e672f4e699fd832",
+  "models": [
+    {
+      "file": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "sha256": "c3355d30191f1f066b26d93fba017ae9809dce6c627dda5f6a66eaa651204f68"
+    },
+    {
+      "file": "wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors",
+      "sha256": "6122e79d55e0f235698d11d657f3b196c5273c830da00b2b013c5a048d5e6a42"
+    },
+    {
+      "file": "wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors",
+      "sha256": "5471a457b6ac404202a5fbe6c11595a3d5641fc766b00f38763f72303fffc21e"
+    },
+    {
+      "file": "wan_2.1_vae.safetensors",
+      "sha256": "2fc39d31359a4b0a64f55876d8ff7fa8d780956ae2cb13463b0223e15148976b"
+    }
+  ],
+  "created_utc": "2026-11-04T09:19:03.843441+00:00",
+  "status": "completed",
+  "runtime_profile": "standard-offload",
+  "prompt_id": "657bb660-565e-4366-af92-9fd5e2798870",
+  "server_seconds": 209.951,
+  "output": "outputs/experiments/photo-a-14b/video.mp4",
+  "output_sha256": "746d49ee65d45e289469e994adbe441766f9b8a571fd494254411507b965e539",
+  "metrics": {
+    "width": 832,
+    "height": 480,
+    "frames": 49,
+    "fps": 16.0,
+    "seconds": 3.0625,
+    "full_decode": true,
+    "mean_frame_change": 1.7439,
+    "metadata": {
+      "major_brand": "isom",
+      "minor_version": "512",
+      "compatible_brands": "isomiso2avc1mp41",
+      "title": "RocketWright Local Video Experiment",
+      "encoder": "Lavf63.1.102",
+      "comment": "AI-generated concept visualization; no engineering validation"
+    },
+    "note": "Frame change is a motion/consistency diagnostic, not a realism score."
+  },
+  "polling_session_seconds": 211.7,
+  "sampled_device_memory_peak_mib": 19815,
+  "memory_note": "Whole-device usage sampled every few seconds; includes other applications, may miss peaks."
+}

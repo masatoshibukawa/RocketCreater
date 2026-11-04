@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ペトロケ探索計画 | RocketWright</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="plan.css">
+</head>
+<body>
+<a class="skip" href="#main">本文へ移動</a>
+<header><div class="wrap">
+  <a class="brand" href="index.html"><b aria-hidden="true"></b>RocketWright</a>
+  <nav class="site-nav" aria-label="設計ガイド">
+    <a href="index.html">候補プール</a>
+    <a href="layers.html">層別解析</a>
+    <a href="selection.html">候補選択</a>
+    <a href="plan.html" aria-current="page">探索計画</a>
+  </nav>
+</div></header>
+<main id="main" class="wrap plan">
+<p class="eyebrow">WATER ROCKET / 設計レビュー</p>
+<h1>探索の手順と検証計画</h1>
+<p class="lead">1.5 Lの機体で卵を高度30 mまで上げて回収するために、どの条件を固定し、どの結果を比較するか。探索器の実行順と、判断を試す7つのケースを示します。</p>
+<nav class="page-nav" aria-label="このページの目次"><span>このページ</span><a href="#sequence">探索順序</a><a href="#dependencies">依存関係</a><a href="#harness">判断表</a><a href="#milestones">実装順</a></nav>
+<section id="sequence"><p class="eyebrow">01 / 誰が、何を決めるか</p><h2>探索ループのシーケンス図</h2>
+<figure><div class="diagram" role="region" tabindex="0" aria-label="探索ループ図。小さい画面では横にスクロールできます。"><svg class="chart" viewBox="0 0 820 375" role="img" aria-labelledby="seq-title seq-desc">
+<title id="seq-title">探索ループのシーケンス図</title><desc id="seq-desc">探索器が比較条件を固定し、候補プールと文献から適用可能な手法を取り出す。LLMが選んだ一手をコードが検査して解析し、未達条件と履歴を返す。</desc>
+<defs><marker id="s-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="#34675a" d="M0 0 10 5 0 10z"/></marker></defs>
+<line class="lane" x1="103" y1="58" x2="103" y2="356"/><g class="node "><rect x="21" y="10" width="164" height="46" rx="7"/><text x="103" y="38" text-anchor="middle" class="">探索器（コード）</text></g>
+<line class="lane" x1="310" y1="58" x2="310" y2="356"/><g class="node "><rect x="228" y="10" width="164" height="46" rx="7"/><text x="310" y="38" text-anchor="middle" class="">候補プール・文献</text></g>
+<line class="lane" x1="518" y1="58" x2="518" y2="356"/><g class="node "><rect x="436" y="10" width="164" height="46" rx="7"/><text x="518" y="38" text-anchor="middle" class="">設計LLM</text></g>
+<line class="lane" x1="717" y1="58" x2="717" y2="356"/><g class="node "><rect x="635" y="10" width="164" height="46" rx="7"/><text x="717" y="38" text-anchor="middle" class="">解析器</text></g>
+<text x="206.5" y="83" text-anchor="middle" class="edge-label">1　要求・比較条件を固定</text><path class="arrow" marker-end="url(#s-arr)" d="M103 90H310"/>
+<text x="206.5" y="125" text-anchor="middle" class="edge-label">2　使える手法と根拠</text><path class="arrow" marker-end="url(#s-arr)" d="M310 132H103"/>
+<text x="310.5" y="167" text-anchor="middle" class="edge-label">3　同じ候補集合・履歴・残予算</text><path class="arrow" marker-end="url(#s-arr)" d="M103 174H518"/>
+<text x="310.5" y="209" text-anchor="middle" class="edge-label">4　変数・手法・指標・根拠ID</text><path class="arrow" marker-end="url(#s-arr)" d="M518 216H103"/>
+<text x="410" y="251" text-anchor="middle" class="edge-label">5　適用条件を確認した案を解析</text><path class="arrow" marker-end="url(#s-arr)" d="M103 258H717"/>
+<text x="410" y="293" text-anchor="middle" class="edge-label">6　指標・単位・不確かさ・出典</text><path class="arrow" marker-end="url(#s-arr)" d="M717 300H103"/>
+<text x="310.5" y="335" text-anchor="middle" class="edge-label">7　全要求で判定し、未達なら根拠と履歴を返す</text><path class="arrow" marker-end="url(#s-arr)" d="M103 342H518"/>
+</svg></div>
+<figcaption>変数の値・依存データ・モデル版・残予算が変わるたびに、手順2から使える組を再選定します。公称合格案は別条件で確認し、上限到達・候補枯渇時は試した範囲と未達条件を返します。<a href="selection.html#rules">候補を絞る条件とLLMが選ぶ手順</a></figcaption></figure>
+<ol class="notes">
+<li><strong>比較の条件を記録する。</strong> 要求・固定部品・変数と単位・環境・モデル版・根拠の図表をひと組にします。R14表2は実測、表3は著者の計算。絶対圧から周囲圧を引き、同じ試行IDで照合します。<a href="index.html#ref-R14">R14 表2–3</a></li>
+<li><strong>機体の改善とモデルの検証を分岐させる。</strong> 文献機体すら再現できず原因が分からない場合は、測定条件・モデルの適用域を調べます。新しい解析は「検証待ち」として入力・出力・照合先を登録し、実装・照合が済んだ版から探索に使います。許容誤差は測定誤差、対象条件、用途を踏まえて試験前に定めます。</li>
+<li><strong>選定後に確認試行を置く。</strong> 条件をそろえた公称飛行と同一シードのばらつき試験で候補を比較し、選んだ案は別シードまたは留保条件で再評価します。R04の因子選別と確認実験を応用します。原論文の飛距離を、今回の高度・回収の合格条件に読み替えることはできません。<a href="index.html#ref-R04">R04 表3–6・12–13</a></li>
+</ol></section>
+<section id="dependencies"><p class="eyebrow">02 / 何を再計算するか</p><h2>レイヤー間の依存関係図</h2>
+<p class="lead"><strong>L0の固定条件</strong>は全枝に適用します。指定容量・積載・回収・予算は、層を戻っても維持します。矢印は値が伝わる方向です。</p>
+<figure><div class="diagram" role="region" tabindex="0" aria-label="依存関係図。小さい画面では横にスクロールできます。"><svg class="chart" viewBox="0 0 820 388" role="img" aria-labelledby="dep-title dep-desc">
+<title id="dep-title">部品と運用条件から飛行・回収までの依存関係</title><desc id="dep-desc">運用点とノズルは推力履歴を決め、フィンと機体構成は空力と質量を変える。これらは上昇・頂点の状態で合流し、回収部品とともに降下・着地に影響する。</desc>
+<defs><marker id="d-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="#34675a" d="M0 0 10 5 0 10z"/></marker></defs>
+<path class="arrow" marker-end="url(#d-arr)" d="M115 63V104"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M307 63V82H162V104"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M515 63V104"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M563 63V77H655V104"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M717 63V104"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M128 162V181H382V212"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M515 162V180H443V212"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M717 162V199H490V212"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M415 267V313"/>
+<path class="arrow" marker-end="url(#d-arr)" d="M189 339H273"/>
+<g class="node "><rect x="10" y="12" width="210" height="51" rx="7"/><text x="115" y="32.5" text-anchor="middle" class="">L3　充填率・初期圧</text><text x="115" y="52.5" text-anchor="middle" class="">温湿度は測定条件</text></g>
+<g class="node "><rect x="230" y="12" width="155" height="51" rx="7"/><text x="307.5" y="32.5" text-anchor="middle" class="">L2　ノズル</text><text x="307.5" y="52.5" text-anchor="middle" class="">出口径・整流器</text></g>
+<g class="node "><rect x="405" y="12" width="210" height="51" rx="7"/><text x="510" y="32.5" text-anchor="middle" class="">L2　フィン・ノーズ</text><text x="510" y="52.5" text-anchor="middle" class="">形状・取り付け</text></g>
+<g class="node "><rect x="628" y="12" width="180" height="51" rx="7"/><text x="718" y="32.5" text-anchor="middle" class="">L1　機体構成</text><text x="718" y="52.5" text-anchor="middle" class="">搭載部品・配分</text></g>
+<g class="node "><rect x="10" y="105" width="235" height="56" rx="7"/><text x="127.5" y="128" text-anchor="middle" class="">圧力 → 推力履歴</text><text x="127.5" y="148" text-anchor="middle" class="">R13・R02</text></g>
+<g class="node "><rect x="411" y="105" width="200" height="56" rx="7"/><text x="511" y="128" text-anchor="middle" class="">空力係数・復元性</text><text x="511" y="148" text-anchor="middle" class="">R03・D09</text></g>
+<g class="node "><rect x="628" y="105" width="180" height="56" rx="7"/><text x="718" y="128" text-anchor="middle" class="">組立質量・重心</text><text x="718" y="148" text-anchor="middle" class="">部品変更時に更新</text></g>
+<g class="node main-node"><rect x="271" y="213" width="287" height="54" rx="7"/><text x="414.5" y="235" text-anchor="middle" class="">上昇軌跡 → 頂点状態</text><text x="414.5" y="255" text-anchor="middle" class="">到達高度は R14 で照合</text></g>
+<g class="node "><rect x="10" y="315" width="178" height="52" rx="7"/><text x="99" y="336" text-anchor="middle" class="">L2　回収機構</text><text x="99" y="356" text-anchor="middle" class="">放出・膨張条件</text></g>
+<g class="node main-node"><rect x="274" y="314" width="283" height="53" rx="7"/><text x="415.5" y="335.5" text-anchor="middle" class="">開傘 → 降下 → 着地</text><text x="415.5" y="355.5" text-anchor="middle" class="">完全開傘の有無も記録</text></g>
+</svg></div>
+<figcaption>同じ変更が複数の枝に効きます。フィンや傘を替えたらL1の質量・重心も更新し、前の機体の軌跡・回収結果を引き継ぎません。</figcaption></figure>
+<div class="grid">
+<article class="card"><h3>ノズルを替えたら</h3><p>整流器の開口比と穴数を区別し、治具・初期圧・充填量を合わせて推力と内圧の時系列を照合します。R13の膨張指数は固定容器での値なので、飛行中の噴射には移用条件を記録します。<a href="index.html#ref-R02">R02 図10–14</a> ／ <a href="index.html#ref-R13">R13 図3・表I</a></p></article>
+<article class="card"><h3>フィンや傘を替えたら</h3><p>D09のPN1とPN3は細翼で枚数が異なります。組立質量も確認し、空力比較では迎角、レイノルズ数、重心まわりの符号を統一します。傘は放出・完全開傘を別イベントにし、開傘時刻が未測定なら実測待ちにします。<a href="index.html#ref-D09">D09 CAD</a> ／ <a href="index.html#ref-R03">R03 表2・図14</a> ／ <a href="index.html#ref-P09">P09 手順4–6</a></p></article>
+</div>
+<p class="example"><strong>層を戻る条件</strong>　同じ刻み・範囲で運用候補を使い切り、有効な部品候補があるならL3からL2へ。表現を変更した場合は探索空間の版を上げ、影響する結果を無効化します。証拠不足で優劣がつかない場合は「同等・要追加測定」を残します。</p>
+</section>
+<section id="harness">
+<p class="eyebrow">03 / 判断をどう試すか</p>
+<h2>ハーネスの判断表</h2>
+<p><a href="layers.html#checks">姿勢・回転・振動の対照試験</a>では、フィン取付角と搭載位置を一つずつ変え、どの層が差を再現すべきかを定めます。</p>
+<p class="example"><strong>組立状態の静安定も追跡する。</strong> L2のフィン位置と積載位置、L3の残水量から、同じ時点のCGとCPを比較します。変更前の重心や異なる迎角で求めた圧力中心を流用すると評価を誤ります。<a href="index.html#phase_static_margin">静安定余裕の定義と図</a></p>
+<p class="lead">本番と同じ一手選択器に、設計状態・候補・履歴を入力します。A/Bは要求、現在の機体、候補集合、残り予算を同一にし、過去の試行だけを入れ替える対照テストです。以下の期待動作はプロジェクトの提案です。</p>
+<table class="decisions">
+<caption>合格扱いにする判断と、それを確認する観測点</caption>
+<thead><tr><th scope="col">局面</th><th scope="col">入力で変えるもの</th><th scope="col">期待する一手と判定条件</th></tr></thead>
+<tbody>
+<tr id="case-a"><th scope="row">A　運用を続ける</th><td>高度不足。L3の圧力・充填率に改善傾向があり、比較可能な未試行点が残る。</td><td><strong>L3で公称飛行。</strong> 指定容量・積載・部品を固定し、未試行点と比較対象の試行IDを返す。高度の許容帯からの逸脱量で評価する。</td></tr>
+<tr id="case-b"><th scope="row">B　部品層に戻る</th><td>Aと同じ候補を提示。今回の刻みでは運用点を試し終え、いずれも高度不足。適合する別ノズルは未試行。</td><td><strong>L2でノズルを比較。</strong> 変更の根拠に探索済みの履歴を挙げ、部品で決まる内径と組立質量を更新して再計算する。既試行点の反復や容量の緩和は不合格。</td></tr>
+<tr><th scope="row">C　実測差が小さい</th><td>R14表2の試行1・2は同じ絶対圧で17.5 mと17.1 m。各高度の報告誤差は±0.5 m。</td><td><strong>順位を保留。</strong> この2点の測定区間は重なる。追加の反復測定を提案する。再現評価には表2の実測値を用い、表3の計算値を正解として渡した入力は退ける。<a href="index.html#ref-R14">R14</a></td></tr>
+<tr><th scope="row">D　異なる因子が混在</th><td>「枚数の影響」を調べたい。PN1→PN2では両方3枚のまま、翼形状とアダプタ条件が変わる。</td><td><strong>比較組を選び直す。</strong> PN1/PN3を枚数比較候補とし、組立質量を確認。空力モデルが未検証なら、形状だけで安定性順位を付けず、試験体・風洞条件をそろえる。<a href="index.html#ref-D09">D09</a> ／ <a href="index.html#ref-R03">R03</a></td></tr>
+<tr><th scope="row">E　モデルの証拠が不足</th><td>ノズルの実測との不一致がある。圧力の基準か推力波形の時間原点が不明。あるいは解析器が自作予定の段階。</td><td><strong>まず検証試行を選ぶ。</strong> ゲージ圧と絶対圧の区別、時間軸、同じ治具での推力・内圧を確かめる。未取得の数値は欠測として返し、機体の合格判定への採用は保留する。<a href="index.html#ref-R02">R02</a></td></tr>
+<tr><th scope="row">F　公称合格後の比較</th><td>公称では2案とも合格。選定に使ったシードの結果だけがある。</td><td><strong>ばらつき比較と独立確認。</strong> 同一環境・同一シード・同数の試行で成功率と高度逸脱量の95パーセンタイルを比較。選定後に別シードで全要求を確認し、選定用と確認用の結果を別記する。<a href="index.html#ref-R04">R04</a></td></tr>
+<tr><th scope="row">G　開傘を確認できない</th><td>回収必須。放出は観測されたが、完全開傘のイベントまたは時刻が欠けている。</td><td><strong>未観測と未開傘を区別。</strong> 未観測なら時刻を補完せず「判定保留」、着地まで開かないことが確認された試行は「回収失敗」。説明書だけで展開成功率を与える提案は退ける。<a href="index.html#ref-P09">P09</a></td></tr>
+</tbody></table>
+<h3>判定の記録</h3>
+<p>各ケースで、選択した層・変数・解析手法・評価関数・根拠となる試行IDまたは文献ID・停止理由を保存します。固定条件違反、未実装手法の実行、実測と計算の取り違えはコードで検出します。LLMの適応選択は同じモデル版・プロンプト版でA/Bを複数回実行し、両方で期待する層を選べた組数と全組数を報告します。判断理由は参照した履歴と照合します。</p>
+</section>
+
+<section id="milestones">
+<p class="eyebrow">04 / 実装の順番</p><h2>最初に通す3つの関門</h2>
+<ol class="notes">
+<li><strong>既存モデルでA/Bを通す。</strong> 1.5 L固定の要求、実行可能なノズル・充填率候補、比較履歴を用意する。コードの固定条件検査と、LLMが履歴に応じて層を変える評価を別々に記録する。</li>
+<li><strong>モデルごとの再現試験を作る。</strong> 第一候補はR14の1 L機体。実測4試行の残差と測定誤差を報告する。試行5は天井で上限に達し、6には発射状態の問題があったため、1〜4と分けて扱う。これはモデルの検証用で、1.5 Lのミッションは別に判定する。次にR02の推力波形を揃え、整流器の候補を解禁する。<a href="index.html#ref-R14">R14 表2・結論</a> ／ <a href="index.html#ref-R02">R02 図5–11</a></li>
+<li><strong>空力・回収をつなぎ、候補選定を確認する。</strong> 寸法・組立質量・重心、風洞条件、開傘イベントの記録がそろった範囲からモデルを追加する。モデル版変更で古い評価を除外し、最後に留保した条件で高度・回収・予算と未解決事項を報告する。</li>
+</ol>
+</section>
+</main>
+<footer><div class="wrap"><a href="index.html">ペトロケ設計ガイドに戻る</a>　／　文献に基づく探索計画</div></footer>
+</body></html>

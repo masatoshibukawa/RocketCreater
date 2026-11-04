@@ -1,0 +1,40 @@
+id,language,publisher,title,url,accessed,verification,topic,referenced_categories,notes
+S01,en,Meshy,3D printing workflow,https://docs.meshy.ai/en/webapp/guides/use-cases/3d-printing,2026-11-04,本文確認,AIから印刷,01_全体工程|02_AI生成|03_モデル修正と設計|08_多言語調査と出典,自動修復と書出し。数値は普遍的な保証値として採用しない
+S02,en,Meshy,Prompting best practices,https://docs.meshy.ai/en/webapp/guides/prompting,2026-11-04,本文確認,プロンプト,02_AI生成|06_制作レシピ,一体構造と具体的形状の指定
+S03,en,Tripo,Multiview to model H3,https://docs.tripo3d.ai/model-generation/multiview-to-model-v3-0-v3-1.html,2026-11-04,本文確認,複数視点,01_全体工程|02_AI生成|08_多言語調査と出典,入力順序と版別のパラメータ制約を確認
+S04,en,Tripo,Conversion,https://docs.tripo3d.ai/export/conversion.html,2026-11-04,本文確認,形式変換,02_AI生成|05_トラブル対処|08_多言語調査と出典,STLはテクスチャ非保持。3MF変換も形状のみ
+S05,en,Tencent-Hunyuan,Hunyuan3D-2.1 README,https://github.com/Tencent-Hunyuan/Hunyuan3D-2.1,2026-11-04,本文確認,ローカル生成,02_AI生成,形状とテクスチャのVRAM条件を区別
+S06,en,Tencent-Hunyuan,Hunyuan3D-2.1 LICENSE,https://github.com/Tencent-Hunyuan/Hunyuan3D-2.1/blob/main/LICENSE,2026-11-04,公式検索掲載本文確認,利用条件,02_AI生成,コード内の短いライセンス表記だけで判断しない
+S07,en,Microsoft,TRELLIS README,https://github.com/microsoft/TRELLIS,2026-11-04,本文確認,ローカル生成,02_AI生成,Linuxと16GB GPU等の記載。TRELLIS系列全体へ一般化しない
+S08,zh-CN,Tencent Cloud,腾讯混元生3D 操作指南,https://cloud.tencent.com/document/product/1804/120704,2026-11-04,本文確認,プロンプト,02_AI生成|06_制作レシピ|08_多言語調査と出典,単一主体を推奨。サービス移行案内あり
+S09,zh-CN,Tencent Cloud,TokenHub HY-3D 调用指南,https://cloud.tencent.com.cn/document/product/1823/137181,2026-11-04,本文確認,クラウド生成,02_AI生成|06_制作レシピ,hy-3d-3.0と3.1。ローカル2.1と別
+S10,en,Blender Extensions,3D Print Toolbox,https://extensions.blender.org/add-ons/print3d-toolbox/,2026-11-04,公式検索掲載本文確認,メッシュ検査,03_モデル修正と設計,直接取得は402。公式インデックスの機能説明を確認
+S11,en,Blender Extensions,3D Print Toolbox Version History,https://extensions.blender.org/add-ons/print3d-toolbox/versions/,2026-11-04,公式検索掲載本文確認,版依存,03_モデル修正と設計,4.2LTS以降の拡張。機能ごとの対応版が異なる
+S12,en,Blender Foundation,Solidify Modifier Blender 5.1 Manual,https://docs.blender.org/manual/en/5.1/modeling/modifiers/generate/solidify.html,2026-11-04,公式検索掲載本文確認,厚みとスケール,03_モデル修正と設計,latestの直接取得は402。5.1の公開掲載本文で基礎原理を確認
+S13,es,Blender Foundation,Modificador Rehacer malla Blender 4.5 LTS Manual,https://docs.blender.org/manual/es/4.5/modeling/modifiers/generate/remesh.html,2026-11-04,公式検索掲載本文確認,再メッシュ,03_モデル修正と設計|08_多言語調査と出典,スペイン語見出しと英語本文が混在。4.5固定
+S14,en,Prusa Research,Modeling with 3D printing in mind,https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135,2026-11-04,公式検索掲載本文確認,印刷設計,01_全体工程|03_モデル修正と設計|05_トラブル対処,公差・積層方向・向き・設計反復
+S15,de,Prusa Research,Infill,https://help.prusa3d.com/de/article/infill_42,2026-11-04,本文確認,外壁と内部充填,03_モデル修正と設計|04_印刷と後処理|08_多言語調査と出典,公式翻訳。独立研究としては数えない
+S16,de,Prusa Research,Beschädigte 3D-Modelle zum Drucken,https://help.prusa3d.com/de/article/beschadigte-3d-modelle-zum-drucken_2205,2026-11-04,公式検索掲載本文確認,修復,03_モデル修正と設計|05_トラブル対処|08_多言語調査と出典,古いWindows連携の案内を現行の保証に使わない
+S17,fr,Prusa Research,Évidement,https://help.prusa3d.com/fr/article/evidement_117285,2026-11-04,本文確認,光造形の中空化,04_印刷と後処理|05_トラブル対処|08_多言語調査と出典,排液穴と断面確認。公式翻訳
+S18,es,Prusa Research,Material de soporte,https://help.prusa3d.com/es/article/material-de-soporte_1698,2026-11-04,公式検索掲載本文確認,支持材,03_モデル修正と設計,公式翻訳。角度の定義と機種条件に注意
+S19,es,Prusa Research,Problemas en la primera capa,https://help.prusa3d.com/es/article/problemas-en-la-primera-capa_1804,2026-11-04,公式検索掲載本文確認,初層,04_印刷と後処理|05_トラブル対処|08_多言語調査と出典,旧機種のLive Z操作を自動調整機へ一般化しない
+S20,ja,Prusa Research,オブジェクトの方向,https://help.prusa3d.com/ja/article/オブジェクトの方向_1658,2026-11-04,公式検索掲載本文確認,光造形の向き,04_印刷と後処理|08_多言語調査と出典,日本語のページだが本文の多くは英語。別言語の独立根拠にしない
+S21,ja,Formlabs,SLA basic finishing steps,https://formlabs.com/jp/support/SLA-basic-finishing/,2026-11-04,公式検索掲載本文確認,洗浄乾燥硬化,04_印刷と後処理|05_トラブル対処|08_多言語調査と出典,材種別の指定を優先。支持除去の時点は製品ごとに判断
+S22,ja,Formlabs,3Dプリントにおける公差・精度・精密さ,https://formlabs.com/jp/blog/understanding-accuracy-precision-tolerance-in-3d-printing/,2026-11-04,公式検索掲載本文確認,寸法評価,01_全体工程|03_モデル修正と設計|07_チェックと記録,後処理を含む完成品で測定
+S23,ko,Formlabs,고해상도 모델과 소품의 3D 프린트,https://formlabs.com/kr/applications/models-and-props/,2026-11-04,公式検索掲載本文確認,全体工程,04_印刷と後処理,設計→準備→造形→洗浄硬化→仕上げ。地域版の公式解説
+S24,ko,Formlabs,섬광처럼 빠른 SLA 후처리 공정,https://formlabs.com/kr/post-processing/wash-cure/,2026-11-04,公式検索掲載本文確認,洗浄と硬化,04_印刷と後処理|08_多言語調査と出典,宣伝上の所要時間を全材料への標準時間に使わない
+S25,en,Formlabs,Safety with Formlabs SLA products,https://formlabs.com/support/Safety-Formlabs-SLA-printers/,2026-11-04,本文と公式検索掲載確認,レジンと作業環境,04_印刷と後処理,メーカーの製品範囲と材料SDSを区別
+S26,en,3MF Consortium,3MF Core Specification v1.3.0,https://3mf.io/wp-content/uploads/sites/106/2025/02/3MF_Core_Specification_v1.3.0.pdf,2026-11-04,公式検索掲載本文確認,交換形式,01_全体工程,単位・メタデータ・必須拡張の定義
+S27,en,OrcaSlicer,Calibration Guide,https://github.com/OrcaSlicer/OrcaSlicer/wiki/calibration_guide,2026-11-04,本文確認,校正,04_印刷と後処理|05_トラブル対処,2026-10の公式Wiki。旧URLはトップへリダイレクト
+S28,en,Prusa Research,Filament Material Guide,https://help.prusa3d.com/filament-material-guide,2026-11-04,公式検索掲載本文確認,材料選び,04_印刷と後処理,材料と機器条件の比較。温度を全製品共通値として転載しない
+S29,en,Prusa Research,Drying filament,https://help.prusa3d.com/article/drying-filament_332086,2026-11-04,公式検索掲載本文確認,保管と乾燥,04_印刷と後処理|05_トラブル対処,Prusamentの条件とスプールの耐熱条件を確認
+S30,en,CadQuery project,Importing and Exporting Files,https://cadquery.readthedocs.io/en/latest/importexport.html,2026-11-04,公式検索掲載本文確認,CAD原本と交換形式,02_AI生成|03_モデル修正と設計|06_制作レシピ,パラメトリック原本とSTEP等の交換を区別
+S31,en,OpenSCAD project,Using OpenSCAD in a command line environment,https://files.openscad.org/documentation/manual/Using_OpenSCAD_in_a_command_line_environment.html,2026-11-04,公式検索掲載本文確認,CADと書出し,02_AI生成|06_制作レシピ,古い版のオプション例を含む。インストール版のhelpを確認
+S32,en,Formlabs,Design specifications for 3D models Form 4 generation,https://formlabs.com/support/Design-specifications-for-3D-models-Form-4-generation/,2026-11-04,公式検索掲載本文確認,最小造形寸法,03_モデル修正と設計|04_印刷と後処理|05_トラブル対処|08_多言語調査と出典,Form4・GreyV5・50µmの条件。壁・穴・排液穴を区別
+S33,en,Meshy,What Is the Ownership of the Generated Models,https://help.meshy.ai/en/articles/10137554-what-is-the-ownership-of-the-generated-models,2026-11-04,公式検索掲載本文確認,生成物の条件,02_AI生成,プラン・公開状態・入力素材の条件を確認
+S34,en,Meshy,What Is Included on the Free Plan,https://help.meshy.ai/en/articles/15696428-what-is-included-on-the-free-plan,2026-11-04,公式検索掲載本文確認,利用プラン,02_AI生成|08_多言語調査と出典,モデル別のダウンロードと帰属条件。課金時に再確認
+S35,en,Meshy,Image to 3D,https://docs.meshy.ai/en/webapp/image-to-3d,2026-11-04,本文確認,入力画像,02_AI生成|05_トラブル対処,背景・視点整合性・画像補正による変化
+S36,ja,Formlabs,Dimensional inaccuracy SLA,https://formlabs.com/jp/support/Dimensional-inaccuracy-SLA/,2026-11-04,公式検索掲載本文確認,完成寸法,03_モデル修正と設計|04_印刷と後処理|05_トラブル対処,向き・支持・後処理と寸法精度
+S37,en,Formlabs,Disposing of resin,https://formlabs.com/support/Disposing-of-resin/,2026-11-04,公式検索掲載本文確認,廃棄,04_印刷と後処理,未硬化レジンと汚染溶剤を排水しない。地域ルールは別確認
+S38,en,Prusa Research,Cut tool,https://help.prusa3d.com/article/cut-tool_1779,2026-11-04,公式検索掲載本文確認,分割と接合,03_モデル修正と設計,コネクターの種類と切断方法
+S39,en,Prusa Research,Organic Supports,https://help.prusa3d.com/article/organic-supports_480131,2026-11-04,公式検索掲載本文確認,支持,04_印刷と後処理|05_トラブル対処,枝の安定性・先端・密度・塗り指定

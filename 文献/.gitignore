@@ -1,0 +1,10 @@
+# Third-party originals retained on this computer for consultation.
+原本/
+# Educational/personal-use license. Keep this study copy local.
+CAD/D22-FreeCAD/
+# Author release meshes and third-party OpenSCAD dependencies.
+CAD/D09-RocketFins/releases/
+CAD/D09-RocketFins/libraries/
+
+# Locally archived Alibre assemblies, component models, and print meshes.
+CAD/D23-TSoGiants/

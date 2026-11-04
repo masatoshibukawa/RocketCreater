@@ -1,0 +1,38 @@
+{
+  "source": {
+    "supplied_url": "https://lnkd.in/p/g9TsR-i4",
+    "public_post": "https://www.linkedin.com/posts/isro-indian-space-hub_omspace-infinityone-indianspaceindustry-activity-7521055649573543937-gOV1",
+    "shared_by": "Indian Space Hub",
+    "subject": "Omspace Infinity One payload fairing and kickstage",
+    "original_asset_creator": "not independently established",
+    "observed_on": "2026-11-04",
+    "local_reference": "reference/source.mp4",
+    "source_media_in_git": false
+  },
+  "measured": {
+    "width": 640,
+    "height": 360,
+    "fps": 30,
+    "decoded_video_frames": 310,
+    "video_duration_seconds": 10.3333333333,
+    "container_duration_seconds": 10.43,
+    "audio": "AAC stereo, 44100 Hz"
+  },
+  "observed_visual_structure": [
+    "Dark opening followed by a low-angle industrial hangar shot",
+    "Two open carbon-look fairing halves flank a central metallic truss and upper-stage assembly",
+    "Camera tilt changes from ceiling-dominant to a fuller view of the assembly",
+    "Thin cyan outer frame, top-left brand, left information panel, right status panel",
+    "Top-center and bottom-right fairing wireframe diagrams, bottom-left vehicle outline",
+    "The shot fades to black before the end"
+  ],
+  "adaptation": {
+    "brand": "RocketWright",
+    "method": "Procedural Blender scene, camera animation, screen-space HUD composition, original synthesized audio",
+    "purpose": "Project-adapted reference reconstruction",
+    "match_targets": ["shot duration", "16:9 composition", "open fairing and central assembly", "camera tilt", "cyan HUD layout", "dark opening and ending"],
+    "intentional_changes": ["RocketWright branding", "concept visualization labels in place of unverified flight or structural status", "newly modeled concept geometry", "original audio"],
+    "engineering_claim": "Visual concept only; not a computed flight or structural result",
+    "pixel_identical": false
+  }
+}

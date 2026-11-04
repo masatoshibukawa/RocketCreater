@@ -1,0 +1,4 @@
+interface:
+  display_name: "3D制作の多言語調査"
+  short_description: "七言語の既存出典を探し、機種・材料・版の条件を保って追加調査を行う"
+  default_prompt: "$3d-model-research を使い、この3D制作の疑問を一次資料で調べ、条件と出典を付けて日本語で整理してください。"

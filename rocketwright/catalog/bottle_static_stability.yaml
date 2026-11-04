@@ -1,0 +1,40 @@
+# Planned diagnostic of a complete, fin-stabilized bottle assembly (L1), using L2
+# mass/layout and external geometry and the L3 operating point. Tool results stay
+# unavailable until the bottle-specific mass and aerodynamic models are validated.
+analysis_methods:
+  phase_static_margin:
+    status: planned
+    variables: [dry_mass_kg, payload_mass_kg, water_fill_frac, fins.root_le_from_nose_m, measured_body_diameter_m]
+    layout_inputs:
+      dry_cg_from_nose_m: Measured balance station of the dry assembly, excluding payload.
+      payload_cg_from_nose_m: Axial mass-center station of the installed payload.
+      water_cg_from_nose_m: Centroid of remaining water from bottle geometry and liquid distribution at each sample.
+    context: Use one assembled geometry, the nose tip as origin, aft positive, and a documented positive body diameter D. Synchronize liquid inventory, attitude, airspeed and aerodynamic state.
+    method: Calculate CG from the mass-weighted axial stations of all retained masses, including remaining water. Account for contained gas or document its approximation. Obtain the small-angle CP from the normal-force and pitching-moment slopes for the same shape and flow regime.
+    sample_policy: Record CG at the specified prelaunch fill as a balance check. Evaluate aerodynamic margin from guide exit, through water discharge when airborne, at water depletion and through valid free coast. Record the minimum over resolved valid samples including intermediate fill states. Mark constrained, low-dynamic-pressure, unsupported and recovery states separately.
+    outputs:
+      time_s: Common sample times.
+      cg_from_nose_m: Axial center of mass, per state.
+      cp_from_nose_m: Small-angle center of pressure, per valid aerodynamic state.
+      cp_minus_cg_m: CP station minus CG station at the same state.
+      static_margin_cal: Signed separation divided by D in body diameters.
+      validity: Per-sample applicability, measurement uncertainty and reason for gaps.
+    validation: Compare predicted CG with dry, loaded and intermediate-fill balance measurements. Check restoring sign against moment slopes about the same CG under matched R03 conditions. If uncertainty spans zero, force slope is unresolved or coverage is incomplete, report inconclusive for the affected envelope.
+    references: [R03, NASA-stability]
+evaluation_functions:
+  minimum_static_margin_cal:
+    method: phase_static_margin
+    uses: [time_s, cg_from_nose_m, cp_from_nose_m, static_margin_cal, validity]
+    role: static_stability_diagnostic
+    direction: compare_to_validated_minimum
+    unit: cal
+    definition: Report the least signed margin among valid free-flight samples plus time, phase, both stations and coverage. Positive is restoring for positive normal-force slope, zero is neutral to first order, negative is destabilizing. Set any extra design margin from mission-specific evidence before scoring. This is not a dynamic stability or mission pass result.
+references:
+  R03:
+    title: Watanabe et al., 水ロケットの空力特性と飛行安定化について
+    url: https://doi.org/10.2322/jjsass.52.449
+    locator: Tables 1–2 and Figs. 9–13. Compare conditions and the moment reference point.
+  NASA-stability:
+    title: NASA Glenn Research Center, Rocket Stability Condition
+    url: https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/conditions-for-rocket-stability/
+    locator: Restoring Force and De-Stabilizing Force. Small disturbances of passively stabilized model rockets.

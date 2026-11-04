@@ -1,0 +1,10 @@
+{
+  "decision": "candidate",
+  "notes": "縦長のフェアリング、支持架台、2つのノズルへ近づいた。材質と周囲の照明は写真調。ただしノズルは依然カメラを向き、元の形状や寸法を再現していない。",
+  "reviewed_artifacts": [
+    "full-resolution generated image"
+  ],
+  "full_real_time_playback_review": false,
+  "visible_service_watermark_found_in_reviewed_frames": false,
+  "geometry_equivalence_to_original": false
+}
