@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>姿勢・回転・振動の3層の解析仕様 | RocketWright</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="plan.css">
+</head>
+<body>
+<a class="skip" href="#main">本文へ移動</a>
+<header><div class="wrap"><a class="brand" href="index.html"><b aria-hidden="true"></b>RocketWright</a>
+<nav aria-label="仕様の目次"><a href="index.html">ガイド</a><a href="#low">部品</a><a href="#middle">組立機体</a><a href="#high">飛行全体</a><a href="#checks">検証例</a></nav></div></header>
+<main id="main" class="wrap plan">
+<p class="eyebrow">WATER ROCKET / 自作モデルの設計仕様案</p>
+<h1>形状から、姿勢と<br>ペイロードの揺れまで</h1>
+<p class="lead">例は「1.5 Lのペトロケで卵を高度30 mまで上げて回収」。部品形状から力を求め、その力で組立機体がどう動くかを解き、搭載物が実際に受ける荷重を評価します。以下の動解析・振動解析は開発候補です。</p>
+<div class="steps">
+<div class="step"><span>01　部品</span><h3><a href="#low">どの力が生じる？</a></h3><p>姿勢・風速を与えて、空力係数と力・モーメントを返す。</p></div>
+<div class="step"><span>02　組立機体</span><h3><a href="#middle">乱れから戻る？</a></h3><p>質量特性を加え、ロール・首振りとその減衰を返す。</p></div>
+<div class="step"><span>03　飛行全体</span><h3><a href="#high">荷物は要求を満たす？</a></h3><p>推進・風・回収・取付構造を含め、高度と搭載位置の荷重を返す。</p></div>
+</div>
+<p class="example"><strong>ここでの「層」は解析の粒度です。</strong> 既存の探索変数のL0〜L3とは別に扱います。たとえばL3の充填率は、中層の重心・慣性と、高層の推力・高度の両方に効きます。</p>
+<section id="low">
+<p class="eyebrow">01 / 部品・外形</p><h2>姿勢を与えて、力とモーメントを測る</h2>
+<dl>
+<dt>探索変数</dt><dd>コーン形状 <code>nose_profile</code>、フィン枚数・張出し・翼弦・後退量・取付位置、取付角 <code>fins.cant_rad</code>。カントは機軸に対してフィンを同じ向きにひねる角度です。組立誤差はフィンごとの別入力として残します。</dd>
+<dt>解析条件</dt><dd>対気速度、空気密度、迎角 <code>alpha_rad</code>、横滑り角 <code>beta_rad</code>、既知の回転速度を入力。基準面積・基準長・モーメントの基準点を固定します。コーンとフィンの干渉は組立形状で確認します。</dd>
+<dt>解析手法</dt><dd>小迎角では風洞データ・適用域内の簡易空力モデルから係数表を作成。取付角を変えて回転ゼロでロール駆動モーメントを求め、取付角を固定して回転速度を振り、ロール減衰を求めます。迎角・横滑り角を振ってピッチ・ヨーの復元特性も取得します。</dd>
+<dt>評価関数と受け渡し</dt><dd><code>roll_moment_at_zero_rate_nm</code>（N·m）と <code>d_roll_moment_d_roll_rate</code>（N·m·s/rad）で駆動と減衰を分離。風洞との照合は同じ測定点での <code>moment_coefficient_rmse</code>。中層へは係数表、軸・符号、測定誤差、有効な迎角・速度・回転速度の範囲を渡します。</dd>
+</dl>
+<p>軸対称のコーンと対称配置の無カント翼が、無風・迎角ゼロ・初期回転ゼロで持続的なロールを発生するなら、まず非対称条件か実装の符号を確認します。<a href="https://docs.rocketpy.org/en/latest/technical/aerodynamics/roll_equations.html">RocketPyのロール方程式</a> ／ <a href="index.html#ref-R03">R03 風洞試験</a></p>
+</section>
+<section id="middle">
+<p class="eyebrow">02 / 組立機体</p><h2>同じ外乱に対する、姿勢の時系列を比べる</h2>
+<dl>
+<dt>探索変数・固定値</dt><dd>搭載位置 <code>payload_cg_from_nose_m</code>、回収装置の配置、フィン構成。ミッション指定の積載質量は固定。部品の質量と位置、残水量から質量 <code>mass_kg(t)</code>、重心 <code>cg_from_nose_m(t)</code>、慣性テンソル <code>inertia_kg_m2(t)</code> を更新します。</dd>
+<dt>解析手法</dt><dd>まずガイド離脱直後・噴射途中・惰性上昇の各状態で、小さな迎角や同一の横風パルスを与えます。剛体6自由度の並進・回転方程式を時間積分し、姿勢と機体軸角速度 <code>p, q, r</code>（ロール・ピッチ・ヨー、rad/s）を求めます。空力モーメントをその時点の重心に移し、推力線のずれも考慮。噴射中は排出質量の運動量と慣性の変化を整合させます。</dd>
+<dt>静安定を評価</dt><dd>位置は機首原点・機尾方向を正とします。角速度は機体の右手座標系（前・右・下）の各軸まわりを正とし、測定器の軸から変換します。<code>SM(t) = (xCP − xCG) / D</code>。有効な自由飛行区間の最小値とその時刻を返します。<a href="index.html#phase_static_margin">CG・CPの基準と適用条件</a></dd>
+<dt>動安定を評価</dt><dd><code>peak_abs_roll_rate_rad_s</code>（最大ロール角速度）、<code>peak_abs_alpha_rad</code>（最大迎角）、<code>settling_time_s</code>（整定時間）を別々に記録。整定時間は外乱終了から姿勢誤差と横方向角速度が指定帯に入り、指定時間とどまるまで。飛行区間が先に終われば「区間内未整定」とします。</dd>
+<dt>高層への出力</dt><dd>時刻、位置・速度、姿勢クォータニオン、角速度・角加速度、重心の加速度、質量特性、飛行フェーズと適用域フラグ。正の静安定余裕だけで、首振りの収束や許容ロールを合格にしません。</dd>
+</dl>
+</section>
+<section id="high">
+<p class="eyebrow">03 / ミッション・ペイロード</p><h2>推進から着地まで、搭載物の位置で判定する</h2>
+<dl>
+<dt>探索変数・不確実量</dt><dd>ペトロケの推進はノズル・充填率・初期ゲージ圧。これらに対応する推力履歴 <code>thrust_n(t)</code> と質量流出を使います。搭載位置、取付剛性 <code>mount_stiffness_n_per_m</code>、減衰 <code>mount_damping_n_s_per_m</code>、回収条件を組み合わせます。風・圧力誤差・取付角誤差は記録した分布から試行ごとに与えます。</dd>
+<dt>解析手法</dt><dd>中層の運動モデルをガイド拘束・離脱、噴射終了、頂点、開傘、着地までつなぎます。剛体上の基準点Oから固定ベクトルrだけ離れた取付点Pの加速度は <code>aP = aO + ω̇ × r + ω × (ω × r)</code>。全項を同一座標系にそろえ、加速度計と比べるときは重力を差し引いてセンサー軸へ変換します。局所の振動は取付点の加振波形と質量・ばね・減衰のモデル、または実測した伝達関数から求めます。推力の滑らかな平均曲線だけでは高周波振動を評価できません。</dd>
+<dt>飛行の評価</dt><dd><code>apogee_band_excess_m</code> は高度の許容帯を超えた距離。頂点・開傘時の傾きと角速度、開傘失敗の有無、着地速度も記録します。各試行で全必須条件を判定し、同じ試行条件で成功率と失敗理由を比較します。</dd>
+<dt>荷物が受ける環境の評価</dt><dd><code>payload_peak_specific_force_mps2</code>（センサー軸の最大比力）と <code>payload_band_rms_mps2</code>（指定周波数帯の振動加速度RMS）を区別。軸、センサー位置、帯域、時間窓、サンプル周波数を固定します。着地衝撃は上昇中の連続振動と分けて記録。取付応答や荷物の耐性データが欠ければ、その判定は「未評価」とします。</dd>
+</dl>
+<p>推力・内圧と機体振動の照合には<a href="index.html#ref-R02">R02の水ロケット実験</a>、取付位置と機械環境を分ける考え方には<a href="https://www.nasa.gov/wp-content/uploads/2023/09/soundingrocketprogramhandbook.pdf">NASA観測ロケットハンドブック §4.2.1・§6.3.3</a>を参照。許容値は対象ペイロードの試験・仕様から設定します。</p>
+</section>
+<section id="checks">
+<p class="eyebrow">04 / 最初の検証</p><h2>取付角と搭載位置を一つずつ変える</h2>
+<table class="decisions"><caption>同じ機体・推進・環境を基準とする対照試験</caption>
+<thead><tr><th scope="col">ケース</th><th scope="col">操作</th><th scope="col">確認する結果</th></tr></thead><tbody>
+<tr><th scope="row">A　対称性</th><td>無風、対称機体、無カント、初期回転ゼロ。</td><td>ロール駆動モーメントと初期ロール加速度が数値・測定誤差の範囲でゼロ。許容誤差は事前に記録する。</td></tr>
+<tr><th scope="row">B　符号反転</th><td>Aから全フィンのカントだけを同じ大きさの正・負に変更。</td><td>低層のロールモーメントと中層の初期ロール加速度がそれぞれ逆符号。回転開始後は減衰項が回転を抑える向きになる。</td></tr>
+<tr><th scope="row">C　質量配置</th><td>外形・積載質量・外乱を固定し、搭載位置だけを前後に移す。</td><td>同一流れ・同一外部形状でCPは同じ。CGと慣性を更新し、静安定余裕と過渡応答を再計算。以前の整定時間を流用しない。</td></tr>
+<tr><th scope="row">D　取付部振動</th><td>同じ取付点の加振記録を、異なる剛性・減衰の取付モデルへ入力。</td><td>同じ帯域と時間窓でペイロードの応答を比べ、加速度計または加振試験で照合。剛体の角速度を振動RMSの代用にしない。</td></tr>
+</tbody></table>
+<p class="example"><strong>実装順</strong>　①カントとロールの符号試験 → ②放水に伴う質量特性・外乱後の姿勢応答 → ③全飛行と取付部振動。各段階で実測との誤差と適用域を記録し、確認済みの出力から次層の設計比較に使います。</p>
+</section></main>
+<footer><div class="wrap"><a href="index.html">設計ガイド</a> ／ <a href="plan.html">探索計画とハーネス判断表</a></div></footer>
+</body></html>
