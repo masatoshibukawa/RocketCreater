@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dプリントのトラブル対処"
+  short_description: "形状・スライス・実機・後処理を切り分け、変更を絞って再試作する"
+  default_prompt: "$3d-model-troubleshooting を使い、この印刷不良の証拠を確認し、原因の仮説と一度の再試作で調べる変更を決めてください。"

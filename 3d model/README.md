@@ -4,6 +4,23 @@
 
 **最初は「AIで外観を作る→実寸と形状を修正→正しい機種設定でスライス→原寸の部分試作→本出力」の順で進める。** 寸法を合わせる部品は、パラメトリックCADを中心にする。
 
+## 制作に使うスキル
+
+[3Dモデル制作の索引スキル](3d-model-skills/SKILL.md)から、以下の8カテゴリーの専門スキルを選べる。スキルは依頼の進め方と確認条件を持ち、詳しい数値や手順は下の調査資料を必要に応じて参照する。
+
+| カテゴリー | スキル |
+| --- | --- |
+| 全体工程 | [3d-model-overview](3d-model-skills/categories/3d-model-overview/SKILL.md) |
+| AI生成 | [3d-model-ai-generation](3d-model-skills/categories/3d-model-ai-generation/SKILL.md) |
+| モデル修正と設計 | [3d-model-preparation](3d-model-skills/categories/3d-model-preparation/SKILL.md) |
+| 印刷と後処理 | [3d-model-printing](3d-model-skills/categories/3d-model-printing/SKILL.md) |
+| トラブル対処 | [3d-model-troubleshooting](3d-model-skills/categories/3d-model-troubleshooting/SKILL.md) |
+| 制作レシピ | [3d-model-recipes](3d-model-skills/categories/3d-model-recipes/SKILL.md) |
+| チェックと記録 | [3d-model-records](3d-model-skills/categories/3d-model-records/SKILL.md) |
+| 多言語調査と出典 | [3d-model-research](3d-model-skills/categories/3d-model-research/SKILL.md) |
+
+利用時は`3d model/3d-model-skills/SKILL.mdを使って…`のように入口を指定する。ここでは指定場所にスキル原本を保存しており、自動検出やインストールの設定は行っていない。
+
 ## カテゴリー別の資料
 
 工程と用途で8つのフォルダーに分類している。フォルダー番号は読む順番の目安で、文書名の番号は元の工程順を保持している。
