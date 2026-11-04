@@ -354,6 +354,261 @@
       }
     },
     {
+      "id": "D23",
+      "lang": "en",
+      "title": "Water Bottle Rocket Launcher",
+      "author": "The Shoulders of Giants, Inc. (TSoG)",
+      "year": "2019 製作・2020 保存版",
+      "kind": "発射台の組立CAD・部品CAD・印刷メッシュ",
+      "note": "教育団体の夏期設計プロジェクト。台座・ノズル・手元トリガーの組立図と部品表を照合できる。2012年試作、2013年改良を経た経緯も作者が記録している。",
+      "source": "https://github.com/TSoGiants/Water-Bottle-Rocket-Launcher/tree/b73d27ca0ef081e64c4c870241b8b8f07fae703c",
+      "download": null,
+      "local": {
+        "path": "CAD/D23-TSoGiants"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D24",
+      "lang": "pl",
+      "title": "Rakieta wodna",
+      "author": "Grzegorz Brzezinka／Foton 第97号、ヤギェウォ大学",
+      "year": "2007",
+      "kind": "物理教育誌の製作記事",
+      "note": "0.5 LのPETボトルや自転車のチューブ用バルブを用いる工作例。夏号の印刷ページ51から始まる。",
+      "source": "https://ruj.uj.edu.pl/bitstreams/95f7fc71-1c28-4de8-b4e6-e6a1e79d5d4c/download",
+      "download": null,
+      "local": null,
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D25",
+      "lang": "cs",
+      "title": "Vodní raketa",
+      "author": "Západočeská pobočka České astronomické společnosti／チェコ天文学会西ボヘミア支部",
+      "year": null,
+      "kind": "天文学会支部の機体工作図",
+      "note": "2本のPETボトル、コルク、空気入れのバルブを使う。機体を棒に沿わせる2本のガイド管の取り付け位置を示す。",
+      "source": "https://www.astro.zcu.cz/obr.php?pid=3624",
+      "download": "https://www.astro.zcu.cz/obr.php?pid=3624",
+      "local": {
+        "path": "原本/D25-czech-astronomical-society.pdf",
+        "pages": 2,
+        "sha256": "4002c009fdd4313ae9755c91872b292f7e06f6c4b0b84f5251388dca7f27bca1"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D26",
+      "lang": "fi",
+      "title": "Divetymonoksidi –raketti",
+      "author": "Mika Aarnio／フィンランド天文協会 Ursa 配布",
+      "year": "2021",
+      "kind": "発射台製作者の技術資料",
+      "note": "真鍮の配管部品を使う発射台の構成、継手・シールと操作弁の配置を説明。ボトル用ノズルの3Dプリント配布先も記載。",
+      "source": "https://www.ursa.fi/fileadmin/ursa2010/Harrastus/Jaostot/Kerho-yhdistys/vesiraketin_laukaisulaite.pdf",
+      "download": "https://www.ursa.fi/fileadmin/ursa2010/Harrastus/Jaostot/Kerho-yhdistys/vesiraketin_laukaisulaite.pdf",
+      "local": {
+        "path": "原本/D26-aarnio-launcher.pdf",
+        "pages": 6,
+        "sha256": "dfffa560e3046d1e21197bd2aef18f230b70917588e9098e82d6f32f21f884a8"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D27",
+      "lang": "fi",
+      "title": "Vesipaineraketti",
+      "author": "Miika Haataja, Väinö Katajisto／ヘルシンキ大学",
+      "year": "2015",
+      "kind": "実験合宿の記録",
+      "note": "前半は水・空気入りのボトル、ノズル、栓の密封を説明する。後半に扱う液体窒素の別実験は水ロケットの試験結果から区別する。",
+      "source": "https://blogs.helsinki.fi/fys-tutkijapiiri/files/2014/12/tiederetriitti_vesipaineraketti.pdf",
+      "download": "https://blogs.helsinki.fi/fys-tutkijapiiri/files/2014/12/tiederetriitti_vesipaineraketti.pdf",
+      "local": {
+        "path": "原本/D27-helsinki-retreat.pdf",
+        "pages": 5,
+        "sha256": "41457f119849f4640d998d3bb7267441efc383f5c6bc4d0f068d85792c26ee5c"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D28",
+      "lang": "nl",
+      "title": "Maak je eigen waterraket",
+      "author": "Sonnenborgh museum & sterrenwacht／オランダ",
+      "year": null,
+      "kind": "天文台・博物館の工作教材",
+      "note": "家庭で入手できるPETボトル、コルクなどの材料と発射の仕組みを説明する。オランダ語の部品名で機体構成を確認できる。",
+      "source": "https://www.sonnenborgh.nl/thuis-leren-van-de-sterren/waterraket",
+      "download": null,
+      "local": null,
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D29",
+      "lang": "nn",
+      "title": "Vassrakett – rakettforskar for ein dag!",
+      "author": "Bjørn Vidnes, Aud Ragnhild Skår／Naturfagsenteret、オスロ大学",
+      "year": null,
+      "kind": "対照実験の授業案",
+      "note": "発射角度や尾翼を一度に一条件ずつ変え、到達距離を比較する。生徒が自分で実験条件を決めるための問いもある。",
+      "source": "https://www.naturfag.no/uopplegg/vis.html?tid=2048986",
+      "download": null,
+      "local": null,
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D30",
+      "lang": "tr",
+      "title": "Su Roketi İmalatı ve Eğitimi",
+      "author": "Ahmet Polatoğlu・ATAK／Atatürk Üniversitesi",
+      "year": "2021",
+      "kind": "大学アウトリーチの実施報告",
+      "note": "天文学・宇宙科学部門と学生クラブによる製作・指導プロジェクト。材料調達と授業での使用状況を写真付き報告で追える。",
+      "source": "https://tdm.atauni.edu.tr/wp-content/uploads/2022/05/1077.-Su-Roketi-Imalati-ve-Egitimi.pdf",
+      "download": "https://tdm.atauni.edu.tr/wp-content/uploads/2022/05/1077.-Su-Roketi-Imalati-ve-Egitimi.pdf",
+      "local": {
+        "path": "原本/D30-ataturk-water-rocket.pdf",
+        "pages": 9,
+        "sha256": "090f14bbebeaec18bd447a9c7ad7aff84fd8145cafa4e3538d65e4c23d675b49"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D31",
+      "lang": "hr",
+      "title": "Water Rocket Challenge – AstroFest Zagreb",
+      "author": "Pozdravi svemir／クロアチア",
+      "year": "2026 開催案内",
+      "kind": "主催者による競技要項",
+      "note": "当日会場で機体を製作するチーム競技。持ち込み機の扱い、水を用いる推進方式、チーム編成の条件を明示する。",
+      "source": "https://pozdravisvemir.hr/event/water-rocket-challenge-2/",
+      "download": null,
+      "local": null,
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D32",
+      "lang": "el",
+      "title": "Πύραυλος Νερού",
+      "author": "ΕΝ.Ε.Ε.ΓΥ.-Λ. Σύρου／ギリシャ・シロス島の学校",
+      "year": "2012 掲載・2017 更新",
+      "kind": "学校の工作・飛行記録",
+      "note": "機械系授業で生徒がボトル式水ロケットを作って飛ばした記録。材料を用意し、機体を組み立てた授業の流れが分かる。",
+      "source": "https://www.atsida.gr/ta-nea-mas-50/mesa-sthn-taxh/440-pyraylos-neroy",
+      "download": null,
+      "local": null,
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D33",
+      "lang": "fr",
+      "title": "Water Rocket – Guide pratique",
+      "author": "ESERO Luxembourg",
+      "year": "2025 大会版",
+      "kind": "大会公式ガイド",
+      "note": "主催者が提供するボトル用先端部、発射台、空気入れと、参加者が製作する機体の範囲を区別できる。ルールと会場での手順も収録。",
+      "source": "https://www.esero.lu/wp-content/uploads/2025/02/Water-Rocket-Challenge-Guide-2025-FR.pdf",
+      "download": "https://www.esero.lu/wp-content/uploads/2025/02/Water-Rocket-Challenge-Guide-2025-FR.pdf",
+      "local": {
+        "path": "原本/D33-esero-luxembourg.pdf",
+        "pages": 24,
+        "sha256": "018761099165c94c155cf506cb37e0e4eaf46b8eb1352188ca95728bc4d6b3f8"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D34",
+      "lang": "fr",
+      "title": "Fusées à eau",
+      "author": "Kot Astro & M.A.R.S.／UCLouvain、ベルギー",
+      "year": "2021 作成・2022 大会用",
+      "kind": "大学団体の標的競技資料",
+      "note": "着地点が標的にどれだけ近いかで競う形式。大会前に製作する機体と当日の打上げを分けて説明している。",
+      "source": "https://www.sciences.be/wp-content/uploads/2022/02/Fus_es_Frimout-1.pdf",
+      "download": "https://www.sciences.be/wp-content/uploads/2022/02/Fus_es_Frimout-1.pdf",
+      "local": {
+        "path": "原本/D34-uclouvain-target.pdf",
+        "pages": 8,
+        "sha256": "c4fda28855356b5afd229f7adef0e38940a30bc1f49d226a6ec32e00c645007a"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D35",
+      "lang": "vi",
+      "title": "Cuộc thi chế tạo tên lửa nước 2022 tại Việt Nam",
+      "author": "Trung tâm Vũ trụ Việt Nam／ベトナム宇宙センター",
+      "year": "2022 開催報告",
+      "kind": "宇宙機関の競技実施記録",
+      "note": "ホアラック天文台で開かれた大会の記録。機体の構造に加え、複数方向からの風で軌道予測が難しくなったことを主催者が報告している。",
+      "source": "https://vnsc.org.vn/vi/tin-tuc-su-kien/cuoc-thi-che-tao-ten-lua-nuoc-2022-tai-viet-nam/",
+      "download": null,
+      "local": null,
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D36",
+      "lang": "en",
+      "title": "Water Rocket",
+      "author": "Arthur C Clarke Institute for Modern Technologies／スリランカ",
+      "year": null,
+      "kind": "国立技術機関の教育プログラム",
+      "note": "ボトル式水ロケットの1日工作講習と国内競技からAPRSAFへの選考を説明。国内の継続的な活動を調べる入口になる。",
+      "source": "https://www.accimt.ac.lk/water-rocket/",
+      "download": null,
+      "local": null,
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D37",
+      "lang": "en",
+      "title": "Zonal Space Education Workshop, Ilorin",
+      "author": "African Regional Centre for Space Science and Technology Education – English／ナイジェリア",
+      "year": null,
+      "kind": "地域宇宙教育センターの実施記録",
+      "note": "中等学校向け宇宙教育の一部として水ロケット実演を記録。ナイジェリアのイロリンで、ロケット実演を衛星・宇宙科学の学習と組み合わせた例。",
+      "source": "https://www.arcsstee.org.ng/download/Director/Zonal%20Space%20Education%20Workshop.pdf",
+      "download": "https://www.arcsstee.org.ng/download/Director/Zonal%20Space%20Education%20Workshop.pdf",
+      "local": {
+        "path": "原本/D37-arcsstee-ilorin.pdf",
+        "pages": 1,
+        "sha256": "2740607c40c1bceb3ab158ef272d8517f47c2227ad141024fa49c264e5632d07"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D38",
+      "lang": "pl",
+      "title": "LIV Olimpiada Fizyczna – zadania zawodów I stopnia, zadanie 14",
+      "author": "Olimpiada Fizyczna／ポーランド物理オリンピック",
+      "year": null,
+      "kind": "競技の原問題",
+      "note": "第54回予選の問14。栓が外れる圧力を同じとし、水を容量の1/4と3/4まで入れた場合の到達高度を比較させる。",
+      "source": "https://of.szc.pl/pdf/54OF_I-1_T_z.pdf",
+      "download": "https://of.szc.pl/pdf/54OF_I-1_T_z.pdf",
+      "local": {
+        "path": "原本/D38-polish-physics-olympiad.pdf",
+        "pages": 6,
+        "sha256": "8e43139709697de2ddaf50b25b8d7eaf8795cefa20f9809e8de52240ea5221fd"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
+      "id": "D39",
+      "lang": "sv",
+      "title": "Vattenraketen",
+      "author": "Tom Tits Experiment／スウェーデン",
+      "year": null,
+      "kind": "科学館の常設体験展示",
+      "note": "機体をワイヤに沿って飛ばし、上部のベルを鳴らす展示。水量または圧力を変え、同じ到達目標で観察できる仕組み。",
+      "source": "https://www.tomtit.se/besok/utstallningar-och-experiment/experiment/vattenraketen/",
+      "download": null,
+      "local": null,
+      "category": "設計図・製作資料"
+    },
+    {
       "id": "R01",
       "category": "論文・研究資料",
       "lang": "ja",
@@ -725,6 +980,181 @@
       }
     },
     {
+      "id": "R24",
+      "lang": "en",
+      "title": "Soda-bottle water rockets",
+      "author": "David Kagan, Louis Buchholtz, Lynda Klein／The Physics Teacher",
+      "year": "1995",
+      "kind": "学術誌・機体製作と運動モデル",
+      "note": "2 Lの炭酸飲料ボトルを使う機体の製作と発射時のモデルを扱い、予測と実験を比較する。第33巻第3号、150–157ページ。",
+      "source": "https://doi.org/10.1119/1.2344175",
+      "download": null,
+      "local": null,
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R25",
+      "lang": "ja",
+      "title": "科学工作教室実施報告「グンと高く飛ばそう水ロケット」",
+      "author": "藤本光章／愛媛県総合科学博物館研究報告 第1号",
+      "year": "1996 発行・1995 実施",
+      "kind": "博物館紀要・工作教室の実施報告",
+      "note": "飛ばなかった機体を調べ、胴体の曲がり、翼の位置ずれ、ゴム栓の緩みを記録。製作条件と実際の不具合を結びつけて読める。",
+      "source": "https://www.i-kahaku.jp/publications/bulletin/pdf/01/12-fujimoto.pdf",
+      "download": "https://www.i-kahaku.jp/publications/bulletin/pdf/01/12-fujimoto.pdf",
+      "local": {
+        "path": "原本/R25-ehime-fujimoto-1996.pdf",
+        "pages": 3,
+        "sha256": "fe94d0741c211bc307b582c43994fedee9c599798be5baf9b2ce2c8eafed03bf"
+      },
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R26",
+      "lang": "ca",
+      "title": "Construcció i aprofitament didàctic del coet d’aigua",
+      "author": "Àngel Luis Torres Climent, Tomás José Martínez Sempere／Ciències 第26号",
+      "year": "2013",
+      "kind": "実験授業・斜方投射",
+      "note": "機体と発射台を製作し、放物運動を実験的に扱う。カタルーニャ語本文で授業用の構成と測定の流れを確認できる。",
+      "source": "https://revistes.uab.cat/ciencies/article/view/n26-torres-martinez",
+      "download": "https://revistes.uab.cat/ciencies/article/download/n26-torres-martinez/76",
+      "local": {
+        "path": "原本/R26-torres-martinez.pdf",
+        "pages": 5,
+        "sha256": "2ffe5148a430434822d869073135397c14ce230f05328d69cf6ceab7e50a39ac"
+      },
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R27",
+      "lang": "ca",
+      "title": "Estudi dels coets d’aigua",
+      "author": "Taller Ginebró／UVic の研究賞資料庫",
+      "year": "2012",
+      "kind": "高校の研究報告",
+      "note": "機体と発射台を自作し、理論と実験を比較する。目次から発射台の製作、測定手順、結果へ進める。",
+      "source": "https://premisrecerca.uvic.cat/sites/default/files/webform/33d0d2d23766e22a5c33fbc2e5e4448d75bc062f_EstudiDelsCoetsDAigua.pdf",
+      "download": "https://premisrecerca.uvic.cat/sites/default/files/webform/33d0d2d23766e22a5c33fbc2e5e4448d75bc062f_EstudiDelsCoetsDAigua.pdf",
+      "local": {
+        "path": "原本/R27-taller-ginebro.pdf",
+        "pages": 43,
+        "sha256": "04bdbaa8e0d20a9a72fc444574d922bcc6a3abd32f5570ba68712286d235d504"
+      },
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R28",
+      "lang": "sv",
+      "title": "Projekt-uppgifter – Vattenraketen i provbänk / Vattenraketen i provflygning",
+      "author": "Kungliga Tekniska högskolan (KTH)／スウェーデン",
+      "year": "2012 教材の版",
+      "kind": "大学の数値解析課題",
+      "note": "課題23は試験台上、24は飛行中の水ロケットを扱う。同じボトルの推進過程と機体運動を段階的にモデル化するための問題。",
+      "source": "https://www.math.kth.se/na/SF1547/numd15/Lab3BuppgJO.pdf",
+      "download": "https://www.math.kth.se/na/SF1547/numd15/Lab3BuppgJO.pdf",
+      "local": {
+        "path": "原本/R28-kth-test-stand-flight.pdf",
+        "pages": 36,
+        "sha256": "c3c18ffbe44ffb278a36f2ef90c2af033f4d08d59d883229fe2b2c9a33c12f57"
+      },
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R29",
+      "lang": "hu",
+      "title": "A BME Kísérleti Köre bemutatja: vízirakéta",
+      "author": "Palotai Veronika／Fizikai Szemle、ブダペスト工科経済大学",
+      "year": "2018",
+      "kind": "大学実験グループの報告",
+      "note": "機体、発射台、パラシュートと搭載センサーを部位別に報告する。回収と高度・速度の測定を一つの活動として読める。",
+      "source": "https://physics.bme.hu/sites/physics.bme.hu/files/users/wignerszakkollegium/FizSzem-201812-PalotaiVeronika.pdf",
+      "download": "https://physics.bme.hu/sites/physics.bme.hu/files/users/wignerszakkollegium/FizSzem-201812-PalotaiVeronika.pdf",
+      "local": {
+        "path": "原本/R29-palotai-bme.pdf",
+        "pages": 5,
+        "sha256": "a590360f53188385ff4992cde4e5bb7dfcc2107ac68eb2472f955ff26b65cc83"
+      },
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R30",
+      "lang": "sl",
+      "title": "Potisna sila vodne rakete (tema 18) – opis projekta",
+      "author": "Anton Luka Šijanec／Gimnazija Bežigrad、スロベニア",
+      "year": "2021 保存版",
+      "kind": "推力の測定計画",
+      "note": "固定ボトルの推力、内圧、水位を同期して記録するための装置と作図計画。資料末尾で日付が自動生成される旨を明記しているため、年は保存版を示す。",
+      "source": "https://razor.arnes.si/~asija3/files/sola/gimb/2/fiz/naloga/tekst/dokument.pdf",
+      "download": "https://razor.arnes.si/~asija3/files/sola/gimb/2/fiz/naloga/tekst/dokument.pdf",
+      "local": {
+        "path": "原本/R30-sijanec-thrust.pdf",
+        "pages": 6,
+        "sha256": "0d89ddcdd7e0bc0280e4e3f71a6ed6695ca7d701a5b97452e6acbcd2adc3f97f"
+      },
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R31",
+      "lang": "th",
+      "title": "การหาประสิทธิภาพคู่มือการประดิษฐ์จรวดขวดน้ำ ตามขั้นตอนโครงงานสะเต็มศึกษา สำหรับนักเรียนชั้นประถมศึกษาตอนปลาย",
+      "author": "สถาพร เรืองรุ่ง (Sathaphorn Ruengrung)／Journal of Education and Innovative Learning",
+      "year": "2022",
+      "kind": "教材評価の実証研究",
+      "note": "小学校高学年向けのボトルロケット製作教材を評価。児童20名の学習前後の成績と満足度を調べた研究で、教材の教育効果を比較する際に使える。",
+      "source": "https://so06.tci-thaijo.org/index.php/jeil/article/view/260354",
+      "download": "https://so06.tci-thaijo.org/index.php/jeil/article/download/260354/175402",
+      "local": {
+        "path": "原本/R31-ruengrung-stem.pdf",
+        "pages": 16,
+        "sha256": "ae2f4b0e59f167de275ff8ce9701986a2df5c1d4b70041dfc4111297d203b8f2"
+      },
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R32",
+      "lang": "id",
+      "title": "Pembuatan dan penggunaan roket air sebagai alat peraga untuk meningkatkan aktivitas belajar siswa di SMAN 4 Lubuklinggau",
+      "author": "Fenny Nisvalisia ほか／Universitas Bengkulu、インドネシア",
+      "year": "2012",
+      "kind": "修士論文・公開抄録",
+      "note": "水量・角度・空気圧と飛距離の関係を調べ、授業での利用も評価。リポジトリで公開されている抄録を採録し、本文は登録利用者向け。",
+      "source": "https://repository.unib.ac.id/id/eprint/4788/",
+      "download": null,
+      "local": null,
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R33",
+      "lang": "pt",
+      "title": "Foguete de Garrafa PET com Propulsão a água – Relatório Final",
+      "author": "Gustavo Germiniani, Henrique Macedo de Souza, João Henrique Teixeira Ferreira／SENAC CAS、ブラジル",
+      "year": "2025",
+      "kind": "応用物理の学生設計報告",
+      "note": "カプセル、接続部、パラシュートを含む機体の設計を説明する。同じプロジェクトの部品図と試験写真を照合できる。",
+      "source": "https://raw.githubusercontent.com/jzinho14/WaterRocket_AppliedPhysics/2f3ffd73d4ecb1c971e9cb5b86310d31f8dcc9bb/Relat%C3%B3rio_Final_Foguete_de_Garrafa_PET.pdf",
+      "download": "https://raw.githubusercontent.com/jzinho14/WaterRocket_AppliedPhysics/2f3ffd73d4ecb1c971e9cb5b86310d31f8dcc9bb/Relat%C3%B3rio_Final_Foguete_de_Garrafa_PET.pdf",
+      "local": {
+        "path": "原本/R33-senac-applied-physics.pdf",
+        "pages": 36,
+        "sha256": "b85428e82ec6e30543bff191340a8db9e0e2f50484c96b0acef653f64363de54"
+      },
+      "category": "論文・研究資料"
+    },
+    {
+      "id": "R34",
+      "lang": "en",
+      "title": "UCT team smashes eight-year water rocket world altitude record",
+      "author": "UCT Newsroom／ケープタウン大学、南アフリカ",
+      "year": "2015 掲載",
+      "kind": "大学研究チームの飛行試験報告",
+      "note": "ケープタウン大学の計算流体力学チームがClass Aの機体で830 mに到達したと2015年に報告。大学が当時発表した競技クラス付きの飛行記録として扱う。",
+      "source": "https://www.news.uct.ac.za/article/-2015-10-07-uct-team-smashes-eight-year-water-rocket-world-altitude-record",
+      "download": null,
+      "local": null,
+      "category": "論文・研究資料"
+    },
+    {
       "id": "P01",
       "category": "既製品資料",
       "lang": "ja",
@@ -962,6 +1392,160 @@
       "source": "https://www.arborsci.com/products/super-bottle-rocket-launcher",
       "download": null,
       "local": null
+    },
+    {
+      "id": "P16",
+      "lang": "en",
+      "title": "Liquifly Deluxe Water Powered Rocket Kit",
+      "author": "Questacon Shop／オーストラリア",
+      "year": null,
+      "kind": "国立科学技術センター取扱製品の構成",
+      "note": "ボトル、翼、バルブ2個、ホース、ポンプを同梱するキット。部品単体の発射台と比較する際に、付属する部材を特定できる。",
+      "source": "https://shop.questacon.edu.au/products/liquifly-deluxe-water-powered-rocket-kit",
+      "download": null,
+      "local": null,
+      "category": "既製品資料"
+    },
+    {
+      "id": "P17",
+      "lang": "sv",
+      "title": "Raket vattendriven (art.nr 53802)",
+      "author": "Sagitta／スウェーデン",
+      "year": null,
+      "kind": "理科教材供給元の製品仕様",
+      "note": "圧力に応じてノズルが自動で外れる方式。ボトルとポンプは別途用意するため、P16の一体キットと供給範囲を比較できる。",
+      "source": "https://www.sagitta.se/artikel/raket-vattendriven",
+      "download": null,
+      "local": null,
+      "category": "既製品資料"
+    },
+    {
+      "id": "H01",
+      "lang": "en",
+      "title": "Jet Driven Aerial Toy (US2732657)",
+      "author": "Adam Krautkrämer／米国特許庁",
+      "year": "1956 公報",
+      "kind": "水噴射式飛行玩具の特許",
+      "note": "胴体に水と圧縮空気を入れ、保持具を解除して水を噴射する飛行玩具。ポンプと保持具を一体で描いた図がある。飲料ボトル転用前の先行例。",
+      "source": "https://patents.google.com/patent/US2732657A/en",
+      "download": "https://patentimages.storage.googleapis.com/8f/e6/a6/d2b8a847858a29/US2732657.pdf",
+      "local": {
+        "path": "原本/H01-krautkramer-1956.pdf",
+        "pages": 4,
+        "sha256": "bde5e40acd2519657d8816d934bb85a60720597bde0a9d2d2f54b3c98491cb38"
+      },
+      "category": "歴史・所蔵資料"
+    },
+    {
+      "id": "H02",
+      "lang": "en",
+      "title": "Multiple Stage Rocket (US2927398)",
+      "author": "Joseph Kaye, Edward F. Kurtz Jr., George F. Harper／米国特許庁",
+      "year": "1960 公報",
+      "kind": "多段式の特許",
+      "note": "第一段から第二段に水を分配する管と二つのノズルを図示する。現代のPET機と比較する際は、専用の段胴体を持つ設計として読める。",
+      "source": "https://patents.google.com/patent/US2927398A/en",
+      "download": "https://patentimages.storage.googleapis.com/31/2f/62/f368c8977ce99f/US2927398.pdf",
+      "local": {
+        "path": "原本/H02-kaye-1960.pdf",
+        "pages": 8,
+        "sha256": "38817ac7c4e5451d332aedd7f085d166f838c47b03698d01e9f3f7f1ee15362e"
+      },
+      "category": "歴史・所蔵資料"
+    },
+    {
+      "id": "H03",
+      "lang": "en",
+      "title": "Two-Stage Rocket (US3049832)",
+      "author": "Edward J. Joffe／Park Plastics Co., Inc.／米国特許庁",
+      "year": "1962 公報",
+      "kind": "玩具メーカーの段間機構特許",
+      "note": "逆止弁を通じて第二段に水と空気を送り、段間の係合を解除する方式。H01の先行特許を本文中で引用している。",
+      "source": "https://patents.google.com/patent/US3049832A/en",
+      "download": "https://patentimages.storage.googleapis.com/22/d2/ba/97959e7e145670/US3049832.pdf",
+      "local": {
+        "path": "原本/H03-joffe-1962.pdf",
+        "pages": 7,
+        "sha256": "be901d37478132580096072cdaf33149099a2e8a8537aa07545dff94c10e69bb"
+      },
+      "category": "歴史・所蔵資料"
+    },
+    {
+      "id": "H04",
+      "lang": "en",
+      "title": "Reaction Toy Arrangement and Method (US3962818)",
+      "author": "Reginald F. Pippin Jr.／米国特許商標庁",
+      "year": "1976 公報",
+      "kind": "発射・分離機構の特許",
+      "note": "噴出口と別に自己密封する横の注入口を設け、段の内圧変化で分離する構成を説明。固定具をどこに置くかをH02・H03と比較できる。",
+      "source": "https://patents.google.com/patent/US3962818A/en",
+      "download": "https://patentimages.storage.googleapis.com/e5/ca/84/9eebe76bc99706/US3962818.pdf",
+      "local": {
+        "path": "原本/H04-pippin-1976.pdf",
+        "pages": 10,
+        "sha256": "8e7c68c380288535bfee9c9cff9c1ce7685fb36c0a9aa6bd133949ae93923b40"
+      },
+      "category": "歴史・所蔵資料"
+    },
+    {
+      "id": "H05",
+      "lang": "en",
+      "title": "Toy Rocket (GB2145001A)",
+      "author": "John Maxwell Jackson／Hinterland Ltd／英国特許庁",
+      "year": "1985 公開公報",
+      "kind": "飲料ボトル転用の特許",
+      "note": "炭酸飲料用の樹脂ボトルに、ねじ付きカラー、着脱する安定翼、柔軟なノズルを組み合わせる。市販ボトルが機体になることを抄録が明記する。",
+      "source": "https://patents.google.com/patent/GB2145001A/en",
+      "download": "https://patentimages.storage.googleapis.com/60/cb/22/981231541a54ee/GB2145001A.pdf",
+      "local": {
+        "path": "原本/H05-jackson-1985.pdf",
+        "pages": 6,
+        "sha256": "e4d4cf8bd392db8a7abc83ce71b411549af852156062dcf53ac760ef0018cda6"
+      },
+      "category": "歴史・所蔵資料"
+    },
+    {
+      "id": "H06",
+      "lang": "en",
+      "title": "Pressurized Air/Water Rocket and Launcher (US5415153)",
+      "author": "Lonnie G. Johnson, Bruce M. D’Andrade／米国特許商標庁",
+      "year": "1995 公報",
+      "kind": "発射台と機体の特許",
+      "note": "発射台側にも圧力容器を設け、受け管と機体のジェット管を接続する方式。機体のボトル口だけを解放する設計との機構差を図面で追える。",
+      "source": "https://patents.google.com/patent/US5415153A/en",
+      "download": "https://patentimages.storage.googleapis.com/1a/7e/b9/426eaafba1696d/US5415153.pdf",
+      "local": {
+        "path": "原本/H06-johnson-1995.pdf",
+        "pages": 10,
+        "sha256": "cd5aacce9ec802e0c7a880b2868a79876f5eb0c5a0665f9ef77fa141d44f5d22"
+      },
+      "category": "歴史・所蔵資料"
+    },
+    {
+      "id": "H07",
+      "lang": "en",
+      "title": "Water Toy – Novelty Water Rocket, HT 21626",
+      "author": "Museums Victoria／オーストラリア",
+      "year": "2000–2007 所蔵機関の年代表示・2007 受入",
+      "kind": "博物館所蔵品台帳",
+      "note": "三脚の台座、ばね付きの弁を持つホース、逆さに差した飲料ボトルを写真と現物記述で確認できる。年代は収蔵品の表示範囲で、寄贈は2007年10月。",
+      "source": "https://collections.museumsvictoria.com.au/items/1388372",
+      "download": null,
+      "local": null,
+      "category": "歴史・所蔵資料"
+    },
+    {
+      "id": "H08",
+      "lang": "en",
+      "title": "About the Water Rokit",
+      "author": "Hinterland／英国",
+      "year": null,
+      "kind": "メーカー自身による製品史",
+      "note": "Roger Wilkins と Max Jackson が1970年代後半に着想した経緯と1983年への言及がある。後年の回顧として、同社の公開特許H05と対照できる。",
+      "source": "https://waterrokit.com/about/",
+      "download": null,
+      "local": null,
+      "category": "歴史・所蔵資料"
     }
   ]
 }
