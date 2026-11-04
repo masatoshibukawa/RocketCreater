@@ -1,0 +1,50 @@
+[
+  {
+    "id": "component/D02/9/300/35",
+    "reason": "Start with the YAC canopy because its area is traceable to the pattern."
+  },
+  {
+    "id": "flight/D02/9/300/35",
+    "reason": "Thrust and recovery screen passed; measure integrated flight height as a baseline."
+  },
+  {
+    "id": "component/D01/22/300/35",
+    "reason": "Before retuning D02 compare the second literature architecture at the same fill and pressure."
+  },
+  {
+    "id": "flight/D01/22/300/35",
+    "reason": "Compare complete designs without attributing the altitude difference solely to the nozzle."
+  },
+  {
+    "id": "screen/D01/22/300/35",
+    "reason": "Nominal altitude 29.55 m and descent 3.13 m/s pass; evaluate sensitivity with the common selection seed."
+  },
+  {
+    "id": "component/D02/9/375/35",
+    "reason": "D02 failed only altitude. Keep its larger canopy and same nozzle and fill; test the pressure correction suggested by the 23.29 m result."
+  },
+  {
+    "id": "flight/D02/9/375/35",
+    "reason": "The revised low-layer thrust and nominal descent pass screening; recompute trajectory instead of reusing the old miss."
+  },
+  {
+    "id": "screen/D02/9/375/35",
+    "reason": "At 30.67 m the D02 variant lands slower than D01. Compare both under identical perturbations."
+  },
+  {
+    "id": "component/new/22/300/35",
+    "reason": "Cover the independent constraint-generated start under the same environment before freezing a finalist."
+  },
+  {
+    "id": "flight/new/22/300/35",
+    "reason": "Compute the new start's actual nominal altitude and descent under the same acceptance limits."
+  },
+  {
+    "id": "screen/new/22/300/35",
+    "reason": "Measure combined success for this third architecture on the same 24 selection conditions."
+  },
+  {
+    "id": "confirm/D01/22/300/35",
+    "reason": "Freeze D01: tied with the new start at 24/24, slower nominal landing, and closest nominal height to 30 m. Evaluate once on the independent confirmation seed."
+  }
+]
