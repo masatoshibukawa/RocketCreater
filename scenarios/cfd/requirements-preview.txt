@@ -1,0 +1,2 @@
+matplotlib>=3.8,<4
+scikit-image>=0.22,<0.26

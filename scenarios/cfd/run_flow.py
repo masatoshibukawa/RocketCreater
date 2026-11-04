@@ -1,6 +1,7 @@
 """Run one independent GPU wind-tunnel case from a generated assembly.json."""
 
 import argparse
+import atexit
 import json
 import math
 import os
@@ -8,6 +9,17 @@ import time
 from pathlib import Path
 
 import numpy as np
+
+
+def sample_volume(cp, module, src, mask, sizes, stride):
+    nx, ny, nz = map(int, sizes[:3])
+    shape = tuple(math.ceil(s / stride) for s in (nz, ny, nx))
+    vol = cp.empty((2, *shape), cp.float32)
+    module.get_function("volume")(
+        ((math.prod(shape) + 127) // 128,), (128,), (src, mask, vol, *sizes[:3], np.int32(stride))
+    )
+    velocity, inside = vol.get()
+    return velocity, inside.astype(bool)
 
 
 def main():
@@ -27,6 +39,13 @@ def main():
     p.add_argument("--nu", type=float, default=1.5e-5, help="physical kinematic viscosity, m²/s")
     p.add_argument("--lattice-speed", type=float, default=0.075)
     p.add_argument("--volume", action="store_true", help="save a 3-D sampled wake for plotting")
+    p.add_argument("--study-position", nargs=2, type=int, help=argparse.SUPPRESS)
+    p.add_argument(
+        "--preview",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="publish a live progress.html and four PNGs (requires preview packages)",
+    )
     p.add_argument(
         "--paired-samples",
         action=argparse.BooleanOptionalAction,
@@ -109,8 +128,78 @@ def main():
     steps = math.ceil(args.times * d / speed / sample_every) * sample_every
     forces = cp.zeros((steps // sample_every, 6), cp.float32)
     args.output.mkdir(parents=True, exist_ok=False)
+    preview = None
+    if args.preview:
+        try:
+            if __package__:
+                from .flow_preview import FlowPreview
+            else:
+                from flow_preview import FlowPreview
+        except ImportError as error:
+            print(
+                f"CFD preview unavailable ({error}). Install requirements-preview.txt.", flush=True
+            )
+        else:
+            preview = FlowPreview(
+                args.output,
+                dims,
+                args.shape,
+                args.angle,
+                args.cant,
+                args.speed,
+                reynolds,
+                d,
+                args.upstream,
+                args.study_position,
+            )
+            atexit.register(preview.page, "中断")
+            print(f"CFD progress: {(args.output / 'progress.html').resolve().as_uri()}", flush=True)
+            if args.study_position:
+                print(
+                    f"Study progress: {(args.output.parent / 'progress.html').resolve().as_uri()}",
+                    flush=True,
+                )
+    nsamples = steps // sample_every
+    milestones = {math.ceil(nsamples * f / 4) * sample_every for f in (1, 2, 3)}
+    scale = 0.5 * speed**2 * math.pi * d * d / 4 * (2 if args.paired_samples else 1)
+
+    def draw_progress(completed):
+        stride = max(1, round(d / 6))
+        velocity, inside = sample_volume(cp, module, src, mask, sizes, stride)
+        # Use the actual center slice, independent of the stride/parity of the volume.
+        plane = cp.empty((4, ny, nx), cp.float32)
+        cut(((nx * ny + 127) // 128,), threads, (src, mask, plane, *sizes[:3]))
+        data = plane.get()
+        count = completed // sample_every
+        f = forces[:count, :2].get().astype(float)
+        t = np.arange(1, count + 1) * sample_every * speed / d
+        preview.snapshot(
+            round(100 * completed / steps),
+            velocity / speed,
+            inside,
+            stride,
+            data[0] / speed,
+            data[3].astype(bool),
+            t,
+            (along * f[:, 0] + across * f[:, 1]) / scale,
+        )
+
+    def publish_progress(completed):
+        nonlocal preview
+        if preview is None:
+            return
+        try:
+            draw_progress(completed)
+        except (MemoryError, OSError, ValueError, RuntimeError) as error:
+            print(f"CFD preview stopped ({error}); simulation continues.", flush=True)
+            atexit.unregister(preview.page)
+            try:
+                preview.page("画像更新を停止")
+            except OSError:
+                pass
+            preview = None
+
     start = time.monotonic()
-    checkpoint = max(1, steps // 4)
     for step in range(steps):
         phase = (step + 1) % sample_every
         sample = phase == 0 or (args.paired_samples and phase == sample_every - 1)
@@ -122,8 +211,9 @@ def main():
         src, dst = dst, src
         if step % 250 == 0:
             cp.cuda.Stream.null.synchronize()
-        if (step + 1) % checkpoint == 0 and (step + 1) < steps:
+        if (step + 1) in milestones:
             print(f"{args.output.name}: {100 * (step + 1) / steps:.0f}%", flush=True)
+            publish_progress(step + 1)
     del dst
     cp.get_default_memory_pool().free_all_blocks()
     coeff = forces.get().astype(float) / (0.5 * speed**2 * math.pi * d * d / 4)
@@ -155,14 +245,7 @@ def main():
     )
     if args.volume:
         stride = max(1, d // 8)
-        shape_zyx = tuple(math.ceil(s / stride) for s in (nz, ny, nx))
-        vol = cp.empty((2, *shape_zyx), cp.float32)
-        module.get_function("volume")(
-            ((math.prod(shape_zyx) + 127) // 128,),
-            threads,
-            (src, mask, vol, *sizes[:3], np.int32(stride)),
-        )
-        velocity, inside = vol.get()
+        velocity, inside = sample_volume(cp, module, src, mask, sizes, stride)
         np.savez_compressed(
             args.output / "volume.npz",
             ux_U=velocity / speed,
@@ -195,6 +278,9 @@ def main():
         seconds=time.monotonic() - start,
     )
     (args.output / "case.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    publish_progress(steps)
+    if preview is not None:
+        atexit.unregister(preview.page)
     print(
         f"{args.output.name}: Cd={mean[0]:.5f}, Cl={mean[1]:.5f}, "
         f"roll={mean[5]:.5f}, Mz={mean[7]:.5f}, {result['seconds']:.1f} s",

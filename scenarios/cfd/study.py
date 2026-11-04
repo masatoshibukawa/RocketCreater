@@ -46,6 +46,7 @@ def main():
     p.add_argument("prototype", type=Path, help="completed manufacturing packet")
     p.add_argument("root", type=Path, help="new case root for --run, or a completed case root")
     p.add_argument("--run", action="store_true", help="compute all cases before analysis")
+    p.add_argument("--no-preview", action="store_true", help="skip live images during the suite")
     args = p.parse_args()
     assembly = json.loads((args.prototype / "assembly.json").read_text(encoding="utf-8"))
     design = BottleDesign.model_validate_json((args.prototype / "design.json").read_bytes())
@@ -55,7 +56,7 @@ def main():
     reference = json.loads(reference_file.read_text(encoding="utf-8"))
     if args.run:
         args.root.mkdir(parents=True, exist_ok=False)
-        for name, options in CASES.items():
+        for position, (name, options) in enumerate(CASES.items(), 1):
             subprocess.run(
                 [
                     sys.executable,
@@ -66,6 +67,11 @@ def main():
                         else args.prototype / "assembly.json"
                     ),
                     str(args.root / name),
+                    *(
+                        ["--no-preview"]
+                        if args.no_preview
+                        else ["--study-position", str(position), str(len(CASES))]
+                    ),
                     *options.split(),
                     *([] if "--paired-samples" in options.split() else ["--no-paired-samples"]),
                 ],
