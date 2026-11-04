@@ -1,0 +1,30 @@
+id,title,publisher,language,url,accessed,kind,checked_scope
+D01,DevTools protocol repository README,ChromeDevTools,en,https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/README.md,2026-11-04,official_repository,Generated definitions and daily update policy
+D02,Browser protocol JSON,ChromeDevTools,en,https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/json/browser_protocol.json,2026-11-04,official_schema,Page screenshot; Network conditions; Performance metrics; Tracing stream and completion; domain index
+D03,JavaScript protocol JSON,ChromeDevTools,en,https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/json/js_protocol.json,2026-11-04,official_schema,Runtime evaluate parameters and object lifecycle
+D04,BrowserType connectOverCDP,Playwright,en,https://playwright.dev/docs/api/class-browsertype#browser-type-connect-over-cdp,2026-11-04,official_api,Chromium support and connection fidelity limitations
+D05,CDPSession,Playwright,en,https://playwright.dev/docs/api/class-cdpsession,2026-11-04,official_api,Session creation; send; event subscription; detach
+D06,Auto-waiting,Playwright,en,https://playwright.dev/docs/actionability,2026-11-04,official_guide,Actionability checks and force behavior
+D07,Page API,Playwright,en,https://playwright.dev/docs/api/class-page,2026-11-04,official_api,Navigation readiness and discouraged networkidle
+D08,Request Interception,Puppeteer,en,https://pptr.dev/guides/network-interception,2026-11-04,official_guide,Paused requests and resolution requirements
+D09,Performance features reference,Chrome for Developers,en,https://developer.chrome.com/docs/devtools/performance/reference,2026-11-04,official_guide,Live metrics; recordings; sampling; screenshots; CPU and network throttling
+D10,Why lab and field data can be different,web.dev,en,https://web.dev/articles/lab-and-field-data-differences,2026-11-04,official_guide,Lab and field distinction
+D11,Changes to remote debugging switches to improve security,Chrome for Developers,en,https://developer.chrome.com/blog/remote-debugging-port,2026-11-04,official_announcement,Chrome 136 non-default user data directory requirement
+D12,Optimize Largest Contentful Paint,web.dev,en,https://web.dev/articles/optimize-lcp,2026-11-04,official_guide,LCP meaning and optimization by subparts
+D13,Optimize Interaction to Next Paint,web.dev,en,https://web.dev/articles/optimize-inp,2026-11-04,official_guide,Interaction lifecycle and field versus lab diagnosis
+D14,Optimize Cumulative Layout Shift,web.dev,en,https://web.dev/articles/optimize-cls,2026-11-04,official_guide,Unitless metric and load versus post-load shifts
+D15,Avoid large complex layouts and layout thrashing,web.dev,en,https://web.dev/articles/avoid-large-complex-layouts-and-layout-thrashing,2026-11-04,official_guide,Read-write ordering and forced layout
+D16,Coverage Find unused JavaScript and CSS,Chrome for Developers,en,https://developer.chrome.com/docs/devtools/coverage,2026-11-04,official_guide,Coverage purpose and stack-dependent refactoring
+D17,Analyze runtime performance,Chrome for Developers,en,https://developer.chrome.com/docs/devtools/performance,2026-11-04,official_tutorial,Runtime versus loading; demo and profiling workflow
+D18,ランタイム パフォーマンスを分析する,Chrome for Developers,ja,https://developer.chrome.com/docs/devtools/performance?hl=ja,2026-11-04,official_translation,CPU throttling terminology and demo conditions
+D19,分析运行时性能,Chrome for Developers,zh-CN,https://developer.chrome.com/docs/devtools/performance?hl=zh-cn,2026-11-04,official_translation,CPU throttling terminology and demo conditions
+D20,런타임 성능 분석,Chrome for Developers,ko,https://developer.chrome.com/docs/devtools/performance?hl=ko,2026-11-04,official_translation,CPU throttling terminology and demo conditions
+D21,Laufzeitleistung analysieren,Chrome for Developers,de,https://developer.chrome.com/docs/devtools/performance?hl=de,2026-11-04,official_translation,Runtime versus loading and tutorial browser version
+D22,Analyser les performances de l'environnement d'exécution,Chrome for Developers,fr,https://developer.chrome.com/docs/devtools/performance?hl=fr,2026-11-04,official_translation,Runtime versus loading and tutorial browser version
+D23,Analiza el rendimiento del entorno de ejecución,Chrome for Developers,es-419,https://developer.chrome.com/docs/devtools/performance?hl=es-419,2026-11-04,official_translation,Runtime versus loading and CPU throttling
+D24,Analisar o desempenho do ambiente de execução,Chrome for Developers,pt-BR,https://developer.chrome.com/docs/devtools/performance?hl=pt-br,2026-11-04,official_translation,Tutorial browser version and profiling context
+D25,Network features reference,Chrome for Developers,en,https://developer.chrome.com/docs/devtools/network,2026-11-04,official_guide,Requests; cache; timing and throttling
+D26,Page domain PDL,ChromeDevTools,en,https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/pdl/domains/Page.pdl,2026-11-04,official_schema,Clipped screenshots and experimental optimizeForSpeed
+D27,Network domain PDL,ChromeDevTools,en,https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/pdl/domains/Network.pdl,2026-11-04,official_schema,Deprecated emulation and experimental replacements; request timing and identity
+D28,Tracing domain PDL,ChromeDevTools,en,https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/pdl/domains/Tracing.pdl,2026-11-04,official_schema,Trace start; stream mode; completion and data loss
+D29,IO domain PDL,ChromeDevTools,en,https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/pdl/domains/IO.pdl,2026-11-04,official_schema,Sequential reads; base64Encoded; eof; close

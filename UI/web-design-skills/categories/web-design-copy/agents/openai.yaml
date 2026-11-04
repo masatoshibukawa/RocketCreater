@@ -1,0 +1,3 @@
+interface:
+  display_name: "Webコピーと文章"
+  short_description: "対象と動作を具体的に書き、不要な括弧・比喩・開発事情を減らす"
