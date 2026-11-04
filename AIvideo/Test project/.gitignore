@@ -1,0 +1,6 @@
+reference/
+.venv/
+tools/bin/
+tools/python/
+renders/
+__pycache__/
