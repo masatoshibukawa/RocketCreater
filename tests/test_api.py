@@ -27,6 +27,7 @@ def test_root_points_to_ui_and_docs():
 
 
 def test_design_streams_events(monkeypatch):
+    monkeypatch.setenv("ROCKETWRIGHT_ENABLE_CLOUD_DESIGN", "1")
     seen: dict = {}
 
     async def fake_loop(text: str, **kwargs):
@@ -55,6 +56,17 @@ def test_design_streams_events(monkeypatch):
 def test_design_rejects_empty_text():
     r = client.post("/design", json={"text": ""})
     assert r.status_code == 422
+
+
+def test_paid_design_is_disabled_without_explicit_opt_in(monkeypatch):
+    monkeypatch.delenv("ROCKETWRIGHT_ENABLE_CLOUD_DESIGN", raising=False)
+
+    async def must_not_call(*args, **kwargs):
+        raise AssertionError("Paid design loop must not be reached")
+        yield
+
+    monkeypatch.setattr(main, "run_design_loop", must_not_call)
+    assert client.post("/design", json={"text": "design a rocket"}).status_code == 423
 
 
 def test_cors_allows_localhost_3000():
@@ -162,6 +174,7 @@ def _ts_event_types() -> list[str]:
 def test_design_sse_framing_with_fake_client(monkeypatch):
     """The real loop (scripted fake Claude, real physics) streamed through the API: every frame
     is `event: <type>\\ndata: <one-line json>\\n\\n`, with types the web client knows."""
+    monkeypatch.setenv("ROCKETWRIGHT_ENABLE_CLOUD_DESIGN", "1")
     from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
     from rocketwright.agent.loop import run_design_loop
 

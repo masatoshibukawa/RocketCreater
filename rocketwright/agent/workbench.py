@@ -128,6 +128,14 @@ class Workbench:
         search = self.search(state)
         options = search.options()
         recommendation = baseline_choice(search, options)[0] if options else None
+        recipe = json.loads((ROOT / "scenarios/bottle_prototype_choices.json").read_text())
+        history_ids = [row["chosen"] for row in state["history"]]
+        if history_ids == [row["id"] for row in recipe[: len(history_ids)]] and len(
+            history_ids
+        ) < len(recipe):
+            next_id = recipe[len(history_ids)]["id"]
+            if next_id in options:
+                recommendation = next_id
         last = next(reversed(search.results), None) if search.results else None
         plan = search.plan(last, search.design(last)) if last else None
         confirmed = any(

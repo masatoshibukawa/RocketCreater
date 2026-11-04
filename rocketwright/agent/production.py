@@ -1,0 +1,272 @@
+"""Fixed render recipes, typed local direction and a pinned ComfyUI handoff."""
+
+from __future__ import annotations
+
+import copy
+import json
+import os
+import re
+import subprocess
+import sys
+import uuid
+from pathlib import Path
+from typing import Literal
+from urllib.parse import urlencode
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
+from rocketwright.agent.workbench import ROOT, SKILLS, Conflict
+
+
+class Direction(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    design_caption: str = Field(min_length=1, max_length=250)
+    launch_caption: str = Field(min_length=1, max_length=250)
+    camera: Literal["orbit", "slow_orbit"]
+    launch_prompt: str = Field(min_length=1, max_length=1800)
+
+
+def media_settings():
+    media_root = Path(os.getenv("ROCKETWRIGHT_MEDIA_ROOT", ROOT / "AIvideo"))
+    return {
+        "blender": Path(
+            os.getenv(
+                "ROCKETWRIGHT_BLENDER",
+                "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe",
+            )
+        ),
+        "python": Path(os.getenv("ROCKETWRIGHT_VIDEO_PYTHON", sys.executable)),
+        "libs": media_root / "Test project/tools/python",
+    }
+
+
+def plan_video(bench, project_id, revision, local=True, director=None):
+    def worker(state):
+        if not state["files"]:
+            raise Conflict("Export the confirmed design before planning its videos")
+        if any(f["kind"] == "video" for f in state["files"]):
+            raise Conflict("Videos already exist. Keep their approved direction unchanged.")
+        current = bench.view(state)
+        if local:
+            skills = [
+                {"path": p, "instructions": (ROOT / p).read_text(encoding="utf-8")}
+                for p in SKILLS["video"]
+            ]
+            context = {
+                "design": current["design"],
+                "dimensions_mm": current["plan"]["dimensions_mm"],
+                "evidence": state["history"][-2:],
+                "skills": skills,
+                "output": "separate design explanation and simulated launch CG",
+            }
+            data, model = (director or LocalDirector()).generate(
+                context,
+                Direction.model_json_schema(),
+                "Write Japanese short captions and an English cinematic launch prompt. "
+                "Do not state measurements, times or performance numbers in captions. "
+                "Engineering labels are added from evidence by code. Preserve rigid geometry. "
+                "Return only the requested JSON; never provide shell commands or graph nodes.",
+            )
+            direction = Direction.model_validate(data)
+            if re.search(r"\d", direction.design_caption + direction.launch_caption):
+                raise Conflict("Use captions without numerical claims; code adds measured labels")
+        else:
+            model = "deterministic_recipe"
+            direction = Direction(
+                design_caption="構成と回収装置を確認する",
+                launch_caption="解析結果に沿って飛行を再生する",
+                camera="slow_orbit",
+                launch_prompt="A rigid water rocket on an outdoor launch field, smooth camera "
+                "movement, natural daylight, stable fins and unchanged proportions, "
+                "realistic materials. No text, no logos, no people, no fire or explosion.",
+            )
+        state["video_plan"] = direction.model_dump() | {
+            "model": model,
+            "skills": SKILLS["video"],
+            "fps": 24,
+            "frames_per_clip": 96,
+            "width": 960,
+            "height": 540,
+            "audio": "none",
+            "design_source": state["history"][-1]["chosen"],
+            "status": "planned",
+            "wan_status": "not_submitted",
+        }
+
+    return bench._run(project_id, revision, "video_direction", worker)
+
+
+def render_video(bench, project_id, revision):
+    def worker(state):
+        settings = media_settings()
+        if not settings["blender"].is_file() or not settings["python"].is_file():
+            raise LocalRuntimeError("Configure the installed Blender and video Python executables")
+        if state.get("video_plan", {}).get("status") != "planned":
+            raise Conflict("Approve a shot plan before rendering")
+        if any(f["kind"] == "video" for f in state["files"]):
+            raise Conflict("Videos already exist for this design")
+        directory = bench.directory(project_id) / "video"
+        directory.mkdir(exist_ok=True)
+        current = bench.view(state)
+        job = {
+            "dimensions_mm": current["plan"]["dimensions_mm"],
+            "plan": state["video_plan"],
+            "design": current["design"],
+            "source_id": state["history"][-1]["chosen"],
+            "evidence": state["history"][-2:],
+            "trace": json.loads(bench.file(project_id, "production/trace.json").read_text()),
+        }
+        job_path = directory / "job.json"
+        job_path.write_text(json.dumps(job, ensure_ascii=False, indent=2), encoding="utf-8")
+        env = os.environ.copy()
+        env["PYTHONUTF8"] = "1"
+        flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+        commands = [
+            [
+                str(settings["blender"]),
+                "--background",
+                "--python",
+                str(ROOT / "scripts/render_workbench_scene.py"),
+                "--",
+                str(job_path),
+            ],
+            [
+                str(settings["python"]),
+                str(ROOT / "scripts/compose_workbench_video.py"),
+                str(job_path),
+                "--libs",
+                str(settings["libs"]),
+            ],
+        ]
+        with (directory / "render.log").open("w", encoding="utf-8") as log:
+            for command in commands:
+                try:
+                    subprocess.run(
+                        command,
+                        cwd=ROOT,
+                        env=env,
+                        check=True,
+                        timeout=900,
+                        stdout=log,
+                        stderr=subprocess.STDOUT,
+                        creationflags=flags,
+                    )
+                except (OSError, subprocess.SubprocessError) as exc:
+                    raise LocalRuntimeError(
+                        "Video render failed; inspect the project render.log"
+                    ) from exc
+        verification = json.loads((directory / "verification.json").read_text())
+        if not verification["passed"]:
+            raise LocalRuntimeError("Video verification did not pass")
+        state["video_plan"]["status"] = "rendered"
+        bench.register_files(state, directory, "video")
+        # Logs and executable scene files are local implementation details.
+        state["files"] = [f for f in state["files"] if f["name"] not in {"render.log", "job.json"}]
+
+    return bench._run(project_id, revision, "render_design_and_launch", worker)
+
+
+def comfy_client():
+    return LocalJSON(os.getenv("ROCKETWRIGHT_COMFY_URL", "http://127.0.0.1:8188"))
+
+
+def submit_wan(bench, project_id, revision):
+    def worker(state):
+        plan = state.get("video_plan", {})
+        if plan.get("status") != "rendered" or plan.get("wan_status") != "not_submitted":
+            raise Conflict("Render a reference first; do not submit duplicate video jobs")
+        reference = bench.file(project_id, "video/launch-reference.png")
+        client = comfy_client()
+        boundary = uuid.uuid4().hex
+        image_name = project_id + ".png"
+        body = (
+            f'--{boundary}\r\nContent-Disposition: form-data; name="image"; '
+            f'filename="{image_name}"\r\nContent-Type: image/png\r\n\r\n'
+        ).encode()
+        body += reference.read_bytes() + f"\r\n--{boundary}--\r\n".encode()
+        import urllib.request
+
+        request = urllib.request.Request(
+            client.address + "/upload/image",
+            body,
+            {"Content-Type": f"multipart/form-data; boundary={boundary}"},
+        )
+        try:
+            with client.opener.open(request, timeout=30) as response:
+                upload = json.load(response)
+        except OSError as exc:
+            raise LocalRuntimeError("Could not upload the reference to local ComfyUI") from exc
+        graph = copy.deepcopy(
+            json.loads((ROOT / "AIvideo/local-runtime/workflow-api.json").read_text())
+        )
+        # Only fields of the repository's tested graph are writable. No model-generated nodes.
+        graph["4"]["inputs"]["image"] = upload["name"]
+        graph["5"]["inputs"]["text"] = plan["launch_prompt"]
+        graph["6"]["inputs"]["text"] = "text, watermark, logos, geometry changes, flames, explosion"
+        graph["7"]["inputs"].update(width=832, height=480, length=49)
+        graph["9"]["inputs"].update(seed=20261104, steps=20)
+        graph["12"]["inputs"]["filename_prefix"] = "rocketwright_" + project_id
+        available = client.request("/object_info")
+        if {n["class_type"] for n in graph.values()} - available.keys():
+            raise LocalRuntimeError("Local ComfyUI is missing required Wan2.2 nodes")
+        response = client.request("/prompt", {"prompt": graph, "client_id": project_id})
+        prompt_id = response.get("prompt_id", "")
+        if not re.fullmatch(r"[a-f0-9-]{36}", prompt_id):
+            raise LocalRuntimeError("ComfyUI did not accept the workflow")
+        plan.update(wan_status="queued", prompt_id=prompt_id)
+        (bench.directory(project_id) / "video/wan-workflow.json").write_text(
+            json.dumps(graph, indent=2)
+        )
+
+    return bench._run(project_id, revision, "submit_wan22", worker)
+
+
+def collect_wan(bench, project_id, revision):
+    def worker(state):
+        plan = state.get("video_plan", {})
+        if plan.get("wan_status") not in {"queued", "running"}:
+            raise Conflict("No pending Wan2.2 job")
+        client = comfy_client()
+        result = client.request("/history/" + plan["prompt_id"]).get(plan["prompt_id"])
+        if result is None:
+            plan["wan_status"] = "running"
+            return
+        if result.get("status", {}).get("status_str") != "success":
+            plan["wan_status"] = "failed"
+            raise LocalRuntimeError("Wan2.2 job failed; inspect ComfyUI history")
+        videos = [
+            v
+            for output in result.get("outputs", {}).values()
+            for v in output.get("images", []) + output.get("gifs", [])
+            if v.get("filename", "").lower().endswith(".mp4")
+        ]
+        if not videos:
+            raise LocalRuntimeError("Successful workflow returned no MP4 artifact")
+        # The server reports an output descriptor, never a caller-supplied URL or local path.
+        descriptor = videos[0]
+        query = urlencode({k: descriptor.get(k, "") for k in ("filename", "subfolder", "type")})
+        with client.opener.open(client.address + "/view?" + query, timeout=60) as response:
+            data = response.read(100 * 1024 * 1024 + 1)
+        if len(data) > 100 * 1024 * 1024 or b"ftyp" not in data[:32]:
+            raise LocalRuntimeError("ComfyUI output is not a bounded MP4")
+        directory = bench.directory(project_id) / "wan"
+        directory.mkdir(exist_ok=True)
+        (directory / "launch-ai.mp4").write_bytes(data)
+        (directory / "generation.json").write_text(
+            json.dumps(
+                {
+                    "prompt_id": plan["prompt_id"],
+                    "descriptor": descriptor,
+                    "status": "generated",
+                    "validation": "container_only",
+                    "engineering_geometry": "not_verified",
+                    "audio": "none",
+                },
+                indent=2,
+            )
+        )
+        bench.register_files(state, directory, "ai_video")
+        plan["wan_status"] = "generated"
+
+    return bench._run(project_id, revision, "collect_wan22", worker)
