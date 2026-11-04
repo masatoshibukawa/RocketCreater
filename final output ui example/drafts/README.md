@@ -1,6 +1,6 @@
 # RocketWright UI drafts
 
-4枚の画像で、目的入力から解析、候補比較、動画とファイル出力までを検討する。
+基本の4枚と設定画面1枚で、目的入力から解析、候補比較、動画とファイル出力、機材選択までを検討する。
 [一覧ページ](../ui-drafts.html)をブラウザーで開く。画像はリンクから原寸で確認できる。
 
 | Image | State | Main decision |
@@ -9,6 +9,7 @@
 | [02-analysis.png](02-analysis.png) | 解析中 | 工程・対象・件数・時間の表示と、小さな整備員の点検を対応させる |
 | [03-design-comparison.png](03-design-comparison.png) | 候補案の比較 | 機体・評価値・費用を比べ、採用か再解析を選ぶ |
 | [04-videos-and-exports.png](04-videos-and-exports.png) | 動画と出力 | 同じ採用案の解説・飛行CG・模型・図面を扱う |
+| [05-equipment-settings.png](05-equipment-settings.png) | 機材と作業環境の設定 | プリンター・材料・工具・作業者を選び、案件の制約を構造化する |
 
 ## Design
 
@@ -18,6 +19,7 @@
 
 参照は[Zoo Design Studioの公式公開画面](https://zoo.dev/images/download/start-building-today.webp)。
 解析中の画像を先に作り、その画像を残り3画面の機体・キャラクター・画面構成の参照として使用した。
+設定画面は入力画面を参照して追加し、上部右から開くパネルの案としている。[機材設定仕様](../equipment-settings-spec.md)と[追加画像の生成プロンプト](05-equipment-settings-prompt.json)を参照。
 元サービスのコード・ロゴ・モデルは同梱していない。
 
 ## Status and interpretation
@@ -33,6 +35,7 @@
 ## Generation and verification
 
 組み込みの画像生成ツールを使用した。[prompts.json](prompts.json)に4画面それぞれの生成プロンプトを保存している。
+設定画面のプロンプトは別の[05-equipment-settings-prompt.json](05-equipment-settings-prompt.json)に保存している。機材名・寸法は表示例で、登録・保存や設計への適用を実装した画面ではない。
 既存の操作試作とは別ファイルで保存し、元の試作を上書きしていない。
-4枚を目視し、共通の画面構成、機体、作業員、工程・時間の表示、動画と出力の配置を確認した。
+基本4枚と追加した設定画面を目視し、共通の画面構成、機体、作業員、工程・時間の表示、動画と出力、機材選択の配置を確認した。
 画像ファイルと一覧ページのリンクを検査する。画像をブラウザー画面の実操作や物理検証の結果とは扱わない。

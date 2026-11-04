@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="RocketWrightのUIドラフト4画面。目的入力、整備員による解析進捗、設計案比較、動画とファイル出力。">
+  <meta name="description" content="RocketWrightのUIドラフト。目的入力、整備員による解析進捗、設計案比較、動画とファイル出力、機材設定。">
   <title>RocketWright — UI drafts</title>
   <style>
     :root{color-scheme:dark;font-family:system-ui,"Segoe UI",Meiryo,sans-serif;background:#1e1e1e;color:#dedede}
@@ -19,16 +19,18 @@
 <body>
   <header>
     <h1>RocketWright / UIドラフト</h1>
-    <p>黒いワークベンチと小さな整備員を組み合わせた4画面。画像による機能提案で、数値・待ち時間・生成物は表示例です。</p>
+    <p>黒いワークベンチと小さな整備員を組み合わせた基本の4画面と機材設定の案。画像による機能提案で、数値・待ち時間・生成物は表示例です。</p>
     <p><a href="output-spec.md">途中出力・最終出力の具体仕様</a>：最初は実機のペットボトル水ロケット、長期目標は月へのミッション。画像中の展示用模型という出力名は、この最新方針に合わせて改訂します。</p>
     <p><a href="assembly-spec.md">詳細な組立方法と作業余裕の仕様</a>：成人・子どもの条件を選び、手・指・工具の経路と組立順序を設計時に確認します。</p>
-    <nav aria-label="ドラフト画面"><a href="#mission">01 目的と条件</a><a href="#analysis">02 解析中</a><a href="#comparison">03 設計案を比較</a><a href="#outputs">04 動画と出力</a></nav>
+    <p><a href="equipment-settings-spec.md">機材と作業環境の設定仕様</a>：プリンター・材料・工具等を選び、今回の設計条件へ適用します。</p>
+    <nav aria-label="ドラフト画面"><a href="#mission">01 目的と条件</a><a href="#analysis">02 解析中</a><a href="#comparison">03 設計案を比較</a><a href="#outputs">04 動画と出力</a><a href="#equipment">05 機材設定</a></nav>
   </header>
   <main>
     <section id="mission"><h2>01 / 目的を伝え、条件を確認する</h2><p>右の対話と条件フォームから始める。中央には機体の仮表示と、作業の開始を待つ整備員を置く。</p><figure><a href="drafts/01-mission-input.png"><img src="drafts/01-mission-input.png" width="1672" height="941" alt="黒いワークベンチの入力画面。右に卵を30メートルまで飛ばす条件、中央に機体の仮表示と2人の整備員。"></a><figcaption>確認した条件から解析を開始する。解析前には完了率や残り時間を表示しない。</figcaption></figure></section>
     <section id="analysis"><h2>02 / 解析対象と進捗を、整備員の動きで伝える</h2><p>工程と対象部位を選択表示し、小さな整備員が点検する。解析内容・完了件数・経過時間・工程の残り時間を同じ場所にまとめる。</p><figure><a href="drafts/02-analysis.png"><img src="drafts/02-analysis.png" width="1672" height="941" loading="lazy" alt="解析中の画面。足場に上がった整備員が回収装置を点検し、ほかの整備員がフィンとパラシュートを点検する。下に72件完了と残り時間の表示例。"></a><figcaption>実際の解析イベントに動きを対応させる仕様案。時間を推定できない工程は「見積もり中」とし、全探索の架空の完了率は作らない。</figcaption></figure></section>
     <section id="comparison"><h2>03 / 機体と結果を比べ、採用案を決める</h2><p>足場が外れ、候補案の違いを共通の表で比較する。右から採用、条件変更、再解析へ進む。</p><figure><a href="drafts/03-design-comparison.png"><img src="drafts/03-design-comparison.png" width="1672" height="941" loading="lazy" alt="完成した機体の周りで整備員が片付ける比較画面。案Aと案Bの到達高度、費用、試行成功率を下の表で比較する。"></a><figcaption>画像の寸法・質量・成功率は説明用の仮表示。実装では積載質量と機体総質量を区別し、同じ環境・評価条件で計算した値を表示する。</figcaption></figure></section>
     <section id="outputs"><h2>04 / 設計解説と打ち上げCGを見て、成果物を保存する</h2><p>採用した同じ設計案から、解説動画・打ち上げCG・展示用模型・図面をまとめて扱う。</p><figure><a href="drafts/04-videos-and-exports.png"><img src="drafts/04-videos-and-exports.png" width="1672" height="941" loading="lazy" alt="成果物画面。上に構造を説明する3Dと注釈の動画、下に同じ水ロケットが飛び立つCG。左に模型・図面・動画ファイル、右に再生と保存の操作。"></a><figcaption>プリンター用模型、PDF設計図、設計データからの動画生成は提案段階。完成した動画や製造用データをこの画像に含むという意味ではない。</figcaption></figure></section>
+    <section id="equipment"><h2>05 / プリンター・材料・工具を設定から選ぶ</h2><p>上部右の設定から機材パネルを開く。普段の標準設定と今回の設計条件を分け、必要な制約を構造化して渡す。</p><figure><a href="drafts/05-equipment-settings.png"><img src="drafts/05-equipment-settings.png" width="1671" height="941" loading="lazy" alt="入力画面の右側に開いた機材と作業環境の設定パネル。今回の設計と標準設定、プリンター、材料、工具、作業者を選び、未入力項目を確認して適用する。"></a><figcaption>機材名と寸法は表示例。設定保存・適用・カタログ検索は未実装の提案。<a href="drafts/05-equipment-settings-prompt.json">この画像の生成プロンプト</a>。</figcaption></figure></section>
   </main>
   <footer><p><a href="drafts/prompts.json">画像生成のプロンプト</a> · <a href="drafts/README.md">制作メモ</a> · <a href="index.html">既存の操作試作</a></p><p>画面構成の参照：<a href="https://zoo.dev/design-studio">Zoo Design Studio</a>。整備員の動きは解析状況を伝える表現で、実機の製作完了を示すものではありません。</p></footer>
 </body>
