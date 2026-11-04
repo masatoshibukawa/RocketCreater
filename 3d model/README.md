@@ -4,21 +4,34 @@
 
 **最初は「AIで外観を作る→実寸と形状を修正→正しい機種設定でスライス→原寸の部分試作→本出力」の順で進める。** 寸法を合わせる部品は、パラメトリックCADを中心にする。
 
-| 文書 | 分かること |
-| --- | --- |
-| [01 全体工程と方法の選び方](01_workflow-and-choices.md) | 目的別の経路、工程ごとの合格条件、ファイル形式 |
-| [02 AI生成](02_ai-generation.md) | 画像・プロンプト、クラウド/ローカル、版と利用条件 |
-| [03 メッシュ修復とCAD](03_mesh-and-cad.md) | Blenderの具体的操作、単位、厚み、交差、再メッシュ |
-| [04 印刷設計](04_design-for-print.md) | 壁厚、公差、片側隙間と直径差、方向、分割、接合 |
-| [05 FDM/FFF](05_fdm-printing.md) | 材料、乾燥、スライス、校正、初層、本出力、仕上げ |
-| [06 光造形](06_resin-printing.md) | 露光、island、支持、中空化、排液、洗浄・乾燥・硬化 |
-| [07 症状別の切り分け](07_troubleshooting.md) | 26の症状、確認する原因、戻る工程、再試作 |
-| [08 制作レシピと指示文](08_recipes-and-prompts.md) | マスコット、寸法付きプレート、浮き彫り、外注の準備 |
-| [09 多言語調査](09_multilingual-research.md) | 7言語の検索と知見、用語対照、資料の矛盾と限界 |
-| [10 チェックと記録](10_checklists-and-records.md) | 工程別チェック、保存構成、費用、受け渡し |
-| [出典一覧](sources.csv) | 39件の一次資料、言語、URL、確認範囲、適用条件 |
+## カテゴリー別の資料
 
-記入用テンプレート：[仕様メモ](templates/project-brief.md)、[印刷記録CSV](templates/print-log.csv)、[比較試験CSV](templates/experiment-log.csv)、[制作記録JSON](templates/project-record.example.json)。
+工程と用途で8つのフォルダーに分類している。フォルダー番号は読む順番の目安で、文書名の番号は元の工程順を保持している。
+
+| カテゴリー / フォルダー | 主な内容 | 読む資料 |
+| --- | --- | --- |
+| `01_全体工程` | 作り方の選択、工程ごとの合格条件、ファイル形式 | [全体工程と方法の選び方](01_全体工程/01_workflow-and-choices.md) |
+| `02_AI生成` | 参考画像、プロンプト、クラウド/ローカル、ツールと利用条件 | [AI生成](02_AI生成/02_ai-generation.md) |
+| `03_モデル修正と設計` | Blender/CAD、メッシュ修復、実寸、壁厚、公差、方向、分割・接合 | [メッシュ修復とCAD](03_モデル修正と設計/03_mesh-and-cad.md)、[印刷設計](03_モデル修正と設計/04_design-for-print.md) |
+| `04_印刷と後処理` | 材料、スライス、校正、支持、実機出力、洗浄・乾燥・硬化、仕上げ | [FDM/FFF](04_印刷と後処理/05_fdm-printing.md)、[光造形](04_印刷と後処理/06_resin-printing.md) |
+| `05_トラブル対処` | 26の症状、原因確認、戻る工程、再試作 | [症状別の切り分け](05_トラブル対処/07_troubleshooting.md) |
+| `06_制作レシピ` | マスコット、寸法付きプレート、浮き彫り、指示文、外注の準備 | [制作レシピと指示文](06_制作レシピ/08_recipes-and-prompts.md) |
+| `07_チェックと記録` | 工程別チェック、保存、費用、受け渡し、記入用テンプレート | [チェックと記録](07_チェックと記録/10_checklists-and-records.md) |
+| `08_多言語調査と出典` | 7言語の検索と知見、用語対照、資料の違いと限界、39件の出典 | [多言語調査](08_多言語調査と出典/09_multilingual-research.md)、[出典一覧CSV](08_多言語調査と出典/sources.csv) |
+
+記入用テンプレートは`07_チェックと記録/templates/`にまとめている：[仕様メモ](07_チェックと記録/templates/project-brief.md)、[印刷記録CSV](07_チェックと記録/templates/print-log.csv)、[比較試験CSV](07_チェックと記録/templates/experiment-log.csv)、[制作記録JSON](07_チェックと記録/templates/project-record.example.json)。
+
+出典CSVは、元の`topic`（資料の主題）に加え、`referenced_categories`で参照されるカテゴリーを絞り込める。複数のカテゴリーで使う資料は`|`で区切って記録し、出典IDと言語・確認範囲は共通で管理している。
+
+## 目的から選ぶ
+
+| やりたいこと | 読む順番 |
+| --- | --- |
+| まず全工程を把握する | [全体工程](01_全体工程/01_workflow-and-choices.md) → [チェックと記録](07_チェックと記録/10_checklists-and-records.md) |
+| 置物やマスコットを作る | [AI生成](02_AI生成/02_ai-generation.md) → [制作レシピ](06_制作レシピ/08_recipes-and-prompts.md) → [FDM](04_印刷と後処理/05_fdm-printing.md)または[光造形](04_印刷と後処理/06_resin-printing.md) |
+| 寸法を合わせる部品を作る | [メッシュとCAD](03_モデル修正と設計/03_mesh-and-cad.md) → [公差・接合の設計](03_モデル修正と設計/04_design-for-print.md) → [寸法付きの制作例](06_制作レシピ/08_recipes-and-prompts.md) |
+| 印刷がうまくいかない | [症状別の切り分け](05_トラブル対処/07_troubleshooting.md) → 該当する修正・設計・印刷工程 |
+| 原語の資料や根拠を調べる | [多言語調査](08_多言語調査と出典/09_multilingual-research.md) → [カテゴリ付き出典CSV](08_多言語調査と出典/sources.csv) |
 
 ```mermaid
 flowchart LR
