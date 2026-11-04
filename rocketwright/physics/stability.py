@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import math
 
-from rocketwright.schema import AmateurDesign
+from rocketwright.schema import AmateurDesign, FinSet
 
 __all__ = [
     "NOSE_CP_FRACTION",
@@ -50,8 +50,14 @@ def nose_normal_force(design: AmateurDesign) -> tuple[float, float]:
 
 def fin_normal_force(design: AmateurDesign) -> tuple[float, float]:
     """(C_N, CP station) of the fin set, including the body-interference factor."""
-    f = design.fins
-    radius = design.body_diameter_m / 2.0
+    return trapezoidal_fin_force(
+        design.body_diameter_m, design.fins, overall_length_m(design) - design.fins.root_chord_m
+    )
+
+
+def trapezoidal_fin_force(diameter_m: float, f: FinSet, x_root_le: float) -> tuple[float, float]:
+    """Normal-force slope and CP for fins with a specified root leading-edge station."""
+    radius = diameter_m / 2.0
     cr, ct, s, xt = f.root_chord_m, f.tip_chord_m, f.span_m, f.sweep_m
     # Mid-chord line length from root mid-chord to tip mid-chord.
     mid_chord = math.sqrt(s * s + (xt + ct / 2.0 - cr / 2.0) ** 2)
@@ -60,10 +66,9 @@ def fin_normal_force(design: AmateurDesign) -> tuple[float, float]:
     # two fins are effective in any plane; OpenRocket applies a reduction for 5+ fins.
     cn = (
         interference
-        * (4.0 * f.count * (s / design.body_diameter_m) ** 2)
+        * (4.0 * f.count * (s / diameter_m) ** 2)
         / (1.0 + math.sqrt(1.0 + (2.0 * mid_chord / (cr + ct)) ** 2))
     )
-    x_root_le = overall_length_m(design) - cr  # fins flush with the aft end
     x_cp = (
         x_root_le + xt * (cr + 2.0 * ct) / (3.0 * (cr + ct)) + (cr + ct - cr * ct / (cr + ct)) / 6.0
     )
