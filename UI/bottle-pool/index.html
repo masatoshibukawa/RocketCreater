@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ペットボトル水ロケットの設計変数、解析手法、評価指標と検証文献をたどる設計ガイド。">
+<title>ペトロケ設計ガイド | RocketWright</title><link rel="stylesheet" href="style.css">
+<script src="guide.js" defer></script>
+</head><body>
+<a class="skip" href="#main">本文へ移動</a>
+<header><div class="wrap">
+  <a class="brand" href="index.html"><b aria-hidden="true"></b>RocketWright</a>
+  <nav class="site-nav" aria-label="設計ガイド">
+    <a href="index.html" aria-current="page">候補プール</a>
+    <a href="layers.html">層別解析</a>
+    <a href="selection.html">候補選択</a>
+    <a href="plan.html">探索計画</a>
+  </nav>
+</div></header>
+<main id="main">
+<div class="hero"><div class="wrap"><div><p class="eyebrow">水ロケット設計資料</p><h1>ペトロケ設計ガイド</h1><p class="hero-intro">部品ごとの探索変数を調べ、設計の差をどの解析と指標で確かめるかを選べます。</p>
+<div class="hero-actions"><a class="primary-link" href="#parts">部品から変数を探す <span aria-hidden="true">↓</span></a><a href="selection.html#cases">解析の判断例を読む</a></div></div>
+<figure class="vehicle-plate"><figcaption><span>機体構成</span><span>ペットボトル水ロケット</span></figcaption>
+<svg viewBox="0 0 400 178" role="img" aria-labelledby="svg-title"><title id="svg-title">機首に回収部、胴体に水と空気、後部にフィンとノズルを持つ機体の概念図</title>
+<defs><pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#38716b" stroke-width=".5"/></pattern></defs>
+<rect width="400" height="178" rx="9" fill="url(#grid)"/>
+<g stroke="#a9e9d6" stroke-width="2" fill="#245b55"><path d="M55 87Q83 54 119 59H249Q266 60 282 77H303V99H282Q266 116 249 117H119Q83 122 55 87Z"/><path d="M218 59L249 36H274L266 66M218 117L249 140H274L266 111"/><path d="M303 78H315V98H303Z"/></g>
+<path d="M197 61H247Q263 61 279 78V99Q264 113 248 115H197Z" fill="#66bfae"/><path d="M113 62Q89 70 69 87Q91 104 112 113" fill="none" stroke="#eabe78" stroke-width="3" stroke-dasharray="4 4"/>
+<g stroke="#abd0c7" fill="none"><path d="M90 62V34H49M195 116V146H128M310 76L330 50H368"/></g>
+<g fill="#effcf6" font-size="15" font-family="sans-serif"><text x="32" y="28">回収部</text><text x="111" y="163">充填率</text><text x="330" y="44">ノズル</text></g></svg></figure></div></div>
+<div class="wrap">
+<section id="overview"><p class="eyebrow">01 / 候補プール</p><h2>変数・手法・指標を調べる</h2>
+<ol class="pool-index">
+  <li><a href="#parts"><small>01　探索変数</small><strong>何を変えるか</strong><span>ノズル径、フィンの取付角、充填率</span></a></li>
+  <li><a href="#analysis"><small>02　解析手法</small><strong>どう調べるか</strong><span>公称飛行、費用概算、ばらつき試験</span></a></li>
+  <li><a href="#scores"><small>03　評価指標</small><strong>何で比べるか</strong><span>高度の逸脱量、降下速度、回収距離</span></a></li>
+</ol>
+<nav class="page-nav" aria-label="関連する設計資料"><span>設計資料</span><a href="layers.html#layer-map">3層の比較</a><a href="selection.html#analysis-record">解析の登録6項目</a><a href="#research">モデル開発候補</a><a href="#sources">文献一覧</a></nav>
+<p class="example"><strong>例：1.5 Lのボトルで卵を30 mまで上げて回収する。</strong>　高度が足りないとき、充填率の調整でまだ改善していれば運用条件を試します。試した範囲で頭打ちなら、容量を保ったままノズルを比較します。</p></section>
+<section id="parts"><p class="eyebrow">02 / 部品と運用</p><h2>探索する変数</h2><p class="lead">項目を開くと、変数の意味、適した解析、根拠の文献が読めます。</p>
+<div id="part-search" hidden>
+  <label for="part-query">部品名・変数名から探す</label>
+  <div class="search-row">
+    <input type="search" id="part-query" placeholder="例：ノズル、開傘、water_fill_frac" aria-controls="part-list">
+    <button type="button" id="clear-query">検索を解除</button>
+  </div>
+  <p id="match-count" role="status" aria-live="polite"></p>
+</div>
+<div id="part-list" class="grid"><details id="part-bottle"><summary>ボトル・機体質量</summary><div class="details-body"><p>容量を指定したミッションでは、同じボトルで比較します。部品を替えたら組立後の乾燥質量を更新します。</p><span class="status now">現行モデル</span><dl>
+<dt>内部容積 <code>bottle_volume_m3</code></dt><dd>指定がある場合は固定。部品IDは bottle_id。</dd>
+<dt>乾燥質量 <code>dry_mass_kg</code></dt><dd>水と積載物を除く、組み上がった機体の質量。</dd>
+<dt>積載質量 <code>payload_mass_kg</code></dt><dd>卵などの質量。同じミッションでは固定。</dd>
+</dl><span class="status future">自作予定</span><dl>
+<dt>実測した胴体外径 <code>measured_body_diameter_m</code></dt><dd>風洞試験や文献機体と比較するときの基準面積に使う。</dd>
+</dl><p><a href="#flight">公称飛行</a>で高度を、<a href="#vertical_flight_replay">実測高度の再現</a>でモデル誤差を確認。 <a href="#phase_static_margin">組立時の重心・圧力中心も確認</a>。</p><a class="ref" href="#ref-R03">R03</a> <a class="ref" href="#ref-R14">R14</a></div></details>
+<details id="part-nozzle"><summary>ノズル・整流器</summary><div class="details-body"><p>噴出口の太さと、その上流の整流器は別の変数です。</p><span class="status now">現行モデル</span><dl>
+<dt>噴出口の内径 <code>nozzle_diameter_m</code></dt><dd>nozzle_id で部品を選び、その内径を飛行計算に渡す。出口面積は内径から求める。</dd>
+</dl><span class="status future">自作予定</span><dl>
+<dt>ノズル長 <code>nozzle_length_m</code></dt><dd>入口面から出口面までの距離。</dd>
+<dt>整流器の有無 <code>nozzle.has_flow_regulator</code></dt><dd>装着時に開口比と穴数を選ぶ。</dd>
+<dt>整流器の開口比 <code>nozzle.regulator_open_area_ratio</code></dt><dd>全穴の合計面積 ÷ ノズル出口面積。1を超えうる。</dd>
+<dt>穴数 <code>nozzle.regulator_orifice_count</code></dt><dd>同じ開口比で穴数を変えると、各穴の径も変わる。</dd>
+</dl><p><a href="#transient_nozzle_flow">噴射過程</a>で、推力の時間履歴を実測と比較。</p><a class="ref" href="#ref-R02">R02</a></div></details>
+<details id="part-fins"><summary>フィン・取り付け</summary><div class="details-body"><p>現行の水モデルが飛行に反映するのは装着の有無です。形状は自作モデルの探索候補です。</p><span class="status now">現行モデル</span><dl>
+<dt>フィンの有無 <code>has_fins</code></dt><dd>装着する場合に部品 fin_set_id を選ぶ。</dd>
+</dl><span class="status future">自作予定</span><dl>
+<dt>CAD形態 <code>fins.planform_variant</code></dt><dd>PN1＝細翼3枚、PN2＝広翼3枚、PN3＝細翼5枚。枚数を比べるならPN1とPN3。</dd>
+<dt>枚数 <code>fins.count</code></dt><dd>機体全体の枚数。CAD形態を選ぶと決まる。</dd>
+<dt>翼根・翼端の弦長 <code>fins.root_chord_m / fins.tip_chord_m</code></dt><dd>それぞれ前縁から後縁までの軸方向長さ。</dd>
+<dt>張り出し・後退 <code>fins.span_m / fins.sweep_m</code></dt><dd>胴体表面から翼端までの距離と、翼端前縁の後方へのずれ。</dd>
+<dt>板厚・取り付け位置 <code>fins.thickness_m / fins.root_le_from_nose_m</code></dt><dd>板面に垂直な厚さと、機首から翼根前縁までの軸方向距離。</dd>
+<dt>取り付け方式 <code>fins.mount_type</code></dt><dd>標準・補強を比較。各仕様で剛性と質量を測る。</dd>
+</dl><p><a href="#aerodynamic_polars">風洞条件での空力評価</a>へ。CADは形状の出典、風洞試験は解析の照合先。 <a href="#phase_static_margin">組立時の重心・圧力中心も確認</a>。</p><a class="ref" href="#ref-D09">D09</a> <a class="ref" href="#ref-R03">R03</a></div></details>
+<details id="part-nose"><summary>ノーズ・表面処理</summary><div class="details-body"><p>組み合わせは風洞試験の試験体と照らして選びます。</p><span class="status future">自作予定</span><dl>
+<dt>ノーズ形状 <code>nose_profile</code></dt><dd>円錐型と半球型。</dd>
+<dt>表面処理 <code>surface_treatment</code></dt><dd>基準面、渦発生器、ディンプル。原論文の表1で形状との組み合わせを確認。</dd>
+</dl><p><a href="#aerodynamic_polars">空力係数</a>を同じ迎角・レイノルズ数で比較。</p><a class="ref" href="#ref-R03">R03</a></div></details>
+<details id="part-chute"><summary>パラシュート・回収</summary><div class="details-body"><p>現行モデルは頂点で開傘します。放出と完全開傘の時間差は、自作モデルで扱います。</p><span class="status now">現行モデル</span><dl>
+<dt>装着の有無 <code>has_parachute</code></dt><dd>回収必須なら装着で固定。部品は parachute_id で選ぶ。</dd>
+<dt>傘の直径 <code>parachute_diameter_m</code></dt><dd>装着時の投影面積と降下速度に使う。</dd>
+</dl><span class="status future">自作予定</span><dl>
+<dt>放出機構 <code>recovery.release_mechanism</code></dt><dd>例は機体が頂点付近で傾いたときに外れるノーズ。</dd>
+<dt>開傘所要時間 <code>recovery.inflation_time_s</code></dt><dd>放出から完全開傘まで。実機の傘・収納条件で測定する。</dd>
+</dl><p><a href="#canopy_deployment">開傘過程</a>で、完全開傘時の対地高度を比較。</p><a class="ref" href="#ref-P09">P09</a></div></details>
+<details id="part-operation"><summary>充填・圧力・発射条件</summary><div class="details-body"><p>同じ機体のまま調整する運用点と、固定して比較する試験条件を分けます。</p><span class="status now">現行モデル</span><dl>
+<dt>水の充填率 <code>water_fill_frac</code></dt><dd>初期水量 ÷ ボトル容量。0と1の間。</dd>
+<dt>初期ゲージ圧 <code>initial_gauge_pressure_pa</code></dt><dd>内圧と周囲圧の差。文献の絶対圧は基準を揃えてから比較。</dd>
+<dt>ガイド長 <code>env.rail_length_m</code></dt><dd>有効な案内長。発射台が指定された場合は固定。</dd>
+</dl><span class="status future">自作予定</span><dl>
+<dt>発射仰角 <code>launch_elevation_deg</code></dt><dd>水平からの角度。鉛直飛行のミッションでは固定。</dd>
+<dt>初期ガス温度 <code>initial_gas_temperature_k</code></dt><dd>容器内部の気体温度を測定する。</dd>
+<dt>初期ガス相対湿度 <code>initial_gas_relative_humidity_frac</code></dt><dd>初期温度の飽和蒸気圧に対する水蒸気分圧の比。</dd>
+</dl><p><a href="#humid_air_expansion">湿り空気の膨張</a>、<a href="#robust_factor_screen">条件の組み合わせ比較</a>へ。</p><a class="ref" href="#ref-R04">R04</a> <a class="ref" href="#ref-R13">R13</a> <a class="ref" href="#ref-R14">R14</a></div></details></div></section>
+<section id="analysis"><p class="eyebrow">03 / 解析と評価</p><h2>現在使える解析</h2><div class="methods">
+<article class="card" id="flight"><span class="status now">現行モデル</span><h3>公称飛行</h3><code>simulate_design</code><p>同じ環境で1案ずつ仮想飛行。到達高度、降下速度、着地距離と合否を返します。</p></article>
+<article class="card"><span class="status now">現行モデル</span><h3>費用概算</h3><code>estimate_cost</code><p>基本機体とパラシュートの概算を比較。個別部品の市場価格は未反映です。</p></article>
+<article class="card"><span class="status now">現行モデル</span><h3>ばらつき試験</h3><code>run_dispersion</code><p>圧力・風速・風向を変えて反復。合格率と結果の分布を比較します。</p></article></div>
+<details id="scores" style="margin-top:.85rem"><summary>現在使える8つの評価指標</summary><div class="details-body"><dl>
+<dt>公称条件の総合合否 <code>nominal_pass</code></dt><dd>容量・高度・積載・回収・費用など、適用される全条件で判定。</dd>
+<dt>高度の許容範囲からの逸脱 <code>altitude_band_violation</code></dt><dd>許容帯を外れた距離（m）。範囲内は0。</dd>
+<dt>降下速度の超過 <code>descent_speed_violation</code></dt><dd>許容降下速度を超えた分（m/s）。発射台を離れた試行で評価。</dd>
+<dt>予算超過額 <code>budget_violation</code></dt><dd>見積額が予算を上回った分（円）。</dd>
+<dt>概算費用 <code>minimize_cost</code></dt><dd>合格案同士で比較。現モデルの価格差はパラシュート装着の有無による。</dd>
+<dt>要求達成率 <code>maximize_success_rate</code></dt><dd>同じシード・試行数・風条件で全条件に合格した試行の割合。</dd>
+<dt>高度逸脱量の95パーセンタイル <code>minimize_altitude_band_violation_p95</code></dt><dd>失敗の頻度が似る案で、外したときの大きさを比較。</dd>
+<dt>着地距離の95パーセンタイル <code>minimize_recovery_distance_p95</code></dt><dd>発射地点からの水平距離（m）。回収範囲の比較に使う。</dd>
+</dl></div></details></section>
+<section id="research"><p class="eyebrow">04 / モデル開発</p><h2>自作シミュレータの候補</h2><p class="lead">7つの開発仕様です。それぞれに必要な条件、評価関数、検証先を対応させています。</p><div class="grid"><details id="humid_air_expansion"><summary>湿り空気の膨張</summary><div class="details-body"><span class="status future">自作予定</span><p><code>humid_air_expansion</code></p><dl><dt>入力と比較条件</dt><dd>内部の初期温度・湿度・圧力と気体体積</dd><dt>解析</dt><dd>圧力と体積の推移を求め、実効ポリトロープ指数を推定する。</dd><dt>評価関数</dt><dd><code>polytropic_exponent_error</code><br>指数の実測値との絶対差。固定容器で検証してから飛行条件への適用を検討する。</dd></dl><a class="ref" href="#ref-R13">R13</a></div></details>
+<details id="phase_static_margin">
+<summary>重心と圧力中心の位置関係</summary>
+<div class="details-body"><span class="status future">自作予定</span>
+<p>フィン・積載物・水を組み付けた状態で、小さな迎角のずれに対して機首を戻す向きのモーメントが生じるかを調べます。</p>
+<figure class="stability-figure">
+<svg viewBox="0 0 320 108" role="img" aria-labelledby="cgcp-title">
+<title id="cgcp-title">復元側の模式例。機首から後方へ測ると、丸で示すCGの後方に、ひし形で示すCPがある。</title>
+<path d="M15 49 Q40 32 68 32 H249 L270 40 H288 V58 H270 L249 66 H68 Q40 66 15 49Z" fill="#deeee7" stroke="#34675a"/>
+<path d="M220 32L250 15H264L254 35M220 66L250 83H264L254 63" fill="#c4e3d7" stroke="#34675a"/>
+<circle cx="118" cy="49" r="6" fill="#13584a"/><path d="M185 42l7 7-7 7-7-7z" fill="#894911"/>
+<g fill="#153b35" text-anchor="middle" font-size="13" font-family="sans-serif"><text x="118" y="25">CG 重心</text><text x="185" y="25">CP 圧力中心</text><text x="75" y="97">機首を原点</text><text x="224" y="97">後方が正 →</text></g>
+</svg><figcaption>位置関係の模式図。点の位置は説明用です。</figcaption></figure>
+<dl><dt>座標をそろえる</dt><dd>乾燥機体・積載物・残水などの質量と位置から <code>xCG = Σ(mᵢ xᵢ) / Σmᵢ</code>。<code>xCP</code> は同じ形状・流れでの微小迎角に対する法線力とモーメントの変化から求めます。</dd>
+<dt>位置の差と静安定余裕</dt><dd><code>Δx = xCP − xCG</code>（m）、<code>SM = Δx / D</code>（胴体径何個分か）。通常の正の法線力傾斜をもつ場合、正なら復元側、0なら一次近似で中立、負なら不安定側です。Dには同じ基準胴体外径を使います。</dd>
+<dt>どの時点で評価するか</dt><dd>発射前は所定充填量で重心を測定。ガイド離脱後は、噴射途中の残水量、水切れ、惰性上昇を追い、有効な自由飛行区間の最小値 <code>minimum_static_margin_cal</code> と、その時刻・CG・CPを返します。</dd>
+<dt>判定を保留する条件</dt><dd>低動圧などでCPを同定できない、評価区間が抜ける、または誤差を含めると符号が決まらない場合です。必要な余裕は機体・ミッション別に検証します。動的な揺れの収束や飛行全体の合否は別項目です。</dd></dl>
+<p><a href="https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/conditions-for-rocket-stability/">NASA Glennの静安定の解説</a> ／ <a href="#ref-R03">R03 風洞条件とモーメントの照合</a></p>
+</div></details>
+<details id="transient_nozzle_flow"><summary>水から空気に移る噴射過程</summary><div class="details-body"><span class="status future">自作予定</span><p><code>transient_nozzle_flow</code></p><dl><dt>入力と比較条件</dt><dd>整流器の有無・開口比・穴数／同期した推力・内圧データ</dd><dt>解析</dt><dd>同じ治具条件で通常ノズルと整流ノズルの推力・内圧履歴を比較する。</dd><dt>評価関数</dt><dd><code>thrust_curve_rmse_n</code><br>共通の時間軸・噴射区間での推力の二乗平均平方根誤差（N）。</dd></dl><a class="ref" href="#ref-R02">R02</a></div></details>
+<details id="aerodynamic_polars"><summary>迎角ごとの空力特性</summary><div class="details-body"><span class="status future">自作予定</span><p><code>aerodynamic_polars</code></p><dl><dt>入力と比較条件</dt><dd>フィン形状・取り付け、ノーズ・表面処理／風速・重心・迎角</dd><dt>解析</dt><dd>揚力・抗力・縦揺れモーメントを算出。まず論文の試験体を再現してからCAD形状を比較する。</dd><dt>評価関数</dt><dd><code>moment_slope_per_rad</code><br>重心まわりのモーメント係数の傾き。機首上げ正の定義では、微小迎角域の負の傾きが復元方向。</dd></dl><a class="ref" href="#ref-R03">R03</a> <a class="ref" href="#ref-D09">D09</a></div></details>
+<details id="canopy_deployment"><summary>放出から完全開傘まで</summary><div class="details-body"><span class="status future">自作予定</span><p><code>canopy_deployment</code></p><dl><dt>入力と比較条件</dt><dd>放出機構、収納条件、開傘時間、質量、頂点での姿勢・風</dd><dt>解析</dt><dd>放出・膨張・定常降下を分け、完全に開かなかった試行も記録する。</dd><dt>評価関数</dt><dd><code>full_open_altitude_m</code><br>完全開傘時の対地高度。未開傘は失敗として別に数える。</dd></dl><a class="ref" href="#ref-P09">P09</a></div></details>
+<details id="robust_factor_screen"><summary>ばらつきに強い条件の探索</summary><div class="details-body"><span class="status future">自作予定</span><p><code>robust_factor_screen</code></p><dl><dt>入力と比較条件</dt><dd>容量・充填率・ガイド長・発射仰角・初期圧／共通の風条件</dd><dt>解析</dt><dd>直交表で因子の影響を絞り、別試行で確認する。飛距離を扱った原論文の設計を高度ミッション向けに組み直す。</dd><dt>評価関数</dt><dd><code>worst_case_apogee_error_m</code><br>宣言した風条件での、目標高度からの最大絶対誤差（m）。</dd></dl><a class="ref" href="#ref-R04">R04</a></div></details>
+<details id="vertical_flight_replay"><summary>実測高度の再現</summary><div class="details-body"><span class="status future">自作予定</span><p><code>vertical_flight_replay</code></p><dl><dt>入力と比較条件</dt><dd>1 Lの文献機体、実測質量・外径・水量・圧力／試行ID</dd><dt>解析</dt><dd>条件を揃えた4試行を動画による実測高度と照合。台の条件と絶対圧・ゲージ圧を区別する。</dd><dt>評価関数</dt><dd><code>reference_apogee_mae_m</code><br>モデルの高度予測の平均絶対誤差（m）。試行ごとの差と測定誤差も併記する。</dd></dl><table class="runs">
+<caption>R14 表2の実測例（1 L機体・水温17 ℃）</caption>
+<thead><tr><th>試行</th><th>水の充填率</th><th>初期絶対圧</th><th>到達高度</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>35.0%</td><td>350 kPa</td><td>17.5 m</td></tr>
+<tr><td>2</td><td>32.5%</td><td>350 kPa</td><td>17.1 m</td></tr>
+<tr><td>3</td><td>25.5%</td><td>300 kPa</td><td>14.1 m</td></tr>
+<tr><td>4</td><td>25.5%</td><td>350 kPa</td><td>17.4 m</td></tr>
+</tbody></table>
+<p>試行3・4は水量が同じなので、圧力の違いを比較できます。高度の測定誤差は±0.5 m。モデルに入力するゲージ圧は、表の絶対圧から周囲圧を引いて求めます。</p>
+<a class="ref" href="#ref-R14">R14</a></div></details></div></section>
+<section id="sources"><p class="eyebrow">05 / 根拠</p><h2>参照した7資料</h2><p class="lead">文献IDから原論文・CAD・製品説明書を開けます。</p><ul class="source-list">
+<li id="ref-R02"><b>R02</b><div><a href="https://doi.org/10.2322/jjsass.51.314">渡辺ほか · 水ロケットの推力特性制御の一方法</a><small>図5–14。通常ノズルと整流ノズルの推力・内圧の時間履歴。</small></div></li>
+<li id="ref-R03"><b>R03</b><div><a href="https://doi.org/10.2322/jjsass.52.449">渡辺ほか · 水ロケットの空力特性と飛行安定化について</a><small>表1–2、図9–14、表4。風洞試験体、迎角ごとの空力係数、フィン取り付け方式。</small></div></li>
+<li id="ref-R04"><b>R04</b><div><a href="https://doi.org/10.12792/jjiiae.8.1.28">當摩ほか · 水ロケット飛行安定性能の最適化</a><small>表3–6、12–13。直交表による条件比較と確認実験。原論文の応答は飛距離。</small></div></li>
+<li id="ref-R13"><b>R13</b><div><a href="https://arxiv.org/abs/1211.1923">Romanelli ほか · Air expansion in the water rocket</a><small>図3・表I。固定容器内の気体の圧力と体積、ポリトロープ指数の実測。</small></div></li>
+<li id="ref-R14"><b>R14</b><div><a href="https://arxiv.org/abs/2001.08828">Fischer ほか · Water rocket dynamics including air drag</a><small>表2は動画から測定した到達高度。表3は著者の計算値。</small></div></li>
+<li id="ref-D09"><b>D09</b><div><a href="https://github.com/adrianschlatter/RocketFins/tree/57f2c9fd475be499aafb2655b12f20a75f135e60">Schlatter · RocketFins CAD</a><small>PN1・PN2・PN3の形状定義。寸法と枚数を比較する資料。</small></div></li>
+<li id="ref-P09"><b>P09</b><div><a href="https://stratofins.com/content/pdf/StratoChute_Manual.pdf">StratoChute · パラシュート取扱説明書</a><small>手順4–6。収納、取り付け、ノーズコーンの分離機構。開傘時間は要測定。</small></div></li>
+</ul></section></div></main>
+<footer><div class="wrap">RocketWright　／　候補プール第3版に基づく閲覧ガイド　·　2026年11月4日</div></footer>
+</body></html>

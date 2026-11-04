@@ -498,6 +498,15 @@ def _tool_search_catalog(inp: dict[str, Any]) -> dict[str, Any]:
             "use each item's `id` verbatim: engines -> Stage.engine_id, boosters -> "
             "Booster.booster_id, motors -> AmateurDesign.motor_id; unknown ids are rejected"
         )
+    if tier == "bottle" and out["parts"]:
+        with (_CATALOG_DIR / "bottle_static_stability.yaml").open(encoding="utf-8") as f:
+            stability = yaml.safe_load(f)
+        planned = out.setdefault("planned", {})
+        for shelf in ("analysis_methods", "evaluation_functions"):
+            planned.setdefault(shelf, {}).update(stability[shelf])
+        references = out.setdefault("references", {})
+        for key, source in stability["references"].items():
+            references.setdefault(key, source)
     return out
 
 
