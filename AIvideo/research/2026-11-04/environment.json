@@ -1,0 +1,20 @@
+{
+  "observed_on": "2026-11-04",
+  "timezone": "Asia/Tokyo",
+  "scope": "Read-only hardware inventory and bounded checks of common AI application locations; no installation or generation benchmark.",
+  "os": {"name": "Microsoft Windows 11 Pro", "version": "10.0.26200"},
+  "cpu": {"name": "AMD Ryzen 9 7950X 16-Core Processor", "logical_processors": 32},
+  "ram_gib": 63.1,
+  "gpu": {"name": "NVIDIA GeForce RTX 4090", "vram_mib": 24564, "driver_version": "610.88", "memory_source": "nvidia-smi"},
+  "system_drive_free_gib_at_observation": 188.2,
+  "python_on_path": "3.11.6",
+  "packages_in_that_python": {"torch": null, "diffusers": null, "transformers": null, "accelerate": null, "safetensors": null, "comfyui-frontend-package": null},
+  "commands_found_on_path": ["nvidia-smi", "python", "git"],
+  "commands_not_found_on_path": ["ollama", "lmstudio", "lms", "uv", "ffmpeg"],
+  "common_model_locations_checked": ["~/.ollama/models/manifests", "~/.lmstudio/models", "~/.cache/lm-studio/models"],
+  "common_comfyui_locations_checked": ["~/ComfyUI", "C:/ComfyUI", "~/Documents/ComfyUI"],
+  "models_found_in_checked_locations": [],
+  "other_virtualenvs_drives_and_custom_locations": "not exhaustively searched",
+  "generation_test": "not run",
+  "privacy": "No host name, user name, serial number, account data, or complete installed-software list is included."
+}
