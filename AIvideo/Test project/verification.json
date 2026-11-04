@@ -1,0 +1,53 @@
+{
+  "output": "rocketwright_fairing.mp4",
+  "sha256": "b7c06b7cf1fc36cacf3a58288dc54314a0d8cd40f8029c206fe51a4a5262cc68",
+  "bytes": 2902280,
+  "video": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30.0,
+    "decoded_frames": 310,
+    "video_duration_seconds": 10.333333333333334,
+    "container_duration_seconds": 10.43
+  },
+  "audio": {
+    "codec": "aac",
+    "source": "original deterministic synthesis",
+    "sample_rate": 48000,
+    "channels": 2,
+    "duration_seconds": 10.43,
+    "peak_dbfs": -7.38,
+    "rms_dbfs": -19.98
+  },
+  "render": {
+    "blender": "5.2.2 LTS",
+    "engine": "CYCLES",
+    "device": "NVIDIA GeForce RTX 4090",
+    "samples": 24,
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "timeline_frames": 310,
+    "scene_frames_before_black_tail": 263,
+    "scene_frames_found": 263
+  },
+  "metadata": {
+    "exported_text": ";FFMETADATA1\nmajor_brand=isom\nminor_version=512\ncompatible_brands=isomiso2avc1mp41\ntitle=RocketWright Fairing Concept\ncomment=Concept visualization\\; not a flight or structural result\nencoder=Lavf63.1.102\n",
+    "unwanted_working_labels_found": []
+  },
+  "checks": {
+    "full_video_decode": "passed",
+    "expected_frame_count": "passed",
+    "black_opening_and_ending": "passed",
+    "nonempty_audio_without_sample_clipping": "passed",
+    "metadata_scan": "passed"
+  },
+  "visual_review": "contact sheet produced; review separately",
+  "audio_listening_review": "not performed by this script",
+  "reference_comparison": {
+    "pixel_identical": false,
+    "adapted_brand": "RocketWright",
+    "new_geometry": true,
+    "original_audio": true
+  }
+}
