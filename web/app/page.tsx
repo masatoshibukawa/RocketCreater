@@ -7,6 +7,7 @@ import ChatPanel from "./components/ChatPanel";
 import FlightChart from "./components/FlightChart";
 import ReviewPanel from "./components/ReviewPanel";
 import TierBadge from "./components/TierBadge";
+import WorkbenchPanel from "./components/WorkbenchPanel";
 import { exportInfoFromEvents } from "./lib/api";
 import { useDesignStream } from "./lib/useDesignStream";
 import type { DispersionResult, LandingPoint, Tier, TracePoint } from "./lib/types";
@@ -15,6 +16,7 @@ import type { DispersionResult, LandingPoint, Tier, TracePoint } from "./lib/typ
 const MAX_ATTEMPTS = 40;
 
 export default function Home() {
+  const [workspace, setWorkspace] = useState(true);
   const stream = useDesignStream();
   const { start, stop, reset } = stream;
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -68,9 +70,12 @@ export default function Home() {
     reset();
   }, [reset]);
 
+  if (workspace) return <WorkbenchPanel onOpenDesign={() => setWorkspace(false)} />;
+
   return (
     <main className="app">
       <section className="column column-left">
+        <button onClick={() => setWorkspace(true)}>製作ワークベンチに戻る</button>
         <ChatPanel
           messages={stream.messages}
           status={stream.status}
