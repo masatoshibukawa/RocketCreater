@@ -10,6 +10,8 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 
 ペットボトルロケットの設計変数・解析手法・評価指標は、[ブラウザで読める設計ガイド](UI/bottle-pool/README.md)にまとめています。
 
+1.5 L ペットボトル機の[試作手順](scenarios/bottle_prototype.md)では、手持ちゼロからの購入表、等倍フィン型紙、3Dプリント用ホルダーと治具を生成できます。
+
 ## 何をするか
 
 1. 要求を `bottle` / `amateur` / `commercial` / `heavy` のいずれかに分類する。

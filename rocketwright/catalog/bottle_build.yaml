@@ -1,0 +1,80 @@
+# Engineering estimates for one unpressurized prototype. Installed group totals, not unit
+# weights, vendor quotations, kit ratings, or measurements. Stations in mm aft of nose tip.
+geometry_mm:
+  body_diameter: 90
+  nose_length: 100
+  egg_bay_length: 82
+  canopy_bay_length: 80
+  bottle_length: 305
+  skirt_length: 110
+  skirt_overhang: 5
+  fin_root: 70
+  fin_tip: 35
+  fin_span: 70
+  fin_sweep: 35
+  fin_tab: 10
+  fin_tail_inset: 5
+  bay_clear_diameter: 84
+  dummy_width: 45
+  dummy_length: 60
+  padding: 8
+  fit_allowance: 2
+# One candidate change per transition; fold/bond the four fins as matched pairs of faces.
+variants:
+  carton_plain: {fin: carton_fin, pad: pad_plain}
+  carton_damped: {fin: carton_fin, pad: pad_damped}
+  pp_damped: {fin: pp_fin_075, pad: pad_damped}
+  carton_wide: {fin: carton_fin, pad: pad_damped, span_mm: 140}
+  pp_wide: {fin: pp_fin_075, pad: pad_damped, span_mm: 140}
+# Same 60 g surrogate as the previous experiment. Damping belongs to the assembled
+# mount, not to the material grade. These reference cases must be identified by a bench test.
+mount:
+  support_g: 20
+  wall_n_m: 2500
+  pad_n_m: 600
+  deadline_s: 0.5
+  residual_limit: 0.10
+  modal_zeta: {pad_plain: 0.02, pad_damped: 0.06}
+extra_resources:
+  tanita_kd320: {name: タニタ KD-320（仮組み用はかり）, source: https://shop.tanita.co.jp/shop/products/TKD320WH31}
+  shinwa_19518: {name: シンワ 19518（100 mmノギス・読取0.1 mm）, source: https://www.shinwasokutei.co.jp/products/19518/}
+  pad_plain: {name: 緩衝材付き軽量ホルダー, basis: 試作案}
+  pad_damped: {name: 粘弾性材付きホルダー, basis: 試作案・減衰を要測定}
+  sleeve: {name: 回収傘室・スカート・搭載筒用の非加圧の予備PET容器, basis: D01/D02を搭載条件に合わせて変更}
+  attachment: {name: 両面・ビニールテープ、傘の補強シール, basis: D02}
+  cords: {name: たこ糸・弾性テザー, basis: D02}
+  open_neck: {name: ボトル開口・首固定のフルボア発射台との組, basis: D07 第3節 Design A}
+  insert: {name: 市販の着脱式噴射口・対になる純正発射台, basis: D02/P01の方式・内径要照合}
+  guide_eyes: {name: 外部ガイド用の軽量アイレットと固定テープ, basis: 設計案・台と干渉しないことを要確認}
+common:
+  # id, purchase/cut quantity, installed mass g, estimated material outlay JPY, CG station mm
+  - [coke_jp_1500, 1本（無加工の本体）, 45, 220, 404]
+  - [sleeve, 予備2本から3部位, 23, 440, 257]
+  - [nose_paper, 扇形1枚, 4, 80, 67]
+  - [cords, 傘糸8本各800 mm・連結糸300 mm・ゴムひも300 mm, 5, 180, 220]
+  - [attachment, 固定・傘の8点補強一式, 9, 260, 370]
+  - [guide_eyes, 同軸の2か所, 2, 50, 380]
+options:
+  carton_fin: [4枚（各2面と取付タブ）, 12, 100, 540]
+  pp_fin_075: [4枚（各2面と取付タブ）, 21, 250, 540]
+  pad_plain: [1式, 20, 180, 141]
+  pad_damped: [1式, 23, 290, 141]
+  open_neck: [開口1か所, 0, 0, 567]
+  insert: [噴射口1個, 10, 440, 567]
+film: {resource: canopy_film, density_g_m2_assumed: 28, purchase_jpy: 100, station_mm: 221}
+ground: [fin_alignment_template, hand_pump, mitutoyo_cd_15ax, and_hl_200i]
+sources:
+  D01: https://www.yac-j.com/wp-content/uploads/2024/11/1-1.pdf
+  D02: https://www.yac-j.com/wp-content/uploads/2024/11/1-2.pdf
+  D07: https://www.npl.co.uk/getmedia/9562a6ed-13e3-45e6-8234-205f6a2538d6/wr_booklet_print.pdf
+  P01: https://prd1.takagi-member.jp/store/products/detail/248
+procurement:
+  bench_tool_totals_jpy: {starter: 7524, laboratory: 33770}
+  pump_shipping_surcharge_jpy: 770
+  guide_and_tools_allowance_jpy: [4000, 10000]
+  # Published tax-inclusive item prices, checked 2026-11-04. Verify at checkout.
+  insert_set:
+    - {name: スカイテイルズ 102 発射台, url: https://www.skytales.co.jp/product/2, price_jpy: 2695, purpose: 地上・角度調整式発射台}
+    - {name: スカイテイルズ 104 リモコン, url: https://www.skytales.co.jp/product/3, price_jpy: 1430, purpose: 地上・102に追加して遠隔解除}
+    - {name: スカイテイルズ 107 純正噴射口, url: https://www.skytales.co.jp/product/5, price_jpy: 440, purpose: 搭載・パッキン付}
+    - {name: スカイテイルズ 111 DIA PUMP, url: https://www.skytales.co.jp/product/8, price_jpy: 6050, purpose: 地上・圧力計付き手動ポンプ}

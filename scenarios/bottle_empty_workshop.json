@@ -1,0 +1,9 @@
+{
+  "nozzle_options_mm": [9],
+  "insert_bore_mm": 9,
+  "measurement_set": "starter",
+  "guide_travel_m": 1.5,
+  "fill_options_pct": [25],
+  "pressure_ceiling_kpa": 400,
+  "articles": {}
+}

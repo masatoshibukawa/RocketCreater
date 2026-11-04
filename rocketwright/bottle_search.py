@@ -9,6 +9,7 @@ from pathlib import Path
 
 from anthropic import APIError
 
+from rocketwright.bottle_assembly import Workshop, assembly, catalog
 from rocketwright.bottle_candidates import (
     CONFIRMATION_SEED,
     ENV,
@@ -22,6 +23,7 @@ from rocketwright.bottle_candidates import (
     flight_tool,
     starts,
 )
+from rocketwright.bottle_packet import write_packet
 from rocketwright.drawing import render_side_view_svg
 from rocketwright.physics.water import PASS_THRESHOLDS
 
@@ -40,6 +42,45 @@ SAMPLES = {"screen": (24, SELECTION_SEED), "confirm": (64, CONFIRMATION_SEED)}
 PASS_RATE = 0.80  # Predeclared experimental proxy, not a measured recovery reliability.
 TARGET = REQUIREMENT.target_altitude_m
 
+ASSEMBLY_SHELF = {
+    "component": dict(
+        layer="low/middle",
+        phase="assembly and free response",
+        target="BOM, payload bay, CP/CG and vibration",
+        method="mass sum, fit, Barrowman and Lyapunov",
+        inputs=["material variant", "stations and dimensions", "fill", "workshop article"],
+        outputs=["dry mass", "wet/dry CG", "CP", "pitch rate", "mount bound"],
+        evaluation="fit, budget, wet/dry restoring margin, positive pitch rate and residual <=10%",
+    ),
+    "flight": dict(
+        layer="middle",
+        phase="nominal flight",
+        target="assembled vehicle",
+        method="water trajectory plus two Cd endpoints",
+        inputs=["accepted component screen", "guide length"],
+        outputs=["altitude", "descent", "drag envelope"],
+        evaluation="nominal and both endpoints pass",
+    ),
+    "screen": dict(
+        layer="high",
+        phase="selection",
+        target="mission under pressure and wind variation",
+        method="run_dispersion",
+        inputs=["passing flight", "selection seed"],
+        outputs=["pass count", "quantiles"],
+        evaluation="at least 80% in 24 conditions",
+    ),
+    "confirm": dict(
+        layer="high",
+        phase="locked design",
+        target="one frozen assembly",
+        method="run_dispersion",
+        inputs=["passing screen", "confirmation seed"],
+        outputs=["pass count", "build packet"],
+        evaluation="at least 80% in 64 new conditions",
+    ),
+}
+
 
 @dataclass(frozen=True)
 class Action:
@@ -48,27 +89,55 @@ class Action:
     nozzle_mm: int
     pressure_kpa: int
     fill_pct: int
+    variant: str = ""
 
     @property
     def id(self):
-        return f"{self.method}/{self.start}/{self.nozzle_mm}/{self.pressure_kpa}/{self.fill_pct}"
+        base = f"{self.method}/{self.start}/{self.nozzle_mm}/{self.pressure_kpa}/{self.fill_pct}"
+        return f"{base}/{self.variant}" if self.variant else base
 
     def change(self, **kwargs):
         return Action(**(asdict(self) | kwargs))
 
 
 class Search:
-    def __init__(self, mode="mixed"):
+    def __init__(self, mode="mixed", workshop=None):
         records = starts()
         keys = {"mixed": records, "references": ("D02", "D01"), "new": ("new",)}[mode]
         self.records = {key: records[key] for key in keys}
         self.history = []
         self.results = {}
+        self.workshop = workshop
+        self.shelf = SHELF if workshop is None else ASSEMBLY_SHELF
+        self.env = (
+            ENV
+            if workshop is None
+            else ENV.model_copy(update={"rail_length_m": workshop.guide_travel_m})
+        )
+        if workshop is not None:
+            workshop.check_ids(records)
 
     def design(self, action):
-        return design_at(
+        design = design_at(
             self.records[action.start], action.nozzle_mm, action.pressure_kpa, action.fill_pct
         )
+        if self.workshop is None:
+            return design
+        plan = self.plan(action, design)
+        return design.model_copy(
+            update={
+                "dry_mass_kg": plan["dry_mass_g"] / 1000,
+                "axial_drag_coefficient": plan["axial_cd"],
+                "nozzle_diameter_m": (
+                    self.workshop.insert_bore_mm / 1000
+                    if action.nozzle_mm == 9
+                    else design.nozzle_diameter_m
+                ),
+            }
+        )
+
+    def plan(self, action, design):
+        return assembly(design, action.start, action.nozzle_mm, action.variant, self.workshop)
 
     def options(self):
         options = {}
@@ -76,14 +145,51 @@ class Search:
             return options
 
         def offer(action):
+            if self.workshop is not None:
+                if (
+                    action.pressure_kpa > self.workshop.pressure_ceiling_kpa
+                    or action.nozzle_mm not in self.workshop.nozzle_options_mm
+                    or action.fill_pct not in self.workshop.fill_options_pct
+                ):
+                    return
+                kit = catalog()[0]["variants"][action.variant]
+                if {kit["fin"], kit["pad"]} & self.workshop.unavailable:
+                    return
             if action not in self.results:
                 options[action.id] = action
 
         for key, record in self.records.items():
-            offer(Action("component", key, record["initial_nozzle_mm"], 300, 35))
+            nozzle = record["initial_nozzle_mm"]
+            if self.workshop is None:
+                offer(Action("component", key, nozzle, 300, 35))
+                continue
+            initial = [p for p in PRESSURE_KPA if p <= self.workshop.pressure_ceiling_kpa]
+            if initial:
+                if nozzle not in self.workshop.nozzle_options_mm:
+                    nozzle = self.workshop.nozzle_options_mm[0]
+                for v in ("carton_plain", "carton_damped", "pp_damped"):
+                    offer(
+                        Action(
+                            "component",
+                            key,
+                            nozzle,
+                            min(initial, key=lambda p: abs(p - 300)),
+                            min(self.workshop.fill_options_pct, key=lambda f: abs(f - 35)),
+                            v,
+                        )
+                    )
         for action, result in self.results.items():
             if action.method == "component" and result["eligible"]:
                 offer(action.change(method="flight"))
+            if action.method == "component" and self.workshop is not None:
+                if not result["checks"]["mount_settles"] and action.variant == "carton_plain":
+                    offer(action.change(variant="carton_damped"))
+                if not result["checks"]["static_restoring_dry_and_wet"]:
+                    variants = {"carton_damped": "carton_wide", "pp_damped": "pp_wide"}
+                    if action.variant in variants:
+                        offer(action.change(variant=variants[action.variant]))
+                    if action.fill_pct > min(FILL_PCT):
+                        offer(action.change(fill_pct=min(FILL_PCT)))
             if action.method == "screen" and result["success_rate"] >= PASS_RATE:
                 offer(action.change(method="confirm"))
             if action.method != "flight":
@@ -95,6 +201,8 @@ class Search:
             # is only a suggestion. The ODE must validate every new operating point.
             direction = 1 if apogee < TARGET else -1
             pressures = [p for p in PRESSURE_KPA if (p - action.pressure_kpa) * direction > 0]
+            if self.workshop is not None:
+                pressures = [p for p in pressures if p <= self.workshop.pressure_ceiling_kpa]
             if pressures:
                 for p in (
                     min(pressures, key=lambda p: abs(p - action.pressure_kpa)),
@@ -110,7 +218,10 @@ class Search:
             # A hardware change becomes available after operating-point evidence, or when
             # the pressure boundary prevents another step in the desired direction.
             family_runs = sum(
-                a.method == "flight" and a.start == action.start and a.nozzle_mm == action.nozzle_mm
+                a.method == "flight"
+                and a.start == action.start
+                and a.nozzle_mm == action.nozzle_mm
+                and a.variant == action.variant
                 for a in self.results
             )
             if not result["success"] and (family_runs >= 2 or not pressures):
@@ -127,8 +238,31 @@ class Search:
         design = self.design(action)
         if action.method == "component":
             result = component_screen(design)
+            if self.workshop is not None:
+                plan = self.plan(action, design)
+                result.update(
+                    {
+                        k: plan[k]
+                        for k in (
+                            "key",
+                            "dry_mass_g",
+                            "cp_mm",
+                            "wet_cg_mm",
+                            "mount_bound",
+                            "pitch_rate_per_s",
+                            "checks",
+                            "estimated_outlay_jpy",
+                            "unavailable",
+                        )
+                    }
+                )
+                result["eligible"] = (
+                    result["eligible"]
+                    and all(plan["checks"].values())
+                    and plan["estimated_outlay_jpy"] <= REQUIREMENT.budget_jpy
+                )
         elif action.method == "flight":
-            flight = flight_tool("simulate_design", design, action.id)
+            flight = flight_tool("simulate_design", design, action.id, env=self.env)
             result = {
                 "success": flight["success"],
                 "failures": flight["failure_reasons"],
@@ -143,9 +277,31 @@ class Search:
                     )
                 },
             }
+            if self.workshop is not None:
+                corners = []
+                for ratio in (0.85, 1.15):
+                    corner = design.model_copy(
+                        update={"axial_drag_coefficient": design.axial_drag_coefficient * ratio}
+                    )
+                    check = flight_tool(
+                        "simulate_design", corner, f"{action.id}/cd/{ratio}", env=self.env
+                    )
+                    corners.append(
+                        {
+                            "cd": corner.axial_drag_coefficient,
+                            "altitude_m": check["metrics"]["apogee_m"],
+                            "passed": check["success"],
+                        }
+                    )
+                result["cd_checks"] = corners
+                if not all(point["passed"] for point in corners):
+                    result["success"] = False
+                    result["failures"] = [*result["failures"], "assembled Cd bracket"]
         else:
             n, seed = SAMPLES[action.method]
-            spread = flight_tool("run_dispersion", design, action.id, n=n, seed=seed)
+            if self.workshop is not None:
+                seed = {"screen": 4701, "confirm": 77131}[action.method]
+            spread = flight_tool("run_dispersion", design, action.id, n=n, seed=seed, env=self.env)
             result = {
                 "n": n,
                 "seed": seed,
@@ -161,7 +317,7 @@ class Search:
                 "offered": list(options),
                 "chosen": action.id,
                 "reason": reason,
-                "analysis": SHELF[action.method],
+                "analysis": self.shelf[action.method],
                 "result": result,
             }
         )
@@ -187,6 +343,7 @@ def baseline_choice(search, options):
             (a, h)
             for a, h in flights
             if a.start == candidate.start
+            and a.variant == candidate.variant
             and a.nozzle_mm == candidate.nozzle_mm
             and a.fill_pct == candidate.fill_pct
         ]
@@ -203,11 +360,15 @@ def model_choice(client, model, search, options):
     context = {
         "mission": REQUIREMENT.model_dump(mode="json"),
         "starting_records": search.records,
-        "analysis_pool": SHELF,
+        "analysis_pool": search.shelf,
         "eligible": list(options),
         "screening_pass_rate": PASS_RATE,
         "history": [{k: row[k] for k in ("chosen", "reason", "result")} for row in search.history],
     }
+    if search.workshop is not None:
+        context["materials"] = catalog()[0]["variants"]
+        context["workshop"] = search.workshop.model_dump(mode="json")
+        context["build_checks"] = "Material mass, egg fit, wet and dry stability, mount settling."
     tool = {
         "name": "choose_analysis",
         "description": "Select one currently eligible analysis.",
@@ -242,6 +403,16 @@ def main():
     parser.add_argument("--starts", choices=("mixed", "references", "new"), default="mixed")
     parser.add_argument("--output", type=Path, required=True, help="new directory for this run")
     parser.add_argument("--max-actions", type=int, default=32)
+    parser.add_argument(
+        "--workshop",
+        type=Path,
+        help="resource exclusions, operating limits and bench records (JSON)",
+    )
+    parser.add_argument(
+        "--protocol",
+        choices=("assembly", "legacy"),
+        help="default: assembly; old replay IDs select legacy",
+    )
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--interactive", action="store_true", help="read one JSON choice per line")
     group.add_argument("--model", metavar="MODEL_ID", help="select actions using the Anthropic API")
@@ -257,7 +428,16 @@ def main():
         from anthropic import Anthropic
 
         client = Anthropic()
-    search = Search(args.starts)
+    legacy_replay = bool(choices) and choices[0]["id"].count("/") == 4
+    protocol = args.protocol or ("legacy" if legacy_replay else "assembly")
+    if args.workshop and protocol == "legacy":
+        parser.error("--workshop requires the assembly protocol")
+    workshop = (
+        (Workshop.model_validate_json(args.workshop.read_bytes()) if args.workshop else Workshop())
+        if protocol == "assembly"
+        else None
+    )
+    search = Search(args.starts, workshop)
     args.output.mkdir(parents=True, exist_ok=False)
     status = "budget_exhausted"
     selected = None
@@ -307,8 +487,10 @@ def main():
         "run.json",
         {
             "status": status,
+            "protocol": protocol,
+            "workshop": workshop.model_dump(mode="json") if workshop is not None else None,
             "starts": search.records,
-            "method_pool": SHELF,
+            "method_pool": search.shelf,
             "chooser": args.model
             or (
                 "replay"
@@ -319,7 +501,7 @@ def main():
             ),
             "mission": REQUIREMENT.model_dump(mode="json"),
             "bottle_volume_m3": 0.0015,
-            "environment": ENV.model_dump(mode="json"),
+            "environment": search.env.model_dump(mode="json"),
             "thresholds": PASS_THRESHOLDS,
             "min_sample_pass_rate": PASS_RATE,
             "max_actions": args.max_actions,
@@ -335,6 +517,10 @@ def main():
         design = search.design(selected)
         write("design.json", design.model_dump(mode="json"))
         (args.output / "vehicle.svg").write_text(render_side_view_svg(design), encoding="utf-8")
+        if workshop is not None and status == "proxy_pass":
+            write_packet(
+                args.output, design, search.plan(selected, design), search.history, workshop
+            )
     print(status)
     return 0 if status == "proxy_pass" else 1
 

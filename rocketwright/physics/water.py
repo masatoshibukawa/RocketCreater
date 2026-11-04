@@ -284,6 +284,9 @@ def run_flight(
     """Integrate launch -> rail exit -> water exhausted (+ air impulse) -> apogee, and on to
     the ground when there is no parachute. `cd` / `air_impulse_efficiency` override the module
     constants (None -> default)."""
+    # Precedence: explicit `cd` argument > the design's own axial_drag_coefficient > DEFAULT_CD.
+    if cd is None:
+        cd = design.axial_drag_coefficient
     cd, eff = _resolve_constants(cd, air_impulse_efficiency)
     dyn = _Dynamics(design, env, cd=cd, air_impulse_efficiency=eff)
     water_mass = design.bottle_volume_m3 * design.water_fill_frac * WATER_DENSITY_KGPM3
