@@ -172,6 +172,7 @@ function DesignVars({ design }: { design: Design }) {
       </dl>
     );
   }
+  if (design.tier !== "bottle") return null;
   return (
     <dl className="kv">
       <dt>ボトル容量</dt>

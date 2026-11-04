@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
+from rocketwright.agent.production import collect_wan, plan_video, render_video, submit_wan
 from rocketwright.agent.workbench import DEFAULT_WORKBENCH, Conflict, StepChoice
 from rocketwright.bottle_assembly import Workshop
 
@@ -24,6 +25,10 @@ class Revision(BaseModel):
 class StepRequest(Revision):
     id: str = Field(min_length=1, max_length=200)
     reason: str = Field(min_length=1, max_length=2000)
+
+
+class PlanRequest(Revision):
+    local: bool = True
 
 
 def call(operation, *args):
@@ -84,6 +89,26 @@ def propose(project_id: str, request: Revision):
 @router.post("/projects/{project_id}/exports")
 def export(project_id: str, request: Revision):
     return call(DEFAULT_WORKBENCH.export, project_id, request.revision)
+
+
+@router.post("/projects/{project_id}/video-plan")
+def video_plan(project_id: str, request: PlanRequest):
+    return call(plan_video, DEFAULT_WORKBENCH, project_id, request.revision, request.local)
+
+
+@router.post("/projects/{project_id}/render-video")
+def video_render(project_id: str, request: Revision):
+    return call(render_video, DEFAULT_WORKBENCH, project_id, request.revision)
+
+
+@router.post("/projects/{project_id}/wan")
+def wan_submit(project_id: str, request: Revision):
+    return call(submit_wan, DEFAULT_WORKBENCH, project_id, request.revision)
+
+
+@router.post("/projects/{project_id}/wan-result")
+def wan_result(project_id: str, request: Revision):
+    return call(collect_wan, DEFAULT_WORKBENCH, project_id, request.revision)
 
 
 @router.get("/projects/{project_id}/files/{key:path}")

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import AsyncIterator
 
 from fastapi import FastAPI, HTTPException
@@ -61,6 +62,8 @@ async def _sse(request: DesignRequest) -> AsyncIterator[str]:
 
 @app.post("/design")
 async def design(request: DesignRequest) -> StreamingResponse:
+    if os.getenv("ROCKETWRIGHT_ENABLE_CLOUD_DESIGN") != "1":
+        raise HTTPException(423, "課金APIの設計実行は無効です。ローカル試験を利用してください。")
     return StreamingResponse(
         _sse(request),
         media_type="text/event-stream",

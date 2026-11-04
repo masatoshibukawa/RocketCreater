@@ -17,7 +17,7 @@ import {
   type ExportInfo,
 } from "./types";
 
-export const API_BASE: string = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+export const API_BASE: string = process.env.NEXT_PUBLIC_API_BASE ?? "/backend";
 
 /** Join a backend-relative path (e.g. "/artifacts/svg_1.svg") onto API_BASE. */
 export function apiUrl(path: string): string {

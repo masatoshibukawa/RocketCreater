@@ -9,6 +9,7 @@ import DrawingPanel from "./components/DrawingPanel";
 import FlightChart from "./components/FlightChart";
 import ModelViewer from "./components/ModelViewer";
 import StatusStrip from "./components/StatusStrip";
+import WorkbenchPanel from "./components/WorkbenchPanel";
 import { exportInfoFromEvents, exportsForDesign } from "./lib/api";
 import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
 import { useDesignStream } from "./lib/useDesignStream";
@@ -16,6 +17,7 @@ import { useDesignSummary } from "./lib/useDesignSummary";
 import type { DispersionResult, DisplayedDesign, LandingPoint, TracePoint } from "./lib/types";
 
 export default function Home() {
+  const [workspace, setWorkspace] = useState(true);
   const stream = useDesignStream();
   const { start, answer, stop, reset } = stream;
   // Manual pick from 詳細 (attempt log / cards / reviews); null = follow the display rule.
@@ -99,11 +101,14 @@ export default function Home() {
     reset();
   }, [reset]);
 
+  if (workspace) return <WorkbenchPanel onOpenDesign={() => setWorkspace(false)} />;
+
   return (
     <main className="app">
       <StatusStrip status={stream.status} attemptCount={stream.attemptCount} />
       <div className="app-columns">
         <section className="column column-chat">
+          <button onClick={() => setWorkspace(true)}>製作ワークベンチに戻る</button>
           <ChatPanel
             messages={stream.messages}
             status={stream.status}
