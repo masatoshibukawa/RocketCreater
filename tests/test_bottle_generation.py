@@ -12,9 +12,19 @@ def test_harness_rejects_skipping_and_reusing_lower_layer_evidence():
     search.step(action.id, "test the original octagonal canopy")
     _, result = search.step(action.change(method="flight").id, "establish altitude")
     assert result["apogee_m"] < 27
-    raised = action.change(pressure_kpa=375)
-    assert raised.id in search.options()
-    assert raised.change(method="flight").id not in search.options()
+    # A short flight must offer a raised-pressure component re-screen, never a direct flight.
+    # The exact step depends on the calibrated water model (it was 375 kPa before the drag /
+    # air-impulse calibration), so check the behaviour rather than one pressure value.
+    options = search.options()
+    raised = [
+        act
+        for act in options.values()
+        if act.method == "component"
+        and (act.start, act.nozzle_mm, act.fill_pct) == ("D02", 9, 35)
+        and act.pressure_kpa > action.pressure_kpa
+    ]
+    assert raised
+    assert all(r.change(method="flight").id not in options for r in raised)
     assert action.change(method="screen").id not in search.options()
 
 

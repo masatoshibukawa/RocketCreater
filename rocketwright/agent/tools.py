@@ -250,9 +250,8 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "run_dispersion",
             "description": (
-                "Monte-Carlo dispersion: n perturbed flights (bottle: pressure, wind; amateur: "
-                "motor impulse, dry mass, wind, deploy delay; commercial/heavy: Isp, thrust, "
-                "structural fraction; provisional sigmas), judged like simulate_design when the "
+                "Monte-Carlo dispersion: n perturbed flights (provisional per-tier sigmas), "
+                "judged like simulate_design when the "
                 "requirement is passed. Returns success_rate, quantiles (p05/p50/p95 of every "
                 "metric), failure_counts, landing scatter with a 95 % ellipse (bottle/amateur) or "
                 "orbit-insertion errors (commercial/heavy), warnings and `nominal`. "
@@ -315,8 +314,8 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "find_reference_designs",
             "description": (
-                "Nearest real vehicles of the tier (log distance over target altitude and "
-                "payload; k null = 3): id, name, sources, published performance, their "
+                "Nearest real vehicles of the tier (k null = 3): id, name, sources, "
+                "published performance, their "
                 "requirement and site, provisional flag, notes and, for bottle/amateur kits, "
                 "their parts `build` (ground truth for the design chain). With seed=true (null = "
                 "true) the nearest one is scaled to the requirement by plain provisional rules: "
@@ -386,14 +385,9 @@ def get_tool_definitions() -> list[dict[str, Any]]:
             "name": "design_from_parts",
             "description": (
                 "Design a bottle or amateur rocket by CHOOSING PARTS: mass, dimensions and cost "
-                "come from the parts, never typed in. `build` is an AmateurBuild (tube id + cut "
-                "length, nose, mount, motor, fin material + planform, parachute, optional "
-                "recovery hardware / launch lug, payload, deploy delay) or a BottleBuild "
-                "(bottle, fill, gauge pressure, nozzle, optional fin set / parachute / "
-                "launcher, payload), by `tier`. Returns `design`, `bill` (rows, dry_mass_kg, "
-                "cost_jpy), `issues` (buildability, severity error|warning: part fits, body "
-                "length, fin sheet, chute packing, delay options, static margin, thrust-to-"
-                "weight, descent; bottle: neck, pressure caps, fill, payload chute) and `sim` "
+                "come from the parts, never typed in. `build` is an AmateurBuild or a "
+                "BottleBuild, by `tier`. Returns `design`, `bill` (rows, dry_mass_kg, "
+                "cost_jpy), `issues` (buildability, severity error|warning) and `sim` "
                 "(judged, cost from the bill; null when any issue is an error). Fix errors "
                 "first, then iterate on the warnings and the sim."
             ),
@@ -414,7 +408,8 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "completed into a full build by default rules, checked and simulated (all numbers "
                 "from code). Order: amateur motor, mount, body_tube, nose_cone, body_length, "
                 "fins, parachute, deploy_delay; bottle bottle, nozzle, water_fill, pressure, "
-                "fins, parachute. `chosen`: upstream decisions as {stage, value = a candidate's "
+                "fins, parachute. "
+                "`chosen`: upstream decisions as {stage, value = a candidate's "
                 "`option`}; entries downstream of `stage` are dropped (listed in `invalidated`), "
                 "missing upstream stages use the defaults. Returns the top k (null = "
                 f"{DESIGN_STAGE_DEFAULT_K}) candidates (option, label, why, passed, metrics, "
@@ -729,7 +724,8 @@ def _tool_search_catalog(inp: dict[str, Any]) -> dict[str, Any]:
     out["count"] = sum(len(v) for v in out.values() if isinstance(v, list))
     if kind == "resources":
         out["note"] = (
-            "Select a resource id and plan its checks." if out["resources"]
+            "Select a resource id and plan its checks."
+            if out["resources"]
             else "No registered resource matched. Broaden the query or request a sourced entry."
         )
     elif out["count"] == 0:
