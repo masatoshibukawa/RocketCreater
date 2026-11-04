@@ -1,0 +1,3 @@
+interface:
+  display_name: "Webフォントと文字配置"
+  short_description: "日本語・欧文・数値の書体と文字階層、行間、行長、改行を一緒に整える"

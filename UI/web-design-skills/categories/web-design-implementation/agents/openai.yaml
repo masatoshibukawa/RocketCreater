@@ -1,0 +1,3 @@
+interface:
+  display_name: "Webサイト制作と実装"
+  short_description: "既存の技術構成を尊重し、意味あるHTMLと状態・可変幅を持つ画面にする"

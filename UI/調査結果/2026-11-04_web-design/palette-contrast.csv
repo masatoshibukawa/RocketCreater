@@ -1,0 +1,25 @@
+palette,role,foreground,background,ratio,reference_threshold,passes_pair_check
+Mission control,text,#E6EDF3,#121D27,14.44022715,4.5,true
+Mission control,muted,#9AAABA,#121D27,7.17679566,4.5,true
+Mission control,accent,#67E8F9,#121D27,11.77097252,4.5,true
+Mission control,onAccent,#0B1117,#67E8F9,13.08954876,4.5,true
+Mission control,border,#577286,#121D27,3.37710954,3,true
+Mission control,focus,#FBBF24,#121D27,10.22101674,3,true
+Editorial,text,#20241F,#FFFCF5,15.36849169,4.5,true
+Editorial,muted,#586254,#FFFCF5,6.22932216,4.5,true
+Editorial,accent,#245A42,#FFFCF5,7.83391045,4.5,true
+Editorial,onAccent,#FFFFFF,#245A42,8.02706617,4.5,true
+Editorial,border,#737D6D,#FFFCF5,4.19694289,3,true
+Editorial,focus,#8E3B1F,#FFFCF5,7.33123542,3,true
+Light lab,text,#102A43,#FFFFFF,14.64162430,4.5,true
+Light lab,muted,#52667A,#FFFFFF,5.93162653,4.5,true
+Light lab,accent,#005EA8,#FFFFFF,6.63190264,4.5,true
+Light lab,onAccent,#FFFFFF,#005EA8,6.63190264,4.5,true
+Light lab,border,#72869A,#FFFFFF,3.75527134,3,true
+Light lab,focus,#7B3FE4,#FFFFFF,5.71664898,3,true
+Amber terminal,text,#F5F5F0,#1C1C1C,15.58270815,4.5,true
+Amber terminal,muted,#B1B0A7,#1C1C1C,7.82114009,4.5,true
+Amber terminal,accent,#FFCC66,#1C1C1C,11.42711816,4.5,true
+Amber terminal,onAccent,#111111,#FFCC66,12.66154927,4.5,true
+Amber terminal,border,#808078,#1C1C1C,4.28220122,3,true
+Amber terminal,focus,#7DD3FC,#1C1C1C,10.22147139,3,true
