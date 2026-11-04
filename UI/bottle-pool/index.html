@@ -6,21 +6,34 @@
 <script src="guide.js" defer></script>
 </head><body>
 <a class="skip" href="#main">本文へ移動</a>
-<header><div class="wrap"><a class="brand" href="#main"><b aria-hidden="true"></b>RocketWright</a><nav aria-label="ガイドの目次"><a href="plan.html">探索計画</a><a href="#parts">探索変数</a><a href="#analysis">解析と評価</a><a href="#research">自作予定</a><a href="#sources">文献</a></nav></div></header>
+<header><div class="wrap">
+  <a class="brand" href="index.html"><b aria-hidden="true"></b>RocketWright</a>
+  <nav class="site-nav" aria-label="設計ガイド">
+    <a href="index.html" aria-current="page">候補プール</a>
+    <a href="layers.html">層別解析</a>
+    <a href="selection.html">候補選択</a>
+    <a href="plan.html">探索計画</a>
+  </nav>
+</div></header>
 <main id="main">
-<div class="hero"><div class="wrap"><div><p class="eyebrow">WATER ROCKET / DESIGN GUIDE</p><h1>ペトロケ設計ガイド</h1><p>どこを変えると、何が変わるのか。<br>ペットボトル水ロケットの設計候補を、変数・解析・評価の順にたどれます。</p></div>
+<div class="hero"><div class="wrap"><div><p class="eyebrow">水ロケット設計資料</p><h1>ペトロケ設計ガイド</h1><p class="hero-intro">部品ごとの探索変数を調べ、設計の差をどの解析と指標で確かめるかを選べます。</p>
+<div class="hero-actions"><a class="primary-link" href="#parts">部品から変数を探す <span aria-hidden="true">↓</span></a><a href="selection.html#cases">解析の判断例を読む</a></div></div>
+<figure class="vehicle-plate"><figcaption><span>機体構成</span><span>ペットボトル水ロケット</span></figcaption>
 <svg viewBox="0 0 400 178" role="img" aria-labelledby="svg-title"><title id="svg-title">機首に回収部、胴体に水と空気、後部にフィンとノズルを持つ機体の概念図</title>
 <defs><pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#38716b" stroke-width=".5"/></pattern></defs>
 <rect width="400" height="178" rx="9" fill="url(#grid)"/>
 <g stroke="#a9e9d6" stroke-width="2" fill="#245b55"><path d="M55 87Q83 54 119 59H249Q266 60 282 77H303V99H282Q266 116 249 117H119Q83 122 55 87Z"/><path d="M218 59L249 36H274L266 66M218 117L249 140H274L266 111"/><path d="M303 78H315V98H303Z"/></g>
 <path d="M197 61H247Q263 61 279 78V99Q264 113 248 115H197Z" fill="#66bfae"/><path d="M113 62Q89 70 69 87Q91 104 112 113" fill="none" stroke="#eabe78" stroke-width="3" stroke-dasharray="4 4"/>
 <g stroke="#abd0c7" fill="none"><path d="M90 62V34H49M195 116V146H128M310 76L330 50H368"/></g>
-<g fill="#effcf6" font-size="13" font-family="sans-serif"><text x="32" y="28">回収部</text><text x="111" y="163">充填率</text><text x="330" y="44">ノズル</text></g></svg></div></div>
+<g fill="#effcf6" font-size="15" font-family="sans-serif"><text x="32" y="28">回収部</text><text x="111" y="163">充填率</text><text x="330" y="44">ノズル</text></g></svg></figure></div></div>
 <div class="wrap">
-<section id="overview"><p class="eyebrow">01 / 探索の流れ</p><h2>設計の一手を、3つに分ける</h2>
-<p><a href="layers.html#layer-map">低・中・高の各層で、解析対象・解析手法・評価方法をどう選ぶか</a>：フィンの取付角を例に、部品が生む力から開傘時の回転までをたどります。</p>
-<p><a href="selection.html">次にどの解析を選ぶか</a>。開傘時に回りすぎたとき、ハーネスが使える組をどう絞り、LLMが何を根拠に選ぶかを4例で比べます。</p>
-<div class="steps"><div class="step"><span>01　VARIABLE</span><h3><a href="#parts">何を変える？</a></h3><p>固定条件を残し、変更する部品や運用条件を選びます。</p></div><div class="step"><span>02　METHOD</span><h3><a href="#analysis">どう調べる？</a></h3><p>公称飛行で1案を試し、合格案は風や圧力を変えて比較します。</p></div><div class="step"><span>03　METRIC</span><h3><a href="#scores">何で比べる？</a></h3><p>例は高度の逸脱量や回収距離。最終合否では全要求を確認します。</p></div></div>
+<section id="overview"><p class="eyebrow">01 / 候補プール</p><h2>変数・手法・指標を調べる</h2>
+<ol class="pool-index">
+  <li><a href="#parts"><small>01　探索変数</small><strong>何を変えるか</strong><span>ノズル径、フィンの取付角、充填率</span></a></li>
+  <li><a href="#analysis"><small>02　解析手法</small><strong>どう調べるか</strong><span>公称飛行、費用概算、ばらつき試験</span></a></li>
+  <li><a href="#scores"><small>03　評価指標</small><strong>何で比べるか</strong><span>高度の逸脱量、降下速度、回収距離</span></a></li>
+</ol>
+<nav class="page-nav" aria-label="関連する設計資料"><span>設計資料</span><a href="layers.html#layer-map">3層の比較</a><a href="selection.html#analysis-record">解析の登録6項目</a><a href="#research">モデル開発候補</a><a href="#sources">文献一覧</a></nav>
 <p class="example"><strong>例：1.5 Lのボトルで卵を30 mまで上げて回収する。</strong>　高度が足りないとき、充填率の調整でまだ改善していれば運用条件を試します。試した範囲で頭打ちなら、容量を保ったままノズルを比較します。</p></section>
 <section id="parts"><p class="eyebrow">02 / 部品と運用</p><h2>探索する変数</h2><p class="lead">項目を開くと、変数の意味、適した解析、根拠の文献が読めます。</p>
 <div id="part-search" hidden>

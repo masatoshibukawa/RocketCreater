@@ -9,12 +9,20 @@
 </head>
 <body>
 <a class="skip" href="#main">本文へ移動</a>
-<header><div class="wrap"><a class="brand" href="index.html"><b aria-hidden="true"></b>RocketWright</a>
-<nav aria-label="仕様の目次"><a href="index.html">ガイド</a><a href="#layer-map">3層の見方</a><a href="#low">部品</a><a href="#middle">組立機体</a><a href="#high">飛行全体</a><a href="#checks">検証例</a></nav></div></header>
+<header><div class="wrap">
+  <a class="brand" href="index.html"><b aria-hidden="true"></b>RocketWright</a>
+  <nav class="site-nav" aria-label="設計ガイド">
+    <a href="index.html">候補プール</a>
+    <a href="layers.html" aria-current="page">層別解析</a>
+    <a href="selection.html">候補選択</a>
+    <a href="plan.html">探索計画</a>
+  </nav>
+</div></header>
 <main id="main" class="wrap plan">
 <p class="eyebrow">WATER ROCKET / 自作モデルの設計仕様案</p>
-<h1>形状から、姿勢と<br>ペイロードの揺れまで</h1>
-<p class="lead">例は「1.5 Lのペトロケで卵を高度30 mまで上げて回収」。部品形状から力を求め、その力で組立機体がどう動くかを解き、搭載物が実際に受ける荷重を評価します。以下の動解析・振動解析は開発候補です。</p>
+<h1>部品・機体・飛行の層別解析</h1>
+<p class="lead">1.5 Lの機体で卵を高度30 mまで上げて回収する設計例です。フィンが生む力、機体の回転、搭載物が受ける荷重を、自作モデルでどうつなぐかを示します。</p>
+<nav class="page-nav" aria-label="このページの目次"><span>このページ</span><a href="#layer-map">3層を比較</a><a href="#low">部品</a><a href="#middle">組立機体</a><a href="#high">飛行全体</a><a href="#checks">対照試験</a></nav>
 <section id="layer-map">
 <p class="eyebrow">3層の見方 / フィンの取付角を変えたら？</p>
 <h2>何を調べ、どう解き、何で判定するか</h2>

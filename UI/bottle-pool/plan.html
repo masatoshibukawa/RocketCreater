@@ -9,12 +9,20 @@
 </head>
 <body>
 <a class="skip" href="#main">本文へ移動</a>
-<header><div class="wrap"><a class="brand" href="index.html"><b aria-hidden="true"></b>RocketWright</a>
-<nav aria-label="計画の目次"><a href="index.html">ガイドに戻る</a><a href="#sequence">探索順序</a><a href="#dependencies">依存関係</a><a href="#harness">判断表</a></nav></div></header>
+<header><div class="wrap">
+  <a class="brand" href="index.html"><b aria-hidden="true"></b>RocketWright</a>
+  <nav class="site-nav" aria-label="設計ガイド">
+    <a href="index.html">候補プール</a>
+    <a href="layers.html">層別解析</a>
+    <a href="selection.html">候補選択</a>
+    <a href="plan.html" aria-current="page">探索計画</a>
+  </nav>
+</div></header>
 <main id="main" class="wrap plan">
 <p class="eyebrow">WATER ROCKET / 設計レビュー</p>
-<h1>文献から組み直す<br>ペトロケ探索計画</h1>
-<p class="lead">例は「1.5 Lで卵を高度30 mまで上げて回収」。次に動かす変数を選ぶ前に、どの差なら比較できるかを決めます。以下は探索器と評価ハーネスの実装計画です。</p>
+<h1>探索の手順と検証計画</h1>
+<p class="lead">1.5 Lの機体で卵を高度30 mまで上げて回収するために、どの条件を固定し、どの結果を比較するか。探索器の実行順と、判断を試す7つのケースを示します。</p>
+<nav class="page-nav" aria-label="このページの目次"><span>このページ</span><a href="#sequence">探索順序</a><a href="#dependencies">依存関係</a><a href="#harness">判断表</a><a href="#milestones">実装順</a></nav>
 <section id="sequence"><p class="eyebrow">01 / 誰が、何を決めるか</p><h2>探索ループのシーケンス図</h2>
 <figure><div class="diagram" role="region" tabindex="0" aria-label="探索ループ図。小さい画面では横にスクロールできます。"><svg class="chart" viewBox="0 0 820 375" role="img" aria-labelledby="seq-title seq-desc">
 <title id="seq-title">探索ループのシーケンス図</title><desc id="seq-desc">探索器が比較条件を固定し、候補プールと文献から適用可能な手法を取り出す。LLMが選んだ一手をコードが検査して解析し、未達条件と履歴を返す。</desc>
@@ -71,10 +79,10 @@
 <p class="example"><strong>層を戻る条件</strong>　同じ刻み・範囲で運用候補を使い切り、有効な部品候補があるならL3からL2へ。表現を変更した場合は探索空間の版を上げ、影響する結果を無効化します。証拠不足で優劣がつかない場合は「同等・要追加測定」を残します。</p>
 </section>
 <section id="harness">
-<p><a href="layers.html#checks">姿勢・回転・振動の対照試験</a>では、フィン取付角と搭載位置を一つずつ変え、どの層が差を再現すべきかを定めます。</p>
-<p class="example"><strong>組立状態の静安定も追跡する。</strong> L2のフィン位置と積載位置、L3の残水量から、同じ時点のCGとCPを比較します。変更前の重心や異なる迎角で求めた圧力中心を流用すると評価を誤ります。<a href="index.html#phase_static_margin">静安定余裕の定義と図</a></p>
 <p class="eyebrow">03 / 判断をどう試すか</p>
 <h2>ハーネスの判断表</h2>
+<p><a href="layers.html#checks">姿勢・回転・振動の対照試験</a>では、フィン取付角と搭載位置を一つずつ変え、どの層が差を再現すべきかを定めます。</p>
+<p class="example"><strong>組立状態の静安定も追跡する。</strong> L2のフィン位置と積載位置、L3の残水量から、同じ時点のCGとCPを比較します。変更前の重心や異なる迎角で求めた圧力中心を流用すると評価を誤ります。<a href="index.html#phase_static_margin">静安定余裕の定義と図</a></p>
 <p class="lead">本番と同じ一手選択器に、設計状態・候補・履歴を入力します。A/Bは要求、現在の機体、候補集合、残り予算を同一にし、過去の試行だけを入れ替える対照テストです。以下の期待動作はプロジェクトの提案です。</p>
 <table class="decisions">
 <caption>合格扱いにする判断と、それを確認する観測点</caption>
