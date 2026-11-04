@@ -1,0 +1,542 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-11-04",
+  "timezone": "Asia/Tokyo",
+  "scope": "Primary technical and production sources. Localized documents from one publisher are not independent experimental validation.",
+  "sources": [
+    {
+      "id": "V01",
+      "title": "Wan2.2 official repository",
+      "publisher": "Wan-Video",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://github.com/Wan-Video/Wan2.2",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "T2V、I2V、5Bの24GB用コマンドとモデル系列。"
+    },
+    {
+      "id": "V02",
+      "title": "Wan2.2 native workflow examples",
+      "publisher": "Comfy Org",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://docs.comfy.org/tutorials/video/wan/wan2_2",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "ComfyUIの5Bオフロード条件、構成ファイル、14Bと開始終了フレーム。"
+    },
+    {
+      "id": "V03",
+      "title": "HunyuanVideo 1.5 README",
+      "publisher": "Tencent Hunyuan",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "14GBはオフロード有効時。ソース実行のOS要件はLinux。"
+    },
+    {
+      "id": "V04",
+      "title": "HunyuanVideo 1.5 中文文档",
+      "publisher": "Tencent Hunyuan",
+      "languages": [
+        "zh"
+      ],
+      "topic": "video",
+      "url": "https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5/blob/main/README_CN.md",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "中国語の実行説明と蒸留モデルの更新。V03と同じプロジェクトで独立検証ではない。"
+    },
+    {
+      "id": "V05",
+      "title": "LTX Desktop README",
+      "publisher": "Lightricks",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://github.com/Lightricks/LTX-Desktop",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "Windows要件、ローカル生成、任意クラウド機能、Qwenアシスタント。"
+    },
+    {
+      "id": "V06",
+      "title": "LTX-2 Python inference README",
+      "publisher": "Lightricks",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://github.com/Lightricks/LTX-2",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "確認時の2.5用分割コンポーネント、量子化とオフロード。"
+    },
+    {
+      "id": "V07",
+      "title": "LTX-2.5 model card",
+      "publisher": "Lightricks",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "重みのゲート、モデル構成、Community License表示。"
+    },
+    {
+      "id": "V08",
+      "title": "FramePack README",
+      "publisher": "lllyasviel",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://github.com/lllyasviel/FramePack",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "逐次生成、Windows配布、最低VRAMと処理時間は別の条件。"
+    },
+    {
+      "id": "V09",
+      "title": "VACE README",
+      "publisher": "Tongyi Lab",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://github.com/ali-vilab/VACE",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "参照、動画変換、マスク編集。公開モデルごとにベース系列とライセンスが異なる。"
+    },
+    {
+      "id": "V10",
+      "title": "Comfy Desktop for Windows",
+      "publisher": "Comfy Org",
+      "languages": [
+        "en"
+      ],
+      "topic": "local",
+      "url": "https://docs.comfy.org/installation/desktop/windows",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "公式Windows導入経路と新しい標準保存先。"
+    },
+    {
+      "id": "V11",
+      "title": "Gen-4 Video Prompting Guide",
+      "publisher": "Runway",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://help.runwayml.com/hc/en-us/articles/39789879462419-Gen-4-Video-Prompting-Guide",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "入力画像と動作を重視する簡潔な指示。Gen-4で否定表現を一般化しない。"
+    },
+    {
+      "id": "V12",
+      "title": "Veo 3.1 Gemini API guide and retirement notice",
+      "publisher": "Google",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://aistudio.google.com/docs/veo",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "Veo 3.1 Previewの2026年10月22日終了案内。旧URL ai.google.dev/gemini-api/docs/veo から転送。"
+    },
+    {
+      "id": "V13",
+      "title": "Veo 3.1 GA model reference",
+      "publisher": "Google Cloud",
+      "languages": [
+        "en"
+      ],
+      "topic": "video",
+      "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/veo/3-1-generate",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "GAモデルIDと提供経路。Gemini API Previewとは区別する。"
+    },
+    {
+      "id": "V14",
+      "title": "Guide des prompts pour la génération de vidéos",
+      "publisher": "Google Cloud",
+      "languages": [
+        "fr"
+      ],
+      "topic": "video",
+      "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/video/video-gen-prompt-guide?hl=fr",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "被写体、動作、環境、カメラ等の分解。公式ローカライズ資料。"
+    },
+    {
+      "id": "V15",
+      "title": "Generación de vídeos mediante indicaciones de texto",
+      "publisher": "Adobe",
+      "languages": [
+        "es"
+      ],
+      "topic": "video",
+      "url": "https://helpx.adobe.com/es/firefly/web/work-with-audio-and-video/work-with-video/generate-videos-using-text-prompts.html",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "モデル選択と生成設定。スペイン語公式資料。"
+    },
+    {
+      "id": "V16",
+      "title": "Kamerabewegung von echtem Videomaterial übernehmen",
+      "publisher": "Adobe",
+      "languages": [
+        "de"
+      ],
+      "topic": "video",
+      "url": "https://helpx.adobe.com/de/firefly/how-to/video-motion-reference.html",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "カメラ移動を実写から参照するドイツ語の公式実習。"
+    },
+    {
+      "id": "A01",
+      "title": "Qwen3-TTS README",
+      "publisher": "Qwen",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://github.com/QwenLM/Qwen3-TTS",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "話者合成、声の設計、複製のモデル区分、分離環境、Web UI。"
+    },
+    {
+      "id": "A02",
+      "title": "Qwen3-TTS CustomVoice model card",
+      "publisher": "Qwen",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "日本語を含む言語と、CustomVoice重みのApache 2.0表示。"
+    },
+    {
+      "id": "A03",
+      "title": "Fun-CosyVoice 3.0 README",
+      "publisher": "FunAudioLLM",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://github.com/FunAudioLLM/CosyVoice",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "日本語を含む多言語TTS、ストリーミングと指示制御。"
+    },
+    {
+      "id": "A04",
+      "title": "CosyVoice source license",
+      "publisher": "FunAudioLLM",
+      "languages": [
+        "en"
+      ],
+      "topic": "rights",
+      "url": "https://github.com/FunAudioLLM/CosyVoice/blob/main/LICENSE",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "リポジトリのApache 2.0本文。各配布モデルは別途照合する。"
+    },
+    {
+      "id": "A05",
+      "title": "Style-Bert-VITS2 README",
+      "publisher": "litagin02",
+      "languages": [
+        "ja",
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://github.com/litagin02/Style-Bert-VITS2",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "日本語スタイル制御、Windows導入、CPU合成、AGPL表記。"
+    },
+    {
+      "id": "A06",
+      "title": "Style-Bert-VITS2 model terms",
+      "publisher": "litagin02",
+      "languages": [
+        "ja"
+      ],
+      "topic": "rights",
+      "url": "https://github.com/litagin02/Style-Bert-VITS2/blob/master/docs/TERMS_OF_USE.md",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "ソースコードと声モデルの条件を分離。声モデルごとの表記条件等。"
+    },
+    {
+      "id": "A07",
+      "title": "Text to Speech documentation",
+      "publisher": "ElevenLabs",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "多言語の声、モデルごとの特性、出力形式。"
+    },
+    {
+      "id": "A08",
+      "title": "MMAudio README",
+      "publisher": "MMAudio authors / Sony AI / UIUC",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://github.com/hkchengrex/MMAudio",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "動画同期音、制約、コードMITと重みCC-BY-NCの区別。"
+    },
+    {
+      "id": "A09",
+      "title": "Stable Audio Open 1.0 model card",
+      "publisher": "Stability AI",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://huggingface.co/stabilityai/stable-audio-open-1.0",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "テキストから音素材、47秒と44.1kHz、独自ライセンスへの参照。"
+    },
+    {
+      "id": "A10",
+      "title": "AudioCraft README",
+      "publisher": "Meta / Facebook Research",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://github.com/facebookresearch/audiocraft",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "MusicGen等、コードMITと重みCC-BY-NCの区別。"
+    },
+    {
+      "id": "A11",
+      "title": "MuseTalk README",
+      "publisher": "Tencent Music Entertainment Lyra Lab",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://github.com/TMElyralab/MuseTalk",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "音声から口の同期、顔領域の限界、依存物と試験素材の別条件。"
+    },
+    {
+      "id": "X01",
+      "title": "Avengers Endgame production case",
+      "publisher": "Industrial Light & Magic",
+      "languages": [
+        "en"
+      ],
+      "topic": "vfx",
+      "url": "https://www.ilm.com/vfx/avengers-endgame/",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "Anymaと俳優の演技を用いるデジタルキャラクター制作。"
+    },
+    {
+      "id": "X02",
+      "title": "Avengers Endgame production case",
+      "publisher": "Framestore",
+      "languages": [
+        "en"
+      ],
+      "topic": "vfx",
+      "url": "https://www.framestore.com/work/avengers-endgame?language=en",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "衣装置換、デジタルダブル、量子効果、照明と合成の連携。"
+    },
+    {
+      "id": "X03",
+      "title": "Movie Render Pipeline",
+      "publisher": "Epic Games",
+      "languages": [
+        "en"
+      ],
+      "topic": "vfx",
+      "url": "https://dev.epicgames.com/documentation/en-us/unreal-engine/movie-render-pipeline-in-unreal-engine",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "Unrealのオフライン連番・動画出力とMRQ/MRG。"
+    },
+    {
+      "id": "X04",
+      "title": "시네마틱 렌더 세팅 및 포맷",
+      "publisher": "Epic Games",
+      "languages": [
+        "ko",
+        "en"
+      ],
+      "topic": "vfx",
+      "url": "https://dev.epicgames.com/documentation/ko-kr/unreal-engine/cinematic-render-settings-and-formats-in-unreal-engine",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "韓国語本文と一部英語表。出力、サンプル、シャッター、OCIO等の設定。"
+    },
+    {
+      "id": "X05",
+      "title": "Introduction to Pyro",
+      "publisher": "SideFX",
+      "languages": [
+        "en"
+      ],
+      "topic": "vfx",
+      "url": "https://www.sidefx.com/docs/houdini/pyro/intro.html",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "煙や炎のボリューム、ソース、ソルバー、キャッシュ、描画。"
+    },
+    {
+      "id": "X06",
+      "title": "DaVinci Resolve Fusion",
+      "publisher": "Blackmagic Design",
+      "languages": [
+        "en"
+      ],
+      "topic": "vfx",
+      "url": "https://www.blackmagicdesign.com/products/davinciresolve/fusion",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "ノード合成、追跡、マスク、キー、粒子。機能は使用する版で照合する。"
+    },
+    {
+      "id": "L01",
+      "title": "Ollama API introduction",
+      "publisher": "Ollama",
+      "languages": [
+        "en"
+      ],
+      "topic": "local",
+      "url": "https://docs.ollama.com/api/introduction",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "ローカルとクラウドの基点を区別する。"
+    },
+    {
+      "id": "L02",
+      "title": "LM Studio compatibility endpoints",
+      "publisher": "LM Studio",
+      "languages": [
+        "en"
+      ],
+      "topic": "local",
+      "url": "https://lmstudio.ai/docs/developer/openai-compat",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "ローカル会話モデルAPIの基点とモデル一覧。"
+    },
+    {
+      "id": "L03",
+      "title": "FFmpeg filters documentation",
+      "publisher": "FFmpeg",
+      "languages": [
+        "en"
+      ],
+      "topic": "audio",
+      "url": "https://ffmpeg.org/ffmpeg-filters.html",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "amixとloudnormによる音のミックス・正規化。"
+    },
+    {
+      "id": "R01",
+      "title": "Tencent Hunyuan Community License Agreement",
+      "publisher": "Tencent",
+      "languages": [
+        "en"
+      ],
+      "topic": "rights",
+      "url": "https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5/blob/main/LICENSE",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "EU、英国、韓国を除くTerritory等の独自条件。"
+    },
+    {
+      "id": "R02",
+      "title": "LTX-2.x Community License Agreement",
+      "publisher": "Lightricks",
+      "languages": [
+        "en"
+      ],
+      "topic": "rights",
+      "url": "https://github.com/Lightricks/LTX-2/blob/main/LICENSE-2_x",
+      "verified_on": "2026-11-04",
+      "access": "content_read",
+      "source_type": "primary",
+      "finding": "売上規模に応じる利用条件等。アプリのApache表記とは別。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+# Reference architectures for simulation. Neither document reports our adapted vehicle's flight.
+D02:
+  title: YAC parachute water rocket, adapted for an egg
+  reference: https://www.yac-j.com/wp-content/uploads/2024/11/1-2.pdf
+  documented: "pp. 1–3: 1.5 L pressure vessel, fins, nose recovery compartment, eight-sided canopy with 0.24 m sides."
+  canopy_octagon_side_m: 0.24
+  dry_mass_kg: 0.15
+  initial_nozzle_mm: 9
+  assumptions: "Complete dry mass includes the egg cradle and canopy. Assume a regular octagon and use its flat-area equivalent circular diameter. Nozzle and operating point are project inputs."
+D01:
+  title: YAC basic water rocket with an added recovery module
+  reference: https://www.yac-j.com/wp-content/uploads/2024/11/1-1.pdf
+  documented: "pp. 1–4: 1.5 L pressure vessel, skirt-mounted fins, nose cone."
+  canopy_diameter_m: 0.50
+  dry_mass_kg: 0.12
+  initial_nozzle_mm: 22
+  assumptions: "The 0.50 m canopy, egg cradle and their combined airframe mass are project assumptions; this is not the original basic vehicle."

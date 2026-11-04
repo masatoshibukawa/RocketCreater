@@ -139,6 +139,7 @@ class BottleDesign(_Frozen):
     dry_mass_kg: float = Field(gt=0)  # airframe without water and payload
     payload_mass_kg: float = Field(default=0.0, ge=0)
     has_fins: bool = True
+    axial_drag_coefficient: float | None = Field(default=None, gt=0, allow_inf_nan=False)
     has_parachute: bool = False
     parachute_diameter_m: float | None = Field(default=None, gt=0)
 

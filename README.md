@@ -103,18 +103,245 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
   配信され、major / blocker の指摘は設計役に返されます。blocker が付いた案は最終の合格一覧から外れます
   （`review_gate` 種別の `warning` イベントで通知）。ツール結果に無い数値を引用した指摘はコードで除外します。
 
-## 進捗
+## Design direction: hierarchical exploration / 階層的な設計探索
 
-| フェーズ | 期間 | 完了条件 |
+**Proposal, not an implemented capability or a commitment for the competition deadline.**
+The current implementation uses tier-specific schemas and Python simulation tools. The
+following describes a direction for extending that loop; MATLAB integration and a general
+multi-level shape/material optimizer are not claimed to be available.
+
+日本語の要点：設計変数は一列の入力項目ではなく、ミッション・機体全体・各部の形状や材質が
+相互に制約を与える階層として整理します。候補生成→解析→評価→上位要求へのフィードバックを
+繰り返し、設計と検証を一体で進める構想です。MATLAB等の解析手法も選択肢ですが、未実装です。
+
+### Coupled levels, rather than a one-way pipeline
+
+| Level | Decisions and variables to represent | Feedback to exchange |
 | --- | --- | --- |
-| 1 | 11/2–11/3 | schema・classify・guard・最小の multistage とテスト。エージェントがダミー物理で一周する |
-| 2 | 11/4–11/5 | solid・stability・recovery。エージェント＋UI が commercial と amateur で端から端まで動く |
-| 3 | 11/6–11/7 | water、全規模の多数回試行、レビュアー、図面・部品表の出力 |
-| 4 | 11/8 | 機能凍結。scenarios の回帰テスト、UI の磨き込み、README |
-| 5 | 11/9–11/10 | デモ動画、概要文、提出 |
+| Mission / requirements | Purpose, payload, target altitude or orbit, recovery needs, budget, and acceptance criteria | Feasibility, uncertainty, and trade-offs may require revisiting the requirements |
+| System / architecture | Tier, overall configuration, interfaces, and allocations of mass, cost, and performance | Lower-level results update system feasibility and available margins |
+| Subsystem / geometry / materials | Allowed external geometry, material choices and their properties, structural assumptions, and component selection | Mass, compatibility, uncertainty, and verification needs constrain the system-level choices |
+| Analysis / evidence | Model fidelity, solver, assumptions, input/output units, and validation references | Results and model limits determine which candidates can be compared and which need further investigation |
 
-現在：フェーズ 4（機能凍結）。4 つの規模すべてが実物理モデル（`water` / `solid` / `multistage`）で動き、
-多数回試行、レビュアー、図面、レポート、部品表の出力まで繋がっています。
+Higher and lower levels should be co-designed through iterative feedback, rather than
+permanently fixing all upper-level choices before exploring lower-level alternatives.
+This does not require every solver to run at the same time: dependencies, model cost, and
+available evidence determine the order. A change in geometry or material must invalidate
+the dependent results rather than leave stale evaluations attached to a candidate.
+
+### Co-design the intermediate design space
+
+**Future direction:** the middle layer's search space is itself a design decision, not a
+fixed list of variables supplied once at the start. Design its variable set,
+parameterization, bounds, and constraints using both upstream requirements and downstream
+realizability. Optimizing values inside a fixed space and revising that space are different
+operations; the loop needs to support both explicitly.
+
+- Upstream requirements determine which distinctions matter, what must remain fixed, and
+  which objectives or constraints the middle layer must expose.
+- Downstream component, geometry, material, and model feasibility determines which
+  combinations can actually be represented and evaluated.
+- When either side changes, reconsider whether to add, remove, split, combine, or
+  reparameterize variables; revise justified bounds and coupling constraints accordingly.
+- Keep design variables separate from derived quantities and uncertainty parameters.
+  Do not make an infeasible design appear feasible by silently relaxing a requirement.
+- Version each design-space definition and its rationale. Map retained candidates to the
+  new representation where valid, invalidate incompatible results, and rerun affected
+  analyses before comparison.
+- Validate the revised representation with both neighboring layers. If feasibility or
+  parameter bounds lack evidence, record that uncertainty and request review rather than
+  inventing precise limits.
+
+日本語の補足：中間レイヤーでは値を探すだけでなく、**何を変数にするか、どう表現するか、
+どの範囲・制約で探索するか**も上位要求と下位の実現可能性に合わせて更新する構想です。
+
+### Match methods to variables within each level
+
+A layer should not be assigned one universal simulator. Within the same layer, different
+variables need different models, evaluation criteria, and search strategies. The examples
+below are **options to assess**, not implemented integrations or validated predictions.
+
+| Variable or decision | Candidate calculation / analysis method | Evaluation and constraints | Exploration and fidelity considerations |
+| --- | --- | --- | --- |
+| External shape and dimensions | Geometric checks and simplified aerodynamic estimates; higher-fidelity flow analysis only if justified | Packaging, model applicability, drag estimates, and uncertainty | Screen inexpensive geometric alternatives first; re-evaluate selected candidates with consistent assumptions |
+| Material choice and structural dimensions | Material-property lookup, mass accounting, simplified structural/thermal checks; finite-element analysis as a possible later tool | Mass, stiffness, strength/thermal margins, compatibility, and evidence quality | Discrete material choices and continuous dimensions require different handling; retain property sources and applicable conditions |
+| Catalog propulsion choice and system mass allocation | Catalog lookup, mass/energy budgets, and the existing simplified ascent models | Mission compatibility, estimated performance, mass/cost constraints, and provisional-data warnings | Compare catalog-level alternatives only; no internal engine or propellant design |
+| Recovery configuration | Simplified descent model and sensitivity/dispersion analysis | Recovery requirements, descent metrics, and uncertainty under environmental variation | Use nominal checks to screen candidates before more expensive robustness evaluation |
+| Mission target and architecture | Requirements consistency checks and system-level feasibility models | Whether the supported mission can be represented and evaluated at all | Unsupported missions require a scope decision, not a more detailed-looking result from an unsuitable solver |
+
+Separate the **analysis model** from the **search algorithm** and the **execution platform**.
+MATLAB, for example, could host an analysis or search routine, but its use alone does not
+specify the physics, fidelity, validation, or appropriate optimizer.
+
+Track a dependency map from each variable to affected models, outputs, constraints, and other
+variables. For example, a material change can alter mass and structural assumptions, while a
+shape change can alter both mass and aerodynamic inputs. Recompute the affected chain and
+propagate its consequences upward and sideways before comparing candidates.
+
+Use multiple fidelities deliberately: inexpensive screening, targeted refinement, and
+validation against independent references answer different questions. Record model cost and
+uncertainty, compare candidates on a compatible basis, and avoid treating a higher-fidelity
+solver as automatically more trustworthy without suitable inputs and validation.
+
+### Context-dependent analysis modes
+
+**Proposed architecture:** choose an analysis mode from both the current variables and the
+state of adjacent levels, rather than mapping each variable permanently to one solver.
+A mode packages the model, numerical method, fidelity, assumptions, and evaluation rules
+appropriate to the current question.
+
+Selection inputs should include upstream mission/configuration choices, downstream geometry
+and material values, the relevant flight/environment regime, design maturity, required
+accuracy, available evidence, and compute budget. An updated value at any linked level can
+make the current mode invalid and require reselection and reevaluation.
+
+Illustrative hypotheses to validate, not implemented switching rules:
+
+- Early architecture exploration may use inexpensive aggregate models; selected candidates
+  may justify more detailed subsystem analysis once the needed inputs exist.
+- A change in configuration, geometry, material, or operating regime may invalidate a
+  model's assumptions even when the variable names are unchanged.
+- A nominal comparison and an uncertainty/robustness assessment may require different
+  evaluation modes; neither replaces the other.
+
+Each mode should declare its supported input domain, required inputs, limitations, expected
+cost, validation evidence, and output contract. Selection should produce a traceable record
+of the input context, chosen mode/version, selection reason, rejected alternatives, and
+uncertainty. Never invent numerical switching thresholds without evidence.
+
+An AI agent may propose a mode, but applicability checks and validation against references
+must verify that choice. If no validated mode applies, report the analysis as unsupported or
+request human review instead of silently extrapolating. Test boundary cases, transitions,
+cross-mode consistency, and recomputation after changed inputs before relying on automatic
+mode selection. This is a future design goal, not a claim about the current tier selector.
+
+#### Select tools within an analysis domain, and ask when context is missing
+
+**Proposed behavior, not implemented:** "vibration analysis", "aerodynamics", or "thermal
+analysis" is not enough information to select a tool or library. Selection should use the
+physical applicability of a model as well as the software's supported capabilities.
+The following are illustrative context checks, not validated solver recommendations.
+
+| Analysis domain | Context and required inputs to resolve | Selection and constraint checks |
+| --- | --- | --- |
+| Vibration | Characteristic size, geometry, material properties, supports/connections, mass distribution, excitation, operating conditions, and the response of interest | Check whether the candidate model's dimensionality, linearity, boundary conditions, and frequency range suit the question; justify a reduced-order model or a more detailed method rather than selecting solely by the domain label |
+| Aerodynamics | Speed and environment, characteristic size, shape, relevant flow regime, and required outputs | Match the model and implementation to the applicable flow regime and geometry; speed or size changes can require revisiting assumptions, tool/library choice, and evidence |
+| Thermal | The specific part and material, mission destination/environment, operating phase and duration, heat inputs, interfaces, and the temperature quantity being evaluated | Establish relevant thermal processes and boundary conditions; check whether the intended model/tool can represent them and whether steady or transient evaluation answers the question |
+
+For thermal constraints, distinguish a component's operating limits, survival/storage limits,
+material limits, and any validated exposure-duration conditions. Upper and lower temperature
+limits must come from applicable component specifications, material data, mission
+requirements, or an explicitly reviewed assumption, with source, version, and conditions
+recorded. A destination or part name alone is not evidence for a numerical limit. Missing
+limits remain unknown; do not invent universal temperature thresholds.
+
+The LLM's role is to **propose a supported selection or ask the user**, not to silently fill
+critical gaps:
+
+1. Identify which missing inputs could change applicability, tool choice, or acceptance.
+   Ask focused questions about those inputs (for example, which component and operating
+   phase, what environment/speed range, or what specification supplies the limits).
+2. Use the confirmed context to propose a model, calculation method, and available
+   tool/library. Explain the selection reason, alternatives, required inputs, known
+   limitations, and unresolved uncertainty.
+3. Verify the tool/version capabilities and model assumptions against their documentation
+   and suitable validation evidence. A plausible LLM explanation is not validation, and
+   a runnable tool is not proof that its physics applies.
+4. Record the context, sources, assumptions, selected mode/tool/version, and validation
+   status with the result. Reopen the selection when the part, mission, scale, speed,
+   environment, or adjacent-layer decisions change.
+5. If necessary inputs or applicable evidence remain unavailable, label the result
+   exploratory or unsupported and ask for review. Human reviewers retain final judgment
+   on the modeling choice and whether the evidence supports the design decision.
+
+日本語の補足：同じ振動・空力解析でも、速度・大きさ・環境・境界条件によって適切なモデルや
+ツール／ライブラリを選び直す構想です。熱設計も部品・飛行先・運用段階に応じて必要な解析と
+温度制約の根拠を確認します。LLMは根拠付きで選択案を示すか、不足情報を人に質問し、
+適用範囲・不確かさ・検証状況を明示した上で、最終判断を人に委ねます。
+
+### Candidate-generation and evaluation loop
+
+1. **Define the design space.** Separate requirements, hard constraints, controllable
+   variables, derived quantities, and uncertain assumptions. Identify which level owns
+   each decision and which other levels depend on it.
+2. **Generate alternatives.** Choose an exploration method suited to the variables and
+   model cost. Catalog selection, parameter sweeps, or constrained search are possible
+   approaches to assess, not a claim that all are implemented.
+3. **Analyze each candidate.** Use the appropriate model and fidelity for the question.
+   Existing Python tools are the starting point; a MATLAB simulation adapter is a future
+   option. Any adapter needs a defined input/output contract, units, model/version identity,
+   reproducibility settings, and failure reporting before its results can be compared.
+4. **Evaluate constraints and trade-offs.** First check required constraints, then compare
+   objectives such as mission fit, mass, cost, robustness, and confidence in the evidence.
+   Report trade-offs or non-dominated alternatives instead of hiding them in an unexplained
+   single score. Model uncertainty is distinct from candidate performance.
+5. **Feed results back across levels.** An infeasible or weak lower-level choice can trigger
+   changes to allocations, architecture, or an explicitly reconsidered mission requirement.
+   Record what changed, why, and which analyses must be rerun.
+6. **Stop and review.** Define an evaluation budget and completion criteria; retain candidate
+   lineage, assumptions, model provenance, and reasons for rejection for human review.
+
+The evaluation method must evolve with the design question: a visual geometry preview,
+a simplified system simulation, and a higher-fidelity material/structural analysis are not
+interchangeable evidence. A successful model run alone does not establish feasibility.
+
+For the competition, first document the design variables and interfaces actually supported
+by the existing demo. Broader hierarchical optimization, MATLAB coupling, and 3D export need
+separate scope decisions and validation. All extensions must preserve the project limits in
+`CLAUDE.md`: simulation/concept design only, no propulsion internals, manufacturing-ready
+vehicle design, targeting, or guidance/control implementation.
+
+## Progress and submission plan / 進捗・提出計画
+
+**Submission deadline: 2026-11-08 (Sun) 20:00 JST / 11:00 UTC.**
+This follows the organizer's November 2 update for **Built with Claude: Japan 2026**.
+The previous November 9–10 submission schedule is obsolete; do not use the final judging
+date as the submission deadline. The older deadline and phase table in `CLAUDE.md` have
+not yet been synchronized; use the deadline above for submission planning.
+
+日本語の要点：**提出締切は2026年11月8日（日）20:00（日本時間）**です。
+旧記載の「11月9〜10日に動画・概要文を作成して提出」では間に合いません。
+以下は公開済みコードの実装状況と、提出に向けた確認事項・計画案を分けて記載しています。
+
+### Repository status (reviewed 2026-11-03)
+
+The following describes code present on `main`, not a claim that live API calls, the web
+build, or every user input have passed end-to-end validation. Unpushed work is not covered.
+
+| Area | Present in the repository | Verification boundary |
+| --- | --- | --- |
+| Design and simulation | Four tiers, `water` / `solid` / `multistage` models, seeded dispersion, and reviewer integration | Simplifications and provisional data remain documented below; simulation results are not real-world flight certification |
+| API and UI | FastAPI SSE design endpoint and Next.js candidate/review/flight displays | Live Claude API → browser → artifact download must be checked on the submission build |
+| Exports | SVG side view, Markdown/JSON report, and BOM CSV | These are the formats exposed by `api/main.py` and `rocketwright/agent/store.py`; do not present them as completed 3D/STL export |
+| Regression tests | `tests/test_scenarios.py` exercises physics and the agent loop with a scripted fake Claude client | A fake-client test pass is not evidence of live Claude behavior; this documentation update does not establish a new test pass |
+| Frontend build | `web/package.json` provides `npm run build` | `web/README.md` still notes an unverified build; record a successful build against the final submission commit |
+
+Artifact downloads are held in backend memory and expire after a restart or store eviction.
+Save the files needed for the demo before stopping the API.
+
+### Proposed workback plan (not completed milestones)
+
+These are working targets to review with the team, not organizer requirements or additional
+commitments. Prioritize a reproducible existing end-to-end demo over adding unverified scope.
+
+| Target (JST) | Work | Exit criterion |
+| --- | --- | --- |
+| November 3–5 | Agree on the design inputs, supported mission scope, candidate comparison, and UI/backend interface; verify the existing end-to-end path | One documented live-API demo reaches the UI and downloads the expected artifacts; open issues are recorded |
+| November 6 | Stabilize the demo and provisionally freeze submission scope | Regression/lint/build results and remaining limitations are recorded against a commit; unresolved extras are explicitly deferred |
+| November 7 | Prepare the demo video (within 3 minutes), short summary, and public GitHub repository | Draft submission package is ready and links are accessible without private credentials |
+| November 8, before 20:00 | Recheck the package, submit with time to spare, and retain the submission confirmation | All required items are submitted by **20:00 JST / 11:00 UTC**, not merely prepared |
+
+### Submission readiness checklist
+
+Unchecked items are verification tasks, not claims that the implementation is missing or broken.
+
+- [ ] Run `uv run pytest`, `uv run ruff check .`, and `uv run python scripts/check_scenarios.py`; record results and any skipped tests.
+- [ ] Run `npm run build` in `web/`; verify the browser flow against the same backend commit.
+- [ ] Check live Claude behavior on supported demo inputs, including rejected/out-of-scope requests, unsuccessful candidates, and retry/error handling.
+- [ ] Review candidate geometry, labels, units, and download contents; agree on whether 3D visualization/export is in submission scope before describing it as available.
+- [ ] Ensure the video and summary distinguish simulated results, provisional values, and unverified capabilities.
+- [ ] Check the public repository, video, and summary links; exclude credentials and private development data.
+- [ ] Submit by the organizer's deadline and retain confirmation.
 
 ## 簡易化した箇所
 

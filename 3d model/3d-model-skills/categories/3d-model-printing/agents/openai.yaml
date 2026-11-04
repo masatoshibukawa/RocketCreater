@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dプリントと後処理"
+  short_description: "FDMと光造形に合う設定でスライスし、出力と後処理の確認を進める"
+  default_prompt: "$3d-model-printing を使い、このモデルの方式と機種に合うスライス準備、出力、後処理の確認を進めてください。"

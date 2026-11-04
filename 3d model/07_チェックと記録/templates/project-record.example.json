@@ -1,0 +1,77 @@
+{
+  "record_status": "template_not_executed",
+  "project_name": null,
+  "units": "mm",
+  "brief_file": "project-brief.md",
+  "generation": {
+    "provider_or_repository": null,
+    "model_version_or_commit": null,
+    "date": null,
+    "input_files": [],
+    "prompt": null,
+    "seed_if_available": null,
+    "task_id_if_available": null,
+    "original_output_files": [],
+    "account_plan_at_generation": null,
+    "terms_url_and_date": null,
+    "source_material_rights": null,
+    "required_attribution": null
+  },
+  "design": {
+    "width_mm": null,
+    "depth_mm": null,
+    "height_mm": null,
+    "minimum_wall_mm": null,
+    "minimum_connection_mm": null,
+    "clearance_definition": null,
+    "clearance_mm": null,
+    "native_file": null,
+    "mesh_file": null,
+    "revision": null
+  },
+  "print": {
+    "process": null,
+    "printer": null,
+    "firmware": null,
+    "material_product_color_lot": null,
+    "slicer_and_version": null,
+    "profile_name_and_revision": null,
+    "orientation": null,
+    "layer_height_mm": null,
+    "project_file": null,
+    "machine_file": null,
+    "fdm": {
+      "nozzle_diameter_mm": null,
+      "plate": null,
+      "wall_loops": null,
+      "top_shell_thickness_mm": null,
+      "bottom_shell_thickness_mm": null,
+      "infill_percent": null,
+      "drying_conditions": null
+    },
+    "resin": {
+      "temperature_c": null,
+      "exposure_profile": null,
+      "hollow_wall_mm": null,
+      "cavities_and_drainage": null,
+      "washing_conditions": null,
+      "drying_conditions": null,
+      "curing_conditions": null,
+      "support_removal_stage": null
+    }
+  },
+  "verification": {
+    "model_generated": false,
+    "mesh_reviewed": false,
+    "export_dimensions_checked": false,
+    "all_layers_reviewed": false,
+    "physical_trial_completed": false,
+    "postprocessing_completed": false,
+    "measurement_stage": null,
+    "measured_values_and_units": {},
+    "acceptance_criteria": [],
+    "accepted": null,
+    "trial_log": null,
+    "photos": []
+  }
+}

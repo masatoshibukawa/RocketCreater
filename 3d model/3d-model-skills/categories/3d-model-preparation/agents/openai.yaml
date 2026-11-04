@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dモデル修正と印刷設計"
+  short_description: "メッシュ修復とCAD設計で、実寸・壁厚・公差・分割を確認する"
+  default_prompt: "$3d-model-preparation を使い、この3Dモデルの実寸と形状を確認し、印刷に向けた修復と設計を進めてください。"

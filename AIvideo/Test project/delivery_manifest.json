@@ -1,0 +1,33 @@
+{
+  "archive": "renders/rocketwright_fairing_project.zip",
+  "sha256": "bde01ef05210976ab7b30005e8b681e49984e70ab93424bfc36edfc89f497077",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "requirements.txt",
+    "reference_spec.json",
+    "verification.json",
+    "reconstruction_review.md",
+    "tools/analyze_reference.py",
+    "tools/build_scene.py",
+    "tools/compose_video.py",
+    "tools/inspect_reference.py",
+    "tools/package_project.py",
+    "tools/render_project.py",
+    "tools/verify_video.py",
+    "renders/rocketwright_fairing.mp4",
+    "renders/rocketwright_fairing_poster.png",
+    "renders/rocketwright_fairing.blend",
+    "renders/render_settings.json",
+    "renders/original_sound.wav",
+    "renders/verification_contact_sheet.jpg"
+  ],
+  "bytes": 6129718,
+  "extraction_and_hash_check": "passed",
+  "excluded": [
+    "reference footage",
+    "raw page metadata",
+    "dependency binaries",
+    "render frame cache"
+  ]
+}
