@@ -7,6 +7,7 @@ Reusable production skills, research notes, source references, and templates for
 写実的なAI映像、SF映画のVFX、音声・効果音・音楽、ローカル生成について、制作スキルと調査資料を整理しています。
 
 - [動画制作スキルの索引](skills/video-production/SKILL.md) — 入口のスキルと、その下の7カテゴリのスキル
+- [フェアリング映像の再現プロジェクト](Test%20project/README.md) — Blenderの3D、カメラ、HUD、音を組み合わせる制作例
 - [2026年11月4日の調査結果](research/2026-11-04/README.md)
 - [このPCに合う生成方法](research/2026-11-04/04_local_pc.ja.md)
 - [実践手順とSF予告編の制作案](research/2026-11-04/05_production_recipes.ja.md)
