@@ -3,6 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="ペットボトル水ロケットの設計変数、解析手法、評価指標と検証文献をたどる設計ガイド。">
 <title>ペトロケ設計ガイド | RocketWright</title><link rel="stylesheet" href="style.css">
+<script src="guide.js" defer></script>
 </head><body>
 <a class="skip" href="#main">本文へ移動</a>
 <header><div class="wrap"><a class="brand" href="#main"><b aria-hidden="true"></b>RocketWright</a><nav aria-label="ページ内目次"><a href="#parts">探索変数</a><a href="#analysis">解析と評価</a><a href="#research">自作予定</a><a href="#sources">文献</a></nav></div></header>
@@ -19,7 +20,16 @@
 <section id="overview"><p class="eyebrow">01 / 探索の流れ</p><h2>設計の一手を、3つに分ける</h2>
 <div class="steps"><div class="step"><span>01　VARIABLE</span><h3><a href="#parts">何を変える？</a></h3><p>固定条件を残し、変更する部品や運用条件を選びます。</p></div><div class="step"><span>02　METHOD</span><h3><a href="#analysis">どう調べる？</a></h3><p>公称飛行で1案を試し、合格案は風や圧力を変えて比較します。</p></div><div class="step"><span>03　METRIC</span><h3><a href="#scores">何で比べる？</a></h3><p>例は高度の逸脱量や回収距離。最終合否では全要求を確認します。</p></div></div>
 <p class="example"><strong>例：1.5 Lのボトルで卵を30 mまで上げて回収する。</strong>　高度が足りないとき、充填率の調整でまだ改善していれば運用条件を試します。試した範囲で頭打ちなら、容量を保ったままノズルを比較します。</p></section>
-<section id="parts"><p class="eyebrow">02 / 部品と運用</p><h2>探索する変数</h2><p class="lead">項目を開くと、変数の意味、適した解析、根拠の文献が読めます。</p><div class="grid"><details id="part-bottle"><summary>ボトル・機体質量</summary><div class="details-body"><p>容量を指定したミッションでは、同じボトルで比較します。部品を替えたら組立後の乾燥質量を更新します。</p><span class="status now">現行モデル</span><dl>
+<section id="parts"><p class="eyebrow">02 / 部品と運用</p><h2>探索する変数</h2><p class="lead">項目を開くと、変数の意味、適した解析、根拠の文献が読めます。</p>
+<div id="part-search" hidden>
+  <label for="part-query">部品名・変数名から探す</label>
+  <div class="search-row">
+    <input type="search" id="part-query" placeholder="例：ノズル、開傘、water_fill_frac" aria-controls="part-list">
+    <button type="button" id="clear-query">検索を解除</button>
+  </div>
+  <p id="match-count" role="status" aria-live="polite"></p>
+</div>
+<div id="part-list" class="grid"><details id="part-bottle"><summary>ボトル・機体質量</summary><div class="details-body"><p>容量を指定したミッションでは、同じボトルで比較します。部品を替えたら組立後の乾燥質量を更新します。</p><span class="status now">現行モデル</span><dl>
 <dt>内部容積 <code>bottle_volume_m3</code></dt><dd>指定がある場合は固定。部品IDは bottle_id。</dd>
 <dt>乾燥質量 <code>dry_mass_kg</code></dt><dd>水と積載物を除く、組み上がった機体の質量。</dd>
 <dt>積載質量 <code>payload_mass_kg</code></dt><dd>卵などの質量。同じミッションでは固定。</dd>
@@ -83,7 +93,17 @@
 <details id="aerodynamic_polars"><summary>迎角ごとの空力特性</summary><div class="details-body"><span class="status future">自作予定</span><p><code>aerodynamic_polars</code></p><dl><dt>入力と比較条件</dt><dd>フィン形状・取り付け、ノーズ・表面処理／風速・重心・迎角</dd><dt>解析</dt><dd>揚力・抗力・縦揺れモーメントを算出。まず論文の試験体を再現してからCAD形状を比較する。</dd><dt>評価関数</dt><dd><code>moment_slope_per_rad</code><br>重心まわりのモーメント係数の傾き。機首上げ正の定義では、微小迎角域の負の傾きが復元方向。</dd></dl><a class="ref" href="#ref-R03">R03</a> <a class="ref" href="#ref-D09">D09</a></div></details>
 <details id="canopy_deployment"><summary>放出から完全開傘まで</summary><div class="details-body"><span class="status future">自作予定</span><p><code>canopy_deployment</code></p><dl><dt>入力と比較条件</dt><dd>放出機構、収納条件、開傘時間、質量、頂点での姿勢・風</dd><dt>解析</dt><dd>放出・膨張・定常降下を分け、完全に開かなかった試行も記録する。</dd><dt>評価関数</dt><dd><code>full_open_altitude_m</code><br>完全開傘時の対地高度。未開傘は失敗として別に数える。</dd></dl><a class="ref" href="#ref-P09">P09</a></div></details>
 <details id="robust_factor_screen"><summary>ばらつきに強い条件の探索</summary><div class="details-body"><span class="status future">自作予定</span><p><code>robust_factor_screen</code></p><dl><dt>入力と比較条件</dt><dd>容量・充填率・ガイド長・発射仰角・初期圧／共通の風条件</dd><dt>解析</dt><dd>直交表で因子の影響を絞り、別試行で確認する。飛距離を扱った原論文の設計を高度ミッション向けに組み直す。</dd><dt>評価関数</dt><dd><code>worst_case_apogee_error_m</code><br>宣言した風条件での、目標高度からの最大絶対誤差（m）。</dd></dl><a class="ref" href="#ref-R04">R04</a></div></details>
-<details id="vertical_flight_replay"><summary>実測高度の再現</summary><div class="details-body"><span class="status future">自作予定</span><p><code>vertical_flight_replay</code></p><dl><dt>入力と比較条件</dt><dd>1 Lの文献機体、実測質量・外径・水量・圧力／試行ID</dd><dt>解析</dt><dd>条件を揃えた4試行を動画による実測高度と照合。台の条件と絶対圧・ゲージ圧を区別する。</dd><dt>評価関数</dt><dd><code>reference_apogee_mae_m</code><br>モデルの高度予測の平均絶対誤差（m）。試行ごとの差と測定誤差も併記する。</dd></dl><a class="ref" href="#ref-R14">R14</a></div></details></div></section>
+<details id="vertical_flight_replay"><summary>実測高度の再現</summary><div class="details-body"><span class="status future">自作予定</span><p><code>vertical_flight_replay</code></p><dl><dt>入力と比較条件</dt><dd>1 Lの文献機体、実測質量・外径・水量・圧力／試行ID</dd><dt>解析</dt><dd>条件を揃えた4試行を動画による実測高度と照合。台の条件と絶対圧・ゲージ圧を区別する。</dd><dt>評価関数</dt><dd><code>reference_apogee_mae_m</code><br>モデルの高度予測の平均絶対誤差（m）。試行ごとの差と測定誤差も併記する。</dd></dl><table class="runs">
+<caption>R14 表2の実測例（1 L機体・水温17 ℃）</caption>
+<thead><tr><th>試行</th><th>水の充填率</th><th>初期絶対圧</th><th>到達高度</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>35.0%</td><td>350 kPa</td><td>17.5 m</td></tr>
+<tr><td>2</td><td>32.5%</td><td>350 kPa</td><td>17.1 m</td></tr>
+<tr><td>3</td><td>25.5%</td><td>300 kPa</td><td>14.1 m</td></tr>
+<tr><td>4</td><td>25.5%</td><td>350 kPa</td><td>17.4 m</td></tr>
+</tbody></table>
+<p>試行3・4は水量が同じなので、圧力の違いを比較できます。高度の測定誤差は±0.5 m。モデルに入力するゲージ圧は、表の絶対圧から周囲圧を引いて求めます。</p>
+<a class="ref" href="#ref-R14">R14</a></div></details></div></section>
 <section id="sources"><p class="eyebrow">05 / 根拠</p><h2>参照した7資料</h2><p class="lead">文献IDから原論文・CAD・製品説明書を開けます。</p><ul class="source-list">
 <li id="ref-R02"><b>R02</b><div><a href="https://doi.org/10.2322/jjsass.51.314">渡辺ほか · 水ロケットの推力特性制御の一方法</a><small>図5–14。通常ノズルと整流ノズルの推力・内圧の時間履歴。</small></div></li>
 <li id="ref-R03"><b>R03</b><div><a href="https://doi.org/10.2322/jjsass.52.449">渡辺ほか · 水ロケットの空力特性と飛行安定化について</a><small>表1–2、図9–14、表4。風洞試験体、迎角ごとの空力係数、フィン取り付け方式。</small></div></li>

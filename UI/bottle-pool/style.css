@@ -59,11 +59,23 @@ dl { margin: .3rem 0 .8rem; }
 dt { padding-top: .52rem; font-weight: 650; }
 dd { margin: 0; color: var(--soft); font-size: .9rem; }
 .ref { white-space: nowrap; font: 700 .8rem ui-monospace, monospace; margin-inline-end: .45rem; }
+#part-search { margin: .6rem 0 1rem; }
+#part-search label { display: block; font-size: .9rem; font-weight: 700; margin-bottom: .3rem; }
+.search-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+.search-row input, .search-row button {
+  font: inherit; border: 1px solid #78918a; border-radius: .4rem; padding: .45rem .75rem;
+}
+.search-row input { width: min(25rem, 100%); background: var(--panel); color: var(--ink); }
+.search-row button { background: var(--panel); color: var(--teal); cursor: pointer; }
+#match-count { margin: .35rem 0 0; color: var(--soft); font-size: .9rem; }
 .source-list { margin: 0; padding: .3rem 1.1rem; list-style: none; }
 .source-list li { display: grid; grid-template-columns: 3rem 1fr; gap: .4rem; padding: .7rem 0; }
 .source-list li + li { border-top: 1px solid var(--line); }
 .source-list li > b { color: var(--teal); }
 .source-list small { color: var(--soft); display: block; }
+.runs { width: 100%; margin: .8rem 0; border-collapse: collapse; font-size: .9rem; text-align: left; }
+.runs caption { text-align: left; font-weight: 650; }
+.runs th, .runs td { border-bottom: 1px solid var(--line); padding: .35rem .15rem; }
 footer { margin-top: 3rem; padding: 1.2rem 0; border-top: 1px solid var(--line); font-size: .86rem; color: var(--soft); }
 @media(max-width: 720px) {
   .hero .wrap { grid-template-columns: 1fr; gap: 1rem; padding-block: 1.8rem; }
