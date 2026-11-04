@@ -1,0 +1,321 @@
+{
+  "document_type": "proposed_output_contract_examples",
+  "schema_version": "draft-0.1",
+  "illustrative_only": true,
+  "note": "Each case is an independent illustrative snapshot, not an existing API response, manufacturing release, or observed physical test.",
+  "agreed_scope": {
+    "initial_vehicle": "water_bottle_rocket",
+    "intended_use": "actual_launch",
+    "confirmation_mode": "milestone_confirmation",
+    "long_term_destination": "moon",
+    "lunar_terminal_goal": null
+  },
+  "cases": [
+    {
+      "name": "configuration_gate_waiting",
+      "project_id": "example-project-001",
+      "run_id": "example-run-001",
+      "candidate_id": "design-a",
+      "design_revision": 3,
+      "gate": {
+        "id": "G1",
+        "status": "awaiting_confirmation",
+        "requirements_revision": 2,
+        "environment_revision": 1,
+        "design_revision": 3,
+        "decision_id": null,
+        "confirmed_by": null,
+        "confirmed_at": null
+      },
+      "user_view": {
+        "heading": "機体構成を確認してください",
+        "summary": "部品と取付構成を選ぶ節目です。",
+        "unresolved": [
+          "使用する既製ノズルの型番",
+          "回収装置の取付方式"
+        ],
+        "allowed_actions": [
+          "inspect_parts",
+          "edit_configuration",
+          "save_working_copy"
+        ],
+        "advance_enabled": false,
+        "advance_blocking_reason": "次の解析に必要な部品と接続条件が未確定"
+      },
+      "downstream_job_state": "waiting_user"
+    },
+    {
+      "name": "analysis_progress",
+      "event": {
+        "type": "stage_progress",
+        "sequence": 24,
+        "project_id": "example-project-001",
+        "run_id": "example-run-002",
+        "candidate_id": "design-a",
+        "design_revision": 3,
+        "requirements_revision": 2,
+        "environment_revision": 1,
+        "evaluation_id": "example-recovery-eval-001",
+        "job_id": "example-dispersion-job-001",
+        "stage_id": "recovery_dispersion",
+        "target": {
+          "kind": "assembly",
+          "part_ids": [
+            "recovery-assembly"
+          ],
+          "label": "回収装置 / 機体全体"
+        },
+        "status": "running",
+        "source_id": "example-tool-dispersion-001",
+        "progress": {
+          "unit": "trials",
+          "planned": 100,
+          "completed": 72,
+          "valid": 69,
+          "invalid": 3,
+          "in_flight": 4,
+          "successful_valid": 66,
+          "aggregate_status": "provisional",
+          "final_success_rate": null
+        },
+        "timing": {
+          "elapsed_s": 72,
+          "eta_scope": "current_stage",
+          "remaining_low_s": 20,
+          "remaining_high_s": 40,
+          "estimate_source": "example_duration_history",
+          "is_measured_example": false
+        },
+        "worker": {
+          "activity": "inspect_recovery",
+          "target_part_id": "recovery-assembly",
+          "motion_enabled": true
+        },
+        "user_view": {
+          "heading": "風による回収のばらつきを確認中",
+          "progress": "72 / 100 条件",
+          "eta": "この工程の残り 約20〜40秒",
+          "result_state": "集計途中"
+        }
+      }
+    },
+    {
+      "name": "nominal_result_is_not_final_acceptance",
+      "candidate_id": "design-a",
+      "design_revision": 3,
+      "requirements_revision": 2,
+      "environment_revision": 1,
+      "evaluation_id": "example-nominal-eval-001",
+      "source_id": "example-tool-simulate-001",
+      "result_kind": "nominal_simulation",
+      "metrics": [
+        {
+          "key": "apogee_m",
+          "value": 29.6,
+          "unit": "m",
+          "status": "calculated",
+          "source_id": "example-tool-simulate-001"
+        },
+        {
+          "key": "cost_jpy",
+          "value": 2300,
+          "unit": "JPY",
+          "status": "estimate",
+          "source_id": "example-tool-cost-001"
+        }
+      ],
+      "verification": {
+        "nominal_requirement_check": "passed",
+        "dispersion": "running",
+        "attitude_stability": "unsupported",
+        "payload_survival": "not_evaluated",
+        "fabrication_review": "not_started",
+        "hardware_test": "not_recorded"
+      },
+      "release": {
+        "final_adoption_enabled": false,
+        "manufacturing_release_enabled": false,
+        "launch_permission_claimed": false,
+        "blockers": [
+          "必須評価とレビューが未完了",
+          "実機向けの製作条件が未確定"
+        ],
+        "working_copy_download_enabled": true,
+        "working_copy_label": "途中版 / 案A v03"
+      }
+    },
+    {
+      "name": "manufacturing_part_needs_inputs",
+      "part_id": "fin-001",
+      "part_revision": 1,
+      "candidate_id": "design-a",
+      "design_revision": 3,
+      "role": "stabilizing_fin",
+      "procurement_class": "fabricated",
+      "proposed_process": "3d_print",
+      "pressure_retaining_part": false,
+      "mating_part_ids": [
+        "fin-support-001"
+      ],
+      "material": {
+        "name": null,
+        "grade": null,
+        "source_id": null
+      },
+      "geometry": {
+        "source_artifact_id": null,
+        "unit": "mm",
+        "scale": 1,
+        "datums": [],
+        "critical_dimensions": [],
+        "tolerances": []
+      },
+      "mass": {
+        "estimated_kg": null,
+        "measured_kg": null,
+        "source_id": null
+      },
+      "process": {
+        "printer": null,
+        "material_profile": null,
+        "validated_process_revision": null
+      },
+      "checks": {
+        "geometry": "not_run",
+        "dimensional_fit": "not_run",
+        "material_suitability": "not_run",
+        "attachment": "not_run"
+      },
+      "artifact": {
+        "id": "example-part-fin-001",
+        "state": "planned",
+        "download_enabled": false,
+        "download_path": null,
+        "sha256": null
+      },
+      "gate": {
+        "id": "G3",
+        "status": "needs_inputs",
+        "required_inputs": [
+          "正の形状と重要寸法",
+          "相手部品との取付条件",
+          "材料と製作工程",
+          "検査項目と確認者"
+        ]
+      },
+      "display_label": "製作条件を確認してください"
+    },
+    {
+      "name": "final_package_template",
+      "package_id": "example-package-a-r03",
+      "candidate_id": "design-a",
+      "design_revision": 3,
+      "requirements_revision": 2,
+      "environment_revision": 1,
+      "intended_use": "actual_water_rocket_launch",
+      "package_state": "planned",
+      "status_axes": {
+        "simulation": null,
+        "design_confirmation": null,
+        "manufacturing_confirmation": null,
+        "hardware_verification": null,
+        "media_generation": null
+      },
+      "gate_decisions": [],
+      "artifacts": [
+        {
+          "id": "design-data",
+          "kind": "design_json",
+          "path": "design/design.json",
+          "state": "planned",
+          "source_ids": [],
+          "sha256": null,
+          "bytes": null
+        },
+        {
+          "id": "part-records",
+          "kind": "part_records_json",
+          "path": "parts/part-records.json",
+          "state": "planned",
+          "source_ids": [],
+          "sha256": null,
+          "bytes": null
+        },
+        {
+          "id": "assembly-drawing",
+          "kind": "drawing_pdf",
+          "path": "drawings/assembly.pdf",
+          "state": "planned",
+          "source_ids": [],
+          "sha256": null,
+          "bytes": null
+        },
+        {
+          "id": "manufacturing-parts",
+          "kind": "manufacturing_part_set",
+          "path": "manufacturing/parts/",
+          "state": "planned",
+          "source_ids": [],
+          "sha256": null,
+          "bytes": null
+        },
+        {
+          "id": "flight-results",
+          "kind": "analysis_json",
+          "path": "analysis/results.json",
+          "state": "planned",
+          "source_ids": [],
+          "sha256": null,
+          "bytes": null
+        },
+        {
+          "id": "explanation",
+          "kind": "design_explanation_mp4",
+          "path": "videos/design-explanation.mp4",
+          "state": "planned",
+          "source_ids": [],
+          "sha256": null,
+          "bytes": null
+        },
+        {
+          "id": "launch-cg",
+          "kind": "launch_cg_mp4",
+          "path": "videos/launch-cg.mp4",
+          "state": "planned",
+          "source_ids": [],
+          "sha256": null,
+          "bytes": null
+        }
+      ],
+      "downloads": {
+        "core_package_enabled": false,
+        "with_videos_enabled": false
+      },
+      "missing_or_incomplete": [],
+      "release_note": "This is an unfilled template. It contains no manufactured geometry, verified flight design, or completed media."
+    },
+    {
+      "name": "future_lunar_profile",
+      "vehicle_scale": null,
+      "mission_profile": "lunar_transport",
+      "destination": "moon",
+      "terminal_goal": null,
+      "capability_status": "planned_not_implemented",
+      "phase_ids": [
+        "earth_departure",
+        "lunar_transfer",
+        "lunar_arrival"
+      ],
+      "output_categories": [
+        "requirements",
+        "system_architecture",
+        "mass_and_performance_budgets",
+        "phase_trajectory_analyses",
+        "interfaces",
+        "verification_records"
+      ],
+      "evaluation_status": "not_run",
+      "result_values": null
+    }
+  ]
+}
