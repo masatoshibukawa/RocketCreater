@@ -24,6 +24,10 @@ description: "決めたWebデザインをHTML・CSS・JavaScriptや既存フレ�
 
 適切な実行環境がない場合は独立した確認を進め、阻害要因を具体的に報告する。存在しないブラウザ・API・試験の結果を補わない。
 
+## 作業用テンプレート
+
+入力・通信・処理を伴う画面では、[状態と確認の表](references/state-and-verification.md) を必要な範囲で使う。
+
 ## 深掘り
 
 制作工程とHTML例は [実装の調査](../../../調査結果/2026-11-04_web-design/05_building-websites.md)。仕様の確認には [MDN Responsive Design](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design) を使う。

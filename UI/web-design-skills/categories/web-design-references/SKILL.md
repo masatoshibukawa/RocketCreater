@@ -23,6 +23,10 @@ Siteinspire、SANKOU!、Awwwardsなどは探索の入口である。掲載・受
 
 本文だけの取得、画像観察、実操作、ログイン後の確認を区別して報告する。
 
+## 作業用テンプレート
+
+候補を比較・保存するときは、[参考カードと多言語検索語](references/research-cards.md) を使う。
+
 ## 深掘り
 
 検索語とサイト例が必要な場合は、[参考探索の調査](../../../調査結果/2026-11-04_web-design/02_references-and-discovery.md) と [出典台帳](../../../調査結果/2026-11-04_web-design/sources.csv) を参照する。

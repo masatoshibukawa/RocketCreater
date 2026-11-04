@@ -24,6 +24,10 @@ Interなどの欧文書体だけで日本語全体を表示できると仮定し
 
 文字拡大、狭い画面、実際の長文、フォールバックを確認する。利用者による文字間隔変更への耐性と、サイトの既定の文字設定を混同しない。
 
+## 作業用テンプレート
+
+実際の日本語・欧文・数値で比較するときは、[表示見本と文字体系の表](references/type-specimen.md) を使う。
+
 ## 深掘り
 
 具体的な設定例は [文字組みの調査](../../../調査結果/2026-11-04_web-design/04_typography-and-layout.md)。間隔変更の適用条件は [W3C Text Spacing](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html) を参照する。

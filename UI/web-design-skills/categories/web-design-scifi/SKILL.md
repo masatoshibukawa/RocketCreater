@@ -27,6 +27,10 @@ WCAG 2.3.3はAAA、2.2.2と2.3.1はAであり、混同しない。自動更新�
 
 世界観の短い説明、画面の主図と状態、選んだ表現の理由、試作または実装、動き軽減と操作の確認を渡す。映画の画面・ロゴを自分の制作素材として無断で転用しない。
 
+## 作業用テンプレート
+
+世界観や演出の方向を決めるときは、[SFのブリーフとイベント表](references/fui-brief.md) を使う。
+
 ## 深掘り
 
 制作事例とCSS例は [SFデザインの調査](../../../調査結果/2026-11-04_web-design/06_scifi-interfaces.md)。一次資料は [Territory Studio](https://territorystudio.com/project/blade-runner-2049/) と [GMUNK](https://gmunk.com/OBLIVION-GFX)。作品固有の処理を一般Webの必須手順にしない。
