@@ -1,0 +1,177 @@
+{
+  "document_type": "proposed_equipment_settings_contract_examples",
+  "schema_version": "draft-0.1",
+  "illustrative_only": true,
+  "note": "Independent specification fixtures, not current API responses, verified machine specifications, connected hardware, or measured LLM savings.",
+  "cases": [
+    {
+      "name": "unknown_is_not_no_printer",
+      "unregistered": {
+        "equipment_status": "not_registered",
+        "printer_use": null,
+        "printer_id": null,
+        "manufacturing_route": null,
+        "manufacturing_confirmation_enabled": false
+      },
+      "explicit_no_printer": {
+        "equipment_status": "selected",
+        "printer_use": "not_used",
+        "printer_id": null,
+        "manufacturing_route": "select_purchased_or_supported_alternative",
+        "manufacturing_confirmation_enabled": false
+      },
+      "required_distinction": "An absent setting must not imply that the user has no printer."
+    },
+    {
+      "name": "selected_model_with_incomplete_process",
+      "equipment_profile_id": "example-equipment-001",
+      "equipment_revision": 1,
+      "printer": {
+        "id": "example-fdm-a",
+        "revision": 1,
+        "label": "FDMプリンター A（表示例）",
+        "use_mode": "own",
+        "process": "fdm",
+        "usable_build_region_mm": null,
+        "nozzle_diameter_mm": null,
+        "specification_source_id": null
+      },
+      "material_profile_id": null,
+      "process_profile_id": null,
+      "tool_ids": [
+        "example-driver",
+        "example-caliper",
+        "example-scale"
+      ],
+      "operator_modes": [
+        "adult",
+        "child_with_adult"
+      ],
+      "missing_required_inputs": [
+        "材料プロファイル",
+        "工程に必要な機材仕様と根拠",
+        "製作プロファイル"
+      ],
+      "actions": {
+        "save_draft_enabled": true,
+        "apply_incomplete_profile_enabled": true,
+        "manufacturing_confirmation_enabled": false
+      },
+      "llm_savings_measured": false
+    },
+    {
+      "name": "default_changes_do_not_mutate_project",
+      "default_before": {
+        "profile_id": "default-workshop",
+        "revision": 1,
+        "printer_id": "example-fdm-a"
+      },
+      "default_after": {
+        "profile_id": "default-workshop",
+        "revision": 2,
+        "printer_id": "example-fdm-b"
+      },
+      "existing_project": {
+        "project_id": "example-project-001",
+        "equipment_profile_id": "project-equipment-001",
+        "equipment_revision": 3,
+        "snapshot_default_revision": 1,
+        "printer_id": "example-fdm-a"
+      },
+      "update_existing_project_automatically": false,
+      "next_action": "Offer an explicit new project snapshot and impact review if the user chooses to import the new defaults."
+    },
+    {
+      "name": "tool_change_invalidates_assembly_dependencies",
+      "project_id": "example-project-001",
+      "equipment_before_revision": 3,
+      "equipment_after_revision": 4,
+      "changes": [
+        {
+          "field": "tools.driver_profile_id",
+          "before": "example-driver-short",
+          "after": "example-driver-long"
+        }
+      ],
+      "known_affected": [
+        "assembly_access_evaluations",
+        "assembly_steps",
+        "assembly_figures",
+        "assembly_guide"
+      ],
+      "flight_input_change_proven_absent": false,
+      "flight_reuse_status": "requires_dependency_check",
+      "keep_old_results_on_original_revision": true,
+      "change_running_job_inputs_in_place": false,
+      "next_gate": "confirm_changed_conditions"
+    },
+    {
+      "name": "chat_request_becomes_visible_change_draft",
+      "applied": {
+        "equipment_revision": 3,
+        "printer_id": "example-fdm-a",
+        "fixed_for_run": true
+      },
+      "user_intent": "今回は別のプリンターBを使いたい",
+      "proposal": {
+        "printer_id": "example-fdm-b",
+        "state": "pending_condition_confirmation",
+        "origin": "user_request"
+      },
+      "applied_revision_mutated": false,
+      "user_intent_ignored": false,
+      "next_action": "Show the requested replacement, unresolved specifications, and affected parts before applying the new project revision."
+    },
+    {
+      "name": "compact_structured_context",
+      "resolved_snapshot": {
+        "equipment_profile_id": "project-equipment-001",
+        "equipment_revision": 3,
+        "printer_profile_id": "example-fdm-a",
+        "printer_revision": 1,
+        "material_profile_id": null,
+        "tool_profile_ids": [
+          "example-driver",
+          "example-caliper"
+        ],
+        "operator_modes": [
+          "adult",
+          "child_with_adult"
+        ]
+      },
+      "llm_context": {
+        "equipment_profile_id": "project-equipment-001",
+        "equipment_revision": 3,
+        "constraints": {
+          "available_processes": [
+            "fdm"
+          ],
+          "usable_build_region_mm": null,
+          "material_profile_id": null,
+          "available_tool_profile_ids": [
+            "example-driver",
+            "example-caliper"
+          ],
+          "operator_modes": [
+            "adult",
+            "child_with_adult"
+          ]
+        },
+        "unresolved": [
+          "有効な造形領域",
+          "材料と工程の条件"
+        ],
+        "full_catalog_included": false,
+        "additional_details_via_validated_lookup": true
+      },
+      "benchmark": {
+        "measured": false,
+        "clarification_count": null,
+        "equipment_extraction_calls": null,
+        "input_tokens": null,
+        "latency_ms": null,
+        "token_reduction_percent": null
+      }
+    }
+  ]
+}
