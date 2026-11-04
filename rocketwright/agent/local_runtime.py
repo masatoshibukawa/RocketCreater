@@ -6,6 +6,7 @@ import json
 import os
 import urllib.error
 import urllib.request
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -53,7 +54,16 @@ class LocalJSON:
 
 class LocalDirector:
     def __init__(self):
-        self.api = LocalJSON(os.getenv("ROCKETWRIGHT_OLLAMA_URL", "http://127.0.0.1:11434"))
+        connection_path = (
+            Path(__file__).resolve().parents[2] / "AIvideo/local-director/runtime/connection.json"
+        )
+        connection = json.loads(connection_path.read_text()) if connection_path.is_file() else {}
+        self.model = os.getenv("ROCKETWRIGHT_LOCAL_MODEL") or connection.get("model")
+        self.api = LocalJSON(
+            os.getenv("ROCKETWRIGHT_OLLAMA_URL")
+            or connection.get("url")
+            or "http://127.0.0.1:11434"
+        )
 
     def models(self) -> list[str]:
         rows = self.api.request("/api/tags", timeout=3).get("models", [])
@@ -69,7 +79,7 @@ class LocalDirector:
 
     def generate(self, context: dict, schema: dict, instructions: str) -> tuple[dict, str]:
         models = self.models()
-        model = os.getenv("ROCKETWRIGHT_LOCAL_MODEL")
+        model = self.model
         if model is None:
             model = next((m for m in models if m.lower().startswith("gemma")), None)
         if model not in models:
@@ -81,6 +91,7 @@ class LocalDirector:
             {
                 "model": model,
                 "stream": False,
+                "think": False,
                 "format": schema,
                 "messages": [
                     {"role": "system", "content": instructions},

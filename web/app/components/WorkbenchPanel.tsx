@@ -35,6 +35,7 @@ export default function WorkbenchPanel({ onOpenDesign }: { onOpenDesign: () => v
         <div className="wb-runtime"><span className={runtime?.comfyui.available ? "wb-online" : ""}/>ComfyUI {runtime?.comfyui.available ? runtime.comfyui.version : "未接続"}<br/><span className={runtime?.ollama.models.length ? "wb-online" : ""}/>Local LLM {runtime?.ollama.models[0] ?? "未接続"}</div>
       </aside>
       <section className="wb-center" aria-label="設計と成果物">
+        <p className="wb-mobile-mission">探索例: 高度30 m · 搭載60 g · 1.5 L · 材料予算3,000円</p>
         <nav className="wb-tabs" aria-label="設計の表示">{[["assembly", "機体"], ["analysis", "解析"], ["files", "製作ファイル"], ["video", "動画"]].map(([id, label]) => <button key={id} aria-pressed={tab === id} className={tab === id ? "is-active" : ""} onClick={() => setTab(id)}>{label}{id === "files" && files.length > 0 ? <span>{files.filter(f => f.kind === "production").length}</span> : null}</button>)}</nav>
         <div className="wb-main-content">
           {tab === "assembly" ? <RocketViewport project={project} working={working}/> : null}
