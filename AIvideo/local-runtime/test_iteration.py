@@ -39,6 +39,16 @@ class IterationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ambiguous"):
             iterate.action_for({"status": "prepared", "fingerprint": "same"}, "same")
 
+    def test_fork_changes_requested_fields_without_mutating_source(self):
+        plan = {"defaults": {"width": 832, "height": 480}, "runs": [{"id": "source", "backend": "photo", "seed": 1, "positive": "metal"}]}
+        result = iterate.fork_plan(plan, "source", "seed-two", ["seed=2"], "seed only")
+        self.assertEqual(len(plan["runs"]), 1)
+        self.assertEqual(plan["runs"][0]["seed"], 1)
+        self.assertEqual(result["runs"][-1]["seed"], 2)
+        self.assertEqual(result["runs"][-1]["positive"], "metal")
+        with self.assertRaises(ValueError):
+            iterate.fork_plan(result, "source", "seed-two", [], "duplicate")
+
     def test_invalid_ids_and_sampler_splits_are_rejected_before_api(self):
         with self.assertRaises(ValueError):
             iterate.validate({"id": "../escape", "backend": "photo"})

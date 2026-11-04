@@ -72,7 +72,8 @@
       "shift": 5,
       "sampler": "euler",
       "split_step": 10,
-      "hypothesis": "Change video resolution only from photo-a-14b to 1280x720 to inspect retained fine detail at higher compute cost. The 14B workflow accepts multiples of 16."
+      "hypothesis": "Change video resolution only from photo-a-14b to 1280x720 to inspect retained fine detail at higher compute cost. The 14B workflow accepts multiples of 16.",
+      "enabled": false
     },
     {
       "id": "cg-short-prompt-safe",

@@ -59,6 +59,26 @@ def action_for(record, fingerprint):
     raise ValueError("Failed or ambiguous take is preserved: inspect it and use a new id")
 
 
+def fork_plan(plan, source_id, new_id, overrides, hypothesis):
+    matches = [item for item in plan["runs"] if item["id"] == source_id]
+    if len(matches) != 1 or any(item["id"] == new_id for item in plan["runs"]):
+        raise ValueError("Fork needs an existing source and a unique new id")
+    clone = {**plan.get("defaults", {}), **matches[0], "id": new_id}
+    clone.pop("enabled", None)
+    allowed = {"seed", "steps", "cfg", "shift", "width", "height", "frames", "fps", "positive", "negative", "source", "split_step", "sampler"}
+    for override in overrides:
+        key, separator, value = override.partition("=")
+        if not separator or key not in allowed:
+            raise ValueError(f"Unsupported override: {override}")
+        try:
+            clone[key] = json.loads(value)
+        except json.JSONDecodeError:
+            clone[key] = value
+    clone["hypothesis"] = hypothesis or f"Follow-up of {source_id}; changed fields: {', '.join(item.partition('=')[0] for item in overrides) or 'none'}"
+    validate(clone)
+    return {**plan, "runs": [*plan["runs"], clone]}
+
+
 def source_path(value):
     source = (ROOT / value).resolve()
     if not source.is_relative_to(ROOT.parent.resolve()) or not source.is_file():
@@ -250,11 +270,29 @@ def main():
     parser.add_argument("--max-minutes", type=float, default=20)
     parser.add_argument("--port", type=int, default=8188)
     parser.add_argument("--gallery", action="store_true")
+    parser.add_argument("--fork", metavar="SOURCE_ID", help="Append a new configuration without generating")
+    parser.add_argument("--new-id")
+    parser.add_argument("--set", action="append", default=[], metavar="KEY=VALUE")
+    parser.add_argument("--hypothesis")
     options = parser.parse_args()
+    if (options.new_id or options.set or options.hypothesis) and not options.fork:
+        parser.error("--new-id, --set and --hypothesis require --fork")
+    if options.fork and (options.only or options.gallery):
+        parser.error("Forking only updates the plan; run generation or gallery separately")
     if options.gallery:
         gallery()
         return
     plan = json.loads(options.plan.read_text(encoding="utf-8"))
+    if options.fork:
+        if not options.new_id:
+            parser.error("--fork requires --new-id")
+        from filelock import FileLock
+        with FileLock(str(RUNTIME / "iteration.lock"), timeout=0):
+            # Reload after acquiring the lock to preserve another writer's additions.
+            plan = json.loads(options.plan.read_text(encoding="utf-8"))
+            write_json(options.plan, fork_plan(plan, options.fork, options.new_id, options.set, options.hypothesis))
+        print(f"Added {options.new_id}; run with --only {options.new_id}")
+        return
     configurations = [{**plan.get("defaults", {}), **config} for config in plan["runs"]]
     identifiers = [config["id"] for config in configurations]
     if len(identifiers) != len(set(identifiers)):
@@ -268,6 +306,8 @@ def main():
         with FileLock(str(RUNTIME / "iteration.lock"), timeout=0):
             begun, completed = time.monotonic(), 0
             for config in configurations:
+                if not config.get("enabled", True) and not options.only:
+                    continue
                 if options.only and config["id"] not in options.only:
                     continue
                 if completed >= options.max_runs or time.monotonic() - begun > options.max_minutes * 60:

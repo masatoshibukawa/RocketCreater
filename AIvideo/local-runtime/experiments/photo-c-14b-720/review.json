@@ -1,0 +1,12 @@
+{
+  "decision": "selected",
+  "notes": "今回の写実的な概念映像の採用候補。6時点と1280x720の終端画像で、工場設備、金属反射、床と支持具、二つのフェアリングの見え方を確認。小さな視点移動があり、確認フレームにサービスの透かしは見当たらない。元CGより写真に近い素材感だが、ノズルはカメラを向き、元設計との相違や細い部材の軟化も残る。機械的に正しい映像や完全再現とは扱わない。",
+  "reviewed_artifacts": [
+    "six-frame contact sheet",
+    "full-resolution last frame",
+    "source concept image"
+  ],
+  "full_real_time_playback_review": false,
+  "visible_service_watermark_found_in_reviewed_frames": false,
+  "geometry_equivalence_to_original": false
+}
