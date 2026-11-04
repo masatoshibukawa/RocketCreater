@@ -49,6 +49,8 @@ CDPでの記録は次のように設計する。
 3. 応答だけで終了扱いにせず `Tracing.tracingComplete` を待つ。stream方式なら `IO.read` で順次保存して `IO.close` する。
 4. `dataLossOccurred` を確認する。データ欠損のある記録は、そのまま完全な証拠として扱わない。
 
+同じブラウザで複数の記録処理を競合させず、開始した記録の所有者を明確にする。現行定義では `Tracing.start` の古い `categories` / `options` 引数は非推奨なので、対象版に合う `traceConfig` などの指定方法を確認する。
+
 これはAPIの利用順序の要点で、カテゴリ名や対象プロセスの選択は対象版に合わせる。streamは大きな結果の受け渡しを管理しやすくする方式であり、ページの処理自体を軽くする機能ではない。読み出しでは `base64Encoded` と `eof` も扱う。[Tracingの公式定義](https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/pdl/domains/Tracing.pdl) [D28]、[IOの公式定義](https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/pdl/domains/IO.pdl) [D29]
 
 詳細な計測もブラウザ上の仕事を増やす。比較用の最小観測と、原因調査用の詳細記録を分け、どちらの条件で測ったか残す。この使い分けは本調査の運用提案である。

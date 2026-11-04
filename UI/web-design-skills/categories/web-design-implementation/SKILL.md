@@ -29,6 +29,8 @@ description: "決めたWebデザインをHTML・CSS・JavaScriptや既存フレ�
 
 入力・通信・処理を伴う画面では、[状態と確認の表](references/state-and-verification.md) を必要な範囲で使う。
 
+ブラウザ確認の高速化やサイト性能の診断には [CDPの使い分け](references/cdp-workflow.md) を読む。自動化の所要時間と、サイト自体の読み込み・操作性能を別に測る。
+
 ## 深掘り
 
 制作工程とHTML例は [実装の調査](../../../調査結果/2026-11-04_web-design/05_building-websites.md)。仕様の確認には [MDN Responsive Design](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design) を使う。

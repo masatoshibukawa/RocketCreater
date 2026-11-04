@@ -29,6 +29,8 @@ description: "Webデザインの学習計画、制約を使った練習、画面
 
 練習やレビューの結果を残すときは、[実践と確認の記録](references/review-record.md) を使う。
 
+速度の比較やCDPによる観測が必要なら、[CDPの使い分け](../web-design-implementation/references/cdp-workflow.md) を読む。取得量を減らした結果と、画面や操作の確認範囲を対応させて評価する。
+
 ## 深掘り
 
 練習とチェック項目は [実践計画の調査](../../../調査結果/2026-11-04_web-design/08_practice-and-project-application.md)。そこにあるRocketWright案は一例であり、全サイトへ同じ構成を適用しない。
