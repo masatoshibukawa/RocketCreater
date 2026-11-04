@@ -56,7 +56,24 @@ class StepChoice(BaseModel):
 def engine_version() -> str:
     """Invalidate saved numerical evidence if its implementation or inputs change."""
     digest = hashlib.sha256()
-    files = sorted((ROOT / "rocketwright").rglob("*.py"))
+    package = ROOT / "rocketwright"
+    files = sorted((package / "physics").glob("*.py"))
+    files += [
+        package / name
+        for name in (
+            "schema.py",
+            "cost.py",
+            "dispersion.py",
+            "bottle_assembly.py",
+            "bottle_candidates.py",
+            "bottle_search.py",
+            "bottle_print.py",
+            "bottle_packet.py",
+            "drawing.py",
+            "report.py",
+            "agent/tools.py",
+        )
+    ]
     files += sorted((ROOT / "rocketwright/catalog").rglob("*.yaml"))
     files += sorted((ROOT / "rocketwright/catalog").rglob("*.eng"))
     for file in files:

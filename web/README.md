@@ -1,5 +1,11 @@
 # RocketWright web UI
 
+The default entry is now a dark production workbench for the local bottle-workshop trial.
+It connects human analysis checkpoints, saved evidence, production downloads and separate
+design/flight videos. See [local workbench operation](../docs/workbench.md).
+The general conversation screen remains available. Paid design calls are disabled by default;
+the API returns HTTP 423 until explicitly enabled during the final connection review.
+
 Single-screen Next.js (App Router, TypeScript, React 19) frontend for the RocketWright design
 agent. Light theme, Japanese labels, no navigation; the audience is hackathon judges and the
 general public, with the engineering detail folded into a collapsible 「詳細（エンジニア向け）」
@@ -46,7 +52,8 @@ The backend allows CORS from `http://localhost:3000` and `http://127.0.0.1:3000`
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `NEXT_PUBLIC_API_BASE` | `http://localhost:8000` | Base URL of the FastAPI backend. |
+| `NEXT_PUBLIC_API_BASE` | `/backend` | Same-origin API prefix, or an explicit backend origin. |
+| `ROCKETWRIGHT_API_URL` | `http://127.0.0.1:8000` | Server-side target of the `/backend` forwarding rule. |
 
 Put it in `web/.env.local` to override, e.g. `NEXT_PUBLIC_API_BASE=http://127.0.0.1:8000`.
 
@@ -85,6 +92,12 @@ Every number shown comes from a tool result or a backend endpoint; the UI only c
 `POST /design` takes a single `text` and has no conversation memory. When the agent emits a
 `question` event, the chat shows it as a question bubble with a reply box. Sending the reply
 restarts the loop with the request so far plus the answer appended:
+
+## Build verification
+
+The integrated production build and TypeScript checks passed with Node 24.19.0 and the committed
+pnpm lockfile. The existing candidate card required an explicit bottle-tier guard for TypeScript
+narrowing. UI rendering uses plain CSS and Recharts; no additional UI kit was introduced.
 
 ```
 <request>

@@ -21,10 +21,46 @@ from rocketwright.agent.workbench import ROOT, SKILLS, Conflict
 
 class Direction(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
-    design_caption: str = Field(min_length=1, max_length=250)
-    launch_caption: str = Field(min_length=1, max_length=250)
+    design_focus: Literal["payload_and_recovery", "fins_and_stability", "assembly_dimensions"]
+    launch_focus: Literal["trajectory_replay", "ascent_and_recovery"]
     camera: Literal["orbit", "slow_orbit"]
-    launch_prompt: str = Field(min_length=1, max_length=1800)
+    launch_motion: Literal["tracking_ascent", "stationary_inspection"]
+    reason: str = Field(min_length=1, max_length=500)
+
+
+def bind_direction(direction: Direction) -> dict:
+    """Bind a model's finite choices to factual copy and a non-combustion scene recipe."""
+    captions = {
+        "payload_and_recovery": "搭載室と回収装置の配置を確認する",
+        "fins_and_stability": "フィンの配置と機体の構成を確認する",
+        "assembly_dimensions": "機体の配置と寸法を確認する",
+        "trajectory_replay": "計算した飛行軌跡を再生する",
+        "ascent_and_recovery": "上昇と降下の計算結果を確認する",
+    }
+    motion = {
+        "tracking_ascent": "The water rocket lifts vertically with a brief water spray, "
+        "then coasts smoothly. The camera tracks its ascent.",
+        "stationary_inspection": "The water rocket remains stationary while the camera "
+        "makes a slow lateral inspection move.",
+    }
+    return direction.model_dump() | {
+        "design_caption": captions[direction.design_focus],
+        "launch_caption": captions[direction.launch_focus],
+        "launch_prompt": "A PET bottle water rocket with rigid fins on an outdoor field. "
+        + motion[direction.launch_motion]
+        + " Natural daylight, stable geometry, unchanged proportions, realistic materials. "
+        "Preserve the reference assembly. A single continuous shot.",
+    }
+
+
+def validate_bound_direction(plan: dict) -> None:
+    direction = Direction.model_validate({key: plan.get(key) for key in Direction.model_fields})
+    expected = bind_direction(direction)
+    if any(
+        plan.get(key) != expected[key]
+        for key in ("design_caption", "launch_caption", "launch_prompt")
+    ):
+        raise Conflict("Video direction changed. Review a new plan before continuing.")
 
 
 def media_settings():
@@ -59,29 +95,27 @@ def plan_video(bench, project_id, revision, local=True, director=None):
                 "evidence": state["history"][-2:],
                 "skills": skills,
                 "output": "separate design explanation and simulated launch CG",
+                "rocket_type": "PET bottle water rocket, no combustion",
             }
             data, model = (director or LocalDirector()).generate(
                 context,
                 Direction.model_json_schema(),
-                "Write Japanese short captions and an English cinematic launch prompt. "
-                "Do not state measurements, times or performance numbers in captions. "
-                "Engineering labels are added from evidence by code. Preserve rigid geometry. "
-                "Return only the requested JSON; never provide shell commands or graph nodes.",
+                "Select the registered focus, camera and motion IDs for this water rocket. "
+                "Explain your selection briefly in Japanese. Scripts own all captions, "
+                "measurements, physics and image prompts. Do not invent performance or "
+                "request any new capabilities. Return only the requested JSON.",
             )
             direction = Direction.model_validate(data)
-            if re.search(r"\d", direction.design_caption + direction.launch_caption):
-                raise Conflict("Use captions without numerical claims; code adds measured labels")
         else:
             model = "deterministic_recipe"
             direction = Direction(
-                design_caption="構成と回収装置を確認する",
-                launch_caption="解析結果に沿って飛行を再生する",
+                design_focus="payload_and_recovery",
+                launch_focus="trajectory_replay",
                 camera="slow_orbit",
-                launch_prompt="A rigid water rocket on an outdoor launch field, smooth camera "
-                "movement, natural daylight, stable fins and unchanged proportions, "
-                "realistic materials. No text, no logos, no people, no fire or explosion.",
+                launch_motion="tracking_ascent",
+                reason="採用案の構成と計算した軌跡を順に確認する。",
             )
-        state["video_plan"] = direction.model_dump() | {
+        state["video_plan"] = bind_direction(direction) | {
             "model": model,
             "skills": SKILLS["video"],
             "fps": 24,
@@ -104,6 +138,7 @@ def render_video(bench, project_id, revision):
             raise LocalRuntimeError("Configure the installed Blender and video Python executables")
         if state.get("video_plan", {}).get("status") != "planned":
             raise Conflict("Approve a shot plan before rendering")
+        validate_bound_direction(state["video_plan"])
         if any(f["kind"] == "video" for f in state["files"]):
             raise Conflict("Videos already exist for this design")
         directory = bench.directory(project_id) / "video"
@@ -176,6 +211,7 @@ def submit_wan(bench, project_id, revision):
         plan = state.get("video_plan", {})
         if plan.get("status") != "rendered" or plan.get("wan_status") != "not_submitted":
             raise Conflict("Render a reference first; do not submit duplicate video jobs")
+        validate_bound_direction(plan)
         reference = bench.file(project_id, "video/launch-reference.png")
         client = comfy_client()
         boundary = uuid.uuid4().hex
