@@ -354,6 +354,21 @@
       }
     },
     {
+      "id": "D23",
+      "lang": "en",
+      "title": "Water Bottle Rocket Launcher",
+      "author": "The Shoulders of Giants, Inc. (TSoG)",
+      "year": "2019 製作・2020 保存版",
+      "kind": "発射台の組立CAD・部品CAD・印刷メッシュ",
+      "note": "教育団体の夏期設計プロジェクト。台座・ノズル・手元トリガーの組立図と部品表を照合できる。2012年試作、2013年改良を経た経緯も作者が記録している。",
+      "source": "https://github.com/TSoGiants/Water-Bottle-Rocket-Launcher/tree/b73d27ca0ef081e64c4c870241b8b8f07fae703c",
+      "download": null,
+      "local": {
+        "path": "CAD/D23-TSoGiants"
+      },
+      "category": "設計図・製作資料"
+    },
+    {
       "id": "R01",
       "category": "論文・研究資料",
       "lang": "ja",
