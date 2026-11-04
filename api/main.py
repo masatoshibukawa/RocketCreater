@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
 from pydantic import BaseModel, Field
 
+from api.workbench import router as workbench_router
 from rocketwright import __version__
 from rocketwright.agent.loop import run_design_loop
 from rocketwright.agent.store import DEFAULT_STORE, MEDIA_TYPES, store_drawing
@@ -17,6 +18,7 @@ from rocketwright.schema import Design, Env
 CORS_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
 app = FastAPI(title="RocketWright", version=__version__)
+app.include_router(workbench_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
