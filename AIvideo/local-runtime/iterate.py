@@ -110,6 +110,9 @@ def measure_video(source, destination, config):
         raise ValueError("Decoded output does not match requested dimensions, fps, or frame count")
     if not count or max(means) < 2:
         raise ValueError("Empty or black output")
+    serialized_metadata = json.dumps(metadata).lower()
+    if any(term in serialized_metadata for term in ("c:\\users\\", "chatgpt", "codex", "utm_")):
+        raise ValueError("Unexpected working label or local path in output metadata")
     sheet.save(destination.parent / "contact.jpg", quality=94)
     return {"width": width, "height": height, "frames": count, "fps": fps, "seconds": count / fps, "full_decode": True, "mean_frame_change": round(float(np.mean(differences)), 4) if differences else 0, "metadata": metadata, "note": "Frame change is a motion/consistency diagnostic, not a realism score."}
 
@@ -153,6 +156,10 @@ def run_one(config, address, timeout=1800):
     if action == "submit":
         record = {"id": identifier, "fingerprint": fingerprint, "config": config, "input_sha256": source_hash, "models": models, "created_utc": datetime.now(timezone.utc).isoformat(), "status": "prepared"}
         if config["backend"] != "import":
+            server = json.loads((RUNTIME / "server.json").read_text())
+            if config.get("runtime_profile") == "standard-offload" and not server.get("conservative"):
+                raise RuntimeError("This take requires start.py --conservative")
+            record["runtime_profile"] = "standard-offload" if server.get("conservative") else "dynamic-vram"
             queue = api(address, "/queue")
             if queue["queue_running"] or queue["queue_pending"]:
                 raise RuntimeError("ComfyUI queue is busy; leave other jobs intact and try later")
@@ -228,7 +235,8 @@ def gallery():
         config = record["config"]
         kind = "image.png" if config["backend"] == "photo" else "video.mp4"
         visual = f'<img src="{identifier}/{kind}" alt="{identifier}">' if config["backend"] == "photo" else f'<video controls loop muted playsinline preload="metadata" poster="{identifier}/poster.jpg" src="{identifier}/{kind}"></video>'
-        cards.append(f'<article data-status="{html.escape(review["decision"])}"><h2>{html.escape(identifier)}</h2>{visual}<p>{html.escape(config.get("hypothesis", ""))}</p><p class="details">{html.escape(config["backend"])} · {record["metrics"]["width"]}×{record["metrics"]["height"]} · {record.get("server_seconds", "import")}s</p><strong>{html.escape(review["decision"])}</strong><p>{html.escape(review.get("notes", "Not reviewed yet"))}</p><a href="{identifier}/{kind}">Open media</a> <a href="{identifier}/contact.jpg" {"hidden" if kind == "image.png" else ""}>Contact sheet</a><details><summary>Settings</summary><pre>{html.escape(json.dumps(config,ensure_ascii=False,indent=2))}</pre></details></article>')
+        contact_link = f'<a href="{identifier}/contact.jpg">Contact sheet</a>' if kind == "video.mp4" else ""
+        cards.append(f'<article data-status="{html.escape(review["decision"])}"><h2>{html.escape(identifier)}</h2>{visual}<p>{html.escape(config.get("hypothesis", ""))}</p><p class="details">{html.escape(config["backend"])} · {record["metrics"]["width"]}×{record["metrics"]["height"]} · {record.get("server_seconds", "import")}s</p><strong>{html.escape(review["decision"])}</strong><p>{html.escape(review.get("notes", "Not reviewed yet"))}</p><a href="{identifier}/{kind}">Open media</a> {contact_link}<details><summary>Settings</summary><pre>{html.escape(json.dumps(config,ensure_ascii=False,indent=2))}</pre></details></article>')
     document = '''<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RocketWright Video Experiments</title><style>body{margin:0;background:#10151c;color:#e9eef2;font:16px system-ui}header,main{max-width:1440px;margin:auto;padding:24px}h1{font-size:32px}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:24px}article{background:#1a2430;padding:20px;border-radius:12px;border:1px solid #34465a}video,img{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#080d12}p{line-height:1.6}.details{color:#aabac8}a{color:#80d5ed;margin-right:16px}pre{white-space:pre-wrap;overflow-wrap:anywhere}button{padding:10px;margin:4px;color:inherit;background:#24384b;border:1px solid #66849b;border-radius:6px}article[data-status="selected"]{border-color:#76e0b8}header p{max-width:900px}</style><header><h1>RocketWright Video Experiments</h1><p>無料のローカル生成を比較する。写真調の新規コンセプトは元CGと形状が異なる。数値は生成速度・デコード確認であり、写実性の自動スコアではない。動画の音声はない。</p><button onclick="filter('all')">All</button><button onclick="filter('selected')">Selected</button><button onclick="document.querySelectorAll('video').forEach(v=>{v.currentTime=0;v.play()})">Play together</button><button onclick="document.querySelectorAll('video').forEach(v=>v.pause())">Pause</button></header><main>'''+"\n".join(cards)+'''</main><script>function filter(s){document.querySelectorAll('article').forEach(a=>a.hidden=s!=='all'&&a.dataset.status!==s)}</script></html>'''
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     (OUTPUTS / "index.html").write_text(document, encoding="utf-8")
@@ -255,15 +263,20 @@ def main():
         raise ValueError("Unknown experiment id")
     if options.max_runs < 1 or options.max_minutes <= 0:
         raise ValueError("Run and time limits must be positive")
-    begun, completed = time.monotonic(), 0
-    for config in configurations:
-        if options.only and config["id"] not in options.only:
-            continue
-        if completed >= options.max_runs or time.monotonic() - begun > options.max_minutes * 60:
-            print("Campaign limit reached; rerun to continue", flush=True)
-            break
-        completed += run_one(config, f"http://127.0.0.1:{options.port}")
-        gallery()
+    from filelock import FileLock, Timeout
+    try:
+        with FileLock(str(RUNTIME / "iteration.lock"), timeout=0):
+            begun, completed = time.monotonic(), 0
+            for config in configurations:
+                if options.only and config["id"] not in options.only:
+                    continue
+                if completed >= options.max_runs or time.monotonic() - begun > options.max_minutes * 60:
+                    print("Campaign limit reached; rerun to continue", flush=True)
+                    break
+                completed += run_one(config, f"http://127.0.0.1:{options.port}")
+                gallery()
+    except Timeout as error:
+        raise RuntimeError("Another iteration campaign holds the local lock; leave it running") from error
 
 
 if __name__ == "__main__":

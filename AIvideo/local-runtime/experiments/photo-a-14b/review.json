@@ -1,0 +1,10 @@
+{
+  "decision": "candidate",
+  "notes": "写真調の照明、床の跡、背景設備を維持した約3秒の動画。6時点で小さな視点移動を確認。ただし開始画像の3つの前向きノズルと楕円の殻は残り、機械形状の正しさは満たさない。",
+  "reviewed_artifacts": [
+    "six-frame contact sheet"
+  ],
+  "full_real_time_playback_review": false,
+  "visible_service_watermark_found_in_reviewed_frames": false,
+  "geometry_equivalence_to_original": false
+}

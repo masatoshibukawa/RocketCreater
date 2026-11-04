@@ -19,6 +19,7 @@ A dated collection of primary sources, Japanese production notes, and planning t
 | [05 Production recipes](05_production_recipes.ja.md) | 最初の一場面、30秒SF予告編、PC内LLMとの連携、比較方法 |
 | [06 Multilingual search](06_multilingual_search.ja.md) | 言語ごとの検索語、採用基準、取得できなかった資料 |
 | [07 Sources](07_sources.ja.md) | 38件の一次資料と利用条件への入口 |
+| [08 Realism and iteration](08_realism_iteration.ja.md) | 写真調の開始画像、5B/14B、モデル比較、反復実行と評価の追調査 |
 | [Source registry](sources.json) | URL、発行元、言語、確認日、要点の機械可読データ |
 | [Hardware inventory](environment.json) | 個人識別情報を除いた読み取り専用のPC確認結果 |
 | [Shot plan template](templates/shot_plan.example.json) | オリジナルSF予告編の6カット構成案 |
@@ -29,5 +30,7 @@ A dated collection of primary sources, Japanese production notes, and planning t
 Sources were checked on November 4, 2026. Findings are summaries, not copies of the source documents. Publisher claims, local hardware observations, and proposed production recipes are distinguished in the notes. Localized documentation from the same publisher is not independent validation.
 
 No model weights were downloaded, no production applications were installed, and no video or audio generation benchmark was run. Existing local LLM installations were not identified in the limited locations inspected; custom locations and other Python environments remain unverified. Cloud pricing and access must be checked when choosing a service.
+
+The preceding status describes the initial inventory and literature collection. Subsequent local installation and real generation tests are recorded in [local-runtime](../../local-runtime/README.md) and [the realism follow-up](08_realism_iteration.ja.md); they include model downloads and measured trials. The original inventory remains a dated observation.
 
 The JSON files in `templates/` are planning and record templates, not executable ComfyUI workflows. Actual ComfyUI workflow JSON should come from the matching official template and be saved with the app and model versions used.
