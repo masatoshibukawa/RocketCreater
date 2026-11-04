@@ -8,7 +8,12 @@
     "intended_use": "actual_launch",
     "confirmation_mode": "milestone_confirmation",
     "long_term_destination": "moon",
-    "lunar_terminal_goal": null
+    "lunar_terminal_goal": null,
+    "assembly_operator_selection": [
+      "adult",
+      "child_with_adult"
+    ],
+    "assembly_planning_required": true
   },
   "cases": [
     {

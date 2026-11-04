@@ -1,0 +1,231 @@
+{
+  "document_type": "proposed_assembly_contract_examples",
+  "schema_version": "draft-0.1",
+  "illustrative_only": true,
+  "note": "Independent logical fixtures for reviewing the proposed contract. No real anthropometry, CAD collision computation, manufacturing instruction, or physical trial has been performed.",
+  "scope": {
+    "vehicle": "water_bottle_rocket",
+    "intended_use": "actual_launch",
+    "operator_selection": [
+      "adult",
+      "child_with_adult"
+    ],
+    "selected_profile_results_must_remain_separate": true
+  },
+  "cases": [
+    {
+      "name": "profiles_need_evidence",
+      "selected_operator_modes": [
+        "adult",
+        "child_with_adult"
+      ],
+      "profiles": [
+        {
+          "profile_id": "operator-adult",
+          "revision": 1,
+          "age_band": null,
+          "handedness": null,
+          "glove_id": null,
+          "dimension_source_id": null,
+          "geometry_source_id": null,
+          "applicability_status": "needs_inputs"
+        },
+        {
+          "profile_id": "operator-child-with-adult",
+          "revision": 1,
+          "age_band": null,
+          "handedness": null,
+          "glove_id": null,
+          "dimension_source_id": null,
+          "geometry_source_id": null,
+          "adult_support_assignment": null,
+          "applicability_status": "needs_inputs"
+        }
+      ],
+      "missing": [
+        "対象年齢帯",
+        "手の形と動作に対応する資料・実測",
+        "手袋と左右の条件",
+        "子どもと成人の担当"
+      ],
+      "overall_assembly_status": "not_evaluated",
+      "manufacturing_confirmation_enabled": false,
+      "rule": "No zero-filled dimensions or adult-data scaling may count as verified child input."
+    },
+    {
+      "name": "one_profile_pass_does_not_cover_both",
+      "fixture_type": "synthetic_status_fixture",
+      "step_id": "fasten-payload-support",
+      "selected_required_profiles": [
+        "operator-adult",
+        "operator-child-with-adult"
+      ],
+      "per_profile": [
+        {
+          "profile_id": "operator-adult",
+          "geometry_status": "geometric_screen_fail",
+          "reason": "手の動く範囲が隣接支持部と干渉",
+          "minimum_clearance_mm": null
+        },
+        {
+          "profile_id": "operator-child-with-adult",
+          "geometry_status": "geometric_screen_pass",
+          "required_margin_status": "not_set",
+          "force_status": "not_evaluated",
+          "physical_trial_status": "not_recorded",
+          "minimum_clearance_mm": null
+        }
+      ],
+      "overall_status": "blocked",
+      "manufacturing_confirmation_enabled": false,
+      "rule": "The selected adult profile fails; the child's geometry-only screen is not whole-task verification."
+    },
+    {
+      "name": "close_cover_after_internal_work",
+      "steps": [
+        {
+          "id": "position-support",
+          "predecessors": []
+        },
+        {
+          "id": "fasten-internal-support",
+          "predecessors": [
+            "position-support"
+          ]
+        },
+        {
+          "id": "inspect-internal-support",
+          "predecessors": [
+            "fasten-internal-support"
+          ]
+        },
+        {
+          "id": "close-cover",
+          "predecessors": [
+            "inspect-internal-support"
+          ]
+        }
+      ],
+      "proposed_order": [
+        "position-support",
+        "close-cover",
+        "fasten-internal-support",
+        "inspect-internal-support"
+      ],
+      "expected_status": "invalid_order",
+      "blocked_step": "close-cover",
+      "unsatisfied_predecessors": [
+        "inspect-internal-support"
+      ],
+      "candidate_order": [
+        "position-support",
+        "fasten-internal-support",
+        "inspect-internal-support",
+        "close-cover"
+      ],
+      "candidate_order_still_requires_access_evaluation": true
+    },
+    {
+      "name": "tool_cannot_be_withdrawn",
+      "step_id": "fasten-payload-support",
+      "fixture_type": "synthetic_status_fixture",
+      "part_revision": 3,
+      "tool_id": "example-hand-tool",
+      "tool_revision": 1,
+      "path_status": {
+        "approach": "geometric_screen_pass",
+        "operation": "geometric_screen_pass",
+        "withdrawal": "collision"
+      },
+      "permitted_contacts": [
+        [
+          "tool-bit",
+          "target-fastener"
+        ]
+      ],
+      "prohibited_collision": [
+        "tool-handle",
+        "already-installed-cover"
+      ],
+      "overall_geometry_status": "geometric_screen_fail",
+      "manufacturing_confirmation_enabled": false,
+      "proposed_change": "Review cover order or tooling and repeat the full approach-operation-withdrawal evaluation.",
+      "dimensional_values": null
+    },
+    {
+      "name": "holding_and_operation_need_support",
+      "step_id": "hold-and-fasten-support",
+      "concurrent_tasks": [
+        {
+          "id": "hold-part",
+          "hands": 1
+        },
+        {
+          "id": "counter-hold-mating-part",
+          "hands": 1
+        },
+        {
+          "id": "operate-tool",
+          "hands": 1
+        }
+      ],
+      "available_operator_hands": 2,
+      "assigned_helper_id": null,
+      "support_fixture_id": null,
+      "status": "needs_support_plan",
+      "manufacturing_confirmation_enabled": false,
+      "candidate_change": "Assign a suitable helper or fixture, then evaluate geometry, force, and task suitability again."
+    },
+    {
+      "name": "geometry_is_not_physical_verification",
+      "step_id": "fit-recovery-cover",
+      "fixture_type": "synthetic_status_fixture",
+      "statuses": {
+        "geometry": "geometric_screen_pass",
+        "tolerance_effects": "not_evaluated",
+        "holding": "not_evaluated",
+        "force": "not_evaluated",
+        "visual_confirmation": "not_evaluated",
+        "physical_trial": "not_recorded"
+      },
+      "ui_label": "簡易幾何チェック通過 / 作業と実物の確認待ち",
+      "verified_assembly_claimed": false,
+      "manufacturing_confirmation_enabled": false,
+      "trial_output_label": "検討用 / 未確定"
+    },
+    {
+      "name": "manual_cannot_invent_missing_process_values",
+      "step_id": "fasten-payload-support",
+      "part_ids": [
+        "payload-support-001",
+        "mating-support-001"
+      ],
+      "operator_assignment": null,
+      "prerequisite_state": "support-positioned-cover-open",
+      "procedure_revision": 2,
+      "access_evaluation_id": null,
+      "required_process_parameter": {
+        "key": "fastening_condition",
+        "value": null,
+        "unit": null,
+        "source_id": null,
+        "required_for_this_step": true
+      },
+      "figures": [],
+      "verification_criteria": [],
+      "physical_trial_status": "not_recorded",
+      "artifact": {
+        "kind": "assembly_instructions_pdf",
+        "state": "planned",
+        "download_enabled": false
+      },
+      "blockers": [
+        "担当・保持と工具の条件",
+        "組立アクセス結果",
+        "締結条件の根拠",
+        "完了基準"
+      ],
+      "ready_to_publish": false
+    }
+  ]
+}
