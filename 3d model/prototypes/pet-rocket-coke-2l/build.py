@@ -499,6 +499,8 @@ def main():
         obj.data.update()
         result = inspect_mesh(obj, config["mass_density_g_cm3"])
         result["numeric_seam_cleanup_volume_delta_mm3"] = cleanup_delta
+        result["filename"] = "fin_assembly.stl" if name == "fin" and config["revision"] != "v1" else name + ".stl"
+        result["coordinate_frame"] = "bottle_axis_local" if name == "fin" else "part_local_z_up"
         report["parts"][name] = result
         require_valid_solid(result, name)
         save_stl(obj, out / (name + ".stl"))
@@ -508,6 +510,8 @@ def main():
         printable = print_copy(fin, config["fin"].get("print_rotation_y_deg", 0))
         clean_numeric_seams(printable)
         fin_print_report = inspect_mesh(printable, config["mass_density_g_cm3"])
+        fin_print_report["filename"] = "fin.stl"
+        fin_print_report["coordinate_frame"] = f"print_pose_y{config['fin'].get('print_rotation_y_deg', 0):g}_min_xyz_zero"
         require_valid_solid(fin_print_report, "fin_print")
         save_stl(printable, out / "fin.stl")
         report["parts"]["fin_print"] = fin_print_report
@@ -524,6 +528,8 @@ def main():
             vertex.co -= minimum
         clean_numeric_seams(gauge)
         gauge_report = inspect_mesh(gauge, config["mass_density_g_cm3"])
+        gauge_report["filename"] = "mount_gauge.stl"
+        gauge_report["coordinate_frame"] = "print_pose_radial_end_face_down_long_axis_horizontal"
         require_valid_solid(gauge_report, "mount_gauge")
         save_stl(gauge, out / "mount_gauge.stl")
         report["parts"]["mount_gauge"] = gauge_report
