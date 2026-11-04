@@ -1,0 +1,4 @@
+interface:
+  display_name: "3DモデルのAI生成"
+  short_description: "画像・プロンプトと生成方式を選び、形状の採用と修正工程につなげる"
+  default_prompt: "$3d-model-ai-generation を使い、参考画像と要件から印刷向けの3D生成を進め、採用する形状と修正点を整理してください。"
