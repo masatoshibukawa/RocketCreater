@@ -40,6 +40,12 @@ class Workshop(BaseModel):
     unavailable: set[str] = Field(default_factory=set)
     nozzle_options_mm: list[Literal[9, 22]] = Field(default_factory=lambda: [9, 22], min_length=1)
     pressure_ceiling_kpa: float = Field(default=500, gt=0, le=500)
+    fill_options_pct: list[Literal[25, 35, 45]] = Field(
+        default_factory=lambda: [25, 35, 45], min_length=1
+    )
+    guide_travel_m: float = Field(default=1.5, gt=0, le=3)
+    insert_bore_mm: float = Field(default=9, gt=0, le=22)
+    measurement_set: Literal["starter", "laboratory"] = "laboratory"
     # construction key = architecture/nozzle/material variant (independent of fill and pressure)
     articles: dict[str, BenchRecord] = Field(default_factory=dict)
 
@@ -161,6 +167,8 @@ def assembly(design, architecture, nozzle_mm, variant, workshop):
     ground = [*recipe["ground"]]
     if mass + egg_g > resources["and_hl_200i"]["facts"]["capacity_g"]:
         ground[ground.index("and_hl_200i")] = "and_hl_2000i"  # dry loaded mass to 1 g
+    if workshop.measurement_set == "starter":
+        ground = ["fin_alignment_template", "hand_pump", "shinwa_19518", "tanita_kd320"]
     unavailable = sorted(({row["id"] for row in bill} | set(ground)) & workshop.unavailable)
     checks = {
         "resources_available_to_plan": not unavailable,

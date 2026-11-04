@@ -94,10 +94,10 @@ def component_screen(design: BottleDesign) -> dict:
     }
 
 
-def flight_tool(name: str, design: BottleDesign, trial_id: str, **options) -> dict:
+def flight_tool(name: str, design: BottleDesign, trial_id: str, *, env=ENV, **options) -> dict:
     args = {
         "design": design.model_dump(mode="json"),
-        "env": ENV.model_dump(mode="json"),
+        "env": env.model_dump(mode="json"),
         "requirement": REQUIREMENT.model_dump(mode="json"),
         **options,
     }

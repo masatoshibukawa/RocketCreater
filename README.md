@@ -8,6 +8,8 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 **Built with Claude: Japan 2026** 向けに開発。すべてシミュレーション上で完結し、実機は打ち上げません。
 ライセンスは MIT です。
 
+1.5 L ペットボトル機の[試作手順](scenarios/bottle_prototype.md)では、手持ちゼロからの購入表、等倍フィン型紙、3Dプリント用ホルダーと治具を生成できます。
+
 ## 何をするか
 
 1. 要求を `bottle` / `amateur` / `commercial` / `heavy` のいずれかに分類する。

@@ -5,6 +5,7 @@ import math
 from pathlib import Path
 
 from rocketwright.bottle_assembly import catalog
+from rocketwright.bottle_print import print_parts
 
 
 def fin_pattern(g):
@@ -58,7 +59,7 @@ def side_view(plan):
  <text x="0" y="-175">配置寸法 mm（ボトル輪郭は模式図）</text></g></svg>'''
 
 
-def write_packet(directory, design, plan, history):
+def write_packet(directory, design, plan, history, workshop):
     g = plan["dimensions_mm"]
     sources = catalog()[0]["sources"]
     parts = "\n".join(
@@ -75,6 +76,8 @@ def write_packet(directory, design, plan, history):
     plan["physical_status"] = "awaiting_bench_and_field_verification"
     plan["pending_evidence"] = checkout
     plan["holdout"] = history[-1]["result"]
+    plan["print_parts"] = print_parts(directory, g)
+    plan["guide_travel_m"] = workshop.guide_travel_m
     (directory / "assembly.json").write_text(
         json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
@@ -110,17 +113,53 @@ def write_packet(directory, design, plan, history):
     manual += "\n" + "\n".join("- " + item for item in checkout)
     manual += "\n\n出典　" + " ・ ".join(f"[{k}]({v})" for k, v in sources.items()) + "\n"
     (directory / "build.md").write_text(manual, encoding="utf-8")
-    worksheet = {
-        "articles": {
-            plan["key"]: {
-                "article_id": "",
-                "record": "",
-                "dry_mass_g": None,
-                "dry_cg_from_tip_mm": None,
-                "modal_zeta_lower": None,
-            }
-        }
-    }
+    worksheet = workshop.model_dump(mode="json")
+    worksheet["articles"].setdefault(
+        plan["key"],
+        {
+            "article_id": "",
+            "record": "",
+            "dry_mass_g": None,
+            "dry_cg_from_tip_mm": None,
+            "modal_zeta_lower": None,
+        },
+    )
     (directory / "bench-template.json").write_text(
         json.dumps(worksheet, indent=2) + "\n", encoding="utf-8"
     )
+    prices = catalog()[0]["procurement"]
+    product_rows = "\n".join(
+        f"| [{r['name']}]({r['url']}) | {r['price_jpy']:,} 円 | {r['purpose']} |"
+        for r in prices["insert_set"]
+    )
+    store_total = sum(r["price_jpy"] for r in prices["insert_set"])
+    if plan["nozzle_interface"] == "insert":
+        nozzle_budget = next(row["allowance_jpy"] for row in plan["bill"] if row["id"] == "insert")
+        cash = plan["estimated_outlay_jpy"] + store_total - nozzle_budget
+        launch_list = (
+            product_rows + f"\n\n4点 {store_total:,} 円。機体材料を足して"
+            f" {cash:,} 円（噴射口は一度だけ計上）。"
+        )
+    else:
+        cash = None
+        launch_list = "この案は首保持式。実物の首に適合する発射台・ポンプ一式の個別見積りが必要。"
+    procurement = Path(__file__).with_name("catalog") / "bottle_procurement.md"
+    startup = "発射台見積り後に算出"
+    if cash is not None:
+        base = (
+            cash
+            + prices["bench_tool_totals_jpy"][workshop.measurement_set]
+            + prices["pump_shipping_surcharge_jpy"]
+        )
+        low, high = prices["guide_and_tools_allowance_jpy"]
+        startup = f"{base + low:,}〜{base + high:,} 円"
+    text = procurement.read_text(encoding="utf-8").format(
+        launch_list=launch_list,
+        guide=workshop.guide_travel_m,
+        bore=design.nozzle_diameter_m * 1000,
+        fill=design.water_fill_frac * design.bottle_volume_m3 * 1e6,
+        startup=startup,
+        print=plan["print_parts"],
+        material=plan["estimated_outlay_jpy"],
+    )
+    (directory / "procurement.md").write_text(text, encoding="utf-8")
