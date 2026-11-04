@@ -1,0 +1,38 @@
+{
+  "selected_take": "photo-c-14b-720",
+  "selected_video": "outputs/experiments/photo-c-14b-720/video.mp4",
+  "sha256": "8f2c921f59c35ad796a5c0df526a87b923cce7d6db57949ec480c9dab30c5803",
+  "video": {
+    "width": 1280,
+    "height": 720,
+    "frames": 49,
+    "fps": 16.0,
+    "seconds": 3.0625,
+    "full_decode": true,
+    "mean_frame_change": 2.2993,
+    "metadata": {
+      "major_brand": "isom",
+      "minor_version": "512",
+      "compatible_brands": "isomiso2avc1mp41",
+      "title": "RocketWright Local Video Experiment",
+      "encoder": "Lavf63.1.102",
+      "comment": "AI-generated concept visualization; no engineering validation"
+    },
+    "note": "Frame change is a motion/consistency diagnostic, not a realism score."
+  },
+  "server_seconds": 656.293,
+  "completed_takes": 10,
+  "generated_images": 3,
+  "generated_videos": 6,
+  "imported_baselines": 1,
+  "gallery": "outputs/experiments/index.html",
+  "comparison_image": "outputs/experiments/before_after.jpg",
+  "findings": [
+    "In reviewed frames, photographic source preparation improved material and workshop appearance more clearly than prompt changes on the original CG.",
+    "The 14B candidates preserve the photographic source appearance, but this small trial does not establish a general quality advantage over 5B.",
+    "The 720p candidate succeeds at higher resolution with substantially higher generation time; softened thin details remain.",
+    "Source concepts change mechanical geometry. Nozzle orientation remains incorrect relative to the intended upright rocket arrangement."
+  ],
+  "review_scope": "Source images, timed contact sheets and selected full-resolution frames. Full real-time playback was not reviewed.",
+  "audio": "Silent outputs"
+}

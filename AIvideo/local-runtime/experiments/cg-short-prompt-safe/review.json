@@ -1,0 +1,10 @@
+{
+  "decision": "rejected",
+  "notes": "標準オフロードで約56秒。6時点の画像では元CGの形と明るく均一な質感が残る。指示文だけの改善には限界がある。",
+  "reviewed_artifacts": [
+    "six-frame contact sheet"
+  ],
+  "full_real_time_playback_review": false,
+  "visible_service_watermark_found_in_reviewed_frames": false,
+  "geometry_equivalence_to_original": false
+}

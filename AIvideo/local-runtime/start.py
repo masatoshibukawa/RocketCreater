@@ -16,11 +16,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8188)
     parser.add_argument("--background", action="store_true")
+    parser.add_argument("--conservative", action="store_true", help="Use standard model offloading instead of DynamicVRAM")
     options = parser.parse_args()
     directories = {"user": RUNTIME / "user", "input": RUNTIME / "inputs", "output": ROOT / "outputs"}
     for directory in directories.values():
         directory.mkdir(parents=True, exist_ok=True)
     arguments = [str(PYTHON), "-u", str(COMFY / "main.py"), "--listen", "127.0.0.1", "--port", str(options.port), "--disable-auto-launch", "--offline", "--disable-all-custom-nodes", "--disable-metadata", "--reserve-vram", "2"]
+    if options.conservative:
+        arguments.extend(["--disable-dynamic-vram"])
     for name, directory in directories.items():
         arguments.extend([f"--{name}-directory", str(directory)])
     environment = local_environment()
@@ -38,7 +41,7 @@ def main():
     log_path = RUNTIME / "server.log"
     with log_path.open("ab") as log:
         process = subprocess.Popen(arguments, cwd=COMFY, env=environment, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
-    (RUNTIME / "server.json").write_text(json.dumps({"pid": process.pid, "url": address}, indent=2) + "\n")
+    (RUNTIME / "server.json").write_text(json.dumps({"pid": process.pid, "url": address, "conservative": options.conservative}, indent=2) + "\n")
     for _ in range(90):
         if process.poll() is not None:
             raise RuntimeError(f"ComfyUI exited with {process.returncode}; inspect runtime/server.log")

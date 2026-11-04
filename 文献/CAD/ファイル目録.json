@@ -1,0 +1,714 @@
+[
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/bottle.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/bottle.scad",
+    "sha256": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/fins.scad",
+    "sha256": "5a852ae48cc98e648ae24f18c5b14926d2e9ab7a9c2a324fa91bfd4f9c2f0c64"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/gardena.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/gardena.scad",
+    "sha256": "2f4b5f879eed0879973b24ae6848f7cf89e07be740244e39c3bdda74df8940ba"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/pco-1881.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/pco-1881.scad",
+    "sha256": "e2620b331c5c6f8d1e703a8512dd8d568f8c1844da9d978e675cb43fe171eb08"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/PN1_3_narrow_fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/PN1_3_narrow_fins.scad",
+    "sha256": "931d2e02ead434db1209bd2ce87408fac00846077fa0de22896454f52ec774a3"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/PN2_3_broad_fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/PN2_3_broad_fins.scad",
+    "sha256": "39e1a027bc3220db628ef640cf745259698e9a5b7a68cddac723177542fc4cc5"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/PN3_5_narrow_fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/PN3_5_narrow_fins.scad",
+    "sha256": "cb73021b71881d773a02a0775b8b6d09e6a06c94090e365d1373f9a8a611ad86"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/releases/1A.stl",
+    "url": "https://github.com/adrianschlatter/RocketFins/releases/download/1A/1A.stl",
+    "sha256": "9a8f3d7921e7bf99f17047c52a8430f20ec2250169fefc1474a155292c9bede7",
+    "triangles": 36234
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/releases/2B.stl",
+    "url": "https://github.com/adrianschlatter/RocketFins/releases/download/2B/2B.stl",
+    "sha256": "0a44395cfbf2b7f2fd48ae010fe0f39bb1a3ab111f8613619c3c768e15489867",
+    "triangles": 66310
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/releases/3B.stl",
+    "url": "https://github.com/adrianschlatter/RocketFins/releases/download/3B/3B.stl",
+    "sha256": "a97bdd94f14f5af81a0a47287d29e11a5d6ec184a049ca721863862fcf9c4233",
+    "triangles": 69050
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/rocket.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/rocket.scad",
+    "sha256": "3a385691387e35a640e8a49d80672b7d5c55f85fc0e0b55cfc5e46dcf0c0667d"
+  },
+  {
+    "source_id": "D09",
+    "path": "D09-RocketFins/rocket_fins.scad",
+    "url": "https://raw.githubusercontent.com/adrianschlatter/RocketFins/57f2c9fd475be499aafb2655b12f20a75f135e60/rocket_fins.scad",
+    "sha256": "8ad2dc36aca07834209b4e20ed5c84e7cc4efd05d875155b6c2268e2db71d93d"
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Battery Mount.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Battery%20Mount.stl",
+    "sha256": "249339ecac9f7db57850220dead5cecb37f74fefa75aece87d73dfda71709e1f",
+    "triangles": 96
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Bottle Connector.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Bottle%20Connector.stl",
+    "sha256": "be19a68bf329156902b2757ded166ab3e18a8c0b3caca207689a19593c6cee66",
+    "triangles": 15462
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 A.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20A.stl",
+    "sha256": "9e6a8c9cf41dfabddfbae338e41bf5c77b92951e7bada24a7538450f05f079be",
+    "triangles": 130
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 B.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20B.stl",
+    "sha256": "f03d093caf9d86e573c6ca85dd6858f90a997fe081f9bcd52e544dd40b2212b7",
+    "triangles": 4920
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 C Large.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20C%20Large.stl",
+    "sha256": "45ca934b3dbaeb25cd3bf646fa36bca13b8315fc700ca70fbcbf30d79d57e754",
+    "triangles": 2266
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 C.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20C.stl",
+    "sha256": "1f1dbebef0efee02fc842cd1ad4731455607cf15d3efc83ba8b5a67497886b26",
+    "triangles": 1906
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fin Type 1 D.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fin%20Type%201%20D.stl",
+    "sha256": "fa15e03259aaa473719d9ee84ad7d2b0539226ca1f13f51d112f5dbd87d3bc01",
+    "triangles": 1638
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fins Ring Type 1 Heavy.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fins%20Ring%20Type%201%20Heavy.stl",
+    "sha256": "4fa9d5eb66b34f155f2a3681a58443dc300f941f5236a010d97f639a3c7447d3",
+    "triangles": 1448
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Fins Ring Type 1 Light.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Fins%20Ring%20Type%201%20Light.stl",
+    "sha256": "d9743c94a4fc85b2a850d78f7650485fd1365d2965e47d955e7144dc066e003e",
+    "triangles": 1448
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Flight Computer Mount.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Flight%20Computer%20Mount.stl",
+    "sha256": "3782072bde8ce58b16e660c8ba6135d9731f34aeb31410dc25724e9140102d8e",
+    "triangles": 308
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Hose Connector Compressed Air Pomp.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Hose%20Connector%20Compressed%20Air%20Pomp.stl",
+    "sha256": "5322fd27e20345644b9aa716123cc1fc73f1aca3dba8df66ec45f421a018c67e",
+    "triangles": 19706
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Air pressure Cable Tie Holder.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Air%20pressure%20Cable%20Tie%20Holder.stl",
+    "sha256": "43ae3faca647b8841c0e574be729cd001f392c07f3204df58d4973c1a379258d",
+    "triangles": 2156
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Air pressure Cable Tie Slider.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Air%20pressure%20Cable%20Tie%20Slider.stl",
+    "sha256": "efacd59ddff1f9d17eeed54a61a9da7c659a08a43c206f904f96be64c08246da",
+    "triangles": 1562
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Air pressure Cable Tie Trigger.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Air%20pressure%20Cable%20Tie%20Trigger.stl",
+    "sha256": "4d3f30997e11353ef54532bab1b3a937448615be56f5affa94446347fc505c62",
+    "triangles": 1090
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Air pressure Quick release Trigger.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Air%20pressure%20Quick%20release%20Trigger.stl",
+    "sha256": "c7d4fc35fc5cc67511ad19436123e8d01147a168e7179d76fde5dbea8ef3f387",
+    "triangles": 9828
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Base Air pressure Cable Tie.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Base%20Air%20pressure%20Cable%20Tie.stl",
+    "sha256": "ab678940acbed6719b1aac4cef76e86ac962c8d565a2e5faa55c4cd8704f0d4d",
+    "triangles": 8810
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Base Air pressure Quick release.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Base%20Air%20pressure%20Quick%20release.stl",
+    "sha256": "ec0e696722aad3cc1e32654329e964436cdce876cb4fdfc6ed2b7425b6fbe7d8",
+    "triangles": 11942
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Foot.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Foot.stl",
+    "sha256": "dc6ee3fec4975cf325627f64def93b65eed4caf74c1ab868c1df77855328a323",
+    "triangles": 876
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Launch Platform Leg.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Launch%20Platform%20Leg.stl",
+    "sha256": "d9b65642ec4e1669059a3133ebd4ba74efc97f5b708b1ea3b6424ca610072c0a",
+    "triangles": 1904
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Nose Cone Body Type A.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Nose%20Cone%20Body%20Type%20A.stl",
+    "sha256": "dd7439dbeb185b0300beba71a97e811d6fdd15172c202c760c6e53d332907756",
+    "triangles": 7900
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Nose Cone Body Type B.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Nose%20Cone%20Body%20Type%20B.stl",
+    "sha256": "96e77b2d15922cf3483b1ac82d6318db29c185549b65a6208ccb45f03fdcd4eb",
+    "triangles": 9546
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Nose Cone Ejection Hatch.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Nose%20Cone%20Ejection%20Hatch.stl",
+    "sha256": "f7f54170f81e004a8d9e3dc22d9cd646d525a72f7413ca3890c21b9a71794205",
+    "triangles": 3860
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Nose Cone Tip.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Nose%20Cone%20Tip.stl",
+    "sha256": "aee65087b7059d9efc30b3f96cbf378442046b59068127c62e4715f877018e51",
+    "triangles": 2854
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Parachute Mechanical Trigger Part 1.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Parachute%20Mechanical%20Trigger%20Part%201.stl",
+    "sha256": "dc5829bbe01fcdaf3ae3b9fdeb87ae9230b272470f234cf89029ffa64bf8221d",
+    "triangles": 246
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Parachute Mechanical Trigger Part 2.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Parachute%20Mechanical%20Trigger%20Part%202.stl",
+    "sha256": "ad82ebe2666ec9fe25ad3276f156b8d3f997960a7617dff5f3aaf0cb05c32f90",
+    "triangles": 300
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Payload Body.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Payload%20Body.stl",
+    "sha256": "c33512a5692a25fe647aecc1486404ccbb06b833cf11e83ffa78644f4e3a3a26",
+    "triangles": 14526
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Payload Bottle Connector Type A.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Payload%20Bottle%20Connector%20Type%20A.stl",
+    "sha256": "7ab192e56321a3d2b68c62563518986417115cfb43fa37c7ddd936a6ecfb0352",
+    "triangles": 10354
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Payload Bottle Connector Type B.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Payload%20Bottle%20Connector%20Type%20B.stl",
+    "sha256": "ca4277307487618059af93475163e20dc630d2c96130517826f7bcc898ce11eb",
+    "triangles": 4952
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Payload Nose Connector.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Payload%20Nose%20Connector.stl",
+    "sha256": "a3e98acded15880bd03b878e6b026394e1ecb90e81481097b4b359fa7f27a451",
+    "triangles": 7488
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Rail Guide Mount Foot.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Rail%20Guide%20Mount%20Foot.stl",
+    "sha256": "966417ab0ec80664559a25963a96137cf6cb47e94f45b3c71e3fa7456ad9f990",
+    "triangles": 1140
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Rail Guide Mount Ring.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Rail%20Guide%20Mount%20Ring.stl",
+    "sha256": "f94696c9b88f5774c746a695b96dbafc5c65700db219b717e3227f3b5a15fb65",
+    "triangles": 1056
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Rail Guide Mount Slider.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Rail%20Guide%20Mount%20Slider.stl",
+    "sha256": "44b6a345d1fcd69c24657e90b3915b04704bc23cf671cb00d237c0bc020cce33",
+    "triangles": 54
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Servo Motor Arm Type 1.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Servo%20Motor%20Arm%20Type%201.stl",
+    "sha256": "e57fb64cacf2e417c36652907a0f3d068faf8963d221f45bd116cf6f74fdb6f1",
+    "triangles": 8202
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Servo Motor Arm Type 2.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Servo%20Motor%20Arm%20Type%202.stl",
+    "sha256": "0e1fcb2db542ab71301427913a61d4f665cc883f6c7fa6dd9228db1b07e11a9e",
+    "triangles": 6668
+  },
+  {
+    "source_id": "D21",
+    "path": "D21-ESP-Controlled-Rocket/3d-designs/Valve Connector.stl",
+    "url": "https://raw.githubusercontent.com/zerneo85/ESP-Controlled-Rocket/7308214caad006f6e669f08e432c7419ee9cb096/3d-designs/Valve%20Connector.stl",
+    "sha256": "371033109fd793dbc232e6f783026a8ba98ba043b26b42c5d64546a41f327aa0",
+    "triangles": 11438
+  },
+  {
+    "source_id": "D22",
+    "path": "D22-FreeCAD/physics-water-rocket-nose-macroFCMacro.FCMacro",
+    "url": "https://raw.githubusercontent.com/JustThatRandomCoder/physics-water-rocket-project/c047014fdfa9b1004959c10a114613ec0f1979e8/physics-water-rocket-nose-macroFCMacro.FCMacro",
+    "sha256": "fdb4ed2a35bafc5882bbba83d616571cb7844600cdf333de84bccfa50cae6bf7"
+  },
+  {
+    "source_id": "D22",
+    "path": "D22-FreeCAD/physics-water-rocket-tail-ring-macro.FCMacro",
+    "url": "https://raw.githubusercontent.com/JustThatRandomCoder/physics-water-rocket-project/c047014fdfa9b1004959c10a114613ec0f1979e8/physics-water-rocket-tail-ring-macro.FCMacro",
+    "sha256": "fbe3bd77d602f3b00b4d355c6bfd005b4490db0ad8cce36d2e0945ed7a66d620"
+  },
+  {
+    "source_id": "D22",
+    "path": "D22-FreeCAD/water-rocket-nose-ring.FCStd",
+    "url": "https://raw.githubusercontent.com/JustThatRandomCoder/physics-water-rocket-project/c047014fdfa9b1004959c10a114613ec0f1979e8/water-rocket-nose-ring.FCStd",
+    "sha256": "a5073c73701f3f4d4cfddf37fb9bb092e1f9166c7c80849d9b65759696af2e9c"
+  },
+  {
+    "source_id": "D22",
+    "path": "D22-FreeCAD/water-rocket-tail-ring.FCStd",
+    "url": "https://raw.githubusercontent.com/JustThatRandomCoder/physics-water-rocket-project/c047014fdfa9b1004959c10a114613ec0f1979e8/water-rocket-tail-ring.FCStd",
+    "sha256": "547a992b0c94fae52367a080791ad4fae3c8ff9791f68b8c45fededa34eaea80"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/Accessories/1986K690_TYPE 302 STAINLESS STEEL COMPRESSION SPRING.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/Accessories/1986K690_TYPE%20302%20STAINLESS%20STEEL%20COMPRESSION%20SPRING.AD_PRT",
+    "sha256": "0ce87f1e393afd08ee110394a7fdeabdca170e3a8ef008e824e9cf39ca1b599a"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/Accessories/48435K713_EXTENDED-LIFE ASME-CODE POP-SAFETY VALVE.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/Accessories/48435K713_EXTENDED-LIFE%20ASME-CODE%20POP-SAFETY%20VALVE.AD_PRT",
+    "sha256": "11861a147e935f514329f503fa687f58171e0b1b8bb6756339b9c66a31bcc6bb"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/Accessories/90190A110_PHILLIPS ROUNDED HEAD SCREWS FOR SHEET METAL_0,5in.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/Accessories/90190A110_PHILLIPS%20ROUNDED%20HEAD%20SCREWS%20FOR%20SHEET%20METAL_0%2C5in.AD_PRT",
+    "sha256": "72260de08102cc1649ff158910604a72f61d179fe4f72a56fcc1f5c980213ad5"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/Accessories/90190A113_PHILLIPS ROUNDED HEAD SCREWS FOR SHEET METAL_0,75in.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/Accessories/90190A113_PHILLIPS%20ROUNDED%20HEAD%20SCREWS%20FOR%20SHEET%20METAL_0%2C75in.AD_PRT",
+    "sha256": "d9b20b7ee2bdbba167d82604c243d3c69d97346822e71addd8b833c42d75ca0a"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/Accessories/9044K371_MUSIC-WIRE-EXTENSION-SPRING.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/Accessories/9044K371_MUSIC-WIRE-EXTENSION-SPRING.AD_PRT",
+    "sha256": "f33d9686ddab98b56b25c96a5806f280753e9ecf568cd6c9a3ab5322657ada4a"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/Accessories/91515A100_ROUND WASHER HEAD DRILLING SCREW FOR METAL.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/Accessories/91515A100_ROUND%20WASHER%20HEAD%20DRILLING%20SCREW%20FOR%20METAL.AD_PRT",
+    "sha256": "83681ded099abf5d40d95a990789375e306f55df0168a7b10d7f5eef5e2b5a01"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/Accessories/Bottle.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/Accessories/Bottle.AD_PRT",
+    "sha256": "4c2ec330c2bc6aad93f2aece06a64d3d9c1800aff0f16ecf430e8024d146f5cd"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/Accessories/CinderBlock.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/Accessories/CinderBlock.AD_PRT",
+    "sha256": "acce8de80daaf7af8de1e64199133f1efe4d93f8565020a2028249b9a383d163"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/PVC/0,5 in PVC Bushing.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/PVC/0%2C5%20in%20PVC%20Bushing.AD_PRT",
+    "sha256": "5e267e3023b194ee3f4dcce63a88419f303d1ee3301306829c8a2231488217f6"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/PVC/0,5 in PVC Straight for Base Screw.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/PVC/0%2C5%20in%20PVC%20Straight%20for%20Base%20Screw.AD_PRT",
+    "sha256": "a68709712eaef5c81794dd8f6a737f46a2bdd782133ec4f36866b07daf15a633"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/PVC/0,5 in PVC Straight for Base Upper.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/PVC/0%2C5%20in%20PVC%20Straight%20for%20Base%20Upper.AD_PRT",
+    "sha256": "87fb3ae4e79235a8d89afa5008a7ab7251d169ae78286dc6d3dfcf2fb19371f3"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/PVC/0,5 in PVC Straight for Base.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/PVC/0%2C5%20in%20PVC%20Straight%20for%20Base.AD_PRT",
+    "sha256": "3224f78a6d0f2bdf8667d24c662603a356ca940b403f6f31565bc70fbb665cf7"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/PVC/0,5 in PVC T.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/PVC/0%2C5%20in%20PVC%20T.AD_PRT",
+    "sha256": "b5d4734bbc28c5eaf94a5333100c05a30f87cde2aee28deec457eb089f0ff038"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/PVC/0,5 in PVC conduit.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/PVC/0%2C5%20in%20PVC%20conduit.AD_PRT",
+    "sha256": "76b702bf736c8d3259067d105b7ac99156c53dbfc93dd9c0b594d42e4fc7e042"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/PVC/0,5 in PVC straight for Nozzle.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/PVC/0%2C5%20in%20PVC%20straight%20for%20Nozzle.AD_PRT",
+    "sha256": "5e81d95ab900594dc9fef9af7fd39ef7387b6308e68a174c5e82765bf77d6775"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Base_Cap.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Base_Cap.AD_PRT",
+    "sha256": "ea9009f4eab05aaec2bb9ab93d9fcf4568b1e09378febb036771c8dc517bc184"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Cross_Brace.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Cross_Brace.AD_PRT",
+    "sha256": "5b2efe60f352f94b457e22336b3416e98b86db65f32b43fd38a8c95e79adfa3e"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Hinge_1.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Hinge_1.AD_PRT",
+    "sha256": "974a3c4b689c948891e64b5d8fc1fbba057209fbe9f5d2d89bd0465e57f7d68b"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Hinge_2.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Hinge_2.AD_PRT",
+    "sha256": "b0145767c06330235618c3ac4fb7148e931b925f696b00de090f8555f92fe39b"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Hinge_Knob.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Hinge_Knob.AD_PRT",
+    "sha256": "7b9333de58560f14ea61d30dab5f3ea8499dcda6850a2d2a67f5a359d0abff2b"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Plate_Knob.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Plate_Knob.AD_PRT",
+    "sha256": "440b87b34c8559d4c925738ec72c349551cee82d971c12ea3d0497760d9005d5"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Plate_Threaded.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Plate_Threaded.AD_PRT",
+    "sha256": "a82a9b5dccc6b0afae4deb17b98f54a5344bca543acbb3e590a48ca46ea37486"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Plate_Threaded_Endcap.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Plate_Threaded_Endcap.AD_PRT",
+    "sha256": "2381a9700df42adc8ae5da8da2fda93e857d7a548d5f94ff92a290810f07476f"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Base/Plate_Unthreaded.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Base/Plate_Unthreaded.AD_PRT",
+    "sha256": "70c3d2baf5f515124fe634ccd349c08f22e1e3d31492fe3a971f5d2c3109effc"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Jigs/Zip_Tie_Jig.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Jigs/Zip_Tie_Jig.AD_PRT",
+    "sha256": "ff1dbca671486f8c72abb38cdb165f6722d410fe2eae5f3542919c681eea2948"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Nozzle/Cable_Housing_clamp.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Nozzle/Cable_Housing_clamp.AD_PRT",
+    "sha256": "0cb8648feeab27d4865bf97474d168cee25261f7960e2e5ac64f4f9205952095"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Nozzle/Cuff.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Nozzle/Cuff.AD_PRT",
+    "sha256": "98e661d9660f9375837770257c1a32acecc00aaefac3bdf0f396c1b8526f58fb"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Nozzle/Cuff_cover.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Nozzle/Cuff_cover.AD_PRT",
+    "sha256": "d7f25678bbe1eba6052572225d0c57fdd99dc126c4d03269494a424245ff9456"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Nozzle/Threaded_Inner.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Nozzle/Threaded_Inner.AD_PRT",
+    "sha256": "9670a8fb7753a03f012731b306d22bae2781f633897d23a105b081eadf12e799"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Nozzle/Threaded_Outer.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Nozzle/Threaded_Outer.AD_PRT",
+    "sha256": "39d4d542024497705d05e38be777ec2c2b84c2b6dd7e3c4b218607738c5f146b"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Trigger/Button_slide.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Trigger/Button_slide.AD_PRT",
+    "sha256": "e0a7a28f980e3cc7ce13ea73bca1c58bfd88384e4e69af5f36e67dda35df0eae"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Trigger/Button_top.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Trigger/Button_top.AD_PRT",
+    "sha256": "b8123a7bfeb49d4dedad590c5e28faf21fb40c92d03c603d2d3acdcbb320c62f"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Trigger/Housing_Bottom.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Trigger/Housing_Bottom.AD_PRT",
+    "sha256": "dd317961734052898e08bfaaa77a400acdab363ef79d8c2dbd6ab6c0a3fefd3e"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Trigger/Housing_Top.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Trigger/Housing_Top.AD_PRT",
+    "sha256": "3095e835dcde11ab6d5556cb91535cf86cc9df1cb401af88c24b5e2123b29f17"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/To_Print/Trigger/Sled.AD_PRT",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/To_Print/Trigger/Sled.AD_PRT",
+    "sha256": "446b24640da86577a72109c26de41fc94f3dc7db97131fe47b8fe983e54c7069"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/__Assemblies/Full_Assembly.AD_ASM",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/__Assemblies/Full_Assembly.AD_ASM",
+    "sha256": "7efc9fffc4e0dd4875c616fc162fccaa100f9dfa8ed1ffdab950c0ede1a6d039"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/__Assemblies/Nozzle_Assembly.AD_ASM",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/__Assemblies/Nozzle_Assembly.AD_ASM",
+    "sha256": "9d1380d7effc5b08a294eaa4a2f82e032f252596dc7914784e3f8533c9be59c2"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAD/__Assemblies/Trigger_Assembly.AD_ASM",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAD/__Assemblies/Trigger_Assembly.AD_ASM",
+    "sha256": "2f1c206db6fdb10d27e990b3b52e66221c824418f2576d071ef82c44808d72df"
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Base_Cap.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Base_Cap.stl",
+    "sha256": "77d70a5a0f2c4bd718b6856ef1fe05d95367b14e3c1642945445b44517959db4",
+    "triangles": 42136
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Cross_Brace.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Cross_Brace.stl",
+    "sha256": "bc83ddeb864f4b9869735fe0f3c9190a74e62a968be689e39973b916631240cd",
+    "triangles": 223162
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Hinge_1.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Hinge_1.stl",
+    "sha256": "c0fc58da9623a0961b8dd84c627dd8a2f303f7c03439dccd503b937bfae92f69",
+    "triangles": 111242
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Hinge_2.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Hinge_2.stl",
+    "sha256": "c8c9ce6527d89c8755a1752d2b0bb7f7c1e6b2c179a3acd7caa5f7ebcb5768c9",
+    "triangles": 111896
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Hinge_Knob.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Hinge_Knob.stl",
+    "sha256": "e49266882f8f7fb1972f7b08ff8c54dff791f840e81df8234e74ced19c8b186d",
+    "triangles": 238342
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Plate_Knob.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Plate_Knob.stl",
+    "sha256": "566d011824c7ae50d99b486b534a350d38192475e31d485927c417c4c6134397",
+    "triangles": 146942
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Plate_Threaded.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Plate_Threaded.stl",
+    "sha256": "2f6eeb742662fdf05d4e37ba47c7bfe94c24d78cb36691e9edab9e832b77016c",
+    "triangles": 166386
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Plate_Threaded_Endcap.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Plate_Threaded_Endcap.stl",
+    "sha256": "40fc3afd99437d122839c63586bc779a9f4cace25e06b7bc2afb9f7e0c687a5c",
+    "triangles": 34058
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Base/STL/Plate_Unthreaded.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Base/STL/Plate_Unthreaded.stl",
+    "sha256": "7abd5434cacc39dcd8d502af98dd165db2c0852d4e99e73cc41ad340b069e764",
+    "triangles": 119826
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Jigs/STL/Zip_Tie_Jig.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Jigs/STL/Zip_Tie_Jig.stl",
+    "sha256": "b944b0b447b721450494cbef3c0a9c08d2d6d104bc93e29cf696f3ef1f70df4d",
+    "triangles": 27788
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Nozzle/STL/Cable_Housing_clamp.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Nozzle/STL/Cable_Housing_clamp.stl",
+    "sha256": "8644fed13edcb0657714866848ce34157cfccd2b1bad2d060db1ec48b85c94ed",
+    "triangles": 52960
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Nozzle/STL/Cuff.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Nozzle/STL/Cuff.stl",
+    "sha256": "83a3acd385884396fc536efd7c032ea01e0e37454ff2128ab6e5ccbb7a91a708",
+    "triangles": 56890
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Nozzle/STL/Cuff_cover.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Nozzle/STL/Cuff_cover.stl",
+    "sha256": "1ed3a757e5ebc78ecd12ed1020df1bb72147c0808b901c40ba282cc8c8be2b0d",
+    "triangles": 8160
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Nozzle/STL/Threaded_Inner.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Nozzle/STL/Threaded_Inner.stl",
+    "sha256": "6263ee127e70f0d8995148591e988781acbc5b0b76a2dc9100e65bd78a0b6a21",
+    "triangles": 334534
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Nozzle/STL/Threaded_Outer.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Nozzle/STL/Threaded_Outer.stl",
+    "sha256": "19a0ff1d936f1f3e5e04417757e84c4347bce8f057bcef50f49f06fdbf625f57",
+    "triangles": 162126
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Trigger/STL/Button_slide.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Trigger/STL/Button_slide.stl",
+    "sha256": "5d60ab941d0e4f3d8299fe9902c81802cfcdb04855cca86041f1d9bc09f65248",
+    "triangles": 18252
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Trigger/STL/Button_top.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Trigger/STL/Button_top.stl",
+    "sha256": "953f30353051e202ec024b70f76fed25986a1ef58ae24be3263c07c3f3529f6e",
+    "triangles": 80758
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Trigger/STL/Housing_Bottom.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Trigger/STL/Housing_Bottom.stl",
+    "sha256": "18169f895508ae8eba2f480d9ed03df6f886d89cbd8d7cf755f35b9cb2aeca23",
+    "triangles": 28850
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Trigger/STL/Housing_Top.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Trigger/STL/Housing_Top.stl",
+    "sha256": "dea21fe6fc48498199c133fa085fb40c81f8805b4e2cfbff824cc836410c3e6c",
+    "triangles": 68948
+  },
+  {
+    "source_id": "D23",
+    "path": "D23-TSoGiants/CAM/Trigger/STL/Sled.stl",
+    "url": "https://raw.githubusercontent.com/TSoGiants/Water-Bottle-Rocket-Launcher/b73d27ca0ef081e64c4c870241b8b8f07fae703c/CAM/Trigger/STL/Sled.stl",
+    "sha256": "7144d0b701c775a6d358897e99a66b3801934da548cfcbe15840c516952f1617",
+    "triangles": 18860
+  }
+]

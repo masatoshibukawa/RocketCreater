@@ -1,0 +1,136 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "flux-2-klein-4b.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "flux2",
+      "device": "default"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": [
+        "2",
+        0
+      ],
+      "text": "A real documentary photograph of an upright rocket upper-stage assembly being inspected inside an aerospace factory. The central rocket stage is vertical: a polished cylindrical propellant tank on top, a silver tubular triangular spaceframe below it, and exactly two large dark metallic bell-shaped engine nozzles at the very bottom pointing straight down toward the concrete floor. Their circular openings face the floor, not the camera. A heavy yellow bolted steel assembly fixture supports the stage above the floor. On either side of the stage, two very tall and narrow black carbon-fiber payload fairing halves are held upright in separate grounded steel cradles. Each fairing half has a long cylindrical lower section and a sharply tapered ogive nose at its top, with silver bolted separation flanges, curved black interior skin and thin reinforcing ribs. Both halves open toward the central stage. Full assembly in frame, symmetrical wide composition, photographed at waist level with a 50mm lens. Worn epoxy floor, small tool carts, cable trays, work benches, shelves and overhead steel beams. Cool daylight from high windows mixed with warm practical overhead lights. Natural soft contact shadows, restrained colors, fine scratches and machining marks on brushed metal, realistic carbon fiber, slight uneven material roughness. Professional industrial photography, f5.6, no people, no text."
+    }
+  },
+  "5": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "EmptyFlux2LatentImage",
+    "inputs": {
+      "width": 1024,
+      "height": 576,
+      "batch_size": 1
+    }
+  },
+  "7": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 20261104
+    }
+  },
+  "8": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "9": {
+    "class_type": "Flux2Scheduler",
+    "inputs": {
+      "steps": 4,
+      "width": 1024,
+      "height": 576
+    }
+  },
+  "10": {
+    "class_type": "CFGGuider",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "positive": [
+        "4",
+        0
+      ],
+      "negative": [
+        "5",
+        0
+      ],
+      "cfg": 1.0
+    }
+  },
+  "11": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "7",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "8",
+        0
+      ],
+      "sigmas": [
+        "9",
+        0
+      ],
+      "latent_image": [
+        "6",
+        0
+      ]
+    }
+  },
+  "12": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "11",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "12",
+        0
+      ],
+      "filename_prefix": "experiments/photo-c/raw"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-04",
+  "scope": "prototype deliverables and baseline/improved native files; ignored Python caches, temporary slicer logs and unrelated repository changes excluded",
+  "files_checked": 40,
+  "local_markdown_links_checked": 39,
+  "native_metadata": [
+    {
+      "file": "baseline/parts.blend",
+      "uncompressed_native_metadata_checked": true,
+      "assistant_work_label_matches": 0,
+      "scene_render_paths_relative": true
+    },
+    {
+      "file": "improved/parts.blend",
+      "uncompressed_native_metadata_checked": true,
+      "assistant_work_label_matches": 0,
+      "scene_render_paths_relative": true
+    }
+  ],
+  "negative_rejection_controls_passed": [
+    "non_manifold_edges",
+    "boundary_edges",
+    "zero_area_triangles",
+    "nonadjacent_intersection_pairs",
+    "connected_components",
+    "volume_mm3",
+    "input_units",
+    "input_resolution"
+  ],
+  "unresolved_items": [],
+  "physical_print_completed": false,
+  "flight_released": false
+}
