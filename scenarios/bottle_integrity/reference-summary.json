@@ -1,0 +1,1173 @@
+{
+  "scope": "conditional numerical reference; actual article not qualified",
+  "input_sha256": "4c8224a174c23ee3585469aa46ab190bb3dc7cb15145915e6d01296776788857",
+  "results_sha256": "6b1fcc0f8cb3db504584e486dfc44d32c1a20fb9823921a81f6f8c6199fee1b4",
+  "implementation_sha256": {
+    "aeroelastic.py": "fc62165c31361b62d36d716de1343dad36a84d4a338866b05412df2cafe4c0c4",
+    "contact.py": "4ff2c3b8138e90cc6aa9f1fda3d644acbe89e63aa38808e99cb3eaae3d5c8005",
+    "evidence.py": "a4828c468f5b2de1ad345b798e7fcea7275fefe55426324b876853009b0758e5",
+    "fem.py": "f3cc40c8b9f67f35325c874b535d594cac15c858fbc67cc5cbc78c35ff6781e7",
+    "flight.py": "f69b7c5ddb0b008d0bdc250e3e19e242f5b2f167602c9919eefab025256038e8",
+    "harness.py": "9ef9bbbc7cf9730db0678600fc1bb7d43b30fae77838619d98c7857c5442ab09",
+    "loads.py": "68b9b189550fd98e76b52900ef8df831b05400ed2ce34e8150334113d30caa16",
+    "schema.py": "90d12206e8fc2e97149f790af12dd3e200d71b8969d655593d90549a1d0a3770",
+    "stability.py": "0f76342f8bd1a62946554777b35fc28fdd2c6fca65e8f5d2e3e9518a92dcdad1",
+    "thermal.py": "f5e3aa68950e459ced677c345902f031e3bd13159c4a6cf70026666fff6780f3",
+    "verification.py": "a66a89f0f97846a21c4cb7db4242d295dd5e18b85f4a090fdfdc281debc7db55",
+    "__init__.py": "41f195c6a9ef65fda175447e48a5a57aebb6b9ed5a7afb417292bd93e47d4a81"
+  },
+  "design": {
+    "tier": "bottle",
+    "bottle_volume_m3": 0.0015,
+    "water_fill_frac": 0.25,
+    "initial_gauge_pressure_pa": 400000.0,
+    "nozzle_diameter_m": 0.009,
+    "dry_mass_kg": 0.1527873,
+    "payload_mass_kg": 0.06,
+    "has_fins": true,
+    "axial_drag_coefficient": 0.5277283278631213,
+    "has_parachute": true,
+    "parachute_diameter_m": 0.5950714871308219
+  },
+  "config": {
+    "loads": {
+      "ambient_pa": 101085,
+      "initial_k": 293.15,
+      "ambient_k": 293.15,
+      "gamma": 1.4,
+      "gas_r": 287.05,
+      "discharge_coefficient": 0.9,
+      "gas_wall_h": 30,
+      "outside_h": 10,
+      "wall_area_m2": 0.08,
+      "wall_capacity_j_k": 54,
+      "initial_wall_k": 293.15,
+      "max_time_s": 5
+    },
+    "contact": {
+      "support_kg": 0.02,
+      "wall_k": 2500,
+      "wall_c": 1.0,
+      "pad_k": 600,
+      "pad_c": 0.6,
+      "pad_cubic": 1000000.0,
+      "gap_m": 0.008,
+      "stop_k": 2000000.0,
+      "stop_c": 200,
+      "contact_area_m2": 0.0003,
+      "max_step_s": 0.0002
+    },
+    "material": {
+      "young_pa": 2000000000.0,
+      "poisson": 0.3,
+      "density": 1200,
+      "cte": 6e-05,
+      "warm_ratio": 0.5,
+      "reference_c": 20,
+      "warm_c": 55,
+      "yield_pa": null,
+      "hardening_pa": 100000000.0,
+      "tensile_allowable_pa": null,
+      "compressive_allowable_pa": null,
+      "evidence_id": null,
+      "engineering_constants": null
+    },
+    "fin_material": null,
+    "body_material": null,
+    "collar_material": null,
+    "flight": {
+      "wind_mps": 2,
+      "gust_mps": 1,
+      "cant_deg": 0.5,
+      "initial_tilt_deg": 1,
+      "rail_m": 1.5,
+      "pitch_damping": 10,
+      "opening_s": 0.15,
+      "deployment_delay_s": 0,
+      "stop_distance_m": 0.015,
+      "maximum_time_s": 60,
+      "aero_angle_limit_deg": 15,
+      "sample_count": 8,
+      "seed": 64731
+    },
+    "fin_thickness_m": 0.001,
+    "fin_root_k_n_m": 500000.0,
+    "body_thickness_m": 0.0003,
+    "collar_support_k_n_m": 2000000.0,
+    "surface_absorptivity": 0.8,
+    "solar_w_m2": 800,
+    "warm_wait_s": 600,
+    "pressure_hold_s": 60,
+    "creep_reference_rate_per_s": null,
+    "creep_reference_stress_pa": 30000000.0,
+    "creep_exponent": 3,
+    "observable_relative_tolerance": 0.05,
+    "maximum_mesh_level": 3
+  },
+  "assembly_key": "D02/9/carton_wide",
+  "verdict": {
+    "physical_status": "not_qualified",
+    "qualified": false,
+    "failed_methods": [],
+    "missing_evidence": [
+      "geometry",
+      "material",
+      "mount",
+      "joint",
+      "pressure",
+      "thrust",
+      "aerodynamics",
+      "inertia",
+      "thermal",
+      "modes",
+      "recovery",
+      "operations"
+    ],
+    "cfd_transfer": "diagnostic_only",
+    "required_followup": {
+      "geometry": "article dimensions, wall thickness map, attachment and print orientation",
+      "material": "direction/temperature dependent stress-strain, failure and creep observations",
+      "mount": "pad compression, damping, contact area and payload fracture load",
+      "joint": "bond/fastener pull-out and support compliance",
+      "pressure": "manufacturer applicability and approved qualified pressure-retention evidence",
+      "thrust": "time-resolved thrust, pressure and temperature including residual air",
+      "aerodynamics": "independent force/moment measurements across Reynolds number and incidence",
+      "inertia": "wet/dry CG and principal inertias",
+      "thermal": "conductivity, heat capacity, expansion and interface conductance",
+      "modes": "assembled modes and damping with attachment compliance",
+      "recovery": "deployment timing, inflation loads, attachment strength and landing tests",
+      "operations": "launcher restraint/release, recovery area and operational review"
+    },
+    "conclusion": "Executed conditional analyses do not establish actual article safety",
+    "numerical_checks": {
+      "all_structural_mesh_observables": true,
+      "fin_load_deformation_fixed_point": true,
+      "propulsion_conservation": true,
+      "flight": true,
+      "contact": true,
+      "fem_benchmarks": true
+    },
+    "execution_status": "completed",
+    "source_id": "4c8224a174c2:verdict"
+  },
+  "benchmarks": {
+    "tension": {
+      "expected_m": 5e-08,
+      "computed_m": 4.9999999999999985e-08,
+      "relative_error": 2.220446049250313e-16,
+      "pass": true
+    },
+    "expansion": {
+      "expected_m": 0.00018,
+      "computed_m": 0.00018,
+      "relative_error": 0.0,
+      "pass": true
+    },
+    "beam": {
+      "meshes": [
+        {
+          "nodes": 393,
+          "computed_m": 0.0009192214307692307,
+          "expected_m": 0.00093789,
+          "relative_error": 0.01990486009102277
+        },
+        {
+          "nodes": 2117,
+          "computed_m": 0.0009263717648648647,
+          "expected_m": 0.00093789,
+          "relative_error": 0.012281008577909258
+        }
+      ],
+      "pass": true
+    },
+    "creep": {
+      "expected_m": 0.0015006000000000002,
+      "computed_m": 0.0015006000000000002,
+      "relative_error": 0.0,
+      "pass": true
+    },
+    "passed": true
+  },
+  "structure_load_envelope": {
+    "q_pa": 401.47946558437843,
+    "collar_force_n": 62.11774563955517
+  },
+  "structures": {
+    "fin-nominal": {
+      "mesh_check": {
+        "observables": {
+          "max_displacement_m": 0.01240940544524316,
+          "p95_integration_vm_pa": 0.008380932238838179
+        },
+        "pass": true,
+        "scope": "displacement and 95th-percentile stress; peak stress not qualified"
+      },
+      "nodes": 5141,
+      "max_displacement_m": 0.02775537925480654,
+      "max_integration_vm_pa": 3798097.4496330875,
+      "p95_integration_vm_pa": 2995626.6492881924,
+      "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+      "deck_sha256": "817950a30f42585f7e6fae1359b87f9fbb91a2ff8f2cd3e43c3e050b62c1023c",
+      "metadata": {
+        "scope": "nonlinear solid fin, compliant root and follower pressure",
+        "force_target_n": 0.9208811291604726,
+        "temperature_c": 20.0,
+        "q_pa": 401.47946558437843
+      }
+    },
+    "fin-warm": {
+      "mesh_check": {
+        "observables": {
+          "max_displacement_m": 0.01155164924655494,
+          "p95_integration_vm_pa": 0.005182771475035319
+        },
+        "pass": true,
+        "scope": "displacement and 95th-percentile stress; peak stress not qualified"
+      },
+      "nodes": 5141,
+      "max_displacement_m": 0.04247183128280371,
+      "max_integration_vm_pa": 4006216.4370994125,
+      "p95_integration_vm_pa": 3042575.2047842564,
+      "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+      "deck_sha256": "0baae8183dba739567d24639d7a6cc4d3465e69b45f1c821fbfdd932405f4965",
+      "metadata": {
+        "scope": "nonlinear solid fin, compliant root and follower pressure",
+        "force_target_n": 0.9437703509781591,
+        "temperature_c": 44.83691394012777,
+        "q_pa": 401.47946558437843
+      }
+    },
+    "collar-nominal": {
+      "mesh_check": {
+        "observables": {
+          "max_displacement_m": 0.047773041221178425,
+          "p95_integration_vm_pa": 0.036484737906367304
+        },
+        "pass": true,
+        "scope": "displacement and 95th-percentile stress; peak stress not qualified"
+      },
+      "nodes": 7704,
+      "max_displacement_m": 0.000847493964631164,
+      "max_integration_vm_pa": 8660866.862195823,
+      "p95_integration_vm_pa": 6376763.176908992,
+      "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+      "deck_sha256": "0b7f2d4eadc454387a04a180ac1e928e5377104fd3238df8dce4186d4419a3a3",
+      "metadata": {
+        "scope": "inner-band load, four support sectors with compression-only normal springs",
+        "support_tensile_regularisation": 1e-06,
+        "support_tensile_transition_m": 1e-08,
+        "force_target_n": 62.11774563955517,
+        "temperature_c": 20.0
+      }
+    },
+    "collar-warm": {
+      "mesh_check": {
+        "observables": {
+          "max_displacement_m": 0.007329336145053933,
+          "p95_integration_vm_pa": 0.0011693912289243436
+        },
+        "pass": true,
+        "scope": "displacement and 95th-percentile stress; peak stress not qualified"
+      },
+      "nodes": 13440,
+      "max_displacement_m": 0.0009912613184579987,
+      "max_integration_vm_pa": 9396852.06818425,
+      "p95_integration_vm_pa": 6262646.339223638,
+      "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+      "deck_sha256": "086100190bfe9c6641360d30a57d194ca3fb7eff7a0230154c50094f4630f2fa",
+      "metadata": {
+        "scope": "inner-band load, four support sectors with compression-only normal springs",
+        "support_tensile_regularisation": 1e-06,
+        "support_tensile_transition_m": 1e-08,
+        "force_target_n": 62.11774563955517,
+        "temperature_c": 35.364614636095325
+      }
+    },
+    "body-nominal": {
+      "mesh_check": {
+        "observables": {
+          "max_displacement_m": 0.04196120831833927,
+          "p95_integration_vm_pa": 0.03463278553101601
+        },
+        "pass": true,
+        "scope": "displacement and 95th-percentile stress; peak stress not qualified"
+      },
+      "nodes": 13056,
+      "max_displacement_m": 0.0032270541653602594,
+      "max_integration_vm_pa": 59057012.53727306,
+      "p95_integration_vm_pa": 54413552.55717937,
+      "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+      "deck_sha256": "5747ffa9a80fc4e5a3925679cb9f5aa023e509ac7ebff481f4ebe538c52cd39f",
+      "metadata": {
+        "scope": "profiled pressure wall, equivalent end closures; ribs/caps absent",
+        "profile_m": [
+          [
+            0.0,
+            0.012
+          ],
+          [
+            0.0183,
+            0.014
+          ],
+          [
+            0.06709999999999999,
+            0.045
+          ],
+          [
+            0.244,
+            0.045
+          ],
+          [
+            0.305,
+            0.025
+          ]
+        ],
+        "pressure_pa": 400000.0,
+        "temperature_c": 20.0,
+        "creep_enabled": false,
+        "stress_unit_pa": 1.0,
+        "force_unit_n": 1.0,
+        "axial_compression_n": 62.11774563955517,
+        "transverse_n": 6.211774563955517,
+        "ovality": 0.003
+      }
+    },
+    "body-warm": {
+      "mesh_check": {
+        "observables": {
+          "max_displacement_m": 0.021239073224067595,
+          "p95_integration_vm_pa": 0.007161781125074151
+        },
+        "pass": true,
+        "scope": "displacement and 95th-percentile stress; peak stress not qualified"
+      },
+      "nodes": 13056,
+      "max_displacement_m": 0.004396137487788342,
+      "max_integration_vm_pa": 62633631.93930912,
+      "p95_integration_vm_pa": 59964568.90322801,
+      "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+      "deck_sha256": "f53be953a404ad0163bd1aefa6fda2f3e137a024382531a461d96ee0d5688ba5",
+      "metadata": {
+        "scope": "profiled pressure wall, equivalent end closures; ribs/caps absent",
+        "profile_m": [
+          [
+            0.0,
+            0.012
+          ],
+          [
+            0.0183,
+            0.014
+          ],
+          [
+            0.06709999999999999,
+            0.045
+          ],
+          [
+            0.244,
+            0.045
+          ],
+          [
+            0.305,
+            0.025
+          ]
+        ],
+        "pressure_pa": 430868.96403439983,
+        "temperature_c": 43.37175864496521,
+        "creep_enabled": false,
+        "stress_unit_pa": 1.0,
+        "force_unit_n": 1.0,
+        "axial_compression_n": 62.11774563955517,
+        "transverse_n": 6.211774563955517,
+        "ovality": 0.003
+      }
+    }
+  },
+  "propulsion": {
+    "completed": true,
+    "scope": "dry ideal gas, lumped heat exchange, quasi-steady convergent discharge",
+    "liquid_end": {
+      "time_s": 0.2659845373711562,
+      "pressure_pa": 337730.81968833174,
+      "temperature_k": 263.4437664711162
+    },
+    "air_duration_s": 0.5490265666569742,
+    "peak_thrust_n": 45.804420889339184,
+    "impulse_ns": 10.375076154595034,
+    "energy_balance_relative": 1.8099002218351412e-13,
+    "mass_balance_relative": 4.2882908979427696e-10
+  },
+  "thermal": {
+    "vented": {
+      "completed": true,
+      "scope": "five-node heat network; assumed contact/convection properties",
+      "sealed": false,
+      "final_c": {
+        "gas": 43.37288895834661,
+        "skin": 43.37371047499374,
+        "mount": 35.37921778577402,
+        "payload": 26.222661883067303,
+        "fin": 44.83691394027028
+      },
+      "peak_absolute_pressure_pa": 101085.0,
+      "energy_balance_relative": 3.2343070816296604e-14,
+      "capacities_j_k": [
+        0.9535521130303539,
+        54.0,
+        24.0,
+        190.2,
+        12.0
+      ],
+      "conductances_w_k": [
+        [
+          0.0,
+          0.3,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.3,
+          0.0,
+          0.08,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.08,
+          0.0,
+          0.06,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.06,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "sealed": {
+      "completed": true,
+      "scope": "five-node heat network; assumed contact/convection properties",
+      "sealed": true,
+      "final_c": {
+        "gas": 43.36730619926021,
+        "skin": 43.37175864496521,
+        "mount": 35.364614636095325,
+        "payload": 26.214654587146015,
+        "fin": 44.83691394012777
+      },
+      "peak_absolute_pressure_pa": 531953.9640343998,
+      "energy_balance_relative": 2.303203908285121e-14,
+      "capacities_j_k": [
+        4.726820602045951,
+        54.0,
+        24.0,
+        190.2,
+        12.0
+      ],
+      "conductances_w_k": [
+        [
+          0.0,
+          0.3,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.3,
+          0.0,
+          0.08,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.08,
+          0.0,
+          0.06,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.06,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    }
+  },
+  "contact": {
+    "launch": {
+      "contact_occurred": true,
+      "peak_penetration_mm": 0.3350833701295641,
+      "peak_contact_force_n": 12.720235577658235,
+      "peak_payload_force_n": 18.374536495654368,
+      "peak_payload_proper_mps2": 306.2422749275728,
+      "peak_wall_reaction_n": 14.34661858400917,
+      "nominal_contact_pressure_pa": 42400.785258860786,
+      "work_balance_relative": 6.867797608675676e-07,
+      "scope": "2 axial DOFs, cubic pad, unilateral compliant stop; contact area assumed",
+      "fracture_status": "unknown_without_specimen_allowables"
+    },
+    "opening": {
+      "contact_occurred": false,
+      "peak_penetration_mm": 0.0,
+      "peak_contact_force_n": 0.0,
+      "peak_payload_force_n": 0.6997183949683525,
+      "peak_payload_proper_mps2": 11.661973249472542,
+      "peak_wall_reaction_n": 0.9328988105674016,
+      "nominal_contact_pressure_pa": 0.0,
+      "work_balance_relative": 2.5828738053185385e-13,
+      "scope": "2 axial DOFs, cubic pad, unilateral compliant stop; contact area assumed",
+      "fracture_status": "unknown_without_specimen_allowables"
+    },
+    "warm_launch": {
+      "contact_occurred": true,
+      "peak_penetration_mm": 0.38492780279701655,
+      "peak_contact_force_n": 15.411157353393575,
+      "peak_payload_force_n": 21.07856333709918,
+      "peak_payload_proper_mps2": 351.30938895165303,
+      "peak_wall_reaction_n": 15.498427986195164,
+      "nominal_contact_pressure_pa": 51370.52451131192,
+      "work_balance_relative": 1.7654730863658283e-07,
+      "scope": "2 axial DOFs, cubic pad, unilateral compliant stop; contact area assumed",
+      "fracture_status": "unknown_without_specimen_allowables"
+    },
+    "warm_opening": {
+      "contact_occurred": false,
+      "peak_penetration_mm": 0.0,
+      "peak_contact_force_n": 0.0,
+      "peak_payload_force_n": 0.7017883948196999,
+      "peak_payload_proper_mps2": 11.696473246994998,
+      "peak_wall_reaction_n": 0.9356445532149301,
+      "nominal_contact_pressure_pa": 0.0,
+      "work_balance_relative": 2.3147753974940184e-13,
+      "scope": "2 axial DOFs, cubic pad, unilateral compliant stop; contact area assumed",
+      "fracture_status": "unknown_without_specimen_allowables"
+    }
+  },
+  "landing": [
+    {
+      "contact_occurred": true,
+      "peak_penetration_mm": 1.993270869462665,
+      "peak_contact_force_n": 181.95284065402885,
+      "peak_payload_force_n": 189.21351370140266,
+      "peak_payload_proper_mps2": 3153.5585616900444,
+      "peak_wall_reaction_n": 62.11774563955517,
+      "nominal_contact_pressure_pa": 606509.4688467629,
+      "work_balance_relative": 9.487811475249246e-06,
+      "scope": "2 axial DOFs, cubic pad, unilateral compliant stop; contact area assumed",
+      "fracture_status": "unknown_without_specimen_allowables",
+      "stop_distance_m": 0.005,
+      "assumption": "full impact speed along mount axis"
+    },
+    {
+      "contact_occurred": true,
+      "peak_penetration_mm": 2.002944887081474,
+      "peak_contact_force_n": 181.4964492077798,
+      "peak_payload_force_n": 189.1738422861146,
+      "peak_payload_proper_mps2": 3152.8973714352433,
+      "peak_wall_reaction_n": 61.34726249830356,
+      "nominal_contact_pressure_pa": 604988.1640259327,
+      "work_balance_relative": 3.3562304481373274e-06,
+      "scope": "2 axial DOFs, cubic pad, unilateral compliant stop; contact area assumed",
+      "fracture_status": "unknown_without_specimen_allowables",
+      "stop_distance_m": 0.015,
+      "assumption": "full impact speed along mount axis"
+    },
+    {
+      "contact_occurred": true,
+      "peak_penetration_mm": 2.0106457826541133,
+      "peak_contact_force_n": 181.99876259425025,
+      "peak_payload_force_n": 189.75451864865641,
+      "peak_payload_proper_mps2": 3162.57531081094,
+      "peak_wall_reaction_n": 57.82142725367187,
+      "nominal_contact_pressure_pa": 606662.5419808342,
+      "work_balance_relative": 1.6961705142757657e-05,
+      "scope": "2 axial DOFs, cubic pad, unilateral compliant stop; contact area assumed",
+      "fracture_status": "unknown_without_specimen_allowables",
+      "stop_distance_m": 0.03,
+      "assumption": "full impact speed along mount axis"
+    }
+  ],
+  "flight": {
+    "completed": true,
+    "qualified": false,
+    "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+    "limitations": [
+      "unvalidated aero and inertia",
+      "no liquid slosh",
+      "canopy inflation prescribed; line/cloth dynamics unresolved",
+      "high-angle aerodynamic continuation is unqualified"
+    ],
+    "rail_exit_s": 0.20544452980917863,
+    "rail_exit_speed_mps": 15.333956994619312,
+    "apogee_m": 29.54535363065758,
+    "apogee_s": 2.521087310124107,
+    "impact_speed_mps": 4.324948779633927,
+    "vertical_impact_mps": 2.3990011512200766,
+    "drift_m": 37.83980360325904,
+    "max_q_pa": 360.51170248771024,
+    "max_canopy_force_n": 1.3509631276344134,
+    "ascent_incidence_deg": 10.408418756391821,
+    "aero_domain_pass": true,
+    "peak_roll_rad_s": 3.6862203667078863,
+    "quaternion_norm_error": 4.169951939303473e-09
+  },
+  "flight_time_refinement": {
+    "apogee_m": 2.8855726057590093e-07,
+    "max_q_pa": 2.117877507194753e-07,
+    "impact_speed_mps": 3.3676512799604582e-06,
+    "max_canopy_force_n": 2.5912550922725143e-05
+  },
+  "pitch": {
+    "completed": true,
+    "all_frozen_points_hurwitz": true,
+    "common_quadratic": {
+      "max_lyapunov_eigenvalue": 13.73104868754884,
+      "P": [
+        [
+          14.570027486192709,
+          0.0008214140426177995
+        ],
+        [
+          0.0008214140426177848,
+          0.023907782177388388
+        ]
+      ],
+      "sampled_common_certificate": false
+    },
+    "time_s": [
+      0.20568373300221945,
+      0.20807576493262772,
+      0.21334916563131698,
+      0.22076231290004758,
+      0.22883703930444438,
+      0.23704938319135954,
+      0.24482257589884948,
+      0.25206525773534766,
+      0.258821941236059,
+      0.2651309316038313,
+      0.26537888715503866,
+      0.26562684270624604,
+      0.2657576923277624,
+      0.2658885419492788,
+      0.2659668743480173,
+      0.2659772989547108,
+      0.26598772356140427,
+      0.26599741560694057,
+      0.2660943360623036,
+      0.26699915615344144,
+      0.2712611011901579,
+      0.27706691687228036,
+      0.2827555163558961,
+      0.2887289863158955,
+      0.294442190483341,
+      0.29980280355766825,
+      0.30509389277143795,
+      0.31043395066453533,
+      0.3158590597057578,
+      0.321236274334971,
+      0.3267010779440735,
+      0.3321919048493802,
+      0.3377467297129677,
+      0.34336818268326535,
+      0.349004971566711,
+      0.3545676057600489,
+      0.35888275813985177,
+      0.36304449033335373,
+      0.36776799929287207,
+      0.3730346423968159,
+      0.3785835849875387,
+      0.3841721063358195,
+      0.38895779279896936,
+      0.3931275426034862,
+      0.39728843858666774,
+      0.40145924215190737,
+      0.4057065219578414,
+      0.40997833853002347,
+      0.41423277271734454,
+      0.41833977608924455,
+      0.4226661197884194,
+      0.4275420456521331,
+      0.4328831834369859,
+      0.4388467348683563,
+      0.4454945519405206,
+      0.4529490144464184,
+      0.4608096535705708,
+      0.4682826862546454,
+      0.4753994117073555,
+      0.48235791895381896,
+      0.48929221474574497,
+      0.4962973165093659,
+      0.5034620835846124,
+      0.5107952026802901,
+      0.5182646741862251,
+      0.5258095912623001,
+      0.5333632290603384,
+      0.5408629321686214,
+      0.5482329405913717,
+      0.5553299343783143,
+      0.5622261003382318,
+      0.5705266012505879,
+      0.5797730647802383,
+      0.5895018479435192,
+      0.5993452058133616,
+      0.6092282089350969,
+      0.6191643039781373,
+      0.6291750892973716,
+      0.6392679897801162,
+      0.6494334677243729,
+      0.6596458291500488,
+      0.6698650785466556,
+      0.6800391812934795,
+      0.6901055278860766,
+      0.6999895338521476,
+      0.7095970095883033,
+      0.7187929689263564,
+      0.7273409020926636,
+      0.7354859698524526,
+      0.7448221961651955,
+      0.7549984990336146,
+      0.7658886349315843,
+      0.7773502094474821,
+      0.7892198163645174,
+      0.8013302397531125,
+      0.8135459946392214,
+      0.8257819812166709,
+      0.8383212643859127,
+      0.8504919825844738,
+      0.8626334423227687,
+      0.8747423519959825,
+      0.8868234450863828,
+      0.8988802266530562,
+      0.910913757441807,
+      0.9229211088289313,
+      0.9348926397277378,
+      0.9468059589814442,
+      0.9586090880228922,
+      0.9701437675522024,
+      0.9830624961130385,
+      0.9969312165250187,
+      1.01063928960318,
+      1.0239830526926463,
+      1.0369691686091562,
+      1.0495347698228086,
+      1.0614605533249168,
+      1.0728422357798906,
+      1.08452720921357,
+      1.0963505149086068,
+      1.108203193947177,
+      1.120002071442376,
+      1.1316517221598534,
+      1.1429410854946487,
+      1.153189171458093,
+      1.1648372218303846,
+      1.1768406135647265,
+      1.188890494059482,
+      1.2008359203511472,
+      1.212569936614231,
+      1.2239751241389254,
+      1.2348756019165394,
+      1.2449371945765184,
+      1.254832863251959,
+      1.2658349380571234,
+      1.2773135873771824,
+      1.2885801438749143,
+      1.300615173601034,
+      1.313641178086557,
+      1.3275994856984852,
+      1.3424721720774877,
+      1.35825550218628,
+      1.3749396467657606,
+      1.3924713804492606,
+      1.41068306100762,
+      1.429190540830588,
+      1.4477165089286455,
+      1.4677165089286455,
+      1.4877165089286455,
+      1.5077165089286455,
+      1.5277165089286455,
+      1.5477165089286455,
+      1.5677165089286456,
+      1.5877165089286456,
+      1.6077165089286456,
+      1.6277165089286456,
+      1.6477165089286456,
+      1.6677165089286456,
+      1.6877165089286457,
+      1.7077165089286457,
+      1.7277165089286457,
+      1.7477165089286457,
+      1.7677165089286457,
+      1.7877165089286458,
+      1.8077165089286458,
+      1.8277165089286458,
+      1.8477165089286458,
+      1.8677165089286458,
+      1.8877165089286458,
+      1.9077165089286459,
+      1.9277165089286459,
+      1.947716508928646,
+      1.967716508928646,
+      1.987716508928646,
+      2.0077165089286457,
+      2.0277165089286457,
+      2.0477165089286458,
+      2.067716508928646,
+      2.087716508928646,
+      2.107716508928646
+    ],
+    "qualified": false,
+    "scope": "local pitch, fixed velocity direction, surrogate dry inertia",
+    "limitations": [
+      "frozen stability does not prove time-varying or nonlinear stability",
+      "sampled common P does not cover unsampled states or flexible/slosh modes"
+    ]
+  },
+  "flutter": {
+    "completed": true,
+    "qualified": false,
+    "dry_modes_hz": [
+      10.774463217236601,
+      76.1921004988847
+    ],
+    "crossings": [
+      {
+        "offset_chord": -0.25,
+        "lag_scale": 0.5,
+        "first_sampled_instability_mps": 5.936708860759494
+      },
+      {
+        "offset_chord": -0.25,
+        "lag_scale": 1.0,
+        "first_sampled_instability_mps": 6.924050632911393
+      },
+      {
+        "offset_chord": -0.25,
+        "lag_scale": 2.0,
+        "first_sampled_instability_mps": 8.405063291139241
+      },
+      {
+        "offset_chord": 0.0,
+        "lag_scale": 0.5,
+        "first_sampled_instability_mps": 16.79746835443038
+      },
+      {
+        "offset_chord": 0.0,
+        "lag_scale": 1.0,
+        "first_sampled_instability_mps": 19.265822784810126
+      },
+      {
+        "offset_chord": 0.0,
+        "lag_scale": 2.0,
+        "first_sampled_instability_mps": 21.240506329113924
+      },
+      {
+        "offset_chord": 0.25,
+        "lag_scale": 0.5,
+        "first_sampled_instability_mps": 11.860759493670887
+      },
+      {
+        "offset_chord": 0.25,
+        "lag_scale": 1.0,
+        "first_sampled_instability_mps": 12.848101265822786
+      },
+      {
+        "offset_chord": 0.25,
+        "lag_scale": 2.0,
+        "first_sampled_instability_mps": 13.835443037974684
+      }
+    ],
+    "temperature_c": 20.0,
+    "scope": "assumed two-mode typical section and aerodynamic lag; diagnostic only"
+  },
+  "refinement_provenance": {
+    "parent_results_sha256": "942c9dafd2573a4c9da554912db47cca4026fb88d470eccc5b26741384d517e7",
+    "maximum_level": 4,
+    "added": [
+      {
+        "case": "collar-warm",
+        "level": 4,
+        "check": {
+          "observables": {
+            "max_displacement_m": 0.007329336145053933,
+            "p95_integration_vm_pa": 0.0011693912289243436
+          },
+          "pass": true,
+          "scope": "displacement and 95th-percentile stress; peak stress not qualified"
+        },
+        "deck_sha256": "086100190bfe9c6641360d30a57d194ca3fb7eff7a0230154c50094f4630f2fa"
+      }
+    ],
+    "source_sha256": "5c50fdecd38bb21b611becf0ee7a793d17782ac2634c6e9dcfa6bb2ed868b9e9",
+    "scope": "unchanged physical models and previous solutions; extended mesh budget only"
+  },
+  "uncertainty": {
+    "seed": 64731,
+    "samples": [
+      {
+        "sample": 0,
+        "pressure_pa": 388924.3966017667,
+        "wind_mps": 3.440425885549186,
+        "opening_s": 0.1848159496250616,
+        "result": {
+          "completed": true,
+          "qualified": false,
+          "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+          "limitations": [
+            "unvalidated aero and inertia",
+            "no liquid slosh",
+            "canopy inflation prescribed; line/cloth dynamics unresolved",
+            "high-angle aerodynamic continuation is unqualified"
+          ],
+          "rail_exit_s": 0.20879795774077642,
+          "rail_exit_speed_mps": 15.091416653143822,
+          "apogee_m": 29.44072873625351,
+          "apogee_s": 2.5429588625394004,
+          "impact_speed_mps": 6.029366562415212,
+          "vertical_impact_mps": 2.7288775923012656,
+          "drift_m": 53.62312460335085,
+          "max_q_pa": 351.36376482669976,
+          "max_canopy_force_n": 1.4222237798225774,
+          "ascent_incidence_deg": 14.82601266021263,
+          "aero_domain_pass": true,
+          "peak_roll_rad_s": 3.638397489921573,
+          "quaternion_norm_error": 4.871133940653749e-09
+        }
+      },
+      {
+        "sample": 1,
+        "pressure_pa": 379040.8138074546,
+        "wind_mps": 2.8410043969377283,
+        "opening_s": 0.24271031226818934,
+        "result": {
+          "completed": true,
+          "qualified": false,
+          "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+          "limitations": [
+            "unvalidated aero and inertia",
+            "no liquid slosh",
+            "canopy inflation prescribed; line/cloth dynamics unresolved",
+            "high-angle aerodynamic continuation is unqualified"
+          ],
+          "rail_exit_s": 0.21197351906916304,
+          "rail_exit_speed_mps": 14.860098023079047,
+          "apogee_m": 28.068429447364274,
+          "apogee_s": 2.479757684899321,
+          "impact_speed_mps": 5.880812428856031,
+          "vertical_impact_mps": 3.128995114038597,
+          "drift_m": 44.01577214200432,
+          "max_q_pa": 336.8295767608885,
+          "max_canopy_force_n": 1.4285267642689294,
+          "ascent_incidence_deg": 15.291747860679173,
+          "aero_domain_pass": false,
+          "peak_roll_rad_s": 3.5593953410231434,
+          "quaternion_norm_error": 8.66608296234972e-09
+        }
+      },
+      {
+        "sample": 2,
+        "pressure_pa": 404947.49895794503,
+        "wind_mps": 1.9846482063819222,
+        "opening_s": 0.2067139180863488,
+        "result": {
+          "completed": true,
+          "qualified": false,
+          "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+          "limitations": [
+            "unvalidated aero and inertia",
+            "no liquid slosh",
+            "canopy inflation prescribed; line/cloth dynamics unresolved",
+            "high-angle aerodynamic continuation is unqualified"
+          ],
+          "rail_exit_s": 0.20393518806683145,
+          "rail_exit_speed_mps": 15.457770460193998,
+          "apogee_m": 31.39418744733675,
+          "apogee_s": 2.6126737113660674,
+          "impact_speed_mps": 4.316270527454325,
+          "vertical_impact_mps": 2.7364166614168455,
+          "drift_m": 39.67668745354066,
+          "max_q_pa": 370.4872821011919,
+          "max_canopy_force_n": 1.3456250842299595,
+          "ascent_incidence_deg": 7.719010704689524,
+          "aero_domain_pass": true,
+          "peak_roll_rad_s": 3.7393865211260913,
+          "quaternion_norm_error": 1.1623080276024211e-09
+        }
+      },
+      {
+        "sample": 3,
+        "pressure_pa": 391513.7583336773,
+        "wind_mps": 2.0253016161055615,
+        "opening_s": 0.15098727403304749,
+        "result": {
+          "completed": true,
+          "qualified": false,
+          "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+          "limitations": [
+            "unvalidated aero and inertia",
+            "no liquid slosh",
+            "canopy inflation prescribed; line/cloth dynamics unresolved",
+            "high-angle aerodynamic continuation is unqualified"
+          ],
+          "rail_exit_s": 0.208082592984435,
+          "rail_exit_speed_mps": 15.12689323763728,
+          "apogee_m": 27.433840867278004,
+          "apogee_s": 2.419728717965161,
+          "impact_speed_mps": 4.204252720328219,
+          "vertical_impact_mps": 2.978320744751896,
+          "drift_m": 33.89299190186341,
+          "max_q_pa": 345.39944208312676,
+          "max_canopy_force_n": 1.4576266008949967,
+          "ascent_incidence_deg": 12.60937623635103,
+          "aero_domain_pass": true,
+          "peak_roll_rad_s": 3.6046088484263104,
+          "quaternion_norm_error": 1.2311639707718314e-08
+        }
+      },
+      {
+        "sample": 4,
+        "pressure_pa": 439919.79148704186,
+        "wind_mps": 1.1527533903254557,
+        "opening_s": 0.2701235967525266,
+        "result": {
+          "completed": true,
+          "qualified": false,
+          "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+          "limitations": [
+            "unvalidated aero and inertia",
+            "no liquid slosh",
+            "canopy inflation prescribed; line/cloth dynamics unresolved",
+            "high-angle aerodynamic continuation is unqualified"
+          ],
+          "rail_exit_s": 0.19452125381357166,
+          "rail_exit_speed_mps": 16.201535066044165,
+          "apogee_m": 32.8693527992642,
+          "apogee_s": 2.626843737941526,
+          "impact_speed_mps": 2.873224221270619,
+          "vertical_impact_mps": 2.8349189547384435,
+          "drift_m": 7.821000335469054,
+          "max_q_pa": 415.01157491849864,
+          "max_canopy_force_n": 1.4461077401085192,
+          "ascent_incidence_deg": 7.163390980494755,
+          "aero_domain_pass": true,
+          "peak_roll_rad_s": 3.9631283907994845,
+          "quaternion_norm_error": 1.2621295120140985e-08
+        }
+      },
+      {
+        "sample": 5,
+        "pressure_pa": 363938.360615332,
+        "wind_mps": 0.451725431500161,
+        "opening_s": 0.10602245578782447,
+        "result": {
+          "completed": true,
+          "qualified": false,
+          "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+          "limitations": [
+            "unvalidated aero and inertia",
+            "no liquid slosh",
+            "canopy inflation prescribed; line/cloth dynamics unresolved",
+            "high-angle aerodynamic continuation is unqualified"
+          ],
+          "rail_exit_s": 0.21713605437881697,
+          "rail_exit_speed_mps": 14.493638089769329,
+          "apogee_m": 25.586930910744954,
+          "apogee_s": 2.3626146598567894,
+          "impact_speed_mps": 2.757958406136198,
+          "vertical_impact_mps": 2.6323758873096255,
+          "drift_m": 7.382680237711734,
+          "max_q_pa": 305.3702863130631,
+          "max_canopy_force_n": 1.3020863980333879,
+          "ascent_incidence_deg": 2.8656762905368174,
+          "aero_domain_pass": true,
+          "peak_roll_rad_s": 3.381288877670207,
+          "quaternion_norm_error": 3.932870806799826e-09
+        }
+      },
+      {
+        "sample": 6,
+        "pressure_pa": 413372.83243972517,
+        "wind_mps": 3.7208722388495197,
+        "opening_s": 0.0653672708763172,
+        "result": {
+          "completed": true,
+          "qualified": false,
+          "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+          "limitations": [
+            "unvalidated aero and inertia",
+            "no liquid slosh",
+            "canopy inflation prescribed; line/cloth dynamics unresolved",
+            "high-angle aerodynamic continuation is unqualified"
+          ],
+          "rail_exit_s": 0.20168191386116027,
+          "rail_exit_speed_mps": 15.607952883330084,
+          "apogee_m": 28.81002755103437,
+          "apogee_s": 2.4682937572433987,
+          "impact_speed_mps": 6.538267171922446,
+          "vertical_impact_mps": 2.9226553110952955,
+          "drift_m": 55.729999596111185,
+          "max_q_pa": 377.0494060813393,
+          "max_canopy_force_n": 1.3850213172059813,
+          "ascent_incidence_deg": 16.07632133465015,
+          "aero_domain_pass": false,
+          "peak_roll_rad_s": 3.77124385914877,
+          "quaternion_norm_error": 5.346518450188853e-09
+        }
+      },
+      {
+        "sample": 7,
+        "pressure_pa": 429761.1262236,
+        "wind_mps": 0.917715360879902,
+        "opening_s": 0.11659496964256451,
+        "result": {
+          "completed": true,
+          "qualified": false,
+          "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+          "limitations": [
+            "unvalidated aero and inertia",
+            "no liquid slosh",
+            "canopy inflation prescribed; line/cloth dynamics unresolved",
+            "high-angle aerodynamic continuation is unqualified"
+          ],
+          "rail_exit_s": 0.19723305027677654,
+          "rail_exit_speed_mps": 15.957342794685179,
+          "apogee_m": 29.26959379170744,
+          "apogee_s": 2.4528717364059065,
+          "impact_speed_mps": 3.097407961271471,
+          "vertical_impact_mps": 3.0794998096561415,
+          "drift_m": 3.1766710672370357,
+          "max_q_pa": 390.5178358507291,
+          "max_canopy_force_n": 1.5666262684588483,
+          "ascent_incidence_deg": 8.46327522335689,
+          "aero_domain_pass": true,
+          "peak_roll_rad_s": 3.839674324191049,
+          "quaternion_norm_error": 1.6131525781837297e-08
+        }
+      }
+    ],
+    "scope": "assumed stratified ranges; not measured probability distributions",
+    "qualified": false,
+    "execution_status": "completed",
+    "source_id": "4c8224a174c2:uncertainty"
+  }
+}

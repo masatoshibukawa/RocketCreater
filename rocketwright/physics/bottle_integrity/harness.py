@@ -177,6 +177,12 @@ class IntegrityHarness:
         cfd_assessment=None,
     ):
         self.design = BottleDesign.model_validate(design)
+        if (
+            self.design.payload_mass_kg <= 0
+            or not self.design.has_fins
+            or not self.design.has_parachute
+        ):
+            raise ValueError("This integrity pool requires fins, a payload and parachute recovery")
         self.assembly = copy.deepcopy(assembly)
         self.config = config or AnalysisConfig()
         self.output = Path(output).resolve()
@@ -373,9 +379,28 @@ class IntegrityHarness:
                 p,
                 initial_proper=9.80665 if name == "launch" else acc[0],
             )
+        warm = self.results["flight"]["warm_sealed_scenario"]
+        for name, lo, hi in [
+            ("warm_launch", 0.0, 1.2),
+            (
+                "warm_opening",
+                max(0.0, warm["apogee_s"] - 0.05),
+                warm["apogee_s"] + self.config.flight.deployment_delay_s + 1,
+            ),
+        ]:
+            t = np.linspace(lo, hi, int((hi - lo) / 0.0005) + 1)
+            acc = np.interp(t, warm["trace"]["time_s"], warm["trace"]["proper_mps2"])
+            cases[name] = contact.response(
+                t,
+                acc,
+                self.design.payload_mass_kg,
+                p,
+                initial_proper=9.80665 if name == "warm_launch" else acc[0],
+            )
+        impact_velocity = max(f["impact_speed_mps"], warm["impact_speed_mps"])
         landing = []
         for distance in [0.005, self.config.flight.stop_distance_m, 0.03]:
-            velocity = f["impact_speed_mps"]
+            velocity = impact_velocity
             duration = 2 * distance / velocity
             t = np.linspace(0, 0.3, 3001)
             pulse = np.where(
@@ -386,7 +411,7 @@ class IntegrityHarness:
             landing.append(r)
         worst = landing[0]
         distance = 0.005
-        velocity = f["impact_speed_mps"]
+        velocity = impact_velocity
         duration = 2 * distance / velocity
         t = np.linspace(0, 0.3, 6001)
         pulse = np.where(
@@ -405,6 +430,8 @@ class IntegrityHarness:
             "landing_time_refinement": change,
             "numerical_pass": change < self.config.observable_relative_tolerance,
             "scope": "scalar load-magnitude envelope; separate event equilibrium assumptions",
+            "landing_envelope_speed_mps": impact_velocity,
+            "pad_temperature_dependence": "unknown; nominal pad law used in both load scenarios",
         }
 
     def _structure(self):
@@ -446,6 +473,7 @@ class IntegrityHarness:
                     break
             change = self._mesh_change(history[-2]["fem"], history[-1]["fem"])
             results["cases"]["fin-" + label] = {"meshes": history, "mesh_check": change}
+            write_json(self.output / "structure-progress.json", results)
         for label, temp in [("nominal", 20.0), ("warm", warm["mount"])]:
             history = []
             for level in range(1, cfg.maximum_mesh_level + 1):
@@ -459,6 +487,7 @@ class IntegrityHarness:
                 "meshes": history,
                 "mesh_check": self._mesh_change(*history[-2:]),
             }
+            write_json(self.output / "structure-progress.json", results)
         for label, temp, pressure in [
             ("nominal", 20.0, self.design.initial_gauge_pressure_pa),
             (
@@ -487,6 +516,7 @@ class IntegrityHarness:
                 "meshes": history,
                 "mesh_check": self._mesh_change(*history[-2:]),
             }
+            write_json(self.output / "structure-progress.json", results)
         # Explicit exploratory material alternatives, not assigned physical properties.
         ortho = cfg.model_copy(deep=True)
         ortho.collar_material = (cfg.collar_material or cfg.material).model_copy(deep=True)
@@ -556,7 +586,14 @@ class IntegrityHarness:
 
     def _fem_case(self, folder, name, deck):
         lines, nodes, elements, meta = deck
-        r = fem.run_deck(self.solver, folder, name, lines)
+        r = fem.run_deck(
+            self.solver,
+            folder,
+            name,
+            lines,
+            stress_unit_pa=meta.get("stress_unit_pa", 1),
+            force_unit_n=meta.get("force_unit_n", 1),
+        )
         r["metadata"] = meta
         r["geometry"] = {"nodes": nodes, "elements": [e[0] for e in elements]}
         return r
@@ -572,7 +609,7 @@ class IntegrityHarness:
         }
 
     def _stability(self):
-        return {
+        result = {
             "pitch": stability.pitch(
                 self.assembly, self.results["flight"]["nominal"], self.design, self.config.flight
             ),
@@ -583,6 +620,34 @@ class IntegrityHarness:
                 temperature_c=self.results["thermal"]["sealed"]["final_c"]["fin"],
             ),
         }
+        structure = self.results["structure"]
+        updates = {}
+        g = self.assembly["dimensions_mm"]
+        nose_cp = 2 * g["nose_length"] / 3000
+        cn = self.assembly["fin_set_CNalpha_per_rad"]
+        fin_cp = (self.assembly["cp_mm"] / 1000 * (cn + 2) - 2 * nose_cp) / cn
+        for label in ("nominal", "warm"):
+            r = structure["cases"]["fin-" + label]["meshes"][-1]
+            projection = r["fem"]["nodal_force_sum_n"][2] / r["metadata"]["force_target_n"]
+            factor = projection * r["history"][-1]["incidence_deg"] / 3
+            article = copy.deepcopy(self.assembly)
+            article["fin_set_CNalpha_per_rad"] = cn * factor
+            article["cp_mm"] = 1000 * (2 * nose_cp + cn * factor * fin_cp) / (2 + cn * factor)
+            prop = self.results["propulsion"]
+            design = self.design if label == "nominal" else BottleDesign(**prop["warm_design"])
+            loaded = prop["nominal" if label == "nominal" else "warm_sealed_scenario"]
+            f = flight.run(design, article, loaded, self.config.flight)
+            updates[label] = {
+                "fin_normal_slope_factor": factor,
+                "effective_cp_mm": article["cp_mm"],
+                "flight": f,
+                "q_within_structural_envelope": f["max_q_pa"]
+                <= structure["load_envelope"]["q_pa"]
+                * (1 + self.config.observable_relative_tolerance),
+                "scope": "conditional quasi-static tangent approximation from deformed fin load",
+            }
+        result["deformed_fin_flight"] = updates
+        return result
 
     def _uncertainty(self):
         rng = np.random.default_rng(self.config.flight.seed)

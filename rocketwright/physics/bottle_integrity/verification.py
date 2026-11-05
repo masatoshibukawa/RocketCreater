@@ -63,5 +63,33 @@ def fem_limits(executable, output):
             }
         )
     results["beam"] = {"meshes": beam, "pass": beam[-1]["relative_error"] < 0.02}
+    nodes, elements = hex_mesh((4, 2, 2), lambda u, v, w: (0.1 * u, 0.01 * v, 0.01 * w))
+    lines = base_deck(
+        nodes,
+        elements,
+        material,
+        creep={"creep_rate": 1e-7, "creep_stress": 30e6, "creep_n": 3},
+        stress_unit_pa=1e6,
+    )
+    lines += ["*BOUNDARY"]
+    for i, xyz in nodes.items():
+        for j, x in enumerate(xyz):
+            if abs(x) < 1e-10:
+                lines.append(f"{i},{j + 1},{j + 1},0.")
+    lines += ["*STEP", "*STATIC", "*DLOAD"]
+    lines += [f"{e},P4,-30." for e, (_, index) in enumerate(elements, 1) if index[0] == 3]
+    lines += output_cards() + ["*STEP", "*VISCO,CETOL=1.e-6", "0.1,60.,1.e-6,5."] + output_cards()
+    r = run_deck(executable, output / "creep", "creep", lines, stress_unit_pa=1e6, force_unit_n=1e6)
+    computed = float(
+        np.mean([u[0] for i, u in r["node_displacements_m"].items() if nodes[i][0] > 0.09999])
+    )
+    expected = 0.1 * (30e6 / material.young_pa + 60 * 1e-7)
+    error = abs(computed / expected - 1)
+    results["creep"] = {
+        "expected_m": expected,
+        "computed_m": computed,
+        "relative_error": error,
+        "pass": error < 1e-5,
+    }
     results["passed"] = all(r["pass"] for r in results.values())
     return results
