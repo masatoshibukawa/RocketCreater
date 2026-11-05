@@ -14,7 +14,12 @@ from rocketwright import aero
 from rocketwright.aero import registry
 from rocketwright.aero.base import AeroCase, AeroQuery, AeroResult
 from rocketwright.aero.lbm_gpu import LbmGpuBackend, assembly_for, parse_cases
-from rocketwright.aero.openfoam_pipeline import OpenFoamPipelineBackend, parse_results, write_case
+from rocketwright.aero.openfoam_pipeline import (
+    OpenFoamPipelineBackend,
+    docker_command,
+    parse_results,
+    write_case,
+)
 from rocketwright.agent.tools import execute_tool, get_tool_definitions
 from rocketwright.geometry import airframe
 from rocketwright.physics import solid, stability, water
@@ -208,6 +213,14 @@ def test_openfoam_results_parsing_from_recorded_run():
     assert r.static_margin_cal == pytest.approx((cp["xcp_m"] - 0.262) / 0.0817)
     assert any("not converged" in n for n in r.notes)
     assert any("coarse" in n for n in r.notes)
+
+
+def test_openfoam_docker_command_is_limited_and_offline(tmp_path):
+    cmd = docker_command("img:1", tmp_path, "rw-x", 8)
+    assert cmd[:3] == ["docker", "run", "--rm"]
+    assert "--cpus=8" in cmd and "--network=none" in cmd
+    assert f"{tmp_path}:/case" in cmd
+    assert cmd[-3:] == ["rocketcfd", "run", "/case/config.yaml"]
 
 
 def test_openfoam_unavailable_without_docker(monkeypatch):

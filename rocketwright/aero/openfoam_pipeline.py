@@ -41,6 +41,7 @@ __all__ = [
     "DEFAULT_IMAGE",
     "PIPELINE_COMMIT",
     "OpenFoamPipelineBackend",
+    "docker_command",
     "parse_results",
     "write_case",
 ]
@@ -183,6 +184,18 @@ def _tail(path: Path, n: int = 15) -> str:
         return ""
 
 
+def docker_command(image: str, case_dir: Path, container: str, cpus: int) -> list[str]:
+    """CPU-limited, network-less run as the calling user, so outputs stay deletable."""
+    return [
+        "docker", "run", "--rm", "--name", container,
+        f"--cpus={cpus}", "--network=none",
+        f"--user={os.getuid()}:{os.getgid()}",
+        "-e", "HOME=/case", "-e", "MPLCONFIGDIR=/tmp",
+        "-v", f"{case_dir}:/case", "-w", "/case",
+        image, "rocketcfd", "run", "/case/config.yaml",
+    ]  # fmt: skip
+
+
 class OpenFoamPipelineBackend:
     name = "openfoam_pipeline"
     fidelity = "L2"
@@ -232,14 +245,7 @@ class OpenFoamPipelineBackend:
         case_dir = Path(tempfile.mkdtemp(prefix=f"rw-openfoam-{run_id}-"))
         write_case(case_dir, query, nprocs=cpus)
         container = f"rw-aero-{run_id}-{os.getpid()}"
-        cmd = [
-            "docker", "run", "--rm", "--name", container,
-            f"--cpus={cpus}",
-            f"--user={os.getuid()}:{os.getgid()}",
-            "-e", "HOME=/case", "-e", "MPLCONFIGDIR=/tmp",
-            "-v", f"{case_dir}:/case", "-w", "/case",
-            self.image, "rocketcfd", "run", "/case/config.yaml",
-        ]  # fmt: skip
+        cmd = docker_command(self.image, case_dir, container, cpus)
         out_dir = case_dir / "out" / RUN_NAME
         start = time.monotonic()
         try:
