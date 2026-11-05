@@ -30,7 +30,19 @@ def qrate(q, omega):
     return 0.5 * np.r_[-np.dot(v, omega), w * omega + np.cross(v, omega)]
 
 
-def run(design, assembly, loads, cfg: FlightConfig, *, cd_scale=1.0, cn_scale=1.0, max_step=0.02):
+def run(
+    design,
+    assembly,
+    loads,
+    cfg: FlightConfig,
+    *,
+    cd_scale=1.0,
+    cn_scale=1.0,
+    max_step=0.02,
+    aero_model=None,
+    mass_model=None,
+    record_loads=False,
+):
     tr = loads["trace"]
     time = np.asarray(tr["time_s"])
     g = assembly["dimensions_mm"]
@@ -51,6 +63,8 @@ def run(design, assembly, loads, cfg: FlightConfig, *, cd_scale=1.0, cn_scale=1.
     rho = 1.204  # fixed reference atmosphere, documented in scope
 
     def mass_properties(t):
+        if mass_model is not None:
+            return mass_model.properties(t)
         m = np.interp(t, time, tr["mass_kg"], right=last_mass)
         water = np.interp(t, time, tr["water_kg"], right=tr["water_kg"][-1])
         height = water / (1000 * area)
@@ -88,17 +102,25 @@ def run(design, assembly, loads, cfg: FlightConfig, *, cd_scale=1.0, cn_scale=1.
         drag = -q * area * cd * vb / max(speed, 1e-9)
         thrust = np.interp(t, time, tr["thrust_n"], right=0.0)
         m, cg, moment = mass_properties(t)
-        f_body = normal + drag + np.array([0.0, 0.0, thrust])
-        torque = np.cross([0, 0, cg - cp], normal)
-        torque[:2] -= q * area * length**2 / (2 * max(speed, 0.1)) * cfg.pitch_damping * omega[:2]
+        if aero_model is None:
+            aero_force = normal + drag
+            aero_moment = np.cross([0, 0, cg - cp], normal)
+        else:
+            aero = aero_model.evaluate(vb, q, cg)
+            aero_force, aero_moment = aero["force_n"], aero["moment_nm"]
+        f_body = aero_force + np.array([0.0, 0.0, thrust])
+        torque = aero_moment.copy()
+        damping = np.zeros(3)
+        damping[:2] = -q * area * length**2 / (2 * max(speed, 0.1)) * cfg.pitch_damping * omega[:2]
         arm = radius + g["fin_span"] / 2000
-        torque[2] += (
+        damping[2] = (
             q
             * area
             * assembly["fin_set_CNalpha_per_rad"]
             * arm
             * (np.deg2rad(cfg.cant_deg) - omega[2] * arm / (2 * max(speed, 0.1)))
         )
+        torque += damping
         inflation = 0.0
         if deployment is not None and design.has_parachute:
             inflation = np.clip((t - deployment) / cfg.opening_s, 0, 1)
@@ -108,27 +130,42 @@ def run(design, assembly, loads, cfg: FlightConfig, *, cd_scale=1.0, cn_scale=1.
         f_body += canopy
         # Canopy line attaches at the nose; stretch/pendulum fluid effects are unresolved.
         torque += np.cross([0, 0, cg], canopy)
-        return r @ f_body, torque, (m, cg, moment, q, alpha, inflation, np.linalg.norm(canopy))
+        detail = {
+            "air_velocity_body_mps": vb,
+            "aero_force_n": aero_force,
+            "aero_moment_nm": aero_moment,
+            "thrust_n": thrust,
+            "canopy_body_n": canopy,
+            "damping_moment_nm": damping,
+        }
+        return (
+            r @ f_body,
+            torque,
+            (m, cg, moment, q, alpha, inflation, np.linalg.norm(canopy)),
+            detail,
+        )
+
+    def angular_state(t, omega, torque, inertia_now, cg):
+        di = np.array([np.interp(t, time, idot[:, j], right=0) for j in range(3)])
+        mdot = np.interp(t, time, tr["mass_flow_kg_s"], right=0)
+        outlet = length - cg
+        rn = design.nozzle_diameter_m / 2
+        flux = mdot * np.array([outlet**2 + rn**2 / 4, outlet**2 + rn**2 / 4, rn**2 / 2])
+        transport = -(di + flux) * omega
+        angular = (torque - np.cross(omega, inertia_now * omega) + transport) / inertia_now
+        return angular, transport
 
     def rhs(rail, deployment):
         def derivative(t, y):
-            f, torque, (m, cg, inertia_now, *_) = forces(t, y, deployment)
+            f, torque, (m, cg, inertia_now, *_), _ = forces(t, y, deployment)
             acceleration = f / m - np.array([0, 0, G])
             if rail:
                 a = float(np.dot(acceleration, axis))
                 if np.dot(y[:3], axis) <= 0 and np.dot(y[3:6], axis) <= 0 and a < 0:
                     a = 0
                 return np.r_[axis * np.dot(y[3:6], axis), axis * a, np.zeros(7)]
-            di = np.array([np.interp(t, time, idot[:, j], right=0) for j in range(3)])
-            mdot = np.interp(t, time, tr["mass_flow_kg_s"], right=0)
-            # Exhaust co-rotates at an axial outlet: angular momentum carried out.
-            outlet = length - cg
-            rn = design.nozzle_diameter_m / 2
-            flux = mdot * np.array([outlet**2 + rn**2 / 4, outlet**2 + rn**2 / 4, rn**2 / 2])
             omega = y[10:13]
-            angular = (
-                torque - np.cross(omega, inertia_now * omega) - (di + flux) * omega
-            ) / inertia_now
+            angular, _ = angular_state(t, omega, torque, inertia_now, cg)
             return np.r_[y[3:6], acceleration, qrate(y[6:10], omega), angular]
 
         return derivative
@@ -168,9 +205,39 @@ def run(design, assembly, loads, cfg: FlightConfig, *, cd_scale=1.0, cn_scale=1.
     times = np.r_[rail.t, ascent.t[1:], descent.t[1:]]
     states = np.c_[rail.y, ascent.y[:, 1:], descent.y[:, 1:]].T
     samples = []
+    load_samples = []
     for t, y in zip(times, states, strict=True):
-        f, torque, info = forces(t, y, deployment)
-        m, cg, _, q, alpha, inflation, canopy = info
+        f, torque, info, detail = forces(t, y, deployment)
+        m, cg, inertia_now, q, alpha, inflation, canopy = info
+        if record_loads:
+            r = rotation(y[6:10])
+            rail_force = np.zeros(3)
+            rail_moment = np.zeros(3)
+            angular, transport = angular_state(t, y[10:13], torque, inertia_now, cg)
+            if t <= rail.t[-1]:
+                actual = rhs(True, None)(t, y)[3:6]
+                rail_force = r.T @ (m * (actual + [0, 0, G]) - f)
+                rail_moment = -torque
+                angular = np.zeros(3)
+            detail.update(
+                time_s=t,
+                mass_kg=m,
+                inertia_kg_m2=inertia_now,
+                cg_m=cg,
+                proper_body_mps2=r.T @ f / m + rail_force / m,
+                angular_acceleration_rad_s2=angular,
+                transport_moment_nm=transport,
+                rail_force_n=rail_force,
+                rail_moment_nm=rail_moment,
+                external_moment_nm=torque + rail_moment,
+                omega_rad_s=y[10:13],
+            )
+            load_samples.append(
+                {
+                    k: v.tolist() if isinstance(v, np.ndarray) else float(v)
+                    for k, v in detail.items()
+                }
+            )
         # Aerodynamic incidence limits apply to ascent; descent still exposes extrapolation.
         samples.append(
             [
@@ -187,7 +254,7 @@ def run(design, assembly, loads, cfg: FlightConfig, *, cd_scale=1.0, cn_scale=1.
     free_ascent = (times > rail.t[-1]) & (times <= ascent.t[-1])
     active = free_ascent & (values[:, 0] > 10)
     angle_max = float(values[active, 1].max()) if active.any() else 0.0
-    return {
+    result = {
         "completed": bool(len(descent.t_events[0])),
         "qualified": False,
         "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
@@ -224,3 +291,24 @@ def run(design, assembly, loads, cfg: FlightConfig, *, cd_scale=1.0, cn_scale=1.
             "cg_m": values[:, 5].tolist(),
         },
     }
+    if record_loads:
+        result["load_samples"] = load_samples
+    if aero_model is not None:
+        result["aero_source"] = aero_model.metadata
+        result["aero_domain_pass"] = (
+            all(
+                np.linalg.norm(s["air_velocity_body_mps"]) <= aero_model.speeds[-1]
+                for s in load_samples
+            )
+            if record_loads
+            else False
+        )
+        result["scope"] = "quaternion 6DOF with numerical wind-tunnel lookup; conditional model"
+        result["limitations"] = [
+            "unvalidated CFD and mass distribution",
+            "velocity clamped to simulated range; pressure still scales with actual speed squared",
+            "fixed-density flow, no slosh, prescribed canopy inflation",
+            "fourfold-fin azimuth dependence approximated by meridional data",
+            "rotational damping and nozzle angular-momentum transport are engineering models",
+        ]
+    return result
