@@ -1,0 +1,1725 @@
+{
+  "checked_on": "2026-11-05",
+  "files": [
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/LICENSE",
+      "kind": "付属文書",
+      "bytes": 1079,
+      "sha256": "c96e7b71dcf3295c4514afa19b1e345f323cead81ddc336696e7397b81934a13",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/LICENSE",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/README.md",
+      "kind": "付属文書",
+      "bytes": 16878,
+      "sha256": "b1a24ecfded69e3acf3c2dec711e72bfc8a43b0fdced114a1b8b9c975e543725",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/README.md",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/motors/cesaroni/Cesaroni_7579M1520-P.eng",
+      "kind": "入力・観測データ",
+      "bytes": 247,
+      "sha256": "f38ad06972a07e4ef04164a60718f099d732de6e433185e211dd87083f89e4ca",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/motors/cesaroni/Cesaroni_7579M1520-P.eng",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/DragCoeffOR_off.csv",
+      "kind": "入力・観測データ",
+      "bytes": 50,
+      "sha256": "ac266e60e4b0a3a24ab9b0ecda26e0a33af970bd71ad3a63e13a23f074ad24c9",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/astg/DragCoeffOR_off.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/DragCoeffOR_on.csv",
+      "kind": "入力・観測データ",
+      "bytes": 50,
+      "sha256": "ac266e60e4b0a3a24ab9b0ecda26e0a33af970bd71ad3a63e13a23f074ad24c9",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/astg/DragCoeffOR_on.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/altimeter_halcyon.csv",
+      "kind": "入力・観測データ",
+      "bytes": 1902028,
+      "sha256": "7f1fec2faa53f63a183c97d8a9b692763e7b53d60eab15cc6f42ab646afa85a0",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/astg/altimeter_halcyon.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/engine_Halcyon_4thHotfire.eng",
+      "kind": "入力・観測データ",
+      "bytes": 3044,
+      "sha256": "d1568d943d61abe412a9ad35dbb6429aa564da9f687ccc4312a74d186a02888c",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/astg/engine_Halcyon_4thHotfire.eng",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/gnss_halcyon.csv",
+      "kind": "入力・観測データ",
+      "bytes": 97624,
+      "sha256": "1a4715c45c85671c41fd8b3a870a9650548e7e5bae70c781c5e34f054090862f",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/astg/gnss_halcyon.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/rockets/defiance/DragCurve.csv",
+      "kind": "入力・観測データ",
+      "bytes": 4332,
+      "sha256": "ab996d305cffe0631a2f74e1728996854d283a8f9566958fffd0e213a4bd82bb",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/defiance/DragCurve.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/rockets/defiance/Thrust_curve.csv",
+      "kind": "入力・観測データ",
+      "bytes": 7722,
+      "sha256": "b484ca75ed3eba48bbdd28b577c8e3150d8b1c76b3514838aa5a7ed4acbcb730",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/defiance/Thrust_curve.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/rockets/prometheus/2022-06-24-serial-5115-flight-0001-TeleMetrum.csv",
+      "kind": "入力・観測データ",
+      "bytes": 2641687,
+      "sha256": "9fe8d17a25e7944267b34a45ed955303afd5818b3f18479a5f7ffb31a574cecf",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/prometheus/2022-06-24-serial-5115-flight-0001-TeleMetrum.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/weather/euroc_2023_all_windows.nc",
+      "kind": "入力・観測データ",
+      "bytes": 588572,
+      "sha256": "a3d9e08eb3bb4480d1b8ef03b06878a1a1f76397fdc9dcc929fe5cc856f61d56",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/weather/euroc_2023_all_windows.nc",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/data/weather/spaceport_america_pressure_levels_2023_hourly.nc",
+      "kind": "入力・観測データ",
+      "bytes": 21826516,
+      "sha256": "25d48e9d03554251dc2d0601dcaa1e441ca7e7c502f573fceb4ce5c058da8694",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/weather/spaceport_america_pressure_levels_2023_hourly.nc",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/docs/examples/defiance_flight_sim.ipynb",
+      "kind": "飛行計算モデル",
+      "bytes": 229162,
+      "sha256": "0348a6fc8de79458cbc4a48fec1ef3489f5c6a511fd7a215289c34b03aea939b",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/defiance_flight_sim.ipynb",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/docs/examples/halcyon_flight_sim.ipynb",
+      "kind": "飛行計算モデル",
+      "bytes": 471976,
+      "sha256": "ee4e85b91244c95bd4ae0381521aa077e817018e386f2afa9384918dbc453f25",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/halcyon_flight_sim.ipynb",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/docs/examples/prometheus_2022_flight_sim.ipynb",
+      "kind": "飛行計算モデル",
+      "bytes": 337413,
+      "sha256": "44e5dfd07323771d54dec3bfb596f943620915d81f162a6b8cc25c3ea1438186",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/prometheus_2022_flight_sim.ipynb",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/docs/user/motors/hybridmotor.rst",
+      "kind": "利用資料",
+      "bytes": 4790,
+      "sha256": "1d8ae9d420511953beabeb2ccca1b7c26c015a1151cb0e4578eeef78b3d9dd0d",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/user/motors/hybridmotor.rst",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MH01",
+      "path": "ハイブリッド/モデル/MH01-RocketPy/pyproject.toml",
+      "kind": "付属文書",
+      "bytes": 2649,
+      "sha256": "c28c77341e5603ec65ce56a7131b9846185657cdd3a4d1a137a55f0f2e304486",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/pyproject.toml",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/LICENSE.TXT",
+      "kind": "付属文書",
+      "bytes": 35983,
+      "sha256": "d67156f31ed192d8b84328d822c706069c2055872457adb047133bd1dea7d26a",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/LICENSE.TXT",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/README.md",
+      "kind": "付属文書",
+      "bytes": 15911,
+      "sha256": "0f8525dbe533927abce41c052973babacf59588b83e1ca31e38e76ebe42d736b",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/README.md",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/3D printable nose cone and fins.ork",
+      "kind": "機体設計モデル",
+      "bytes": 210986,
+      "sha256": "f7805f774a5374b09a05332b945e154690da317025f8ece644786e0154ebc3dd",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/3D%20printable%20nose%20cone%20and%20fins.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/A simple model rocket.ork",
+      "kind": "機体設計モデル",
+      "bytes": 198735,
+      "sha256": "53369c1707ca2f7959c0a2df2ef5af5d508806c7d0d3010026843905de18f4ae",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/A%20simple%20model%20rocket.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/ARC payload rocket.ork",
+      "kind": "機体設計モデル",
+      "bytes": 106192,
+      "sha256": "3f6be2f1c6a7228f988471fb7707fc34afb67e209e646d1d13302e33cef2b026",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/ARC%20payload%20rocket.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Airstart timing.ork",
+      "kind": "機体設計モデル",
+      "bytes": 284985,
+      "sha256": "254f5251fbd66540c5b8529e10edb20edc851ed87528d59ea8f7779c3a2c5f40",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Airstart%20timing.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Chute release.ork",
+      "kind": "機体設計モデル",
+      "bytes": 88215,
+      "sha256": "3e7d7d4910ff45fbf045faeb74d3c49fade958fad78b69a238b20759826c91c5",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Chute%20release.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Clustered motors.ork",
+      "kind": "機体設計モデル",
+      "bytes": 130846,
+      "sha256": "676c83198308d0d44efbc280a97275b07783225aaaeab29c58100a8686af5a46",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Clustered%20motors.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Deployable payload.ork",
+      "kind": "機体設計モデル",
+      "bytes": 334055,
+      "sha256": "1fa8005a9f9ac17570f07f605c388305d0e804de81a2f5a79a5e97adf2151e41",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Deployable%20payload.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Dual parachute deployment.ork",
+      "kind": "機体設計モデル",
+      "bytes": 270244,
+      "sha256": "3b484264187f7867cfad875dcb16ba6b9e0aa4830f926414fb622c04c72f45dc",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Dual%20parachute%20deployment.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Parallel booster staging.ork",
+      "kind": "機体設計モデル",
+      "bytes": 305433,
+      "sha256": "999a7af8aacd4a27dc3f24b0a5c06a34bd8907139412299def0f91081227d570",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Parallel%20booster%20staging.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Pods--airframes and winglets.ork",
+      "kind": "機体設計モデル",
+      "bytes": 198797,
+      "sha256": "0237cd9d96054164b9026ffc5a182949ac2cd7c4fbd87785ead3862cb87a1ba0",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Pods--airframes%20and%20winglets.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Pods--powered with recovery deployment.ork",
+      "kind": "機体設計モデル",
+      "bytes": 114832,
+      "sha256": "d0f191636d5a13c36124997ad6803c661718e987ccba09024c907f4ef665a6c0",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Pods--powered%20with%20recovery%20deployment.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Simulation extensions.ork",
+      "kind": "機体設計モデル",
+      "bytes": 310492,
+      "sha256": "ed66db65f26f21ff722640e5ff3930d80109fbed662bd0f0ec3d60aa32f6bb8b",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Simulation%20extensions.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Simulation scripting.ork",
+      "kind": "機体設計モデル",
+      "bytes": 331078,
+      "sha256": "8119275c9f81dc538572fd89c9ed0861a6617c5b6fb88effd64d2c9b5a205a03",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Simulation%20scripting.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Three stage low power rocket.ork",
+      "kind": "機体設計モデル",
+      "bytes": 299975,
+      "sha256": "01658f55a89cfa3722b0b7c499b4f25c6562bfdfe885fe7a2511f8a4c5abca9a",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Three%20stage%20low%20power%20rocket.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Tube fin rocket.ork",
+      "kind": "機体設計モデル",
+      "bytes": 53634,
+      "sha256": "dc184622d49050c259b82effb72fd0177da9fddeef2e378335bcc55935dc240f",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Tube%20fin%20rocket.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS14",
+      "path": "固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Two stage high power rocket.ork",
+      "kind": "機体設計モデル",
+      "bytes": 183938,
+      "sha256": "ccb52e5002b0106c005e29b891487f851754d2891d910231eea68023fb171ebd",
+      "source": "https://raw.githubusercontent.com/openrocket/openrocket/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Two%20stage%20high%20power%20rocket.ork",
+      "commit": "2d76b9733a1c1ccd5e59eddc7f778a15a803cc34",
+      "validation": "upstream Git blob matched; ORK XML parsed"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/LICENSE",
+      "kind": "付属データ",
+      "bytes": 1064,
+      "sha256": "a1b42d6a96ce303723dfdc2799d9bafa78ac593cbb332655940720471021de1f",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/LICENSE",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/README.md",
+      "kind": "付属データ",
+      "bytes": 1406,
+      "sha256": "85859a70184e7d9e4a69ff2e14491519309daa066d9556edaafc026ee4159cdc",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/README.md",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine.json",
+      "kind": "付属データ",
+      "bytes": 1772,
+      "sha256": "a8d74e656f461f9a67af6ed4ac0501b3bcaaf30742f09eee989dedacc14b08bb",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine.json",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_body.png",
+      "kind": "付属データ",
+      "bytes": 13236,
+      "sha256": "f5f6dc79ae5bde3d48fc21eb56d6b0479030ef5217c7578a9bbd78ec3abe51d1",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_body.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_body.scad",
+      "kind": "形状モデル",
+      "bytes": 839,
+      "sha256": "ce1015fd474814c329d8558e7f86f6b741da3b0dc12291479fb286eb451402a4",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_body.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_body.stl",
+      "kind": "形状モデル",
+      "bytes": 1089957,
+      "sha256": "8b675f9fcaab4fe5f104239afb5f9ba1a49b8d0df61c4ebf41acab8c8aa7a667",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_body.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 6064 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_collar.png",
+      "kind": "付属データ",
+      "bytes": 23021,
+      "sha256": "5f4d7aab05f58c247142ba85b74927b80856e938cde4c67c27cf598fd6e3cf1d",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_collar.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_collar.scad",
+      "kind": "形状モデル",
+      "bytes": 664,
+      "sha256": "262908d1cf1f6e3773511d5ac4e12aec71a3fdd3ebecc19bd48a42600859fa60",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_collar.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_collar.stl",
+      "kind": "形状モデル",
+      "bytes": 726229,
+      "sha256": "0af19ebb682f30c317517ddf5c4b1ade47eebb7a0648109de2264957d4011baa",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_collar.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 4000 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_collar_test.png",
+      "kind": "付属データ",
+      "bytes": 19420,
+      "sha256": "5fe20b6ade711be18ecb91c893e933b656ec068ff9e59d49c917b4620174331c",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_collar_test.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_collar_test.scad",
+      "kind": "形状モデル",
+      "bytes": 3338,
+      "sha256": "fb9d780166e733b8931aa73657a0ac6518064efb5f18da2dc4622ff748412dcd",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_collar_test.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_collar_test.stl",
+      "kind": "形状モデル",
+      "bytes": 2164482,
+      "sha256": "8fc34bf843e188c99673496eb4419b579fa6c6c6afaf83ad4ad8b384cc9a8a53",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_collar_test.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 12096 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_engine_mount.png",
+      "kind": "付属データ",
+      "bytes": 15207,
+      "sha256": "18caaed28619ef605bbaace97671c5e5f988cc839ec25f00091fe70f299b58a2",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_engine_mount.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_engine_mount.scad",
+      "kind": "形状モデル",
+      "bytes": 609,
+      "sha256": "c3bbd6443b453a322237be955bff233305c6cdaf4d117b036d9e5351612b62a0",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_engine_mount.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_engine_mount.stl",
+      "kind": "形状モデル",
+      "bytes": 989285,
+      "sha256": "6791dfec49b3dee4c2cc3fbf55c3dc0b61751ec11e5ed419e1e843cb53ea2317",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_engine_mount.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 5600 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_fin.png",
+      "kind": "付属データ",
+      "bytes": 7144,
+      "sha256": "f2162fb0662344c8d35edae678c164fb8016514ba0024f35ecb96646ecd2a058",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_fin.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_fin.scad",
+      "kind": "形状モデル",
+      "bytes": 494,
+      "sha256": "93d637d994d8bca7d27a6c75a58a6c7e9abf12b7d27772baa64f76a6e456ba5a",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_fin.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_fin.stl",
+      "kind": "形状モデル",
+      "bytes": 1957,
+      "sha256": "8d8433a9802beb2d15cc1b4362e3443fa38669f155bb1ddb3f587e823061c91a",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_fin.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 12 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_launchlug.png",
+      "kind": "付属データ",
+      "bytes": 8673,
+      "sha256": "00eafc197863ecaa7252948e666067b4b36e769d86579fe7cc17970633641466",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_launchlug.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_launchlug.scad",
+      "kind": "形状モデル",
+      "bytes": 181,
+      "sha256": "5169c995ca23ced347f462a17319d10a72a44413ebd59cdf06fc03180ad7b2a1",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_launchlug.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_launchlug.stl",
+      "kind": "形状モデル",
+      "bytes": 265526,
+      "sha256": "699d83adbd5b46810f929d32598f13a54e49c614b31fd21c1bbdd610a752abbc",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_launchlug.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 1600 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_nosecone.png",
+      "kind": "付属データ",
+      "bytes": 24752,
+      "sha256": "1fc0f309ee3e6674a05321b830d4796fb46825b27c904c675631b2a570576cf3",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_nosecone.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_nosecone.scad",
+      "kind": "形状モデル",
+      "bytes": 7258,
+      "sha256": "cafa3b84d02f79f87e3de27426a217b3a8fa6a9ad7ef6d191239a03b6ee0272d",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_nosecone.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_nosecone.stl",
+      "kind": "形状モデル",
+      "bytes": 14931035,
+      "sha256": "f604c85a3290339b89ac53fe5f463ad23673840303117deb770e4ccf55d6fa25",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_nosecone.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 76928 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_tail.png",
+      "kind": "付属データ",
+      "bytes": 10980,
+      "sha256": "1c607ece7e43e77a75e40d6ee34383148d18588f06ee693e1440417c64d5577f",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_tail.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_tail.scad",
+      "kind": "形状モデル",
+      "bytes": 3878,
+      "sha256": "9b6f60239104b940cad6bb506075d094861d4988241741d70b20af9daeb4fbc7",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_tail.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/d/d_engine_tail.stl",
+      "kind": "形状モデル",
+      "bytes": 1909250,
+      "sha256": "34ebb5862d89fad267e46ed03a69881c87326efe88b5cb441a6ca33a8edf4279",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/d/d_engine_tail.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 10796 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/e/e_engine.json",
+      "kind": "付属データ",
+      "bytes": 1771,
+      "sha256": "a1812a6fb13b9ccf8dbd5445458643dba94990ded9e13d864ffc6d313d24e8e8",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/e/e_engine.json",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/example_launch.png",
+      "kind": "付属データ",
+      "bytes": 1252253,
+      "sha256": "fa13b7375f6108d45006b8e7f2ddb2a2b726739922d569578ba74a0740c0fdc9",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/example_launch.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/exploded_rocket.png",
+      "kind": "付属データ",
+      "bytes": 40743,
+      "sha256": "9a1dd8e557a5ca4f6944f78d03777bb60540c6380c9f03db03752d46e817866e",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/exploded_rocket.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/launchpad.jpg",
+      "kind": "付属データ",
+      "bytes": 4139,
+      "sha256": "e49758c5ab7a85537e3a81191fa946e47d8b2218c50ac3267aab6907d849fb04",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/launchpad.jpg",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/makerbot.jpg",
+      "kind": "付属データ",
+      "bytes": 63998,
+      "sha256": "af088536ed5c2fbc90d4af3a8d04b9e5fc819463f90026481aa6e97906af8606",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/makerbot.jpg",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/model_rocket_motors.jpg",
+      "kind": "付属データ",
+      "bytes": 34558,
+      "sha256": "b7aaf68fcfbc9cc8fbdc26784a438bb01ee842e5d76432550b02a93223191cdd",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/model_rocket_motors.jpg",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/openscad.png",
+      "kind": "付属データ",
+      "bytes": 5415,
+      "sha256": "8a0e885f7acb7ab3bbb2f17189f1ef1b8a6fda517ba07e014a2d7af04ad9b593",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/openscad.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/openspace.jpg",
+      "kind": "付属データ",
+      "bytes": 33809,
+      "sha256": "d6063567de6ee37af054d1d20af68d77e3a7fd95f2b2170940f06f6889bf6a00",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/openspace.jpg",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/print_ex1.jpg",
+      "kind": "付属データ",
+      "bytes": 459111,
+      "sha256": "6d6b21f44d5e0e0efa5aa41e7c5fa39667604384536f244014baa0cc8a9dd354",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/print_ex1.jpg",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/print_ex2.jpg",
+      "kind": "付属データ",
+      "bytes": 766024,
+      "sha256": "93e2613c923f6c3ca2a37f99d8b0d4d3de7bc5bcd2f6167763b316ebff72cdf1",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/print_ex2.jpg",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/python-logo.jpg",
+      "kind": "付属データ",
+      "bytes": 40269,
+      "sha256": "11d50b7497fa5707645025b8b186a076975f4b30f5cf53030b68d00a6471ae24",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/python-logo.jpg",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/terminal_install.png",
+      "kind": "付属データ",
+      "bytes": 46237,
+      "sha256": "35798a020e525cbdb07c9d702bdcad8d05fc4b7d0e2d9b258908c5bdb98c7ce0",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/terminal_install.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/images/two_stage_launch.png",
+      "kind": "付属データ",
+      "bytes": 366451,
+      "sha256": "b7cead48cc70c00731e791319962423f05209995ab8518ca6d3cb8743259a018",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/images/two_stage_launch.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine.json",
+      "kind": "付属データ",
+      "bytes": 1778,
+      "sha256": "4ff389b456484c795416c8bf93ecdd175b112304d2ce227f4fd47d3cfc8292db",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine.json",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_body.png",
+      "kind": "付属データ",
+      "bytes": 12964,
+      "sha256": "ba05e546a4c0133ad26a6a35f1eb233f9c85d42d28dcc66b16765a31da369ac0",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_body.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_body.scad",
+      "kind": "形状モデル",
+      "bytes": 839,
+      "sha256": "6cc9c6291317c1d8dbad79021f8089c4cc34d20e335a51cdc887639d798f29f9",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_body.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_body.stl",
+      "kind": "形状モデル",
+      "bytes": 1083822,
+      "sha256": "ac8f8b524c44350758aa946c52dcb3dacdf4db5a27099b456d80cb147c302cbb",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_body.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 6048 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar.png",
+      "kind": "付属データ",
+      "bytes": 21065,
+      "sha256": "c4a58a97e2a0a504d4f73d314a1ab2a6592bdf7a2b9ec85f3719b702d8ebb63d",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_collar.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar.scad",
+      "kind": "形状モデル",
+      "bytes": 664,
+      "sha256": "2440f0b3aea01803ded7e4f660120cb80570e65cfdaaf0629fae8cd0cf12b7df",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_collar.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar.stl",
+      "kind": "形状モデル",
+      "bytes": 721423,
+      "sha256": "5570fb35e233cb731501777b572a6ed9ede2ae5b760124e2906f9e28a78286b9",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_collar.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 4000 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar_test.png",
+      "kind": "付属データ",
+      "bytes": 18771,
+      "sha256": "37d20cc9f5bca85c0d7d2666a49a31044222f3e1740c0d90c1de9edf0b2bf48d",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_collar_test.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar_test.scad",
+      "kind": "形状モデル",
+      "bytes": 3338,
+      "sha256": "51f32930f3a5eac68c34700afbbf586643dd6895ad0c08afbe54230220a30b31",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_collar_test.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar_test.stl",
+      "kind": "形状モデル",
+      "bytes": 2153875,
+      "sha256": "3ea44862187e15709c301d1ba68ef842ec2516c0bf5662772f3bf1a31f3bfc3f",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_collar_test.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 12072 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_engine_mount.png",
+      "kind": "付属データ",
+      "bytes": 15366,
+      "sha256": "6560713e0512cff872c04c2180fa462d9f1813a4289711a155b24c88692b10ac",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_engine_mount.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_engine_mount.scad",
+      "kind": "形状モデル",
+      "bytes": 603,
+      "sha256": "98fb1fa1fadfaaa3d0328ca4424ba0e6154027d426c36cfc73f6862162dc0b42",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_engine_mount.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_engine_mount.stl",
+      "kind": "形状モデル",
+      "bytes": 855623,
+      "sha256": "30fb9b34b58aa714986e7a3fdeec87e69eda2060afdd65f7cc7f06c37b0f7bee",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_engine_mount.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 4816 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_fin.png",
+      "kind": "付属データ",
+      "bytes": 7057,
+      "sha256": "e154599699c0ec7a6a94c89b85282a97f3ef5c1cced156136a194e272d54177a",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_fin.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_fin.scad",
+      "kind": "形状モデル",
+      "bytes": 494,
+      "sha256": "9783560234170a38f3fdb586f614e5b279e287acc07a945b73b1a245778c69e9",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_fin.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_fin.stl",
+      "kind": "形状モデル",
+      "bytes": 1939,
+      "sha256": "4bb29c86d2d74e482478f9c84fb166ba87d7471eda83a90effb10fbc79c0009b",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_fin.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 12 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_launchlug.png",
+      "kind": "付属データ",
+      "bytes": 8673,
+      "sha256": "00eafc197863ecaa7252948e666067b4b36e769d86579fe7cc17970633641466",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_launchlug.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_launchlug.scad",
+      "kind": "形状モデル",
+      "bytes": 181,
+      "sha256": "450d71967593dd012ccd4d8ee2d2c2d8a39812425c94b9d6a9644dc8bd89889e",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_launchlug.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_launchlug.stl",
+      "kind": "形状モデル",
+      "bytes": 265504,
+      "sha256": "3656c98116f086dcd4787e75d6aa94e4422b6a16c6097a4702d81843cdd0de85",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_launchlug.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 1600 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_nosecone.png",
+      "kind": "付属データ",
+      "bytes": 24185,
+      "sha256": "b2caa51801b581d923a6a86c36cc974691d7f0ddb693b4ddc99a0510e8d56ebf",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_nosecone.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_nosecone.scad",
+      "kind": "形状モデル",
+      "bytes": 6384,
+      "sha256": "8be85cbe04e5856b0355d1c4bfd7424fc3e87ea41fd8b7a0fc54de4858e99209",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_nosecone.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_nosecone.stl",
+      "kind": "形状モデル",
+      "bytes": 13150194,
+      "sha256": "700242dd85be2307297cbbd19f3ed91463cfea6ab1a3ebeed4272b71c80d47d2",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_nosecone.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 67720 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_tail.png",
+      "kind": "付属データ",
+      "bytes": 11068,
+      "sha256": "76ab0a17041e2dadf5a91b5b3e0fdb7b22a710f8d4c5d156ad6a6fb3ce6ef0a1",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_tail.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_tail.scad",
+      "kind": "形状モデル",
+      "bytes": 3872,
+      "sha256": "f8a48a439e1d7250bb082e622c6d3af22fa216e68259dbce82bd63950b06249d",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_tail.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini/mini_engine_tail.stl",
+      "kind": "形状モデル",
+      "bytes": 1696866,
+      "sha256": "8fbbb01be6afd67001e74aed6713f7bda5a34c79c89743e9bdfbffbac892900f",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini/mini_engine_tail.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 9580 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini_8fin/rocket.json",
+      "kind": "付属データ",
+      "bytes": 1597,
+      "sha256": "58453d07ab7a907f7a7d4e27d67ec3e0918adfcfd84dd2358c31fe9447318e2a",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini_8fin/rocket.json",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini_8fin/rocket_tail.png",
+      "kind": "付属データ",
+      "bytes": 11414,
+      "sha256": "26dbf61597670e649d42d05bc288080f8114527147a5665157bd807c44918e02",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini_8fin/rocket_tail.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini_8fin/rocket_tail.scad",
+      "kind": "形状モデル",
+      "bytes": 6015,
+      "sha256": "f4bb3d4558357ba47a4d0b3aaae274520cc44be6a350b4d11c445fb07feabd1e",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini_8fin/rocket_tail.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini_8fin/rocket_tail.stl",
+      "kind": "形状モデル",
+      "bytes": 1713701,
+      "sha256": "0e9f6ac0c7b49f4eef82d05a4657947112aa865065c67c38f850ee12036db65b",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini_8fin/rocket_tail.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 9672 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini_8fin_spin/rocket.json",
+      "kind": "付属データ",
+      "bytes": 1597,
+      "sha256": "93944f839ebb428f37a306e71cb800d5ca697bcc947f3d7b53e6f5defee770f2",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini_8fin_spin/rocket.json",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini_8fin_spin/rocket_tail.png",
+      "kind": "付属データ",
+      "bytes": 13518,
+      "sha256": "ac13b0c7ac9a5387cfec8308b1cf79bcf00911fabe54499c09cbf3fe1bcf83be",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini_8fin_spin/rocket_tail.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini_8fin_spin/rocket_tail.scad",
+      "kind": "形状モデル",
+      "bytes": 6015,
+      "sha256": "646ba5dcbb5acf90a9b0a9e7dcb0736153cd0b08e21a73c03d78c08c9d01a4dc",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini_8fin_spin/rocket_tail.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/mini_8fin_spin/rocket_tail.stl",
+      "kind": "形状モデル",
+      "bytes": 1802681,
+      "sha256": "34bbf33545aec78f4774d516ed6a324051d60a1096c8a041e024b46ecbfb3ef0",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/mini_8fin_spin/rocket_tail.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 10132 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine.json",
+      "kind": "付属データ",
+      "bytes": 1785,
+      "sha256": "878c6092e43c0a13548b2577bee964d71efba0722b80234ca1baefe2a79ae632",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine.json",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_body.png",
+      "kind": "付属データ",
+      "bytes": 11749,
+      "sha256": "cb29937884a7dc74af5844bed217d48014182576a9229aee3f7e004a802cb592",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_body.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_body.scad",
+      "kind": "形状モデル",
+      "bytes": 840,
+      "sha256": "5d8c5e68a579502500ce6646c6bf2f349a945eeec1c499820b542618a5389f7b",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_body.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_body.stl",
+      "kind": "形状モデル",
+      "bytes": 1089955,
+      "sha256": "081fad5830586fc97c22392085aaf6417ee8809d641bcddce980cd69a535bb3d",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_body.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 6032 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_collar.png",
+      "kind": "付属データ",
+      "bytes": 22490,
+      "sha256": "2edaf0e98d75e9490c03a3b3cab7a5c142c6431f6fe71c3f22fbddba3acb7adf",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_collar.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_collar.scad",
+      "kind": "形状モデル",
+      "bytes": 665,
+      "sha256": "dae3dd042277881451559cd342369fc51a856a6c8de81becfb509a89127c57c8",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_collar.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_collar.stl",
+      "kind": "形状モデル",
+      "bytes": 730191,
+      "sha256": "d030880f59bdc450ac196908bc280d48c454c02beb1f97fe4b04217c9c35ecbb",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_collar.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 4000 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_collar_test.png",
+      "kind": "付属データ",
+      "bytes": 17559,
+      "sha256": "eb25e8c348c2c11555364bf05820b6108f52ca4667fbce140a0c7776c23803b3",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_collar_test.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_collar_test.scad",
+      "kind": "形状モデル",
+      "bytes": 3342,
+      "sha256": "922e8875b8f5018141dfbf1219598bee1917a499868a4f520433bf5531ab270e",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_collar_test.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_collar_test.stl",
+      "kind": "形状モデル",
+      "bytes": 2168696,
+      "sha256": "ed8f2160d9326affd184dba57fe79412b783db430451379d13368216398916c2",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_collar_test.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 12048 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_engine_mount.png",
+      "kind": "付属データ",
+      "bytes": 13818,
+      "sha256": "74dfc464a4b2753084daf3523071919c08bd431ad0772782745711573532d53b",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_engine_mount.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_engine_mount.scad",
+      "kind": "形状モデル",
+      "bytes": 606,
+      "sha256": "b1a99b7b3384d40e84408efa0e5e3413b77d7552ec21a7ba1eebeafbe4370841",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_engine_mount.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_engine_mount.stl",
+      "kind": "形状モデル",
+      "bytes": 860560,
+      "sha256": "47a0caa8a34156008421b6adb56a408d3e3b43bfb1a15487627bd79bf8f7d434",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_engine_mount.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 4816 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_fin.png",
+      "kind": "付属データ",
+      "bytes": 6944,
+      "sha256": "925c2d911ccad0476c4cd866fe97d15e777de8d47ce1cb4a731f4e4e522caf83",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_fin.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_fin.scad",
+      "kind": "形状モデル",
+      "bytes": 494,
+      "sha256": "ec365c06cfcc9f7939e8b87c59d04b48b75809635a0637ecb9f528c9bc5cc0e8",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_fin.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_fin.stl",
+      "kind": "形状モデル",
+      "bytes": 1957,
+      "sha256": "ee8d8133692b5ae6dbe103475357551c3b151bd32e42e511fc18ac7aa5f7b6c0",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_fin.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 12 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_launchlug.png",
+      "kind": "付属データ",
+      "bytes": 8673,
+      "sha256": "00eafc197863ecaa7252948e666067b4b36e769d86579fe7cc17970633641466",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_launchlug.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_launchlug.scad",
+      "kind": "形状モデル",
+      "bytes": 181,
+      "sha256": "cc255da86fc1ecfcfa757ac9ff837afd9a0586ba6ed24ab66b7e0cdd12f1002a",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_launchlug.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_launchlug.stl",
+      "kind": "形状モデル",
+      "bytes": 265572,
+      "sha256": "5f19a328b8f61074d8f95377a4754246cb4e96cfda4bbbc7129e68328db911c7",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_launchlug.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 1600 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_nosecone.png",
+      "kind": "付属データ",
+      "bytes": 22312,
+      "sha256": "4aac472659ae0907349154f6e4662210431a836333680160e2af0e3ae1a03d13",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_nosecone.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_nosecone.scad",
+      "kind": "形状モデル",
+      "bytes": 7388,
+      "sha256": "55526a70570b1608a7e6be88b28388a8a477748ab3002a6787579daa68863768",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_nosecone.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_nosecone.stl",
+      "kind": "形状モデル",
+      "bytes": 15257444,
+      "sha256": "5180e39fe6b3ce12881b586a581db67b6341157bb99689755e4b8176773cba4e",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_nosecone.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 78512 triangles"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_tail.png",
+      "kind": "付属データ",
+      "bytes": 11029,
+      "sha256": "24020ed76720028c35a5f7d8069bcef4678b1f683c0868283279a12eed0ba1dc",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_tail.png",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_tail.scad",
+      "kind": "形状モデル",
+      "bytes": 3876,
+      "sha256": "f182c3c7c3d7cdabb63d1e417a2b4e219769068ca8c163c90e3a63365869676b",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_tail.scad",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS15",
+      "path": "固体/モデル/MS15-Rockit/examples/std/standard_engine_tail.stl",
+      "kind": "形状モデル",
+      "bytes": 1843600,
+      "sha256": "73423b99625b348266215ab397cb9b2b1146d13515b339d5131c42bea5b8d884",
+      "source": "https://raw.githubusercontent.com/vishnubob/rockit/cbf10616b0d689cbe364fb4190f6b1e75330298b/examples/std/standard_engine_tail.stl",
+      "commit": "cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "validation": "upstream Git blob matched; ASCII STL 10348 triangles"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/LICENSE",
+      "kind": "付属文書",
+      "bytes": 1079,
+      "sha256": "c96e7b71dcf3295c4514afa19b1e345f323cead81ddc336696e7397b81934a13",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/LICENSE",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/README.md",
+      "kind": "付属文書",
+      "bytes": 16878,
+      "sha256": "b1a24ecfded69e3acf3c2dec711e72bfc8a43b0fdced114a1b8b9c975e543725",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/README.md",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/motors/aerotech/AeroTech_K828FJ.eng",
+      "kind": "入力・観測データ",
+      "bytes": 593,
+      "sha256": "ba778b6add25bb0d866ca22b68eb63a0bac93313f4ed65afc5a720f396073d1b",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/motors/aerotech/AeroTech_K828FJ.eng",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/motors/cesaroni/Cesaroni_4895L1395-P.eng",
+      "kind": "入力・観測データ",
+      "bytes": 148,
+      "sha256": "eb09768c01f3c5f7290e77e93ee5fc307ca282c079558cf7195b5a17c7bb9784",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/motors/cesaroni/Cesaroni_4895L1395-P.eng",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/rockets/EPFL_Bella_Lui/bella_lui_flight_data_filtered.csv",
+      "kind": "入力・観測データ",
+      "bytes": 26260,
+      "sha256": "ccf8bcecd91d5b912e8f8b3bcf9efe13248453e1a81dc79d2b4daea4e985de2d",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/EPFL_Bella_Lui/bella_lui_flight_data_filtered.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/rockets/NDRT_2020/ndrt_2020_flight_data.csv",
+      "kind": "入力・観測データ",
+      "bytes": 72472,
+      "sha256": "5e64b446199988ac183b2f3965d76da27e57496bb2a33f78df73aa23fd18d7b8",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/NDRT_2020/ndrt_2020_flight_data.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/rockets/camoes/drag_coefficient_power_off.csv",
+      "kind": "入力・観測データ",
+      "bytes": 118,
+      "sha256": "51842d053e3b9a372142dfd07bf5e70aeddfb0aa03989b3cd49cbfdde16394be",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/camoes/drag_coefficient_power_off.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/rockets/camoes/drag_coefficient_power_on.csv",
+      "kind": "入力・観測データ",
+      "bytes": 118,
+      "sha256": "51842d053e3b9a372142dfd07bf5e70aeddfb0aa03989b3cd49cbfdde16394be",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/camoes/drag_coefficient_power_on.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/rockets/camoes/flight_data.csv",
+      "kind": "入力・観測データ",
+      "bytes": 436836,
+      "sha256": "8ceb1a196901569e32a6e9f09067feebb5ca1406d686e402f726e715a1be1dcc",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/camoes/flight_data.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/rockets/camoes/gnss_flight.csv",
+      "kind": "入力・観測データ",
+      "bytes": 23051,
+      "sha256": "ea6129167650b503477282e6dd2864530145bc33a26487a612dcfc4e781f99e6",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/camoes/gnss_flight.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/rockets/camoes/thrust_source.csv",
+      "kind": "入力・観測データ",
+      "bytes": 1837,
+      "sha256": "2104527e6fc8a97d909ef7370f585618c0be6d0334fe3cc9a77e715fa865b941",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/camoes/thrust_source.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/weather/bella_lui_weather_data_ERA5.nc",
+      "kind": "入力・観測データ",
+      "bytes": 47616,
+      "sha256": "51a60794fca3a4511436ee54821307a557576399fe5d1252bbf7c7b639809e95",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/weather/bella_lui_weather_data_ERA5.nc",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/weather/euroc_2023_all_windows.nc",
+      "kind": "入力・観測データ",
+      "bytes": 588572,
+      "sha256": "a3d9e08eb3bb4480d1b8ef03b06878a1a1f76397fdc9dcc929fe5cc856f61d56",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/weather/euroc_2023_all_windows.nc",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/data/weather/ndrt_2020_weather_data_ERA5.nc",
+      "kind": "入力・観測データ",
+      "bytes": 47620,
+      "sha256": "e23b2e402bd2b8ed22cee249264601bf85d40e46391daa32dbd7b781b9979034",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/weather/ndrt_2020_weather_data_ERA5.nc",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/docs/examples/bella_lui_flight_sim.ipynb",
+      "kind": "飛行計算モデル",
+      "bytes": 575266,
+      "sha256": "1402eee9b084da9307acd9ec84e3f730118d0f6897f25943f2d8a691749061af",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/bella_lui_flight_sim.ipynb",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/docs/examples/camoes_flight_sim.ipynb",
+      "kind": "飛行計算モデル",
+      "bytes": 627004,
+      "sha256": "dca32f4603c1acfdce58ffaf6ffce0355767d99da1db2a3ee88c5f60dd50140b",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/camoes_flight_sim.ipynb",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/docs/examples/ndrt_2020_flight_sim.ipynb",
+      "kind": "飛行計算モデル",
+      "bytes": 559458,
+      "sha256": "ac6ac18064b7297c2f272035bb9e555902aad816add0b7860f6641ad033591b2",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/ndrt_2020_flight_sim.ipynb",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/docs/user/motors/solidmotor.rst",
+      "kind": "利用資料",
+      "bytes": 2694,
+      "sha256": "c6fab802309e2614cff70311c46e7db27b1ac90787a2697540bf95f1e810ea60",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/user/motors/solidmotor.rst",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS16",
+      "path": "固体/モデル/MS16-RocketPy/pyproject.toml",
+      "kind": "付属文書",
+      "bytes": 2649,
+      "sha256": "c28c77341e5603ec65ce56a7131b9846185657cdd3a4d1a137a55f0f2e304486",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/pyproject.toml",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/LICENSE",
+      "kind": "付属文書",
+      "bytes": 1079,
+      "sha256": "c96e7b71dcf3295c4514afa19b1e345f323cead81ddc336696e7397b81934a13",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/LICENSE",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/README.md",
+      "kind": "付属文書",
+      "bytes": 16878,
+      "sha256": "b1a24ecfded69e3acf3c2dec711e72bfc8a43b0fdced114a1b8b9c975e543725",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/README.md",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/berkeley/drag.csv",
+      "kind": "入力・観測データ",
+      "bytes": 175266,
+      "sha256": "5c9f9c1469c61433929d9998c7c6551c000ce67a62c4fa8a4f9380a1ee9f6311",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/berkeley/drag.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/berkeley/pressurantMassFiltered.csv",
+      "kind": "入力・観測データ",
+      "bytes": 354601,
+      "sha256": "b68bd036c084cb16e8b03a90ea633624d147bd7f3cab5693954ee983a16387cc",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/berkeley/pressurantMassFiltered.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/berkeley/test124_Lox_Volume.csv",
+      "kind": "入力・観測データ",
+      "bytes": 14385,
+      "sha256": "dad272fff8c2e157a130c8f7354f9759deef89c399d2c7fd2fa444c7d95a7942",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/berkeley/test124_Lox_Volume.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/berkeley/test124_Propane_Volume.csv",
+      "kind": "入力・観測データ",
+      "bytes": 14283,
+      "sha256": "1ff3ef893cd26bf918b92d30600ddbdec4b73abf7d7b01e9ffde990f630353c8",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/berkeley/test124_Propane_Volume.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/berkeley/test124_Thrust_Curve.csv",
+      "kind": "入力・観測データ",
+      "bytes": 57959,
+      "sha256": "ca78ae1c36e6ab692d154b413310aea5b4487bc920965793c543e33f2d27200e",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/berkeley/test124_Thrust_Curve.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/hedy/hedy_power_off_drag.csv",
+      "kind": "入力・観測データ",
+      "bytes": 7478,
+      "sha256": "2b8acdaf6fdb14857a52d700cf7ead4ef7c7e49d4f6f104c664a4f38b263af12",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/hedy/hedy_power_off_drag.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/hedy/hedy_power_on_drag.csv",
+      "kind": "入力・観測データ",
+      "bytes": 2467,
+      "sha256": "e20e706348d60db73de1a0740ea730d839bd6bdc9847706d57f0650bf7d452eb",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/hedy/hedy_power_on_drag.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/hedy/hedy_thrust_euroc_launch.csv",
+      "kind": "入力・観測データ",
+      "bytes": 116,
+      "sha256": "b088f163c876838be3fa4ddcc38a9d839c881dff1b4816025b1a87770e3e6d2b",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/hedy/hedy_thrust_euroc_launch.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/tust/hedy_power_off_drag.csv",
+      "kind": "入力データ互換コピー",
+      "bytes": 7478,
+      "sha256": "2b8acdaf6fdb14857a52d700cf7ead4ef7c7e49d4f6f104c664a4f38b263af12",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/hedy/hedy_power_off_drag.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "Identical bytes; compatibility path for upstream notebook tust reference"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/tust/hedy_power_on_drag.csv",
+      "kind": "入力データ互換コピー",
+      "bytes": 2467,
+      "sha256": "e20e706348d60db73de1a0740ea730d839bd6bdc9847706d57f0650bf7d452eb",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/hedy/hedy_power_on_drag.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "Identical bytes; compatibility path for upstream notebook tust reference"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/rockets/tust/hedy_thrust_euroc_launch.csv",
+      "kind": "入力データ互換コピー",
+      "bytes": 116,
+      "sha256": "b088f163c876838be3fa4ddcc38a9d839c881dff1b4816025b1a87770e3e6d2b",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/rockets/hedy/hedy_thrust_euroc_launch.csv",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "Identical bytes; compatibility path for upstream notebook tust reference"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/data/weather/hedy_euroc_2025_weather_data.nc",
+      "kind": "入力・観測データ",
+      "bytes": 401193,
+      "sha256": "eab6309bf95b3429c0d7792c04d2a8dd47b6bafb0f56f6ae2ead8a8d42d54a81",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/data/weather/hedy_euroc_2025_weather_data.nc",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/docs/examples/SEB_liquid_motor.ipynb",
+      "kind": "飛行計算モデル",
+      "bytes": 2863566,
+      "sha256": "21dc138b18a277ebcb5faf464d123c61c042f3217ae6795a54c7d3d04a87551a",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/SEB_liquid_motor.ipynb",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/docs/examples/hedy_flight_sim.ipynb",
+      "kind": "飛行計算モデル",
+      "bytes": 1249141,
+      "sha256": "0feb477c3e254afa5ade9bcfb6a44c31f21416e7c1585900a2c90f427b628fe5",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/hedy_flight_sim.ipynb",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched; JSON parsed"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/docs/user/motors/liquidmotor.rst",
+      "kind": "利用資料",
+      "bytes": 5954,
+      "sha256": "cc29b3bbf467f12d33352c05122573a2c7ffad81e8c657294857e08d58eb8b5a",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/user/motors/liquidmotor.rst",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/docs/user/motors/tanks.rst",
+      "kind": "利用資料",
+      "bytes": 12534,
+      "sha256": "8988a4ae1d25e911ed34bbb428893ea5549d23c027d2fc6b91595c27ef1bb242",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/user/motors/tanks.rst",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "ML01",
+      "path": "液体/モデル/ML01-RocketPy/pyproject.toml",
+      "kind": "付属文書",
+      "bytes": 2649,
+      "sha256": "c28c77341e5603ec65ce56a7131b9846185657cdd3a4d1a137a55f0f2e304486",
+      "source": "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/pyproject.toml",
+      "commit": "9bd6ad3af8f97bafa3201d4e70eba2877e66e040",
+      "validation": "upstream Git blob matched"
+    }
+  ]
+}
