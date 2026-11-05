@@ -94,6 +94,13 @@ PASS_CRITERIA: dict[str, float] = {
     "payload_shortfall_tolerance_kg": 0.0,  # design must carry at least the required payload
 }
 
+# Opt-in aerodynamics (rocketwright/aero, docs/aero.md). "none"/null keeps the module Cd.
+AERO_BACKEND_NAMES = "auto|barrowman|openfoam_pipeline|lbm_gpu"
+# SIMPLIFICATION: aero is evaluated at one representative airspeed per tier and its Cd is then
+# held constant over the whole flight (as the module constants are).
+AERO_QUERY_SPEED_MPS: dict[str, float] = {"bottle": 15.0, "amateur": 50.0}
+AERO_QUERY_ALPHAS_DEG = (0.0, 4.0)
+
 # tune_pitch_program budget: ~80 ascents at ~50-100 ms each, i.e. a few seconds per call.
 _TUNE_MAX_EVALUATIONS = 80
 
@@ -190,6 +197,7 @@ def get_tool_definitions() -> list[dict[str, Any]]:
     tier_enum = {"type": "string", "enum": [t.value for t in Tier]}
     part_tier = {"type": "string", "enum": ["bottle", "amateur"]}
     stage_enum = {"type": "string", "enum": list(ALL_STAGES)}
+    aero_backend = _nullable({"type": "string"})
     return [
         {
             "name": "classify_requirement",
@@ -206,10 +214,10 @@ def get_tool_definitions() -> list[dict[str, Any]]:
             "description": (
                 "List catalog items: engines and strap-on boosters (commercial/heavy, "
                 "catalog/engines.yaml), parts (bottle/amateur) and solid motors (amateur, RASP "
-                ".eng files). Filter by tier and/or free-text query. Use the returned `id` "
-                "values verbatim as engine_id / booster_id / motor_id in designs. For water "
-                "rockets use kind=resources to find candidate materials, components and "
-                "equipment by model, shelf or role (e.g. fins, vibration, mass_measurement). "
+                ".eng files). Filter by tier and/or query; use `id` verbatim as engine_id / "
+                "booster_id / motor_id. For water "
+                "rockets use kind=resources to find materials, components and "
+                "equipment by model, shelf or role (e.g. fins, mass_measurement). "
                 "Resource ids identify planning candidates, not simulator inputs or inventory."
             ),
             "strict": True,
@@ -233,8 +241,9 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "trace, warnings, source_id. Commercial/heavy need engine ids from "
                 "search_catalog. tune_pitch=true (orbit goals, a few seconds) searches "
                 "pitch_start_s / initial_pitch_deg for the target orbit and returns "
-                "`tuned_design` to adopt; the open-loop gravity turn is sensitive (0.1 deg can "
-                "move the perigee by tens of km)."
+                "`tuned_design` to adopt (0.1 deg can move the perigee by tens of km). "
+                f"aero_backend (null = off): {AERO_BACKEND_NAMES} gives the flight Cd (CFD: "
+                "minutes, cached; on request only)."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -244,6 +253,7 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                     "seed": _nullable({"type": "integer"}),
                     "requirement": _nullable(req),
                     "tune_pitch": {"type": "boolean"},
+                    "aero_backend": aero_backend,
                 }
             ),
         },
@@ -257,9 +267,8 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "orbit-insertion errors (commercial/heavy), warnings and `nominal`. "
                 f"n: null = {DISPERSION_DEFAULT_N}, max {DISPERSION_MAX_N}. Run it on passing "
                 "designs only and quote success_rate from it. cost_jpy: the parts bill total "
-                "(bill.cost_jpy of the design_from_parts / auto_design result) for a "
-                "bottle/amateur parts design, so the budget is judged on the bill; null = the "
-                "cost.py estimate."
+                "(bill.cost_jpy from design_from_parts / auto_design) so the budget is judged "
+                "on the bill; null = cost.py estimate."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -283,9 +292,8 @@ def get_tool_definitions() -> list[dict[str, Any]]:
             "name": "render_drawing",
             "description": (
                 "Render a dimensioned SVG side view of a design (deterministic; commercial/heavy "
-                "are concept sketches). The SVG itself is not returned: the result carries an "
-                "artifact `id`, `svg_chars` and `download.svg` (a path served by the API) that "
-                "you quote in the final answer."
+                "are concept sketches). Returns artifact `id`, `svg_chars` and `download.svg` (an "
+                "API path) to quote in the final answer."
             ),
             "strict": True,
             "input_schema": _obj({"design": design}),
@@ -297,9 +305,9 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "ONE design. `result_json` is the simulate_design result for that design as JSON "
                 "text (copy the tool result verbatim; its source_id is used as the provenance of "
                 "every metric). `dispersion_json` is the matching run_dispersion result as JSON "
-                "text, or null. `requirement` is the normalised requirement, or null. The report "
-                "text is not returned: the result carries `id`, `markdown_chars`, `bom_rows` and "
-                "a `download` map (report .md, json, bom .csv paths) to quote in the final answer."
+                "text, or null. `requirement` is the normalised requirement, or null. Returns "
+                "`id`, `markdown_chars`, `bom_rows` and `download` paths (md, json, csv) to quote "
+                "in the final answer."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -398,6 +406,7 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                     "env": _nullable(env),
                     "requirement": _nullable(req),
                     "seed": _nullable({"type": "integer"}),
+                    "aero_backend": aero_backend,
                 }
             ),
         },
@@ -455,6 +464,47 @@ def get_tool_definitions() -> list[dict[str, Any]]:
 
 
 # --------------------------------------------------------------------------- helpers
+
+
+def _aero_eval(design: Design, backend: Any) -> tuple[dict[str, float], dict[str, Any] | None]:
+    """(simulate kwargs, aero summary) for an opt-in aero backend; ({}, None) when off."""
+    if backend is None or backend == "none":
+        return {}, None
+    if backend not in AERO_BACKEND_NAMES.split("|"):  # "none" handled above
+        raise ValueError(f"aero_backend must be one of {AERO_BACKEND_NAMES}, got {backend!r}")
+    if isinstance(design, MultistageDesign):
+        raise ValueError("aero_backend covers the bottle and amateur tiers only")
+    from rocketwright import aero  # lazy: only opt-in callers pay for it
+
+    query = aero.AeroQuery(
+        design=design,
+        speed_mps=AERO_QUERY_SPEED_MPS[design.tier],
+        alphas_deg=AERO_QUERY_ALPHAS_DEG,
+    )
+    result = aero.evaluate(query, backend=backend)
+    summary = result.summary()
+    summary["cd_for_flight_model"] = aero.cd_for_physics(result, design)
+    return {"cd": summary["cd_for_flight_model"]}, summary
+
+
+def _with_aero(result: SimResult, summary: dict[str, Any] | None) -> SimResult:
+    """Attach the aero numbers (unit-suffixed metrics) and their provenance (warnings)."""
+    if summary is None:
+        return result
+    metrics = dict(result.metrics)
+    metrics["aero_cd_ratio"] = summary["cd_for_flight_model"]
+    for key, metric in (
+        ("static_margin_cal", "aero_static_margin_cal"),
+        ("x_cp_from_nose_m", "aero_x_cp_m"),
+    ):
+        if summary.get(key) is not None:
+            metrics[metric] = summary[key]
+    note = (
+        f"aero: Cd {summary['cd_for_flight_model']:.3f} from {summary['backend']} "
+        f"({summary['fidelity']}{', provisional' if summary['provisional'] else ''}"
+        f"{', cached' if summary['cached'] else ''}; {summary['source']})"
+    )
+    return result.model_copy(update={"metrics": metrics, "warnings": [*result.warnings, note]})
 
 
 def _parse_design(data: Any) -> Design:
@@ -882,7 +932,11 @@ def _tool_design_from_parts(inp: dict[str, Any]) -> dict[str, Any]:
             "was not simulated; fix the `issues` with severity error first"
         )
         return out
-    sim = _simulate_dispatch(design, env, seed, req, cost_jpy=bill.cost_jpy)
+    aero_kw, aero_summary = _aero_eval(design, inp.get("aero_backend"))
+    sim = _simulate_dispatch(design, env, seed, req, cost_jpy=bill.cost_jpy, **aero_kw)
+    sim = _with_aero(sim, aero_summary)
+    if aero_summary is not None:
+        out["aero"] = aero_summary
     build_warnings = [f"build: {i.message}" for i in issues]
     out["sim"] = sim.model_copy(
         update={"warnings": list(sim.warnings) + build_warnings}
@@ -974,7 +1028,11 @@ def _tool_simulate(inp: dict[str, Any]) -> dict[str, Any]:
     if inp.get("tune_pitch"):
         tuned = _tune_pitch(design, env, req)
         design = tuned
-    out = _simulate_dispatch(design, env, seed, req).model_dump(mode="json")
+    aero_kw, aero_summary = _aero_eval(design, inp.get("aero_backend"))
+    sim = _with_aero(_simulate_dispatch(design, env, seed, req, **aero_kw), aero_summary)
+    out = sim.model_dump(mode="json")
+    if aero_summary is not None:
+        out["aero"] = aero_summary
     if tuned is not None:
         out["tuned_design"] = tuned.model_dump(mode="json")
     return out
