@@ -13,6 +13,21 @@
 | [PR #8](https://github.com/masatoshibukawa/RocketCreater/pull/8) | 21件の材料・部品・機材候補。#6に同じ実装を含む | `d98243d` |
 | [PR #9](https://github.com/masatoshibukawa/RocketCreater/pull/9) | 黒いドック型画面と4状態のUI案 | `882cd74` |
 
+## 最新チャットからの追加統合
+
+2026年11月5日の再確認では、以下の確定済み成果を追加した。元PRのマージは行わず、対象ディレクトリの変更だけをこの統合ブランチへ取り込む。
+
+| 出典 | 内容 | 確認したコミット |
+| --- | --- | --- |
+| [PR #7](https://github.com/masatoshibukawa/RocketCreater/pull/7) | mainにある2Lコカ・コーラ想定のCAD v2、5 STLの検査とスライス記録 | `ecb270e` |
+| [PR #13](https://github.com/masatoshibukawa/RocketCreater/pull/13) | 2L CADと物理を保つ写真由来の1080p設計紹介・上昇予測、再生成コード・照合記録 | `a59a12f` |
+| [PR #14](https://github.com/masatoshibukawa/RocketCreater/pull/14) | 固体・液体・ハイブリッド・共通の50資料とモデル目録 | `bdb6b6c` |
+| [PR #15](https://github.com/masatoshibukawa/RocketCreater/pull/15) | 途中結果の固定、変更の適用、組立の閲覧と実施記録を分けるUX仕様・3画面 | `2f2ef51` |
+
+1.5L・60g・30mの既存探索と、2L・3枚フィンのCAD v2は別設計。2Lの映像・CADを1.5L探索の成果物として添付しない。2Lの胴径110mm・高さ315mmは未実測の仮定であり、現物への嵌合・保持・回収・飛行の検証を引き継がない。履歴の閲覧、結果の固定、実作業の完了も別々に扱う。
+
+別チャットで進行中の `scenarios/thermostructural/` は未コミットだったため取り込んでいない。熱・材料応力・搭載部の評価を、完了した解析として表示しない。組立PDFと出力テキストの詳細化も最新の要求として引き継ぐ。
+
 別チャットのユーザー指定から、最初の製作用対象はペットボトルロケット、途中の節目で次の工程へ進むか選択する方式、設計説明動画と打ち上げCGの両方、解析中の小さな作業キャラクターを引き継ぐ。月までの設計は将来目標であり、このペトロケ用解析を外挿しない。
 
 | 担当 | 決めること・実行すること | 持たせない権限 |
