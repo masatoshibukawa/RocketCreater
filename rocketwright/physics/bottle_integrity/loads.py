@@ -129,7 +129,7 @@ def propulsion(design, cfg: LoadConfig):
     )
     pressure_end = trace[-1, 3]
     return {
-        "completed": pressure_end <= cfg.ambient_pa + 50.1,
+        "completed": bool(pressure_end <= cfg.ambient_pa + 50.1),
         "scope": "dry ideal gas, lumped heat exchange, quasi-steady convergent discharge",
         "liquid_end": {"time_s": time, "pressure_pa": end_values[0], "temperature_k": end[2]},
         "air_duration_s": trace[-1, 0] - time if exhausted else 0,
