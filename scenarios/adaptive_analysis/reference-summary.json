@@ -1,0 +1,1152 @@
+{
+  "status": "conditional_followup_complete",
+  "physical_qualification": false,
+  "pool_counts": {
+    "variables": 26,
+    "targets": 7,
+    "methods": 17,
+    "evaluations": 9,
+    "actions": 23
+  },
+  "actions": [
+    {
+      "id": "diagnose",
+      "seconds": 0.03100000019185245,
+      "status": "completed",
+      "fingerprint": "097e25d9842dcb5c21dc278d82bdb649765b6e6b20df73a9498cf2f8d62eaa92",
+      "artifact_hash": "aff5c66f128ff9cb3f17ed19583379166cc5a35093f13aaa14aa51f3923fafd0"
+    },
+    {
+      "id": "aero-sensitivity",
+      "seconds": 10.718999999808148,
+      "status": "completed",
+      "fingerprint": "02594454c91b9b3cef09aff24de153ab69b79ba87f315f9f7fac79a274a07fa2",
+      "artifact_hash": "5cf5744dd490ab815f0bba72a05d21f2fc2432d2369b3cabb101f36a1e4cd8c2"
+    },
+    {
+      "id": "fin-candidates",
+      "seconds": 0.1410000000614673,
+      "status": "completed",
+      "fingerprint": "9e4c3979484908eba276dd25a3c2b180710eb601cf582ce7905959b29a1ca87a",
+      "artifact_hash": "3e56f0110afc41c42775ed0a15a651feddd054ae00aed8b0daa9c2a963eb8bd2"
+    },
+    {
+      "id": "fin-confirm",
+      "seconds": 59.781999999890104,
+      "status": "completed",
+      "fingerprint": "40a062a66b8ebe5fd61b481d3b6914f859f21fd21c5819d3a8ebd4240edbae66",
+      "artifact_hash": "2bb577ffbdfc57ef90d478553cd05e74942e789376c9c243636ca8356033af09"
+    },
+    {
+      "id": "mass-reflight",
+      "seconds": 1.406999999890104,
+      "status": "completed",
+      "fingerprint": "04b3f4a388a0ee091de92a5ca51fc48937f31e0ad401b9bef27a81db6cb570e2",
+      "artifact_hash": "ce66117e47e3cae084f39ec1338a1c581866a58223660289fb3c50d8176baf28"
+    },
+    {
+      "id": "longer-average",
+      "seconds": 52.438000000081956,
+      "status": "completed",
+      "fingerprint": "477924309e60fbfd15e8c3502f79595ed50036e875d836914d04c8c37cb55266",
+      "artifact_hash": "d9391e1ae76551401a1f8662fe5dbb7e58ec6483b2c299c98a2410aef4ab2df1"
+    },
+    {
+      "id": "angle-stencil",
+      "seconds": 150.92199999978766,
+      "status": "completed",
+      "fingerprint": "dae75d72204e41212b7ea51a0bc563ef99eca36ad430551a6e27f584e8309aaa",
+      "artifact_hash": "c4cfeb4e36497e9f839ca37c9f7e54fda3e140bd6dbb1448b4e4603f9079f2c0"
+    },
+    {
+      "id": "lower-mach",
+      "seconds": 39.40600000019185,
+      "status": "completed",
+      "fingerprint": "e83a4a0961bc0933dd5dd2ffb158e31b619fe4ebcadcd1a26c321b9e25f01cff",
+      "artifact_hash": "82d22769ffc2c7bf677d0a5f4aa13782d383f9d4dad4f48f28c56b8274f3f1ec"
+    },
+    {
+      "id": "angle-grid24",
+      "seconds": 183.7970000000205,
+      "status": "completed",
+      "fingerprint": "719d64e8de10b758e2ce58665ba00fb3f5a19a702bf7f939861e4440f3af67aa",
+      "artifact_hash": "2daab50fa9e455bb1fdf7200802159c459ac01f0c7c3ebefec3db9442b77f836"
+    },
+    {
+      "id": "compare-aero",
+      "seconds": 0.0,
+      "status": "completed",
+      "fingerprint": "3d1efc692bcfb06b7f41cb86931002d4d9350e6d8ad745a692db9582e8b8f061",
+      "artifact_hash": "f98f8260cd91d3f737a6f35b50aeb7648d375f5b1d04222c5749ef3b0b313fe1"
+    },
+    {
+      "id": "trajectory-perturbation",
+      "seconds": 7.875,
+      "status": "completed",
+      "fingerprint": "0c6c69e08f415074b7e68481028e43c5e44c80c2041cae0b90849ef6ea0e2a94",
+      "artifact_hash": "fae02e09ff84b05486d1a03dcd15dd62735ff601cdac4299fa3db1c0dee0d7d3"
+    },
+    {
+      "id": "repair-review",
+      "seconds": 0.0,
+      "status": "completed",
+      "fingerprint": "a07f81f60f146438f089fb9ef68f0783671e988f5651774f9b212483af703105",
+      "artifact_hash": "d9a2e1ff6e0d51525ed9ec4274b4d3b7c61bf5be1b3550481904274f6fba30c4"
+    },
+    {
+      "id": "geometry-candidates",
+      "seconds": 0.14000000013038516,
+      "status": "completed",
+      "fingerprint": "fadd7c2904b7e95262b0f0085edd594c8ef8b56476cee0685ecde1733e93bdcb",
+      "artifact_hash": "38b4fef8c679fa0f019ec3af5893264c653f82d1828a9e49af1905b9dcdca8f6"
+    },
+    {
+      "id": "repair-fin-check",
+      "seconds": 18.593999999808148,
+      "status": "completed",
+      "fingerprint": "47e09598c04dee950dc15f53b36a1ac525a83e36c9c9dcd1f4bb1b447f6c9c34",
+      "artifact_hash": "ff231a483a17b57721473df81972fd46dc09b7c841839ecd6d478f99f161ff42"
+    },
+    {
+      "id": "repair-aero-probe",
+      "seconds": 114.98400000017136,
+      "status": "completed",
+      "fingerprint": "5691cc5c5ff41f984199e9b0a23b1e46db86a7272a346b583e2f6d52f0047eba",
+      "artifact_hash": "5a357b8d02f9a09973dc938bd4458f7e2915d05f9bf6ff29efb8099e270dd79d"
+    }
+  ],
+  "mass_reconciliation": {
+    "solid_assumption_kg": 0.03864,
+    "bom_kg": 0.024,
+    "difference_kg": 0.01464
+  },
+  "aero_comparison": {
+    "training_angles": [
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "holdout_angles": [
+      7,
+      9,
+      11,
+      13
+    ],
+    "interpolation": [
+      {
+        "angle": 7,
+        "norm": 0.08004328783600968,
+        "components": {
+          "Cx": 0.019902374482265218,
+          "Cy": 0.042457053998735866,
+          "Cz": 0.046598033578883515,
+          "Croll": 0.016501329980378246,
+          "Cpitch_y": 0.21147358015951362,
+          "Cm_z": 0.11460383379835658
+        }
+      },
+      {
+        "angle": 9,
+        "norm": 0.044379099495204,
+        "components": {
+          "Cx": 0.00643011061277696,
+          "Cy": 0.019662643042677688,
+          "Cz": 0.018721242723941614,
+          "Croll": 0.0580561106614901,
+          "Cpitch_y": 0.1057791034977803,
+          "Cm_z": 0.06430433636357094
+        }
+      },
+      {
+        "angle": 11,
+        "norm": 0.2598839471536316,
+        "components": {
+          "Cx": 0.005466374948558952,
+          "Cy": 0.18972712916036844,
+          "Cz": 0.012066389348169322,
+          "Croll": 0.1538262820545964,
+          "Cpitch_y": 0.07703656106004281,
+          "Cm_z": 0.4408551935118952
+        }
+      },
+      {
+        "angle": 13,
+        "norm": 0.015747564984911727,
+        "components": {
+          "Cx": 0.03022907065091817,
+          "Cy": 0.0025618223832848124,
+          "Cz": 0.01734313607700883,
+          "Croll": 0.013958079559110666,
+          "Cpitch_y": 0.15347893029755838,
+          "Cm_z": 0.008043178378736434
+        }
+      }
+    ],
+    "duration40_to160": {
+      "norm": 0.021201166306432855,
+      "components": {
+        "Cx": 0.004849873911205358,
+        "Cy": 0.028855365815880756,
+        "Cz": 0.15671339181903984,
+        "Croll": 0.22509084547889524,
+        "Cpitch_y": 0.4969470850892288,
+        "Cm_z": 0.011474553813604684
+      }
+    },
+    "lattice_speed075_to050": {
+      "norm": 0.03332364747139049,
+      "components": {
+        "Cx": 0.0417177936431166,
+        "Cy": 0.02893635154687365,
+        "Cz": 0.07828062632934757,
+        "Croll": 0.01290541529607601,
+        "Cpitch_y": 0.03153816684820171,
+        "Cm_z": 0.02800693815495917
+      }
+    },
+    "grid16_to24": {
+      "10": {
+        "norm": 0.1307105249662948,
+        "components": {
+          "Cx": 0.2592451050964881,
+          "Cy": 0.0844539032869856,
+          "Cz": 0.07984627245746438,
+          "Croll": 0.2385923694524971,
+          "Cpitch_y": 0.030000411796136835,
+          "Cm_z": 0.07461326579566231
+        }
+      },
+      "12": {
+        "norm": 0.12964518185936263,
+        "components": {
+          "Cx": 0.24454337357198022,
+          "Cy": 0.006168932669846892,
+          "Cz": 0.09580396221172106,
+          "Croll": 0.16758885133510293,
+          "Cpitch_y": 0.05746164100841576,
+          "Cm_z": 0.0994059037320427
+        }
+      },
+      "14": {
+        "norm": 0.10873981002900329,
+        "components": {
+          "Cx": 0.27973903782956916,
+          "Cy": 0.03042591394097579,
+          "Cz": 0.17534449008372865,
+          "Croll": 0.1190722947140173,
+          "Cpitch_y": 0.7218776091335721,
+          "Cm_z": 0.03159113151887174
+        }
+      }
+    },
+    "requested_local_tolerance": 0.05,
+    "next_method": "boundary-fitted geometry or interpolated wall treatment; retain current diagnostics",
+    "metrics": {
+      "aero_error": 14.437552182671443,
+      "aero_numerical_pass": false
+    },
+    "reason": "Higher-grid convergence, absolute validation and off-plane coverage remain unresolved; no automatic promotion",
+    "scope": "Lattice-speed comparison also changes time step; Mach and temporal effects are not isolated"
+  },
+  "sensitivity": {
+    "baseline_apogee_m": 21.673203045780586,
+    "components": [
+      {
+        "component": "axial",
+        "apogees": {
+          "-0.1": 22.51266535661157,
+          "-0.05": 22.08228229163339,
+          "0.05": 21.283628811847763,
+          "0.1": 20.912301273933465
+        },
+        "derivative_5pct_m": -7.9865347978562795,
+        "derivative_10pct_m": -8.001820413390526,
+        "central_curvature_m": 7.856053898386506
+      },
+      {
+        "component": "normal",
+        "apogees": {
+          "-0.1": 21.668607647917526,
+          "-0.05": 21.67086663674646,
+          "0.05": 21.67526645782406,
+          "0.1": 21.67730801580762
+        },
+        "derivative_5pct_m": 0.04399821077598176,
+        "derivative_10pct_m": 0.04350183945046382,
+        "central_curvature_m": -0.04904278360271519
+      },
+      {
+        "component": "moment",
+        "apogees": {
+          "-0.1": 21.667178006192056,
+          "-0.05": 21.670148339390433,
+          "0.05": 21.676016745828438,
+          "0.1": 21.678451743108088
+        },
+        "derivative_5pct_m": 0.0586840643800457,
+        "derivative_10pct_m": 0.05636868458015698,
+        "central_curvature_m": -0.07763422610267412
+      }
+    ],
+    "l1_sensitivity_m_per_relative_error": 8.104502688546553,
+    "allocated_aero_error_m": 0.75,
+    "local_coefficient_tolerance": 0.05,
+    "scope": "Local worst-sign sum of component sensitivities, not a global error bound",
+    "metrics": {
+      "required_aero_tolerance": 0.05,
+      "altitude_shortfall": 8.326796954219414
+    }
+  },
+  "nonlinear_fin": {
+    "cases": [
+      {
+        "candidate": {
+          "id": "reference-t1-k500000",
+          "properties": {
+            "young_pa": 2000000000.0,
+            "density": 1200,
+            "warm_ratio": 0.5
+          },
+          "thickness_m": 0.001,
+          "root_k_n_m": 500000.0
+        },
+        "meshes": [
+          {
+            "completed": true,
+            "solver": "CalculiX Version 2.23",
+            "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+            "deck_sha256": "2b3efd3486104159a70094a63886cab99034a6789bc086f487825e1bba362635",
+            "max_displacement_m": 0.09962120422250226,
+            "max_integration_vm_pa": 9628664.72070212,
+            "p95_integration_vm_pa": 7308952.488110405,
+            "nodal_force_sum_n": [
+              0.013637475363490439,
+              -1.4625331309574474,
+              1.7704454952155033
+            ],
+            "solver_stress_unit_pa": 1.0,
+            "solver_force_unit_n": 1.0,
+            "nodes": 2373,
+            "strength_status": "unknown_without_matching_material_evidence",
+            "resolution": 2,
+            "twist_deg": 0.5648755766465438,
+            "peak_twist_deg": 1.2623455334736804
+          },
+          {
+            "completed": true,
+            "solver": "CalculiX Version 2.23",
+            "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+            "deck_sha256": "7ae89f83410a1f502c553cec9e0bdb02f320aaf50a7da7208c3b1c98d4e10344",
+            "max_displacement_m": 0.10028849303239576,
+            "max_integration_vm_pa": 9878656.003499202,
+            "p95_integration_vm_pa": 7347963.502260777,
+            "nodal_force_sum_n": [
+              0.014832032733298478,
+              -1.4715465803381287,
+              1.7630104642928108
+            ],
+            "solver_stress_unit_pa": 1.0,
+            "solver_force_unit_n": 1.0,
+            "nodes": 5141,
+            "strength_status": "unknown_without_matching_material_evidence",
+            "resolution": 3,
+            "twist_deg": 0.5927023888983962,
+            "peak_twist_deg": 1.3064560269221388
+          }
+        ],
+        "mesh_change": {
+          "max_displacement_m": 0.006653692659216115,
+          "p95_integration_vm_pa": 0.0053090919869660524
+        },
+        "numerical_pass": true,
+        "deflection_span_ratio": 0.7163463788028268,
+        "aero_load_domain_pass": false,
+        "strength_status": "unknown: no applicable material/joint allowable"
+      },
+      {
+        "candidate": {
+          "tip_m": 0.0027519658052800656,
+          "max_deflection_m": 0.0027519658052800656,
+          "first_modes_hz": [
+            45.33067280582906,
+            244.88186949176944
+          ],
+          "mass_one_fin_kg": 0.019320000000000004,
+          "root_force_n": 2.385627412068014,
+          "relative_equilibrium_residual": 4.6453609618038865e-11,
+          "id": "stiff_assumption-t1.5-k5e+06",
+          "profile": "stiff_assumption",
+          "properties": {
+            "young_pa": 20000000000.0,
+            "density": 1600,
+            "warm_ratio": 0.85
+          },
+          "thickness_m": 0.0015,
+          "root_k_n_m": 5000000.0,
+          "deflection_span_ratio": 0.019656898609143325,
+          "screen_pass": true,
+          "mass_four_fins_kg": 0.07728000000000002
+        },
+        "meshes": [
+          {
+            "completed": true,
+            "solver": "CalculiX Version 2.23",
+            "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+            "deck_sha256": "5fc242136042091b9381636b4de4a861c0a386d2d1bdaad7d944c5b832dbe3db",
+            "max_displacement_m": 0.002680214436732007,
+            "max_integration_vm_pa": 5112836.3449649345,
+            "p95_integration_vm_pa": 3638373.915954591,
+            "nodal_force_sum_n": [
+              2.4680577813239164e-05,
+              -0.04260749075617318,
+              2.3920833589939523
+            ],
+            "solver_stress_unit_pa": 1.0,
+            "solver_force_unit_n": 1.0,
+            "nodes": 2373,
+            "strength_status": "unknown_without_matching_material_evidence",
+            "resolution": 2,
+            "twist_deg": 0.03855614343404191,
+            "peak_twist_deg": 0.07505280929743287
+          },
+          {
+            "completed": true,
+            "solver": "CalculiX Version 2.23",
+            "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+            "deck_sha256": "d6256079575e46065e906a3d48d8acb91466c832fbd19835f7a77409099476ab",
+            "max_displacement_m": 0.002733436093044643,
+            "max_integration_vm_pa": 5171427.803100699,
+            "p95_integration_vm_pa": 3641214.386014833,
+            "nodal_force_sum_n": [
+              5.764602279730986e-05,
+              -0.04349237386057514,
+              2.3920681261260928
+            ],
+            "solver_stress_unit_pa": 1.0,
+            "solver_force_unit_n": 1.0,
+            "nodes": 5141,
+            "strength_status": "unknown_without_matching_material_evidence",
+            "resolution": 3,
+            "twist_deg": 0.039673928033011285,
+            "peak_twist_deg": 0.0770721973480279
+          }
+        ],
+        "mesh_change": {
+          "max_displacement_m": 0.01947060567761605,
+          "p95_integration_vm_pa": 0.0007800886624945713
+        },
+        "numerical_pass": true,
+        "deflection_span_ratio": 0.019524543521747446,
+        "aero_load_domain_pass": false,
+        "strength_status": "unknown: no applicable material/joint allowable"
+      },
+      {
+        "candidate": {
+          "tip_m": 0.004355749740822589,
+          "max_deflection_m": 0.004355749740822589,
+          "first_modes_hz": [
+            29.411392667460124,
+            158.57033939048824
+          ],
+          "mass_one_fin_kg": 0.028980000000000006,
+          "root_force_n": 2.3856274122361327,
+          "relative_equilibrium_residual": 5.483281519267565e-11,
+          "id": "reference_assumption-t3-k5e+06",
+          "profile": "reference_assumption",
+          "properties": {
+            "young_pa": 2000000000.0,
+            "density": 1200,
+            "warm_ratio": 0.5
+          },
+          "thickness_m": 0.003,
+          "root_k_n_m": 5000000.0,
+          "deflection_span_ratio": 0.031112498148732775,
+          "screen_pass": true,
+          "mass_four_fins_kg": 0.11592000000000002
+        },
+        "meshes": [
+          {
+            "completed": true,
+            "solver": "CalculiX Version 2.23",
+            "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+            "deck_sha256": "4a1f58213bff257297227f2ebfde84fbd519ffb7509cc97f94d3437b5b5a87eb",
+            "max_displacement_m": 0.004368249657642722,
+            "max_integration_vm_pa": 1345264.9621911442,
+            "p95_integration_vm_pa": 943729.9422986315,
+            "nodal_force_sum_n": [
+              0.00016027476426556315,
+              -0.06941799646887556,
+              2.390765750957958
+            ],
+            "solver_stress_unit_pa": 1.0,
+            "solver_force_unit_n": 1.0,
+            "nodes": 2373,
+            "strength_status": "unknown_without_matching_material_evidence",
+            "resolution": 2,
+            "twist_deg": 0.06774033412225237,
+            "peak_twist_deg": 0.1323852809446951
+          },
+          {
+            "completed": true,
+            "solver": "CalculiX Version 2.23",
+            "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+            "deck_sha256": "6769902b7b92aee6aa0d1541633b19e81b02eb454da73a069ddf2343197cd857",
+            "max_displacement_m": 0.00441979553454775,
+            "max_integration_vm_pa": 1353284.3737002793,
+            "p95_integration_vm_pa": 940960.0228367801,
+            "nodal_force_sum_n": [
+              0.0002123221762828354,
+              -0.07027610089030718,
+              2.3907452980680075
+            ],
+            "solver_stress_unit_pa": 1.0,
+            "solver_force_unit_n": 1.0,
+            "nodes": 5141,
+            "strength_status": "unknown_without_matching_material_evidence",
+            "resolution": 3,
+            "twist_deg": 0.06964980670968367,
+            "peak_twist_deg": 0.13585708395102944
+          }
+        ],
+        "mesh_change": {
+          "max_displacement_m": 0.01166250259816648,
+          "p95_integration_vm_pa": 0.0029437164115653225
+        },
+        "numerical_pass": true,
+        "deflection_span_ratio": 0.031569968103912494,
+        "aero_load_domain_pass": false,
+        "strength_status": "unknown: no applicable material/joint allowable"
+      }
+    ],
+    "load_event": {
+      "case": "crosswind-flight",
+      "time_s": 0.2479804150402997,
+      "q_pa": 228.67103524466083,
+      "incidence_deg": 15.09891796139226,
+      "product": 3452.685201305772,
+      "force_one_fin_n": 2.385627411987717,
+      "aero_load_domain_pass": false
+    },
+    "temperature_c": 44.83691394012777,
+    "scope": "Nonlinear structural response to frozen follower pressure, no fluid re-solve; twist requests FSI",
+    "metrics": {
+      "structure_numerical_pass": true
+    }
+  },
+  "reflight": {
+    "cases": [
+      {
+        "candidate": "stiff_assumption-t1.5-k5e+06",
+        "dry_mass_kg": 0.2060673,
+        "apogee_m": 18.734156887966936,
+        "impact_speed_mps": 4.960206921290139,
+        "loaded_cg_mm": 339.6666681700457,
+        "wet_cg_mm": 437.5503060287119,
+        "wet_static_margin_calibers": 0.2777702498011763,
+        "geometry_aero_invalidated": true
+      },
+      {
+        "candidate": "reference_assumption-t3-k5e+06",
+        "dry_mass_kg": 0.24470730000000002,
+        "apogee_m": 16.67067824205522,
+        "impact_speed_mps": 5.038634633912701,
+        "loaded_cg_mm": 365.0709822180171,
+        "wet_cg_mm": 443.37436614260287,
+        "wet_static_margin_calibers": 0.21305847075794304,
+        "geometry_aero_invalidated": true
+      }
+    ],
+    "scope": "Isolated mass/inertia diagnostic using prior rigid zero-thickness aero; not accepted new designs"
+  },
+  "perturbations": [
+    {
+      "delta_tilt_deg": -0.5,
+      "damping": 2,
+      "peak_difference_deg": 2.3417379970204224,
+      "final_difference_deg": 2.3417379970204224,
+      "final_to_initial_input_ratio": 4.683475994040845,
+      "apogee_difference_m": -0.00376185713287569
+    },
+    {
+      "delta_tilt_deg": 0.5,
+      "damping": 2,
+      "peak_difference_deg": 2.3752886017413912,
+      "final_difference_deg": 2.3752886017413912,
+      "final_to_initial_input_ratio": 4.7505772034827825,
+      "apogee_difference_m": 0.001308971928931868
+    },
+    {
+      "delta_tilt_deg": 2.0,
+      "damping": 2,
+      "peak_difference_deg": 9.687794199478729,
+      "final_difference_deg": 9.687794199478729,
+      "final_to_initial_input_ratio": 4.843897099739364,
+      "apogee_difference_m": -0.008823507199799963
+    },
+    {
+      "delta_tilt_deg": -0.5,
+      "damping": 10,
+      "peak_difference_deg": 1.4319169776589882,
+      "final_difference_deg": 1.4319169776589882,
+      "final_to_initial_input_ratio": 2.8638339553179764,
+      "apogee_difference_m": 0.000359035818071618
+    },
+    {
+      "delta_tilt_deg": 0.5,
+      "damping": 10,
+      "peak_difference_deg": 1.4368921973372526,
+      "final_difference_deg": 1.4368921973372526,
+      "final_to_initial_input_ratio": 2.873784394674505,
+      "apogee_difference_m": -0.002697350833358314
+    },
+    {
+      "delta_tilt_deg": 2.0,
+      "damping": 10,
+      "peak_difference_deg": 5.769450717880369,
+      "final_difference_deg": 5.769450717880369,
+      "final_to_initial_input_ratio": 2.8847253589401847,
+      "apogee_difference_m": -0.023464927375606237
+    }
+  ],
+  "geometry": {
+    "pareto_ids": [
+      "s120-r70-t1-stiff_assumption-k5e+06",
+      "s120-r90-t1-stiff_assumption-k5e+06",
+      "s120-r70-t1.5-stiff_assumption-k5e+06",
+      "s140-r70-t1.5-stiff_assumption-k5e+06",
+      "s120-r90-t1.5-stiff_assumption-k5e+06",
+      "s120-r70-t2-stiff_assumption-k5e+06",
+      "s140-r90-t1.5-stiff_assumption-k5e+06",
+      "s140-r70-t2-stiff_assumption-k5e+06",
+      "s120-r70-t2.5-stiff_assumption-k5e+06",
+      "s140-r70-t2.5-stiff_assumption-k5e+06",
+      "s140-r70-t3-stiff_assumption-k5e+06"
+    ],
+    "criteria": {
+      "deflection_span_limit": 0.05,
+      "positive_dry_and_adverse_wet_CP_minus_CG": true
+    },
+    "scope": "Conditional structural/static screen only. New geometry cannot reuse old CFD as qualified evidence.",
+    "next_required": [
+      "geometry-specific CFD with wall/grid verification",
+      "nonlinear FEM and joint data",
+      "recomputed flight loads and mission evaluation"
+    ],
+    "metrics": {
+      "geometry_screen_feasible_count": 27,
+      "geometry_candidate_exists": true
+    }
+  },
+  "lightest": {
+    "id": "s120-r70-t1-stiff_assumption-k5e+06",
+    "span_mm": 120,
+    "root_mm": 70,
+    "thickness_mm": 1,
+    "profile": "stiff_assumption",
+    "root_k_n_m": 5000000.0,
+    "fin_mass_kg": 0.044800000000000006,
+    "dry_mass_kg": 0.1735873,
+    "deflection_span_ratio": 0.03503221925130371,
+    "first_mode_hz": 44.09600447813441,
+    "wet_margin_with_water_shift_mm": 10.158512319689649,
+    "dry_margin_mm": 139.79143650068232,
+    "screen_pass": true,
+    "CFD_invalidated": true,
+    "nonlinear_FEM_required": true
+  },
+  "new_geometry_fem": {
+    "candidate": "s120-r70-t1-stiff_assumption-k5e+06",
+    "meshes": [
+      {
+        "completed": true,
+        "solver": "CalculiX Version 2.23",
+        "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+        "deck_sha256": "7621cb0cb7b11e452adef820441008416226e2107fc8f9e1e7920af44e2717c0",
+        "max_displacement_m": 0.004324668684372802,
+        "max_integration_vm_pa": 7616660.192771391,
+        "p95_integration_vm_pa": 5667255.116428858,
+        "nodal_force_sum_n": [
+          0.00011940875732285989,
+          -0.06624073003423958,
+          1.9773209314553435
+        ],
+        "solver_stress_unit_pa": 1.0,
+        "solver_force_unit_n": 1.0,
+        "nodes": 2373,
+        "strength_status": "unknown_without_matching_material_evidence",
+        "twist_deg": 0.08107837722272507,
+        "peak_twist_deg": 0.16749642408868562
+      },
+      {
+        "completed": true,
+        "solver": "CalculiX Version 2.23",
+        "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+        "deck_sha256": "0fc3dbf6b9eda981a3a397439f3330ecf1243a4f90afb7cb0f11370d65d4d212",
+        "max_displacement_m": 0.004369309837145146,
+        "max_integration_vm_pa": 7839464.93625756,
+        "p95_integration_vm_pa": 5693327.878054224,
+        "nodal_force_sum_n": [
+          0.00017117453970621932,
+          -0.06695408050526007,
+          1.9772980872509998
+        ],
+        "solver_stress_unit_pa": 1.0,
+        "solver_force_unit_n": 1.0,
+        "nodes": 5141,
+        "strength_status": "unknown_without_matching_material_evidence",
+        "twist_deg": 0.08374672897306105,
+        "peak_twist_deg": 0.1723481939635796
+      }
+    ],
+    "mesh_change": {
+      "max_displacement_m": 0.01021698035530294,
+      "p95_integration_vm_pa": 0.004579529263696092
+    },
+    "numerical_pass": true,
+    "aero_load_domain_pass": false,
+    "strength_status": "unknown",
+    "temperature_c": 44.83691394012777,
+    "reference_load_event": {
+      "case": "crosswind-flight",
+      "time_s": 0.2479804150402997,
+      "q_pa": 228.67103524466083,
+      "incidence_deg": 15.09891796139226,
+      "product": 3452.685201305772,
+      "force_one_fin_n": 2.385627411987717,
+      "aero_load_domain_pass": false
+    },
+    "applied_force_one_fin_n": 1.9730225215814399,
+    "metadata_note": "Reference event force belongs to the original fin. Applied force is derived with the changed CNalpha, matching the generated FEM deck. Immutable raw campaign remains unchanged."
+  },
+  "new_geometry_cfd": {
+    "candidate": "s120-r70-t1-stiff_assumption-k5e+06",
+    "cases": [
+      {
+        "shape": "flat",
+        "assembly": "D02/9/carton_wide",
+        "dimensions_mm": {
+          "body_diameter": 90,
+          "nose_length": 100,
+          "egg_bay_length": 82,
+          "canopy_bay_length": 80,
+          "bottle_length": 305,
+          "skirt_length": 110,
+          "skirt_overhang": 5,
+          "fin_root": 70,
+          "fin_tip": 35.0,
+          "fin_span": 120,
+          "fin_sweep": 35,
+          "fin_tab": 10,
+          "fin_tail_inset": 5,
+          "bay_clear_diameter": 84,
+          "dummy_width": 45,
+          "dummy_length": 60,
+          "padding": 8,
+          "fit_allowance": 2,
+          "overall": 572
+        },
+        "cg_mm": 311.61879648422666,
+        "prior_cd": 0.5277283278631213,
+        "d": 16,
+        "grid": [
+          288,
+          160,
+          160
+        ],
+        "width_D": 10.0,
+        "upstream_D": 3,
+        "Re": 107999.99999999999,
+        "lattice_Ma": 0.12990381056766578,
+        "Cs": 0.16,
+        "tau": 0.5000333333333333,
+        "speed_mps": 18.0,
+        "angle_deg": 0.0,
+        "rotated_geometry": true,
+        "surface_loads": {
+          "samples": 200,
+          "points": 8356,
+          "integration_relative_residual": 1.2976362651164857e-07
+        },
+        "geometry_sha256": "a9d264f67decd4b93ca358119ba0bc6fe4cc16704b5c870ec5eb00ef368ae314",
+        "source_sha256": {
+          "run_flow.py": "bb258ad07b3c6263c0557dd1e4bffdbd2fdc0d3adcf8874b788cf2e3b137fb1a",
+          "bottle_flow.cu": "db8a989f487e1d6f1d7df7a18769ab474a7b2d58bee385633148c30b4b30840a"
+        },
+        "cant_deg": 0,
+        "steps": 8557,
+        "paired_samples": true,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.385018348929127,
+          "Cl": 0.005658032997555376,
+          "Cx": 1.385018348929127,
+          "Cy": 0.005658032997555376,
+          "Cz": 0.004351455456834141,
+          "Croll": 0.006303974814294944,
+          "Cpitch_y": -0.004396568739884012,
+          "Cm_z": 0.016102091551576218
+        },
+        "split_window_difference": {
+          "Cd": -0.008587071930770795,
+          "Cl": 0.011233972593656768,
+          "Cx": -0.008587071930770795,
+          "Cy": 0.011233972593656768,
+          "Cz": -0.0027071886304480546,
+          "Croll": 0.021641114984324646,
+          "Cpitch_y": 0.02094109917350384,
+          "Cm_z": 0.025592144052936663
+        },
+        "max_abs_density_departure": 0.008865696378052235,
+        "seconds": 12.75
+      },
+      {
+        "shape": "flat",
+        "assembly": "D02/9/carton_wide",
+        "dimensions_mm": {
+          "body_diameter": 90,
+          "nose_length": 100,
+          "egg_bay_length": 82,
+          "canopy_bay_length": 80,
+          "bottle_length": 305,
+          "skirt_length": 110,
+          "skirt_overhang": 5,
+          "fin_root": 70,
+          "fin_tip": 35.0,
+          "fin_span": 120,
+          "fin_sweep": 35,
+          "fin_tab": 10,
+          "fin_tail_inset": 5,
+          "bay_clear_diameter": 84,
+          "dummy_width": 45,
+          "dummy_length": 60,
+          "padding": 8,
+          "fit_allowance": 2,
+          "overall": 572
+        },
+        "cg_mm": 311.61879648422666,
+        "prior_cd": 0.5277283278631213,
+        "d": 16,
+        "grid": [
+          288,
+          160,
+          160
+        ],
+        "width_D": 10.0,
+        "upstream_D": 3,
+        "Re": 107999.99999999999,
+        "lattice_Ma": 0.12990381056766578,
+        "Cs": 0.16,
+        "tau": 0.5000333333333333,
+        "speed_mps": 18.0,
+        "angle_deg": 5.0,
+        "rotated_geometry": true,
+        "surface_loads": {
+          "samples": 200,
+          "points": 8462,
+          "integration_relative_residual": 3.247248623532222e-07
+        },
+        "geometry_sha256": "a9d264f67decd4b93ca358119ba0bc6fe4cc16704b5c870ec5eb00ef368ae314",
+        "source_sha256": {
+          "run_flow.py": "bb258ad07b3c6263c0557dd1e4bffdbd2fdc0d3adcf8874b788cf2e3b137fb1a",
+          "bottle_flow.cu": "db8a989f487e1d6f1d7df7a18769ab474a7b2d58bee385633148c30b4b30840a"
+        },
+        "cant_deg": 0,
+        "steps": 8557,
+        "paired_samples": true,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.569362702927153,
+          "Cl": 0.7812976857127384,
+          "Cx": 1.495296223933641,
+          "Cy": 0.9151035841524694,
+          "Cz": 0.00228928268127273,
+          "Croll": -0.0014122516472620337,
+          "Cpitch_y": 0.0021760486234597503,
+          "Cm_z": 1.0119587694129855
+        },
+        "split_window_difference": {
+          "Cd": 0.020256117050612366,
+          "Cl": 0.015870017364207234,
+          "Cx": 0.018795873258948603,
+          "Cy": 0.017575064083576786,
+          "Cz": 0.0049666351832106295,
+          "Croll": -0.0022445296211410686,
+          "Cpitch_y": 0.000993801173662312,
+          "Cm_z": 0.03756833929966563
+        },
+        "max_abs_density_departure": 0.0069376686587929726,
+        "seconds": 12.75
+      },
+      {
+        "shape": "flat",
+        "assembly": "D02/9/carton_wide",
+        "dimensions_mm": {
+          "body_diameter": 90,
+          "nose_length": 100,
+          "egg_bay_length": 82,
+          "canopy_bay_length": 80,
+          "bottle_length": 305,
+          "skirt_length": 110,
+          "skirt_overhang": 5,
+          "fin_root": 70,
+          "fin_tip": 35.0,
+          "fin_span": 120,
+          "fin_sweep": 35,
+          "fin_tab": 10,
+          "fin_tail_inset": 5,
+          "bay_clear_diameter": 84,
+          "dummy_width": 45,
+          "dummy_length": 60,
+          "padding": 8,
+          "fit_allowance": 2,
+          "overall": 572
+        },
+        "cg_mm": 311.61879648422666,
+        "prior_cd": 0.5277283278631213,
+        "d": 16,
+        "grid": [
+          288,
+          160,
+          160
+        ],
+        "width_D": 10.0,
+        "upstream_D": 3,
+        "Re": 107999.99999999999,
+        "lattice_Ma": 0.12990381056766578,
+        "Cs": 0.16,
+        "tau": 0.5000333333333333,
+        "speed_mps": 18.0,
+        "angle_deg": 10.0,
+        "rotated_geometry": true,
+        "surface_loads": {
+          "samples": 200,
+          "points": 8530,
+          "integration_relative_residual": 5.0304890801455075e-08
+        },
+        "geometry_sha256": "a9d264f67decd4b93ca358119ba0bc6fe4cc16704b5c870ec5eb00ef368ae314",
+        "source_sha256": {
+          "run_flow.py": "bb258ad07b3c6263c0557dd1e4bffdbd2fdc0d3adcf8874b788cf2e3b137fb1a",
+          "bottle_flow.cu": "db8a989f487e1d6f1d7df7a18769ab474a7b2d58bee385633148c30b4b30840a"
+        },
+        "cant_deg": 0,
+        "steps": 8557,
+        "paired_samples": true,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.8352927147614708,
+          "Cl": 1.4097454037238264,
+          "Cx": 1.5626107742129465,
+          "Cy": 1.7070234387642724,
+          "Cz": 0.0004441196552399689,
+          "Croll": 0.00170748642663822,
+          "Cpitch_y": -0.0044910825108366815,
+          "Cm_z": 1.396869269443471
+        },
+        "split_window_difference": {
+          "Cd": 0.004032821952941523,
+          "Cl": -0.023999202484364712,
+          "Cx": 0.00813897210264436,
+          "Cy": -0.022934308489728883,
+          "Cz": 0.006303660717893814,
+          "Croll": -0.002536045823196947,
+          "Cpitch_y": -0.016982611664369283,
+          "Cm_z": -0.0808753171085701
+        },
+        "max_abs_density_departure": 0.011810682713985443,
+        "seconds": 12.765000000130385
+      },
+      {
+        "shape": "flat",
+        "assembly": "D02/9/carton_wide",
+        "dimensions_mm": {
+          "body_diameter": 90,
+          "nose_length": 100,
+          "egg_bay_length": 82,
+          "canopy_bay_length": 80,
+          "bottle_length": 305,
+          "skirt_length": 110,
+          "skirt_overhang": 5,
+          "fin_root": 70,
+          "fin_tip": 35.0,
+          "fin_span": 120,
+          "fin_sweep": 35,
+          "fin_tab": 10,
+          "fin_tail_inset": 5,
+          "bay_clear_diameter": 84,
+          "dummy_width": 45,
+          "dummy_length": 60,
+          "padding": 8,
+          "fit_allowance": 2,
+          "overall": 572
+        },
+        "cg_mm": 311.61879648422666,
+        "prior_cd": 0.5277283278631213,
+        "d": 16,
+        "grid": [
+          288,
+          160,
+          160
+        ],
+        "width_D": 10.0,
+        "upstream_D": 3,
+        "Re": 107999.99999999999,
+        "lattice_Ma": 0.12990381056766578,
+        "Cs": 0.16,
+        "tau": 0.5000333333333333,
+        "speed_mps": 18.0,
+        "angle_deg": 15.0,
+        "rotated_geometry": true,
+        "surface_loads": {
+          "samples": 200,
+          "points": 8628,
+          "integration_relative_residual": 1.6312849774895466e-07
+        },
+        "geometry_sha256": "a9d264f67decd4b93ca358119ba0bc6fe4cc16704b5c870ec5eb00ef368ae314",
+        "source_sha256": {
+          "run_flow.py": "bb258ad07b3c6263c0557dd1e4bffdbd2fdc0d3adcf8874b788cf2e3b137fb1a",
+          "bottle_flow.cu": "db8a989f487e1d6f1d7df7a18769ab474a7b2d58bee385633148c30b4b30840a"
+        },
+        "cant_deg": 0,
+        "steps": 8557,
+        "paired_samples": true,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 2.3008869746074723,
+          "Cl": 2.0000632906044,
+          "Cx": 1.7048316811266409,
+          "Cy": 2.527426156264223,
+          "Cz": 0.008806605421929624,
+          "Croll": 0.003957447154770429,
+          "Cpitch_y": -0.01805318313369357,
+          "Cm_z": 2.01339334039624
+        },
+        "split_window_difference": {
+          "Cd": 0.0033149479903431534,
+          "Cl": -0.04213045104394264,
+          "Cx": 0.014106156985609353,
+          "Cy": -0.03983691906312714,
+          "Cz": 0.01882389598648677,
+          "Croll": 0.009899970495912291,
+          "Cpitch_y": -0.03408711545585025,
+          "Cm_z": -0.05359096386113782
+        },
+        "max_abs_density_departure": 0.011826609261333942,
+        "seconds": 12.765000000130385
+      },
+      {
+        "shape": "flat",
+        "assembly": "D02/9/carton_wide",
+        "dimensions_mm": {
+          "body_diameter": 90,
+          "nose_length": 100,
+          "egg_bay_length": 82,
+          "canopy_bay_length": 80,
+          "bottle_length": 305,
+          "skirt_length": 110,
+          "skirt_overhang": 5,
+          "fin_root": 70,
+          "fin_tip": 35.0,
+          "fin_span": 120,
+          "fin_sweep": 35,
+          "fin_tab": 10,
+          "fin_tail_inset": 5,
+          "bay_clear_diameter": 84,
+          "dummy_width": 45,
+          "dummy_length": 60,
+          "padding": 8,
+          "fit_allowance": 2,
+          "overall": 572
+        },
+        "cg_mm": 311.61879648422666,
+        "prior_cd": 0.5277283278631213,
+        "d": 24,
+        "grid": [
+          432,
+          240,
+          240
+        ],
+        "width_D": 10.0,
+        "upstream_D": 3,
+        "Re": 107999.99999999999,
+        "lattice_Ma": 0.12990381056766578,
+        "Cs": 0.16,
+        "tau": 0.50005,
+        "speed_mps": 18.0,
+        "angle_deg": 5.0,
+        "rotated_geometry": true,
+        "surface_loads": {
+          "samples": 200,
+          "points": 18580,
+          "integration_relative_residual": 2.2743979751836623e-07
+        },
+        "geometry_sha256": "a9d264f67decd4b93ca358119ba0bc6fe4cc16704b5c870ec5eb00ef368ae314",
+        "source_sha256": {
+          "run_flow.py": "bb258ad07b3c6263c0557dd1e4bffdbd2fdc0d3adcf8874b788cf2e3b137fb1a",
+          "bottle_flow.cu": "db8a989f487e1d6f1d7df7a18769ab474a7b2d58bee385633148c30b4b30840a"
+        },
+        "cant_deg": 0,
+        "steps": 12800,
+        "paired_samples": true,
+        "averaging_tU_D": [
+          20.0,
+          40.0
+        ],
+        "mean": {
+          "Cd": 1.2368463639593843,
+          "Cl": 0.7550409788036448,
+          "Cx": 1.1663336328178417,
+          "Cy": 0.8599660834418131,
+          "Cz": -0.009266031796939704,
+          "Croll": -0.0005621634692203878,
+          "Cpitch_y": 0.0038277002828097906,
+          "Cm_z": 0.9580166952022786
+        },
+        "split_window_difference": {
+          "Cd": 0.010804319279308805,
+          "Cl": 0.04718824334517946,
+          "Cx": 0.006650479184831415,
+          "Cy": 0.0479503363044016,
+          "Cz": -0.003244968823935334,
+          "Croll": 0.03151265095296492,
+          "Cpitch_y": -0.012961038318614736,
+          "Cm_z": 0.0551521785229202
+        },
+        "max_abs_density_departure": 0.009762674570083618,
+        "seconds": 59.54700000002049
+      }
+    ],
+    "grid16_to24": {
+      "Cx": 0.2820484481108816,
+      "Cy": 0.06411590151321,
+      "Cm_z": 0.056305985564601535
+    },
+    "numerical_pass": false,
+    "scope": "Geometry-specific diagnostic probes; incomplete full-angle table and grid evidence",
+    "metrics": {
+      "new_geometry_aero_qualified": false
+    }
+  },
+  "artifacts_sha256": {
+    "output\\adaptive-01\\results.json": "f991967b72876f3723d9a8486710def0b2f6bb149976c36e7beb689ce7b72bc8",
+    "output\\adaptive-01\\history.json": "f77f06b8e54a72a2cf8444f129c82457cad680c304bb51d3d9fbfad778898a32",
+    "output\\adaptive-01\\pool.json": "4607e72dd48507ec8ae11de3822b9501d5f801ee5360b3fd5252e8d936993f7a",
+    "output\\adaptive-geometry-02\\results.json": "72997f6894430722e2b9c6d2a9cf8fad21db5742ae79d0501a2f13fbf97d8f7c",
+    "output\\adaptive-geometry-02\\history.json": "275563f6d3db686e1b7fc261430f540f42512e3eaae375fd1a4185db89736c01",
+    "output\\adaptive-geometry-02\\pool.json": "a94042355d82a99a1f123aad61cdffd0e42c3039eb42a96e9e7465e66461ec5b"
+  },
+  "live_llm_selection_tested": false
+}

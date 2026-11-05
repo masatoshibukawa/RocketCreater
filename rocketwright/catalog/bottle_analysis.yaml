@@ -41,6 +41,22 @@ targets:
   stability: {label: 飛行中の摂動応答, variables: [fin_cant, root_stiffness, fin_young, payload_station, water_fraction]}
   thermal: {label: 待機・噴射中の温度, variables: [gas_temperature, initial_pressure, body_thickness]}
 methods:
+  repair_audit:
+    label: 上位目標未達から探索層を戻す
+    layer: high
+    category: redesign routing
+    phase: after candidate reflight
+    inputs: [hashed prior campaign, declared mission target]
+    outputs: [geometry repair trigger, rejected thickness-only choices]
+    scope: Reconsider geometry when stiffness candidates lose altitude; no pressure increase implied.
+  geometry_screen:
+    label: フィン形状・厚さ・材質・取付の同時候補比較
+    layer: low
+    category: multidisciplinary screening
+    phase: redesign
+    inputs: [prior load event, mass and CG, parametric fin geometry]
+    outputs: [beam response, wet/dry static margin, mass, Pareto candidates]
+    scope: Barrowman and tapered-beam diagnostic; changed geometry invalidates the CFD table and flight prediction.
   audit:
     label: 既存結果の成分別誤差診断
     layer: low
@@ -181,6 +197,14 @@ evaluations:
   strength: {label: 強度と損傷, observables: [stress_demand, buckling, allowable], rule: Match material lot orientation temperature process and load path before allowing a margin., evidence_level: physical}
   acceptance: {label: 実機適合判定, observables: [numerical_pass, model_validated, physical_records], rule: Missing or out-of-domain evidence fails closed., evidence_level: physical}
 actions:
+  repair-review:
+    {target: mission, method: repair_audit, evaluation: mission, uses: [repair_evidence, code, requirements], addresses: [altitude_shortfall], priority: 90, cost_s: 2}
+  geometry-candidates:
+    {target: fin, method: geometry_screen, evaluation: stiffness, depends: [repair-review], uses: [repair_evidence, geometry, material, code, requirements], addresses: [altitude_shortfall, fin_flexibility], priority: 80, cost_s: 30, quality_requires: [geometry_repair_needed]}
+  repair-fin-check:
+    {target: fin, method: fin_nonlinear, evaluation: nonlinear, depends: [geometry-candidates], uses: [repair_evidence, geometry, material, code], addresses: [fin_flexibility], priority: 75, cost_s: 120, quality_requires: [geometry_candidate_exists]}
+  repair-aero-probe:
+    {target: aero, method: cfd, evaluation: cfd_convergence, depends: [geometry-candidates], uses: [repair_evidence, geometry, code], addresses: [aero_error], priority: 75, cost_s: 240, memory_gib: 3.3, quality_requires: [geometry_candidate_exists]}
   diagnose:
     {target: aero, method: audit, evaluation: error_audit, uses: [prior, geometry, code], addresses: [aero_error], priority: 90, cost_s: 2}
   aero-sensitivity:
