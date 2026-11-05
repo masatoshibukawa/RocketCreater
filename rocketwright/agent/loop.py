@@ -327,7 +327,14 @@ async def run_design_loop(
             async with api.messages.stream(
                 model=cfg.design_model,
                 max_tokens=cfg.max_tokens,
-                system=SYSTEM_PROMPT,
+                # Tools and system prompt are about 29k tokens and identical on every turn.
+                system=[
+                    {
+                        "type": "text",
+                        "text": SYSTEM_PROMPT,
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ],
                 tools=tools,
                 messages=messages,
                 thinking={"type": "adaptive", "display": cfg.thinking_display},

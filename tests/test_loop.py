@@ -91,7 +91,7 @@ async def test_scripted_amateur_run_event_sequence():
         assert call["thinking"] == {"type": "adaptive", "display": "summarized"}
         assert call["output_config"] == {"effort": "high"}
         assert "tool_choice" not in call
-        assert all(t["strict"] is True for t in call["tools"])
+        assert all("strict" not in t for t in call["tools"])  # API limit on nullable params
         assert "budget_tokens" not in json.dumps(call["thinking"])
 
     # both tool results of the derive turn went back in ONE user message; the model never
