@@ -1147,7 +1147,17 @@
         "bytes": 263335,
         "format": "html"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "additional_files": [
+        {
+          "path": "液体/原本/ML16.pdf",
+          "sha256": "0c794afac7ff4b9a7db459609ee6f11b83bb3f017bfa98af7af0c9beadcf97ad",
+          "bytes": 326914,
+          "format": "pdf",
+          "pages": 2,
+          "source": "https://www.auth.gr/wp-content/uploads/2026_6_18_ASAT-%CE%9F-%CF%80%CF%81%CF%8E%CF%84%CE%BF%CF%82-%CE%B5%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CF%8C%CF%82-%CF%80%CF%85%CF%81%CE%B1%CF%85%CE%BB%CE%BF%CE%BA%CE%B9%CE%BD%CE%B7%CF%84%CE%AE%CF%81%CE%B1%CF%82-%CF%85%CE%B3%CF%81%CF%8E%CE%BD-%CE%BA%CE%B1%CF%85%CF%83%CE%AF%CE%BC%CF%89%CE%BD-made-in-Greece.pdf"
+        }
+      ]
     },
     {
       "id": "MH16",
@@ -1458,6 +1468,226 @@
         "bytes": 262324,
         "format": "pdf",
         "pages": 8
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS22",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Model Rocketry Catalog — Cat. No. 701",
+      "author": "Estes Industries",
+      "year": "1970",
+      "kind": "メーカー製品カタログの保存版",
+      "scope": "市販固体モーター・機体・周辺製品",
+      "note": "メーカー公式アーカイブから取得。表紙のカタログ番号701と掲載年を照合した。画像スキャン77ページで、現在の製品仕様ではなく1970年の製品比較に使う。",
+      "source": "https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1970_Catalog.pdf?v=1676660950",
+      "download": "https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1970_Catalog.pdf?v=1676660950",
+      "publication_year": 1970,
+      "local": {
+        "path": "固体/原本/MS22.pdf",
+        "sha256": "4b4aee00f5f20901e86a488e194fddf4bcee6015ba44c3c02019294a2670b42d",
+        "bytes": 13351690,
+        "format": "pdf",
+        "pages": 77
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS23",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Flying Model Rockets — Catalog No. 73",
+      "author": "Centuri Engineering Company",
+      "year": "1973",
+      "kind": "メーカー製品カタログの公開保存版",
+      "scope": "市販模型ロケットと部品",
+      "note": "原メーカー刊行物をJimZの公開アーカイブから保存。表紙のCatalog No. 73で年を照合。Saturn系の縮尺模型などを含む51ページの画像スキャン。",
+      "source": "https://www.spacemodeling.org/jimz/publications/centuri_1973_catalog.pdf",
+      "download": "https://www.spacemodeling.org/jimz/publications/centuri_1973_catalog.pdf",
+      "publication_year": 1973,
+      "local": {
+        "path": "固体/原本/MS23.pdf",
+        "sha256": "78a99064295636d015c35e26019a0d69eeab2af61cbf2e2e7f90ca17704de67f",
+        "bytes": 35524100,
+        "format": "pdf",
+        "pages": 51
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS24",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Advanced Model Rocketry Products — Special Edition Catalog No. 741",
+      "author": "Enerjet / Centuri Engineering Company",
+      "year": "1974",
+      "kind": "メーカー製品カタログの公開保存版",
+      "scope": "高出力寄りの市販模型用製品",
+      "note": "JimZの公開アーカイブから保存した6ページの原刊行物。1974年の市販製品と性能表示を比較する資料で、現行の販売・認証状況は示さない。",
+      "source": "https://www.spacemodeling.org/jimz/publications/enerjet_1974_catalog.pdf",
+      "download": "https://www.spacemodeling.org/jimz/publications/enerjet_1974_catalog.pdf",
+      "publication_year": 1974,
+      "local": {
+        "path": "固体/原本/MS24.pdf",
+        "sha256": "a4119a2fb04cecaeb1e5ba7a42cd4e02e328391cc37c14ec7410e9416f1a6dae",
+        "bytes": 13610041,
+        "format": "pdf",
+        "pages": 6
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS25",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Centuri Orion — Retro-Repro, Kit No. KV-41",
+      "author": "Semroc Astronautics Corporation",
+      "year": "2010年3月7日",
+      "kind": "復刻キットのメーカー組立説明書",
+      "scope": "市販固体モーター用Orion機体",
+      "note": "部品図・機体組立・回収系の説明を含む10ページ。原型は1971年カタログ掲載のCenturi機体だが、保存物は2010年のSemroc復刻版説明書。販売店が配布するメーカー原文。",
+      "source": "https://www.apogeerockets.com/downloads/PDFs/semroc-orion.pdf",
+      "download": "https://www.apogeerockets.com/downloads/PDFs/semroc-orion.pdf",
+      "publication_year": 2010,
+      "original_years": [
+        1971
+      ],
+      "local": {
+        "path": "固体/原本/MS25.pdf",
+        "sha256": "890b8a21d411ce242a22115bdca9774857f214ab86d89889b67e914ac943064e",
+        "bytes": 4098424,
+        "format": "pdf",
+        "pages": 10
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS26",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "OpenRocketQD — example designs and Python source",
+      "author": "Jacob Schrum; Cody Crosby / OpenRocketQD contributors",
+      "year": "2025年4月2日のコミット",
+      "kind": "著者公開の機体モデル・解析用ソース",
+      "scope": "低出力固体模型の形状探索",
+      "note": "MS19論文の付属リポジトリ。4つのORK機体、14のPythonソース、README・LICENSE・requirementsを固定コミットで保存。全21ファイルを公開元のGit blobと照合。実行用JARは同梱せず、解析は未実行。",
+      "source": "https://github.com/schrum2/OpenRocketQD/tree/5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "download": null,
+      "license": "GPL-2.0（リポジトリLICENSE）。個別ソースの著作者表示・由来を保持。",
+      "publication_year": 2025,
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "local": {
+        "path": "固体/モデル/MS26-OpenRocketQD"
+      },
+      "download_status": "モデル21ファイル保存済み。ファイル別取得先・SHA-256はモデルファイル目録.jsonを参照。"
+    },
+    {
+      "id": "ML17",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Design of Liquid Propellant Rocket Engines — NASA SP-125",
+      "author": "Dieter K. Huzel; David H. Huang / Rocketdyne",
+      "year": "1967（NTRS文書IDは1971で始まる）",
+      "kind": "NASAの液体推進技術書",
+      "scope": "実機用液体エンジンの研究・設計史",
+      "note": "469ページのNASA公開スキャン。NTRSの版名はSecond Editionだが、保存PDFの扉と書誌の刊行日は1967年のため、年は1967と記録。模型用キットの説明書ではない。",
+      "source": "https://ntrs.nasa.gov/citations/19710019929",
+      "download": "https://ntrs.nasa.gov/api/citations/19710019929/downloads/19710019929.pdf",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "publication_year": 1967,
+      "local": {
+        "path": "液体/原本/ML17.pdf",
+        "sha256": "471e590a0c8e99c36a98132104a3ddcc7097b0b7c561fb2638ce9d3c80e26c87",
+        "bytes": 47789998,
+        "format": "pdf",
+        "pages": 469
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML18",
+      "category": "液体",
+      "lang": [
+        "da"
+      ],
+      "title": "DTU-studerendes raket når europæisk stjernehimmel",
+      "author": "Peter Aagaard Brixen / Danmarks Tekniske Universitet",
+      "year": "2020年11月4日",
+      "kind": "大学自身の飛行報告",
+      "scope": "DANSTARの液体実験機Dragonfly",
+      "note": "デンマーク語による2020年10月24日の飛行報告。到達高度2.2 kmと回収系の不具合を記載し、将来の9 km目標と区別している。学生実験機であり市販模型キットではない。",
+      "source": "https://www.dtu.dk/nyheder/Alle-nyheder/Nyhed?id=b52469fa-10f8-491f-aeee-94602708e3c1",
+      "download": "https://www.dtu.dk/nyheder/Alle-nyheder/Nyhed?id=b52469fa-10f8-491f-aeee-94602708e3c1",
+      "publication_year": 2020,
+      "local": {
+        "path": "液体/原本/ML18.html",
+        "sha256": "87a3a0b355ca0c7992dd9e2e5e2dce4c43d4b812412ed26f1091b3dbe0044ccd",
+        "bytes": 178200,
+        "format": "html"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH23",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "The E-36 Rocket",
+      "author": "NERO-Eindhoven / Nederlandse Federatie voor Raket-Onderzoek",
+      "year": "年不明（1996年9月20日の飛行記録）",
+      "kind": "愛好家団体自身の飛行記録",
+      "scope": "E-36ハイブリッド実験機",
+      "note": "1996年の飛行を開発団体が報告した英語ページ。機体図へのリンクと計画・実測値を含む。飛行日をページの刊行年とは扱わず、外部画像はHTML保存に含まれない。",
+      "source": "https://nerorockets.org/nero/neh-projects-e36.htm",
+      "download": "https://nerorockets.org/nero/neh-projects-e36.htm",
+      "event_years": [
+        1996
+      ],
+      "local": {
+        "path": "ハイブリッド/原本/MH23.html",
+        "sha256": "43e4f2fad7c4c5ad1139be4c46fc4764989201e93bda5c9f8a97a187d6138a17",
+        "bytes": 13813,
+        "format": "html"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC14",
+      "category": "共通",
+      "lang": [
+        "de"
+      ],
+      "title": "Die Rakete zu den Planetenräumen — Deutsches Museum所蔵資料紹介",
+      "author": "Hermann Oberth（原著）; Deutsches Museum（所蔵紹介）",
+      "year": "1923年の書籍（紹介ページの公開年不明）",
+      "kind": "博物館図書館の原著所蔵紹介",
+      "scope": "1920年代のロケット研究史",
+      "note": "博物館が所蔵する1923年刊の著作をドイツ語で解説。保存物は現在の紹介ページHTMLで、1923年の書籍全文ではない。表紙や図版の外部画像は同梱しない。",
+      "source": "https://www.deutsches-museum.de/forschung/bibliothek/unsere-schaetze/mobilitaet/rakete-zu-den-planetenraeumen",
+      "download": "https://www.deutsches-museum.de/forschung/bibliothek/unsere-schaetze/mobilitaet/rakete-zu-den-planetenraeumen",
+      "original_years": [
+        1923
+      ],
+      "coverage": "所蔵書誌・解説のみ",
+      "local": {
+        "path": "共通/原本/MC14.html",
+        "sha256": "e9b0d3e0b117192a4b6a0a6d54f3c814a96d39a2641239ca684d1d0ba69c4192",
+        "bytes": 63420,
+        "format": "html"
       },
       "download_status": "保存済み"
     }

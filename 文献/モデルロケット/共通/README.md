@@ -157,3 +157,15 @@ Raket Model Klub Praha · 2012年3月版 · cs · 模型団体の競技規則
 [配布元・出典](https://www.raketaci.eu/media/kunena/attachments/43/pravidlarakety2012.pdf) · [原本取得先](https://www.raketaci.eu/media/kunena/attachments/43/pravidlarakety2012.pdf) · [保存ファイル](<原本/MC13.pdf>)（8ページ）
 
 利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mc14"></a>
+
+## MC14 Die Rakete zu den Planetenräumen — Deutsches Museum所蔵資料紹介
+
+Hermann Oberth（原著）; Deutsches Museum（所蔵紹介） · 1923年の書籍（紹介ページの公開年不明） · de · 博物館図書館の原著所蔵紹介
+
+対象：1920年代のロケット研究史。博物館が所蔵する1923年刊の著作をドイツ語で解説。保存物は現在の紹介ページHTMLで、1923年の書籍全文ではない。表紙や図版の外部画像は同梱しない。
+
+[配布元・出典](https://www.deutsches-museum.de/forschung/bibliothek/unsere-schaetze/mobilitaet/rakete-zu-den-planetenraeumen) · [原本取得先](https://www.deutsches-museum.de/forschung/bibliothek/unsere-schaetze/mobilitaet/rakete-zu-den-planetenraeumen) · [保存HTML](<原本/MC14.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。

@@ -265,3 +265,15 @@ PARS Roket Grubu · 年不明（2012〜2026年の活動を記述） · tr · 学
 [配布元・出典](https://www.parsroket.com/) · [原本取得先](https://www.parsroket.com/) · [保存HTML](<原本/MH22.html>)
 
 利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mh23"></a>
+
+## MH23 The E-36 Rocket
+
+NERO-Eindhoven / Nederlandse Federatie voor Raket-Onderzoek · 年不明（1996年9月20日の飛行記録） · en · 愛好家団体自身の飛行記録
+
+対象：E-36ハイブリッド実験機。1996年の飛行を開発団体が報告した英語ページ。機体図へのリンクと計画・実測値を含む。飛行日をページの刊行年とは扱わず、外部画像はHTML保存に含まれない。
+
+[配布元・出典](https://nerorockets.org/nero/neh-projects-e36.htm) · [原本取得先](https://nerorockets.org/nero/neh-projects-e36.htm) · [保存HTML](<原本/MH23.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。

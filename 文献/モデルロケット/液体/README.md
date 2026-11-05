@@ -190,6 +190,30 @@ Arif Nur Hakim / LAPAN · 2015 · id · 研究機関の技術論文
 
 対象：ギリシャの大学液体エンジン実験。ASATの地上燃焼試験を大学がギリシャ語で発表。発表時点の試験完了と将来の飛行目標を区別する。
 
-[配布元・出典](https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/) · [原本取得先](https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/) · [保存HTML](<原本/ML16.html>)
+[配布元・出典](https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/) · [原本取得先](https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/) · [保存HTML](<原本/ML16.html>) · [付属PDF](<原本/ML16.pdf>)（2ページ） · [付属PDF取得先](https://www.auth.gr/wp-content/uploads/2026_6_18_ASAT-%CE%9F-%CF%80%CF%81%CF%8E%CF%84%CE%BF%CF%82-%CE%B5%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CF%8C%CF%82-%CF%80%CF%85%CF%81%CE%B1%CF%85%CE%BB%CE%BF%CE%BA%CE%B9%CE%BD%CE%B7%CF%84%CE%AE%CF%81%CE%B1%CF%82-%CF%85%CE%B3%CF%81%CF%8E%CE%BD-%CE%BA%CE%B1%CF%85%CF%83%CE%AF%CE%BC%CF%89%CE%BD-made-in-Greece.pdf)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml17"></a>
+
+## ML17 Design of Liquid Propellant Rocket Engines — NASA SP-125
+
+Dieter K. Huzel; David H. Huang / Rocketdyne · 1967（NTRS文書IDは1971で始まる） · en · NASAの液体推進技術書
+
+対象：実機用液体エンジンの研究・設計史。469ページのNASA公開スキャン。NTRSの版名はSecond Editionだが、保存PDFの扉と書誌の刊行日は1967年のため、年は1967と記録。模型用キットの説明書ではない。
+
+[配布元・出典](https://ntrs.nasa.gov/citations/19710019929) · [原本取得先](https://ntrs.nasa.gov/api/citations/19710019929/downloads/19710019929.pdf) · [保存ファイル](<原本/ML17.pdf>)（469ページ）
+
+利用条件：NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。
+
+<a id="ml18"></a>
+
+## ML18 DTU-studerendes raket når europæisk stjernehimmel
+
+Peter Aagaard Brixen / Danmarks Tekniske Universitet · 2020年11月4日 · da · 大学自身の飛行報告
+
+対象：DANSTARの液体実験機Dragonfly。デンマーク語による2020年10月24日の飛行報告。到達高度2.2 kmと回収系の不具合を記載し、将来の9 km目標と区別している。学生実験機であり市販模型キットではない。
+
+[配布元・出典](https://www.dtu.dk/nyheder/Alle-nyheder/Nyhed?id=b52469fa-10f8-491f-aeee-94602708e3c1) · [原本取得先](https://www.dtu.dk/nyheder/Alle-nyheder/Nyhed?id=b52469fa-10f8-491f-aeee-94602708e3c1) · [保存HTML](<原本/ML18.html>)
 
 利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
