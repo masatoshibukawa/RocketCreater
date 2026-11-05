@@ -19,13 +19,17 @@
 <body>
   <header>
     <h1>RocketWright / UIドラフト</h1>
-    <p>黒いワークベンチと小さな整備員を組み合わせた6枚の画面案。機材設定と、途中結果を映す背面スクリーンも加えています。画像による機能提案で、数値・待ち時間・生成物は表示例です。</p>
+    <p>黒いワークベンチと小さな整備員を組み合わせた9枚の画面案。07〜09は工程ナビゲーションをそろえ、解析の解説・変更確認・組立の操作を具体化した最新版です。画像による機能提案で、数値・待ち時間・生成物は表示例です。</p>
     <p><a href="output-spec.md">途中出力・最終出力の具体仕様</a>：最初は実機のペットボトル水ロケット、長期目標は月へのミッション。画像中の展示用模型という出力名は、この最新方針に合わせて改訂します。</p>
     <p><a href="assembly-spec.md">詳細な組立方法と作業余裕の仕様</a>：成人・子どもの条件を選び、手・指・工具の経路と組立順序を設計時に確認します。</p>
     <p><a href="equipment-settings-spec.md">機材と作業環境の設定仕様</a>：プリンター・材料・工具等を選び、今回の設計条件へ適用します。</p>
-    <nav aria-label="ドラフト画面"><a href="#mission">01 目的と条件</a><a href="#analysis">02 解析中</a><a href="#comparison">03 設計案を比較</a><a href="#outputs">04 動画と出力</a><a href="#equipment">05 機材設定</a><a href="#backscreen">06 解析スクリーン</a></nav>
+    <nav aria-label="最新版の画面"><a href="#explained">07 解析を理解する</a><a href="#change-review">08 変更の影響を確認する</a><a href="#assembly">09 組立を確認する</a></nav>
+    <nav aria-label="以前のドラフト画面"><a href="#mission">01 目的と条件</a><a href="#analysis">02 解析中</a><a href="#comparison">03 設計案を比較</a><a href="#outputs">04 動画と出力</a><a href="#equipment">05 機材設定</a><a href="#backscreen">06 解析スクリーン</a></nav>
   </header>
   <main>
+    <section id="explained"><h2>07 / 図の意味と、まだ判断できないことを説明する</h2><p>条件・設計・解析・比較・組立・出力の工程を上部に固定。右の解説で目的・届いた結果・判断待ちを分け、固定した過去結果と実行中の解析を区別する。</p><figure><a href="drafts/07-analysis-explained.png"><img src="drafts/07-analysis-explained.png" width="1672" height="941" alt="共通の工程ナビゲーションを持つ解析画面。背面スクリーンの右に何を確かめるか、今分かること、まだ決められないことを説明。下に固定した過去結果と最新へ戻る操作がある。"></a><figcaption>図・条件・単位・表示範囲は解析器が出力した値に結び付ける仕様案。描画自体は画像生成による表示例。<a href="drafts/ux-refinement-prompts.json">生成プロンプト</a>。</figcaption></figure></section>
+    <section id="change-review"><h2>08 / 変更前の結果を残し、影響を見て下書きを保存する</h2><p>同じ視点の案A・案Bと、版を明記した比較表を並べる。選んだフィンの変更案は重ねて表示し、影響する解析・図面・組立手順を保存前に確認する。</p><figure><a href="drafts/08-change-review.png"><img src="drafts/08-change-review.png" width="1672" height="941" loading="lazy" alt="案Aと案Bの比較画面。選択したフィンの変更案を淡い青で重ね、変更前の版の高度と費用を表示。右に材料、寸法、影響範囲、未評価の注意と変更案を保存する操作がある。"></a><figcaption>変更案の保存、再解析、採用確認は別操作。材料不足でも下書きは保存でき、未評価の新しい形状へ旧版の性能値を引き継がない。</figcaption></figure></section>
+    <section id="assembly"><h2>09 / 実寸の手と工具で、工程ごとの作業経路を確認する</h2><p>左で工程を選び、中央で分解図と手・工具の進入・抜き取りを確認。右で作業者・手袋・工具と観察記録を扱い、手順の閲覧を実作業の完了と混同しない。</p><figure><a href="drafts/09-assembly-access.png"><img src="drafts/09-assembly-access.png" width="1672" height="941" loading="lazy" alt="組立工程の画面。外付けフィン金具と分離したフィンを示し、実寸の半透明の手と工具、その進入・抜き取り経路を重ねる。右に成人、未設定の手袋、未選択の工具と判定保留の表示。"></a><figcaption>実機用の確定手順ではなく、表示と操作を検討する概念図。金具形状・締結方法・余裕の成立は未検証。工具はボトル外側の金具へ向け、耐圧ボトルに穴を開ける工程を示さない。</figcaption></figure></section>
     <section id="mission"><h2>01 / 目的を伝え、条件を確認する</h2><p>右の対話と条件フォームから始める。中央には機体の仮表示と、作業の開始を待つ整備員を置く。</p><figure><a href="drafts/01-mission-input.png"><img src="drafts/01-mission-input.png" width="1672" height="941" alt="黒いワークベンチの入力画面。右に卵を30メートルまで飛ばす条件、中央に機体の仮表示と2人の整備員。"></a><figcaption>確認した条件から解析を開始する。解析前には完了率や残り時間を表示しない。</figcaption></figure></section>
     <section id="analysis"><h2>02 / 解析対象と進捗を、整備員の動きで伝える</h2><p>工程と対象部位を選択表示し、小さな整備員が点検する。解析内容・完了件数・経過時間・工程の残り時間を同じ場所にまとめる。</p><figure><a href="drafts/02-analysis.png"><img src="drafts/02-analysis.png" width="1672" height="941" loading="lazy" alt="解析中の画面。足場に上がった整備員が回収装置を点検し、ほかの整備員がフィンとパラシュートを点検する。下に72件完了と残り時間の表示例。"></a><figcaption>実際の解析イベントに動きを対応させる仕様案。時間を推定できない工程は「見積もり中」とし、全探索の架空の完了率は作らない。</figcaption></figure></section>
     <section id="comparison"><h2>03 / 機体と結果を比べ、採用案を決める</h2><p>足場が外れ、候補案の違いを共通の表で比較する。右から採用、条件変更、再解析へ進む。</p><figure><a href="drafts/03-design-comparison.png"><img src="drafts/03-design-comparison.png" width="1672" height="941" loading="lazy" alt="完成した機体の周りで整備員が片付ける比較画面。案Aと案Bの到達高度、費用、試行成功率を下の表で比較する。"></a><figcaption>画像の寸法・質量・成功率は説明用の仮表示。実装では積載質量と機体総質量を区別し、同じ環境・評価条件で計算した値を表示する。</figcaption></figure></section>
