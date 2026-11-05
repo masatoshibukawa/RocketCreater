@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "satellite_name": "OPT-CUBE",
+  "payload_mass_kg": 3.985,
+  "target_perigee_m": 400000.0,
+  "target_apogee_m": 400000.0,
+  "inclination_deg": 51.6,
+  "envelope_mm": {
+    "width": 100.0,
+    "depth": 100.0,
+    "height": 340.5
+  },
+  "sources": {
+    "payload_mass_kg": "計算 total_mass_kg: m = Σm_i + Δm（https://www.satcon.jp/history/prize22/pdf/22_asj.pdf p. 12, 表 16）",
+    "target_perigee_m": "要求 SR-001: 軌道高度を 400 km とする（円軌道を仮定）",
+    "target_apogee_m": "要求 SR-001: 軌道高度を 400 km とする（円軌道を仮定）",
+    "inclination_deg": "要求 SR-002: 軌道傾斜角を 51.6 度とする",
+    "envelope_mm": "https://www.nasa.gov/wp-content/uploads/2018/01/cubesatdesignspecificationrev14_12022-02-09.pdf Appendix B"
+  },
+  "provisional": true
+}
