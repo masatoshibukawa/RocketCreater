@@ -208,7 +208,7 @@ def run_deck(executable, folder, name, lines, *, timeout_s=240):
     )
     return {
         "completed": True,
-        "solver": "CalculiX 2.23",
+        "solver": re.search(r"CalculiX Version [0-9.]+", log).group(0),
         "solver_sha256": hashlib.sha256(exe.read_bytes()).hexdigest(),
         "deck_sha256": hashlib.sha256(deck.read_bytes()).hexdigest(),
         "node_displacements_m": displacements,
@@ -237,7 +237,7 @@ def fin_deck(
         return g["fin_sweep"] / 1000 * f + chord * u, s, (w - 0.5) * cfg.fin_thickness_m
 
     nodes, els = hex_mesh(counts, shape)
-    lines = base_deck(nodes, els, cfg.material)
+    lines = base_deck(nodes, els, cfg.fin_material or cfg.material)
     support = [i for i, xyz in nodes.items() if xyz[1] <= 0]
     foundation(lines, support, len(els) + 1, cfg.fin_root_k_n_m)
     force = (
@@ -300,7 +300,7 @@ def collar_deck(assembly, cfg: AnalysisConfig, force_n, *, resolution=1, tempera
     )
     # Parametric theta, radius, z has negative orientation: reverse theta to restore it.
     nodes = {i: (x, -y, z) for i, (x, y, z) in nodes.items()}
-    lines = base_deck(nodes, els, cfg.material)
+    lines = base_deck(nodes, els, cfg.collar_material or cfg.material)
     support = [
         i
         for i, (x, y, z) in nodes.items()
@@ -371,7 +371,7 @@ def body_deck(
         "creep_stress": cfg.creep_reference_stress_pa,
         "creep_n": cfg.creep_exponent,
     }
-    lines = base_deck(nodes, els, cfg.material, creep=creep)
+    lines = base_deck(nodes, els, cfg.body_material or cfg.material, creep=creep)
     support = [i for i, (_, _, z) in nodes.items() if z < 1e-10]
     foundation(lines, support, len(els) + 1, 1e8)
     lines += [

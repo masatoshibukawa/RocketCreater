@@ -95,6 +95,9 @@ class AnalysisConfig(Strict):
     loads: LoadConfig = Field(default_factory=LoadConfig)
     contact: ContactConfig = Field(default_factory=ContactConfig)
     material: Material = Field(default_factory=Material)
+    fin_material: Material | None = None
+    body_material: Material | None = None
+    collar_material: Material | None = None
     flight: FlightConfig = Field(default_factory=FlightConfig)
     fin_thickness_m: float = Field(default=0.001, gt=0, le=0.02)
     fin_root_k_n_m: float = Field(default=5e5, gt=0)
@@ -107,3 +110,5 @@ class AnalysisConfig(Strict):
     creep_reference_rate_per_s: float | None = Field(default=None, ge=0)
     creep_reference_stress_pa: float = Field(default=30e6, gt=0)
     creep_exponent: float = Field(default=3, ge=1, le=10)
+    observable_relative_tolerance: float = Field(default=0.05, gt=0, le=0.2)
+    maximum_mesh_level: int = Field(default=3, ge=2, le=4)

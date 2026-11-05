@@ -139,6 +139,19 @@ class Search:
     def plan(self, action, design):
         return assembly(design, action.start, action.nozzle_mm, action.variant, self.workshop)
 
+    def integrity(self, action, output, **host_settings):
+        """Create the integrity pool for this assembled candidate.
+
+        Solver/output settings belong to the host; planners select listed method IDs
+        through options()/step(). Legacy search proxy results are not qualification.
+        """
+        from rocketwright.physics.bottle_integrity.harness import IntegrityHarness
+
+        if self.workshop is None:
+            raise ValueError("An assembled workshop candidate is required for integrity analysis")
+        design = self.design(action)
+        return IntegrityHarness(design, self.plan(action, design), output, **host_settings)
+
     def options(self):
         options = {}
         if any(a.method == "confirm" for a in self.results):

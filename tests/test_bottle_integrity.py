@@ -129,3 +129,43 @@ def test_invalid_anisotropy_and_missing_solver_are_not_passes(tmp_path):
         Material(engineering_constants=(2e9, 2e9, 2e9, 0.99, 0.99, 0.99, 1e9, 1e9, 1e9))
     with pytest.raises(FileNotFoundError):
         run_deck(tmp_path / "absent.exe", tmp_path / "run", "missing", [])
+
+
+def make_harness(tmp_path):
+    from rocketwright.bottle_assembly import Workshop
+    from rocketwright.bottle_search import Action, Search
+
+    search = Search("references", Workshop())
+    action = Action("component", "D02", 9, 400, 25, "carton_wide")
+    return search.integrity(action, tmp_path / "integrity")
+
+
+def test_harness_rejects_unavailable_methods_and_propagates_failure(tmp_path):
+    h = make_harness(tmp_path)
+    assert list(h.options()) == ["evidence"]
+    with pytest.raises(ValueError):
+        h.step("flight", "Skip the missing dependencies")
+    h.step("evidence", "Audit actual records before analysis")
+    assert list(h.options()) == ["thermal"]
+
+    def fail():
+        raise RuntimeError("Deliberate unavailable input")
+
+    h._thermal = fail
+    h.step("thermal", "Evaluate temperatures")
+    assert h.results["flight"]["execution_status"] == "blocked"
+    assert not h.results["verdict"]["qualified"]
+    assert not h.options()
+
+
+def test_axially_symmetric_flight_preserves_zero_rotation(tmp_path):
+    from rocketwright.physics.bottle_integrity.flight import run
+
+    h = make_harness(tmp_path)
+    cfg = h.config.flight.model_copy(
+        update={"wind_mps": 0, "gust_mps": 0, "initial_tilt_deg": 0, "cant_deg": 0}
+    )
+    result = run(h.design, h.assembly, propulsion(h.design, h.config.loads), cfg)
+    assert result["completed"]
+    assert np.max(abs(np.array(result["trace"]["omega_rad_s"]))) < 1e-12
+    assert np.max(abs(np.array(result["trace"]["position_m"])[:, :2])) < 1e-12

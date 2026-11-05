@@ -77,7 +77,7 @@ def flutter(assembly, cfg, *, temperature_c=20.0, max_speed=40.0):
     span = g["fin_span"] / 1000
     chord = (g["fin_root"] + g["fin_tip"]) / 2000
     thick = cfg.fin_thickness_m
-    material = cfg.material
+    material = cfg.fin_material or cfg.material
     ratio = np.interp(
         temperature_c, [material.reference_c, material.warm_c], [1, material.warm_ratio]
     )
