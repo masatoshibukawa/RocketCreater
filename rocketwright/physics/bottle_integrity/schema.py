@@ -48,11 +48,30 @@ class Material(Strict):
     tensile_allowable_pa: float | None = Field(default=None, gt=0)
     compressive_allowable_pa: float | None = Field(default=None, gt=0)
     evidence_id: str | None = None
+    # E1,E2,E3,nu12,nu13,nu23,G12,G13,G23 in fixed part-coordinate axes.
+    engineering_constants: (
+        tuple[float, float, float, float, float, float, float, float, float] | None
+    ) = None
 
     @model_validator(mode="after")
     def ordered_temperature(self):
         if self.warm_c <= self.reference_c:
             raise ValueError("warm_c must exceed reference_c")
+        if self.engineering_constants is not None:
+            import numpy as np
+
+            e1, e2, e3, n12, n13, n23, g12, g13, g23 = self.engineering_constants
+            if min(e1, e2, e3, g12, g13, g23) <= 0:
+                raise ValueError("Orthotropic moduli must be positive")
+            compliance = np.array(
+                [
+                    [1 / e1, -n12 / e1, -n13 / e1],
+                    [-n12 / e1, 1 / e2, -n23 / e2],
+                    [-n13 / e1, -n23 / e2, 1 / e3],
+                ]
+            )
+            if min(np.linalg.eigvalsh(compliance)) <= 0 or self.yield_pa is not None:
+                raise ValueError("Invalid orthotropy or unsupported anisotropic plasticity")
         return self
 
 
