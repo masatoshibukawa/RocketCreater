@@ -1,0 +1,159 @@
+# 液体のモデルロケット資料
+
+[全体索引](../README.md) · [CAD・計算モデル](../モデル索引.md)
+
+<a id="ml01"></a>
+
+## ML01 RocketPy liquid flight examples — Space Enterprise at Berkeley and Hedy
+
+RocketPy Team / Space Enterprise at Berkeley / TU Wien Space Team · 2023・2025 対象例、2026 保存版 · en · 飛行計算モデル集
+
+対象：大学液体実験機。LiquidMotorを使う2ノートブック。推力曲線、タンク内の質量変化、機体・飛行条件をモデル化する。Hedy配布原本の古いtustパス用に、同一内容の入力CSVを互換コピーした。
+
+[配布元・出典](https://github.com/RocketPy-Team/RocketPy/tree/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/SEB_liquid_motor.ipynb) · [保存ファイル](モデル/ML01-RocketPy)
+
+利用条件：MIT。LICENSE と作者記載を同梱。
+
+<a id="ml02"></a>
+
+## ML02 Liquid-propellant rocket development (with 11 plates)
+
+Robert H. Goddard · 1936 · en · 一次史料・研究報告
+
+対象：初期の小型液体実験ロケット。1930年代の実験計画と成果をまとめた当時の報告。Smithsonian Miscellaneous Collections 95(3), 1–11。
+
+[配布元・出典](https://repository.si.edu/items/339602ac-9c69-433f-ac29-48cd416f07b7) · [原本取得先](https://repository.si.edu/bitstreams/8c96c611-d13d-4fa1-93ea-78e1b32e60cc/download) · オンライン参照のみ：配布先HTTP 403
+
+利用条件：所蔵機関表示: NO COPYRIGHT – UNITED STATES。
+
+<a id="ml03"></a>
+
+## ML03 Motor cohete de combustible líquido
+
+Carlos Redondo Calle · 2009 · es · 学位プロジェクト
+
+対象：液体ロケットエンジン研究。ケロシン・酸素の二段燃焼エンジン設計の初期検討。大規模エンジンの研究用設計で、模型用の既製品ではない。
+
+[配布元・出典](https://oa.upm.es/1492/) · [原本取得先](https://oa.upm.es/1492/1/PFC_CARLOS_REDONDO_CALLE.pdf) · [保存ファイル](原本/ML03.pdf)（155ページ）
+
+利用条件：CC BY-NC-ND（所蔵ページ表示）。
+
+<a id="ml04"></a>
+
+## ML04 Mass effective bipropellant liquid rocket propulsion system for sounding rockets
+
+Paweł Babalski, Marta Brzynska, Jakub Kęder, Tomasz Krakowski ほか / PUT Rocketlab · 2025 · pl · 大学チーム報告
+
+対象：学生の液体観測ロケット。大学の学生担当部局が公開するポーランド語の最終報告。液体推進系、機体構成、試験、成果を扱う。表紙はPoznań 2025、公開先は2026年のディレクトリ。
+
+[配布元・出典](https://css.put.poznan.pl/en/node/5583) · [原本取得先](https://css.put.poznan.pl/sites/default/files/2026-01/raport_ujednolicony_Bipropellant_rocket_engine_SKNTI.pdf) · [保存ファイル](原本/ML04.pdf)（34ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml05"></a>
+
+## ML05 Designing and Testing of a Bi-liquid Rocket Engine with Graduate Students
+
+Christian Bach, J. Sieder-Katzmann, M. Propst, Martin Tajmar · 2018 · en · 会議論文
+
+対象：大学院・STERN実験機。学生による液体エンジン開発を教育活動として報告。著者公開版。
+
+[配布元・出典](https://www.researchgate.net/publication/328768221_Designing_and_Testing_of_a_Bi-liquid_Rocket_Engine_with_Graduate_Students) · [原本取得先](https://www.researchgate.net/profile/Martin-Tajmar/publication/328768221_Designing_and_Testing_of_a_Bi-liquid_Rocket_Engine_with_Graduate_Students/links/5be2eaa4299bf1124fc1926e/Designing-and-Testing-of-a-Bi-liquid-Rocket-Engine-with-Graduate-Students.pdf) · オンライン参照のみ：配布先HTTP 403
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml06"></a>
+
+## ML06 NYCU 火箭團隊 最大規模固態火箭及首次液態火箭發射
+
+國立陽明交通大學 · 2026 · zh-Hant · 大学の実験報告記事
+
+対象：学生の固体・液体実験機。FARCX-1液体機とSST3固体機を同時に扱う大学発表。固体分類にも関係するが文献数は1件として数える。
+
+[配布元・出典](https://sdgs.nycu.edu.tw/sdgs/ch/app/data/view?id=39622&module=nycu0121&serno=cb6c1b1a-309e-4994-97af-445bb80a4e78) · オンライン参照
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml07"></a>
+
+## ML07 Dr. Robert H. Goddard, American Rocketry Pioneer
+
+NASA · 年不明 · en · 公的機関の歴史解説
+
+対象：1926年以降の液体実験ロケット。初期液体飛行の写真と研究史を紹介。1936年原報ML02と合わせて読む。
+
+[配布元・出典](https://www.nasa.gov/dr-robert-h-goddard-american-rocketry-pioneer/) · オンライン参照
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml08"></a>
+
+## ML08 Low-cost, Lightweight Electronic Flow Regulators for Throttling Liquid Rocket Engines
+
+Vint Lee, Sohom Roy · 2024 · en · プレプリント
+
+対象：小型液体実験機。学部学生チームによる流量調整とスロットリングの研究報告。モデルを読む際の供給系の背景資料。
+
+[配布元・出典](https://arxiv.org/abs/2401.07444) · [原本取得先](https://arxiv.org/pdf/2401.07444) · [保存ファイル](原本/ML08.pdf)（8ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml09"></a>
+
+## ML09 Machine Learning Methods for the Design and Operation of Liquid Rocket Engines — Research Activities at the DLR Institute of Space Propulsion
+
+Günther Waxenegger-Wilfing, Kai Dresia, Jan Deeken, Michael Oschwald · 2021 · en · 研究概説・プレプリント
+
+対象：液体推進研究の補助資料。DLRにおける機械学習研究の概説。模型用モーターの組立説明ではなく、性能推定・解析手法の参考。
+
+[配布元・出典](https://arxiv.org/abs/2102.07109) · [原本取得先](https://arxiv.org/pdf/2102.07109) · [保存ファイル](原本/ML09.pdf)（9ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml10"></a>
+
+## ML10 Lamarr — Das Flüssigraketenprojekt des TU Wien Space Teams
+
+TU Wien Space Team · 年不明 · de · 開発チームのプロジェクト紹介
+
+対象：Hedy学生液体機。機体の主要構成とRocketPy実例との関係を紹介するドイツ語資料。ML11・ML12が英語の設計報告。
+
+[配布元・出典](https://spaceteam.at/lamarr/) · オンライン参照
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml11"></a>
+
+## ML11 Lamarr Concept Report — Team 26, EuRoC 2025
+
+TU Wien Space Team · 2025年4月 · en · 概念設計報告
+
+対象：Hedy学生液体機。計画時点のミッション、構成、推進・回収・地上設備をまとめた13ページの報告。目標と飛行後の実績を区別する。
+
+[配布元・出典](https://spaceteam.at/wp-content/uploads/2025/05/Team26_ConceptReport_v1-1.pdf) · [原本取得先](https://spaceteam.at/wp-content/uploads/2025/05/Team26_ConceptReport_v1-1.pdf) · [保存ファイル](原本/ML11.pdf)（13ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml12"></a>
+
+## ML12 Lamarr Technical Report — EuRoC 2025
+
+TU Wien Space Team · 2025年9月 技術報告 · en · 技術報告
+
+対象：Hedy学生液体機。チーム公式の詳細技術報告。推進系と機体・回収・電子系を一つの機体システムとして参照できる。
+
+[配布元・出典](https://spaceteam.at/wp-content/uploads/2025/10/Technical_Report_Lamarr_EuRoC_2025.pdf) · [原本取得先](https://spaceteam.at/wp-content/uploads/2025/10/Technical_Report_Lamarr_EuRoC_2025.pdf) · [保存ファイル](原本/ML12.pdf)（423ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml13"></a>
+
+## ML13 Saturn V — NASA 3D Models and 3D Printing
+
+NASA · 年不明 · en · 展示用3Dモデル集
+
+対象：液体推進ロケットの縮尺展示模型。Saturn VのGLBと12個のSTL部品。NASA配布の外観・展示模型であり、飛行用模型ロケットやエンジン製造CADではない。実機の脱出系など補助系は主段の液体推進とは別。
+
+[配布元・出典](https://github.com/nasa/NASA-3D-Resources/tree/11ebb4ee043715aefbba6aeec8a61746fad67fa7/3D%20Printing/Saturn%20V%20Rocket) · [保存ファイル](モデル/ML13-NASA-SaturnV)
+
+利用条件：NASA配布READMEの利用案内を同梱。NASAの画像・メディア利用指針と第三者権利を参照。

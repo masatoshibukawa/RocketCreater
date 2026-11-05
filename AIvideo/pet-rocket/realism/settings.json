@@ -1,0 +1,11 @@
+{
+  "width": 1920,
+  "height": 1080,
+  "fps": 24,
+  "samples": 64,
+  "design_frames": 288,
+  "launch_frames": 288,
+  "seed": 20261105,
+  "baseline": "../scenario.json and frozen v2 STL",
+  "purpose": "Replace simplified environment/material/camera presentation with photo-based lighting, ground textures and ground-based cinematography"
+}

@@ -1,0 +1,944 @@
+{
+  "checked_on": "2026-11-05",
+  "records": [
+    {
+      "id": "MS01",
+      "category": "固体",
+      "lang": [
+        "ja"
+      ],
+      "title": "モデルロケット競技規則 Ver.202607",
+      "author": "日本モデルロケット協会",
+      "year": "2026",
+      "kind": "競技規則",
+      "scope": "日本の模型ロケット競技",
+      "note": "クラス別の機体・エンジン・回収方式の指定を確認できる。2026年8月1日適用の版。",
+      "source": "https://jar.or.jp/nationalcompetition/compe-rules/",
+      "download": null
+    },
+    {
+      "id": "MS02",
+      "category": "固体",
+      "lang": [
+        "en",
+        "es",
+        "fr"
+      ],
+      "title": "Alpha III — Instructions",
+      "author": "Estes Industries",
+      "year": "2015 改訂表示",
+      "kind": "メーカー組立説明書",
+      "scope": "市販模型キット",
+      "note": "ノーズ、成形フィン、ボディ、モーターマウント、回収部品の配置と取扱いを図解。英語・スペイン語・フランス語の併記。",
+      "source": "https://estesrockets.com/products/alpha-iii",
+      "download": "https://estesrockets.com/cdn/shop/files/001256-001427-001751-Alpha-III-Instructions.pdf?v=1740513773",
+      "local": {
+        "path": "固体/原本/MS02.pdf",
+        "pages": 4,
+        "sha256": "5c4ca70ccdc9c3138d7d57429e783123687e7bee7712e496e87ecaa8119b6b06"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS03",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Estes Rockets 2026 Catalog",
+      "author": "Estes Industries",
+      "year": "2026",
+      "kind": "製品カタログ",
+      "scope": "市販模型キット・固体モーター",
+      "note": "機体キットと交換部品、モーターの製品構成を調べる資料。価格・供給状況は保存版時点。",
+      "source": "https://estesrockets.com/cdn/shop/files/Estes-Rockets-2026-Catalog.pdf?v=1771692673",
+      "download": "https://estesrockets.com/cdn/shop/files/Estes-Rockets-2026-Catalog.pdf?v=1771692673",
+      "local": {
+        "path": "固体/原本/MS03.pdf",
+        "pages": 25,
+        "sha256": "f08e22bce37a27f23e2ca25c29ccf9f47992dd399148cdfa9a1fb0be940bbe79"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS04",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Estes 1963 Catalog",
+      "author": "Estes Industries",
+      "year": "1963",
+      "kind": "歴史的製品カタログ",
+      "scope": "1960年代の模型ロケット",
+      "note": "メーカー公式アーカイブの初期カタログ。現在の製品仕様とは区別する。",
+      "source": "https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1963_Catalog.pdf?v=1676660918",
+      "download": "https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1963_Catalog.pdf?v=1676660918",
+      "local": {
+        "path": "固体/原本/MS04.pdf",
+        "pages": 23,
+        "sha256": "0860568f1e771a546b2df7403b68e98052d75da64c924a723cd71796baa7a370"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS05",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Estes 1985 Catalog",
+      "author": "Estes Industries",
+      "year": "1985",
+      "kind": "歴史的製品カタログ",
+      "scope": "1980年代の模型ロケット",
+      "note": "機体、モーター、回収・発射用付属品の時代比較に使える公式アーカイブ。",
+      "source": "https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1985_Catalog.pdf?v=1676660943",
+      "download": "https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1985_Catalog.pdf?v=1676660943",
+      "local": {
+        "path": "固体/原本/MS05.pdf",
+        "pages": 37,
+        "sha256": "25f7dca5297f1c1c1a9b8c222047c8967c1f0533fcbda5f4404c2062e5d770fd"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS06",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Estes 1994 Catalog",
+      "author": "Estes Industries",
+      "year": "1994",
+      "kind": "歴史的製品カタログ",
+      "scope": "1990年代の模型ロケット",
+      "note": "1963・1985・2026版と型番や機体構成を比較できる。",
+      "source": "https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1994_Catalog.pdf?v=1676660944",
+      "download": "https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1994_Catalog.pdf?v=1676660944",
+      "local": {
+        "path": "固体/原本/MS06.pdf",
+        "pages": 41,
+        "sha256": "2df33a68c95423d8d9a4db082241848d6a5a75a4c28a3dff3ee87449c89f2b60"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS07",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Model Rocketry Technical Manual — EST 2819",
+      "author": "William Simon; Thomas Beach, Joyce Guzik 改訂 / Estes-Cox Corp.",
+      "year": "2003 著作権表示",
+      "kind": "メーカー技術入門",
+      "scope": "模型ロケットの機体と飛行",
+      "note": "機体工作、静安定、追跡、回収、多段・クラスターを含むメーカー資料。メーカー著作の原本を配布ミラーから取得。",
+      "source": "https://www.europerocketry.com/uploads/media/Estes_Model_Rocketry_Manual_02.pdf",
+      "download": "https://www.europerocketry.com/uploads/media/Estes_Model_Rocketry_Manual_02.pdf",
+      "local": {
+        "path": "固体/原本/MS07.pdf",
+        "pages": 16,
+        "sha256": "a61f10199a9cd0e105bde8a64f57095a2953aae1a22e231c6c8a6b1508d1a952"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS08",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "AeroTech/Quest Science Teaching Guide",
+      "author": "Jeff Flygare / AeroTech・Quest",
+      "year": "1992原版、2022改訂表示",
+      "kind": "メーカー教育資料",
+      "scope": "模型ロケットを使う授業",
+      "note": "メーカー公式リソース集から配布される教育ガイド。",
+      "source": "https://aerotech-rocketry.com/pages/booklets-tech-reports",
+      "download": "https://cdn.shopify.com/s/files/1/0615/7592/1878/files/AeroTechQuestScienceTeachingGuide-compressed.pdf?v=1658431638",
+      "license": "©2022 RCS RMC, Inc.。教育用複写について原本に許諾表示あり。",
+      "local": {
+        "path": "固体/原本/MS08.pdf",
+        "pages": 30,
+        "sha256": "81e7b44e1c027c3cd13c06b3f29780a0103141c5bb01154fa0f066b0ebf70b14"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS09",
+      "category": "固体",
+      "lang": [
+        "de",
+        "en",
+        "fr"
+      ],
+      "title": "Bauanleitung Pan / Assembly Instructions",
+      "author": "Raketenmodellbau Klima",
+      "year": null,
+      "kind": "多言語メーカー組立説明書",
+      "scope": "市販模型キット",
+      "note": "ノーズ、フィン支持部、回収部品などをドイツ語・英語・フランス語で併記する。",
+      "source": "https://www.neu.raketenmodellbau-klima.de/Download_Dateien/Bauanleitung%20Pan.pdf",
+      "download": "https://www.neu.raketenmodellbau-klima.de/Download_Dateien/Bauanleitung%20Pan.pdf",
+      "download_status": "オンライン参照のみ：TLS証明書エラー"
+    },
+    {
+      "id": "MS10",
+      "category": "固体",
+      "lang": [
+        "fr"
+      ],
+      "title": "Microfusée — Présentation",
+      "author": "Planète Sciences",
+      "year": null,
+      "kind": "教育団体の解説",
+      "scope": "フランスの教育用模型ロケット",
+      "note": "機体の主要構成、回収と教育活動の位置付けを紹介する。",
+      "source": "https://www.planete-sciences.org/espace/Microfusee/Presentation",
+      "download": null
+    },
+    {
+      "id": "MS11",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Model Rocket Project for Aerospace Engineering Course: Trajectory Simulation and Propellant Analysis",
+      "author": "Thomas A. Campbell Jr., Masataka Okutsu",
+      "year": "2017",
+      "kind": "プレプリント",
+      "scope": "航空工学の模型ロケット授業",
+      "note": "模型ロケットの授業に軌道シミュレーションと推進剤分析を組み込んだ報告。",
+      "source": "https://arxiv.org/abs/1708.01970",
+      "download": "https://arxiv.org/pdf/1708.01970",
+      "local": {
+        "path": "固体/原本/MS11.pdf",
+        "pages": 22,
+        "sha256": "ab6e2fc87c6c3a69ab28f42af93cb8c5349725aec8de39ec0d3f66a59e6e57cd"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS12",
+      "category": "固体",
+      "lang": [
+        "pt"
+      ],
+      "title": "Minifoguete a propelente sólido: aspectos teóricos e propostas experimentais para o ensino de física",
+      "author": "André Luíz Alves, Anderson Nunes Paneto, Kaio Alan Littike, Sérgio Souza Bento",
+      "year": "2020",
+      "kind": "学術論文",
+      "scope": "物理教育用の小型固体ロケット",
+      "note": "理論と実験の比較から推力・抗力などを推定する教育研究。回収系を持たない研究条件の例を含み、市販キットの取説とは区別する。",
+      "source": "https://www.scielo.br/j/rbef/a/dTQnxcQT6TGhnkYmMx4H6Sx/?lang=pt",
+      "download": "https://www.scielo.br/j/rbef/a/dTQnxcQT6TGhnkYmMx4H6Sx/?format=pdf&lang=pt",
+      "license": "CC BY。著者・掲載誌の表示を保持。",
+      "download_status": "オンライン参照のみ：ダウンロード未完了（タイムアウトまたは応答エラー）"
+    },
+    {
+      "id": "MS13",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Estes C6 — Motor certification data",
+      "author": "National Association of Rocketry Standards & Testing",
+      "year": null,
+      "kind": "第三者試験データシート",
+      "scope": "市販模型モーター",
+      "note": "C6の実測推力曲線と試験時の性能資料。試験版の数値と現在の認証・販売状態を混同しない。",
+      "source": "https://www.nar.org/SandT/pdf/Estes/C6.pdf",
+      "download": "https://www.nar.org/SandT/pdf/Estes/C6.pdf",
+      "download_status": "オンライン参照のみ：配布先HTTP 403"
+    },
+    {
+      "id": "MS14",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "OpenRocket bundled example designs",
+      "author": "OpenRocket contributors",
+      "year": "2026 保存版",
+      "kind": "機体設計モデル集",
+      "scope": "模型・高出力模型",
+      "note": "単段、クラスター、多段、回収機構、印刷用ノーズ・尾翼など固体モーター設定の14 ORK。HyperTEK設定の2 ORKはハイブリッドMH13に分離した。",
+      "source": "https://github.com/openrocket/openrocket/tree/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples",
+      "license": "GPL-3.0-or-later と追加許諾。配布元 LICENSE.TXT を同梱。個別ファイルの表示も参照。",
+      "local": {
+        "path": "固体/モデル/MS14-OpenRocket"
+      }
+    },
+    {
+      "id": "MS15",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Rockit — Model Rocket Construction Kit",
+      "author": "Vishnu Bob / Rockit contributors",
+      "year": "2014 保存版",
+      "kind": "OpenSCAD・STLモデル集",
+      "scope": "市販固体モーター用の模型機体",
+      "note": "mini・standard・Dサイズ等の機体、ノーズ、尾翼、モーターマウントのSCAD 26件とSTL 26件。燃焼室・推進剤の製作モデルではなく、市販モーターを収納する機体部品。Eサイズは設定JSONのみ。",
+      "source": "https://github.com/vishnubob/rockit/tree/cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "license": "MIT。LICENSE と作者READMEを同梱。",
+      "local": {
+        "path": "固体/モデル/MS15-Rockit"
+      }
+    },
+    {
+      "id": "MS16",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "RocketPy solid flight examples — Bella Lui, NDRT 2020, Camões",
+      "author": "RocketPy Team / 各大学チーム",
+      "year": "2020・2023 飛行、2026 保存版",
+      "kind": "飛行計算モデル集",
+      "scope": "大学・高出力実験機",
+      "note": "3つのJupyterノートブックと参照する推力・空力・観測・気象データ。SolidMotorを用いる。各実機の観測結果との比較方法を読める。",
+      "source": "https://github.com/RocketPy-Team/RocketPy/tree/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/bella_lui_flight_sim.ipynb",
+      "license": "MIT。データ提供者の許諾記載を原本内に保持。",
+      "local": {
+        "path": "固体/モデル/MS16-RocketPy"
+      }
+    },
+    {
+      "id": "ML01",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "RocketPy liquid flight examples — Space Enterprise at Berkeley and Hedy",
+      "author": "RocketPy Team / Space Enterprise at Berkeley / TU Wien Space Team",
+      "year": "2023・2025 対象例、2026 保存版",
+      "kind": "飛行計算モデル集",
+      "scope": "大学液体実験機",
+      "note": "LiquidMotorを使う2ノートブック。推力曲線、タンク内の質量変化、機体・飛行条件をモデル化する。Hedy配布原本の古いtustパス用に、同一内容の入力CSVを互換コピーした。",
+      "source": "https://github.com/RocketPy-Team/RocketPy/tree/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/SEB_liquid_motor.ipynb",
+      "license": "MIT。LICENSE と作者記載を同梱。",
+      "local": {
+        "path": "液体/モデル/ML01-RocketPy"
+      }
+    },
+    {
+      "id": "ML02",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Liquid-propellant rocket development (with 11 plates)",
+      "author": "Robert H. Goddard",
+      "year": "1936",
+      "kind": "一次史料・研究報告",
+      "scope": "初期の小型液体実験ロケット",
+      "note": "1930年代の実験計画と成果をまとめた当時の報告。Smithsonian Miscellaneous Collections 95(3), 1–11。",
+      "source": "https://repository.si.edu/items/339602ac-9c69-433f-ac29-48cd416f07b7",
+      "download": "https://repository.si.edu/bitstreams/8c96c611-d13d-4fa1-93ea-78e1b32e60cc/download",
+      "license": "所蔵機関表示: NO COPYRIGHT – UNITED STATES。",
+      "download_status": "オンライン参照のみ：配布先HTTP 403"
+    },
+    {
+      "id": "ML03",
+      "category": "液体",
+      "lang": [
+        "es"
+      ],
+      "title": "Motor cohete de combustible líquido",
+      "author": "Carlos Redondo Calle",
+      "year": "2009",
+      "kind": "学位プロジェクト",
+      "scope": "液体ロケットエンジン研究",
+      "note": "ケロシン・酸素の二段燃焼エンジン設計の初期検討。大規模エンジンの研究用設計で、模型用の既製品ではない。",
+      "source": "https://oa.upm.es/1492/",
+      "download": "https://oa.upm.es/1492/1/PFC_CARLOS_REDONDO_CALLE.pdf",
+      "license": "CC BY-NC-ND（所蔵ページ表示）。",
+      "local": {
+        "path": "液体/原本/ML03.pdf",
+        "pages": 155,
+        "sha256": "521e408257be8b684c972f97b507045ac38c9631305e81475b7bf8d680bf5853"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML04",
+      "category": "液体",
+      "lang": [
+        "pl"
+      ],
+      "title": "Mass effective bipropellant liquid rocket propulsion system for sounding rockets",
+      "author": "Paweł Babalski, Marta Brzynska, Jakub Kęder, Tomasz Krakowski ほか / PUT Rocketlab",
+      "year": "2025",
+      "kind": "大学チーム報告",
+      "scope": "学生の液体観測ロケット",
+      "note": "大学の学生担当部局が公開するポーランド語の最終報告。液体推進系、機体構成、試験、成果を扱う。表紙はPoznań 2025、公開先は2026年のディレクトリ。",
+      "source": "https://css.put.poznan.pl/en/node/5583",
+      "download": "https://css.put.poznan.pl/sites/default/files/2026-01/raport_ujednolicony_Bipropellant_rocket_engine_SKNTI.pdf",
+      "local": {
+        "path": "液体/原本/ML04.pdf",
+        "pages": 34,
+        "sha256": "5e1e76e1d91545f2b0a9add8d361fe0206e24be5281b4de4f815ec64f158a1f9"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML05",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Designing and Testing of a Bi-liquid Rocket Engine with Graduate Students",
+      "author": "Christian Bach, J. Sieder-Katzmann, M. Propst, Martin Tajmar",
+      "year": "2018",
+      "kind": "会議論文",
+      "scope": "大学院・STERN実験機",
+      "note": "学生による液体エンジン開発を教育活動として報告。著者公開版。",
+      "source": "https://www.researchgate.net/publication/328768221_Designing_and_Testing_of_a_Bi-liquid_Rocket_Engine_with_Graduate_Students",
+      "download": "https://www.researchgate.net/profile/Martin-Tajmar/publication/328768221_Designing_and_Testing_of_a_Bi-liquid_Rocket_Engine_with_Graduate_Students/links/5be2eaa4299bf1124fc1926e/Designing-and-Testing-of-a-Bi-liquid-Rocket-Engine-with-Graduate-Students.pdf",
+      "download_status": "オンライン参照のみ：配布先HTTP 403"
+    },
+    {
+      "id": "ML06",
+      "category": "液体",
+      "lang": [
+        "zh-Hant"
+      ],
+      "title": "NYCU 火箭團隊 最大規模固態火箭及首次液態火箭發射",
+      "author": "國立陽明交通大學",
+      "year": "2026",
+      "kind": "大学の実験報告記事",
+      "scope": "学生の固体・液体実験機",
+      "note": "FARCX-1液体機とSST3固体機を同時に扱う大学発表。固体分類にも関係するが文献数は1件として数える。",
+      "source": "https://sdgs.nycu.edu.tw/sdgs/ch/app/data/view?id=39622&module=nycu0121&serno=cb6c1b1a-309e-4994-97af-445bb80a4e78",
+      "download": null
+    },
+    {
+      "id": "ML07",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Dr. Robert H. Goddard, American Rocketry Pioneer",
+      "author": "NASA",
+      "year": null,
+      "kind": "公的機関の歴史解説",
+      "scope": "1926年以降の液体実験ロケット",
+      "note": "初期液体飛行の写真と研究史を紹介。1936年原報ML02と合わせて読む。",
+      "source": "https://www.nasa.gov/dr-robert-h-goddard-american-rocketry-pioneer/",
+      "download": null
+    },
+    {
+      "id": "ML08",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Low-cost, Lightweight Electronic Flow Regulators for Throttling Liquid Rocket Engines",
+      "author": "Vint Lee, Sohom Roy",
+      "year": "2024",
+      "kind": "プレプリント",
+      "scope": "小型液体実験機",
+      "note": "学部学生チームによる流量調整とスロットリングの研究報告。モデルを読む際の供給系の背景資料。",
+      "source": "https://arxiv.org/abs/2401.07444",
+      "download": "https://arxiv.org/pdf/2401.07444",
+      "local": {
+        "path": "液体/原本/ML08.pdf",
+        "pages": 8,
+        "sha256": "041ff99194d206e7a130431483e5297f3f80c054914f2f3d13bcbd9c7d377513"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML09",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Machine Learning Methods for the Design and Operation of Liquid Rocket Engines — Research Activities at the DLR Institute of Space Propulsion",
+      "author": "Günther Waxenegger-Wilfing, Kai Dresia, Jan Deeken, Michael Oschwald",
+      "year": "2021",
+      "kind": "研究概説・プレプリント",
+      "scope": "液体推進研究の補助資料",
+      "note": "DLRにおける機械学習研究の概説。模型用モーターの組立説明ではなく、性能推定・解析手法の参考。",
+      "source": "https://arxiv.org/abs/2102.07109",
+      "download": "https://arxiv.org/pdf/2102.07109",
+      "local": {
+        "path": "液体/原本/ML09.pdf",
+        "pages": 9,
+        "sha256": "3d6a598b71ece9ce8c019cadc501bafce2bd4ac7024cedfeb024a189d1172215"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML10",
+      "category": "液体",
+      "lang": [
+        "de"
+      ],
+      "title": "Lamarr — Das Flüssigraketenprojekt des TU Wien Space Teams",
+      "author": "TU Wien Space Team",
+      "year": null,
+      "kind": "開発チームのプロジェクト紹介",
+      "scope": "Hedy学生液体機",
+      "note": "機体の主要構成とRocketPy実例との関係を紹介するドイツ語資料。ML11・ML12が英語の設計報告。",
+      "source": "https://spaceteam.at/lamarr/",
+      "download": null
+    },
+    {
+      "id": "ML11",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Lamarr Concept Report — Team 26, EuRoC 2025",
+      "author": "TU Wien Space Team",
+      "year": "2025年4月",
+      "kind": "概念設計報告",
+      "scope": "Hedy学生液体機",
+      "note": "計画時点のミッション、構成、推進・回収・地上設備をまとめた13ページの報告。目標と飛行後の実績を区別する。",
+      "source": "https://spaceteam.at/wp-content/uploads/2025/05/Team26_ConceptReport_v1-1.pdf",
+      "download": "https://spaceteam.at/wp-content/uploads/2025/05/Team26_ConceptReport_v1-1.pdf",
+      "local": {
+        "path": "液体/原本/ML11.pdf",
+        "pages": 13,
+        "sha256": "6d696fea114e542e7afa9b93e67f295dbb58c38cc33602d9b56d9a5d343c518d"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML12",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Lamarr Technical Report — EuRoC 2025",
+      "author": "TU Wien Space Team",
+      "year": "2025年9月 技術報告",
+      "kind": "技術報告",
+      "scope": "Hedy学生液体機",
+      "note": "チーム公式の詳細技術報告。推進系と機体・回収・電子系を一つの機体システムとして参照できる。",
+      "source": "https://spaceteam.at/wp-content/uploads/2025/10/Technical_Report_Lamarr_EuRoC_2025.pdf",
+      "download": "https://spaceteam.at/wp-content/uploads/2025/10/Technical_Report_Lamarr_EuRoC_2025.pdf",
+      "local": {
+        "path": "液体/原本/ML12.pdf",
+        "pages": 423,
+        "sha256": "fc229472bb7031794d405ab1756df853c75266803d11a786aa7ff6931f64a891"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML13",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "Saturn V — NASA 3D Models and 3D Printing",
+      "author": "NASA",
+      "year": null,
+      "kind": "展示用3Dモデル集",
+      "scope": "液体推進ロケットの縮尺展示模型",
+      "note": "Saturn VのGLBと12個のSTL部品。NASA配布の外観・展示模型であり、飛行用模型ロケットやエンジン製造CADではない。実機の脱出系など補助系は主段の液体推進とは別。",
+      "source": "https://github.com/nasa/NASA-3D-Resources/tree/11ebb4ee043715aefbba6aeec8a61746fad67fa7/3D%20Printing/Saturn%20V%20Rocket",
+      "download": null,
+      "local": {
+        "path": "液体/モデル/ML13-NASA-SaturnV"
+      },
+      "license": "NASA配布READMEの利用案内を同梱。NASAの画像・メディア利用指針と第三者権利を参照。"
+    },
+    {
+      "id": "MH01",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "RocketPy hybrid flight examples — Prometheus, Halcyon, Defiance Mk. IV",
+      "author": "RocketPy Team / Western Engineering / Aerospace Team Graz / University of Toronto Aerospace Team",
+      "year": "2022–2024 飛行、2026 保存版",
+      "kind": "飛行計算モデル集",
+      "scope": "大学ハイブリッド実験機",
+      "note": "HybridMotorを使う3ノートブックと参照データ。固体燃料と酸化剤タンクを区別し、飛行・回収・観測との比較を扱う。",
+      "source": "https://github.com/RocketPy-Team/RocketPy/tree/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/halcyon_flight_sim.ipynb",
+      "license": "MIT。データ提供者の許諾記載を原本内に保持。",
+      "local": {
+        "path": "ハイブリッド/モデル/MH01-RocketPy"
+      }
+    },
+    {
+      "id": "MH02",
+      "category": "ハイブリッド",
+      "lang": [
+        "ja"
+      ],
+      "title": "CAMUI型ハイブリッドロケットシステムの小型化手法とその飛行実証",
+      "author": "石山達也、稲場康彦、井上遼太、佐々木俊也、寺川健、桧物恒太郎、李尚駿、金井竜一朗、脇田督司、戸谷剛、永田晴紀",
+      "year": "2012",
+      "kind": "大会講演論文",
+      "scope": "小型の大学実験機 miniCAMUI",
+      "note": "気体酸素を使う小型CAMUIの飛行実証。液体酸化剤に限らないハイブリッドの具体例として収録。",
+      "source": "https://www.jstage.jst.go.jp/article/jsmemecj/2012/0/2012__S192023-1/_article/-char/ja",
+      "download": "https://www.jstage.jst.go.jp/article/jsmemecj/2012/0/2012__S192023-1/_pdf/-char/ja",
+      "local": {
+        "path": "ハイブリッド/原本/MH02.pdf",
+        "pages": 5,
+        "sha256": "3f12a35ee93f5043b88045e3fd275065467ccecbc659a292180cbf5c4f1523a7"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH03",
+      "category": "ハイブリッド",
+      "lang": [
+        "ja"
+      ],
+      "title": "小型CAMUI方式ハイブリッドロケットの開発報告",
+      "author": "北海道大学 / UNISEC",
+      "year": "2009",
+      "kind": "活動報告スライド",
+      "scope": "CanSat搭載用の小型実験機",
+      "note": "UNISECワークショップにおける小型化開発の報告。",
+      "source": "https://unisec.jp/history/ws2009/UNISEC09-02show_Hokkaido.pdf",
+      "download": "https://unisec.jp/history/ws2009/UNISEC09-02show_Hokkaido.pdf",
+      "download_status": "オンライン参照のみ：配布先HTTP 404"
+    },
+    {
+      "id": "MH04",
+      "category": "ハイブリッド",
+      "lang": [
+        "ja"
+      ],
+      "title": "CAMUI型ハイブリッドロケット搭載アビオニクス",
+      "author": "北海道工業大学 / UNISEC",
+      "year": "2008",
+      "kind": "活動報告スライド",
+      "scope": "ハイブリッド実験機の搭載電子機器",
+      "note": "エンジン本体と機体側の計測・回収システムを分けて検討するための資料。",
+      "source": "https://unisec.jp/history/ws2008/8_HIT.pdf",
+      "download": "https://unisec.jp/history/ws2008/8_HIT.pdf",
+      "download_status": "オンライン参照のみ：配布先HTTP 404"
+    },
+    {
+      "id": "MH05",
+      "category": "ハイブリッド",
+      "lang": [
+        "ja"
+      ],
+      "title": "ハイブリッドロケット CAMUI — 小型打上げ機体の開発",
+      "author": "永田晴紀 / JAXA ISAS",
+      "year": "2004",
+      "kind": "研究者による解説",
+      "scope": "小型ハイブリッド実証機",
+      "note": "機体構成図と2002・2003年の実証試験を解説する当時の研究紹介。",
+      "source": "https://www.isas.jaxa.jp/j/forefront/2004/nagata/02.shtml",
+      "download": null
+    },
+    {
+      "id": "MH06",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "54 mm Hybrid Rocket Motor Instruction Manual, Version 1.1",
+      "author": "Contrail Rockets LLC",
+      "year": "2017",
+      "kind": "メーカー取扱説明書",
+      "scope": "市販高出力ハイブリッドモーター",
+      "note": "メーカー純正ハードウェアと交換キットの取扱いを記載した2017年版。現行在庫や認証の保証ではない。",
+      "source": "https://contrailrockets.net/wp-content/uploads/2017/11/54mm-Instruction-Manual.2017.pdf",
+      "download": "https://contrailrockets.net/wp-content/uploads/2017/11/54mm-Instruction-Manual.2017.pdf",
+      "local": {
+        "path": "ハイブリッド/原本/MH06.pdf",
+        "pages": 12,
+        "sha256": "7bcbabc93217caec4f5a73e8d831acf6630036314f4e4e44216f78f6a6a1435a"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH07",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "The HyEnD STERN Hybrid Sounding Rocket Project",
+      "author": "M. Kobald, C. Schmierer, U. Fischer, K. Tomilin, A. Petrarolo, M. Rehberger",
+      "year": "2019 出版",
+      "kind": "論文・プロジェクト報告",
+      "scope": "大学の大型実験機 HEROS",
+      "note": "HyEnDの開発、試験設備、機体サブシステムをまとめる。本文には2015年当時の計画が含まれ、出版年と飛行年を区別する。",
+      "source": "https://elib.dlr.de/132743/1/Kobald%20eucass2019_025.pdf",
+      "download": "https://elib.dlr.de/132743/1/Kobald%20eucass2019_025.pdf",
+      "local": {
+        "path": "ハイブリッド/原本/MH07.pdf",
+        "pages": 40,
+        "sha256": "4b9a0385dd88ccae791207b45611e05cc789d16d373455bd5c8fae698fc8c315"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH08",
+      "category": "ハイブリッド",
+      "lang": [
+        "de"
+      ],
+      "title": "Studentische Hybridrakete im Rahmen des STERN-Projektes gestartet",
+      "author": "Universität Stuttgart, Institut für Raumfahrtsysteme",
+      "year": "2021",
+      "kind": "大学の飛行報告",
+      "scope": "Compass学生実験機",
+      "note": "飛行結果と回収時の不具合を含む大学の当時の発表。成果と課題を同じ資料で確認できる。",
+      "source": "https://www.irs.uni-stuttgart.de/institut/aktuelles/news/Studentische-Hybridrakete-im-Rahmen-des-STERN-Projektes-gestartet/",
+      "download": null
+    },
+    {
+      "id": "MH09",
+      "category": "ハイブリッド",
+      "lang": [
+        "it"
+      ],
+      "title": "EuRoC — Il Team Polimi / Gemini",
+      "author": "Politecnico di Milano",
+      "year": null,
+      "kind": "大学チーム紹介",
+      "scope": "Gemini学生ハイブリッド機",
+      "note": "イタリア語で固体機からハイブリッド機への移行と競技参加を説明する。",
+      "source": "https://www.polimi.it/campus-e-servizi/sport-e-tempo-libero/competizioni-internazionali/euroc",
+      "download": null
+    },
+    {
+      "id": "MH10",
+      "category": "ハイブリッド",
+      "lang": [
+        "zh-Hant"
+      ],
+      "title": "TECHNOLOGY — 混合式火箭引擎",
+      "author": "Advanced Rocket Research Center",
+      "year": null,
+      "kind": "研究機関技術紹介",
+      "scope": "台湾の研究用ハイブリッド機",
+      "note": "推進系、機体・飛行シミュレーションなどセンターの技術を紹介。市販模型エンジンではない。",
+      "source": "https://arrc.tw/zh-TW/technology/",
+      "download": null
+    },
+    {
+      "id": "MH11",
+      "category": "ハイブリッド",
+      "lang": [
+        "fr"
+      ],
+      "title": "Polaris : la tête dans les étoiles — Interactions 55",
+      "author": "Université de Technologie de Compiègne",
+      "year": "2021",
+      "kind": "大学広報・プロジェクト紹介",
+      "scope": "学生のハイブリッド開発計画",
+      "note": "学生プロジェクトPolarisの設立と当時の進捗。計画目標を達成済み性能と読まない。",
+      "source": "https://interactions.utc.fr/wp-content/uploads/sites/25/2021/09/interactions55fr.pdf",
+      "download": "https://interactions.utc.fr/wp-content/uploads/sites/25/2021/09/interactions55fr.pdf",
+      "local": {
+        "path": "ハイブリッド/原本/MH11.pdf",
+        "pages": 20,
+        "sha256": "4baeb61aa26b90a591b5f5faf287bc35579b7f9789a36a262f71e8b217aa5c37"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH12",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "A computational model for the design of a nitrous oxide–paraffin wax hybrid rocket engine",
+      "author": "Joel Jean-Philyppe / McGill Rocket Team",
+      "year": "2023",
+      "kind": "プレプリント",
+      "scope": "大学ハイブリッド研究",
+      "note": "酸化剤供給、燃焼、ノズルを含む計算モデルの研究。飛行モデルMH01とは解析対象が異なる。",
+      "source": "https://arxiv.org/abs/2302.06725",
+      "download": "https://arxiv.org/pdf/2302.06725",
+      "local": {
+        "path": "ハイブリッド/原本/MH12.pdf",
+        "pages": 95,
+        "sha256": "3f44a737f9d087d211e776c40bc56d885ca5cc560e864bfa1d34071185410d1f"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH13",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "OpenRocket hybrid examples — Simulation extensions / Simulation scripting",
+      "author": "OpenRocket contributors",
+      "year": "2026 保存版",
+      "kind": "機体設計・計算拡張モデル",
+      "scope": "HyperTEK市販ハイブリッドモーター設定の機体",
+      "note": "2つのORKの内部XMLにtype=hybrid、HyperTEK 2800CC172L-L540を確認。拡張・スクリプト利用例を含むため、静的な形状ファイルと区別する。拡張コードは実行していない。",
+      "source": "https://github.com/openrocket/openrocket/blob/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples/Simulation%20extensions.ork",
+      "download": null,
+      "local": {
+        "path": "ハイブリッド/モデル/MH13-OpenRocket"
+      },
+      "license": "GPL-3.0-or-later と追加許諾。LICENSE.TXT を同梱。"
+    },
+    {
+      "id": "MH14",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "The HyperTEK Hybrid Propulsion System — User Manual",
+      "author": "Cesaroni Technology Incorporated",
+      "year": null,
+      "kind": "メーカー取扱説明書の保存版",
+      "scope": "市販高出力ハイブリッドモーター",
+      "note": "メーカー著作の説明書を公開保存ミラーから取得。MH13の市販モーター系列を理解するための製品資料。現行製品・販売状況は未確認。",
+      "source": "https://www.privatedata.com/byb/rocketry/hybrids/HyperTEKmanual.pdf",
+      "download": "https://www.privatedata.com/byb/rocketry/hybrids/HyperTEKmanual.pdf",
+      "local": {
+        "path": "ハイブリッド/原本/MH14.pdf",
+        "pages": 10,
+        "sha256": "f51f591b4d76d05c484e94761dcdc4ce3c384c9dd0a9de8b83ed06220a59f5d9"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH15",
+      "category": "ハイブリッド",
+      "lang": [
+        "fr"
+      ],
+      "title": "Conception et construction d’un démonstrateur de moteur fusée hybride",
+      "author": "Sacha Bumann, Samuel Gebhard / Gymnase de Morges",
+      "year": "2025年4月 改訂表紙（本文フッター2024）",
+      "kind": "学生研究報告",
+      "scope": "地上実験用ハイブリッド実証機",
+      "note": "作者リポジトリの研究報告。CADで設計した図はあるが、ネイティブCADの配布は確認できず、PDFを収録する。",
+      "source": "https://github.com/Bestsage/Hybrid-Rocket-Engine/tree/cf569999f2d49dca50b9b00a3712fd9e1bafbbe3",
+      "download": "https://raw.githubusercontent.com/Bestsage/Hybrid-Rocket-Engine/cf569999f2d49dca50b9b00a3712fd9e1bafbbe3/NW25-643729_Finale_Arbeit.pdf",
+      "license": "リポジトリに包括ライセンスなし。著作者の権利を保持し、ローカル閲覧用として保存。",
+      "local": {
+        "path": "ハイブリッド/原本/MH15.pdf",
+        "pages": 108,
+        "sha256": "93b79c8a051241b541527e9c6ae1645ed3e494db27e24d19cebf343e38b276fd"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC01",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "Development of an Open Source model rocket simulation software",
+      "author": "Sampo Niskanen",
+      "year": "2009",
+      "kind": "修士論文",
+      "scope": "模型ロケット空力・飛行解析",
+      "note": "OpenRocketの空力、安定性、飛行計算と実験比較を説明する原論文。英語本文、フィンランド語要旨付き。",
+      "source": "https://openrocket.sourceforge.net/thesis.pdf",
+      "download": "https://openrocket.sourceforge.net/thesis.pdf",
+      "local": {
+        "path": "共通/原本/MC01.pdf",
+        "pages": 126,
+        "sha256": "b948abf452c2f1c2ac63f0e0acfcb12dda2af856f8a7b51b22e0afca76d78d0c"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC02",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "RocketPy: Combining Open-Source and Scientific Libraries to Make the Space Sector More Modern and Accessible",
+      "author": "João Lemes Gribel Soares, Mateus Stano Junqueira, Oscar Mauricio Prada Ramirez, Patrick Sampaio dos Santos Brandão, Adriano Augusto Antongiovanni, Guilherme Fernandes Alves, Giovani Hidalgo Ceotto",
+      "year": "2022",
+      "kind": "会議論文",
+      "scope": "三方式のロケット飛行解析",
+      "note": "Pythonによるロケット飛行シミュレーションとオープンな解析環境を紹介。",
+      "source": "https://proceedings.scipy.org/articles/majora-212e5952-020.pdf",
+      "download": "https://proceedings.scipy.org/articles/majora-212e5952-020.pdf",
+      "local": {
+        "path": "共通/原本/MC02.pdf",
+        "pages": 9,
+        "sha256": "86425f68c71c1288a920ec4eb4349d4a00a61ca95eb4f28a96699d5b0e3eba1c"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC03",
+      "category": "共通",
+      "lang": [
+        "de"
+      ],
+      "title": "STERN — Raketenprogramm für Studenten",
+      "author": "K. Lappöhn, D. Regenbrecht, D. Bergmann, M. Schmid, P. Rickmers",
+      "year": "2012",
+      "kind": "会議報告",
+      "scope": "大学の固体・液体・ハイブリッド実験機",
+      "note": "学生ロケットプログラムの教育目的と機体システム・開発レビューを紹介。",
+      "source": "https://www.dglr.de/publikationen/2012/281497.pdf",
+      "download": "https://www.dglr.de/publikationen/2012/281497.pdf",
+      "local": {
+        "path": "共通/原本/MC03.pdf",
+        "pages": 11,
+        "sha256": "75f91d8ac1e2976c231fd1c0ccc3fa262518a7780c4d895a58f70da5c823dc9d"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC04",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "Operation of solid rockets in comparison with hybrid rockets during the STERN project",
+      "author": "Katharina Schüttauf, Andreas Stamminger, Karsten Lappöhn, H. Ciezki, W. Kitsche",
+      "year": "2016",
+      "kind": "会議論文",
+      "scope": "学生ロケットの運用比較",
+      "note": "固体とハイブリッドの運用を同じ教育プログラム内で比較する資料。",
+      "source": "https://elib.dlr.de/110589/",
+      "download": "https://elib.dlr.de/110589/2/Sch%C3%BCttauf_SpaceOPs.pdf",
+      "local": {
+        "path": "共通/原本/MC04.pdf",
+        "pages": 10,
+        "sha256": "d3fec688d407e45c4e8297d465e633e2a7638c227b1329c07d98d1fdec09642d"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC05",
+      "category": "共通",
+      "lang": [
+        "pt"
+      ],
+      "title": "Manual de Segurança e Boas Práticas para Operação e Lançamento de Foguetes Amadores",
+      "author": "Agência Espacial Brasileira",
+      "year": null,
+      "kind": "宇宙機関の参照資料",
+      "scope": "ブラジルの教育・アマチュアロケット",
+      "note": "ブラジルの小型ロケット活動に対する宇宙機関の手引き。日本の適用規則を代替するものではない。",
+      "source": "https://www.gov.br/aeb/pt-br/servicos/manuais_da_aeb/manuais/manual-de-seguranca-e-boas-praticas-para-operacao-e-lancamento-de-foguetes-amadores-reb-parte-4",
+      "download": null
+    },
+    {
+      "id": "MC06",
+      "category": "共通",
+      "lang": [
+        "de"
+      ],
+      "title": "STERN — Das Raketen-Programm für Studierende",
+      "author": "Deutsches Zentrum für Luft- und Raumfahrt",
+      "year": null,
+      "kind": "宇宙機関の教育プログラム紹介",
+      "scope": "大学実験ロケットの方式比較",
+      "note": "市販固体、液体、蒸気、ハイブリッドが同じ学生開発プログラムに含まれることを確認できる。蒸気式は液体化学推進とは別方式。",
+      "source": "https://www.dlr.de/de/ar/themen-missionen/raumfahrttechnologien/traegersysteme/stern",
+      "download": null
+    }
+  ]
+}

@@ -1,0 +1,306 @@
+{
+  "files": [
+    {
+      "path": "assets/fin_assembly.stl",
+      "bytes": 45184,
+      "sha256": "6935cb062afa3e92c703370d36aab22fef6c58fe6dcbb6f20e35f9e8917699ce"
+    },
+    {
+      "path": "assets/nose_cone.stl",
+      "bytes": 880084,
+      "sha256": "4dead51a76bd63b54a48efba3a41aaef200536084742098922fe8f1b0073d097"
+    },
+    {
+      "path": "audit_metadata.py",
+      "bytes": 3555,
+      "sha256": "91cd573d7a50d7d1f9ff0c50feb41b1592e2b1582a754c3ba20ce38a12274aa3"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1103,
+      "sha256": "0dea19428bb150f3cca0b6dec3b91be3b92dc967f41a50c5d9c48cbff5913e80"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 1230,
+      "sha256": "6f6f0f9d7f0d3e06ceea14e4faffe60cb37342fd496f16f6277823b6ba53f344"
+    },
+    {
+      "path": "realism/artifact-audit.json",
+      "bytes": 3729,
+      "sha256": "8ba9395cc86fbef5e1d03bd7978cb3afa771c0c8fc05026fef3f850083123579"
+    },
+    {
+      "path": "realism/asset-manifest.json",
+      "bytes": 2137,
+      "sha256": "db673676ecd43b2fc36da0e63698a123762c179135a2d3e8d25980bb8fb33347"
+    },
+    {
+      "path": "realism/audit.py",
+      "bytes": 2512,
+      "sha256": "0fe979b8ab4c16d722f4de0d0d4d00ceee73cd3651502a6c30e11965bb9dc9ee"
+    },
+    {
+      "path": "realism/cache/ground-diff.jpg",
+      "bytes": 3075676,
+      "sha256": "28f5ba8690553f192c0e5e1a5ff40f34765b4b93f4cc7059b1a3e9c795b6c28c"
+    },
+    {
+      "path": "realism/cache/ground-normal.jpg",
+      "bytes": 4943950,
+      "sha256": "ffe49db71a0fd34c1e259625df66a302a237597d6ef655307987ec4e45bc6f21"
+    },
+    {
+      "path": "realism/cache/ground-rough.jpg",
+      "bytes": 2230457,
+      "sha256": "b9a516b61b7040a9245ac206642d5f767ad9589a0169c4a1668221429e8a998c"
+    },
+    {
+      "path": "realism/cache/outdoor.exr",
+      "bytes": 21670628,
+      "sha256": "f7ea4a8ffacbd3947f96a9190aebd8c2ecdff13c153224a7b5f6328b97381b94"
+    },
+    {
+      "path": "realism/cache/workshop.exr",
+      "bytes": 23151289,
+      "sha256": "39b66568e3c0e086bbf172a6cf182f1bf4fb4a6a3a510ba9f5cf7891e43cac6d"
+    },
+    {
+      "path": "realism/check.py",
+      "bytes": 1947,
+      "sha256": "0eff0caf6ab885d16dac78e715d4000463d0035133062f9f88525ad876b560be"
+    },
+    {
+      "path": "realism/compose.py",
+      "bytes": 6967,
+      "sha256": "459db00d541d46a657664f6bd0fe9a8cf8dd21b23820e565d233ccad5a1bb4eb"
+    },
+    {
+      "path": "realism/deliver.py",
+      "bytes": 6837,
+      "sha256": "30311f599d47ff9fa3a254f0b0c59b994e6ee7b18e2a58befba80f3d6a0296b8"
+    },
+    {
+      "path": "realism/fetch_assets.py",
+      "bytes": 2172,
+      "sha256": "2bff167926e302f53054be2dd16e846b94e28857377ef0c5efcb08dd03207593"
+    },
+    {
+      "path": "realism/geometry-audit.json",
+      "bytes": 1417,
+      "sha256": "a842fcc86d185a2882d6a10db42b6c2358e32617244b0036f6e45fbc43610fe8"
+    },
+    {
+      "path": "realism/README.md",
+      "bytes": 5774,
+      "sha256": "3cb2bd695922ac11d51ba6c11cd75e9c3abc3c2efdd67dc8ef7ecbcb44514b7d"
+    },
+    {
+      "path": "realism/render.py",
+      "bytes": 3396,
+      "sha256": "34c32338eabb0373527c0cf77332d4c3084bcfecf4242c464da4a33308730a8f"
+    },
+    {
+      "path": "realism/renders/comparison.jpg",
+      "bytes": 185280,
+      "sha256": "21741dcf13ca46672df8ba7e58408deb213d29af74f1a6f2ea8c782b51832369"
+    },
+    {
+      "path": "realism/renders/design-cinematic-contact.jpg",
+      "bytes": 256664,
+      "sha256": "ee0b0b7d63e0247881ecf5801d5e1943b85ca7f74fea2a50508f8222342be780"
+    },
+    {
+      "path": "realism/renders/design-cinematic-poster.png",
+      "bytes": 1742509,
+      "sha256": "102aa90db4ae122231e798995f1c6582d6b0b8e6ebf32ce0214c78930a697dde"
+    },
+    {
+      "path": "realism/renders/design-contact.jpg",
+      "bytes": 279249,
+      "sha256": "ad99aa71401d2611d1f57d10d73a18ffd972e72ff34001e9362580e481c3aff6"
+    },
+    {
+      "path": "realism/renders/design-poster.png",
+      "bytes": 1736446,
+      "sha256": "2173d979ebba1022c9f0c684126f068da53facef42144e95d8c9529ae27fef15"
+    },
+    {
+      "path": "realism/renders/design-render.json",
+      "bytes": 277,
+      "sha256": "7dc21b684fd6ba85c79b1d03297d41e41c0a6719e215b71743da707f46dd936c"
+    },
+    {
+      "path": "realism/renders/design-sound.wav",
+      "bytes": 3072044,
+      "sha256": "2cdd0765db3e3bb1418f9dbbc3e8a183d8fef1beee191e4d21f54172485797da"
+    },
+    {
+      "path": "realism/renders/design.blend",
+      "bytes": 6271391,
+      "sha256": "ee1b93abe48fbabe29794ddffadfb8ce6afb36eb81e8d63e870abc065db16e04"
+    },
+    {
+      "path": "realism/renders/index.html",
+      "bytes": 2130,
+      "sha256": "283f173da2f322cfa830bcd439288119f40707087313068bc9415f32181ab78a"
+    },
+    {
+      "path": "realism/renders/launch-cinematic-contact.jpg",
+      "bytes": 125454,
+      "sha256": "dccdd7669812bac7c0fa6717a41e598f8aa71fc71d36ed41f4c47fcda7ac703b"
+    },
+    {
+      "path": "realism/renders/launch-cinematic-poster.png",
+      "bytes": 1350694,
+      "sha256": "19df49da4fc32a285b0bad80b688cbd60f412a4bad71267e6325df2dc597152f"
+    },
+    {
+      "path": "realism/renders/launch-contact.jpg",
+      "bytes": 160953,
+      "sha256": "f72d02f3fa668c159a355bb160ce4dec45b67182d4fa9caacbc92b223588473e"
+    },
+    {
+      "path": "realism/renders/launch-poster.png",
+      "bytes": 1367790,
+      "sha256": "ab37e87ebdaa44c581f83d38eb88e8cb47ccc0ee54ab5383fd366320874d1c54"
+    },
+    {
+      "path": "realism/renders/launch-render.json",
+      "bytes": 276,
+      "sha256": "2f3d31f52a2dddfa50825e6fd5a9873723f26abacc07390692959ec5e046f005"
+    },
+    {
+      "path": "realism/renders/launch-sound.wav",
+      "bytes": 2304044,
+      "sha256": "b8ad46e6d63b299d7f40a0f8d5c0603f3d8c5f341ca0fcba7647a7f5e8af1634"
+    },
+    {
+      "path": "realism/renders/launch-state.csv",
+      "bytes": 28811,
+      "sha256": "32a082906feb13f1d76e2e4bc381b365266737008da1406be68543292d18313e"
+    },
+    {
+      "path": "realism/renders/launch.blend",
+      "bytes": 5802087,
+      "sha256": "22265a4ef9e41f158704118de8132d606ae2cc0af5695863b36610a482ad7cf0"
+    },
+    {
+      "path": "realism/renders/pet_rocket_design.mp4",
+      "bytes": 4536751,
+      "sha256": "11b41d0ef40342b2ef3c8d6231933efaabde24f95893c48038b638d29848d446"
+    },
+    {
+      "path": "realism/renders/pet_rocket_design_cinematic.mp4",
+      "bytes": 4472351,
+      "sha256": "aa8911878d012cfaa869eee1a1fef66084957c0291fd9f6866c37c52d8e40cc7"
+    },
+    {
+      "path": "realism/renders/pet_rocket_launch_cinematic.mp4",
+      "bytes": 3553720,
+      "sha256": "3bbf26fa4d9763201da06d528c5db0bfe8be719f7ffc537c9763c75ef0c03125"
+    },
+    {
+      "path": "realism/renders/pet_rocket_launch_prediction.mp4",
+      "bytes": 3805139,
+      "sha256": "dc6facc8c1fe4998bc6679c0bbaa203e009769915d4d4d3643fc67184d2a2513"
+    },
+    {
+      "path": "realism/review.json",
+      "bytes": 1334,
+      "sha256": "a994215eaf956dbed3645174509a2dc46aa8e0069bc54abd131c39bd13817c22"
+    },
+    {
+      "path": "realism/scene-metadata-cleanup.json",
+      "bytes": 500,
+      "sha256": "18193c33162037a515e5d3cd69ff5db370ad9c721a73f11f662ad876b187c998"
+    },
+    {
+      "path": "realism/scene.py",
+      "bytes": 17949,
+      "sha256": "78a120ee9f83093aa42e58ea7341f486010689bd6dec9e348be02a2e1601a683"
+    },
+    {
+      "path": "realism/settings.json",
+      "bytes": 339,
+      "sha256": "a00db88f124b4417769f3d873ca24455e72d570e0b28b55f4ea2b14caa7584be"
+    },
+    {
+      "path": "realism/verification.json",
+      "bytes": 5564,
+      "sha256": "4bdc368572c01bb7e3348bd05ef7f1c158aac46ad623df01e822dc8744e39cbd"
+    },
+    {
+      "path": "realism/verify.py",
+      "bytes": 5348,
+      "sha256": "367b74851785b3c483d3fa3013e88b9006ee868ca7d7f760e1f60e6876c5a6ce"
+    },
+    {
+      "path": "render-settings.json",
+      "bytes": 297,
+      "sha256": "31c05786c3b74caa1aa8a032de3ef73bcbbc012e0fcaeea253867b67fcafde87"
+    },
+    {
+      "path": "render_scene.py",
+      "bytes": 19342,
+      "sha256": "0cd0495616d7e9d8e6885b6d6cffaa0599d01f1a28f8c5d880d24954428a48a4"
+    },
+    {
+      "path": "renders/trajectory.npz",
+      "bytes": 27111,
+      "sha256": "4bde226c53c43c044624473632ef8f0dd32497b5da7f4d5d53ce9c7f1efbe7c4"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 80,
+      "sha256": "89be8f53f8adb6b7f5737a060f6a24671ee717833409302db942473af6fc61f7"
+    },
+    {
+      "path": "sanitize_scenes.py",
+      "bytes": 1319,
+      "sha256": "0ebb5d0643153f6ae3c9010a2e1576ed894ef5a1b6aa647c8b66b0b48be6c0f6"
+    },
+    {
+      "path": "scenario.json",
+      "bytes": 1568,
+      "sha256": "772724e4a8712a7fae886913ca5dbd391c4012e0a32a18dd00878433415dda3e"
+    },
+    {
+      "path": "simulate.py",
+      "bytes": 11063,
+      "sha256": "1366b69327df4b7de22bbce065eed2d1834b99e92b30150b3b4d23f6626d5ff2"
+    },
+    {
+      "path": "simulation.json",
+      "bytes": 4827,
+      "sha256": "d0d59f38adb81d3872a27f55712c100dd0f21533325078f98024c5d765fc5152"
+    },
+    {
+      "path": "source-data/assembly.json",
+      "bytes": 593,
+      "sha256": "fe24d8e66e3077ce47e9935cbe736e057a1903ce0a2162fb82fb4fff0f157403"
+    },
+    {
+      "path": "source-data/geometry.json",
+      "bytes": 5124,
+      "sha256": "26b3c19fc55b9cedab2aae3b471959ae368ea9828b3a6e682906852c39e10fb3"
+    },
+    {
+      "path": "source-data/parameters.json",
+      "bytes": 1500,
+      "sha256": "ea3ab67822fdb1ca11119b94279a1dd0975e0a020a463db1e2ebacbc29dc8d33"
+    },
+    {
+      "path": "test_physics.py",
+      "bytes": 1868,
+      "sha256": "55ad83c41543e801473978f7973e744d7650bbbdcb81d484a3b22811122d8315"
+    },
+    {
+      "path": "timeline.py",
+      "bytes": 512,
+      "sha256": "70154fad69016c075f2c2f6ce5e39cbf6f2117f38ab3a76fdea159b24e993136"
+    }
+  ],
+  "self_excluded_from_hashes": true,
+  "photo_assets": "Poly Haven CC0; original URLs and hashes in realism/asset-manifest.json"
+}
