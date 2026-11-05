@@ -1,0 +1,230 @@
+version: 1
+sources:
+  grid_verification: https://www.grc.nasa.gov/www/wind/valid/tutorial/spatconv.html
+  solution_verification: https://www.grc.nasa.gov/www/wind/valid/tutorial/verassess.html
+  resource_pool: rocketwright/catalog/bottle_resources.yaml
+  existing_integrity: rocketwright/physics/bottle_integrity/harness.py
+  assumptions: All parameter ranges and screening thresholds are project assumptions, not material ratings.
+variables:
+  fin_span: {unit: m, role: design, bounds: [0.03, 0.14], invalidates: [geometry, aero, structure, mass, stability, flight]}
+  fin_root: {unit: m, role: design, bounds: [0.04, 0.12], invalidates: [geometry, aero, structure, mass, flight]}
+  fin_tip: {unit: m, role: design, bounds: [0.02, 0.08], invalidates: [geometry, aero, structure, mass, flight]}
+  fin_sweep: {unit: m, role: design, bounds: [0, 0.06], invalidates: [geometry, aero, structure, mass, flight]}
+  fin_thickness: {unit: m, role: design, bounds: [0.00075, 0.003], invalidates: [geometry, structure, mass, aero, stability, flight]}
+  fin_cant: {unit: deg, role: design, bounds: [-5, 5], invalidates: [geometry, aero, stability, flight]}
+  fin_young: {unit: Pa, role: material, bounds: [5.0e8, 7.0e10], invalidates: [structure, stability, deformed_aero, flight]}
+  fin_density: {unit: kg/m3, role: material, bounds: [600, 1800], invalidates: [mass, structure, stability, flight]}
+  root_stiffness: {unit: N/m, role: material, bounds: [5.0e4, 5.0e6], invalidates: [structure, stability, deformed_aero, flight]}
+  warm_modulus_ratio: {unit: '1', role: material, bounds: [0.2, 1], invalidates: [structure, stability, flight]}
+  nose_length: {unit: m, role: design, bounds: [0.05, 0.2], invalidates: [geometry, aero, mass, flight]}
+  nozzle_bore: {unit: m, role: design, bounds: [0.007, 0.022], invalidates: [propulsion, mass, flight, loads]}
+  water_fraction: {unit: '1', role: design, bounds: [0.15, 0.4], invalidates: [propulsion, mass, stability, flight, loads]}
+  initial_pressure: {unit: Pa gauge, role: state, bounds: [1.0e5, 4.0e5], invalidates: [propulsion, thermal, flight, loads, structure]}
+  payload_mass: {unit: kg, role: design, bounds: [0.02, 0.1], invalidates: [mass, contact, flight, loads]}
+  payload_station: {unit: m aft nose, role: design, bounds: [0.08, 0.24], invalidates: [mass, contact, stability, flight]}
+  body_thickness: {unit: m, role: material, bounds: [0.0002, 0.001], invalidates: [mass, structure, thermal, flight]}
+  pad_stiffness: {unit: N/m, role: material, bounds: [100, 3000], invalidates: [contact, payload_modes]}
+  pad_damping: {unit: N*s/m, role: material, bounds: [0.1, 5], invalidates: [contact, payload_modes]}
+  gas_temperature: {unit: K, role: state, bounds: [273, 330], invalidates: [propulsion, thermal, flight]}
+  dynamic_pressure: {unit: Pa, role: state, bounds: [0, 1000], invalidates: [structure, stability]}
+  incidence: {unit: deg, role: state, bounds: [0, 180], invalidates: [aero, structure, flight]}
+  reynolds: {unit: '1', role: state, bounds: [100, 200000], invalidates: [aero]}
+  cells_per_diameter: {unit: cells, role: numerical, bounds: [6, 64], invalidates: [aero, loads, flight]}
+  averaging_time: {unit: D/U, role: numerical, bounds: [20, 160], invalidates: [aero, loads, flight]}
+  lattice_mach: {unit: '1', role: numerical, bounds: [0.04, 0.17], invalidates: [aero, loads, flight]}
+targets:
+  aero: {label: 空力係数と分布荷重, variables: [incidence, reynolds, cells_per_diameter, averaging_time, lattice_mach, fin_cant]}
+  fin: {label: フィンと根元の剛性・変形・振動, variables: [fin_span, fin_root, fin_tip, fin_sweep, fin_thickness, fin_young, fin_density, root_stiffness, warm_modulus_ratio, dynamic_pressure]}
+  mission: {label: 質量・姿勢・高度への伝播, variables: [payload_mass, payload_station, water_fraction, nozzle_bore, fin_thickness]}
+  body: {label: ボトル胴体と搭載筒, variables: [body_thickness, initial_pressure, payload_mass, gas_temperature]}
+  payload: {label: ペイロード支持と着地接触, variables: [pad_stiffness, pad_damping, payload_mass]}
+  stability: {label: 飛行中の摂動応答, variables: [fin_cant, root_stiffness, fin_young, payload_station, water_fraction]}
+  thermal: {label: 待機・噴射中の温度, variables: [gas_temperature, initial_pressure, body_thickness]}
+methods:
+  audit:
+    label: 既存結果の成分別誤差診断
+    layer: low
+    category: verification
+    phase: before refinement
+    inputs: [prior CFD histories, prior flight envelope]
+    outputs: [component changes, window drift, missing accuracy evidence]
+    scope: Error diagnostics; differences are not confidence intervals.
+  cfd:
+    label: CUDA D3Q19数値風洞の条件追加
+    layer: low
+    category: aerodynamics
+    phase: rigid external flow
+    inputs: [assembly, fixed case parameters, GPU capacity]
+    outputs: [force histories, surface pressure, conservative line loads]
+    scope: Rigid flat base and zero-thickness fins; no resolved moving-fin coupling.
+    capabilities: [cuda]
+  aero_compare:
+    label: 独立迎角・時間・格子の比較
+    layer: middle
+    category: verification
+    phase: table acceptance
+    inputs: [CFD batches, old table]
+    outputs: [held-out errors, error source comparison, escalation request]
+    scope: Fixed training angles and disjoint held-out angles; no tuning on holdout.
+  fin_screen:
+    label: テーパ梁による剛性・質量・固有振動スクリーニング
+    layer: low
+    category: structure
+    phase: candidate screening
+    inputs: [fin geometry, assumed material profiles, root spring, load envelope]
+    outputs: [deflection, mass, first mode, shortlist]
+    scope: Linear Euler-Bernoulli FE; large deformation is a trigger for nonlinear analysis.
+  fin_nonlinear:
+    label: 温間非線形FEMと変形後ねじれ
+    layer: middle
+    category: aeroelasticity
+    phase: shortlist verification
+    inputs: [fin shortlist, material, root support, dynamic pressure]
+    outputs: [displacement, stress demand, twist, mesh differences]
+    scope: Frozen follower-pressure demand; twist triggers fluid recoupling. No material strength certificate.
+    capabilities: [calculix]
+  reflight:
+    label: 候補のBOM・重心・慣性更新と6DOF再飛行
+    layer: high
+    category: flight
+    phase: candidate comparison
+    inputs: [nonlinear fin results, updated mass, CFD table, propulsion]
+    outputs: [altitude, impact speed, CG, inertia, static margin]
+    scope: Zero-thickness rigid CFD reused only as explicit mass-effect diagnostic; changed thickness needs new aero.
+  sensitivity:
+    label: 空力成分別感度と上位要求からの誤差配分
+    layer: high
+    category: accuracy allocation
+    phase: requirements feedback
+    inputs: [CFD table, 6DOF model, altitude budget]
+    outputs: [finite-difference sensitivities, local aero tolerance, curvature]
+    scope: Local sensitivity budget, not a bound on model-form error or measured probability.
+  perturbation:
+    label: 6DOF非線形摂動の有限時間応答
+    layer: high
+    category: stability
+    phase: guide exit to apogee
+    inputs: [baseline flight, perturbed tilt and damping, CFD table]
+    outputs: [trajectory differences, peak attitude difference, finite-time ratios]
+    scope: Selected finite perturbations do not establish Lyapunov or global exponential stability.
+  fitted_cfd:
+    label: 境界適合メッシュまたは補間境界CFD
+    layer: low
+    category: aerodynamics
+    phase: geometry-discretization escalation
+    inputs: [finite-thickness CAD, mesh family, turbulence treatment]
+    outputs: [independent aero coefficients, wall resolution, grid study]
+    scope: Adapter to be implemented and verified before selection.
+    implementation: planned
+  fsi:
+    label: 変形形状を交換するCFD・構造連成
+    layer: middle
+    category: aeroelasticity
+    phase: flight envelope
+    inputs: [verified CFD, material tensor, structural mesh]
+    outputs: [transient deformed loads, mode damping]
+    scope: Requires both solvers and load/displacement transfer verification.
+    implementation: planned
+  body_buckling:
+    label: 胴体の初期不整・内圧・同時断面荷重
+    layer: middle
+    category: structure
+    phase: governing load events
+    inputs: [actual wall profile, simultaneous N V M T, material law]
+    outputs: [nonlinear equilibrium path, buckling sensitivity, stress demand]
+    scope: Existing integrity FEM available separately; coupled event adapter pending.
+    implementation: planned
+  pad_contact:
+    label: 温度依存パッドと多方向着地
+    layer: middle
+    category: contact
+    phase: landing
+    inputs: [contact law, landing attitude, local mount geometry]
+    outputs: [peak payload force, crush demand, rebound]
+    scope: Existing scalar contact available separately; multidirectional adapter pending.
+    implementation: planned
+  thermal:
+    label: 温度依存物性の熱・構造反復
+    layer: middle
+    category: thermal
+    phase: wait and discharge
+    inputs: [thermal boundaries, measured temperature-property curves]
+    outputs: [temperature, pressure, updated stiffness]
+    scope: Existing five-node thermal model available separately; material calibration pending.
+    implementation: planned
+  slosh:
+    label: 液面移動と機体姿勢の連成
+    layer: middle
+    category: fluid dynamics
+    phase: powered ascent
+    inputs: [reservoir geometry, discharge, acceleration history]
+    outputs: [liquid CG, inertia, lateral loads, damping]
+    scope: Reduced pendulum must be correlated before multi-phase CFD escalation.
+    implementation: planned
+  qualify:
+    label: 適用範囲を限定した設計判定
+    layer: high
+    category: evidence synthesis
+    phase: design acceptance
+    inputs: [verified numerics, model validation, applicable material records]
+    outputs: [separate numerical and physical verdicts]
+    scope: Simulated evidence cannot satisfy physical article qualification.
+    implementation: planned
+evaluations:
+  error_audit: {label: 誤差源の切り分け, observables: [Cx, Cy, Cm_z, drift], rule: Compare like components and independent histories; do not hide moment error in a total norm., evidence_level: diagnostic}
+  cfd_convergence: {label: 時間・格子・補間の精度, observables: [coefficient changes, held-out residual], rule: Apply declared numerical limits and retain failures; GCI needs suitable convergence behavior., evidence_level: numerical}
+  stiffness: {label: 変形比・質量・固有振動, observables: [tip/span, mass_kg, mode_hz], rule: Rank feasible stiffness screens by mass; linear large-deflection output is diagnostic only., evidence_level: diagnostic}
+  nonlinear: {label: 非線形変形と格子差, observables: [max_displacement, p95_stress, twist_residual], rule: Mesh limits and coupling residual must pass separately; missing strength allowables remain unknown., evidence_level: numerical}
+  mission: {label: 高度・回収・重心の候補比較, observables: [apogee, impact_speed, wet_dry_margin], rule: Preserve model validity flags and require independent verification for changed geometry., evidence_level: diagnostic}
+  budget: {label: 上位精度からの局所配分, observables: [dh_dCa, dh_dCn, dh_dCm, local_tolerance], rule: Allocate declared altitude budget using component sensitivity; zero sensitivity is not automatic qualification., evidence_level: diagnostic}
+  stability: {label: 有限時間増幅・減衰, observables: [attitude_difference, normalized_growth], rule: Report tested perturbations and time interval; no global theorem from finite samples., evidence_level: diagnostic}
+  strength: {label: 強度と損傷, observables: [stress_demand, buckling, allowable], rule: Match material lot orientation temperature process and load path before allowing a margin., evidence_level: physical}
+  acceptance: {label: 実機適合判定, observables: [numerical_pass, model_validated, physical_records], rule: Missing or out-of-domain evidence fails closed., evidence_level: physical}
+actions:
+  diagnose:
+    {target: aero, method: audit, evaluation: error_audit, uses: [prior, geometry, code], addresses: [aero_error], priority: 90, cost_s: 2}
+  aero-sensitivity:
+    {target: mission, method: sensitivity, evaluation: budget, depends: [diagnose], uses: [prior, geometry, mass, operation, code, requirements], addresses: [aero_error, altitude_shortfall], priority: 85, cost_s: 90}
+  angle-stencil:
+    target: aero
+    method: cfd
+    evaluation: cfd_convergence
+    parameters: {kind: angle_stencil, cells: 16, speed: 24, angles: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], times: 40, lattice_speed: 0.075}
+    depends: [diagnose]
+    uses: [geometry, code]
+    addresses: [aero_error]
+    priority: 72
+    cost_s: 210
+    memory_gib: 0.8
+  longer-average:
+    {target: aero, method: cfd, evaluation: cfd_convergence, parameters: {kind: duration, cells: 16, speed: 24, angles: [12], times: 160, lattice_speed: 0.075}, depends: [diagnose], uses: [geometry, code], addresses: [aero_error], priority: 73, cost_s: 75, memory_gib: 0.8}
+  lower-mach:
+    {target: aero, method: cfd, evaluation: cfd_convergence, parameters: {kind: lattice_mach, cells: 16, speed: 24, angles: [12], times: 80, lattice_speed: 0.05}, depends: [diagnose], uses: [geometry, code], addresses: [aero_error], priority: 68, cost_s: 65, memory_gib: 0.8}
+  angle-grid24:
+    {target: aero, method: cfd, evaluation: cfd_convergence, parameters: {kind: grid, cells: 24, speed: 24, angles: [10, 12, 14], times: 40, lattice_speed: 0.075}, depends: [diagnose], uses: [geometry, code], addresses: [aero_error], priority: 67, cost_s: 240, memory_gib: 3.3}
+  grid40:
+    {target: aero, method: cfd, evaluation: cfd_convergence, parameters: {kind: grid, cells: 40, speed: 18, angles: [0, 5], times: 40, lattice_speed: 0.075}, depends: [diagnose], uses: [geometry, code], addresses: [aero_error], priority: 65, cost_s: 1100, memory_gib: 21.5}
+  compare-aero:
+    {target: aero, method: aero_compare, evaluation: cfd_convergence, depends: [angle-stencil, longer-average, lower-mach, angle-grid24, aero-sensitivity], uses: [prior, geometry, code, requirements], addresses: [aero_error], priority: 95, cost_s: 3}
+  fin-candidates:
+    {target: fin, method: fin_screen, evaluation: stiffness, depends: [diagnose], uses: [geometry, material, prior, code, requirements], addresses: [fin_flexibility, altitude_shortfall], priority: 75, cost_s: 10, bounds: {fin_span_m: [0.03, 0.14]}}
+  fin-confirm:
+    {target: fin, method: fin_nonlinear, evaluation: nonlinear, depends: [fin-candidates], uses: [geometry, material, prior, code, requirements], addresses: [fin_flexibility], priority: 74, cost_s: 600}
+  mass-reflight:
+    {target: mission, method: reflight, evaluation: mission, depends: [fin-confirm], uses: [geometry, mass, operation, prior, code, requirements], addresses: [altitude_shortfall, fin_flexibility], priority: 80, cost_s: 120}
+  trajectory-perturbation:
+    {target: stability, method: perturbation, evaluation: stability, depends: [aero-sensitivity], uses: [geometry, mass, operation, prior, code], addresses: [stability_unknown], priority: 60, cost_s: 90}
+  boundary-fitted:
+    {target: aero, method: fitted_cfd, evaluation: cfd_convergence, depends: [compare-aero], uses: [geometry, code], addresses: [aero_error], priority: 95, cost_s: 3600}
+  moving-fin:
+    {target: fin, method: fsi, evaluation: nonlinear, depends: [fin-confirm, compare-aero], uses: [geometry, material, code], addresses: [fin_flexibility], priority: 90, cost_s: 3600, quality_requires: [aero_numerical_pass]}
+  body-event-loads:
+    {target: body, method: body_buckling, evaluation: strength, uses: [actual_wall_profile, material, load_events], addresses: [body_strength_unknown], priority: 70, cost_s: 1800}
+  payload-oblique-contact:
+    {target: payload, method: pad_contact, evaluation: strength, uses: [contact_law, landing_attitude, geometry], addresses: [payload_strength_unknown], priority: 70, cost_s: 900}
+  thermal-properties:
+    {target: thermal, method: thermal, evaluation: strength, uses: [thermal_properties, material_curves], addresses: [warm_strength_unknown], priority: 65, cost_s: 300}
+  liquid-motion:
+    {target: stability, method: slosh, evaluation: stability, uses: [geometry, operation, code], addresses: [stability_unknown], priority: 65, cost_s: 1200}
+  accept-design:
+    {target: mission, method: qualify, evaluation: acceptance, uses: [actual_article_evidence], addresses: [qualification_unknown], priority: 100, cost_s: 3, quality_requires: [aero_numerical_pass, structure_numerical_pass, physical_evidence_pass]}

@@ -152,6 +152,16 @@ class Search:
         design = self.design(action)
         return IntegrityHarness(design, self.plan(action, design), output, **host_settings)
 
+    def analysis_campaign(self, output, **host_settings):
+        """Adaptive follow-up pool; host registers adapters, input hashes and budgets.
+
+        Planner clients use options()/step(id, reason); no shell or thresholds are
+        supplied by the planner. Existing candidate generation stays unchanged.
+        """
+        from rocketwright.adaptive import Campaign
+
+        return Campaign(output, **host_settings)
+
     def options(self):
         options = {}
         if any(a.method == "confirm" for a in self.results):
