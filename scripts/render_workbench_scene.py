@@ -11,6 +11,10 @@ from mathutils import Vector
 job_path = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
 job = json.loads(job_path.read_text(encoding="utf-8"))
 output = job_path.parent
+preview = "--preview" in sys.argv
+if preview:
+    output = output / "preview"
+    output.mkdir(exist_ok=True)
 g = {k: v / 1000 for k, v in job["dimensions_mm"].items()}
 plan = job["plan"]
 bpy.ops.object.select_all(action="SELECT")
@@ -121,16 +125,24 @@ def look_at(position, target):
 trace = job["trace"]
 fps = plan["fps"]
 count = plan["frames_per_clip"]
+if preview:
+    count = 1
+camera_distance = length * 4.5  # Complete assembly inside the caption-safe frame.
 for mode in ("design", "launch"):
     frames = output / (mode + "-frames")
     frames.mkdir(exist_ok=True)
     for index in range(count):
-        progress = index / (count - 1)
+        progress = index / max(1, count - 1)
         if mode == "design":
             root.location = (0, 0, 0)
             angle = -math.pi / 2 + progress * (0.6 if plan["camera"] == "slow_orbit" else 1.2)
             look_at(
-                (1.15 * math.cos(angle), 1.15 * math.sin(angle), length * 0.8), (0, 0, length / 2)
+                (
+                    camera_distance * math.cos(angle),
+                    camera_distance * math.sin(angle),
+                    length * 0.8,
+                ),
+                (0, 0, length / 2),
             )
         else:
             # Replay the sampled solver trajectory; animation duration is presentation time.
@@ -141,10 +153,14 @@ for mode in ("design", "launch"):
             position = [a[k] + (b[k] - a[k]) * mix for k in ("east_m", "north_m", "altitude_m")]
             root.location = position
             look_at(
-                (position[0] + 1.1, position[1] - 1.6, position[2] + 0.8),
+                (
+                    position[0] + camera_distance * 0.55,
+                    position[1] - camera_distance * 0.85,
+                    position[2] + length * 0.9,
+                ),
                 (position[0], position[1], position[2] + length / 2),
             )
         scene.render.filepath = str(frames / f"{index:04d}.png")
         bpy.ops.render.render(write_still=True)
-    if mode == "design":
+    if mode == "design" and not preview:
         bpy.ops.wm.save_as_mainfile(filepath=str(output / "assembly.blend"))
