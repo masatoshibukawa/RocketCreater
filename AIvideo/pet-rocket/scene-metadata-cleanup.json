@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "file": "renders/design.blend",
+      "file_browser_directory_fields_cleared": 1,
+      "replacement": "//",
+      "scene_blocks_and_offsets": "preserved"
+    },
+    {
+      "file": "renders/launch.blend",
+      "file_browser_directory_fields_cleared": 1,
+      "replacement": "//",
+      "scene_blocks_and_offsets": "preserved"
+    }
+  ],
+  "scope": "Only null-terminated saved file-browser Documents directory fields; geometry is separately audited"
+}
