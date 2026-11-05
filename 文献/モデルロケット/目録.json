@@ -1,0 +1,95 @@
+{
+  "checked_on": "2026-11-05",
+  "records": [
+    {
+      "id": "MS14",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "OpenRocket bundled example designs",
+      "author": "OpenRocket contributors",
+      "year": "2026 保存版",
+      "kind": "機体設計モデル集",
+      "scope": "模型・高出力模型",
+      "note": "単段、クラスター、多段、回収機構、印刷用ノーズ・尾翼など16のORK。機体構成と市販モーターを使う飛行設計の比較用。",
+      "source": "https://github.com/openrocket/openrocket/tree/2d76b9733a1c1ccd5e59eddc7f778a15a803cc34/core/src/main/resources/datafiles/examples",
+      "license": "GPL-3.0系。配布元 LICENSE.TXT を同梱。個別ファイルの表示も参照。",
+      "local": {
+        "path": "固体/モデル/MS14-OpenRocket"
+      }
+    },
+    {
+      "id": "MS15",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Rockit — Model Rocket Construction Kit",
+      "author": "Vishnu Bob / Rockit contributors",
+      "year": "2014 保存版",
+      "kind": "OpenSCAD・STLモデル集",
+      "scope": "市販固体モーター用の模型機体",
+      "note": "mini・standard・Dサイズ等の機体、ノーズ、尾翼、モーターマウントのSCAD 26件とSTL 26件。燃焼室・推進剤の製作モデルではなく、市販モーターを収納する機体部品。Eサイズは設定JSONのみ。",
+      "source": "https://github.com/vishnubob/rockit/tree/cbf10616b0d689cbe364fb4190f6b1e75330298b",
+      "license": "MIT。LICENSE と作者READMEを同梱。",
+      "local": {
+        "path": "固体/モデル/MS15-Rockit"
+      }
+    },
+    {
+      "id": "MS16",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "RocketPy solid flight examples — Bella Lui, NDRT 2020, Camões",
+      "author": "RocketPy Team / 各大学チーム",
+      "year": "2020・2023 飛行、2026 保存版",
+      "kind": "飛行計算モデル集",
+      "scope": "大学・高出力実験機",
+      "note": "3つのJupyterノートブックと参照する推力・空力・観測・気象データ。SolidMotorを用いる。各実機の観測結果との比較方法を読める。",
+      "source": "https://github.com/RocketPy-Team/RocketPy/tree/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/bella_lui_flight_sim.ipynb",
+      "license": "MIT。データ提供者の許諾記載を原本内に保持。",
+      "local": {
+        "path": "固体/モデル/MS16-RocketPy"
+      }
+    },
+    {
+      "id": "ML01",
+      "category": "液体",
+      "lang": [
+        "en"
+      ],
+      "title": "RocketPy liquid flight examples — Space Enterprise at Berkeley and Hedy",
+      "author": "RocketPy Team / Space Enterprise at Berkeley / TU Wien Space Team",
+      "year": "2023・2025 対象例、2026 保存版",
+      "kind": "飛行計算モデル集",
+      "scope": "大学液体実験機",
+      "note": "LiquidMotorを使う2ノートブック。推力曲線、タンク内の質量変化、機体・飛行条件をモデル化する。Hedy配布原本の古いtustパス用に、同一内容の入力CSVを互換コピーした。",
+      "source": "https://github.com/RocketPy-Team/RocketPy/tree/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/SEB_liquid_motor.ipynb",
+      "license": "MIT。LICENSE と作者記載を同梱。",
+      "local": {
+        "path": "液体/モデル/ML01-RocketPy"
+      }
+    },
+    {
+      "id": "MH01",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "RocketPy hybrid flight examples — Prometheus, Halcyon, Defiance Mk. IV",
+      "author": "RocketPy Team / Western Engineering / Aerospace Team Graz / University of Toronto Aerospace Team",
+      "year": "2022–2024 飛行、2026 保存版",
+      "kind": "飛行計算モデル集",
+      "scope": "大学ハイブリッド実験機",
+      "note": "HybridMotorを使う3ノートブックと参照データ。固体燃料と酸化剤タンクを区別し、飛行・回収・観測との比較を扱う。",
+      "source": "https://github.com/RocketPy-Team/RocketPy/tree/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/halcyon_flight_sim.ipynb",
+      "license": "MIT。データ提供者の許諾記載を原本内に保持。",
+      "local": {
+        "path": "ハイブリッド/モデル/MH01-RocketPy"
+      }
+    }
+  ]
+}
