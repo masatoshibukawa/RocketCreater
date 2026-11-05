@@ -1,0 +1,578 @@
+{
+  "cases": {
+    "nominal": {
+      "apogee_m": 21.673203045780586,
+      "apogee_s": 2.0788520234975305,
+      "max_q_pa": 320.8610907135846,
+      "max_canopy_force_n": 2.067906386074474,
+      "impact_speed_mps": 4.640768841304234,
+      "ascent_incidence_deg": 14.305313162178964,
+      "drift_m": 13.470463861920647,
+      "max_equilibrium_residual": [
+        5.342948306008566e-16,
+        1.46150452851046e-16,
+        2.3636648194269583e-13,
+        3.7513395167998453e-17,
+        2.723515857283587e-16,
+        9.430653076492568e-19
+      ],
+      "max_mach": 0.0673079187908832,
+      "max_acceleration_g": 11.365105080225893,
+      "speed_clamped_samples": 361,
+      "max_speed_mps": 23.086616145272938,
+      "scale": 1.0,
+      "time_refinement": {
+        "compression_n": 0.0,
+        "tension_n": 0.0,
+        "shear_n": 6.993419712220117e-07,
+        "bending_nm": 7.695060355583649e-07
+      }
+    },
+    "calm": {
+      "apogee_m": 21.91489009636381,
+      "apogee_s": 2.092445153618091,
+      "max_q_pa": 322.2474934247765,
+      "max_canopy_force_n": 1.9978469073945264,
+      "impact_speed_mps": 3.988762179607449,
+      "ascent_incidence_deg": 1.1725679383786922,
+      "drift_m": 0.7193220309342929,
+      "max_equilibrium_residual": [
+        8.261620554339544e-17,
+        0.0,
+        2.0383694732117874e-13,
+        0.0,
+        1.4738373282224826e-17,
+        0.0
+      ],
+      "max_mach": 0.06745317681572763,
+      "max_acceleration_g": 11.407886405098793,
+      "speed_clamped_samples": 348,
+      "max_speed_mps": 23.136439647794575,
+      "scale": 1.0
+    },
+    "crosswind": {
+      "apogee_m": 21.320637625385242,
+      "apogee_s": 2.0684000336660713,
+      "max_q_pa": 324.0366494407282,
+      "max_canopy_force_n": 2.280779569620821,
+      "impact_speed_mps": 6.170063585940026,
+      "ascent_incidence_deg": 29.26278716768376,
+      "drift_m": 26.760265387207895,
+      "max_equilibrium_residual": [
+        2.0816681711721685e-15,
+        3.1094918306884267e-16,
+        2.0883295093199195e-13,
+        7.589415207398531e-17,
+        5.169475958410885e-16,
+        3.7125454078155984e-18
+      ],
+      "max_mach": 0.0676401716095941,
+      "max_acceleration_g": 11.304462465698906,
+      "speed_clamped_samples": 364,
+      "max_speed_mps": 23.200578862090776,
+      "scale": 1.0
+    },
+    "warm": {
+      "apogee_m": 23.021206572844356,
+      "apogee_s": 2.1187863158930913,
+      "max_q_pa": 356.0830621332445,
+      "max_canopy_force_n": 2.0662981751393987,
+      "impact_speed_mps": 4.309304583161253,
+      "ascent_incidence_deg": 12.632416555971734,
+      "drift_m": 14.387504366163396,
+      "max_equilibrium_residual": [
+        9.506284648352903e-16,
+        2.443791696782327e-16,
+        2.1438406605511773e-13,
+        5.57822017743792e-17,
+        4.0766001685454967e-16,
+        9.359714067160019e-19
+      ],
+      "max_mach": 0.07090604995891357,
+      "max_acceleration_g": 12.352778256267154,
+      "speed_clamped_samples": 378,
+      "max_speed_mps": 24.320775135907358,
+      "scale": 1.0
+    },
+    "aero_upper": {
+      "apogee_m": 18.359850597641802,
+      "apogee_s": 1.8779508115937553,
+      "max_q_pa": 297.54876260101673,
+      "max_canopy_force_n": 2.006981784004688,
+      "impact_speed_mps": 4.211221217999949,
+      "ascent_incidence_deg": 12.471796615063345,
+      "drift_m": 11.841339932484383,
+      "max_equilibrium_residual": [
+        1.5404344466674047e-15,
+        2.3592239273284576e-16,
+        2.0294876890147862e-13,
+        5.648693318649478e-17,
+        4.172009959724221e-16,
+        1.744252596633418e-18
+      ],
+      "max_mach": 0.06481666902908015,
+      "max_acceleration_g": 10.813889765621528,
+      "speed_clamped_samples": 317,
+      "max_speed_mps": 22.23211747697449,
+      "scale": 1.5257597711714728
+    },
+    "aero_lower": {
+      "apogee_m": 27.30156222764049,
+      "apogee_s": 2.399059119377721,
+      "max_q_pa": 350.2763082206702,
+      "max_canopy_force_n": 2.132049016358232,
+      "impact_speed_mps": 4.523392845843705,
+      "ascent_incidence_deg": 10.313277861014393,
+      "drift_m": 16.403197967000494,
+      "max_equilibrium_residual": [
+        4.579669976578771e-16,
+        1.1568437180420332e-16,
+        2.219335826225688e-13,
+        2.5045070184415152e-17,
+        1.700029006457271e-16,
+        1.860084352170443e-18
+      ],
+      "max_mach": 0.0703255303805976,
+      "max_acceleration_g": 11.973205066179483,
+      "speed_clamped_samples": 427,
+      "max_speed_mps": 24.12165692054498,
+      "scale": 0.4742402288285271
+    },
+    "low_damping": {
+      "apogee_m": 21.609711607142277,
+      "apogee_s": 2.0773892470554443,
+      "max_q_pa": 321.55272620688976,
+      "max_canopy_force_n": 2.0657080792487927,
+      "impact_speed_mps": 4.6400337519808765,
+      "ascent_incidence_deg": 10.458313398889782,
+      "drift_m": 12.896418764333232,
+      "max_equilibrium_residual": [
+        1.124100812432971e-15,
+        2.7560419224581523e-16,
+        2.3636648194269583e-13,
+        7.193681414441322e-17,
+        3.2699537522162814e-16,
+        7.37257477290143e-18
+      ],
+      "max_mach": 0.06738042288573505,
+      "max_acceleration_g": 11.366725235123187,
+      "speed_clamped_samples": 361,
+      "max_speed_mps": 23.111485049807122,
+      "scale": 1.0
+    },
+    "delayed_canopy": {
+      "apogee_m": 21.673203045780586,
+      "apogee_s": 2.0788520234975305,
+      "max_q_pa": 320.8610907135846,
+      "max_canopy_force_n": 2.068095494417934,
+      "impact_speed_mps": 4.654509925697788,
+      "ascent_incidence_deg": 14.305313162178964,
+      "drift_m": 13.423583753723166,
+      "max_equilibrium_residual": [
+        5.342948306008566e-16,
+        1.5113778284447932e-16,
+        2.3636648194269583e-13,
+        3.7513395167998453e-17,
+        2.723515857283587e-16,
+        9.546061315555967e-19
+      ],
+      "max_mach": 0.0673079187908832,
+      "max_acceleration_g": 11.365105080225893,
+      "speed_clamped_samples": 364,
+      "max_speed_mps": 23.086616145272938,
+      "scale": 1.0
+    },
+    "axial_landing_5mm": {
+      "source_case": "crosswind",
+      "impact_speed_mps": 6.170063585940026,
+      "stop_distance_m": 0.005,
+      "proper_acceleration_mps2": 3816.7751154543093
+    },
+    "axial_landing_15mm": {
+      "source_case": "crosswind",
+      "impact_speed_mps": 6.170063585940026,
+      "stop_distance_m": 0.015,
+      "proper_acceleration_mps2": 1278.79613848477
+    },
+    "axial_landing_30mm": {
+      "source_case": "crosswind",
+      "impact_speed_mps": 6.170063585940026,
+      "stop_distance_m": 0.03,
+      "proper_acceleration_mps2": 644.301394242385
+    }
+  },
+  "tunnel_checks": {
+    "grid24_to32": {
+      "0": 0.14190021817919785,
+      "5": 0.33574755561998465,
+      "90": 0.037444583234192266
+    },
+    "table16_to32": {
+      "0": 0.4187387653698811,
+      "5": 0.5257597711714729,
+      "90": 0.07305640534897707
+    },
+    "width10_to14": 0.021023620370154168,
+    "duration40_to80": 0.02961651981475655,
+    "held_out_interpolation": 0.25433110227605743,
+    "held_out_case": "holdout-v24-a012",
+    "max_surface_integration_residual": 4.959556829738607e-07,
+    "criteria": {
+      "grid": 0.05,
+      "domain": 0.05,
+      "duration": 0.03,
+      "interpolation": 0.1
+    },
+    "pass": false,
+    "scope": "six-component coefficient norm; numerical sensitivity, no physical validation"
+  },
+  "assumed_aero_spread": 0.5257597711714729,
+  "design_factor": 1.5,
+  "units": "SI; forces N, moments N*m",
+  "sources_sha256": {
+    "input.json": "4c8224a174c23ee3585469aa46ab190bb3dc7cb15145915e6d01296776788857",
+    "run.py": "09098467eed2a8f2f4401b6318d405d99d585e057d398842722f81cf9fe4ca56",
+    "flight.py": "e0e414395b9deb705143ca49cbee19d670878105afbac0ac52f0e74cc9b03e42",
+    "flight_loads.py": "b254cd5edab1d0d5f3bc1689dc8db9857ce85af7458a069a1c2e5e97e34b2b03"
+  },
+  "maxima": {
+    "compression_n": {
+      "station_m": 0.56700001,
+      "limit": 821.1700784344547,
+      "design": 1231.755117651682,
+      "case": "axial_landing_5mm",
+      "time_s": 60.81501110402813,
+      "concurrent_vector": [
+        -0.0,
+        -0.0,
+        821.1700784344547,
+        -0.0,
+        -0.0,
+        -0.0
+      ]
+    },
+    "tension_n": {
+      "station_m": 0.36196875999999994,
+      "limit": 2730.8869350965647,
+      "design": 4096.330402644847,
+      "case": "warm",
+      "time_s": 0.0,
+      "concurrent_vector": [
+        -0.09118998704645552,
+        -0.0,
+        -2730.8869350965647,
+        -0.0,
+        -0.014637177037001646,
+        -0.0
+      ]
+    },
+    "shear_n": {
+      "station_m": 0.38000001,
+      "limit": 2.0106538490124706,
+      "design": 3.015980773518706,
+      "case": "crosswind",
+      "time_s": 0.20634506799841504,
+      "concurrent_vector": [
+        1.9912288210475249,
+        0.27881298889820016,
+        -1647.7334999568964,
+        0.037857471028659634,
+        -0.2697703503185964,
+        -0.0
+      ]
+    },
+    "bending_nm": {
+      "station_m": 0.37999999,
+      "limit": 0.31363575740720767,
+      "design": 0.4704536361108115,
+      "case": "crosswind",
+      "time_s": 0.20634506799841504,
+      "concurrent_vector": [
+        -1.603813204119366,
+        -0.22453147519001762,
+        -1647.9234711928116,
+        0.04347200247955039,
+        -0.3106083922317792,
+        -0.0
+      ]
+    },
+    "torsion_nm": {
+      "station_m": 0.56700001,
+      "limit": 7.37257477290143e-18,
+      "design": 1.1058862159352145e-17,
+      "case": "low_damping",
+      "time_s": 2.558714601392492,
+      "concurrent_vector": [
+        0.0064866371887940585,
+        -0.002003576136461491,
+        0.044150041301350855,
+        2.7091128974026773e-05,
+        8.77083338593072e-05,
+        -7.37257477290143e-18
+      ]
+    }
+  },
+  "status": "conditional_simulations_complete",
+  "physical_safety": "not_qualified",
+  "limits": [
+    "CFD numerical checks are independent of actual-material qualification",
+    "mean rigid-geometry aero; no resolved moving-fin FSI or turbulent buffet",
+    "azimuthal symmetry surrogate and engineering rotational damping",
+    "BOM-based surrogate inertia; no slosh; nozzle-lumped angular transport",
+    "pressure end-resultants use uniform reservoir membrane approximation",
+    "canopy inflation prescribed; landing axis-aligned prescribed stopping distance",
+    "assumed design margin; separate component maxima are not a concurrent load case"
+  ],
+  "tunnel_manifest": {
+    "source_hashes": {
+      "run_flow.py": "bb258ad07b3c6263c0557dd1e4bffdbd2fdc0d3adcf8874b788cf2e3b137fb1a",
+      "bottle_flow.cu": "db8a989f487e1d6f1d7df7a18769ab474a7b2d58bee385633148c30b4b30840a",
+      "assembly.json": "8c53240c6a5f66ed12fcaccbe6c0acd2eaff25b02117255b112e05596d27cc7b"
+    },
+    "cases": {
+      "v08-a000": {
+        "case_sha256": "15cd75d30fce37b7a0762f3633163946b0377de5dfad6256ec35a0e3149dff45",
+        "seconds": 12.766000000061467
+      },
+      "v08-a005": {
+        "case_sha256": "b5965ade94056724de0c3e240cc7a9a29221c7197111c3e0b0f7e60c543db1c0",
+        "seconds": 12.765999999828637
+      },
+      "v08-a015": {
+        "case_sha256": "1b1719ae67036611a36a6af2a6c4d04c46f4f9cdf7ddfd8249ef4c49dc64fed8",
+        "seconds": 12.766000000061467
+      },
+      "v08-a045": {
+        "case_sha256": "beaec10bc01f8f02b18ecd6acb69ec68317669fdb41243403ada645c15ef5bd5",
+        "seconds": 12.766000000061467
+      },
+      "v08-a090": {
+        "case_sha256": "243e5cbdbd212f5c7e3c2a4cb64912de81dda7b00374dc90a7592c585a2887ab",
+        "seconds": 12.764999999897555
+      },
+      "v08-a135": {
+        "case_sha256": "d0fac2930918e8433581cad8740c361731a7257abb6a024b19463fbf4aa5ad26",
+        "seconds": 12.766000000061467
+      },
+      "v08-a180": {
+        "case_sha256": "bf9054f10174622b086b19dacae118c1e1f8d1347a5719076c7a89aa8083457f",
+        "seconds": 12.766000000061467
+      },
+      "v18-a000": {
+        "case_sha256": "28df295ee5bbae2c7e3171a48131f190fb3ba799c0e1a3568c2278f063749f6c",
+        "seconds": 12.765000000130385
+      },
+      "v18-a005": {
+        "case_sha256": "f476962bed79e9eddcbe6f3a27f4598ede7948d2a36ce0fc57d452bf8c81dd53",
+        "seconds": 12.766000000061467
+      },
+      "v18-a015": {
+        "case_sha256": "e75ca4fa54bf57bf888350f6cdfc3e4a9233c01c39c555d781e33cb942faf0c6",
+        "seconds": 12.766000000061467
+      },
+      "v18-a045": {
+        "case_sha256": "88a2a0b63645b028a9970617dc0f5be0a22ac3313caa1be079e0fba59ee9127d",
+        "seconds": 12.766000000061467
+      },
+      "v18-a090": {
+        "case_sha256": "327b6ffdf02a305ca86e53c0ce656f3b116358de815179791ed780d982286b6f",
+        "seconds": 12.780999999959022
+      },
+      "v18-a135": {
+        "case_sha256": "787ec44d23fa1c1fc703fc3e496cb33f47ab0945e527bf50f667238ecda658e7",
+        "seconds": 12.766000000061467
+      },
+      "v18-a180": {
+        "case_sha256": "7c579a10f9d7f61671c1093e013113405ebc27fec52d3b43cd2bbb8cbc348b55",
+        "seconds": 12.781999999890104
+      },
+      "v30-a000": {
+        "case_sha256": "1b2f1afa8a1bf06cb0319309a1c6501cadf12e2acc327b8f2c8db7a7af34e379",
+        "seconds": 12.781999999890104
+      },
+      "v30-a005": {
+        "case_sha256": "47a44ed68b66e7b9df83328176596883324550670d1217cfcca62dfd481de8a4",
+        "seconds": 12.780999999959022
+      },
+      "v30-a015": {
+        "case_sha256": "0d36e115cc0b4c33816625fab783ecfdb04f0e2adbcb6cf941cef520d8d9a141",
+        "seconds": 12.796999999787658
+      },
+      "v30-a045": {
+        "case_sha256": "855e0bfe969b5eb4dec7f2eef1e1bf01099d5292bbdee64f0851db2fb9fec11b",
+        "seconds": 12.781999999890104
+      },
+      "v30-a090": {
+        "case_sha256": "4ee625b40a9e97c8d1c4969646693cfc8cdbebc46dc2a583ae4241c5c8399ac2",
+        "seconds": 12.764999999897555
+      },
+      "v30-a135": {
+        "case_sha256": "f47962867e77f1154b84cf4b252a932ed61f22f6fa284e88b1915fee2d844a3f",
+        "seconds": 12.781000000191852
+      },
+      "v30-a180": {
+        "case_sha256": "886a24f721523ac0d252b3a1ca42224a7e9c17e9c2d1547ad82eecb9a9a4bc99",
+        "seconds": 12.780999999959022
+      },
+      "mesh24-a000": {
+        "case_sha256": "14f31dd5e55e34758545ecac3309726c6109ab82e0669296d71f9cfe7f3dadd4",
+        "seconds": 59.67200000002049
+      },
+      "mesh24-a005": {
+        "case_sha256": "368cc49eb717b962f6917167c539fd98b71e41855ec0e5257f98c1f60d2dead5",
+        "seconds": 59.687999999849126
+      },
+      "mesh24-a090": {
+        "case_sha256": "c9aac3abe88712e5a8e30bc698645f139c0b32b6ffb1e8e8c99c25a26bc451d6",
+        "seconds": 59.70299999997951
+      },
+      "mesh32-a000": {
+        "case_sha256": "0dcc4c52148479c83a2d139ce07104e93f4777414f460a21a87c12f68150810b",
+        "seconds": 179.40600000019185
+      },
+      "mesh32-a005": {
+        "case_sha256": "8a4dc6ab89d3006f641603cb867e5c8e5033ff68c3e141fe0fff5e901cf32cbc",
+        "seconds": 179.10900000017136
+      },
+      "mesh32-a090": {
+        "case_sha256": "6047726ec25a9c5a55b47368ff59c26a4ce3cae5162dc796a3378bbe90e488fa",
+        "seconds": 179.2970000000205
+      },
+      "width-a005": {
+        "case_sha256": "2a91b75399f501a8407eb63cf3415408178ca0077a6469a12f24c71fb330acda",
+        "seconds": 24.843999999808148
+      },
+      "long-a005": {
+        "case_sha256": "0fa43d3b1756458613bd3a38c631ccb82b3de5eaae4aacc545d13328d1d03103",
+        "seconds": 25.312999999849126
+      },
+      "holdout-v24-a010": {
+        "case_sha256": "f828addbe2ed54a8f94131cc95e40f6f163619cc60f96b7a63dee8cd32d7a186",
+        "seconds": 12.719000000040978
+      },
+      "v08-a010": {
+        "case_sha256": "f2caa7a22afcfc56f63860772693f227ea837699a6bd3e494f92aa770fb516ea",
+        "seconds": 12.733999999938533
+      },
+      "v18-a010": {
+        "case_sha256": "9cccf9de49235d290e107e78c0237e4f8e8c47a0a489005fdf68e52f24b30c11",
+        "seconds": 12.734000000171363
+      },
+      "v30-a010": {
+        "case_sha256": "874797c2132f0089c019d823cafbe80a0947cd7b47f587c7448cef4f7842d0da",
+        "seconds": 12.75
+      },
+      "holdout-v24-a012": {
+        "case_sha256": "e5a39776e504cc93d5b50fd0e3622791a7ddef5ddd3220983ccad4228f674cf1",
+        "seconds": 12.75
+      }
+    },
+    "physical_validation": false
+  },
+  "tunnel_table_config": {
+    "speeds_mps": [
+      8,
+      18,
+      30
+    ],
+    "angles_deg": [
+      0,
+      5,
+      10,
+      15,
+      45,
+      90,
+      135,
+      180
+    ],
+    "holdout_case": "holdout-v24-a012",
+    "holdout_speed_mps": 24,
+    "holdout_angle_deg": 12,
+    "reason": "25.2% held-out error at 10 degrees triggered incidence refinement"
+  },
+  "independent_sphere_control": {
+    "shape": "sphere",
+    "assembly": "D02/9/carton_wide",
+    "dimensions_mm": {
+      "body_diameter": 90,
+      "nose_length": 100,
+      "egg_bay_length": 82,
+      "canopy_bay_length": 80,
+      "bottle_length": 305,
+      "skirt_length": 110,
+      "skirt_overhang": 5,
+      "fin_root": 70,
+      "fin_tip": 35,
+      "fin_span": 140,
+      "fin_sweep": 35,
+      "fin_tab": 10,
+      "fin_tail_inset": 5,
+      "bay_clear_diameter": 84,
+      "dummy_width": 45,
+      "dummy_length": 60,
+      "padding": 8,
+      "fit_allowance": 2,
+      "overall": 572
+    },
+    "cg_mm": 289.5050282606152,
+    "prior_cd": 0.5277283278631213,
+    "d": 16,
+    "grid": [
+      352,
+      224,
+      224
+    ],
+    "width_D": 14.0,
+    "upstream_D": 7.0,
+    "Re": 100.0,
+    "lattice_Ma": 0.12990381056766578,
+    "Cs": 0,
+    "tau": 0.536,
+    "speed_mps": null,
+    "angle_deg": 0,
+    "rotated_geometry": false,
+    "surface_loads": {
+      "samples": 200,
+      "points": 1200,
+      "integration_relative_residual": 2.0499130178388952e-07
+    },
+    "geometry_sha256": "8c53240c6a5f66ed12fcaccbe6c0acd2eaff25b02117255b112e05596d27cc7b",
+    "source_sha256": {
+      "run_flow.py": "bb258ad07b3c6263c0557dd1e4bffdbd2fdc0d3adcf8874b788cf2e3b137fb1a",
+      "bottle_flow.cu": "db8a989f487e1d6f1d7df7a18769ab474a7b2d58bee385633148c30b4b30840a"
+    },
+    "cant_deg": 0,
+    "steps": 8557,
+    "paired_samples": true,
+    "averaging_tU_D": [
+      20.05546875,
+      40.1109375
+    ],
+    "mean": {
+      "Cd": 1.1763118769856502,
+      "Cl": -9.233156836994601e-10,
+      "Cx": 1.1763118769856502,
+      "Cy": -9.233156836994601e-10,
+      "Cz": 6.581197589958699e-09,
+      "Croll": -4.426794327993295e-10,
+      "Cpitch_y": 4.3678390261160554e-08,
+      "Cm_z": -3.373926877428606e-09
+    },
+    "split_window_difference": {
+      "Cd": -3.008656167713397e-05,
+      "Cl": -2.889504594756898e-08,
+      "Cx": -3.008656167713397e-05,
+      "Cy": -2.889504594756898e-08,
+      "Cz": -6.410842243635112e-08,
+      "Croll": 9.794145741806417e-10,
+      "Cpitch_y": 9.563471221497556e-08,
+      "Cm_z": 8.485462203960336e-08
+    },
+    "max_abs_density_departure": 0.009228356182575226,
+    "seconds": 29.608999999938533,
+    "reference_cd": 1.0917,
+    "relative_error": 0.07750469633200541
+  },
+  "full_assessment_sha256": "91e30064453757a92a8862bc857be0589e955c3cbeaeebb109538eaa902833e6",
+  "design_loads_sha256": "c07ef729e63733dbe6390e3867b706f369543a43424f56a9b0bf984a9608425c"
+}
