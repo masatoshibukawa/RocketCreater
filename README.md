@@ -413,11 +413,12 @@ vehicle design, targeting, or guidance/control implementation.
 **Submission deadline: 2026-11-08 (Sun) 20:00 JST / 11:00 UTC.**
 This follows the organizer's November 2 update for **Built with Claude: Japan 2026**.
 The previous November 9–10 submission schedule is obsolete; do not use the final judging
-date as the submission deadline. The older deadline and phase table in `CLAUDE.md` have
-not yet been synchronized; use the deadline above for submission planning.
+date as the submission deadline. The team's target is to submit on Saturday, November 7,
+keeping November 8 as a buffer.
 
 日本語の要点：**提出締切は2026年11月8日（日）20:00（日本時間）**です。
 旧記載の「11月9〜10日に動画・概要文を作成して提出」では間に合いません。
+チームの提出目標は11月7日（土）で、11月8日は予備日です。
 以下は公開済みコードの実装状況と、提出に向けた確認事項・計画案を分けて記載しています。
 
 ### Repository status (reviewed 2026-11-03)
@@ -445,8 +446,8 @@ commitments. Prioritize a reproducible existing end-to-end demo over adding unve
 | --- | --- | --- |
 | November 3–5 | Agree on the design inputs, supported mission scope, candidate comparison, and UI/backend interface; verify the existing end-to-end path | One documented live-API demo reaches the UI and downloads the expected artifacts; open issues are recorded |
 | November 6 | Stabilize the demo and provisionally freeze submission scope | Regression/lint/build results and remaining limitations are recorded against a commit; unresolved extras are explicitly deferred |
-| November 7 | Prepare the demo video (within 3 minutes), short summary, and public GitHub repository | Draft submission package is ready and links are accessible without private credentials |
-| November 8, before 20:00 | Recheck the package, submit with time to spare, and retain the submission confirmation | All required items are submitted by **20:00 JST / 11:00 UTC**, not merely prepared |
+| November 7 | Prepare the demo video (within 3 minutes), short summary, and public GitHub repository; recheck the package and submit | All required items are submitted and the confirmation is retained |
+| November 8, before 20:00 | Buffer only: fix and resubmit if needed | Everything is in by **20:00 JST / 11:00 UTC**, not merely prepared |
 
 ### Submission readiness checklist
 
