@@ -15,8 +15,22 @@ import numpy as np
 class TunnelDatabase:
     def __init__(self, folder, *, scale=1.0):
         folder = Path(folder)
-        self.speeds = np.array([8.0, 18.0, 30.0])
-        self.angles = np.array([0.0, 5.0, 15.0, 45.0, 90.0, 135.0, 180.0])
+        config_path = folder / "table-config.json"
+        config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
+        self.speeds = np.array(config.get("speeds_mps", [8.0, 18.0, 30.0]))
+        self.angles = np.array(config.get("angles_deg", [0.0, 5.0, 15.0, 45.0, 90.0, 135.0, 180.0]))
+        if (
+            len(self.speeds) < 2
+            or len(self.angles) < 2
+            or not np.isfinite(self.speeds).all()
+            or not np.isfinite(self.angles).all()
+            or np.any(np.diff(self.speeds) <= 0)
+            or np.any(np.diff(self.angles) <= 0)
+            or self.speeds[0] <= 0
+            or self.angles[0] != 0
+            or self.angles[-1] != 180
+        ):
+            raise ValueError("Invalid tunnel interpolation axes")
         self.scale = scale
         rows, hashes, geometry = [], {}, set()
         removed = []
@@ -198,7 +212,23 @@ def section_resultants(stations, forces, couples, cuts):
 
 def recover(flight, aero, mass_model, propulsion, *, cuts=65, pressure=True):
     """Recover balanced loads, retaining rail, canopy, pressure and transport terms."""
-    cut_stations = np.linspace(0, mass_model.length, cuts)
+    # Resolve both sides of fixed point loads/couples instead of skipping jumps
+    # between regularly spaced section samples. Water slices remain distributed.
+    fixed = np.r_[
+        aero.stations,
+        mass_model.dry_station,
+        mass_model.top,
+        mass_model.bottom,
+        0.38,
+        mass_model.length - 0.04,
+    ]
+    cut_stations = np.unique(
+        np.clip(
+            np.r_[np.linspace(0, mass_model.length, cuts), fixed - 1e-8, fixed + 1e-8],
+            0,
+            mass_model.length,
+        )
+    )
     traces, residuals = [], []
     for sample in flight["load_samples"]:
         t, cg = sample["time_s"], sample["cg_m"]

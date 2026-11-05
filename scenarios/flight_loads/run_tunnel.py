@@ -15,6 +15,7 @@ def main():
     parser.add_argument("--cells", type=int, default=16)
     parser.add_argument("--times", type=float, default=40)
     parser.add_argument("--checks-only", action="store_true")
+    parser.add_argument("--refine-incidence", action="store_true")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[2]
     driver = root / "scenarios/cfd/run_flow.py"
@@ -33,6 +34,11 @@ def main():
         ("long-a005", 16, 18, 5, 10, 2 * args.times),
         ("holdout-v24-a010", 16, 24, 10, 10, args.times),
     ]
+    if args.refine_incidence:
+        jobs = [
+            (f"v{speed:02}-a010", args.cells, speed, 10, 10, args.times) for speed in (8, 18, 30)
+        ]
+        jobs.append(("holdout-v24-a012", args.cells, 24, 12, 10, args.times))
     fingerprint = {
         p.name: hashlib.sha256(p.read_bytes()).hexdigest()
         for p in (driver, driver.with_name("bottle_flow.cu"), args.assembly)
@@ -80,6 +86,27 @@ def main():
             "seconds": result["seconds"],
         }
         manifest_file.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    if args.refine_incidence:
+        angles = [0, 5, 10, 15, 45, 90, 135, 180]
+        for speed in (8, 18, 30):
+            for angle in angles:
+                if not (args.output / f"v{speed:02}-a{angle:03}/case.json").exists():
+                    raise ValueError("Refined table has missing base cases")
+        (args.output / "table-config.json").write_text(
+            json.dumps(
+                {
+                    "speeds_mps": [8, 18, 30],
+                    "angles_deg": angles,
+                    "holdout_case": "holdout-v24-a012",
+                    "holdout_speed_mps": 24,
+                    "holdout_angle_deg": 12,
+                    "reason": "25.2% held-out error at 10 degrees triggered incidence refinement",
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
     print("TUNNEL COMPLETE", flush=True)
 
 
