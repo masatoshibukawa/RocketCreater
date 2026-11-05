@@ -175,6 +175,13 @@ def write_manual(directory: Path, state: dict, output_directory: Path | None = N
             "解析上の採用案から作成した仮組み用の手順です。実物への適合、取付保持、強度、回収・飛行の検証は完了していません。図は原寸型紙ではありません。"
         )
     )
+    story.append(
+        p(
+            f"計算の仮定: 初期圧力差 {design['initial_gauge_pressure_pa'] / 1000:g} kPa / "
+            f"充填率 {design['water_fill_frac'] * 100:g}%（機材の許容値ではありません）。",
+            small,
+        )
+    )
     story.append(assembly_figure(plan, font))
     story.append(p("最初に照合するもの"))
     story.append(
