@@ -3,6 +3,7 @@ function r = fin_response(input,cfg,thermal,outDir)
 p=cfg.fin; g=input.assembly.dimensions_mm;
 r.provisional=true; r.scope='Static strip torsion and spanwise bending, no flutter or 6DOF flight.';
 names=["bonded","two_slipping_plies","warm_bonded","stiffer_root"];
+labels=["一体の板","２枚の板が滑る","温度で剛性低下","取付剛性を10倍"];
 factor=[1,0.25,thermal.assumed_warm_fin_stiffness_ratio,1]; rootFactor=[1,1,factor(3),10];
 qvalues=[0.5*1.2*15^2,input.max_dynamic_pressure_pa];
 cases=struct([]); ncase=0;
@@ -60,23 +61,24 @@ for qindex=1:2
     nexttile; hold on
     for j=1:numel(names)
         a=cases((j-1)*6+(qindex-1)*3+2);
-        plot(a.span_m*1000,a.deflection_m*1000,'LineWidth',2,'DisplayName',names(j));
+        style='-';if ~a.applicable,style='--';end
+        plot(a.span_m*1000,a.deflection_m*1000,style,'LineWidth',2,'DisplayName',labels(j));
     end
-    yline(g.fin_span*p.max_deflection_span_fraction,'k--','微小変形の仮の判定線');
+    yline(g.fin_span*p.max_deflection_span_fraction,'k:','微小変形の仮の判定線','HandleVisibility','off');
     grid on; legend('Location','northwest','Interpreter','none'); xlabel('根元から (mm)');ylabel('面外変位 (mm)');
     title(sprintf('動圧 %.0f Pa・迎角 %.0f°・ねじり偏心なし',qvalues(qindex),p.incidence_deg));
 end
 nexttile; hold on
 for j=1:numel(names)
     a=cases((j-1)*6+6);
-    plot(a.span_m*1000,a.twist_deg,'LineWidth',2,'DisplayName',names(j));
+    plot(a.span_m*1000,a.twist_deg,'--','LineWidth',2,'DisplayName',labels(j));
 end
-yline(p.max_rotation_deg,'k--'); grid on; xlabel('根元から (mm)');ylabel('ねじり角 (°)');
+yline(p.max_rotation_deg,'k:','HandleVisibility','off'); grid on; xlabel('根元から (mm)');ylabel('ねじり角 (°)');
 title('最大動圧・偏心 +0.25 弦長 の仮定'); legend('Location','northwest','Interpreter','none');
 nexttile; axis off
-text(0,.9,{'剛性・接着・取付ばね・空力の作用点は仮定'; '微小変形の範囲を外れたケースは姿勢解析を保留'; ...
+text(0,.9,{'剛性・接着・取付ばね・空力の作用点は仮定'; '破線は微小変形の範囲を外れた外挿'; ...
     '温度 → 剛性 → 変形 → 空力係数 → 局所安定性'; '指数減衰は乾燥・固定流れ・仮の減衰比での結果'; ...
-    '全飛行の安定性、フラッター、材料破壊は未判定'},'FontSize',12,'VerticalAlignment','top');
+    '全飛行の安定性、フラッター、材料破壊は未判定'},'FontSize',10,'VerticalAlignment','top');
 exportgraphics(fig,fullfile(outDir,'fin-coupling.png'),'Resolution',150);
 end
 
