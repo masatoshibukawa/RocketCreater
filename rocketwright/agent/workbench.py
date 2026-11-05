@@ -311,6 +311,29 @@ class Workbench:
 
         return self._run(project_id, revision, "export_production", worker)
 
+    def manual(self, project_id: str, revision: int):
+        def worker(state):
+            from rocketwright.agent.manual import write_manual
+
+            if any(f["kind"] == "manual" for f in state["files"]):
+                raise Conflict("The frozen assembly PDF already exists")
+            keys = {f["key"] for f in state["files"] if f["kind"] == "production"}
+            required = {"production/assembly.json", "production/build.md", "production/report.json"}
+            if not required <= keys:
+                raise Conflict("Export the confirmed production packet before generating its PDF")
+            for key in required:
+                self.file(project_id, key)  # Validate the frozen sources before rendering.
+            directory = self.directory(project_id)
+            report = json.loads((directory / "production/report.json").read_text(encoding="utf-8"))
+            write_manual(
+                directory / "production",
+                state | {"design_snapshot": report["design"]},
+                directory / "manual",
+            )
+            self.register_files(state, directory / "manual", "manual")
+
+        return self._run(project_id, revision, "assembly_pdf", worker)
+
     def file(self, project_id: str, key: str) -> Path:
         state = self.load(project_id)
         record = next((f for f in state["files"] if f["key"] == key), None)

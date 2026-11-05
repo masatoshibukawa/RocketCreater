@@ -1,15 +1,35 @@
 """Local production workbench routes; each mutation acknowledges one revision."""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from rocketwright.agent.library import DEFAULT_LIBRARY
 from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
 from rocketwright.agent.production import collect_wan, plan_video, render_video, submit_wan
 from rocketwright.agent.workbench import DEFAULT_WORKBENCH, Conflict, StepChoice
 from rocketwright.bottle_assembly import Workshop
 
 router = APIRouter(prefix="/workbench", tags=["workbench"])
+
+
+@router.get("/library")
+def library():
+    return call(DEFAULT_LIBRARY.view)
+
+
+@router.get("/library/assets/{asset_id}")
+def library_asset(asset_id: str):
+    path = call(DEFAULT_LIBRARY.file, asset_id)
+    return FileResponse(path, filename=path.name, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/references")
+def references(
+    q: str = Query(default="", max_length=200),
+    category: str = Query(default="all", pattern="^(all|water|model)$"),
+):
+    return call(DEFAULT_LIBRARY.references, q, category)
 
 
 class ProjectRequest(BaseModel):
@@ -89,6 +109,11 @@ def propose(project_id: str, request: Revision):
 @router.post("/projects/{project_id}/exports")
 def export(project_id: str, request: Revision):
     return call(DEFAULT_WORKBENCH.export, project_id, request.revision)
+
+
+@router.post("/projects/{project_id}/assembly-pdf")
+def assembly_pdf(project_id: str, request: Revision):
+    return call(DEFAULT_WORKBENCH.manual, project_id, request.revision)
 
 
 @router.post("/projects/{project_id}/video-plan")

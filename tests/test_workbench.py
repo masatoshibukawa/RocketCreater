@@ -72,6 +72,13 @@ def test_workshop_replay_exports_same_design_and_integrity_checked_downloads(ben
         state = bench.step(state["id"], state["revision"], StepChoice(**choice))
     assert state["confirmed"]
     state = bench.export(state["id"], state["revision"])
+    history = state["history"]
+    state = bench.manual(state["id"], state["revision"])
+    pdf = next(f for f in state["files"] if f["kind"] == "manual")
+    assert bench.file(state["id"], pdf["key"]).read_bytes().startswith(b"%PDF-")
+    assert state["history"] == history  # Viewing/printing cannot complete a physical step.
+    with pytest.raises(Conflict, match="already exists"):
+        bench.manual(state["id"], state["revision"])
     names = {f["name"] for f in state["files"]}
     assert {"payload-collar-mm.stl", "fin-marking-jig-mm.stl", "report.json", "trace.json"} <= names
     report_file = next(f for f in state["files"] if f["name"] == "report.json")
@@ -97,6 +104,13 @@ def test_api_checkpoints_validation_and_resume(monkeypatch, bench):
         endpoint = f"/workbench/projects/{state['id']}"
         assert client.get(endpoint).json()["revision"] == 0
         assert client.post(endpoint + "/exports", json={"revision": 0}).status_code == 409
+        state = client.get(endpoint).json()
+        assert (
+            client.post(
+                endpoint + "/assembly-pdf", json={"revision": state["revision"]}
+            ).status_code
+            == 409
+        )
         assert client.get("/workbench/projects/not-an-id").status_code == 404
         assert client.get(endpoint + "/files/state.json").status_code == 404
 
