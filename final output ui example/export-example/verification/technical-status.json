@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0-draft",
+  "package_id": "rocketwright-water-rocket-content-example",
+  "design_revision": "r00",
+  "content_status": "draft_example",
+  "package_integrity": "run_scripts_verify_package",
+  "geometry": "not_evaluated",
+  "assembly_access": "not_evaluated",
+  "physical_trial": "not_recorded",
+  "manufacturing_release": "not_released",
+  "ready_for_manufacturing": false,
+  "blockers": [
+    "要求・機材・部品が未確定",
+    "形状と製作条件が未確定",
+    "組立経路と実物での成立が未確認"
+  ],
+  "source_ids": [
+    "user-water-rocket",
+    "user-equipment",
+    "user-assembly"
+  ]
+}
