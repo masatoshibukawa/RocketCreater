@@ -1,0 +1,115 @@
+{
+  "checks": "passed",
+  "records": [
+    {
+      "file": "renders/design.blend",
+      "decompressed_bytes": 6271391,
+      "unwanted_metadata_matches": []
+    },
+    {
+      "file": "renders/launch.blend",
+      "decompressed_bytes": 5802087,
+      "unwanted_metadata_matches": []
+    },
+    {
+      "file": "renders/pet_rocket_design.mp4",
+      "metadata": {
+        "container": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "title": "PET Rocket v2 Photographic Design",
+          "encoder": "Lavf63.1.102",
+          "comment": "AI-assisted physically based CG; frozen source CAD; assumed bottle detail and inputs; not actual footage; photo assets from Poly Haven CC0"
+        },
+        "streams": [
+          {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc63.1.102 libx264"
+          },
+          {
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        ]
+      }
+    },
+    {
+      "file": "renders/pet_rocket_launch_prediction.mp4",
+      "metadata": {
+        "container": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "title": "PET Rocket v2 Photographic Conditional Ascent",
+          "encoder": "Lavf63.1.102",
+          "comment": "AI-assisted physically based CG; frozen source CAD; assumed bottle detail and inputs; not actual footage; photo assets from Poly Haven CC0"
+        },
+        "streams": [
+          {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc63.1.102 libx264"
+          },
+          {
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        ]
+      }
+    },
+    {
+      "file": "renders/pet_rocket_design_cinematic.mp4",
+      "metadata": {
+        "container": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "title": "PET Rocket v2 Photographic Design",
+          "encoder": "Lavf63.1.102",
+          "comment": "AI-assisted physically based CG; frozen source CAD; assumed bottle detail and inputs; not actual footage; photo assets from Poly Haven CC0"
+        },
+        "streams": [
+          {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc63.1.102 libx264"
+          },
+          {
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        ]
+      }
+    },
+    {
+      "file": "renders/pet_rocket_launch_cinematic.mp4",
+      "metadata": {
+        "container": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "title": "PET Rocket v2 Photographic Conditional Ascent",
+          "encoder": "Lavf63.1.102",
+          "comment": "AI-assisted physically based CG; frozen source CAD; assumed bottle detail and inputs; not actual footage; photo assets from Poly Haven CC0"
+        },
+        "streams": [
+          {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc63.1.102 libx264"
+          },
+          {
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        ]
+      }
+    }
+  ],
+  "images": "No unwanted working labels in saved image metadata",
+  "disclosure": "AI-assisted production and source/license notices retained",
+  "film_count": 4,
+  "image_count": 8
+}

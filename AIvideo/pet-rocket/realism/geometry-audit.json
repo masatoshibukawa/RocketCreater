@@ -38,10 +38,10 @@
       ],
       "three_fin_placement": "passed",
       "relative_asset_paths": "passed",
-      "saved_frame": 230,
-      "width": 960,
-      "height": 540,
-      "camera_z_m": 1.25
+      "saved_frame": 1,
+      "width": 1920,
+      "height": 1080,
+      "camera_z_m": 0.4099999964237213
     }
   ],
   "photo_asset_hashes": "passed",

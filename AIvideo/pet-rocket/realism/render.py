@@ -26,6 +26,7 @@ def main():
     env=os.environ.copy();env["BLENDER_USER_RESOURCES"]=str(out/"blender-user")
     config=json.loads((ROOT/"settings.json").read_text())
     tasks=[("design",1),("design",170),("launch",1),("launch",80),("launch",230)] if args.preview else [(kind,None) for kind in ("design","launch") if args.film in ("both",kind)]
+    tasks=[task for task in tasks if args.film in ("both",task[0])]
     for film,frame in tasks:
         directory=out/(film+"-frames");marker=directory/"input-signature.txt"
         if not frame:
@@ -41,8 +42,21 @@ def main():
         if frame:command += ["--preview",str(frame),"--width","960","--samples","32"]
         else:command += ["--start",str(start)]
         print(f"Rendering {film} "+(f"preview {frame}" if frame else f"from frame {start}"),flush=True)
-        with (out/(film+(f"-preview-{frame}" if frame else "-render")+".log")).open("w",encoding="utf-8") as log:
-            subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+        preserved={}
+        if frame:
+            for name in (film+".blend",film+"-render.json",film+"-state.csv"):
+                path=out/name
+                preserved[path]=path.read_bytes() if path.exists() else None
+        try:
+            with (out/(film+(f"-preview-{frame}" if frame else "-render")+".log")).open("w",encoding="utf-8") as log:
+                subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+        finally:
+            for path,payload in preserved.items():
+                if payload is not None:path.write_bytes(payload)
+                elif path.exists():
+                    target=out/(film+f"-preview-{frame}-"+path.name)
+                    assert target.resolve().parent==out.resolve()
+                    path.replace(target)
         if "Traceback (most recent call last)" in Path(log.name).read_text(encoding="utf-8"):
             raise RuntimeError("Blender handler failed; inspect "+Path(log.name).name)
     print("Rendering complete",flush=True)
