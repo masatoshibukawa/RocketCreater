@@ -31,8 +31,8 @@ export default function WorkbenchPanel({ onOpenDesign }: { onOpenDesign: () => v
     <div className="wb-body">
       <aside className="wb-left">
         <div className="wb-dock-title">設計条件<span>MISSION</span></div>
-        <dl className="wb-conditions"><div><dt>目標高度</dt><dd>30 <small>m</small></dd></div><div><dt>搭載質量</dt><dd>60 <small>g</small></dd></div><div><dt>ボトル容量</dt><dd>1.5 <small>L</small></dd></div><div><dt>材料予算</dt><dd>3,000 <small>円</small></dd></div></dl>
-        <p className="wb-note">卵の回収を想定した探索例。購入候補・寸法・発射台の条件を仮定し、工程ごとに確かめます。</p>
+        <dl className="wb-conditions"><div><dt>目標高度</dt><dd>30 <small>m</small></dd></div><div><dt>搭載質量</dt><dd>60 <small>g</small></dd></div><div><dt>ボトル容量</dt><dd>1.5 <small>L</small></dd></div><div><dt>材料予算</dt><dd>3,000 <small>円</small></dd></div><div><dt>解析の探索上限</dt><dd>{project?.workshop.pressure_ceiling_kpa ?? 400} <small>kPa</small></dd></div></dl>
+        <p className="wb-note">卵の回収を想定した探索例。購入候補・寸法・発射台の条件を仮定し、工程ごとに確かめます。探索上限は計算用の範囲で、機材の許容値は未確認です。</p>
         <div className="wb-dock-title">機体の構成<span>ASSEMBLY</span></div>
         <ul className="wb-tree"><li>◈ 機体全体<ul><li>ノーズ・搭載室</li><li>回収装置</li><li>市販PETボトル</li><li>フィン・取付部</li></ul></li></ul>
         {project?.plan ? <><div className="wb-dock-title">確認結果<span>CHECKS</span></div><ul className="wb-checks">{Object.entries(project.plan.checks).map(([key, passed]) => <li key={key}><span className={passed ? "wb-pass" : "wb-fail"}>{passed ? "✓" : "×"}</span>{CHECK[key] ?? key}</li>)}</ul><p className="wb-note">計算上の条件判定。実物の保持・寸法・回収は製作後に確認します。</p></> : null}

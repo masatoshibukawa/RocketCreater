@@ -157,3 +157,63 @@ NASA · 年不明 · en · 展示用3Dモデル集
 [配布元・出典](https://github.com/nasa/NASA-3D-Resources/tree/11ebb4ee043715aefbba6aeec8a61746fad67fa7/3D%20Printing/Saturn%20V%20Rocket) · [保存ファイル](モデル/ML13-NASA-SaturnV)
 
 利用条件：NASA配布READMEの利用案内を同梱。NASAの画像・メディア利用指針と第三者権利を参照。
+
+<a id="ml14"></a>
+
+## ML14 Rancang Bangun Enjin Roket Cair dengan Gaya Dorong 1000 KGF Menggunakan Propelan Asam Nitrat–Kerosen
+
+Arif Nur Hakim / LAPAN · 2015 · id · 研究機関の技術論文
+
+対象：研究機関の液体エンジン ECX1000H2。インドネシア語本文の試験報告。設計目標と測定された性能を分けて報告している。模型キットではなく、液体方式の研究資料。
+
+[配布元・出典](https://ejournal.brin.go.id/ijoa/article/view/12423) · [原本取得先](https://karya.brin.go.id/id/eprint/11110/1/Jurnal%20TD_Arif_Pustekroket_2015.pdf) · [保存ファイル](<原本/ML14.pdf>)（16ページ）
+
+利用条件：掲載誌サイトはCC BY-SAを表示。原本の表示と配布元の条件を参照。
+
+<a id="ml15"></a>
+
+## ML15 Труды по ракетной технике
+
+К. Э. Циолковский; М. К. Тихонравов 編; Ф. А. Цандер · 1947年版（1903〜1935年の論考を収録） · ru · 原著論集の復刻スキャン
+
+対象：宇宙飛行・液体ロケット理論の歴史資料。1903年の論考や1920〜1930年代の研究を含む1947年刊の論集。大統領図書館の書誌で版を照合し、公開スキャンを保存。書誌上368ページ、表紙等を含むPDFは374ページ。
+
+[配布元・出典](https://www.prlib.ru/item/375985) · [原本取得先](https://www.tsiolkovsky.org/wp-content/uploads/2024/04/252-tsiolkovsky-writings-on-rocket-science-1947.pdf) · [保存ファイル](<原本/ML15.pdf>)（374ページ）
+
+利用条件：公開スキャンの包括的再配布許可は未確認。原著・編集・配布元の表示を保持。
+
+<a id="ml16"></a>
+
+## ML16 Ο πρώτος πυραυλοκινητήρας υγρών καυσίμων made in Greece είναι πλέον πραγματικότητα, χάρη στη φοιτητική ομάδα ASAT
+
+Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης / ASAT · 2026年6月18日 · el · 大学の試験発表
+
+対象：ギリシャの大学液体エンジン実験。ASATの地上燃焼試験を大学がギリシャ語で発表。発表時点の試験完了と将来の飛行目標を区別する。
+
+[配布元・出典](https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/) · [原本取得先](https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/) · [保存HTML](<原本/ML16.html>) · [付属PDF](<原本/ML16.pdf>)（2ページ） · [付属PDF取得先](https://www.auth.gr/wp-content/uploads/2026_6_18_ASAT-%CE%9F-%CF%80%CF%81%CF%8E%CF%84%CE%BF%CF%82-%CE%B5%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CF%8C%CF%82-%CF%80%CF%85%CF%81%CE%B1%CF%85%CE%BB%CE%BF%CE%BA%CE%B9%CE%BD%CE%B7%CF%84%CE%AE%CF%81%CE%B1%CF%82-%CF%85%CE%B3%CF%81%CF%8E%CE%BD-%CE%BA%CE%B1%CF%85%CF%83%CE%AF%CE%BC%CF%89%CE%BD-made-in-Greece.pdf)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml17"></a>
+
+## ML17 Design of Liquid Propellant Rocket Engines — NASA SP-125
+
+Dieter K. Huzel; David H. Huang / Rocketdyne · 1967（NTRS文書IDは1971で始まる） · en · NASAの液体推進技術書
+
+対象：実機用液体エンジンの研究・設計史。469ページのNASA公開スキャン。NTRSの版名はSecond Editionだが、保存PDFの扉と書誌の刊行日は1967年のため、年は1967と記録。模型用キットの説明書ではない。
+
+[配布元・出典](https://ntrs.nasa.gov/citations/19710019929) · [原本取得先](https://ntrs.nasa.gov/api/citations/19710019929/downloads/19710019929.pdf) · [保存ファイル](<原本/ML17.pdf>)（469ページ）
+
+利用条件：NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。
+
+<a id="ml18"></a>
+
+## ML18 DTU-studerendes raket når europæisk stjernehimmel
+
+Peter Aagaard Brixen / Danmarks Tekniske Universitet · 2020年11月4日 · da · 大学自身の飛行報告
+
+対象：DANSTARの液体実験機Dragonfly。デンマーク語による2020年10月24日の飛行報告。到達高度2.2 kmと回収系の不具合を記載し、将来の9 km目標と区別している。学生実験機であり市販模型キットではない。
+
+[配布元・出典](https://www.dtu.dk/nyheder/Alle-nyheder/Nyhed?id=b52469fa-10f8-491f-aeee-94602708e3c1) · [原本取得先](https://www.dtu.dk/nyheder/Alle-nyheder/Nyhed?id=b52469fa-10f8-491f-aeee-94602708e3c1) · [保存HTML](<原本/ML18.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。

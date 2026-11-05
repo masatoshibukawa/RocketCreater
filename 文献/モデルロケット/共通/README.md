@@ -73,3 +73,99 @@ Deutsches Zentrum für Luft- und Raumfahrt · 年不明 · de · 宇宙機関の
 [配布元・出典](https://www.dlr.de/de/ar/themen-missionen/raumfahrttechnologien/traegersysteme/stern) · オンライン参照
 
 利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mc07"></a>
+
+## MC07 A Method of Reaching Extreme Altitudes
+
+Robert H. Goddard / Smithsonian Institution · 1919 · en · 原著研究報告の図書館書誌
+
+対象：初期ロケット理論・実験の歴史資料。Smithsonian Miscellaneous Collections 71(2)。出版元図書館が1919年版の書誌とデジタル原本を提供。模型用の説明書ではなく、初期研究の比較用。
+
+[配布元・出典](https://library.si.edu/digital-library/book/methodreachinge00godd) · [原本取得先](https://repository.si.edu/bitstream/handle/10088/23596/SMC_71_Goddard_1919_2_1-69.pdf) · オンライン参照のみ：Smithsonian PDFはHTTP 403、Internet Archive公開コピーはHTTP 503で取得不可。
+
+利用条件：図書館はCC0 / No Copyright - United Statesと表示。
+
+<a id="mc08"></a>
+
+## MC08 マッハ数によるロケット静安定変化の予備試験
+
+谷 喬; 原 亘利; 関根 英夫 / 航空宇宙技術研究所 · 1964 · ja · 日本航空学会誌の実験論文
+
+対象：ロケットの風洞模型・空力比較。12巻127号、269–274ページ。単段機や二段機の構成要素を使った静安定の風洞試験。本文発行1964年とJ-STAGE公開2009年を区別する。
+
+[配布元・出典](https://www.jstage.jst.go.jp/article/jjsass1953/12/127/12_127_269/_article/-char/ja/) · [原本取得先](https://www.jstage.jst.go.jp/article/jjsass1953/12/127/12_127_269/_pdf) · [保存ファイル](<原本/MC08.pdf>)（6ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mc09"></a>
+
+## MC09 The Practical Calculation of the Aerodynamic Characteristics of Slender Finned Vehicles
+
+James S. Barrowman / Catholic University of America · 1967（NASA再刊番号2001） · en · 学位論文・NASA公開版
+
+対象：細長い有翼機体の空力解析。原学位論文は1967年3月。NASA/TM-2001-209983として公開された版を保存。亜音速・超音速の解析であり、遷音速領域を対象外とする原著の範囲を保持。
+
+[配布元・出典](https://ntrs.nasa.gov/citations/20010047838) · [原本取得先](https://ntrs.nasa.gov/api/citations/20010047838/downloads/20010047838.pdf) · [保存ファイル](<原本/MC09.pdf>)（103ページ）
+
+利用条件：NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。
+
+<a id="mc10"></a>
+
+## MC10 NERO Projecten — modelraketbouw en experimentele raketbouw
+
+Nederlandse Federatie voor Raket-Onderzoek (NERO) · 年不明（1970〜2006年の計画・飛行を収録） · nl · 愛好家団体の原プロジェクト記録
+
+対象：オランダの模型・実験ロケット。模型、高出力模型、実験機を区分し、H系列とE-36ハイブリッドなどの記録に接続する。表には失敗・未飛行計画も含まれる。
+
+[配布元・出典](https://nerorockets.org/nero/ndh-projects.htm) · [原本取得先](https://nerorockets.org/nero/ndh-projects.htm) · [保存HTML](<原本/MC10.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mc11"></a>
+
+## MC11 Ракетомоделювання — навчальна програма (на основі пневматичного та гумомоторного стартового обладнання)
+
+Ольга Косило; Дмитро Косило / Український державний центр позашкільної освіти · 2025 · uk · 公的教育機関のカリキュラム
+
+対象：空気圧・ゴム式発射を使う模型教育。3年間の模型教育課程。表紙で空気圧・ゴム式と確認できるため、固体・液体・ハイブリッドの燃焼エンジン資料には入れず、機体教育の比較資料として共通に収録。
+
+[配布元・出典](https://udcpo.gov.ua/stem-programmes-of-study/) · [原本取得先](https://udcpo.gov.ua/wp-content/uploads/2025/09/udcpo-program-rocket-modeling-2025.pdf) · [保存ファイル](<原本/MC11.pdf>)（17ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mc12"></a>
+
+## MC12 Bouw je eigen modelraket — Ariane-4 papieren model
+
+eXplorion（配布）; ESA表記の展開図 · 年不明 · nl · 科学教育施設の紙模型図面
+
+対象：Ariane-4の1:75展示用紙模型。4ページの紙模型展開図。配布ページはオランダ語で教育活動を説明する。模型自体は燃焼エンジンを持たない展示用で、液体エンジンCADとして数えない。
+
+[配布元・出典](https://www.explorion.nl/raket/) · [原本取得先](https://www.explorion.nl/downloadmap/raketmodel_Ariane.pdf) · [保存ファイル](<原本/MC12.pdf>)（4ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mc13"></a>
+
+## MC13 Stavební a soutěžní pravidla pro rakety, polomakety a ostatní modely poháněné raketovými motory
+
+Raket Model Klub Praha · 2012年3月版 · cs · 模型団体の競技規則
+
+対象：固体・ハイブリッドを含む高出力模型競技。本文2.2で市販固体モーターとハイブリッドを明記。2012年版の保存資料として収録し、現在の法令・大会規則の保証とはしない。
+
+[配布元・出典](https://www.raketaci.eu/media/kunena/attachments/43/pravidlarakety2012.pdf) · [原本取得先](https://www.raketaci.eu/media/kunena/attachments/43/pravidlarakety2012.pdf) · [保存ファイル](<原本/MC13.pdf>)（8ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mc14"></a>
+
+## MC14 Die Rakete zu den Planetenräumen — Deutsches Museum所蔵資料紹介
+
+Hermann Oberth（原著）; Deutsches Museum（所蔵紹介） · 1923年の書籍（紹介ページの公開年不明） · de · 博物館図書館の原著所蔵紹介
+
+対象：1920年代のロケット研究史。博物館が所蔵する1923年刊の著作をドイツ語で解説。保存物は現在の紹介ページHTMLで、1923年の書籍全文ではない。表紙や図版の外部画像は同梱しない。
+
+[配布元・出典](https://www.deutsches-museum.de/forschung/bibliothek/unsere-schaetze/mobilitaet/rakete-zu-den-planetenraeumen) · [原本取得先](https://www.deutsches-museum.de/forschung/bibliothek/unsere-schaetze/mobilitaet/rakete-zu-den-planetenraeumen) · [保存HTML](<原本/MC14.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。

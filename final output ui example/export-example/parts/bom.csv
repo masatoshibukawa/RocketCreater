@@ -1,0 +1,4 @@
+part_id,revision,name_ja,procurement,quantity,quantity_status,material,source_id
+bottle-001,r00,既製の耐圧ボトル,purchase,,needs_input,,user-water-rocket
+fin-001,r00,外付けフィン・取付部,to_be_decided,,needs_input,,user-assembly
+recovery-001,r00,回収装置・取付部,to_be_decided,,needs_input,,user-assembly
