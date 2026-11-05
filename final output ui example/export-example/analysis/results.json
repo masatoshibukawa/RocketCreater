@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0-draft",
+  "package_id": "rocketwright-water-rocket-content-example",
+  "design_revision": "r00",
+  "content_status": "draft_example",
+  "analysis_run_id": null,
+  "evaluations": [
+    {
+      "evaluation_id": "flight-altitude",
+      "status": "not_run",
+      "value": null,
+      "unit": "m",
+      "method": null,
+      "conditions": null,
+      "source_artifact_ids": []
+    },
+    {
+      "evaluation_id": "assembly-access",
+      "status": "not_evaluated",
+      "value": null,
+      "unit": null,
+      "method": null,
+      "conditions": null,
+      "source_artifact_ids": []
+    }
+  ],
+  "figures": [],
+  "source_ids": [
+    "user-water-rocket",
+    "user-assembly"
+  ]
+}
