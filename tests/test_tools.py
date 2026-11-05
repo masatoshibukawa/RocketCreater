@@ -571,7 +571,7 @@ def test_parts_tools_are_registered_and_strict():
     assert "list_parts" in TOOL_NAMES and "design_from_parts" in TOOL_NAMES
     defs = {d["name"]: d for d in get_tool_definitions()}
     schema = defs["design_from_parts"]["input_schema"]
-    assert set(schema["properties"]) == {"build", "env", "requirement", "seed"}
+    assert set(schema["properties"]) == {"build", "env", "requirement", "seed", "aero_backend"}
     build = schema["properties"]["build"]
     tiers = {opt["properties"]["tier"]["const"] for opt in build["anyOf"]}
     assert tiers == {"amateur", "bottle"}
