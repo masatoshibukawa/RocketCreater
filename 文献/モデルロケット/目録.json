@@ -939,6 +939,527 @@
       "note": "市販固体、液体、蒸気、ハイブリッドが同じ学生開発プログラムに含まれることを確認できる。蒸気式は液体化学推進とは別方式。",
       "source": "https://www.dlr.de/de/ar/themen-missionen/raumfahrttechnologien/traegersysteme/stern",
       "download": null
+    },
+    {
+      "id": "MS17",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Toy rocket — US2841084A",
+      "author": "Orville H. Carlisle",
+      "year": "1958 登録・公開（1954年8月30日出願）",
+      "kind": "特許公報・構成図",
+      "scope": "初期の再使用可能な模型ロケット",
+      "note": "機体・交換カートリッジ・回収用パラシュート・発射台の図を収録。1954年の出願と1958年の公報発行を区別する。",
+      "source": "https://patents.google.com/patent/US2841084A/en",
+      "download": "https://kirkmcd.princeton.edu/Carlisle/carlisle_us2841084_54_rocket.pdf",
+      "publication_year": 1958,
+      "local": {
+        "path": "固体/原本/MS17.pdf",
+        "sha256": "db36412454d51cfd5aa7aff0877007b5e9e2362e4df044bd09bf424c865489a4",
+        "bytes": 537403,
+        "format": "pdf",
+        "pages": 4
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS18",
+      "category": "固体",
+      "lang": [
+        "cs"
+      ],
+      "title": "Raketové modelářství: Stavba raket, modelů a raketoplánů — Obsah",
+      "author": "Alois Rosenberg / CPress",
+      "year": "2006",
+      "kind": "出版社公開の目次",
+      "scope": "チェコ語の模型ロケット入門書",
+      "note": "保存物は出版社が公開した3ページの目次。136ページの書籍全文ではない。工作、飛行安定、回収、競技に関する章を探すための書誌資料。",
+      "source": "https://www.albatrosmedia.sk/tituly/8488428/raketove-modelarstvi/",
+      "download": "https://cdn.albatrosmedia.cz/Files/TableOfContents/8865452/",
+      "publication_year": 2006,
+      "coverage": "目次のみ",
+      "local": {
+        "path": "固体/原本/MS18.pdf",
+        "sha256": "fe85837f20ee819ad1c19b7d0f538ae06c2fbbb6170330868a1d31adac87c737",
+        "bytes": 46354,
+        "format": "pdf",
+        "pages": 3
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS19",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "A Quality Diversity Approach to Evolving Model Rockets",
+      "author": "Jacob Schrum; Cody Crosby / Southwestern University",
+      "year": "2025",
+      "kind": "学会論文・著者プレプリント",
+      "scope": "市販固体モーターを使う低出力模型",
+      "note": "OpenRocketによる多様な機体形状の探索と実機飛行の比較。機体形状の設計空間と、計算と実験の差を扱う。作者の公開リポジトリも本文に記載。",
+      "source": "https://arxiv.org/abs/2504.02177",
+      "download": "https://arxiv.org/pdf/2504.02177",
+      "license": "arXiv掲載のCC BY 4.0。原本の著作者表示を保持。",
+      "publication_year": 2025,
+      "local": {
+        "path": "固体/原本/MS19.pdf",
+        "sha256": "f859c8a5495646078bc01913aba1824dbd8a83d415ca1c4230b371cf056495cd",
+        "bytes": 22307382,
+        "format": "pdf",
+        "pages": 9
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS20",
+      "category": "固体",
+      "lang": [
+        "sk"
+      ],
+      "title": "Športový poriadok — Verzia 1.0 / 2024",
+      "author": "Letecko-raketomodelárska asociácia Slovenska (LERMAS)",
+      "year": "2024",
+      "kind": "模型競技団体の規程",
+      "scope": "スロバキアの模型競技",
+      "note": "第3章に宇宙模型と固体模型モーターの定義を収録。航空模型も含む規程全体の保存版であり、記載した版の内容を参照する。",
+      "source": "https://www.lermas.sk/sportove-vysledky/sportove-pravidla/",
+      "download": "https://www.lermas.sk/?mdocs-file=2631",
+      "publication_year": 2024,
+      "local": {
+        "path": "固体/原本/MS20.pdf",
+        "sha256": "d94fd84b50d3b73dd82ac7893fa5d0f35baa437d02c4b340898f6b611523d5f5",
+        "bytes": 697207,
+        "format": "pdf",
+        "pages": 38
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MS21",
+      "category": "固体",
+      "lang": [
+        "sv"
+      ],
+      "title": "Modellvänner — September 2018, Modellraketer",
+      "author": "Modellvänner編集部（Sture Tingwall; Patrik Gertsson）",
+      "year": "2018年9月",
+      "kind": "愛好家による原刊行雑誌",
+      "scope": "スウェーデンの模型ロケット活動",
+      "note": "誌面5ページに模型ロケット活動の紹介と1962〜1964年の過去記事への手掛かり。雑誌全体19ページを保存。過去記事の年代を本号の発行年と混同しない。",
+      "source": "https://modellvanner.se/mv/modellvanner201809.pdf",
+      "download": "https://modellvanner.se/mv/modellvanner201809.pdf",
+      "publication_year": 2018,
+      "local": {
+        "path": "固体/原本/MS21.pdf",
+        "sha256": "7defedbf269473e6cd771ed2009e9590b9239849f365b8e32d2788b5392bdee7",
+        "bytes": 4096131,
+        "format": "pdf",
+        "pages": 19
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML14",
+      "category": "液体",
+      "lang": [
+        "id"
+      ],
+      "title": "Rancang Bangun Enjin Roket Cair dengan Gaya Dorong 1000 KGF Menggunakan Propelan Asam Nitrat–Kerosen",
+      "author": "Arif Nur Hakim / LAPAN",
+      "year": "2015",
+      "kind": "研究機関の技術論文",
+      "scope": "研究機関の液体エンジン ECX1000H2",
+      "note": "インドネシア語本文の試験報告。設計目標と測定された性能を分けて報告している。模型キットではなく、液体方式の研究資料。",
+      "source": "https://ejournal.brin.go.id/ijoa/article/view/12423",
+      "download": "https://karya.brin.go.id/id/eprint/11110/1/Jurnal%20TD_Arif_Pustekroket_2015.pdf",
+      "license": "掲載誌サイトはCC BY-SAを表示。原本の表示と配布元の条件を参照。",
+      "publication_year": 2015,
+      "local": {
+        "path": "液体/原本/ML14.pdf",
+        "sha256": "d764c8fe89d726bb1308bae4823dce1cf6992a0f3785cf652c2a2b76d0c48f38",
+        "bytes": 1002617,
+        "format": "pdf",
+        "pages": 16
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML15",
+      "category": "液体",
+      "lang": [
+        "ru"
+      ],
+      "title": "Труды по ракетной технике",
+      "author": "К. Э. Циолковский; М. К. Тихонравов 編; Ф. А. Цандер",
+      "year": "1947年版（1903〜1935年の論考を収録）",
+      "kind": "原著論集の復刻スキャン",
+      "scope": "宇宙飛行・液体ロケット理論の歴史資料",
+      "note": "1903年の論考や1920〜1930年代の研究を含む1947年刊の論集。大統領図書館の書誌で版を照合し、公開スキャンを保存。書誌上368ページ、表紙等を含むPDFは374ページ。",
+      "source": "https://www.prlib.ru/item/375985",
+      "download": "https://www.tsiolkovsky.org/wp-content/uploads/2024/04/252-tsiolkovsky-writings-on-rocket-science-1947.pdf",
+      "license": "公開スキャンの包括的再配布許可は未確認。原著・編集・配布元の表示を保持。",
+      "publication_year": 1947,
+      "original_years": [
+        1903,
+        1911,
+        1914,
+        1924,
+        1926,
+        1927,
+        1929,
+        1930,
+        1932,
+        1933,
+        1934,
+        1935
+      ],
+      "local": {
+        "path": "液体/原本/ML15.pdf",
+        "sha256": "ceb9af2cbc0c37ebbb5b82dfda8bdd35614a798e9a2b6274eb03bdcc6a318181",
+        "bytes": 56343091,
+        "format": "pdf",
+        "pages": 374
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "ML16",
+      "category": "液体",
+      "lang": [
+        "el"
+      ],
+      "title": "Ο πρώτος πυραυλοκινητήρας υγρών καυσίμων made in Greece είναι πλέον πραγματικότητα, χάρη στη φοιτητική ομάδα ASAT",
+      "author": "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης / ASAT",
+      "year": "2026年6月18日",
+      "kind": "大学の試験発表",
+      "scope": "ギリシャの大学液体エンジン実験",
+      "note": "ASATの地上燃焼試験を大学がギリシャ語で発表。発表時点の試験完了と将来の飛行目標を区別する。",
+      "source": "https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/",
+      "download": "https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/",
+      "publication_year": 2026,
+      "local": {
+        "path": "液体/原本/ML16.html",
+        "sha256": "98ea0515ae60d6b27d46fec3ac66598e3f351e4d815e9d697ba225ac4e55c49a",
+        "bytes": 263335,
+        "format": "html"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH16",
+      "category": "ハイブリッド",
+      "lang": [
+        "tr"
+      ],
+      "title": "Hibrit Yakıtlı Roket Motoru Ateşleme/Test Düzeneği Tasarımı",
+      "author": "Ali Emre Samur; Abdurrahman Hacıoğlu; Arif Karabeyoğlu",
+      "year": "2016",
+      "kind": "学術誌論文",
+      "scope": "研究用ハイブリッド地上試験設備",
+      "note": "Havacılık ve Uzay Teknolojileri Dergisi 9(1), 25–30。研究設備の概念設計を記載し、実現済みの市販製品としては扱わない。",
+      "source": "https://jast.hho.msu.edu.tr/index.php/JAST/article/download/40/33/106",
+      "download": "https://jast.hho.msu.edu.tr/index.php/JAST/article/download/40/33/106",
+      "download_status": "オンライン参照のみ：配布元TLS証明書のホスト名不一致でローカル取得不可。検索サービス上の原文で書誌・本文言語を確認。",
+      "publication_year": 2016
+    },
+    {
+      "id": "MH17",
+      "category": "ハイブリッド",
+      "lang": [
+        "fi"
+      ],
+      "title": "Hybridiraketit",
+      "author": "Suomen Avaruustutkimusseura (SATS-SAFF)",
+      "year": "年不明",
+      "kind": "愛好家団体の技術解説",
+      "scope": "HyperTEK使用の高出力模型プロジェクト",
+      "note": "フィンランド語によるハイブリッド方式の説明と、団体自身のHaisunäätä・Supikoiraプロジェクトへの言及。市販モーターを使う趣味活動の資料。ページのフッター年は発行年に使わない。",
+      "source": "https://www.sats-saff.fi/hybridiraketit/",
+      "download": "https://www.sats-saff.fi/hybridiraketit/",
+      "local": {
+        "path": "ハイブリッド/原本/MH17.html",
+        "sha256": "ef4899a6462a4e989105fa2fa2ab0a490e7a68cd906bb9ca5eae039522b75685",
+        "bytes": 55905,
+        "format": "html"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH18",
+      "category": "ハイブリッド",
+      "lang": [
+        "nb"
+      ],
+      "title": "Vellykket test av hybridrakett",
+      "author": "Andøya Space",
+      "year": "2024年7月5日",
+      "kind": "射場運営機関の飛行報告",
+      "scope": "実機観測ロケット ILR-33 AMBER 2K",
+      "note": "2024年7月3日の飛行をノルウェー語で報告。ハイブリッド主推進と補助ブースターを持つ実機で、模型の飛行認証資料とは区別する。",
+      "source": "https://andoyaspace.no/nyhet/vellykket-test-av-hybridrakett/",
+      "download": "https://andoyaspace.no/nyhet/vellykket-test-av-hybridrakett/",
+      "publication_year": 2024,
+      "local": {
+        "path": "ハイブリッド/原本/MH18.html",
+        "sha256": "d582d6460e80576469243d65b1390bce58aa4bb93a2d227145006ef6471e721d",
+        "bytes": 107484,
+        "format": "html"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH19",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "Hybrid propulsion technology program. Volume 2: Technology definition package",
+      "author": "Gordon E. Jensen; Allen L. Holzman; Steven O. Leisch; Joseph Keilbach; Randy Parsley; John Humphrey",
+      "year": "1989年10月15日",
+      "kind": "NASA委託研究報告",
+      "scope": "大型ハイブリッドブースター概念研究",
+      "note": "NASA-CR-183954。1980年代の概念設計・解析の一次資料。飛行実績や模型用モーターの製品説明書とは区別する。",
+      "source": "https://ntrs.nasa.gov/citations/19900012478",
+      "download": "https://ntrs.nasa.gov/api/citations/19900012478/downloads/19900012478.pdf",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "publication_year": 1989,
+      "local": {
+        "path": "ハイブリッド/原本/MH19.pdf",
+        "sha256": "6ae7f75d13c0f41dc792675dbd568b214bb1049d8ddf58f95a6241666afbaf0a",
+        "bytes": 4041916,
+        "format": "pdf",
+        "pages": 118
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH20",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "Further Analytical Study of Hybrid Rocket Combustion",
+      "author": "W. S. Y. Hung; C. S. Chen; J. K. Haviland / University of Virginia",
+      "year": "1972年10月",
+      "kind": "大学・NASA研究報告",
+      "scope": "ハイブリッド燃焼の数理研究",
+      "note": "NASA CR-112201 / AEEP-4041-106-72U。過渡・定常燃焼の解析研究。NTRSの文書ID冒頭の1973ではなく、表紙の1972年を採用。",
+      "source": "https://ntrs.nasa.gov/citations/19730003241",
+      "download": "https://ntrs.nasa.gov/api/citations/19730003241/downloads/19730003241.pdf",
+      "publication_year": 1972,
+      "local": {
+        "path": "ハイブリッド/原本/MH20.pdf",
+        "sha256": "15998145b5db782a9f2faaa49a9f8cf52204573267bf2a8c7affe3936e846801",
+        "bytes": 1296582,
+        "format": "pdf",
+        "pages": 49
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MH21",
+      "category": "ハイブリッド",
+      "lang": [
+        "ko"
+      ],
+      "title": "S.R.S 하이브리드 로켓 시스템의 개발역사",
+      "author": "김계환; 이상용; 이영석; 정기연; 문희장 / 한국항공대학교",
+      "year": "2013年12月",
+      "kind": "学会講演論文の書誌・著者抄録",
+      "scope": "韓国航空大学S.R.Sの小型実験機",
+      "note": "韓国推進工学会第41回秋季大会、416–420ページ。2005〜2013年の開発経緯を著者が報告。公開ページの韓国語抄録を確認し、5ページの本文PDFは未取得。",
+      "source": "https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE02457545",
+      "download": null,
+      "coverage": "著者抄録・書誌のみ",
+      "download_status": "オンライン参照：公開抄録と書誌のみ。本文未取得。",
+      "publication_year": 2013
+    },
+    {
+      "id": "MH22",
+      "category": "ハイブリッド",
+      "lang": [
+        "tr"
+      ],
+      "title": "Pars Roket Grubu — projeler ve tarihçe",
+      "author": "PARS Roket Grubu",
+      "year": "年不明（2012〜2026年の活動を記述）",
+      "kind": "学生チーム自身の活動報告",
+      "scope": "トルコの学生ハイブリッド実験機",
+      "note": "チーム自身のトルコ語サイト。ハイブリッド開発・飛行の沿革と2026年の液体方式への展開を記載。ページ公開年は不明のため、沿革中の年を発行年として数えない。",
+      "source": "https://www.parsroket.com/",
+      "download": "https://www.parsroket.com/",
+      "local": {
+        "path": "ハイブリッド/原本/MH22.html",
+        "sha256": "f9f15c0854156563e5fedbd1c230ca888ed2cd6d47eefda2ebb85882f94af297",
+        "bytes": 18962,
+        "format": "html"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC07",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "A Method of Reaching Extreme Altitudes",
+      "author": "Robert H. Goddard / Smithsonian Institution",
+      "year": "1919",
+      "kind": "原著研究報告の図書館書誌",
+      "scope": "初期ロケット理論・実験の歴史資料",
+      "note": "Smithsonian Miscellaneous Collections 71(2)。出版元図書館が1919年版の書誌とデジタル原本を提供。模型用の説明書ではなく、初期研究の比較用。",
+      "source": "https://library.si.edu/digital-library/book/methodreachinge00godd",
+      "download": "https://repository.si.edu/bitstream/handle/10088/23596/SMC_71_Goddard_1919_2_1-69.pdf",
+      "license": "図書館はCC0 / No Copyright - United Statesと表示。",
+      "download_status": "オンライン参照のみ：Smithsonian PDFはHTTP 403、Internet Archive公開コピーはHTTP 503で取得不可。",
+      "publication_year": 1919
+    },
+    {
+      "id": "MC08",
+      "category": "共通",
+      "lang": [
+        "ja"
+      ],
+      "title": "マッハ数によるロケット静安定変化の予備試験",
+      "author": "谷 喬; 原 亘利; 関根 英夫 / 航空宇宙技術研究所",
+      "year": "1964",
+      "kind": "日本航空学会誌の実験論文",
+      "scope": "ロケットの風洞模型・空力比較",
+      "note": "12巻127号、269–274ページ。単段機や二段機の構成要素を使った静安定の風洞試験。本文発行1964年とJ-STAGE公開2009年を区別する。",
+      "source": "https://www.jstage.jst.go.jp/article/jjsass1953/12/127/12_127_269/_article/-char/ja/",
+      "download": "https://www.jstage.jst.go.jp/article/jjsass1953/12/127/12_127_269/_pdf",
+      "publication_year": 1964,
+      "local": {
+        "path": "共通/原本/MC08.pdf",
+        "sha256": "c607dd873cb52da0376577867f4d624b459fdec4f57fa73e24122d02cd49f7e5",
+        "bytes": 750245,
+        "format": "pdf",
+        "pages": 6
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC09",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "The Practical Calculation of the Aerodynamic Characteristics of Slender Finned Vehicles",
+      "author": "James S. Barrowman / Catholic University of America",
+      "year": "1967（NASA再刊番号2001）",
+      "kind": "学位論文・NASA公開版",
+      "scope": "細長い有翼機体の空力解析",
+      "note": "原学位論文は1967年3月。NASA/TM-2001-209983として公開された版を保存。亜音速・超音速の解析であり、遷音速領域を対象外とする原著の範囲を保持。",
+      "source": "https://ntrs.nasa.gov/citations/20010047838",
+      "download": "https://ntrs.nasa.gov/api/citations/20010047838/downloads/20010047838.pdf",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "publication_year": 1967,
+      "local": {
+        "path": "共通/原本/MC09.pdf",
+        "sha256": "09d62b014a706c700e1b596c8cc58c60e87d613da4ce963db3f72361ef0187eb",
+        "bytes": 1996930,
+        "format": "pdf",
+        "pages": 103
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC10",
+      "category": "共通",
+      "lang": [
+        "nl"
+      ],
+      "title": "NERO Projecten — modelraketbouw en experimentele raketbouw",
+      "author": "Nederlandse Federatie voor Raket-Onderzoek (NERO)",
+      "year": "年不明（1970〜2006年の計画・飛行を収録）",
+      "kind": "愛好家団体の原プロジェクト記録",
+      "scope": "オランダの模型・実験ロケット",
+      "note": "模型、高出力模型、実験機を区分し、H系列とE-36ハイブリッドなどの記録に接続する。表には失敗・未飛行計画も含まれる。",
+      "source": "https://nerorockets.org/nero/ndh-projects.htm",
+      "download": "https://nerorockets.org/nero/ndh-projects.htm",
+      "local": {
+        "path": "共通/原本/MC10.html",
+        "sha256": "af1c5567a01b12be3fe2afa9d264a2cde66a6a9a831ddc2d4e988a3c03510378",
+        "bytes": 32015,
+        "format": "html"
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC11",
+      "category": "共通",
+      "lang": [
+        "uk"
+      ],
+      "title": "Ракетомоделювання — навчальна програма (на основі пневматичного та гумомоторного стартового обладнання)",
+      "author": "Ольга Косило; Дмитро Косило / Український державний центр позашкільної освіти",
+      "year": "2025",
+      "kind": "公的教育機関のカリキュラム",
+      "scope": "空気圧・ゴム式発射を使う模型教育",
+      "note": "3年間の模型教育課程。表紙で空気圧・ゴム式と確認できるため、固体・液体・ハイブリッドの燃焼エンジン資料には入れず、機体教育の比較資料として共通に収録。",
+      "source": "https://udcpo.gov.ua/stem-programmes-of-study/",
+      "download": "https://udcpo.gov.ua/wp-content/uploads/2025/09/udcpo-program-rocket-modeling-2025.pdf",
+      "publication_year": 2025,
+      "local": {
+        "path": "共通/原本/MC11.pdf",
+        "sha256": "f2f81277f1ba88881c06e585293edf28e088192505f24ac7ffd1c6fdcea21f56",
+        "bytes": 871314,
+        "format": "pdf",
+        "pages": 17
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC12",
+      "category": "共通",
+      "lang": [
+        "nl"
+      ],
+      "title": "Bouw je eigen modelraket — Ariane-4 papieren model",
+      "author": "eXplorion（配布）; ESA表記の展開図",
+      "year": "年不明",
+      "kind": "科学教育施設の紙模型図面",
+      "scope": "Ariane-4の1:75展示用紙模型",
+      "note": "4ページの紙模型展開図。配布ページはオランダ語で教育活動を説明する。模型自体は燃焼エンジンを持たない展示用で、液体エンジンCADとして数えない。",
+      "source": "https://www.explorion.nl/raket/",
+      "download": "https://www.explorion.nl/downloadmap/raketmodel_Ariane.pdf",
+      "coverage": "紙模型図面と配布ページの説明",
+      "local": {
+        "path": "共通/原本/MC12.pdf",
+        "sha256": "53216305fbfba5fa4975f7d0abe09d872304cfc90fa5fb301358a2c8dfd8d521",
+        "bytes": 2080956,
+        "format": "pdf",
+        "pages": 4
+      },
+      "download_status": "保存済み"
+    },
+    {
+      "id": "MC13",
+      "category": "共通",
+      "lang": [
+        "cs"
+      ],
+      "title": "Stavební a soutěžní pravidla pro rakety, polomakety a ostatní modely poháněné raketovými motory",
+      "author": "Raket Model Klub Praha",
+      "year": "2012年3月版",
+      "kind": "模型団体の競技規則",
+      "scope": "固体・ハイブリッドを含む高出力模型競技",
+      "note": "本文2.2で市販固体モーターとハイブリッドを明記。2012年版の保存資料として収録し、現在の法令・大会規則の保証とはしない。",
+      "source": "https://www.raketaci.eu/media/kunena/attachments/43/pravidlarakety2012.pdf",
+      "download": "https://www.raketaci.eu/media/kunena/attachments/43/pravidlarakety2012.pdf",
+      "publication_year": 2012,
+      "local": {
+        "path": "共通/原本/MC13.pdf",
+        "sha256": "0c8b58f691af771da6d6c50c70a2a28b219981c758327e9eb359787e2c211fa8",
+        "bytes": 262324,
+        "format": "pdf",
+        "pages": 8
+      },
+      "download_status": "保存済み"
     }
   ]
 }

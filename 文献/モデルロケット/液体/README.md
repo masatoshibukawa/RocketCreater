@@ -157,3 +157,39 @@ NASA · 年不明 · en · 展示用3Dモデル集
 [配布元・出典](https://github.com/nasa/NASA-3D-Resources/tree/11ebb4ee043715aefbba6aeec8a61746fad67fa7/3D%20Printing/Saturn%20V%20Rocket) · [保存ファイル](モデル/ML13-NASA-SaturnV)
 
 利用条件：NASA配布READMEの利用案内を同梱。NASAの画像・メディア利用指針と第三者権利を参照。
+
+<a id="ml14"></a>
+
+## ML14 Rancang Bangun Enjin Roket Cair dengan Gaya Dorong 1000 KGF Menggunakan Propelan Asam Nitrat–Kerosen
+
+Arif Nur Hakim / LAPAN · 2015 · id · 研究機関の技術論文
+
+対象：研究機関の液体エンジン ECX1000H2。インドネシア語本文の試験報告。設計目標と測定された性能を分けて報告している。模型キットではなく、液体方式の研究資料。
+
+[配布元・出典](https://ejournal.brin.go.id/ijoa/article/view/12423) · [原本取得先](https://karya.brin.go.id/id/eprint/11110/1/Jurnal%20TD_Arif_Pustekroket_2015.pdf) · [保存ファイル](<原本/ML14.pdf>)（16ページ）
+
+利用条件：掲載誌サイトはCC BY-SAを表示。原本の表示と配布元の条件を参照。
+
+<a id="ml15"></a>
+
+## ML15 Труды по ракетной технике
+
+К. Э. Циолковский; М. К. Тихонравов 編; Ф. А. Цандер · 1947年版（1903〜1935年の論考を収録） · ru · 原著論集の復刻スキャン
+
+対象：宇宙飛行・液体ロケット理論の歴史資料。1903年の論考や1920〜1930年代の研究を含む1947年刊の論集。大統領図書館の書誌で版を照合し、公開スキャンを保存。書誌上368ページ、表紙等を含むPDFは374ページ。
+
+[配布元・出典](https://www.prlib.ru/item/375985) · [原本取得先](https://www.tsiolkovsky.org/wp-content/uploads/2024/04/252-tsiolkovsky-writings-on-rocket-science-1947.pdf) · [保存ファイル](<原本/ML15.pdf>)（374ページ）
+
+利用条件：公開スキャンの包括的再配布許可は未確認。原著・編集・配布元の表示を保持。
+
+<a id="ml16"></a>
+
+## ML16 Ο πρώτος πυραυλοκινητήρας υγρών καυσίμων made in Greece είναι πλέον πραγματικότητα, χάρη στη φοιτητική ομάδα ASAT
+
+Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης / ASAT · 2026年6月18日 · el · 大学の試験発表
+
+対象：ギリシャの大学液体エンジン実験。ASATの地上燃焼試験を大学がギリシャ語で発表。発表時点の試験完了と将来の飛行目標を区別する。
+
+[配布元・出典](https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/) · [原本取得先](https://www.auth.gr/press/o-protos-pyraylokinitiras-ygron-kays/) · [保存HTML](<原本/ML16.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。

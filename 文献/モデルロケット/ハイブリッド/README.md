@@ -181,3 +181,87 @@ Sacha Bumann, Samuel Gebhard / Gymnase de Morges · 2025年4月 改訂表紙（�
 [配布元・出典](https://github.com/Bestsage/Hybrid-Rocket-Engine/tree/cf569999f2d49dca50b9b00a3712fd9e1bafbbe3) · [原本取得先](https://raw.githubusercontent.com/Bestsage/Hybrid-Rocket-Engine/cf569999f2d49dca50b9b00a3712fd9e1bafbbe3/NW25-643729_Finale_Arbeit.pdf) · [保存ファイル](原本/MH15.pdf)（108ページ）
 
 利用条件：リポジトリに包括ライセンスなし。著作者の権利を保持し、ローカル閲覧用として保存。
+
+<a id="mh16"></a>
+
+## MH16 Hibrit Yakıtlı Roket Motoru Ateşleme/Test Düzeneği Tasarımı
+
+Ali Emre Samur; Abdurrahman Hacıoğlu; Arif Karabeyoğlu · 2016 · tr · 学術誌論文
+
+対象：研究用ハイブリッド地上試験設備。Havacılık ve Uzay Teknolojileri Dergisi 9(1), 25–30。研究設備の概念設計を記載し、実現済みの市販製品としては扱わない。
+
+[配布元・出典](https://jast.hho.msu.edu.tr/index.php/JAST/article/download/40/33/106) · [原本取得先](https://jast.hho.msu.edu.tr/index.php/JAST/article/download/40/33/106) · オンライン参照のみ：配布元TLS証明書のホスト名不一致でローカル取得不可。検索サービス上の原文で書誌・本文言語を確認。
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mh17"></a>
+
+## MH17 Hybridiraketit
+
+Suomen Avaruustutkimusseura (SATS-SAFF) · 年不明 · fi · 愛好家団体の技術解説
+
+対象：HyperTEK使用の高出力模型プロジェクト。フィンランド語によるハイブリッド方式の説明と、団体自身のHaisunäätä・Supikoiraプロジェクトへの言及。市販モーターを使う趣味活動の資料。ページのフッター年は発行年に使わない。
+
+[配布元・出典](https://www.sats-saff.fi/hybridiraketit/) · [原本取得先](https://www.sats-saff.fi/hybridiraketit/) · [保存HTML](<原本/MH17.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mh18"></a>
+
+## MH18 Vellykket test av hybridrakett
+
+Andøya Space · 2024年7月5日 · nb · 射場運営機関の飛行報告
+
+対象：実機観測ロケット ILR-33 AMBER 2K。2024年7月3日の飛行をノルウェー語で報告。ハイブリッド主推進と補助ブースターを持つ実機で、模型の飛行認証資料とは区別する。
+
+[配布元・出典](https://andoyaspace.no/nyhet/vellykket-test-av-hybridrakett/) · [原本取得先](https://andoyaspace.no/nyhet/vellykket-test-av-hybridrakett/) · [保存HTML](<原本/MH18.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mh19"></a>
+
+## MH19 Hybrid propulsion technology program. Volume 2: Technology definition package
+
+Gordon E. Jensen; Allen L. Holzman; Steven O. Leisch; Joseph Keilbach; Randy Parsley; John Humphrey · 1989年10月15日 · en · NASA委託研究報告
+
+対象：大型ハイブリッドブースター概念研究。NASA-CR-183954。1980年代の概念設計・解析の一次資料。飛行実績や模型用モーターの製品説明書とは区別する。
+
+[配布元・出典](https://ntrs.nasa.gov/citations/19900012478) · [原本取得先](https://ntrs.nasa.gov/api/citations/19900012478/downloads/19900012478.pdf) · [保存ファイル](<原本/MH19.pdf>)（118ページ）
+
+利用条件：NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。
+
+<a id="mh20"></a>
+
+## MH20 Further Analytical Study of Hybrid Rocket Combustion
+
+W. S. Y. Hung; C. S. Chen; J. K. Haviland / University of Virginia · 1972年10月 · en · 大学・NASA研究報告
+
+対象：ハイブリッド燃焼の数理研究。NASA CR-112201 / AEEP-4041-106-72U。過渡・定常燃焼の解析研究。NTRSの文書ID冒頭の1973ではなく、表紙の1972年を採用。
+
+[配布元・出典](https://ntrs.nasa.gov/citations/19730003241) · [原本取得先](https://ntrs.nasa.gov/api/citations/19730003241/downloads/19730003241.pdf) · [保存ファイル](<原本/MH20.pdf>)（49ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mh21"></a>
+
+## MH21 S.R.S 하이브리드 로켓 시스템의 개발역사
+
+김계환; 이상용; 이영석; 정기연; 문희장 / 한국항공대학교 · 2013年12月 · ko · 学会講演論文の書誌・著者抄録
+
+対象：韓国航空大学S.R.Sの小型実験機。韓国推進工学会第41回秋季大会、416–420ページ。2005〜2013年の開発経緯を著者が報告。公開ページの韓国語抄録を確認し、5ページの本文PDFは未取得。
+
+[配布元・出典](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE02457545) · オンライン参照：公開抄録と書誌のみ。本文未取得。
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mh22"></a>
+
+## MH22 Pars Roket Grubu — projeler ve tarihçe
+
+PARS Roket Grubu · 年不明（2012〜2026年の活動を記述） · tr · 学生チーム自身の活動報告
+
+対象：トルコの学生ハイブリッド実験機。チーム自身のトルコ語サイト。ハイブリッド開発・飛行の沿革と2026年の液体方式への展開を記載。ページ公開年は不明のため、沿革中の年を発行年として数えない。
+
+[配布元・出典](https://www.parsroket.com/) · [原本取得先](https://www.parsroket.com/) · [保存HTML](<原本/MH22.html>)
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
