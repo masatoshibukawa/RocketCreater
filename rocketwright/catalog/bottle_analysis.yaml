@@ -75,13 +75,13 @@ methods:
     outputs: [deflection, mass, first mode, shortlist]
     scope: Linear Euler-Bernoulli FE; large deformation is a trigger for nonlinear analysis.
   fin_nonlinear:
-    label: 温間非線形FEMと平均ねじれ反復
+    label: 温間非線形FEMと変形後ねじれ
     layer: middle
     category: aeroelasticity
     phase: shortlist verification
     inputs: [fin shortlist, material, root support, dynamic pressure]
     outputs: [displacement, stress demand, twist, mesh differences]
-    scope: Conditional stiffness study with assumed properties; no material strength certificate.
+    scope: Frozen follower-pressure demand; twist triggers fluid recoupling. No material strength certificate.
     capabilities: [calculix]
   reflight:
     label: 候補のBOM・重心・慣性更新と6DOF再飛行
