@@ -83,8 +83,8 @@ def prepare(packet: Path, out: Path) -> dict:
             "proper_accel_mps2": flight.accel_mps2.tolist(),
         },
         "limitations": [
-            "Unvalidated constant drag coefficient; previous 3D CFD failed absolute-drag validation.",
-            "Air impulse has no resolved duration; opening and landing shocks are separate scenarios.",
+            "Unvalidated constant Cd; previous 3D CFD failed absolute-drag validation.",
+            "Air impulse duration unresolved; opening and landing shocks use separate scenarios.",
             "No measured strength, stiffness, thermal properties, contact or bond allowables.",
         ],
     }

@@ -61,8 +61,8 @@ nexttile; z=r.sun(end); plot(z.time_s/60,[z.skin_C,z.mount_C,z.payload_C,z.fin_C
 grid on; legend('外装','保持リング','搭載物','露出フィン','Location','northwest'); xlabel('時間 (min)'); ylabel('温度 (°C)'); title('吸収率 0.8 の温度を構造解析へ渡す');
 nexttile; axis off
 text(0,0.9,{'材料物性・熱伝達率・日射条件は仮定'; '冷却は水噴射終了まで（空気だけの噴出は対象外）'; ...
-    '日なたの例は未加圧。内圧への温度フィードバックは未解析'; '温度からの剛性変化も仮の感度モデル'; ...
-    sprintf('飛行速度による最大の全温上昇 %.2f K',r.aerodynamic_stagnation_rise_K)},'FontSize',12,'VerticalAlignment','top');
+    '日なたの例は未加圧。内圧への温度反映は未解析'; '温度からの剛性変化も仮の感度モデル'; ...
+    sprintf('飛行速度による最大の全温上昇 %.2f K',r.aerodynamic_stagnation_rise_K)},'FontSize',10,'VerticalAlignment','top');
 exportgraphics(fig,fullfile(outDir,'thermal.png'),'Resolution',150);
     function dy=rates(~,y)
         rad=@(T) p.emissivity*5.670374419e-8*((T+273.15)^4-(p.ambient_C+273.15)^4);
