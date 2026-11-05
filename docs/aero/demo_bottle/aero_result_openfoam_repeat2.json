@@ -1,0 +1,38 @@
+{
+  "cd": 0.381805,
+  "cn_alpha_per_rad": 8.043741594291236,
+  "x_cp_from_nose_m": 0.23251994475527693,
+  "static_margin_cal": -0.3624569144211964,
+  "cg_from_nose_m": 0.262138747546645,
+  "ref_diameter_m": 0.08171675477253906,
+  "per_case": [
+    {
+      "speed_mps": 15.0,
+      "alpha_deg": 0.0,
+      "cd": 0.381805,
+      "cn": -0.0254631,
+      "cm": -0.123194,
+      "cm_ref_from_nose_m": 0.0
+    },
+    {
+      "speed_mps": 15.0,
+      "alpha_deg": 4.0,
+      "cd": 0.428542,
+      "cn": 0.536096,
+      "cm": 1.47468,
+      "cm_ref_from_nose_m": 0.0
+    }
+  ],
+  "backend": "openfoam_pipeline",
+  "fidelity": "L2",
+  "provisional": true,
+  "notes": [
+    "steady RANS k-omega SST, fully turbulent, wall functions",
+    "mesh preset coarse: not grid-converged, precision not claimed",
+    "alpha 0 deg not converged (CD swing 0.00% over the averaging window)"
+  ],
+  "source": "Model-Rocket-CFD-Pipeline b43605c (external, unlicensed: not vendored) / OpenFOAM v2412 simpleFoam",
+  "wall_time_s": 597.8178499517962,
+  "cached": false,
+  "cd_for_flight_model": 0.3147594768605014
+}

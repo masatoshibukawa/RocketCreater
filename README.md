@@ -22,6 +22,7 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 
 - [統合した資料・決定事項と担当範囲](docs/integration.md)
 - [ローカル試験の起動と操作](docs/workbench.md)
+- [空力レイヤー（Barrowman・OpenFOAM・GPU LBM の差し替え、ビルド手順と実測）](docs/aero.md)
 - [既存Gemmaの再利用](AIvideo/local-director/README.md)
 
 これは開発・試験用の統合です。製作部品のスライス、現物の寸法・強度・回収・飛行の確認、および最終提出チェックは別工程です。
