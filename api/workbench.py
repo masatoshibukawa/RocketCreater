@@ -111,6 +111,11 @@ def export(project_id: str, request: Revision):
     return call(DEFAULT_WORKBENCH.export, project_id, request.revision)
 
 
+@router.post("/projects/{project_id}/assembly-pdf")
+def assembly_pdf(project_id: str, request: Revision):
+    return call(DEFAULT_WORKBENCH.manual, project_id, request.revision)
+
+
 @router.post("/projects/{project_id}/video-plan")
 def video_plan(project_id: str, request: PlanRequest):
     return call(plan_video, DEFAULT_WORKBENCH, project_id, request.revision, request.local)
