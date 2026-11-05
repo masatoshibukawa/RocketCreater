@@ -1,0 +1,7 @@
+{
+  "design_frames": "design-frames",
+  "launch_frames": "launch-frames-refined",
+  "fps": 24,
+  "samples": 24,
+  "visual_refinement": "Extend terrain and camera clipping distance so the predicted ascent does not reveal a finite-ground/far-clip band. Geometry and ODE trajectory are unchanged."
+}
