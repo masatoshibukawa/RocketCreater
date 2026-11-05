@@ -1,0 +1,15 @@
+{
+  "archive": "renders/pet_rocket_v2_photographic.zip",
+  "bytes": 82768800,
+  "sha256": "5e8bee0cdc207ddc0bc1df3dc52c781d5fc8267bec439efc2be123731175666d",
+  "files": 61,
+  "extraction_and_hashes": "passed",
+  "extracted_page_links": "passed",
+  "excluded": [
+    "raw frame caches",
+    "render logs",
+    "runtime binaries",
+    "system fonts",
+    "backup blend files"
+  ]
+}
