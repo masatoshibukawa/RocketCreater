@@ -1,10 +1,15 @@
 import pytest
 
-from rocketwright.bottle_candidates import VOLUME_M3, design_at, starts
+from rocketwright import bottle_candidates, bottle_search
+from rocketwright.bottle_candidates import REQUIREMENT, VOLUME_M3, design_at, starts
 from rocketwright.bottle_search import Action, Search
 
 
-def test_harness_rejects_skipping_and_reusing_lower_layer_evidence():
+def test_harness_rejects_skipping_and_reusing_lower_layer_evidence(monkeypatch):
+    # A 30 m fixture keeps this 300 kPa flight short of target, whatever the demo target is.
+    short_flight = REQUIREMENT.model_copy(update={"target_altitude_m": 30})
+    monkeypatch.setattr(bottle_candidates, "REQUIREMENT", short_flight)
+    monkeypatch.setattr(bottle_search, "TARGET", 30)
     search = Search("references")
     action = Action("component", "D02", 9, 300, 35)
     with pytest.raises(ValueError, match="listed ID"):

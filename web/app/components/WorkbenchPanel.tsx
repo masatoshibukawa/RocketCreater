@@ -31,7 +31,7 @@ export default function WorkbenchPanel({ onOpenDesign }: { onOpenDesign: () => v
     <div className="wb-body">
       <aside className="wb-left">
         <div className="wb-dock-title">設計条件<span>MISSION</span></div>
-        <dl className="wb-conditions"><div><dt>目標高度</dt><dd>30 <small>m</small></dd></div><div><dt>搭載質量</dt><dd>60 <small>g</small></dd></div><div><dt>ボトル容量</dt><dd>1.5 <small>L</small></dd></div><div><dt>材料予算</dt><dd>3,000 <small>円</small></dd></div><div><dt>解析の探索上限</dt><dd>{project?.workshop.pressure_ceiling_kpa ?? 400} <small>kPa</small></dd></div></dl>
+        <dl className="wb-conditions"><div><dt>目標高度</dt><dd>20 <small>m</small></dd></div><div><dt>搭載質量</dt><dd>60 <small>g</small></dd></div><div><dt>ボトル容量</dt><dd>1.5 <small>L</small></dd></div><div><dt>材料予算</dt><dd>3,000 <small>円</small></dd></div><div><dt>解析の探索上限</dt><dd>{project?.workshop.pressure_ceiling_kpa ?? 400} <small>kPa</small></dd></div></dl>
         <p className="wb-note">卵の回収を想定した探索例。購入候補・寸法・発射台の条件を仮定し、工程ごとに確かめます。探索上限は計算用の範囲で、機材の許容値は未確認です。</p>
         <div className="wb-dock-title">機体の構成<span>ASSEMBLY</span></div>
         <ul className="wb-tree"><li>◈ 機体全体<ul><li>ノーズ・搭載室</li><li>回収装置</li><li>市販PETボトル</li><li>フィン・取付部</li></ul></li></ul>
@@ -39,7 +39,7 @@ export default function WorkbenchPanel({ onOpenDesign }: { onOpenDesign: () => v
         <div className="wb-runtime"><span className={runtime?.comfyui.available ? "wb-online" : ""}/>ComfyUI {runtime?.comfyui.available ? runtime.comfyui.version : "未接続"}<br/><span className={runtime?.ollama.models.length ? "wb-online" : ""}/>Local LLM {runtime?.ollama.models.length ? "接続済み" : "未接続"}</div>
       </aside>
       <section className="wb-center" aria-label="設計と成果物">
-        <p className="wb-mobile-mission">探索例: 高度30 m · 搭載60 g · 1.5 L · 材料予算3,000円</p>
+        <p className="wb-mobile-mission">探索例: 高度20 m · 搭載60 g · 1.5 L · 材料予算3,000円</p>
         <nav className="wb-tabs" aria-label="設計の表示">{[["assembly", "機体"], ["analysis", "解析"], ["files", "製作ファイル"], ["video", "動画"], ["library", "設計例と資料"]].map(([id, label]) => <button key={id} aria-pressed={tab === id} className={tab === id ? "is-active" : ""} onClick={() => setTab(id)}>{label}{id === "files" && files.length > 0 ? <span>{files.filter(f => f.kind === "production").length}</span> : null}</button>)}</nav>
         <div className="wb-main-content">
           {tab === "assembly" ? <RocketViewport project={project} working={working}/> : null}

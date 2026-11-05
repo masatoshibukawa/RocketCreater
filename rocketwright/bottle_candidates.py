@@ -15,7 +15,7 @@ from rocketwright.schema import BottleDesign, Env, Requirement
 
 REQUIREMENT = Requirement(
     goal_kind="altitude",
-    target_altitude_m=30,
+    target_altitude_m=20,
     payload_mass_kg=0.060,
     budget_jpy=3000,
     recovery_required=True,
