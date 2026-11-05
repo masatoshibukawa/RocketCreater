@@ -64,7 +64,23 @@ def hex_mesh(counts, mapping):
     return nodes, elements
 
 
-def material_cards(p: Material, *, creep_rate=None, creep_stress=30e6, creep_n=3):
+def material_cards(
+    p: Material, *, creep_rate=None, creep_stress=30e6, creep_n=3, stress_unit_pa=1.0
+):
+    # Use MPa/MN internally for creep: the Windows solver loses conditioning with
+    # Norton A near 1e-30 in Pa units. Geometry stays in metres; results return to SI.
+    p = p.model_copy(deep=True)
+    p.young_pa /= stress_unit_pa
+    p.density /= stress_unit_pa
+    p.hardening_pa /= stress_unit_pa
+    if p.yield_pa is not None:
+        p.yield_pa /= stress_unit_pa
+    if p.engineering_constants is not None:
+        p.engineering_constants = tuple(
+            x / stress_unit_pa if i in (0, 1, 2, 6, 7, 8) else x
+            for i, x in enumerate(p.engineering_constants)
+        )
+    creep_stress /= stress_unit_pa
     if p.engineering_constants is not None:
         if creep_rate is not None:
             raise ValueError("This creep adapter supports isotropic material only")
@@ -91,7 +107,7 @@ def material_cards(p: Material, *, creep_rate=None, creep_stress=30e6, creep_n=3
     return text
 
 
-def base_deck(nodes, elements, material, *, creep=None):
+def base_deck(nodes, elements, material, *, creep=None, stress_unit_pa=1.0):
     lines = ["*HEADING", "Conditional bottle component analysis; SI units", "*NODE"]
     lines += [f"{i}," + ",".join(f"{x:.12g}" for x in xyz) for i, xyz in nodes.items()]
     lines += ["*ELEMENT,TYPE=C3D20R,ELSET=PART"]
@@ -102,7 +118,7 @@ def base_deck(nodes, elements, material, *, creep=None):
         f"1,{len(nodes)},1",
         "*SOLID SECTION,ELSET=PART,MATERIAL=PART",
     ]
-    lines += material_cards(material, **(creep or {}))
+    lines += material_cards(material, **(creep or {}), stress_unit_pa=stress_unit_pa)
     lines += ["*INITIAL CONDITIONS,TYPE=TEMPERATURE", "ALL,20."]
     return lines
 
@@ -143,7 +159,9 @@ def output_cards():
     ]
 
 
-def run_deck(executable, folder, name, lines, *, timeout_s=240):
+def run_deck(
+    executable, folder, name, lines, *, timeout_s=600, stress_unit_pa=1.0, force_unit_n=1.0
+):
     exe = Path(executable).resolve()
     folder = Path(folder).resolve()
     folder.mkdir(parents=True, exist_ok=True)
@@ -154,15 +172,22 @@ def run_deck(executable, folder, name, lines, *, timeout_s=240):
         raise FileExistsError(f"Use a new FEM output directory: {deck}")
     deck.write_text("\n".join(lines) + "\n", encoding="ascii")
     env = dict(os.environ, OMP_NUM_THREADS="2", NUMBER_OF_CPUS="2")
-    p = subprocess.run(
-        [str(exe), "-i", name],
-        cwd=folder,
-        env=env,
-        text=True,
-        errors="replace",
-        capture_output=True,
-        timeout=timeout_s,
-    )
+    try:
+        p = subprocess.run(
+            [str(exe), "-i", name],
+            cwd=folder,
+            env=env,
+            text=True,
+            errors="replace",
+            capture_output=True,
+            timeout=timeout_s,
+        )
+    except subprocess.TimeoutExpired as error:
+        partial = error.stdout or b""
+        if isinstance(partial, bytes):
+            partial = partial.decode(errors="replace")
+        (folder / f"{name}.log").write_text(partial + "\nSOLVER TIMEOUT\n", encoding="utf-8")
+        raise RuntimeError(f"CalculiX {name} exceeded {timeout_s} seconds") from error
     log = p.stdout + "\n" + p.stderr
     (folder / f"{name}.log").write_text(log, encoding="utf-8")
     if p.returncode or "*ERROR" in log.upper() or "Job finished" not in log:
@@ -200,7 +225,7 @@ def run_deck(executable, folder, name, lines, *, timeout_s=240):
             continue
     if not displacements or not stresses:
         raise RuntimeError(f"Missing FEM fields in {name}.dat")
-    stress = np.asarray(stresses)
+    stress = np.asarray(stresses) * stress_unit_pa
     sxx, syy, szz, sxy, sxz, syz = stress.T
     vm = np.sqrt(
         0.5 * ((sxx - syy) ** 2 + (syy - szz) ** 2 + (szz - sxx) ** 2)
@@ -216,7 +241,9 @@ def run_deck(executable, folder, name, lines, *, timeout_s=240):
         "max_integration_vm_pa": float(vm.max()),
         "p95_integration_vm_pa": float(np.quantile(vm, 0.95)),
         "integration_stress_pa": stress.tolist(),
-        "nodal_force_sum_n": np.sum(list(forces.values()), axis=0).tolist(),
+        "nodal_force_sum_n": (np.sum(list(forces.values()), axis=0) * force_unit_n).tolist(),
+        "solver_stress_unit_pa": stress_unit_pa,
+        "solver_force_unit_n": force_unit_n,
         "nodes": len(displacements),
         "strength_status": "unknown_without_matching_material_evidence",
     }
@@ -371,9 +398,14 @@ def body_deck(
         "creep_stress": cfg.creep_reference_stress_pa,
         "creep_n": cfg.creep_exponent,
     }
-    lines = base_deck(nodes, els, cfg.body_material or cfg.material, creep=creep)
+    scale = 1e6 if cfg.creep_reference_rate_per_s is not None else 1.0
+    lines = base_deck(
+        nodes, els, cfg.body_material or cfg.material, creep=creep, stress_unit_pa=scale
+    )
+    if scale != 1:
+        lines[1] = "Conditional creep analysis; length m, stress MPa, force MN"
     support = [i for i, (_, _, z) in nodes.items() if z < 1e-10]
-    foundation(lines, support, len(els) + 1, 1e8)
+    foundation(lines, support, len(els) + 1, 1e8 / scale)
     lines += [
         "*STEP,NLGEOM,INC=300",
         "*STATIC",
@@ -382,22 +414,24 @@ def body_deck(
         f"ALL,{temperature_c:.8g}",
         "*DLOAD",
     ]
-    lines += [f"{e},P1,{pressure_pa:.9g}" for e, (_, ijk) in enumerate(els, 1) if ijk[2] == 0]
+    lines += [
+        f"{e},P1,{pressure_pa / scale:.9g}" for e, (_, ijk) in enumerate(els, 1) if ijk[2] == 0
+    ]
     # Equivalent closures carry pressure resultants; local cap stress is unresolved.
     lines += ["*CLOAD"]
     for z, sign, r in ((0, -1, profile[0, 1]), (L, 1, profile[-1, 1])):
         ids = [i for i, xyz in nodes.items() if abs(xyz[2] - z) < 1e-10]
-        force = pressure_pa * np.pi * (r - cfg.body_thickness_m / 2) ** 2
+        force = pressure_pa / scale * np.pi * (r - cfg.body_thickness_m / 2) ** 2
         lines += [f"{i},3,{sign * force / len(ids):.9g}" for i in ids]
         if z == L:
             # *CLOAD duplicates are added by CalculiX within a step.
-            lines += [f"{i},3,{-axial_compression_n / len(ids):.9g}" for i in ids]
-            lines += [f"{i},1,{transverse_n / len(ids):.9g}" for i in ids]
+            lines += [f"{i},3,{-axial_compression_n / len(ids) / scale:.9g}" for i in ids]
+            lines += [f"{i},1,{transverse_n / len(ids) / scale:.9g}" for i in ids]
     lines += output_cards()
     if cfg.creep_reference_rate_per_s is not None and cfg.pressure_hold_s > 0:
         lines += [
             "*STEP,NLGEOM,INC=500",
-            "*VISCO",
+            "*VISCO,CETOL=1.0e-6",
             f"0.1,{cfg.pressure_hold_s:.9g},1e-7,5.",
         ] + output_cards()
     return (
@@ -410,6 +444,8 @@ def body_deck(
             "pressure_pa": pressure_pa,
             "temperature_c": temperature_c,
             "creep_enabled": cfg.creep_reference_rate_per_s is not None,
+            "stress_unit_pa": scale,
+            "force_unit_n": scale,
             "axial_compression_n": axial_compression_n,
             "transverse_n": transverse_n,
             "ovality": ovality,

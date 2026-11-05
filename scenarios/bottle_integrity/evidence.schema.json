@@ -1,0 +1,93 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "article": {
+      "minLength": 1,
+      "title": "Article",
+      "type": "string"
+    },
+    "component": {
+      "minLength": 1,
+      "title": "Component",
+      "type": "string"
+    },
+    "method": {
+      "minLength": 1,
+      "title": "Method",
+      "type": "string"
+    },
+    "source_file": {
+      "minLength": 1,
+      "title": "Source File",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "measured": {
+      "title": "Measured",
+      "type": "boolean"
+    },
+    "temperature_c": {
+      "title": "Temperature C",
+      "type": "number"
+    },
+    "specimen_count": {
+      "minimum": 1,
+      "title": "Specimen Count",
+      "type": "integer"
+    },
+    "orientation": {
+      "title": "Orientation",
+      "type": "string"
+    },
+    "manufacturing": {
+      "title": "Manufacturing",
+      "type": "string"
+    },
+    "reviewed_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reviewed By"
+    },
+    "applicable_min": {
+      "title": "Applicable Min",
+      "type": "number"
+    },
+    "applicable_max": {
+      "title": "Applicable Max",
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "article",
+    "component",
+    "method",
+    "source_file",
+    "source_sha256",
+    "measured",
+    "temperature_c",
+    "specimen_count",
+    "orientation",
+    "manufacturing",
+    "applicable_min",
+    "applicable_max"
+  ],
+  "title": "EvidenceRecord",
+  "type": "object"
+}
