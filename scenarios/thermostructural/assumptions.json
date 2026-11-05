@@ -1,0 +1,72 @@
+{
+  "provisional": true,
+  "basis": "Sensitivity inputs, not measured material properties or allowable loads. SI units unless suffixed.",
+  "fin": {
+    "E_pa": 2000000000,
+    "nu": 0.3,
+    "thickness_m": 0.001,
+    "root_twist_stiffness_nm_rad": 0.5,
+    "root_bend_stiffness_nm_rad": 0.5,
+    "aerodynamic_offset_chord_fractions": [-0.25, 0, 0.25],
+    "incidence_deg": 3,
+    "max_deflection_span_fraction": 0.1,
+    "max_rotation_deg": 5,
+    "warm_stiffness_ratio": 0.5,
+    "softening_begin_C": 25,
+    "softening_end_C": 55,
+    "pitch_zeta": 0.15
+  },
+  "mount": {
+    "support_mass_kg": 0.02,
+    "wall_stiffness_n_m": 2500,
+    "pad_stiffness_n_m": 600,
+    "modal_zeta": 0.06,
+    "available_stroke_m": 0.008,
+    "air_pulse_durations_s": [0.01, 0.03, 0.1],
+    "landing_stop_distances_m": [0.005, 0.015, 0.03],
+    "opening_delta_v_mps": 3,
+    "opening_durations_s": [0.02, 0.1, 0.3]
+  },
+  "body": {
+    "wall_thicknesses_m": [0.0002, 0.0003, 0.0004],
+    "sleeve_thickness_m": 0.0003,
+    "E_pa": 2000000000,
+    "nu": 0.38,
+    "CTE_per_K": 0.00006,
+    "joint_overlap_m": 0.02,
+    "payload_eccentricity_m": 0.01
+  },
+  "thermal": {
+    "gas_initial_C": 20,
+    "polytropic_exponents": [1.2, 1.4],
+    "wall_thickness_m": 0.0003,
+    "wall_k_w_m_k": 0.2,
+    "wall_rho_kg_m3": 1380,
+    "wall_cp_j_kg_k": 1200,
+    "inside_h_w_m2_k": 30,
+    "outside_h_w_m2_k": 10,
+    "solar_w_m2": 800,
+    "absorptivities": [0.2, 0.8],
+    "ambient_C": 35,
+    "initial_C": 25,
+    "wait_s": 600,
+    "emissivity": 0.9,
+    "skin_mass_kg": 0.012,
+    "skin_cp_j_kg_k": 1200,
+    "payload_cp_j_kg_k": 3300,
+    "pad_k_w_m_k": 0.035,
+    "pad_area_m2": 0.003,
+    "mount_payload_conductance_w_k": 0.08,
+    "exposed_fin_mass_kg": 0.006,
+    "fin_cp_j_kg_k": 1400
+  },
+  "collar": {
+    "E_pa": 2000000000,
+    "nu": 0.35,
+    "rho_kg_m3": 1240,
+    "cp_j_kg_k": 1800,
+    "CTE_per_K": 0.00007,
+    "reference_C": 25,
+    "hmax_m": [0.003, 0.0015]
+  }
+}
