@@ -1900,6 +1900,216 @@
       "source": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/11ebb4ee043715aefbba6aeec8a61746fad67fa7/README.md",
       "commit": "11ebb4ee043715aefbba6aeec8a61746fad67fa7",
       "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/evolve_rockets.py",
+      "kind": "解析用ソースコード",
+      "bytes": 19015,
+      "sha256": "c05c4c1d5829121466a2c0ef393bec7c2ecc0515610d19f82972cb523b4ed313",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/evolve_rockets.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/examples/base_15.03.ork",
+      "kind": "機体設計モデル",
+      "bytes": 201672,
+      "sha256": "11fe64effed7b9b9233469490a53a09821826451ba0bd2a84b0f23f922599caf",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/examples/base_15.03.ork",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/examples/base_23.09.ork",
+      "kind": "機体設計モデル",
+      "bytes": 18772,
+      "sha256": "e1f8d8f89450514479e7c12d91bbd14bbd88f60c33e115a9b669a778c108e7ef",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/examples/base_23.09.ork",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/examples/custom.py",
+      "kind": "解析用ソースコード",
+      "bytes": 15670,
+      "sha256": "4932045fe3c85e21c69991e77abf52984a74a7fcbfbe1e4d851b3d699e362092",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/examples/custom.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/examples/lazy.py",
+      "kind": "解析用ソースコード",
+      "bytes": 2081,
+      "sha256": "44018de0fec4399b9f458ca0dd9a219766a36d2a8e66c11915bfc75b5312c5ab",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/examples/lazy.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/examples/modified.ork",
+      "kind": "機体設計モデル",
+      "bytes": 24811,
+      "sha256": "a3a82fee794feb79ba2c32e19ebe33c50c73efedb83cd79467501dd3ae5e1768",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/examples/modified.ork",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/examples/monte_carlo.py",
+      "kind": "解析用ソースコード",
+      "bytes": 3780,
+      "sha256": "3e16042e48fd8950ea5dd1095d4aaec25895433836a295cff5df4c18ff301257",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/examples/monte_carlo.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/examples/simple.ork",
+      "kind": "機体設計モデル",
+      "bytes": 201571,
+      "sha256": "f5f4de21acd2279895dfb7376c3353fd4e643b85adbcd034808b1af48f439c21",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/examples/simple.ork",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/examples/simple_plot.py",
+      "kind": "解析用ソースコード",
+      "bytes": 1916,
+      "sha256": "9f5efdb2003d48378eb604ab2e7415b673cdd3dbaa55cb6df696fa7a089e13ea",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/examples/simple_plot.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/LICENSE",
+      "kind": "付属文書",
+      "bytes": 18027,
+      "sha256": "a45d0bb572ed792ed34627a72621834b3ba92aab6e2cc4e04301dee7a728d753",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/LICENSE",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/orhelper/__init__.py",
+      "kind": "解析用ソースコード",
+      "bytes": 103,
+      "sha256": "d095eb4ed92c2735bbc9f6303736b9264fe9dea8622b83f44f8a83e1526aedf4",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/orhelper/__init__.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/orhelper/_enums.py",
+      "kind": "解析用ソースコード",
+      "bytes": 2547,
+      "sha256": "5cca7c211d008e785bf11a569df301dc282802f08282e2f629bee136ee9365eb",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/orhelper/_enums.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/orhelper/_orhelper.py",
+      "kind": "解析用ソースコード",
+      "bytes": 12555,
+      "sha256": "213dbf85c507a39e17e7e96396ca2a4aace79d7e7460dca4006abf607a9048f6",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/orhelper/_orhelper.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/plotdata.py",
+      "kind": "解析用ソースコード",
+      "bytes": 7238,
+      "sha256": "82aca23321596c8127788e1da6e62508d4689cbe0daef75003f13122b9f2b10d",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/plotdata.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/process_saved_archives.py",
+      "kind": "解析用ソースコード",
+      "bytes": 24881,
+      "sha256": "6cc46b9f62433246a3b4a693ff04c117a3dbf8587d7de806519b725ecad82274",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/process_saved_archives.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/README.md",
+      "kind": "付属文書",
+      "bytes": 12298,
+      "sha256": "fbbf2f4c5a5da0f7248acbb27cc0315ffb64df481f3235d608d4021a2a87a3eb",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/README.md",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/requirements.txt",
+      "kind": "付属文書",
+      "bytes": 43,
+      "sha256": "a74059ca6e375b0edf6332b0989c7bcc016b8ae5d450baf6a7d02e533fcdf316",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/requirements.txt",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/rocket_design.py",
+      "kind": "解析用ソースコード",
+      "bytes": 10681,
+      "sha256": "d69a252ef2001c10fd89bd8f4e107d35c48840a49a97fee01d1a76b21d9bf12a",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/rocket_design.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/rocket_evaluate.py",
+      "kind": "解析用ソースコード",
+      "bytes": 13896,
+      "sha256": "adf4be5b7dfda9820d7c52b269ba1f97f999ac9e1ff91a891ec5c6801d8a4628",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/rocket_evaluate.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/rocket_fins.py",
+      "kind": "解析用ソースコード",
+      "bytes": 2842,
+      "sha256": "c195a3f570b6385e6921815120892c74fe003492922bc8e7d9868b9247f3070c",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/rocket_fins.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
+    },
+    {
+      "source_id": "MS26",
+      "path": "固体/モデル/MS26-OpenRocketQD/rocket_spread.py",
+      "kind": "解析用ソースコード",
+      "bytes": 3849,
+      "sha256": "bc463b63d9a9bdd36931e10ad7d237c25f5324656ccb1b98975602ea5150cad0",
+      "source": "https://raw.githubusercontent.com/schrum2/OpenRocketQD/5f6d84cc34b72bc1881aab4410f2322babb3aaa9/rocket_spread.py",
+      "commit": "5f6d84cc34b72bc1881aab4410f2322babb3aaa9",
+      "validation": "upstream Git blob matched"
     }
   ]
 }

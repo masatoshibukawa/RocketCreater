@@ -193,3 +193,123 @@ RocketPy Team / 各大学チーム · 2020・2023 飛行、2026 保存版 · en 
 [配布元・出典](https://github.com/RocketPy-Team/RocketPy/tree/9bd6ad3af8f97bafa3201d4e70eba2877e66e040/docs/examples/bella_lui_flight_sim.ipynb) · [保存ファイル](モデル/MS16-RocketPy)
 
 利用条件：MIT。データ提供者の許諾記載を原本内に保持。
+
+<a id="ms17"></a>
+
+## MS17 Toy rocket — US2841084A
+
+Orville H. Carlisle · 1958 登録・公開（1954年8月30日出願） · en · 特許公報・構成図
+
+対象：初期の再使用可能な模型ロケット。機体・交換カートリッジ・回収用パラシュート・発射台の図を収録。1954年の出願と1958年の公報発行を区別する。
+
+[配布元・出典](https://patents.google.com/patent/US2841084A/en) · [原本取得先](https://kirkmcd.princeton.edu/Carlisle/carlisle_us2841084_54_rocket.pdf) · [保存ファイル](<原本/MS17.pdf>)（4ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ms18"></a>
+
+## MS18 Raketové modelářství: Stavba raket, modelů a raketoplánů — Obsah
+
+Alois Rosenberg / CPress · 2006 · cs · 出版社公開の目次
+
+対象：チェコ語の模型ロケット入門書。保存物は出版社が公開した3ページの目次。136ページの書籍全文ではない。工作、飛行安定、回収、競技に関する章を探すための書誌資料。
+
+[配布元・出典](https://www.albatrosmedia.sk/tituly/8488428/raketove-modelarstvi/) · [原本取得先](https://cdn.albatrosmedia.cz/Files/TableOfContents/8865452/) · [保存ファイル](<原本/MS18.pdf>)（3ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ms19"></a>
+
+## MS19 A Quality Diversity Approach to Evolving Model Rockets
+
+Jacob Schrum; Cody Crosby / Southwestern University · 2025 · en · 学会論文・著者プレプリント
+
+対象：市販固体モーターを使う低出力模型。OpenRocketによる多様な機体形状の探索と実機飛行の比較。機体形状の設計空間と、計算と実験の差を扱う。作者の公開リポジトリも本文に記載。
+
+[配布元・出典](https://arxiv.org/abs/2504.02177) · [原本取得先](https://arxiv.org/pdf/2504.02177) · [保存ファイル](<原本/MS19.pdf>)（9ページ）
+
+利用条件：arXiv掲載のCC BY 4.0。原本の著作者表示を保持。
+
+<a id="ms20"></a>
+
+## MS20 Športový poriadok — Verzia 1.0 / 2024
+
+Letecko-raketomodelárska asociácia Slovenska (LERMAS) · 2024 · sk · 模型競技団体の規程
+
+対象：スロバキアの模型競技。第3章に宇宙模型と固体模型モーターの定義を収録。航空模型も含む規程全体の保存版であり、記載した版の内容を参照する。
+
+[配布元・出典](https://www.lermas.sk/sportove-vysledky/sportove-pravidla/) · [原本取得先](https://www.lermas.sk/?mdocs-file=2631) · [保存ファイル](<原本/MS20.pdf>)（38ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ms21"></a>
+
+## MS21 Modellvänner — September 2018, Modellraketer
+
+Modellvänner編集部（Sture Tingwall; Patrik Gertsson） · 2018年9月 · sv · 愛好家による原刊行雑誌
+
+対象：スウェーデンの模型ロケット活動。誌面5ページに模型ロケット活動の紹介と1962〜1964年の過去記事への手掛かり。雑誌全体19ページを保存。過去記事の年代を本号の発行年と混同しない。
+
+[配布元・出典](https://modellvanner.se/mv/modellvanner201809.pdf) · [原本取得先](https://modellvanner.se/mv/modellvanner201809.pdf) · [保存ファイル](<原本/MS21.pdf>)（19ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ms22"></a>
+
+## MS22 Model Rocketry Catalog — Cat. No. 701
+
+Estes Industries · 1970 · en · メーカー製品カタログの保存版
+
+対象：市販固体モーター・機体・周辺製品。メーカー公式アーカイブから取得。表紙のカタログ番号701と掲載年を照合した。画像スキャン77ページで、現在の製品仕様ではなく1970年の製品比較に使う。
+
+[配布元・出典](https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1970_Catalog.pdf?v=1676660950) · [原本取得先](https://cdn.shopify.com/s/files/1/0686/0220/0369/files/Estes_1970_Catalog.pdf?v=1676660950) · [保存ファイル](<原本/MS22.pdf>)（77ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ms23"></a>
+
+## MS23 Flying Model Rockets — Catalog No. 73
+
+Centuri Engineering Company · 1973 · en · メーカー製品カタログの公開保存版
+
+対象：市販模型ロケットと部品。原メーカー刊行物をJimZの公開アーカイブから保存。表紙のCatalog No. 73で年を照合。Saturn系の縮尺模型などを含む51ページの画像スキャン。
+
+[配布元・出典](https://www.spacemodeling.org/jimz/publications/centuri_1973_catalog.pdf) · [原本取得先](https://www.spacemodeling.org/jimz/publications/centuri_1973_catalog.pdf) · [保存ファイル](<原本/MS23.pdf>)（51ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ms24"></a>
+
+## MS24 Advanced Model Rocketry Products — Special Edition Catalog No. 741
+
+Enerjet / Centuri Engineering Company · 1974 · en · メーカー製品カタログの公開保存版
+
+対象：高出力寄りの市販模型用製品。JimZの公開アーカイブから保存した6ページの原刊行物。1974年の市販製品と性能表示を比較する資料で、現行の販売・認証状況は示さない。
+
+[配布元・出典](https://www.spacemodeling.org/jimz/publications/enerjet_1974_catalog.pdf) · [原本取得先](https://www.spacemodeling.org/jimz/publications/enerjet_1974_catalog.pdf) · [保存ファイル](<原本/MS24.pdf>)（6ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ms25"></a>
+
+## MS25 Centuri Orion — Retro-Repro, Kit No. KV-41
+
+Semroc Astronautics Corporation · 2010年3月7日 · en · 復刻キットのメーカー組立説明書
+
+対象：市販固体モーター用Orion機体。部品図・機体組立・回収系の説明を含む10ページ。原型は1971年カタログ掲載のCenturi機体だが、保存物は2010年のSemroc復刻版説明書。販売店が配布するメーカー原文。
+
+[配布元・出典](https://www.apogeerockets.com/downloads/PDFs/semroc-orion.pdf) · [原本取得先](https://www.apogeerockets.com/downloads/PDFs/semroc-orion.pdf) · [保存ファイル](<原本/MS25.pdf>)（10ページ）
+
+利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ms26"></a>
+
+## MS26 OpenRocketQD — example designs and Python source
+
+Jacob Schrum; Cody Crosby / OpenRocketQD contributors · 2025年4月2日のコミット · en · 著者公開の機体モデル・解析用ソース
+
+対象：低出力固体模型の形状探索。MS19論文の付属リポジトリ。4つのORK機体、14のPythonソース、README・LICENSE・requirementsを固定コミットで保存。全21ファイルを公開元のGit blobと照合。実行用JARは同梱せず、解析は未実行。
+
+[配布元・出典](https://github.com/schrum2/OpenRocketQD/tree/5f6d84cc34b72bc1881aab4410f2322babb3aaa9) · [保存ファイル](<モデル/MS26-OpenRocketQD>)
+
+利用条件：GPL-2.0（リポジトリLICENSE）。個別ソースの著作者表示・由来を保持。
