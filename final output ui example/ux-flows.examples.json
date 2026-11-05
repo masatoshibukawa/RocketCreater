@@ -1,0 +1,249 @@
+{
+  "status": "Illustrative UX acceptance cases, not runtime responses or physical test records.",
+  "cases": [
+    {
+      "id": "history-pin",
+      "before": {
+        "job": "running",
+        "following": true,
+        "displayed": "s03",
+        "latest": "s03"
+      },
+      "action": {
+        "type": "select_snapshot",
+        "snapshot": "s02"
+      },
+      "after": {
+        "job": "running",
+        "following": false,
+        "displayed": "s02",
+        "latest": "s03",
+        "newResultNotice": 1
+      },
+      "nextArrival": {
+        "snapshot": "s04",
+        "job": "running",
+        "displayed": "s02",
+        "latest": "s04",
+        "newResultNotice": 2
+      },
+      "forbidden": [
+        "Changing the pinned figure on arrival",
+        "Stopping the job when pinning a figure"
+      ]
+    },
+    {
+      "id": "save-incomplete-edit",
+      "before": {
+        "viewedRevision": "v12",
+        "draftRevision": "v13",
+        "draftState": "unsaved",
+        "material": null
+      },
+      "action": {
+        "type": "save_draft"
+      },
+      "after": {
+        "viewedRevision": "v12",
+        "draftRevision": "v13",
+        "draftState": "saved_incomplete",
+        "jobStarted": false,
+        "evaluation": "not_evaluated",
+        "fabricationConfirmation": false,
+        "resultReferences": [
+          "v12"
+        ]
+      },
+      "forbidden": [
+        "Copying v12 performance to v13",
+        "Launching analysis while saving"
+      ]
+    },
+    {
+      "id": "adopt-unresolved-edit",
+      "before": {
+        "viewedRevision": "v12",
+        "draftState": "unsaved",
+        "requiredEvaluation": "missing"
+      },
+      "action": {
+        "type": "open_adoption"
+      },
+      "after": {
+        "adoptionAllowed": false,
+        "reason": "Resolve the unsaved draft and missing evaluation",
+        "availableActions": [
+          "save_draft",
+          "discard_draft",
+          "review_missing_evaluation"
+        ]
+      }
+    },
+    {
+      "id": "assembly-navigation",
+      "before": {
+        "step": "02",
+        "viewedSteps": [
+          "01"
+        ],
+        "performedSteps": [],
+        "operator": "adult",
+        "gloves": null,
+        "tool": null,
+        "assessment": "pending"
+      },
+      "action": {
+        "type": "next_step"
+      },
+      "after": {
+        "step": "03",
+        "viewedSteps": [
+          "01",
+          "02"
+        ],
+        "performedSteps": [],
+        "assessment": "pending",
+        "physicalVerification": false
+      }
+    },
+    {
+      "id": "record-assembly-observation",
+      "before": {
+        "operatorRevision": "op2",
+        "toolRevision": null,
+        "assessment": "pending"
+      },
+      "action": {
+        "type": "record_observation",
+        "method": "user_observation",
+        "item": "orientation",
+        "result": "observed"
+      },
+      "after": {
+        "observationStored": true,
+        "assessment": "pending",
+        "geometryVerified": false,
+        "physicalVerification": false,
+        "remainingItems": [
+          "tool_selection",
+          "access_path",
+          "withdrawal_path"
+        ]
+      }
+    },
+    {
+      "id": "cancellation-acknowledgement",
+      "before": {
+        "job": "running",
+        "snapshots": [
+          "s01",
+          "s02"
+        ]
+      },
+      "action": {
+        "type": "confirm_cancel"
+      },
+      "afterRequest": {
+        "job": "cancellation_requested",
+        "workerMotion": false,
+        "duplicateRequest": false
+      },
+      "afterServerAcknowledgement": {
+        "job": "cancelled",
+        "snapshots": [
+          "s01",
+          "s02"
+        ]
+      },
+      "forbidden": [
+        "Reporting cancelled before server acknowledgement",
+        "Describing browser fetch abortion as server cancellation"
+      ]
+    },
+    {
+      "id": "reconnect-without-restart",
+      "before": {
+        "jobId": "job-a12",
+        "connection": "lost",
+        "lastSnapshot": "s02"
+      },
+      "action": {
+        "type": "reconnect"
+      },
+      "after": {
+        "jobId": "job-a12",
+        "connection": "connected",
+        "jobStateSource": "server",
+        "jobStarted": false,
+        "completedArtifactsPreserved": true
+      },
+      "fallback": {
+        "ifJobUnknown": "show saved results and offer explicit new-run confirmation",
+        "automaticRestart": false
+      }
+    },
+    {
+      "id": "switch-project-with-unsaved-edit",
+      "before": {
+        "project": "p1",
+        "draft": "unsaved"
+      },
+      "action": {
+        "type": "select_project",
+        "project": "p2"
+      },
+      "after": {
+        "activeProject": "p1",
+        "confirmation": "save_discard_or_stay",
+        "focusAfterClose": "project-selector"
+      },
+      "forbidden": [
+        "Silently discarding the draft",
+        "Applying p1's draft to p2"
+      ]
+    },
+    {
+      "id": "different-version-arrival",
+      "before": {
+        "activeRevision": "v13",
+        "activeJob": "j13"
+      },
+      "arrival": {
+        "revision": "v12",
+        "job": "j12",
+        "snapshot": "old-s99"
+      },
+      "after": {
+        "activeRevision": "v13",
+        "activeJob": "j13",
+        "displayedUpdated": false,
+        "storedUnder": "v12/j12",
+        "notice": "result_received_for_previous_version"
+      }
+    },
+    {
+      "id": "explicit-new-run",
+      "before": {
+        "draftRevision": "v13",
+        "draftState": "saved_incomplete",
+        "missing": [
+          "material"
+        ]
+      },
+      "action": {
+        "type": "confirm_analysis"
+      },
+      "after": {
+        "jobStarted": false,
+        "reason": "Resolve required inputs or restrict the analysis scope explicitly",
+        "fabricationConfirmation": false
+      },
+      "afterInputsResolved": {
+        "action": "confirm_scoped_analysis",
+        "jobStarted": true,
+        "inputRevision": "v13",
+        "priorJobMutated": false
+      }
+    }
+  ]
+}
