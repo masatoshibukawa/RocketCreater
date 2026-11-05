@@ -83,7 +83,12 @@ def reconcile_mass(design, assembly, fin_mass_kg):
     delta = fin_mass_kg - fin["mass_g"] / 1000
     station = fin["station_mm"] / 1000
     fin["mass_g"] = fin_mass_kg * 1000
+    fin["name"] = "仮定物性によるソリッドフィン（材種・製法未確定）"
+    fin["quantity"] = "4枚・取付タブを含む体積から算出"
+    fin["previous_allowance_jpy"] = fin.get("allowance_jpy")
+    fin["allowance_jpy"] = None
     fin["basis"] = "assumed solid fin geometry/density; not weighed hardware"
+    article["cost_status"] = "invalidated: fin material/process not priced"
     dry = design.dry_mass_kg
     payload = design.payload_mass_kg
     water = 1000 * design.bottle_volume_m3 * design.water_fill_frac
