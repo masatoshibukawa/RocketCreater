@@ -8,6 +8,7 @@ import api.workbench as routes
 from api.main import app
 from rocketwright.agent.local_runtime import LocalJSON
 from rocketwright.agent.workbench import Conflict, StepChoice, Workbench
+from rocketwright.bottle_assembly import Workshop
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -66,12 +67,40 @@ def test_model_proposal_is_validated_and_does_not_execute_analysis(bench):
 
 
 def test_workshop_replay_exports_same_design_and_integrity_checked_downloads(bench):
-    state = bench.create()
+    # Numerical search fixture, not an equipment pressure rating. The default
+    # 400 kPa ceiling must remain unchanged even if a new model cannot reach target.
+    workshop = Workshop.model_validate_json(
+        (ROOT / "scenarios/bottle_empty_workshop.json").read_text()
+    ).model_copy(update={"pressure_ceiling_kpa": 500})
+    state = bench.create(workshop)
     choices = json.loads((ROOT / "scenarios/bottle_prototype_choices.json").read_text())
-    for choice in choices:
+    for choice in choices[:4]:
         state = bench.step(state["id"], state["revision"], StepChoice(**choice))
+    # Follow only eligible IDs, rather than replaying an obsolete pressure result.
+    for _ in range(20):
+        if state["confirmed"]:
+            break
+        eligible = [
+            o
+            for o in state["options"]
+            if o["architecture"] == "D02" and o["variant"] == "carton_wide"
+        ]
+        priority = {"confirm": 0, "screen": 1, "flight": 2, "component": 3}
+        chosen = min(eligible, key=lambda o: (priority[o["method"]], -o["pressure_kpa"]))
+        state = bench.step(
+            state["id"],
+            state["revision"],
+            StepChoice(id=chosen["id"], reason="Recalculate an eligible candidate"),
+        )
     assert state["confirmed"]
     state = bench.export(state["id"], state["revision"])
+    history = state["history"]
+    state = bench.manual(state["id"], state["revision"])
+    pdf = next(f for f in state["files"] if f["kind"] == "manual")
+    assert bench.file(state["id"], pdf["key"]).read_bytes().startswith(b"%PDF-")
+    assert state["history"] == history  # Viewing/printing cannot complete a physical step.
+    with pytest.raises(Conflict, match="already exists"):
+        bench.manual(state["id"], state["revision"])
     names = {f["name"] for f in state["files"]}
     assert {"payload-collar-mm.stl", "fin-marking-jig-mm.stl", "report.json", "trace.json"} <= names
     report_file = next(f for f in state["files"] if f["name"] == "report.json")
@@ -97,6 +126,13 @@ def test_api_checkpoints_validation_and_resume(monkeypatch, bench):
         endpoint = f"/workbench/projects/{state['id']}"
         assert client.get(endpoint).json()["revision"] == 0
         assert client.post(endpoint + "/exports", json={"revision": 0}).status_code == 409
+        state = client.get(endpoint).json()
+        assert (
+            client.post(
+                endpoint + "/assembly-pdf", json={"revision": state["revision"]}
+            ).status_code
+            == 409
+        )
         assert client.get("/workbench/projects/not-an-id").status_code == 404
         assert client.get(endpoint + "/files/state.json").status_code == 404
 

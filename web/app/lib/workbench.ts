@@ -11,6 +11,7 @@ export interface AnalysisOption {
 }
 export interface WorkbenchProject {
   id: string; revision: number; confirmed: boolean; recommendation: string | null;
+  workshop: { pressure_ceiling_kpa: number };
   active: { name: string; started_at: number } | null; error: string | null;
   options: AnalysisOption[]; files: WorkbenchFile[];
   proposal: { id: string; reason: string; model: string } | null;

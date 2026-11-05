@@ -6,10 +6,10 @@
 
 1. design/requirements.json で目的と不足している条件を確認する。
 2. design/equipment.json と parts/bom.csv で機材・部品の未選定項目を確認する。
-3. assembly/instructions.md で手順書の読み方と工程ごとの不足を確認する。
+3. [PDFのレイアウト見本](assembly/instructions-preview.pdf)とassembly/instructions.mdで、手順書の読み方と工程ごとの不足を確認する。
 4. verification/technical-status.json で未評価・未実施の項目を確認する。
 
-PDFの組立手順書は標準の出力対象です。この見本ではレイアウト検討用と実機用を区別し、実機用は必要条件がそろうまで未生成として目録に記録します。
+PDFの組立手順書は標準の出力対象です。4ページのレイアウト見本は確認用に生成済みで、実機用は必要条件がそろうまで未生成として目録に記録します。
 
 ## ファイルの役割
 
@@ -20,6 +20,7 @@ PDFの組立手順書は標準の出力対象です。この見本ではレイ�
 | parts/bom.csv | 部品ID・版・名前・調達・数量。空欄は未確定 |
 | assembly/steps.json | Web・PDF・動画で共有する工程の正データ |
 | assembly/instructions.md | 人が読める手順書の文章表示 |
+| assembly/instructions-preview.pdf | 白地・A4のレイアウト検討用。実機用の発行済み手順ではない |
 | analysis/results.json | 未実行・未評価を含む解析の状態 |
 | provenance/sources.json | 条件と説明の出典。見本ではユーザーの要求を記録 |
 | verification/technical-status.json | 幾何・作業・実物の確認状態 |

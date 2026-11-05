@@ -30,8 +30,8 @@
       "use": "content_review",
       "design_revision": "r00",
       "path": "README.md",
-      "size_bytes": 3345,
-      "sha256": "207489204c02c896df0f063e3f9562fd0e20cbfe8f635c24abd9cf17efba0fc0",
+      "size_bytes": 3536,
+      "sha256": "7aa36cf22a7557793ded1d19605fdbe998f2b6f04c7782216f3850f06ef45ba6",
       "depends_on": []
     },
     {
@@ -44,7 +44,9 @@
       "path": "design/requirements.json",
       "size_bytes": 892,
       "sha256": "bc6ea4dbb9521e6dd54cc3c5cae816b1ba0599aa7122654678ec029e8830256d",
-      "depends_on": []
+      "depends_on": [
+        "sources"
+      ]
     },
     {
       "artifact_id": "equipment",
@@ -56,7 +58,9 @@
       "path": "design/equipment.json",
       "size_bytes": 975,
       "sha256": "7424945408ec42707eb77efa0e0fae310fcd200751dfbc7bf2ff5230bbded801",
-      "depends_on": []
+      "depends_on": [
+        "sources"
+      ]
     },
     {
       "artifact_id": "design",
@@ -68,7 +72,11 @@
       "path": "design/design.json",
       "size_bytes": 1153,
       "sha256": "ec4779495791638822bcd4de376c9f02185cba7ac8f419de6ce066188cb2ee03",
-      "depends_on": []
+      "depends_on": [
+        "requirements",
+        "equipment",
+        "sources"
+      ]
     },
     {
       "artifact_id": "bom",
@@ -80,7 +88,10 @@
       "path": "parts/bom.csv",
       "size_bytes": 331,
       "sha256": "a8d7df3665bb24d74d4ecd0fd1ec77be277b3f02f157175e0dde9d7da2e419b8",
-      "depends_on": []
+      "depends_on": [
+        "design",
+        "sources"
+      ]
     },
     {
       "artifact_id": "assembly-steps",
@@ -92,7 +103,11 @@
       "path": "assembly/steps.json",
       "size_bytes": 2418,
       "sha256": "2036c97dc053790ba248205063ceae8ce1ed1727af31de8cda41461e1d6616dd",
-      "depends_on": []
+      "depends_on": [
+        "design",
+        "equipment",
+        "sources"
+      ]
     },
     {
       "artifact_id": "assembly-text",
@@ -102,9 +117,11 @@
       "use": "content_review",
       "design_revision": "r00",
       "path": "assembly/instructions.md",
-      "size_bytes": 1766,
-      "sha256": "f2ddf4af8672da3bcf728dbd91f84bac4229940dec744d841e90abda93193d16",
-      "depends_on": []
+      "size_bytes": 1420,
+      "sha256": "6a30ed82de53da2b5f0f451edec9cced4b0f60a9d3fb1f491bba9e5997cc7805",
+      "depends_on": [
+        "assembly-steps"
+      ]
     },
     {
       "artifact_id": "analysis-results",
@@ -116,7 +133,10 @@
       "path": "analysis/results.json",
       "size_bytes": 708,
       "sha256": "f10cc09b30f1a5aebb4a3effb58d9e5db2c5af8f62fc10393dd1383ea9eb2914",
-      "depends_on": []
+      "depends_on": [
+        "design",
+        "requirements"
+      ]
     },
     {
       "artifact_id": "sources",
@@ -140,7 +160,11 @@
       "path": "verification/technical-status.json",
       "size_bytes": 647,
       "sha256": "466f009b39c25ea080325c1e4e888fb824a0e9210a62f8298946ad6fa2dc9187",
-      "depends_on": []
+      "depends_on": [
+        "design",
+        "assembly-steps",
+        "analysis-results"
+      ]
     },
     {
       "artifact_id": "decisions",
@@ -152,7 +176,9 @@
       "path": "history/decisions.md",
       "size_bytes": 989,
       "sha256": "f12b062d530e477b800152d29dd53315b9be67e997b732cdad813a58bd1fb7f2",
-      "depends_on": []
+      "depends_on": [
+        "sources"
+      ]
     },
     {
       "artifact_id": "package-checker",
@@ -188,21 +214,31 @@
       "path": null,
       "size_bytes": null,
       "sha256": null,
-      "depends_on": [],
+      "depends_on": [
+        "assembly-steps",
+        "design",
+        "equipment",
+        "technical-status"
+      ],
       "reason": "部品・工程・作業条件・図版と確認が未確定"
     },
     {
       "artifact_id": "manual-layout",
       "kind": "assembly_manual_layout_preview",
-      "state": "planned",
-      "content_status": "not_generated",
-      "use": "pending",
+      "state": "ready",
+      "content_status": "draft_example",
+      "use": "layout_review",
       "design_revision": "r00",
-      "path": null,
-      "size_bytes": null,
-      "sha256": null,
-      "depends_on": [],
-      "reason": "レイアウト見本は次の作業単位で生成"
+      "path": "assembly/instructions-preview.pdf",
+      "size_bytes": 150408,
+      "sha256": "232e207aa8df503ceff8786e7217d19004b3eec321e91f06d3eee8e582e9fd85",
+      "depends_on": [
+        "assembly-steps",
+        "design",
+        "equipment",
+        "technical-status",
+        "sources"
+      ]
     },
     {
       "artifact_id": "manufacturing-model",
@@ -214,7 +250,10 @@
       "path": null,
       "size_bytes": null,
       "sha256": null,
-      "depends_on": [],
+      "depends_on": [
+        "design",
+        "equipment"
+      ],
       "reason": "形状と製作条件が未確定"
     },
     {
@@ -227,7 +266,9 @@
       "path": null,
       "size_bytes": null,
       "sha256": null,
-      "depends_on": [],
+      "depends_on": [
+        "analysis-results"
+      ],
       "reason": "解析が未実行"
     },
     {
@@ -240,8 +281,12 @@
       "path": null,
       "size_bytes": null,
       "sha256": null,
-      "depends_on": [],
+      "depends_on": [
+        "assembly-steps",
+        "design"
+      ],
       "reason": "工程と形状が未確定"
     }
-  ]
+  ],
+  "generated_at": "2026-11-05T11:03:05+00:00"
 }
