@@ -2,6 +2,7 @@
 
 import argparse
 import atexit
+import hashlib
 import json
 import math
 import os
@@ -33,6 +34,16 @@ def main():
     p.add_argument("--upstream", type=float, default=3, help="inlet-to-nose distance in diameters")
     p.add_argument("--sphere-re", type=float, default=100, help="Reynolds number of sphere control")
     p.add_argument("--angle", type=float, default=0, help="in-plane incidence in degrees")
+    p.add_argument(
+        "--rotate-geometry",
+        action="store_true",
+        help="rotate the body, keeping flow along open x boundaries; allows 180 degrees",
+    )
+    p.add_argument(
+        "--surface-loads",
+        action="store_true",
+        help="save time-averaged wall-adjacent pressure and distributed total loads",
+    )
     p.add_argument("--cant", type=float, default=0, help="equal-handed fin cant in degrees")
     p.add_argument("--times", type=float, default=36, help="duration in D/U; average last half")
     p.add_argument("--speed", type=float, default=15, help="rocket free-stream speed, m/s")
@@ -61,7 +72,8 @@ def main():
         or not 0 < args.speed <= 35
         or not 2 <= args.upstream <= 10
         or not 1 <= args.sphere_re <= 2e5
-        or max(abs(args.angle), abs(args.cant)) > 15
+        or abs(args.cant) > 15
+        or abs(args.angle) > (180 if args.rotate_geometry else 15)
     ):
         p.error("unsupported geometry, time, speed or angle")
     # On Windows this can point to MATLAB's bin/win64 for NVRTC.
@@ -88,8 +100,16 @@ def main():
         ]
         + [model["loaded_cg_mm"]]
     )
+    rotation_angle = math.radians(args.angle) if args.rotate_geometry else 0.0
     gpu_geometry = cp.asarray(
-        np.r_[g / diameter, math.tan(math.radians(args.cant)), args.upstream], dtype="f"
+        np.r_[
+            g / diameter,
+            math.tan(math.radians(args.cant)),
+            args.upstream,
+            math.cos(rotation_angle),
+            math.sin(rotation_angle),
+        ],
+        dtype="f",
     )
     d, speed = args.cells, args.lattice_speed
     nx, ny = round((15 + args.upstream) * d), 2 * round(args.width * d / 2)
@@ -107,6 +127,11 @@ def main():
     cs = 0 if shape == 1 and reynolds <= 200 else 0.16
     angle = math.radians(args.angle)
     along, across = math.cos(angle), math.sin(angle)
+    transverse_extent = max(g[-1], g[0] - g[-1]) / diameter * abs(math.sin(rotation_angle)) + (
+        0.5 + dims["fin_span"] / diameter
+    ) * abs(math.cos(rotation_angle))
+    if args.rotate_geometry and transverse_extent > args.width / 2 - 0.75:
+        p.error("rotated body is too close to the periodic transverse boundaries")
     code = Path(__file__).with_name("bottle_flow.cu").read_text(encoding="utf-8")
     module = cp.RawModule(code=code, options=("--std=c++11",))
     setup, advance, cut = (module.get_function(k) for k in ("setup", "advance", "cut"))
@@ -115,8 +140,14 @@ def main():
     dst = cp.zeros_like(src)
     blocks, threads = ((n + 127) // 128,), (128,)
     sizes = tuple(np.int32(a) for a in (nx, ny, nz, d))
-    inlet = tuple(np.float32(a) for a in (speed * along, speed * across))
+    inlet = tuple(
+        np.float32(a)
+        for a in ((speed, 0) if args.rotate_geometry else (speed * along, speed * across))
+    )
     setup(blocks, threads, (mask, src, *sizes, np.int32(shape), gpu_geometry, *inlet))
+    surface_ids = cp.where((mask > 0) & (mask < (1 << 31)))[0].astype(cp.int32)
+    surface_stats = cp.zeros((4, len(surface_ids)), cp.float32)
+    surface_count = 0
     params = (
         *sizes,
         *inlet,
@@ -181,7 +212,7 @@ def main():
             data[0] / speed,
             data[3].astype(bool),
             t,
-            (along * f[:, 0] + across * f[:, 1]) / scale,
+            (f[:, 0] if args.rotate_geometry else along * f[:, 0] + across * f[:, 1]) / scale,
         )
 
     def publish_progress(completed):
@@ -203,6 +234,14 @@ def main():
     for step in range(steps):
         phase = (step + 1) % sample_every
         sample = phase == 0 or (args.paired_samples and phase == sample_every - 1)
+        if args.surface_loads and sample and (step // sample_every + 1) * sample_every > steps / 2:
+            if len(surface_ids):
+                module.get_function("surface_probe")(
+                    ((len(surface_ids) + 127) // 128,),
+                    threads,
+                    (src, mask, surface_ids, np.int32(len(surface_ids)), *sizes[:3], surface_stats),
+                )
+            surface_count += 1
         advance(
             blocks,
             threads,
@@ -219,6 +258,11 @@ def main():
     coeff = forces.get().astype(float) / (0.5 * speed**2 * math.pi * d * d / 4)
     if args.paired_samples:
         coeff /= 2
+    if args.rotate_geometry:
+        for j in (0, 3):
+            x, y = coeff[:, j].copy(), coeff[:, j + 1].copy()
+            coeff[:, j] = along * x - across * y
+            coeff[:, j + 1] = across * x + along * y
     cd = coeff[:, 0] * along + coeff[:, 1] * across
     cl = -coeff[:, 0] * across + coeff[:, 1] * along
     times = np.arange(1, len(cd) + 1) * sample_every * speed / d
@@ -230,6 +274,53 @@ def main():
     sample = history[times > times[-1] / 2, 1:]
     mean = sample.mean(axis=0)
     prev, last = np.array_split(sample, 2)
+    surface_summary = None
+    if args.surface_loads:
+        if __package__:
+            from .surface_loads import body_samples, reduce_line
+        else:
+            from surface_loads import body_samples, reduce_line
+        stats = surface_stats.get().astype(float) / surface_count
+        stats[1:] /= 0.5 * speed**2 * math.pi * d**2 / 4
+        xyz, cf = body_samples(
+            surface_ids.get(),
+            stats,
+            (nx, ny, nz),
+            d,
+            args.upstream,
+            diameter / 1000,
+            g[-1] / 1000,
+            args.angle,
+            args.rotate_geometry,
+        )
+        cp_wall = 2 * stats[0] / (3 * speed**2)
+        np.savez_compressed(
+            args.output / "surface-loads.npz",
+            position_m=xyz,
+            pressure_coeff=cp_wall,
+            force_coeff=cf,
+        )
+        line = reduce_line(xyz, cf, dims["overall"] / 1000, diameter / 1000)
+        moment = np.cross(xyz - [g[-1] / 1000, 0, 0], cf).sum(0) / (diameter / 1000)
+        residual = np.r_[cf.sum(0), moment] - mean[2:]
+        relative = float(np.linalg.norm(residual) / max(np.linalg.norm(mean[2:]), 1e-8))
+        line.update(
+            integration_relative_residual=relative,
+            samples=surface_count,
+            pressure_scope="mean pressure at wall-adjacent fluid cell centres",
+            load_scope="momentum exchange: total pressure plus viscous contribution",
+            case_geometry_sha256=hashlib.sha256(args.assembly.read_bytes()).hexdigest(),
+        )
+        (args.output / "line-loads.json").write_text(
+            json.dumps(line, indent=2) + "\n", encoding="utf-8"
+        )
+        if not np.isfinite(cp_wall).all() or relative > 2e-4:
+            raise RuntimeError(f"surface/total load mismatch: {relative}")
+        surface_summary = {
+            "samples": surface_count,
+            "points": len(xyz),
+            "integration_relative_residual": relative,
+        }
     plane = cp.empty((4, ny, nx), cp.float32)
     cut(((nx * ny + 127) // 128,), threads, (src, mask, plane, *sizes[:3]))
     u, v, dr, solid = plane.get()
@@ -268,6 +359,13 @@ def main():
         tau=tau,
         speed_mps=args.speed if shape != 1 else None,
         angle_deg=args.angle,
+        rotated_geometry=args.rotate_geometry,
+        surface_loads=surface_summary,
+        geometry_sha256=hashlib.sha256(args.assembly.read_bytes()).hexdigest(),
+        source_sha256={
+            p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in (Path(__file__), Path(__file__).with_name("bottle_flow.cu"))
+        },
         cant_deg=args.cant,
         steps=steps,
         paired_samples=args.paired_samples,

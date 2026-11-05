@@ -51,15 +51,50 @@ extern "C" __global__ void setup(unsigned *mask,float *f,int nx,int ny,int nz,
     if(k>=n) return;
     float dx=1.f/d,x=(k%nx+.5f)*dx-g[10],y=(k/nx%ny+.5f-ny*.5f)*dx;
     float z=(k/(nx*ny)+.5f-nz*.5f)*dx;
+    // Optional body rotation keeps the incoming flow aligned with the open x faces.
+    // Transform domain coordinates into nose-based body coordinates about dry CG.
+    float xb=g[11]*(x-g[8])-g[12]*y+g[8], yb=g[12]*(x-g[8])+g[11]*y;
+    x=xb; y=yb;
     unsigned bits=0;
     if(solid(shape,x,y,z,dx,g)) bits=1u<<31;
     else for(int i=1;i<19;++i) {
         float vx=-ex[i]*dx,vy=-ey[i]*dx,vz=-ez[i]*dx;
+        float bx=g[11]*vx-g[12]*vy, by=g[12]*vx+g[11]*vy;
+        vx=bx; vy=by;
         if(solid(shape,x+vx,y+vy,z+vz,dx,g) ||
            (shape>=2 && fin_link(x,y,z,vx,vy,vz,g))) bits |= 1u<<i;
     }
     mask[k]=bits;
     for(int i=0;i<19;++i) f[i*n+k]=eq(i,0,u,v,0);
+}
+
+// Sample the SAME incoming populations used by advance, before collision.
+// Pressure is at adjacent fluid-cell centres, not an extrapolated wall value.
+// Force is momentum exchange (pressure + viscous), not pressure-only quadrature.
+extern "C" __global__ void surface_probe(const float *src,const unsigned *mask,
+        const int *ids,int count,int nx,int ny,int nz,float *stats) {
+    int j=blockIdx.x*blockDim.x+threadIdx.x;
+    if(j>=count) return;
+    int k=ids[j], n=nx*ny*nz, y=k/nx%ny,z=k/(nx*ny);
+    unsigned bits=mask[k];
+    float dr=0,fx=0,fy=0,fz=0;
+    for(int i=0;i<19;++i) {
+        int a=ex[i],b=ey[i],c=ez[i]; float h;
+        if(bits & (1u<<i)) {
+            int opposite=(i%2) ? i+1 : i-1;
+            h=src[opposite*n+k];
+            fx-=2*a*h; fy-=2*b*h; fz-=2*c*h;
+        } else {
+            int index=k-a-b*nx-c*nx*ny;
+            if(y-b<0) index+=ny*nx;
+            if(y-b>=ny) index-=ny*nx;
+            if(z-c<0) index+=n;
+            if(z-c>=nz) index-=n;
+            h=src[i*n+index];
+        }
+        dr+=h;
+    }
+    stats[j]+=dr; stats[count+j]+=fx; stats[2*count+j]+=fy; stats[3*count+j]+=fz;
 }
 
 extern "C" __global__ void advance(const float *src,float *dst,const unsigned *mask,
