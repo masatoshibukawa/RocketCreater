@@ -54,6 +54,7 @@
       "air": 0.7502318571337246,
       "coast": 2.6022575557044076
     },
+    "phase_transition_velocity_jump_m_s": 0.0,
     "dry_mass_kg": 0.1739418817919366,
     "initial_water_mass_kg": 0.66,
     "initial_air_mass_kg": 0.00639077552082425,
@@ -72,7 +73,7 @@
     "apogee_step_halving_difference_m": 1.6640344924212513e-06,
     "all_finite": true,
     "water_mass_monotone": true,
-    "velocity_continuous_by_integrator": true
+    "phase_transition_velocity_jump_m_s": 0.0
   },
   "sensitivity_cases": [
     {

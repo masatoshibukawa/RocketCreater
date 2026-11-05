@@ -58,6 +58,8 @@ def integrate(config, design, step=0.001, drag_override=None):
     water0 = volume * config["fill_fraction"] * RHO_W
     gas_volume0 = volume - water0 / RHO_W
     pressure0 = config["ambient_pressure_pa"] + config["gauge_pressure_pa"]
+    if pressure0*(gas_volume0/volume)**GAMMA <= config["ambient_pressure_pa"]:
+        raise ValueError("This ascent recipe requires complete water expulsion; residual-water scenarios need a separate model")
     gas_mass0 = pressure0 * gas_volume0 / (R * config["temperature_k"])
     dry = design["cad_parts_mass_kg"] + config["bottle_mass_kg"] + config["nozzle_mass_kg"] + config["retention_mass_kg"]
     area = math.pi * (config["nozzle_diameter_m"] / 2) ** 2 * config["discharge_coefficient"]
@@ -128,7 +130,8 @@ def integrate(config, design, step=0.001, drag_override=None):
         drag = -0.5 * config["air_density_kg_m3"] * cd * frontal_area * y[1] * abs(y[1])
         rows.append([sample, y[0], y[1], mass, max(y[2], 0.0), max(y[3], 0.0), p, temperature, thrust, mw, ma, jet, (thrust + drag) / mass - G])
     data = np.asarray(rows)
-    return {"data": data, "phase_ends": {name: end for name, start, end, solution, q in phases}, "dry_mass_kg": dry, "initial_water_mass_kg": water0, "initial_air_mass_kg": gas_mass0, "apogee_m": float(state[0]), "apogee_time_s": t, "impulse_ns": float(state[4]), "integrated_water_out_kg": float(state[5]), "integrated_air_out_kg": float(state[6]), "final_air_mass_kg": float(state[3]), "frontal_area_m2": frontal_area, "effective_nozzle_area_m2": area}
+    jumps=[abs(phases[i][3](phases[i][2])[1]-phases[i+1][3](phases[i+1][1])[1]) for i in range(len(phases)-1)]
+    return {"data": data, "phase_ends": {name: end for name, start, end, solution, q in phases}, "phase_transition_velocity_jump_m_s":max(jumps), "dry_mass_kg": dry, "initial_water_mass_kg": water0, "initial_air_mass_kg": gas_mass0, "apogee_m": float(state[0]), "apogee_time_s": t, "impulse_ns": float(state[4]), "integrated_water_out_kg": float(state[5]), "integrated_air_out_kg": float(state[6]), "final_air_mass_kg": float(state[3]), "frontal_area_m2": frontal_area, "effective_nozzle_area_m2": area}
 
 
 def main():
@@ -143,12 +146,13 @@ def main():
         "apogee_step_halving_difference_m": abs(nominal["apogee_m"] - refined["apogee_m"]),
         "all_finite": bool(np.isfinite(data).all()),
         "water_mass_monotone": bool(np.max(np.diff(data[:,4])) < 1e-8),
-        "velocity_continuous_by_integrator": True,
+        "phase_transition_velocity_jump_m_s": nominal["phase_transition_velocity_jump_m_s"],
     }
     assert checks["water_mass_balance_error_kg"] < 1e-7
     assert checks["air_mass_balance_error_kg"] < 1e-7
     assert checks["apogee_step_halving_difference_m"] < 1e-4
     assert checks["all_finite"] and checks["water_mass_monotone"]
+    assert checks["phase_transition_velocity_jump_m_s"]<1e-9
     sensitivity = []
     for drag in (0.35, 0.5, 0.7):
         for pressure_factor in (0.85, 1.0, 1.15):

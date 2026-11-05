@@ -1,0 +1,70 @@
+{
+  "videos": [
+    {
+      "file": "renders/pet_rocket_design.mp4",
+      "sha256": "bde7bdbc800fce55c45dfc832bf326cef4a1583bf6716b6a6bc6ead4c826f95a",
+      "bytes": 1226660,
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "frames": 576,
+      "seconds": 24.0,
+      "full_decode": "passed",
+      "audio": {
+        "channels": 2,
+        "rate_hz": 48000,
+        "sample_peak": 0.025970458984375,
+        "rms": 0.0014181990715717567,
+        "source": "Original synthetic cues and flow-driven sound, not measured acoustics"
+      },
+      "metadata": {
+        "major_brand": "isom",
+        "minor_version": "512",
+        "compatible_brands": "isomiso2avc1mp41",
+        "title": "PET Rocket v2 Design Introduction",
+        "encoder": "Lavf63.1.102",
+        "comment": "AI-assisted physically based visualization using frozen CAD; assumed inputs; not measured or flight-validated"
+      }
+    },
+    {
+      "file": "renders/pet_rocket_launch_prediction.mp4",
+      "sha256": "67bd1987d4afa9c78a99051a66dacd5abf0ebde79905919844340dd022efc451",
+      "bytes": 1377735,
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "frames": 336,
+      "seconds": 14.0,
+      "full_decode": "passed",
+      "audio": {
+        "channels": 2,
+        "rate_hz": 48000,
+        "sample_peak": 0.2340087890625,
+        "rms": 0.02423894475005086,
+        "source": "Original synthetic cues and flow-driven sound, not measured acoustics"
+      },
+      "metadata": {
+        "major_brand": "isom",
+        "minor_version": "512",
+        "compatible_brands": "isomiso2avc1mp41",
+        "title": "PET Rocket v2 Conditional Ascent Prediction",
+        "encoder": "Lavf63.1.102",
+        "comment": "AI-assisted physically based visualization using frozen CAD; assumed inputs; not measured or flight-validated"
+      }
+    }
+  ],
+  "input_signature": "3f24662fba44a602b070907e05369778115d797bab0b5ba1e3789b453f40b939",
+  "frame_sync_max_errors": {
+    "time_s": 0.0,
+    "altitude_m": 9.51563954743051e-07,
+    "water_mass_kg": 0.0,
+    "pressure_pa": 0.0,
+    "displayed_thrust_n": 0.0
+  },
+  "source_hashes": "passed",
+  "geometry_audit": "passed",
+  "visual_review": "Timed contact sheets generated; record separate visual review.",
+  "full_real_time_playback_review": false,
+  "audio_listening_review": false,
+  "limitations": "Conditional still-air vertical ascent and assumed equipment/inputs. No stability, structural or recovery validation; water parcels are not CFD."
+}

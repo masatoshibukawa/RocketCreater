@@ -1,4 +1,4 @@
-"""Render both films sequentially, resuming from the first missing PNG."""
+"""Render both films, preserving matching caches and complete launch-state records."""
 
 import argparse
 import json
@@ -40,11 +40,18 @@ def main():
             print(f"Reuse {film}: all {count} frames exist",flush=True)
             continue
         start=min(missing)
+        if film=="launch" and start>1:
+            # The renderer writes a state log only after a successful sequence.
+            # A partial launch cache must be replayed to retain actual-state evidence.
+            start=1
+            print("Restart launch to regenerate the complete actual-state record",flush=True)
         print(f"Render {film}: frames {start}..{count}",flush=True)
         with (ROOT/"renders"/(film+"-render.log")).open("a",encoding="utf-8") as log:
             subprocess.run([args.blender,"--background","--python-exit-code","1","--python",str(ROOT/"render_scene.py"),"--","--film",film,"--start",str(start),"--end",str(count),"--samples",str(args.samples)],check=True,env=environment,stdout=log,stderr=subprocess.STDOUT)
         print(f"Finished {film}",flush=True)
     print("Both scene sequences complete",flush=True)
+    from sanitize_scenes import main as sanitize_scenes
+    sanitize_scenes()
 
 
 if __name__=="__main__": main()
