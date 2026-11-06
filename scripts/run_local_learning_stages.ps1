@@ -8,7 +8,8 @@ param(
     [Parameter(Mandatory=$true)][string]$CudaPath,
     [Parameter(Mandatory=$true)][string]$CudaDllDir,
     [string]$OllamaUrl = 'http://127.0.0.1:11439',
-    [string]$Model = 'gemma4:12b'
+    [string]$Model = 'gemma4:12b',
+    [switch]$ResumeStage6Report
 )
 $ErrorActionPreference = 'Stop'
 $env:PYTHONPATH = (Resolve-Path -LiteralPath $CupyPath).Path
@@ -17,6 +18,8 @@ $env:CFD_CUDA_DLL_DIR = (Resolve-Path -LiteralPath $CudaDllDir).Path
 $env:PATH = $env:CFD_CUDA_DLL_DIR + ';' + $env:PATH
 $env:ROCKETWRIGHT_OLLAMA_URL = $OllamaUrl
 $env:ROCKETWRIGHT_LOCAL_MODEL = $Model
+$preflightPath = $Output + '-preflight.json'
+if ($ResumeStage6Report) { $preflightPath = $Output + '-resume-preflight.json' }
 
 # This process and its children only. No registry, credentials or global configuration changes.
 @'
@@ -41,7 +44,9 @@ data = dict(source_hash=code_hash(), numpy=np.__version__, cupy=cp.__version__,
             planner='local_llm', claude_requests=0)
 Path(sys.argv[2]).write_text(json.dumps(data,indent=2),encoding='utf-8')
 print(json.dumps(data),flush=True)
-'@ | & $Python - $Runtime ($Output + '-preflight.json')
+'@ | & $Python - $Runtime $preflightPath
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-& $Python -X utf8 -u -m scripts.run_learning_stages $Spec $Training $Output $Runtime --planner local_llm --through 7
+$stageArguments = @($Spec, $Training, $Output, $Runtime, '--planner', 'local_llm', '--through', '7')
+if ($ResumeStage6Report) { $stageArguments += '--resume-stage6-report' }
+& $Python -X utf8 -u -m scripts.run_learning_stages @stageArguments
 exit $LASTEXITCODE
