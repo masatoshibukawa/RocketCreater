@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from api.workbench import PlanRequest, RenderRequest, Revision, call
 from rocketwright.agent.design_projects import DEFAULT_PROJECTS, DesignSpec, queue_operation
 from rocketwright.agent.production import plan_video, queue_video
+from rocketwright.analysis import seeds
 from rocketwright.analysis.schema import Precision, SearchLimits
 from rocketwright.analysis.service import Harness
 
@@ -29,6 +30,23 @@ class CreateRequest(BaseModel):
 class CampaignRequest(Revision):
     precision: Precision = Field(default_factory=Precision)
     limits: SearchLimits = Field(default_factory=SearchLimits)
+
+
+class SeedRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    seed_id: str
+    template: DesignSpec
+
+
+@router.get("/initial-seeds")
+def initial_seeds():
+    return {"seeds": call(seeds.options)}
+
+
+@router.post("/from-seed")
+def from_seed(request: SeedRequest):
+    spec = call(seeds.import_seed, request.seed_id, request.template)
+    return call(DEFAULT_PROJECTS.create, spec)
 
 
 @router.post("/{project_id}/adaptive/start")

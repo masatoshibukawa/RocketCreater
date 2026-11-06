@@ -24,6 +24,16 @@ from rocketwright.schema import BottleDesign
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def integrated_coefficients(values, stations, diameter, cg):
+    """Raw tunnel axes: x goes from nose to tail. Include force arms about the same CG."""
+    arms = np.column_stack(
+        [(np.asarray(stations) - cg) / diameter, np.zeros(len(stations)), np.zeros(len(stations))]
+    )
+    forces = values[..., :3]
+    moments = values[..., 3:] + np.cross(arms, forces)
+    return np.concatenate([forces.sum(axis=-2), moments.sum(axis=-2)], axis=-1)
+
+
 def read(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -127,7 +137,8 @@ class Worker:
             return TunnelDatabase(self.data["cfd_fine"]["table_folder"], scale=scale)
         return AnalyticAero(self.record, scale=scale)
 
-    def trajectory(self, *, dt=0.02, scale=1, tilt=None, use_cfd=True):
+    def trajectory(self, *, dt=None, scale=1, tilt=None, use_cfd=True):
+        dt = dt or self.ctx["runtime"].get("flight_step_s", 0.02)
         cfg = self.cfg.flight.model_copy()
         if tilt is not None:
             cfg.initial_tilt_deg = tilt
@@ -177,6 +188,7 @@ class Worker:
         )
         result["metrics"] = dict(
             apogee_m=result["apogee_m"],
+            max_air_speed_mps=result["max_air_speed_mps"],
             incidence_deg=result["ascent_incidence_deg"],
             aero_domain_pass=result["aero_domain_pass"],
         )
@@ -239,18 +251,27 @@ class Worker:
                 if p.returncode:
                     raise RuntimeError(f"CFD case {out.name} failed; inspect its log")
         table = TunnelDatabase(folder)
+        cases = [read(p) for p in folder.glob("*/case.json")]
+        averaging = max(
+            abs(delta) / max(abs(case["mean"][name]), 0.05)
+            for case in cases
+            for name, delta in case["split_window_difference"].items()
+        )
         result = dict(
             table_folder=str(folder),
             cells=cells,
             metadata=table.metadata,
             coefficients=table.table.tolist(),
+            averaging_relative_change=averaging,
+            maximum_density_departure=max(c["max_abs_density_departure"] for c in cases),
             metrics={},
         )
         if fine:
             old = np.asarray(self.data["cfd_coarse"]["coefficients"])
             # Compare integrated force/couple and distributed loads, not drag alone.
-            total = np.sum(table.table, axis=2)
-            prior = np.sum(old, axis=2)
+            cg = self.assembly["loaded_cg_mm"] / 1000
+            total = integrated_coefficients(table.table, table.stations, table.diameter, cg)
+            prior = integrated_coefficients(old, table.stations, table.diameter, cg)
             diff = np.max(abs(total - prior), axis=(0, 1))
             denominator = np.maximum(np.max(abs(total), axis=(0, 1)), 0.01)
             result["grid_relative_change"] = float(max(diff / denominator))
@@ -265,8 +286,9 @@ class Worker:
 
     def refine(self):
         base = self.base_flight()
-        fine = self.trajectory(dt=0.01)
-        sensitivity = self.trajectory(dt=0.01, scale=1.1)
+        step = self.ctx["runtime"].get("flight_step_s", 0.02) / 2
+        fine = self.trajectory(dt=step)
+        sensitivity = self.trajectory(dt=step, scale=1.1)
         change = abs(fine["apogee_m"] - base["apogee_m"])
         slope = abs(sensitivity["apogee_m"] - fine["apogee_m"]) / 0.1
         allowed = (
@@ -390,7 +412,8 @@ class Worker:
     def confirm(self):
         # Independent tighter integration and perturbed initial condition, never an existence test.
         result = self.trajectory(
-            dt=0.005, tilt=min(10, self.spec.assumptions.initial_tilt_deg + 0.5)
+            dt=self.ctx["runtime"].get("flight_step_s", 0.02) / 4,
+            tilt=min(10, self.spec.assumptions.initial_tilt_deg + 0.5),
         )
         precision, base = self.precision, self.base_flight()
         target = self.spec.requirement.target_altitude_m if self.spec.requirement else None
@@ -413,11 +436,21 @@ class Worker:
             aero_domain=result["aero_domain_pass"] and base["aero_domain_pass"],
             thermal_balance=self.data["thermal"]["metrics"]["thermal_balance"],
             propulsion_balance=self.data["propulsion"]["metrics"]["propulsion_balance"],
+            payload_mass=self.design.payload_mass_kg >= self.spec.requirement.payload_mass_kg,
+            recovery=(
+                not self.spec.requirement.recovery_required
+                or (self.design.has_parachute and result["impact_speed_mps"] <= 5)
+            ),
+            cost_evidence=self.spec.requirement.budget_jpy is None,
         )
         if precision.require_cfd:
             allowed = self.data["refine"]["allowed_aero_relative_change"]
             checks["aero_grid"] = (
                 allowed is not None and self.data["cfd_fine"]["grid_relative_change"] <= allowed
+            )
+            checks["aero_averaging"] = (
+                self.data["cfd_fine"]["averaging_relative_change"]
+                <= precision.temporal_relative_limit
             )
         if precision.require_fem:
             fm = self.data["fem_fine"]["metrics"]

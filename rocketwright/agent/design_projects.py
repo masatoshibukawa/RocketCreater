@@ -380,27 +380,29 @@ class DesignProjects:
             or analysis["implementation_sha256"] != implementation_fingerprint()
         ):
             raise Conflict("この版を再解析してから採用してください。")
+        self.require_adaptive(state)
+
+    def require_adaptive(self, state):
+        if state.get("adaptive"):
+            from rocketwright.analysis import policy
+            from rocketwright.analysis.service import Harness, code_hash
+
+            adaptive = state["adaptive"]
+            harness = Harness(self)
+            campaign, spec, _, _ = harness._campaign(state)
+            confirmation = harness.data(campaign, "confirm")
+            if (
+                adaptive["status"] != "model_criteria_met"
+                or adaptive["accepted_spec_hash"] != policy.identity(spec)
+                or adaptive.get("accepted_code_hash") != code_hash()
+                or not confirmation
+                or not confirmation["metrics"]["criteria_met"]
+            ):
+                raise Conflict("階層解析のこの版の確認が未達です。基本解析だけでは採用できません。")
 
     def adopt(self, project_id, revision):
         def worker(state):
-            if state.get("adaptive"):
-                from rocketwright.analysis import policy
-                from rocketwright.analysis.service import Harness, code_hash
-
-                adaptive = state["adaptive"]
-                harness = Harness(self)
-                campaign, spec, _, _ = harness._campaign(state)
-                confirmation = harness.data(campaign, "confirm")
-                if (
-                    adaptive["status"] != "model_criteria_met"
-                    or adaptive["accepted_spec_hash"] != policy.identity(spec)
-                    or adaptive.get("accepted_code_hash") != code_hash()
-                    or not confirmation
-                    or not confirmation["metrics"]["criteria_met"]
-                ):
-                    raise Conflict(
-                        "階層解析のこの版の確認が未達です。基本解析だけでは採用できません。"
-                    )
+            self.require_adaptive(state)
             a = state["analysis"]
             if (
                 not a

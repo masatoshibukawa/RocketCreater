@@ -17,6 +17,7 @@ class Runtime(Strict):
     cfd_cells_fine: int = Field(default=16, ge=8, le=48)
     cfd_times: float = Field(default=40, ge=2, le=100)
     fem_level: int = Field(default=2, ge=2, le=4)
+    flight_step_s: float = Field(default=0.02, ge=0.0025, le=0.02)
 
     @model_validator(mode="after")
     def increasing(self):

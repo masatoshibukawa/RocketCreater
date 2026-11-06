@@ -101,8 +101,11 @@ def compile_record(spec, cad_metrics):
         fin_tab=a.root_capture_mm,
         fin_root_offset=0,
         fin_shoe_width=0,
+        skirt_length=0,  # flat CFD base; no recessed skirt is inferred
     )
     assembly = dict(
+        key="design-" + digest(spec.model_dump(mode="json"))[:16],
+        axial_cd=spec.design.axial_drag_coefficient or 0.55,
         dimensions_mm=dimensions,
         bill=bill,
         dry_mass_g=dry * 1000,
