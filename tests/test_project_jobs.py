@@ -8,7 +8,40 @@ from rocketwright.agent.design_projects import DesignProjects
 from rocketwright.agent.project_jobs import file_lock, progress
 from rocketwright.agent.workbench import Conflict
 from scripts.render_checkpoint import Checkpoint
+from scripts.render_checkpoint import write as write_checkpoint
 from tests.test_project_equipment import spec
+
+
+def test_checkpoint_publication_retries_windows_readers_and_preserves_previous_on_failure(
+    tmp_path, monkeypatch
+):
+    from pathlib import Path
+
+    import scripts.render_checkpoint as module
+
+    target = tmp_path / "progress.json"
+    target.write_text('{"completed":1}')
+    original = Path.replace
+    attempts = []
+
+    def held_reader(path, destination):
+        attempts.append(path)
+        if len(attempts) < 3:
+            raise PermissionError("reader denies replacement")
+        return original(path, destination)
+
+    monkeypatch.setattr(Path, "replace", held_reader)
+    monkeypatch.setattr(module.time, "sleep", lambda duration: None)
+    write_checkpoint(target, {"completed": 2})
+    assert len(attempts) == 3 and json.loads(target.read_text())["completed"] == 2
+
+    def unavailable(path, destination):
+        raise PermissionError("persistent permission failure")
+
+    monkeypatch.setattr(Path, "replace", unavailable)
+    with pytest.raises(PermissionError):
+        write_checkpoint(target, {"completed": 3})
+    assert json.loads(target.read_text())["completed"] == 2
 
 
 def test_cfd_progress_counts_completed_cases_and_keeps_queue_eta_unknown(tmp_path):

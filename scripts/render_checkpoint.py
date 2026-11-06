@@ -9,7 +9,16 @@ from pathlib import Path
 def write(path, value):
     temp = path.with_suffix(".tmp")
     temp.write_text(json.dumps(value, indent=2), encoding="utf-8")
-    temp.replace(path)
+    for attempt in range(10):
+        try:
+            temp.replace(path)
+            return
+        except PermissionError:
+            # Windows readers can briefly deny replacement. Keep the last complete
+            # checkpoint; never delete it or discard rendered frames to retry.
+            if attempt == 9:
+                raise
+            time.sleep(0.02 * (attempt + 1))
 
 
 class Checkpoint:
