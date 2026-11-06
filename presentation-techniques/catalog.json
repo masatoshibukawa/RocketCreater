@@ -164,9 +164,9 @@
           "purpose": "発話・構成・背景から工夫を取り出し、映像観察と区別する"
         },
         {
-          "skill": "presentation-event-research",
-          "name": "募集・講評・受賞者調査",
-          "purpose": "版と賞を照合し、公開事実・自己申告・推論を区別する"
+          "skill": "presentation-source-research",
+          "name": "出典評価・大会・受賞者調査",
+          "purpose": "研究・助言・募集・受賞事例の根拠と適用範囲を調べる"
         }
       ]
     }
@@ -177,7 +177,7 @@
       "title": "ピッチとプレゼンテーションのテクニック",
       "primary": "presentation-audience-goals",
       "related": [
-        "presentation-event-research"
+        "presentation-source-research"
       ],
       "analysis": "既存の全分野への入口。用途別と横断技法別の二つの経路を加える対象。"
     },
@@ -242,7 +242,7 @@
       "title": "ハッカソンの審査と事例から学ぶ",
       "primary": "presentation-provider-domain",
       "related": [
-        "presentation-event-research"
+        "presentation-source-research"
       ],
       "analysis": "Codex/Gemini/Anthropicの条件・紹介から仮説を作る。後続の詳細調査へ接続。"
     },
@@ -262,14 +262,14 @@
       "title": "ピッチとプレゼンテーションの調査資料",
       "primary": "presentation-audience-goals",
       "related": [
-        "presentation-event-research"
+        "presentation-source-research"
       ],
       "analysis": "基礎調査の索引と、研究・助言・大会条件・制作案の区別。"
     },
     {
       "path": "research/2026-11-06/sources.md",
       "title": "出典と適用範囲",
-      "primary": "presentation-event-research",
+      "primary": "presentation-source-research",
       "related": [
         "presentation-slides",
         "presentation-speaking",
@@ -408,7 +408,7 @@
     {
       "path": "fundraising/sources.md",
       "title": "資金調達ピッチの原語資料と適用範囲",
-      "primary": "presentation-event-research",
+      "primary": "presentation-source-research",
       "related": [
         "presentation-fundraising",
         "presentation-multilingual"
@@ -458,7 +458,7 @@
     {
       "path": "by-duration/sources.md",
       "title": "時間別ピッチの出典と適用範囲",
-      "primary": "presentation-event-research",
+      "primary": "presentation-source-research",
       "related": [
         "presentation-duration"
       ],
@@ -469,7 +469,7 @@
       "title": "大会の違いとデモ発表の評価項目",
       "primary": "presentation-software-hackathons",
       "related": [
-        "presentation-event-research"
+        "presentation-source-research"
       ],
       "analysis": "技育祭/CAMP/博/展と開催年・段階、全体賞・企業賞、動作条件を区別。"
     },
@@ -517,7 +517,7 @@
     {
       "path": "hackathon-demos/06-winner-patterns.md",
       "title": "受賞作品の特徴とデモに取り入れる方法",
-      "primary": "presentation-event-research",
+      "primary": "presentation-source-research",
       "related": [
         "presentation-software-hackathons",
         "presentation-provider-domain"
@@ -529,14 +529,14 @@
       "title": "ソフトウェアハッカソンのデモ発表",
       "primary": "presentation-software-hackathons",
       "related": [
-        "presentation-event-research"
+        "presentation-source-research"
       ],
       "analysis": "一般ソフトウェア大会の入口。評価項目を確認できる動作へ変換。"
     },
     {
       "path": "hackathon-demos/sources.md",
       "title": "ハッカソンのデモ発表と受賞分析の出典",
-      "primary": "presentation-event-research",
+      "primary": "presentation-source-research",
       "related": [
         "presentation-software-hackathons",
         "presentation-multilingual"
@@ -548,7 +548,7 @@
       "title": "Built with Claude: Japan 2026と指定チャットの分析",
       "primary": "presentation-provider-domain",
       "related": [
-        "presentation-event-research"
+        "presentation-source-research"
       ],
       "analysis": "指定チャットの全7ターンとガイドを再構成。最新認証フォームは未確認。"
     },
@@ -557,7 +557,7 @@
       "title": "大会の目的と、専門知識を募集する理由",
       "primary": "presentation-provider-domain",
       "related": [
-        "presentation-event-research",
+        "presentation-source-research",
         "presentation-research-talks",
         "presentation-grant-pitches"
       ],
@@ -566,7 +566,7 @@
     {
       "path": "domain-hackathons/03-winners-and-counterexamples.md",
       "title": "受賞作品と、単純な勝ち筋では説明できない事例",
-      "primary": "presentation-event-research",
+      "primary": "presentation-source-research",
       "related": [
         "presentation-provider-domain"
       ],
@@ -587,14 +587,14 @@
       "title": "LLM事業者と専門分野のハッカソン",
       "primary": "presentation-provider-domain",
       "related": [
-        "presentation-event-research"
+        "presentation-source-research"
       ],
       "analysis": "専門分野・事業者大会の入口。募集目的と知識が効いた判断を示す。"
     },
     {
       "path": "domain-hackathons/sources.md",
       "title": "出典と確認範囲",
-      "primary": "presentation-event-research",
+      "primary": "presentation-source-research",
       "related": [
         "presentation-provider-domain"
       ],
@@ -668,7 +668,7 @@
     {
       "path": "academic-presentations/sources.md",
       "title": "研究プレゼンの出典と確認範囲",
-      "primary": "presentation-event-research",
+      "primary": "presentation-source-research",
       "related": [
         "presentation-research-talks",
         "presentation-scientific-figures",

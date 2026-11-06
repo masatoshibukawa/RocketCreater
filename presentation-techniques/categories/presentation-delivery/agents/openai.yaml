@@ -1,0 +1,4 @@
+interface:
+  display_name: "話し方・質疑・練習"
+  short_description: "話し方・質疑・練習の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-delivery to prepare or improve a presentation for my audience, purpose and time limit."

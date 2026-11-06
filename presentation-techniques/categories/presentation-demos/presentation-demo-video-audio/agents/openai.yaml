@@ -1,0 +1,4 @@
+interface:
+  display_name: "実演・録画・編集・音楽"
+  short_description: "実演・録画・編集・音楽の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-demo-video-audio to prepare or improve a presentation for my audience, purpose and time limit."

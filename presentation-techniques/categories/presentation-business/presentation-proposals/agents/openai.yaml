@@ -1,0 +1,4 @@
+interface:
+  display_name: "顧客デモ・社内提案"
+  short_description: "顧客デモ・社内提案の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-proposals to prepare or improve a presentation for my audience, purpose and time limit."

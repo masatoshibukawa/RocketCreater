@@ -1,0 +1,4 @@
+interface:
+  display_name: "LLM事業者・専門分野の大会"
+  short_description: "LLM事業者・専門分野の大会の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-provider-domain to prepare or improve a presentation for my audience, purpose and time limit."

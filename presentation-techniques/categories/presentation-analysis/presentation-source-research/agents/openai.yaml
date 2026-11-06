@@ -1,0 +1,4 @@
+interface:
+  display_name: "出典評価・大会・受賞者調査"
+  short_description: "出典評価・大会・受賞者調査の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-source-research to research presentation evidence, event requirements and award cases with clear source limits."

@@ -33,7 +33,7 @@
 | ハッカソン・デモ・動画・音 | 実演・録画・編集・音楽 | 入力から結果を見せ、音声・字幕・BGMと障害時の切替を設計する |
 | 言語・文化・アクセシビリティ | 多言語・文化・伝達条件 | 国籍で決め付けず用語・単位・字幕・習熟度へ適応する |
 | 事例分析・調査 | TED・講演分析 | 発話・構成・背景から工夫を取り出し、映像観察と区別する |
-| 事例分析・調査 | 募集・講評・受賞者調査 | 版と賞を照合し、公開事実・自己申告・推論を区別する |
+| 事例分析・調査 | 出典評価・大会・受賞者調査 | 研究・助言・募集・受賞事例の根拠と適用範囲を調べる |
 
 ## このチャットの依頼と保存先
 
@@ -129,7 +129,7 @@
 
 | 資料 | 主なサブカテゴリ | 分析して残す要点 |
 | --- | --- | --- |
-| [research/2026-11-06/sources.md](research/2026-11-06/sources.md) | 募集・講評・受賞者調査 | 38出典の確認範囲。教育の学習効果を受賞・投資へ直接換算しない。 |
+| [research/2026-11-06/sources.md](research/2026-11-06/sources.md) | 出典評価・大会・受賞者調査 | 38出典の確認範囲。教育の学習効果を受賞・投資へ直接換算しない。 |
 | [ted-talks/01-ken-robinson.md](ted-talks/01-ken-robinson.md) | TED・講演分析 | 逸話・会話・ユーモアと主張への復帰。19分の脱線量を短時間へ移さない。 |
 | [ted-talks/02-simon-sinek.md](ted-talks/02-simon-sinek.md) | TED・講演分析 | 枠組み・対比・反復。生物学や成功の因果の正しさとは別評価。 |
 | [ted-talks/03-brene-brown.md](ted-talks/03-brene-brown.md) | TED・講演分析 | 自己開示と仮説の変更。経験が設計判断を変えた場面へ応用。 |
@@ -139,13 +139,13 @@
 | [ted-talks/comparison.md](ted-talks/comparison.md) | TED・講演分析 | 6講演の比較と短いピッチへの転用、観察事実と解釈の記録用シート。 |
 | [ted-talks/README.md](ted-talks/README.md) | TED・講演分析 | TED/TEDxを区別した6講演の索引。字幕を読み、全編映像・音声の採点は未実施。 |
 | [ted-talks/sources.md](ted-talks/sources.md) | TED・講演分析 | 公式の講演・日英文字起こし・本人の準備記録等。全文転載ではなく参照入口。 |
-| [fundraising/sources.md](fundraising/sources.md) | 募集・講評・受賞者調査 | 6言語15出典。成功率や法的・財務的相場を算出する資料ではない。 |
-| [by-duration/sources.md](by-duration/sources.md) | 募集・講評・受賞者調査 | YC等の原助言と独自の時間配分を分離。標準ルールとしない。 |
-| [hackathon-demos/06-winner-patterns.md](hackathon-demos/06-winner-patterns.md) | 募集・講評・受賞者調査 | 9作品、8件は公式受賞と照合。非受賞対照なし・映像全編未採点。 |
-| [hackathon-demos/sources.md](hackathon-demos/sources.md) | 募集・講評・受賞者調査 | 6言語41出典。要項・運営助言・参加記・README・受賞の確度を記録。 |
-| [domain-hackathons/03-winners-and-counterexamples.md](domain-hackathons/03-winners-and-counterexamples.md) | 募集・講評・受賞者調査 | 25作品。22公式受賞＋3公式Finalist。反例で単純なAPI必須・自動化最大仮説を修正。 |
-| [domain-hackathons/sources.md](domain-hackathons/sources.md) | 募集・講評・受賞者調査 | 37公開＋3提供資料。原チャット・認証情報の再配布を避け、取得の限界を保存。 |
-| [academic-presentations/sources.md](academic-presentations/sources.md) | 募集・講評・受賞者調査 | 4言語26出典。実験・調査・図表解説・大学助言・特定制度の確度を区別。 |
+| [fundraising/sources.md](fundraising/sources.md) | 出典評価・大会・受賞者調査 | 6言語15出典。成功率や法的・財務的相場を算出する資料ではない。 |
+| [by-duration/sources.md](by-duration/sources.md) | 出典評価・大会・受賞者調査 | YC等の原助言と独自の時間配分を分離。標準ルールとしない。 |
+| [hackathon-demos/06-winner-patterns.md](hackathon-demos/06-winner-patterns.md) | 出典評価・大会・受賞者調査 | 9作品、8件は公式受賞と照合。非受賞対照なし・映像全編未採点。 |
+| [hackathon-demos/sources.md](hackathon-demos/sources.md) | 出典評価・大会・受賞者調査 | 6言語41出典。要項・運営助言・参加記・README・受賞の確度を記録。 |
+| [domain-hackathons/03-winners-and-counterexamples.md](domain-hackathons/03-winners-and-counterexamples.md) | 出典評価・大会・受賞者調査 | 25作品。22公式受賞＋3公式Finalist。反例で単純なAPI必須・自動化最大仮説を修正。 |
+| [domain-hackathons/sources.md](domain-hackathons/sources.md) | 出典評価・大会・受賞者調査 | 37公開＋3提供資料。原チャット・認証情報の再配布を避け、取得の限界を保存。 |
+| [academic-presentations/sources.md](academic-presentations/sources.md) | 出典評価・大会・受賞者調査 | 4言語26出典。実験・調査・図表解説・大学助言・特定制度の確度を区別。 |
 
 ## 横断して分かったこと
 
@@ -163,5 +163,4 @@
 
 受賞者だけの分析には非受賞者の対照がなく、必勝法や勝率を求められない。TEDと受賞作品の資料は、字幕・文章・公開説明を中心とし、全編映像の視線・身振り・音楽を採点した記録ではない。今回のClaude日本大会の最新認証フォームは未確認。過去資料の募集条件は、実際の制作時に開催回・段階・賞を指定して確認し直す。
 
-今回追加するスキルは、この分類から必要な資料を選び、実際の台本・図・デモ・質疑・レビューへ変換するための手順である。AIが代わりに行った調査・実験・動画視聴を装うためのものではない。
-
+今回追加するスキルは、この分類から必要な資料を選び、実際の台本・図・デモ・質疑・レビューへ変換するための手順である。[共通入口](SKILL.md)から8カテゴリ・22サブカテゴリへ進める。AIが代わりに行った調査・実験・動画視聴を装うためのものではない。
