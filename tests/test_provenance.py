@@ -1,5 +1,7 @@
 """Tests for the unsourced-number check applied to the agent's final explanation."""
 
+import pytest
+
 from rocketwright.agent.provenance import extract_numbers, find_unsourced_numbers
 
 RESULTS = [
@@ -74,3 +76,50 @@ def test_numbers_quoted_from_tool_text_are_sourced():
     quoted = "The 98 mm option (38 mm motor, 356 mm mount) fails: 941 m vs 2,000 m +-10%."
     assert find_unsourced_numbers(quoted.replace("98 mm option", "option"), results) == []
     assert find_unsourced_numbers("It needs 4,400 mm of tube.", results) == ["4,400"]
+
+
+# --- Japanese prose (2026-11-07 audit: numbers glued to Japanese text used to be skipped)
+
+JA_RESULTS = [
+    {
+        "metrics": {"apogee_m": 9999.0, "perigee_m": -2911442.95},
+        "cost_jpy": 130479000.0,
+        "success_rate": 0.873,
+        "env": {"launch_latitude_deg": -39.26},
+        "failure_counts": {"max_q": 28},
+    }
+]
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "高度9999mです",
+        "費用は約1.3億円",
+        "成功率は87.3%です",
+        "不合格は28件",
+        "近地点も \u22122911 km でした",
+        "近地点も -2911 km でした",
+        "打上げ地点は南緯 39.26° です",
+    ],
+)
+def test_japanese_prose_numbers_that_come_from_results_pass(text):
+    assert find_unsourced_numbers(text, JA_RESULTS) == []
+
+
+@pytest.mark.parametrize(
+    ("text", "flagged"),
+    [
+        ("高度8888mです", ["8888m"]),
+        ("費用は約2.4億円", ["2.4億円"]),
+        ("成功率は99.9%です", ["99.9%"]),
+        ("不合格は52件", ["52"]),
+    ],
+)
+def test_japanese_prose_numbers_without_a_source_are_flagged(text, flagged):
+    assert find_unsourced_numbers(text, JA_RESULTS) == flagged
+
+
+@pytest.mark.parametrize("text", ["toolu_01AB23", "H3 ロケット", "3U の衛星", "1.5L のボトル"])
+def test_identifiers_are_still_not_numbers(text):
+    assert extract_numbers(text) == []

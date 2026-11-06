@@ -25,12 +25,16 @@ __all__ = [
     "find_unsourced_numbers",
 ]
 
+# ASCII minus and plus, U+2212 MINUS SIGN and the full-width hyphen-minus of Japanese text.
+_SIGNS = "-+\u2212\uff0d"
+# The boundaries look at ASCII only: Japanese has no spaces, so "高度9999mです" must still
+# give 9999 m, while "toolu_01AB", "H3" and "3U" stay identifiers.
 _NUMBER_RE = re.compile(
-    r"(?<![\w.#])"  # not glued to an identifier, decimal, or ordinal marker
-    r"(?P<num>[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][-+]?\d+)?)"
+    r"(?<![A-Za-z0-9_.#])"  # not glued to an identifier, decimal, or ordinal marker
+    rf"(?P<num>[{_SIGNS}]?(?:\d{{1,3}}(?:,\d{{3}})+|\d+)(?:\.\d+)?(?:[eE][-+]?\d+)?)"
     r"(?!\.\d)"  # the decimal part was consumed; avoid matching "1" of "1.5"
     r"\s*(?P<unit>km/h|km|mps|m/s|m2|m3|m|kg|t|%|s|cal|円|万円|億円|jpy|yen|g)?"
-    r"(?![\w])",
+    r"(?![A-Za-z0-9_])",
     re.IGNORECASE,
 )
 
@@ -62,7 +66,7 @@ class NumberMention:
 
 
 def _significant_digits(num_text: str) -> int:
-    mantissa = re.split(r"[eE]", num_text)[0].replace(",", "").lstrip("+-")
+    mantissa = re.split(r"[eE]", num_text)[0].replace(",", "").lstrip(_SIGNS)
     digits = mantissa.replace(".", "").lstrip("0")
     if "." not in mantissa:
         digits = digits.rstrip("0")  # trailing zeros of an integer are not significant
@@ -75,7 +79,7 @@ def extract_numbers(text: str) -> list[NumberMention]:
         raw = m.group("num")
         unit = m.group("unit")
         try:
-            value = float(raw.replace(",", ""))
+            value = float(raw.replace(",", "").replace("\u2212", "-").replace("\uff0d", "-"))
         except ValueError:  # pragma: no cover - regex guarantees a float
             continue
         shown = raw if unit is None else m.group(0).strip()
@@ -139,11 +143,13 @@ def _close(a: float, b: float) -> bool:
 
 
 def _matches(mention: NumberMention, values: set[float]) -> bool:
+    # Magnitudes are compared: prose writes a negative result as "南緯 39.26°" or "不足 3 kg",
+    # and a range as "0.80-0.93", so the sign of a written number says little about its source.
     scales = _UNIT_SCALES.get(mention.unit or "", _GENERIC_SCALES)
     for scale in scales:
-        target = mention.value * scale
+        target = abs(mention.value * scale)
         for v in values:
-            if _close(v, target) or _close(_round_sig(v, mention.sig_digits), target):
+            if _close(abs(v), target) or _close(abs(_round_sig(v, mention.sig_digits)), target):
                 return True
     return False
 
