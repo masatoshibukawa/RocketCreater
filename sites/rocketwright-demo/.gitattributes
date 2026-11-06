@@ -1,0 +1,3 @@
+# Saved artifacts must retain the bytes verified by the original integration.
+integrated-src/public/assets/** -text
+*.gcode binary
