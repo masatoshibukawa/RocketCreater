@@ -476,8 +476,9 @@ def _aero_eval(design: Design, backend: Any) -> tuple[dict[str, float], dict[str
 
 def _with_stability(result: SimResult, design: Design, fin_set: Any = None) -> SimResult:
     """Add the bottle's static margins: physics.water is a point mass and reports none. With a
-    fin part the geometry is the real one, so a non-restoring design fails; without one the
-    fins are only representative and the margin stays a warning."""
+    fin part the geometry is the real one, so the margins become metrics and a non-restoring
+    design fails. Without one the fins are only representative: a warning, never a metric, so
+    a number for the wrong fins cannot contradict the parts result."""
     if not isinstance(design, BottleDesign):
         return result
     from rocketwright.bottle_stability import bottle_stability  # lazy: aero imports physics
@@ -485,12 +486,14 @@ def _with_stability(result: SimResult, design: Design, fin_set: Any = None) -> S
     stability = bottle_stability(design, fin_set)
     if stability is None:
         return result
+    if fin_set is None:
+        return result.model_copy(update={"warnings": [*result.warnings, *stability.warnings()]})
     metrics = {
         **result.metrics,
         "stability_margin_cal": stability.wet_margin_cal,
         "dry_stability_margin_cal": stability.dry_margin_cal,
     }
-    reasons = [*result.failure_reasons, *(stability.failures() if fin_set is not None else [])]
+    reasons = [*result.failure_reasons, *stability.failures()]
     return result.model_copy(
         update={
             "metrics": metrics,
@@ -1074,11 +1077,10 @@ def _tool_dispersion(inp: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"cost_jpy must be a non-negative number or null, got {cost!r}")
     run = _dispersion_dispatch(design, env, n, seed, req, None if cost is None else float(cost))
     out = run.result.model_dump(mode="json")
-    nominal = _with_stability(run.nominal, design)
     out["nominal"] = {
-        "success": nominal.success,
-        "failure_reasons": list(nominal.failure_reasons),
-        "metrics": dict(nominal.metrics),
+        "success": run.nominal.success,
+        "failure_reasons": list(run.nominal.failure_reasons),
+        "metrics": dict(run.nominal.metrics),
     }
     return out
 

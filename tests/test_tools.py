@@ -222,7 +222,7 @@ def test_simulate_design_suborbital_uses_real_physics(design, req, model):
     parsed = DesignAdapter.validate_python(design)
     target = req["target_altitude_m"] if req else None
     ref = model.simulate(parsed, Env.model_validate(ENV), target_apogee_m=target)
-    assert {k: sim.metrics[k] for k in ref.metrics} == ref.metrics  # bottles add static margins
+    assert sim.metrics == ref.metrics
     assert set(ref.failure_reasons) <= set(sim.failure_reasons)
 
 

@@ -49,14 +49,13 @@ def test_negative_margin_is_warned_in_words():
     assert "does not restore itself at liftoff" in text
 
 
-def test_simulate_design_reports_the_margin_for_a_bottle():
+def test_simulate_design_warns_but_gives_no_number_for_representative_fins():
     out = execute_tool(
         "simulate_design",
         {"design": DESIGN.model_dump(mode="json"), "env": {}, "seed": None, "requirement": None},
         "t",
     )
-    assert "stability_margin_cal" in out["metrics"]
-    assert "dry_stability_margin_cal" in out["metrics"]
+    assert "stability_margin_cal" not in out["metrics"]
     assert any(w.startswith("stability:") for w in out["warnings"])
 
 
