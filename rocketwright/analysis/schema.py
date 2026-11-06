@@ -6,7 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class Strict(BaseModel):
-    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    # Canonical numeric types must survive JSON save/reload: 1 and 1.0 hash differently.
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False, validate_default=True)
 
 
 # Constitutive scenarios, not certified printed-material allowables. The manufacturer's

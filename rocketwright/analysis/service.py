@@ -43,6 +43,8 @@ class Harness:
 
     def start(self, project_id, revision, precision=None, limits=None):
         precision, limits = precision or Precision(), limits or SearchLimits()
+        precision = Precision.model_validate(precision.model_dump())
+        limits = SearchLimits.model_validate(limits.model_dump())
 
         def work(state):
             if state["adopted"] or state.get("adaptive"):
@@ -251,6 +253,11 @@ class Harness:
 
     def _choices(self, c, spec, precision, limits):
         choices = c.options()
+        for key, row in choices["offered"].items():
+            action = c.pool.actions[key]
+            row["target_label"] = c.pool.targets[action.target].label
+            row["method_label"] = c.pool.methods[action.method].label
+            row["evaluation_rule"] = c.pool.evaluations[action.evaluation].rule
         a = self.state["adaptive"]
         unmet = []
         confirmation = self.data(c, "confirm")
@@ -260,7 +267,7 @@ class Harness:
             screen = self.data(c, "screen")
             if screen and screen["apogee_m"] < spec.requirement.target_altitude_m:
                 unmet = ["altitude"]
-        # Numerical uncertainty must be reduced before optimizing against an unreliable prediction.
+        # Numerical uncertainty remains an acceptance obligation during provisional exploration.
         numerical = set(unmet) & {
             "aero_grid",
             "aero_averaging",
@@ -670,6 +677,7 @@ class Harness:
         selection_context = dict(
             version=state["version"],
             metrics=c.metrics,
+            current_screen_metrics=self._snapshot(c),
             unmet=choices["unmet"],
             recent_decisions=[
                 {k: d.get(k) for k in ("action", "reason", "planner")} for d in a["decisions"][-4:]

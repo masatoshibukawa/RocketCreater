@@ -121,3 +121,46 @@ def test_multi_start_inputs_preserve_mission_and_have_independent_geometry():
     assert all(
         s.design.payload_mass_kg == template.design.payload_mass_kg for s in options.values()
     )
+
+
+def test_default_precision_fingerprint_survives_saved_roundtrip():
+    # Native iterations used to be discarded as stale after defaults 1/15 became 1.0/15.0.
+    initial = Precision(require_cfd=False, require_fem=False)
+    restored = Precision.model_validate_json(initial.model_dump_json())
+    assert digest(initial.model_dump()) == digest(restored.model_dump())
+
+
+def test_native_style_feedback_survives_default_precision_reload(tmp_path):
+    from rocketwright.agent.design_projects import sha, write_json
+    from rocketwright.analysis.service import code_hash
+
+    _, h, state = started(tmp_path, max_versions=3, budget_s=5000)
+    c, s, precision, limits = h._campaign(state)
+    artifact = tmp_path / "data.json"
+    write_json(artifact, {"apogee_m": 12})
+    write_json(tmp_path / "manifest.json", {"data.json": sha(artifact)})
+    c.results["screen"] = dict(
+        value=dict(
+            artifact=str(artifact),
+            sha256=sha(artifact),
+            manifest_sha256=sha(tmp_path / "manifest.json"),
+        )
+    )
+    before = dict(apogee_m=10, incidence_deg=2, dry_mass_g=200, static_margin_cal=1.2)
+    after = dict(before, apogee_m=12)
+    h._snapshot = lambda _: after
+    state["adaptive"]["outcome_pending"] = dict(
+        before=before,
+        features=experience.features(s),
+        signature="geometry.fin_span_mm:-1",
+        to_spec_hash=policy.identity(s),
+        code=code_hash(),
+        precision_hash=digest(state["adaptive"]["precision"]),
+        remaining_s=5000,
+        history_index=0,
+        decision_index=-1,
+    )
+    h._feedback(c, s, precision)
+    row = state["adaptive"]["observations"][-1]
+    assert row["status"] == "measured" and row["delta"]["apogee_m"] == 2
+    assert experience.verified(row)
