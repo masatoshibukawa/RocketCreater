@@ -10,6 +10,7 @@ from rocketwright.adaptive import Campaign, Requirements, digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.agent.workbench import Conflict
 from rocketwright.analysis import catalog, planner, policy
+from rocketwright.analysis.aero_accuracy import holdout
 from rocketwright.analysis.record import scopes
 from rocketwright.analysis.runtime import Runtime, run
 from rocketwright.analysis.schema import Precision, SearchLimits
@@ -112,7 +113,7 @@ class Harness:
             )
         )
         inputs["cfd_numerics"] = digest(
-            runtime.model_dump(include={"cfd_cells_coarse", "cfd_cells_fine", "cfd_times"})
+            {k: v for k, v in runtime.model_dump().items() if k.startswith("cfd_")}
         )
         inputs["flight_numerics"] = digest(runtime.flight_step_s)
         p = catalog.pool(precision)
@@ -125,10 +126,22 @@ class Harness:
                 action.uses.append("flight_numerics")
             if key.startswith("cfd_"):
                 action.uses.append("cfd_numerics")
-                cells = runtime.cfd_cells_fine if key.endswith("fine") else runtime.cfd_cells_coarse
+                cells = runtime.cfd_cells_coarse if key == "cfd_coarse" else runtime.cfd_cells_fine
+                if key == "cfd_audit":
+                    cells += 4
                 # Conservative arrays/workspace estimate, recomputed for size and numerical level.
-                action.memory_gib = cells**3 * 100 * 18 * 512 / 1024**3
-                action.cost_s *= (cells / 12) ** 3 * runtime.cfd_times / 40
+                width = runtime.cfd_width + (2 if key == "cfd_audit" else 0)
+                action.memory_gib = cells**3 * width**2 * 18 * 512 / 1024**3
+                action.cost_s *= (
+                    (cells / 12) ** 4
+                    * runtime.cfd_times
+                    / 40
+                    * (width / 10) ** 2
+                    * 0.075
+                    / runtime.cfd_lattice_speed
+                )
+                if key != "cfd_audit":
+                    action.cost_s *= len(runtime.cfd_speeds) * len(runtime.cfd_angles) / 14
                 action.bounds["air_speed_mps"] = (0, 35)
                 action.uses.append("air_speed_mps")
                 action.bounds.update(body_length_diameters=(0, 12), fin_radius_diameters=(0, 4.25))
@@ -226,7 +239,17 @@ class Harness:
             if screen and screen["apogee_m"] < spec.requirement.target_altitude_m:
                 unmet = ["altitude"]
         # Numerical uncertainty must be reduced before optimizing against an unreliable prediction.
-        numerical = set(unmet) & {"aero_grid", "aero_averaging", "fem_mesh", "temporal"}
+        numerical = set(unmet) & {
+            "aero_grid",
+            "aero_averaging",
+            "fem_mesh",
+            "temporal",
+            "aero_interpolation",
+            "aero_domain_size",
+            "aero_lattice",
+            "aero_duration",
+            "aero_third_grid",
+        }
         if confirmation:
             a["quality_pending"] = sorted(numerical)
         else:
@@ -249,7 +272,11 @@ class Harness:
                 scope=proposal["reason"],
             )
         runtime = Runtime.model_validate(a["runtime"])
-        if confirmation and "aero_grid" in numerical and runtime.cfd_cells_fine < 32:
+        if (
+            confirmation
+            and numerical & {"aero_grid", "aero_third_grid"}
+            and runtime.cfd_cells_fine < 32
+        ):
             choices["offered"]["refine/cfd"] = dict(
                 target="airframe flow",
                 method="increase_grid",
@@ -271,7 +298,11 @@ class Harness:
                 addresses=["fem_mesh"],
                 scope="Increase FEM resolutions within the host maximum",
             )
-        if confirmation and "aero_averaging" in numerical and runtime.cfd_times < 100:
+        if (
+            confirmation
+            and numerical & {"aero_averaging", "aero_duration"}
+            and runtime.cfd_times < 100
+        ):
             choices["offered"]["refine/averaging"] = dict(
                 target="unsteady flow",
                 method="longer_averaging",
@@ -293,6 +324,32 @@ class Harness:
                 addresses=["temporal"],
                 scope="Decrease flight step within the host minimum",
             )
+        for suffix, failure, possible, method in (
+            (
+                "table",
+                "aero_interpolation",
+                len(runtime.cfd_speeds) < 5 and len(runtime.cfd_angles) < 13,
+                "add independent lookup nodes",
+            ),
+            ("domain", "aero_domain_size", runtime.cfd_width < 14, "widen transverse domain"),
+            (
+                "lattice",
+                "aero_lattice",
+                runtime.cfd_lattice_speed > 0.025,
+                "decrease lattice speed and time step",
+            ),
+        ):
+            if confirmation and failure in numerical and possible:
+                choices["offered"]["refine/" + suffix] = dict(
+                    target="CFD accuracy",
+                    method=method,
+                    evaluation=failure,
+                    layer="low",
+                    score=102,
+                    cost_s=1,
+                    addresses=[failure],
+                    scope="Bounded host numerical refinement",
+                )
         if len(a["decisions"]) >= limits.max_actions or a["remaining_s"] <= 0:
             for key in choices["offered"]:
                 choices["rejected"][key] = ["campaign_budget"]
@@ -414,6 +471,14 @@ class Harness:
                 r["cfd_times"] = min(100, r["cfd_times"] * 1.5)
             elif key == "refine/time":
                 r["flight_step_s"] /= 2
+            elif key == "refine/table":
+                speed, angle = holdout(r["cfd_speeds"], r["cfd_angles"])
+                r["cfd_speeds"] = sorted(set(r["cfd_speeds"]) | {speed})
+                r["cfd_angles"] = sorted(set(r["cfd_angles"]) | {angle})
+            elif key == "refine/domain":
+                r["cfd_width"] = min(14, r["cfd_width"] + 2)
+            elif key == "refine/lattice":
+                r["cfd_lattice_speed"] = max(0.025, r["cfd_lattice_speed"] / 2)
             c.remaining_s -= 1
             self._persist(c)
         else:

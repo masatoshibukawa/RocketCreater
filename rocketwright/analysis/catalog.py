@@ -19,6 +19,22 @@ def pool(precision):
             ("flight", "high", "CFD-driven 6DOF and section loads", ["cfd_fine"], 15, 0, []),
         ]
         flight = "flight"
+        if precision.require_aero_audit:
+            rows.append(
+                (
+                    "cfd_audit",
+                    "low",
+                    "independent CFD accuracy checks",
+                    ["cfd_fine"],
+                    120,
+                    4,
+                    ["cfd"],
+                )
+            )
+            rows = [
+                (k, layer, name, ["cfd_audit"] if k == "flight" else deps, cost, mem, caps)
+                for k, layer, name, deps, cost, mem, caps in rows
+            ]
     rows += [
         ("refine", "high", "time-step and drag-sensitivity check", [flight], 30, 0, []),
         ("modes", "middle", "warm tapered beam and root foundation", [flight], 5, 0, []),

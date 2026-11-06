@@ -258,3 +258,20 @@ def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
     assert not proposals  # altitude shortfall cannot bypass unfinished precision work
     assert not any(k.startswith("refine/") for k in choices["offered"])
     assert not any(k.startswith("redesign/") for k in choices["offered"])
+
+
+def test_independent_aero_failures_offer_numerical_work_and_block_redesign(tmp_path):
+    _, h, s = started(tmp_path)
+    c, specification, precision, limits = h._campaign(s)
+    original = h.data
+    h.data = lambda campaign, key: (
+        {
+            "unmet": ["altitude", "aero_interpolation", "aero_domain_size", "aero_lattice"],
+            "metrics": {},
+        }
+        if key == "confirm"
+        else original(campaign, key)
+    )
+    choices, proposals, _ = h._choices(c, specification, precision, limits)
+    assert {"refine/table", "refine/domain", "refine/lattice"} <= choices["offered"].keys()
+    assert not proposals
