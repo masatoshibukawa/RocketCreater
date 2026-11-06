@@ -9,6 +9,7 @@
 - [38件の出典と適用範囲](research/2026-11-06/sources.md) — 研究知見、実務ガイド、大会条件と講評の区別
 - [RocketCreaterのピッチとデモの方針](pitch-demo-strategy.md) — LLMとAPIの価値、なぜ自分たちが作るか、ドメイン知識を示す証拠
 - [有名なTED Talksの分析](ted-talks/README.md) — トークごとの構成、話し方の工夫、背景、良い点、日英の公式文字起こし
+- [スタートアップの資金調達ピッチ](fundraising/README.md) — 6言語の原語資料を比較した、投資家向けの構成・証拠・面談・質疑の実務
 
 ## 配置
 
