@@ -132,7 +132,9 @@ function DesignScreen() {
     const same = stream.attempts.filter((a) => a.design !== null && designKey(a.design) === key);
     return [...same.filter((a) => a === displayedAttempt), ...same.filter((a) => a !== displayedAttempt)];
   }, [displayed, displayedAttempt, stream.attempts]);
-  const build = sameDesign.find((a) => a.build !== null)?.build ?? null;
+  // The attempt on screen first: Claude's final answer can restate a design in other digits, and
+  // its parts are still the ones this attempt built.
+  const build = displayedAttempt?.build ?? sameDesign.find((a) => a.build !== null)?.build ?? null;
 
   // /artifacts/summary for the displayed design (debounced, cached by design JSON).
   const summaryState = useDesignSummary(displayed?.design ?? null, stream.requirement, build);

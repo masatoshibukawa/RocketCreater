@@ -280,3 +280,25 @@ def test_bom_multistage_is_concept_level():
         if r["item_id"] not in ("cost_estimate", "payload")
     )
     assert any(r["item_id"] == "cost_estimate" and r["price_jpy"] for r in rows)
+
+
+def test_bottle_bom_names_the_parts_of_this_design_only():
+    small = BOTTLE.model_copy(
+        update={
+            "bottle_volume_m3": 0.0005,
+            "nozzle_diameter_m": 0.015,
+            "has_parachute": True,
+            "parachute_diameter_m": 0.5,
+        }
+    )
+    rows = list(csv.DictReader(io.StringIO(export_bom_csv(small))))
+    text = " ".join(r["name"] for r in rows)
+    assert "500 mL" in text and "15 mm" in text and "50 cm" in text
+    # No part the design does not say it uses: fins stay unnamed without a parts build.
+    assert "1.5 L" not in text and "段ボール" not in text and "corrugated" not in text
+
+
+def test_bottle_bom_keeps_a_size_the_catalog_does_not_have():
+    odd = BOTTLE.model_copy(update={"bottle_volume_m3": 0.0007})
+    rows = list(csv.DictReader(io.StringIO(export_bom_csv(odd))))
+    assert any("0.70 L" in r["name"] and r["price_jpy"] == "" for r in rows), rows

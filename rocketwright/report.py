@@ -119,6 +119,7 @@ _BOTTLE_MASS_SPLIT: dict[str, float] = {
     "fins": 0.25,
     "parachute": 0.20,
 }
+_BOTTLE_PART_SIZE_TOLERANCE = 0.05  # a catalog part within 5 % of the design size is that part
 _AMATEUR_MASS_SPLIT: dict[str, float] = {
     "nose_cone": 0.15,
     "body_tube": 0.45,
@@ -571,11 +572,10 @@ def _csv_cells(row: BomRow) -> list[str]:
     ]
 
 
-def _catalog_row(
-    items: list[dict[str, Any]], tier: str, row_id: str, name: str, qty: int, est_mass: float
+def _part_row(
+    item: dict[str, Any] | None, row_id: str, name: str, qty: int, est_mass: float
 ) -> BomRow:
-    """A BOM row from the catalog when a matching part exists, else a provisional row."""
-    item = _find_part(items, tier, row_id)
+    """A BOM row from a catalog part, else a provisional row under the given name."""
     if item is None:
         return _row(row_id, name, qty, est_mass, None, "provisional")
     mass = item.get("mass_kg")
@@ -588,6 +588,30 @@ def _catalog_row(
         float(price) if isinstance(price, (int, float)) else None,
         _source_text(item),
     )
+
+
+def _catalog_row(
+    items: list[dict[str, Any]], tier: str, row_id: str, name: str, qty: int, est_mass: float
+) -> BomRow:
+    """A BOM row from the catalog when a matching part exists, else a provisional row."""
+    return _part_row(_find_part(items, tier, row_id), row_id, name, qty, est_mass)
+
+
+def _bottle_part(
+    items: list[dict[str, Any]], kind: str, key: str, value: float
+) -> dict[str, Any] | None:
+    """The catalog bottle part of this kind and size, so that a row never names another size."""
+    sized = [
+        item
+        for item in items
+        if item.get("tier") == "bottle"
+        and item.get("kind") == kind
+        and isinstance(item.get(key), (int, float))
+    ]
+    nearest = min(sized, key=lambda item: abs(item[key] - value), default=None)
+    if nearest is None or abs(nearest[key] - value) > _BOTTLE_PART_SIZE_TOLERANCE * value:
+        return None
+    return nearest
 
 
 def _motor_row(design: AmateurDesign) -> BomRow:
@@ -628,32 +652,31 @@ def _bom_bottle(design: BottleDesign) -> list[BomRow]:
         split.pop("parachute")
     total = sum(split.values())
     masses = {k: design.dry_mass_kg * v / total for k, v in split.items()}
+    bottle = _bottle_part(items, "bottle", "volume_m3", design.bottle_volume_m3)
+    nozzle = _bottle_part(items, "nozzle", "diameter_m", design.nozzle_diameter_m)
     litres = design.bottle_volume_m3 * 1000.0
     rows = [
-        _catalog_row(items, "bottle", "bottle", f"PET bottle {litres:.2f} L", 1, masses["bottle"]),
-        _catalog_row(
-            items,
-            "bottle",
+        _part_row(bottle, "bottle", f"PET ボトル {litres:.2f} L", 1, masses["bottle"]),
+        _part_row(
+            nozzle,
             "nozzle",
-            f"Nozzle {design.nozzle_diameter_m * 1000:.1f} mm",
+            f"ノズル {design.nozzle_diameter_m * 1000:.1f} mm",
             1,
             masses["nozzle"],
         ),
     ]
     if design.has_fins:
-        rows.append(_catalog_row(items, "bottle", "fins", "Fin set", 1, masses["fins"]))
-    if design.has_parachute:
+        # SIMPLIFICATION: a design alone does not say which fin set it uses (see build.py).
         rows.append(
-            _catalog_row(
-                items,
-                "bottle",
-                "parachute",
-                f"Parachute {design.parachute_diameter_m or 0:.2f} m",
-                1,
-                masses["parachute"],
-            )
+            _row("fins", "フィン一式（部品は未選択）", 1, masses["fins"], None, "provisional")
         )
-    rows.append(_row("payload", "Payload (placeholder)", 1, design.payload_mass_kg, None, "design"))
+    if design.has_parachute:
+        diameter = design.parachute_diameter_m or 0.0
+        chute = _bottle_part(items, "parachute", "diameter_m", diameter)
+        rows.append(
+            _part_row(chute, "parachute", f"パラシュート {diameter:.2f} m", 1, masses["parachute"])
+        )
+    rows.append(_row("payload", "積載物（代表値）", 1, design.payload_mass_kg, None, "design"))
     return rows
 
 
