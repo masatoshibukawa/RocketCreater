@@ -7,6 +7,10 @@ flies again. It stops when the Cd moved less than CD_TOLERANCE_FRAC and the pres
 SIMPLIFICATION: the Cd of one speed (the flight's maximum, rounded to 1 m/s so that nearby
 flights share a cached solve) is used for the whole flight, as in agent/tools.py.
 SIMPLIFICATION: only the pressure is re-tuned. Fill, nozzle and airframe stay as given.
+
+The first round settles "auto" on one backend and the rest stay on it: Cds of two solvers differ
+by far more than the tolerance, and L0 only echoes the design's Cd, so a fallback in a later round
+would look like convergence. A backend that fails after round 1 ends the loop with its error.
 """
 
 from __future__ import annotations
@@ -136,6 +140,7 @@ def run_aero_loop(
             shape=shape,
         )
         solved = evaluate(query, backend=backend)
+        backend = solved.backend
         new_cd = cd_for_physics(solved, flown)
         current = _retune(flown, env, target_apogee_m, pressures, new_cd)
         after = _fly(current, env, target_apogee_m)

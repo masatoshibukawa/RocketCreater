@@ -57,6 +57,40 @@ main由来のCFDコードにはWindowsで`os.getuid()`が存在しない既知�
 | スクリプト | 数値計算、CAD/STL、Blender、固定ComfyUIグラフ、書出しと検査 | 未確認の工程を完了扱いすること |
 | ユーザー | 要求・仮定の確認、次工程の選択、採用、現物測定と実地確認 | — |
 
+## 飛行・CFDループのAPI（UI担当向け）
+
+確認済みプロジェクトに、CFD を反映した案を併記する操作。既存の工程、凍結した design、製作ファイルは変わらない。計算の中身は [aero.md §7](aero.md) を参照。
+
+`POST /workbench/projects/{id}/aero-loop`、本文 `{"revision": n}`。他の工程と同じく、終わるまで応答しない。OpenFOAM は 1 周あたり数分かかる（同じ形状と速度はキャッシュで即時）。実行中は `GET /workbench/projects/{id}` の `active` が `{"name": "aero_loop", "started_at": …}` になる。成功でも失敗でも `revision` は 1 増える。
+
+| 状態 | 意味 |
+| --- | --- |
+| 200 | プロジェクトの view を返す。`aero_loop` に結果が入る |
+| 404 | プロジェクトがない |
+| 409 | 確認済みでない、`revision` が古い、別の操作が実行中、解析コードが変わった |
+| 422 | 本文の不備、`ROCKETWRIGHT_AERO_BACKEND` の値の誤り、CFD が扱えない条件 |
+| 503 | CFD の実行失敗か時間切れ。理由は `detail` と view の `error`。前回の `aero_loop` は残る |
+
+バックエンドは API の環境変数 `ROCKETWRIGHT_AERO_BACKEND`（`auto`、`barrowman`、`openfoam_pipeline`、`lbm_gpu`。既定は `auto`）で選ぶ。`auto` で CFD が使えないと L0 で完了する。その場合 `rounds[].fidelity` が `L0` になり、Cd は設計の値のまま。
+
+view の `aero_loop`（未実行なら `null`）：
+
+| 項目 | 内容 |
+| --- | --- |
+| `source_action` | 対象の確認工程の ID |
+| `backend_requested`、`target_apogee_m`、`cg_from_nose_m` | 実行条件。重心は水を積んだ状態 |
+| `rounds[]` | 周ごとの記録。下記 |
+| `converged` | Cd の変化 2 % 未満かつ圧力が不変で止まったら `true`。周回上限で止まったら `false` |
+| `final_design` | CFD の Cd（`axial_drag_coefficient`）と更新後の圧力を入れた `BottleDesign`。製作には使わない |
+| `baseline` | 確認工程の値：`pressure_kpa`、`cd`、`success_rate` |
+| `dispersion` | `final_design` の多数回試行（確認工程と同じ `n`、`seed`）：`n`、`seed`、`success_rate`、`passes`、`failure_counts`、`apogee_m`、`descent_speed_mps`（分位点） |
+| `artifacts_dir` | 流れの画像と `report.md` のあるサーバー上のフォルダ。L0 では `null`。ブラウザー用の URL ではない |
+| `notes` | 解法の注意。校正の組が崩れる旨もここに入るので、そのまま表示する |
+
+`rounds[]` の各要素：`round`、飛行の `flight_pressure_kpa`・`flight_cd`・`flight_apogee_m`・`max_speed_mps`、CFD の `cfd_speed_mps`・`cd`・`cd_change_frac`・`x_cp_from_nose_m`・`static_margin_cal`（`null` がありうる）、更新後の `pressure_kpa`・`apogee_m`・`descent_speed_mps`、`elapsed_s`、`cached`、`backend`、`fidelity`。
+
+`aero_loop` の高度は校正から外れた値なので、確認工程の結果と並べるときは別の根拠として表示する。工程をさらに進めても `aero_loop` は消えない。`source_action` と今の確認工程を見比べて、古い結果かどうかを判断する。
+
 ## 成果物の契約
 
 - 解析結果は候補ID、入力、条件、seed、計算の根拠と一緒に保持する。

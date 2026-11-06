@@ -18,7 +18,7 @@ from api.main import app
 from rocketwright import aero
 from rocketwright.aero import registry
 from rocketwright.aero.base import AeroCase, AeroQuery, AeroResult
-from rocketwright.aero.lbm_gpu import LbmGpuBackend, assembly_for
+from rocketwright.aero.lbm_gpu import LbmGpuBackend, assembly_for, parse_cases
 from rocketwright.aero.openfoam_pipeline import write_case
 from rocketwright.agent.workbench import Conflict, StepChoice, Workbench
 from rocketwright.bottle_assembly import Workshop
@@ -251,6 +251,21 @@ def test_lbm_refuses_a_fin_count_its_kernel_cannot_draw_and_auto_notes_why(isola
     assert any("lbm_gpu failed" in n and "four fins" in n for n in result.notes)
 
 
+def test_lbm_result_says_the_assembled_fin_thickness_is_not_solved(tmp_path):
+    design, plan = _adopted()
+    case = {"angle_deg": 0.0, "speed_mps": 21.0, "mean": {"Cd": 1.0, "Cy": 0.0, "Cm_z": 0.0}}
+    (tmp_path / "case.json").write_text(json.dumps(case))
+    files = [tmp_path / "case.json"]
+
+    def notes(shape):
+        query = AeroQuery(design=design, speed_mps=21, alphas_deg=(0.0,), shape=shape)
+        return parse_cases(files, query, ref_diameter_m=0.09, cg_from_nose_m=0.43).notes
+
+    shape = assembled_shape(plan["dimensions_mm"])
+    assert any("2 mm thickness not represented" in n for n in notes(shape))
+    assert not any("not represented" in n for n in notes(None))
+
+
 # --------------------------------------------------------------------------- loop
 
 
@@ -279,6 +294,18 @@ def _nearest(design: BottleDesign, cd: float, pressures) -> float:
         return abs(water.simulate(trial, ENV, 0, cd=cd).metrics["apogee_m"] - TARGET_M)
 
     return float(min(pressures, key=miss))
+
+
+def _fail_after_one_solve(evaluate):
+    calls = []
+
+    def wrapped(query):
+        calls.append(query)
+        if len(calls) > 1:
+            raise RuntimeError("solver blew up")
+        return evaluate(query)
+
+    return wrapped
 
 
 def test_loop_converges_and_updates_the_design(isolated):
@@ -354,6 +381,23 @@ def test_small_cd_change_with_a_moved_pressure_is_not_convergence(isolated):
     assert result.rounds[0].cd_change_frac == pytest.approx(0.0)
     assert result.rounds[0].pressure_kpa != 200
     assert result.converged and len(result.rounds) == 2
+
+
+def test_auto_stays_on_the_backend_of_the_first_round(isolated):
+    # Falling back to L0 here would echo the Cd of round 1 and read as convergence.
+    fake = ScriptedCFD(cds=(0.32,))
+    fake.evaluate = _fail_after_one_solve(fake.evaluate)
+    registry.register(fake)
+    with pytest.raises(RuntimeError, match="solver blew up"):
+        _loop(_bottle(), backend="auto")
+    assert len(fake.queries) == 1
+
+
+def test_auto_with_no_cfd_backend_runs_on_l0(isolated):
+    result = _loop(_bottle(), backend="auto")
+    assert result.converged and {r.backend for r in result.rounds} == {"barrowman"}
+    assert any("no CFD backend usable" in n for n in result.notes)
+    assert result.artifacts_dir is None
 
 
 def test_loop_says_the_cfd_cd_is_outside_the_calibration(isolated):

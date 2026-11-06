@@ -136,6 +136,17 @@ def parse_cases(
         )
     cases.sort(key=lambda c: c.alpha_deg)
     zero = min(cases, key=lambda c: abs(c.alpha_deg))
+    notes = [
+        "D3Q19 LBM-LES (scenarios/cfd), staircase body, zero-thickness fins",
+        "simplified shape: nose + cylinder + flat base, 4 fins",
+        "team's own wind-tunnel check: Cd about 3x the measured 0.253 (results.md)",
+    ]
+    if query.shape is not None:
+        thickness_mm = query.shape.fins.thickness_m * 1000
+        notes.append(
+            f"assembled fins: planform solved, {thickness_mm:g} mm thickness not represented "
+            "(the kernel's fins have zero thickness)"
+        )
     cn_alpha = x_cp = margin = None
     if len({c.alpha_deg for c in cases}) >= 2:
         a = np.radians([c.alpha_deg for c in cases])
@@ -156,11 +167,7 @@ def parse_cases(
         backend=LbmGpuBackend.name,
         fidelity="L2",
         provisional=True,
-        notes=[
-            "D3Q19 LBM-LES (scenarios/cfd), staircase body, zero-thickness fins",
-            "simplified shape: nose + cylinder + flat base, 4 fins",
-            "team's own wind-tunnel check: Cd about 3x the measured 0.253 (results.md)",
-        ],
+        notes=notes,
         source="scenarios/cfd/run_flow.py (GPU lattice Boltzmann, CuPy)",
         wall_time_s=wall_time_s,
         artifacts_dir=artifacts_dir,
