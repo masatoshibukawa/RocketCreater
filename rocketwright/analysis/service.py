@@ -1,6 +1,7 @@
 """Persistent, version-aware analysis/LLM/redesign controller for saved design projects."""
 
 import copy
+import math
 import sys
 import time
 import uuid
@@ -100,6 +101,14 @@ class Harness:
         runtime = Runtime.model_validate(a["runtime"])
         inputs = scopes(spec, precision=precision, code_hash=code_hash())
         inputs["fin_count"] = spec.geometry.fin_count
+        inputs["payload_positive"] = int(spec.design.payload_mass_kg > 0)
+        inputs["recovery_fitted"] = int(spec.design.has_parachute)
+        inputs["fins_fitted"] = int(spec.design.has_fins)
+        inputs["reservoir_envelope_ratio"] = spec.design.bottle_volume_m3 / (
+            math.pi
+            * (spec.geometry.body_diameter_mm / 2000) ** 2
+            * max(1e-9, spec.geometry.nose_base_mm / 1000 - 0.01)
+        )
         inputs["body_length_diameters"] = spec.geometry.overall_mm / spec.geometry.body_diameter_mm
         inputs["fin_radius_diameters"] = (
             0.5 + spec.geometry.fin_span_mm / spec.geometry.body_diameter_mm
@@ -117,6 +126,15 @@ class Harness:
         )
         inputs["flight_numerics"] = digest(runtime.flight_step_s)
         p = catalog.pool(precision)
+        p.actions["geometry"].bounds.update(
+            payload_positive=(1, 1),
+            recovery_fitted=(1, 1),
+            fins_fitted=(1, 1),
+            reservoir_envelope_ratio=(0, 1),
+        )
+        p.actions["geometry"].uses.extend(
+            ["payload_positive", "recovery_fitted", "fins_fitted", "reservoir_envelope_ratio"]
+        )
         for key, action in p.actions.items():
             if key != "geometry":
                 action.uses.append("requirements")

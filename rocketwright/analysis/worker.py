@@ -35,6 +35,19 @@ def integrated_coefficients(values, stations, diameter, cg):
     return np.concatenate([forces.sum(axis=-2), moments.sum(axis=-2)], axis=-1)
 
 
+def free_ascent_margin(trajectory, cp_m, diameter_m):
+    trace = trajectory["trace"]
+    times = np.asarray(trace["time_s"])
+    active = (
+        (times > trajectory["rail_exit_s"])
+        & (times <= trajectory["apogee_s"])
+        & (np.asarray(trace["q_pa"]) > 10)
+    )
+    if not active.any():
+        return None
+    return float(np.min((cp_m - np.asarray(trace["cg_m"])[active]) / diameter_m))
+
+
 def read(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -239,6 +252,7 @@ class Worker:
                     str(angle),
                     "--rotate-geometry",
                     "--surface-loads",
+                    "--paired-samples",
                     "--no-preview",
                 ]
                 with (folder / f"{out.name}.log").open("w", encoding="utf-8") as log:
@@ -418,8 +432,16 @@ class Worker:
         )
         precision, base = self.precision, self.base_flight()
         target = self.spec.requirement.target_altitude_m if self.spec.requirement else None
-        static = self.assembly["cp_mm"] - self.assembly["wet_cg_mm"]
-        static /= self.spec.geometry.body_diameter_mm
+        liftoff_static = (
+            self.assembly["cp_mm"] - self.assembly["wet_cg_mm"]
+        ) / self.spec.geometry.body_diameter_mm
+        margins = [
+            free_ascent_margin(
+                t, self.assembly["cp_mm"] / 1000, self.spec.geometry.body_diameter_mm / 1000
+            )
+            for t in (base, result)
+        ]
+        static = min(margins) if all(m is not None for m in margins) else None
         checks = dict(
             altitude=target is not None
             and (
@@ -434,7 +456,7 @@ class Worker:
                 self.data["stability"]["metrics"]["perturbation_incidence_deg"],
             )
             <= precision.maximum_incidence_deg,
-            static_margin=static >= precision.minimum_static_margin_cal,
+            static_margin=static is not None and static >= precision.minimum_static_margin_cal,
             temporal=self.data["refine"]["metrics"]["temporal_pass"],
             fin_deformation=self.data["modes"]["metrics"]["fin_deflection_ratio"]
             <= precision.deflection_span_limit,
@@ -477,6 +499,9 @@ class Worker:
             checks=checks,
             unmet=[k for k, v in checks.items() if not v],
             static_margin_cal=static,
+            liftoff_static_margin_cal=liftoff_static,
+            static_margin_scope=("fixed analytic CP; free ascent after rail exit at q>10 Pa; "
+                                 "liftoff recorded separately"),
             metrics=dict(criteria_met=all(checks.values())),
             physical_qualification=False,
             full_flight_stability_proved=False,

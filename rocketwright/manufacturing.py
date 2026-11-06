@@ -46,16 +46,16 @@ class PrintGeometry(BottleGeometry):
         if design.geometry is not None:
             return cls.model_validate(design.geometry.model_dump())
         # Explicitly unmeasured defaults; editing saves these in the design.
-        d = (4 * design.bottle_volume_m3 / (math.pi * 3.5)) ** (1 / 3) * 1000
+        scale = (design.bottle_volume_m3 / 0.002) ** (1 / 3)
         return cls(
-            body_diameter_mm=d,
-            body_height_mm=3.5 * d,
-            nose_length_mm=0.8 * d,
-            fin_root_mm=d,
-            fin_tip_mm=0.35 * d,
-            fin_span_mm=0.8 * d,
-            fin_tail_inset_mm=0.25 * 3.5 * d,
-            fin_sweep_mm=0.35 * d,
+            body_diameter_mm=110 * scale,
+            body_height_mm=315 * scale,
+            nose_length_mm=95 * scale,
+            fin_root_mm=100 * scale,
+            fin_tip_mm=36 * scale,
+            fin_span_mm=50 * scale,
+            fin_tail_inset_mm=100 * scale,
+            fin_sweep_mm=14 * scale,
         )
 
     @classmethod

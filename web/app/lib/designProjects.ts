@@ -72,11 +72,11 @@ export function newSpec(source: DesignPackageRequest | null): ProductionSpec {
     nozzle_diameter_m: .009, dry_mass_kg: .1, payload_mass_kg: .06, has_fins: true,
     has_parachute: true, parachute_diameter_m: .7,
   };
-  const d = Math.cbrt(4 * design.bottle_volume_m3 / (Math.PI * 3.5)) * 1000;
+  const scale = Math.cbrt(design.bottle_volume_m3 / .002);
   return { name: "ペトロケの試作", design, geometry: design.geometry ?? {
-    body_diameter_mm: d, body_height_mm: d*3.5, nose_length_mm: d*.8,
-    fin_root_mm: d, fin_tip_mm: d*.35, fin_span_mm: d*.8, fin_sweep_mm: d*.35,
-    fin_count: 4, fin_thickness_mm: 2.4, nose_wall_mm: 1.6, fin_tail_inset_mm: d*3.5*.25,
+    body_diameter_mm: 110*scale, body_height_mm: 315*scale, nose_length_mm: 95*scale,
+    fin_root_mm: 100*scale, fin_tip_mm: 36*scale, fin_span_mm: 50*scale, fin_sweep_mm: 14*scale,
+    fin_count: 4, fin_thickness_mm: 2.4, nose_wall_mm: 1.6, fin_tail_inset_mm: 100*scale,
     dimensions_measured: false,
   }, requirement: source?.requirement ?? null, env: source?.env ?? {},
   other_dry_mass_g: design.dry_mass_kg*1000, measured_printed_mass_g: null,
