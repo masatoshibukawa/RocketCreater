@@ -114,6 +114,8 @@ def inspect(path: Path) -> dict:
         "material_profile": "UltiMaker Black Tough PLA",
         "material_diameter_mm": diameter,
         "material_guid": header["EXTRUDER_TRAIN.0.MATERIAL.GUID"],
+        "nozzle_initial_temperature_c": float(header["EXTRUDER_TRAIN.0.INITIAL_TEMPERATURE"]),
+        "bed_initial_temperature_c": float(header["BUILD_PLATE.INITIAL_TEMPERATURE"]),
         "estimated_time_seconds": seconds,
         "estimated_filament_m": round(volume / (math.pi * (diameter / 2) ** 2) / 1000, 3),
         "estimated_mass_g": round(volume * density / 1000, 2),

@@ -14,6 +14,8 @@ GCODE = """;FLAVOR:Griffin
 ;EXTRUDER_TRAIN.0.NOZZLE.DIAMETER:0.4
 ;EXTRUDER_TRAIN.0.MATERIAL.GUID:test-material
 ;EXTRUDER_TRAIN.0.MATERIAL.VOLUME_USED:1000
+;EXTRUDER_TRAIN.0.INITIAL_TEMPERATURE:220
+;BUILD_PLATE.INITIAL_TEMPERATURE:60
 ;PRINT.TIME:60
 ;LAYER_COUNT:3
 M82
@@ -57,6 +59,7 @@ def test_native_material_units_and_unstarted_state(tmp_path):
     report = inspect(package(tmp_path))
     assert report["estimated_mass_g"] == 1.24
     assert report["estimated_filament_m"] == 0.157
+    assert report["nozzle_initial_temperature_c"] == 220
     assert report["model_layers"] == 3
     assert report["physical_configuration_verified"] is False
     assert report["print_started"] is False
