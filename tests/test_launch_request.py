@@ -17,7 +17,9 @@ EXAMPLE = Path(__file__).resolve().parents[1] / "scenarios/opt_cube/launch_reque
 
 
 def request(**changes):
-    return LaunchRequest.model_validate({**json.loads(EXAMPLE.read_text()), **changes})
+    return LaunchRequest.model_validate(
+        {**json.loads(EXAMPLE.read_text(encoding="utf-8")), **changes}
+    )
 
 
 def test_example_becomes_an_orbit_requirement_with_the_satellite_mass():

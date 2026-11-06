@@ -301,14 +301,20 @@ def test_unknown_jobs_are_not_found(jobs, job_id):
 # --------------------------------------------------------------------------- flow pictures
 
 
-def _flow_run(fake_backend, tmp_path: Path) -> dict:
+def _flow_run(fake_backend, tmp_path: Path, *, symlink=False) -> dict:
     run = tmp_path / "run"
     (run / "flow").mkdir(parents=True)
     (run / "flow" / "V015p00_A+04p00.png").write_bytes(b"\x89PNG flow")
     (run / "flow" / "notes.txt").write_text("not a picture")
     (run / "secret.png").write_bytes(b"\x89PNG outside")
     (tmp_path / "outside.png").write_bytes(b"\x89PNG outside")
-    os.symlink(tmp_path / "outside.png", run / "flow" / "link.png")
+    if symlink:
+        try:
+            os.symlink(tmp_path / "outside.png", run / "flow" / "link.png")
+        except OSError as error:
+            if os.name == "nt" and error.winerror == 1314:
+                pytest.skip("Windows host does not grant file symlink creation")
+            raise
     fake_backend(FakeCFD(artifacts_dir=str(run)))
     return _finished(client.post("/aero/loop", json=_body()).json()["id"])
 
@@ -326,11 +332,17 @@ def test_flow_pictures_are_listed_and_served(fake_backend, tmp_path):
 
 @pytest.mark.parametrize(
     "name",
-    ["notes.txt", "secret.png", "..%2Fsecret.png", "%2E%2E%2Fsecret.png", "link.png", "gone.png"],
+    ["notes.txt", "secret.png", "..%2Fsecret.png", "%2E%2E%2Fsecret.png", "gone.png"],
 )
 def test_only_flow_pictures_are_served(fake_backend, tmp_path, name):
     job = _flow_run(fake_backend, tmp_path)
     assert client.get(f"/aero/loop/{job['id']}/images/{name}").status_code == 404
+
+
+def test_flow_symlinks_are_neither_listed_nor_served(fake_backend, tmp_path):
+    job = _flow_run(fake_backend, tmp_path, symlink=True)
+    assert all(row["name"] != "link.png" for row in job["images"])
+    assert client.get(f"/aero/loop/{job['id']}/images/link.png").status_code == 404
 
 
 def test_a_design_without_pictures_lists_none(jobs):
