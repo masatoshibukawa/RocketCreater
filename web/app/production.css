@@ -20,10 +20,10 @@
 .wb-table th, .wb-table td { padding: 7px 6px; text-align: right; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
 .wb-table th { background: var(--panel-2); font-weight: 600; color: var(--text); }
 .wb-table tr:last-child td { border-bottom: 0; }
-.wb-flow { margin: 18px 0 0; }
+.wb-flow { margin: 0; }
 .wb-flow-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .wb-flow img { display: block; width: 100%; height: auto; border: 1px solid var(--border); }
-.wb-flow figcaption { margin-top: 8px; color: var(--muted); font-size: 15px; }
+.wb-flow figcaption { margin-top: 8px; color: #d8dde3; font-size: 15px; }
 .wb-video { margin: 24px 0; }
 .wb-video figcaption { font-size: 16px; margin-bottom: 10px; }
 .wb-video video { display: block; width: 100%; background: #101615; aspect-ratio: 16 / 9; }
@@ -40,3 +40,8 @@
 .center-tabs { flex-wrap: wrap; gap: 6px; }
 .center-tabs .btn { padding: 6px 8px; }
 .result-note { font-size: 14px; margin: 8px 0 0; }
+.backscreen { margin: 18px 0; padding: 16px 16px 0; background: #1d1d1d; border-radius: 10px; }
+.backscreen .wb-flow img { border-color: #4a4f57; background: #fff; }
+.backscreen-idle { display: flex; align-items: center; justify-content: center; min-height: 180px; margin: 0; padding: 16px; color: #d8dde3; font-size: 17px; text-align: center; border: 1px solid #4a4f57; border-radius: 6px; background: #12161c; }
+/* Sticky: the crew stay in front of a flow picture taller than the panel. */
+.backscreen-crew { position: sticky; bottom: 0; display: block; width: calc(100% + 32px); height: auto; margin: 8px -16px 0; border-radius: 0 0 10px 10px; }

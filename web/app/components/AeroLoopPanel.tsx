@@ -31,9 +31,19 @@ export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps
     {!hasDesign ? <p className="wb-note">設計案が届くと実行できます。</p>
       : !request ? <p className="wb-note">要求の目標高度が分からないため、実行できません。</p> : null}
     {job?.status === "queued" ? <p className="wb-case-tag" role="status">順番を待っています</p> : null}
-    {job?.status === "running" ? <p className="wb-case-tag" role="status">流体解析を実行中 · 経過 {fmt(job.elapsed_s ?? 0, 0)} 秒</p> : null}
     {error ? <p role="alert" className="wb-error">{error}</p> : null}
     {job?.error && !error ? <p role="alert" className="wb-error">{job.error}</p> : null}
+    <div className="backscreen">
+      {image ? <figure className="wb-flow">
+        <div className="wb-flow-picker" role="group" aria-label="迎角">{images.map(row => <button type="button" key={row.name} aria-pressed={row.name === image.name} className={`btn ${row.name === image.name ? "is-active" : ""}`} onClick={() => setPicked(row.name)}>{row.alpha_deg === null ? row.name : `迎角 ${signedDegrees(row.alpha_deg)}`}</button>)}</div>
+        <img src={apiUrl(image.url)} alt={image.alpha_deg === null ? `流れの画像 ${image.name}` : `迎角 ${signedDegrees(image.alpha_deg)} の流れの画像`}/>
+        <figcaption>{image.speed_mps === null ? image.name : `流速 ${fmt(image.speed_mps, 1)} m/s`}{image.alpha_deg === null ? "" : ` · 迎角 ${signedDegrees(image.alpha_deg)}`}</figcaption>
+      </figure> : <p className="backscreen-idle" role="status">
+        {job?.status === "running" ? `流体解析を実行中 · 経過 ${fmt(job.elapsed_s ?? 0, 0)} 秒`
+          : loop ? "この実行には流れの画像がありません。" : "計算した流れの画像がここに映ります"}
+      </p>}
+      <img className="backscreen-crew" src="/workshop/crew.webp" alt=""/>
+    </div>
     {loop ? <>
       <p className="wb-case-tag">{loop.converged ? "抗力係数が収束しました" : "抗力係数は収束していません"} · {loop.rounds.length}周 · 計算手段 {loop.rounds.at(-1)?.backend ?? "—"}</p>
       <div className="wb-table-scroll"><table className="wb-table">
@@ -47,11 +57,6 @@ export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps
       {loop.dispersion ? <p className="wb-note">更新後の案の条件別試行: {loop.dispersion.passes} / {loop.dispersion.n}（{fmt(loop.dispersion.success_rate * 100, 1)}%）。</p> : null}
       <p className="wb-note">元の案の{loop.baseline.pressure_kpa === null ? "" : `圧力は${fmt(loop.baseline.pressure_kpa, 0)} kPa、`}抗力係数は{loop.baseline.cd === null ? "既定値" : fmt(loop.baseline.cd, 3)}です。</p>
       {loop.notes.length > 0 ? <ul className="wb-limitations">{loop.notes.map(text => <li key={text}>{text}</li>)}</ul> : null}
-      {image ? <figure className="wb-flow">
-        <div className="wb-flow-picker" role="group" aria-label="迎角">{images.map(row => <button type="button" key={row.name} aria-pressed={row.name === image.name} className={`btn ${row.name === image.name ? "is-active" : ""}`} onClick={() => setPicked(row.name)}>{row.alpha_deg === null ? row.name : `迎角 ${signedDegrees(row.alpha_deg)}`}</button>)}</div>
-        <img src={apiUrl(image.url)} alt={image.alpha_deg === null ? `流れの画像 ${image.name}` : `迎角 ${signedDegrees(image.alpha_deg)} の流れの画像`}/>
-        <figcaption>{image.speed_mps === null ? image.name : `流速 ${fmt(image.speed_mps, 1)} m/s`}{image.alpha_deg === null ? "" : ` · 迎角 ${signedDegrees(image.alpha_deg)}`}</figcaption>
-      </figure> : <p className="wb-note">この実行には流れの画像がありません。</p>}
     </> : null}
   </section>;
 }
