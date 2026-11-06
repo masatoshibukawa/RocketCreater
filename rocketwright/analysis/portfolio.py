@@ -70,7 +70,17 @@ def run(template, root, *, runtime, precision=None, limits=None, max_starts=5, e
             raise RuntimeError("Source changed during portfolio; do not combine solver versions")
         h = Harness(store, runtime=runtime, prior_experience=prior)
         s = store.create(specification)
-        child = limits.model_copy(update={"budget_s": budget, "max_versions": versions})
+        child = limits.model_copy(
+            update={
+                "budget_s": budget,
+                "max_versions": versions,
+                # The portfolio already reserves detailed confirmation globally. A screening
+                # child needs only its own final diagnostic cycle, not a second large reserve.
+                "reserve_confirmation_fraction": 0.1
+                if not p.require_cfd
+                else limits.reserve_confirmation_fraction,
+            }
+        )
         s = h.start(s["id"], s["revision"], p, child)
         for _ in range(child.max_actions + 1):
             if time.monotonic() - start_time >= limits.budget_s:

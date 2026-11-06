@@ -6,7 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class Strict(BaseModel):
-    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    # Canonical numeric types must survive JSON save/reload: 1 and 1.0 hash differently.
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False, validate_default=True)
 
 
 # Constitutive scenarios, not certified printed-material allowables. The manufacturer's
@@ -76,6 +77,7 @@ class SearchLimits(Strict):
     planner: Literal["local_llm", "baseline"] = "local_llm"
     fallback: Literal["stop", "baseline"] = "stop"
     planner_timeout_s: float = Field(default=90, gt=0, le=180)
+    skip_forced_choices: bool = True
     # Exploration never changes acceptance precision. Fixed-candidate audits can disable it.
     exploratory_redesign: bool = True
     use_experience: bool = True

@@ -121,3 +121,96 @@ def test_multi_start_inputs_preserve_mission_and_have_independent_geometry():
     assert all(
         s.design.payload_mass_kg == template.design.payload_mass_kg for s in options.values()
     )
+
+
+def test_default_precision_fingerprint_survives_saved_roundtrip():
+    # Native iterations used to be discarded as stale after defaults 1/15 became 1.0/15.0.
+    initial = Precision(require_cfd=False, require_fem=False)
+    restored = Precision.model_validate_json(initial.model_dump_json())
+    assert digest(initial.model_dump()) == digest(restored.model_dump())
+
+
+def test_native_style_feedback_survives_default_precision_reload(tmp_path):
+    from rocketwright.agent.design_projects import sha, write_json
+    from rocketwright.analysis.service import code_hash
+
+    _, h, state = started(tmp_path, max_versions=3, budget_s=5000)
+    c, s, precision, limits = h._campaign(state)
+    artifact = tmp_path / "data.json"
+    write_json(artifact, {"apogee_m": 12})
+    write_json(tmp_path / "manifest.json", {"data.json": sha(artifact)})
+    c.results["screen"] = dict(
+        value=dict(
+            artifact=str(artifact),
+            sha256=sha(artifact),
+            manifest_sha256=sha(tmp_path / "manifest.json"),
+        )
+    )
+    before = dict(apogee_m=10, incidence_deg=2, dry_mass_g=200, static_margin_cal=1.2)
+    after = dict(before, apogee_m=12)
+    h._snapshot = lambda _: after
+    state["adaptive"]["outcome_pending"] = dict(
+        before=before,
+        features=experience.features(s),
+        signature="geometry.fin_span_mm:-1",
+        to_spec_hash=policy.identity(s),
+        code=code_hash(),
+        precision_hash=digest(state["adaptive"]["precision"]),
+        remaining_s=5000,
+        history_index=0,
+        decision_index=-1,
+    )
+    h._feedback(c, s, precision)
+    row = state["adaptive"]["observations"][-1]
+    assert row["status"] == "measured" and row["delta"]["apogee_m"] == 2
+    assert experience.verified(row)
+
+
+def test_decision_view_bounds_history_and_keeps_variable_diversity():
+    import json
+
+    from rocketwright.analysis.planner import prompt_view
+
+    offered = {
+        f"change-{i}": dict(
+            method="redesign",
+            layer="high",
+            score=100 - i,
+            cost_s=1,
+            target=dict(section="geometry", field=f"field-{i % 5}", value=i),
+            retrieved_outcomes=[{"private_path": "x" * 20000}],
+            prediction=dict(delta_height_m=1, delta_mass_g=-3),
+            experience=dict(samples=2, mean_delta_height_m=0.8),
+        )
+        for i in range(50)
+    }
+    view, omitted = prompt_view(offered, {}, max_chars=4000)
+    assert len(json.dumps(view, separators=(",", ":"))) <= 4000
+    assert "change-0" in view["choices"] and omitted
+    assert {r["target"]["field"] for r in view["choices"].values()} == {
+        f"field-{i}" for i in range(5)
+    }
+    assert "private_path" not in json.dumps(view)
+    assert offered["change-0"]["retrieved_outcomes"]
+
+
+def test_single_eligible_dependency_avoids_a_model_call():
+    from rocketwright.analysis.planner import choose
+
+    class Unused:
+        def generate(self, *args):
+            raise AssertionError("No LLM choice exists here")
+
+    decision = choose({"offered": {"thermal": {}}}, {}, SearchLimits(), director=Unused())
+    assert decision["action"] == "thermal" and decision["planner"] == "forced_dependency"
+
+
+def test_screening_surfaces_static_and_attitude_violations_before_confirmation(tmp_path):
+    _, h, state = started(tmp_path)
+    c, s, precision, limits = h._campaign(state)
+    h._snapshot = lambda _: dict(apogee_m=10, static_margin_cal=-0.1, incidence_deg=30)
+    h._feedback = lambda *args: None
+    original = h.data
+    h.data = lambda campaign, key: dict(apogee_m=10) if key == "screen" else original(campaign, key)
+    choices, _, _ = h._choices(c, s, precision, limits)
+    assert {"altitude", "static_margin", "attitude"} <= set(choices["unmet"])

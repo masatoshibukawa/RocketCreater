@@ -31,10 +31,15 @@ def test_planner_rejects_unoffered_ids_extra_fields_and_labels_fallback():
         {"action": "shell", "reason": "no"},
         {"action": "screen", "reason": "yes", "passed": True},
     ]
-    outcome = planner.choose(choices, {}, SearchLimits(), director=FakeDirector(invalid))
+    outcome = planner.choose(
+        choices, {}, SearchLimits(skip_forced_choices=False), director=FakeDirector(invalid)
+    )
     assert outcome["action"] is None and len(outcome["errors"]) == 2
     outcome = planner.choose(
-        choices, {}, SearchLimits(fallback="baseline"), director=FakeDirector(invalid)
+        choices,
+        {},
+        SearchLimits(fallback="baseline", skip_forced_choices=False),
+        director=FakeDirector(invalid),
     )
     assert outcome["planner"] == "fallback_baseline"
     assert outcome["action"] == "screen"

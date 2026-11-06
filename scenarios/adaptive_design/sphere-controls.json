@@ -1,0 +1,261 @@
+{
+  "wall": {
+    "gpu_checks": 13,
+    "max_absolute_error": 8.940696716308594e-08
+  },
+  "source": "https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/tutorials/fluid/steady-flow-around-sphere.html",
+  "reference_kind": "Schiller-Naumann correlation; not an exact solution or rocket experiment",
+  "reference_cd": 1.0917310910948732,
+  "limits": {
+    "correlation_relative": 0.05,
+    "successive_grid_relative": 0.05
+  },
+  "cases": [
+    {
+      "shape": "sphere",
+      "wall_scheme": "interpolated",
+      "fin_thickness_mm": 0,
+      "assembly": "R03-model-1-approximation",
+      "dimensions_mm": {
+        "overall": 463,
+        "body_diameter": 92,
+        "nose_length": 163,
+        "fin_root": 100,
+        "fin_tip": 100,
+        "fin_span": 70,
+        "fin_sweep": 0,
+        "fin_tail_inset": 0,
+        "skirt_length": 0
+      },
+      "cg_mm": 183,
+      "prior_cd": null,
+      "d": 12,
+      "grid": [
+        252,
+        144,
+        144
+      ],
+      "width_D": 12.0,
+      "upstream_D": 6.0,
+      "Re": 100.0,
+      "lattice_Ma": 0.12990381056766578,
+      "Cs": 0,
+      "tau": 0.527,
+      "speed_mps": null,
+      "angle_deg": 0,
+      "rotated_geometry": false,
+      "surface_loads": {
+        "samples": 300,
+        "points": 704,
+        "integration_relative_residual": 6.171310953588395e-08
+      },
+      "fin_coefficients": null,
+      "fin_load_scope": "free plates; body-axis force and moment about each root leading edge",
+      "geometry_sha256": "bf2e26ea52ba0805ca1828317c930e38b29fe7d4b4bd97e5eb99523df88e62f7",
+      "source_sha256": {
+        "run_flow.py": "da9504c47feb373add9655e9ebf1aa1ffe5f73150fcdf67d5cbf568a9c0cd5be",
+        "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+        "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb"
+      },
+      "cant_deg": 0,
+      "steps": 9600,
+      "paired_samples": true,
+      "averaging_tU_D": [
+        30.0,
+        60.0
+      ],
+      "mean": {
+        "Cd": 1.1524837259041896,
+        "Cl": 1.334082320042339e-08,
+        "Cx": 1.1524837259041896,
+        "Cy": 1.334082320042339e-08,
+        "Cz": -5.052567634481595e-08,
+        "Croll": 9.380218658286577e-10,
+        "Cpitch_y": -4.801195806906523e-08,
+        "Cm_z": -2.1121365698796264e-08
+      },
+      "split_window_difference": {
+        "Cd": -9.080684971074504e-06,
+        "Cl": -1.1660334520565757e-08,
+        "Cx": -9.080684971074504e-06,
+        "Cy": -1.1660334520565757e-08,
+        "Cz": -5.3702440426376204e-08,
+        "Croll": -1.7313646359209343e-09,
+        "Cpitch_y": -1.1475267273571627e-07,
+        "Cm_z": 2.0155322980433686e-08
+      },
+      "max_abs_density_departure": 0.00939478911459446,
+      "seconds": 23.484999999869615
+    },
+    {
+      "shape": "sphere",
+      "wall_scheme": "interpolated",
+      "fin_thickness_mm": 0,
+      "assembly": "R03-model-1-approximation",
+      "dimensions_mm": {
+        "overall": 463,
+        "body_diameter": 92,
+        "nose_length": 163,
+        "fin_root": 100,
+        "fin_tip": 100,
+        "fin_span": 70,
+        "fin_sweep": 0,
+        "fin_tail_inset": 0,
+        "skirt_length": 0
+      },
+      "cg_mm": 183,
+      "prior_cd": null,
+      "d": 16,
+      "grid": [
+        336,
+        192,
+        192
+      ],
+      "width_D": 12.0,
+      "upstream_D": 6.0,
+      "Re": 100.0,
+      "lattice_Ma": 0.12990381056766578,
+      "Cs": 0,
+      "tau": 0.536,
+      "speed_mps": null,
+      "angle_deg": 0,
+      "rotated_geometry": false,
+      "surface_loads": {
+        "samples": 298,
+        "points": 1200,
+        "integration_relative_residual": 1.0688853274041189e-07
+      },
+      "fin_coefficients": null,
+      "fin_load_scope": "free plates; body-axis force and moment about each root leading edge",
+      "geometry_sha256": "bf2e26ea52ba0805ca1828317c930e38b29fe7d4b4bd97e5eb99523df88e62f7",
+      "source_sha256": {
+        "run_flow.py": "da9504c47feb373add9655e9ebf1aa1ffe5f73150fcdf67d5cbf568a9c0cd5be",
+        "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+        "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb"
+      },
+      "cant_deg": 0,
+      "steps": 12814,
+      "paired_samples": true,
+      "averaging_tU_D": [
+        30.0328125,
+        60.065625
+      ],
+      "mean": {
+        "Cd": 1.1270002515889679,
+        "Cl": 2.6548097863727313e-08,
+        "Cx": 1.1270002515889679,
+        "Cy": 2.6548097863727313e-08,
+        "Cz": 1.8456227548737953e-08,
+        "Croll": 1.8072773446186255e-10,
+        "Cpitch_y": 6.25902792430372e-08,
+        "Cm_z": -3.9550402143194264e-08
+      },
+      "split_window_difference": {
+        "Cd": 1.1493990621724848e-05,
+        "Cl": 7.1129929548752925e-09,
+        "Cx": 1.1493990621724848e-05,
+        "Cy": 7.1129929548752925e-09,
+        "Cz": -1.5650361730639017e-08,
+        "Croll": -3.451352208099755e-11,
+        "Cpitch_y": -5.3817340862098554e-08,
+        "Cm_z": -1.3795509573685356e-08
+      },
+      "max_abs_density_departure": 0.009113967418670654,
+      "seconds": 75.92200000002049
+    },
+    {
+      "shape": "sphere",
+      "wall_scheme": "interpolated",
+      "fin_thickness_mm": 0,
+      "assembly": "R03-model-1-approximation",
+      "dimensions_mm": {
+        "overall": 463,
+        "body_diameter": 92,
+        "nose_length": 163,
+        "fin_root": 100,
+        "fin_tip": 100,
+        "fin_span": 70,
+        "fin_sweep": 0,
+        "fin_tail_inset": 0,
+        "skirt_length": 0
+      },
+      "cg_mm": 183,
+      "prior_cd": null,
+      "d": 20,
+      "grid": [
+        420,
+        240,
+        240
+      ],
+      "width_D": 12.0,
+      "upstream_D": 6.0,
+      "Re": 100.0,
+      "lattice_Ma": 0.12990381056766578,
+      "Cs": 0,
+      "tau": 0.545,
+      "speed_mps": null,
+      "angle_deg": 0,
+      "rotated_geometry": false,
+      "surface_loads": {
+        "samples": 302,
+        "points": 1824,
+        "integration_relative_residual": 7.918693116172987e-08
+      },
+      "fin_coefficients": null,
+      "fin_load_scope": "free plates; body-axis force and moment about each root leading edge",
+      "geometry_sha256": "bf2e26ea52ba0805ca1828317c930e38b29fe7d4b4bd97e5eb99523df88e62f7",
+      "source_sha256": {
+        "run_flow.py": "da9504c47feb373add9655e9ebf1aa1ffe5f73150fcdf67d5cbf568a9c0cd5be",
+        "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+        "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb"
+      },
+      "cant_deg": 0,
+      "steps": 16006,
+      "paired_samples": true,
+      "averaging_tU_D": [
+        30.01125,
+        60.0225
+      ],
+      "mean": {
+        "Cd": 1.1138825821712335,
+        "Cl": -8.610714441972202e-09,
+        "Cx": 1.1138825821712335,
+        "Cy": -8.610714441972202e-09,
+        "Cz": 3.147378504817803e-08,
+        "Croll": -2.9858284245291545e-10,
+        "Cpitch_y": 5.288749400439945e-09,
+        "Cm_z": 1.2649469857590571e-08
+      },
+      "split_window_difference": {
+        "Cd": 1.0494780194880704e-05,
+        "Cl": -5.055461898608272e-08,
+        "Cx": 1.0494780194880704e-05,
+        "Cy": -5.055461898608272e-08,
+        "Cz": 2.714298829830411e-08,
+        "Croll": -1.0353553620427474e-09,
+        "Cpitch_y": 7.49194464816881e-08,
+        "Cm_z": 7.315567686850368e-08
+      },
+      "max_abs_density_departure": 0.009098261594772339,
+      "seconds": 164.5470000000205
+    }
+  ],
+  "correlation_relative_error": [
+    0.05564798447609376,
+    0.03230572141966204,
+    0.020290244783763622
+  ],
+  "successive_grid_relative": [
+    0.02261177340403634,
+    0.011776528000074128
+  ],
+  "elapsed_s": 284.844000000041,
+  "rocket_validation": false,
+  "limitations": [
+    "Periodic transverse boundaries differ from the reference tutorial",
+    "Only the low-Re sphere and wall implementation are checked",
+    "No high-Re rocket wall-layer accuracy or experimental agreement is inferred"
+  ],
+  "evidence_manifest_sha256": "67588a155671f087acfd22a0f245ccdbbba57f1421f8812c3ab5e9d005822128",
+  "verified_files": 20
+}

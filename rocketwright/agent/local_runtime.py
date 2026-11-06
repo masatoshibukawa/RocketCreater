@@ -53,7 +53,9 @@ class LocalJSON:
 
 
 class LocalDirector:
-    def __init__(self):
+    def __init__(self, *, context_tokens=None, output_tokens=1800):
+        self.context_tokens = context_tokens
+        self.output_tokens = output_tokens
         connection_path = (
             Path(__file__).resolve().parents[2] / "AIvideo/local-director/runtime/connection.json"
         )
@@ -97,7 +99,11 @@ class LocalDirector:
                     {"role": "system", "content": instructions},
                     {"role": "user", "content": json.dumps(context, ensure_ascii=False)},
                 ],
-                "options": {"temperature": 0, "num_predict": 1800},
+                "options": {
+                    "temperature": 0,
+                    "num_predict": self.output_tokens,
+                    **({"num_ctx": self.context_tokens} if self.context_tokens else {}),
+                },
                 "keep_alive": 0,
             },
         )

@@ -123,6 +123,7 @@ def training_rows(decisions, outcomes):
         rows.append(
             dict(
                 input=decision["selection_context"],
+                model_input=decision.get("prompt_view"),
                 selected=decision["action"],
                 reason=decision["reason"],
                 outcome=outcome,
