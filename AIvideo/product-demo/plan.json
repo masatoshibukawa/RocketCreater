@@ -1,0 +1,304 @@
+{
+  "schema_version": 1,
+  "status": "planning",
+  "product": "RocketWright",
+  "event": {
+    "name": "Built with Claude: Japan 2026",
+    "deadline": "2026-11-08T20:00:00+09:00",
+    "language": "ja",
+    "max_duration_s": 180,
+    "rule_basis": "participant-provided guide and event-channel notices; latest authenticated form unverified",
+    "rubric_percent": {
+      "impact": 30,
+      "demo": 25,
+      "claude_use": 25,
+      "depth_execution": 20
+    }
+  },
+  "production": {
+    "target_duration_s": 175,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "subtitle_timing": "draft_equal_segments_within_each_shot; retime after actual voice recording",
+    "voice": "Japanese; speaker and take unassigned",
+    "bgm": "undecided; voice intelligibility first",
+    "source_baseline_commit": "34a84967a218ca1672c68d4ea0dc72b0b51c653f",
+    "capture_execution": "not_run",
+    "paths": {
+      "source": "AIvideo/product-demo",
+      "work": "output/media/product-demo",
+      "release": "assets/product-demo/overview"
+    }
+  },
+  "scenario": {
+    "source": "scenarios/demo_bottle.yaml",
+    "request_text": "1.5 L ペットボトルで卵を割らずに 30 m まで上げて回収したい。予算 3,000 円。",
+    "seed": 7,
+    "case_id": null,
+    "run_id": null,
+    "source_id": null,
+    "model_id": null,
+    "measured_latency_s": null,
+    "result_metrics": null
+  },
+  "evidence": {
+    "E01": {
+      "description": "Same-case real app capture and frozen inputs",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E02": {
+      "description": "Actual Claude input/model/tool event trace",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E03": {
+      "description": "Calculation conditions, provenance and returned metrics",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E04": {
+      "description": "Bound failed-check/change/recheck sequence",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E05": {
+      "description": "Same-design flight/analysis and fidelity labels",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E06": {
+      "description": "Downloaded same-case PDF/CSV/SVG and source/version hashes",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E07": {
+      "description": "Explicit single-condition follow-up comparison",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E08": {
+      "description": "Verified team contribution and one domain-knowledge example",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E09": {
+      "description": "Source, rights, disclosure and delivery metadata review",
+      "status": "not_collected",
+      "artifacts": []
+    },
+    "E10": {
+      "description": "Full playback, listening, caption and public access checks",
+      "status": "not_collected",
+      "artifacts": []
+    }
+  },
+  "shots": [
+    {
+      "id": "S01",
+      "start_s": 0,
+      "end_s": 15,
+      "stage": "design",
+      "message": "初めて設計する人の課題を、実アプリから示す",
+      "visual": "3Dモデルと条件欄を同時に見せ、入力前の迷いを一文で置く。結果を先出しする場合も同じ収録案件だけを使う。",
+      "focus": "モデル→要求欄",
+      "voice_lines": [
+        "はじめてロケットを設計すると、形だけでは決められません。",
+        "質量や部品、飛行条件をつなぐ判断が必要です。",
+        "RocketWrightは、その検討を一つの流れにまとめます。"
+      ],
+      "evidence_ids": [
+        "E01",
+        "E08"
+      ],
+      "disclosure": "チームの経歴や利用者の効果を未確認のまま語らない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S02",
+      "start_s": 15,
+      "end_s": 30,
+      "stage": "design",
+      "message": "一人の利用者の要求を入力する",
+      "visual": "設計の相談へscenarioの要求文を入力。seedと環境条件も記録する。入力が長い部分は準備済みと表示して短縮可。",
+      "focus": "要求文→設計を開始",
+      "voice_lines": [
+        "今回は、1.5リットルのペットボトルで、",
+        "卵を回収し、30メートルを目指します。予算は3,000円。",
+        "この要求を、そのままアプリに伝えます。"
+      ],
+      "evidence_ids": [
+        "E01",
+        "E02"
+      ],
+      "disclosure": "30mは要求値。達成値として表示しない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S03",
+      "start_s": 30,
+      "end_s": 47,
+      "stage": "design",
+      "message": "Claudeが要求と道具を結び付ける",
+      "visual": "実際のClaude実行の説明とツール呼出を表示。要求、部品の候補、計算の戻り値の対応を読める範囲で示す。",
+      "focus": "条件整理→実際のツール結果",
+      "voice_lines": [
+        "Claudeが要求と制約を整理し、設計の候補を考えます。",
+        "必要な計算や部品の確認を、道具へつなぎます。",
+        "ここで見せるのは、実際の入力と実行記録です。"
+      ],
+      "evidence_ids": [
+        "E02",
+        "E03"
+      ],
+      "disclosure": "Gemmaや模擬クライアントをClaudeとして見せない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S04",
+      "start_s": 47,
+      "end_s": 70,
+      "stage": "design",
+      "message": "数値と部品の根拠を確かめる",
+      "visual": "候補の3D、部品構成、条件、費用や飛行結果を対応させる。画面の数値はその実行から読み取り、台本へ事前の達成値を埋めない。",
+      "focus": "候補→判定→部品の出典",
+      "voice_lines": [
+        "数値は、専用の計算コードが出します。",
+        "部品の構成と飛行条件をそろえて、候補を確かめます。",
+        "計算結果だけでなく、部品の出典と仮定も辿れます。"
+      ],
+      "evidence_ids": [
+        "E03"
+      ],
+      "disclosure": "シミュレーションの判定を、実機の安全認証と呼ばない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S05",
+      "start_s": 70,
+      "end_s": 98,
+      "stage": "design",
+      "message": "検査の未達を受け、理由に沿って選び直す",
+      "visual": "同じ実行の未達条件、Claudeの外部に説明可能な理由、変更、再検査を示す。実際の未達→修正が得られない場合は収録案件を再選定する。",
+      "focus": "未達の理由→変更箇所→再計算",
+      "voice_lines": [
+        "この案は、入力した条件をまだ満たしていません。",
+        "Claudeが検査結果を読み、見直す箇所と理由を説明します。",
+        "変更した案を、同じ判定条件で再計算します。",
+        "結果を受けて検討を進めるところが、このデモの核です。"
+      ],
+      "evidence_ids": [
+        "E04"
+      ],
+      "disclosure": "別の成功実行をつながない。目標・閾値を黙って変えない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S06",
+      "start_s": 98,
+      "end_s": 119,
+      "stage": "analysis",
+      "message": "解析結果を利用者が読み取る",
+      "visual": "解析→高度の推移／飛行と回収を表示。同じsource_idの時系列を再生する。流体解析は実行したsolverと精度・収束の状態を示せる場合だけ挿入。",
+      "focus": "高度履歴→条件→未確認事項",
+      "voice_lines": [
+        "解析では、飛行の推移と条件を確認できます。",
+        "表示する機体とグラフは、同じ設計案の計算結果です。",
+        "回収の映像や数値も、実機での成功とは分けて示します。"
+      ],
+      "evidence_ids": [
+        "E05"
+      ],
+      "disclosure": "CG・記録再生・待ち時間の省略をその場で表示する。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S07",
+      "start_s": 119,
+      "end_s": 139,
+      "stage": "exports",
+      "message": "同じ案の使える成果物を取り出す",
+      "visual": "出力→製作票・印刷データ／設計図SVG。製作票PDF、部品表、側面図を実際に開く。組立手順・S5データ・CGは同じ保存版で取得できた場合だけ補足。",
+      "focus": "出力操作→PDF／CSV／SVG",
+      "voice_lines": [
+        "確認した案から、図面や部品表、製作票を取り出します。",
+        "同じ設計の条件と根拠を、次の作業へ持ち帰れます。",
+        "作成できないものは、その理由も表示します。"
+      ],
+      "evidence_ids": [
+        "E06"
+      ],
+      "disclosure": "任意のClaude案から組立工程まで自動生成できるとは言わない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S08",
+      "start_s": 139,
+      "end_s": 153,
+      "stage": "design",
+      "message": "条件の変化に対する判断の変化を示す",
+      "visual": "比較用の要求は一つだけ変更。元の要求と新しい要求、モデル・環境・予算を記録する。追試を示せない場合は同じ時間枠で出典と仮定の確認へ差し替える。",
+      "focus": "変えた条件→実際の判断の差",
+      "voice_lines": [
+        "条件が変わったときも、どこを見直すかが大切です。",
+        "変えた条件と、それを受けた判断を並べて確認します。"
+      ],
+      "evidence_ids": [
+        "E07"
+      ],
+      "disclosure": "比較する実行は別実行と明記。学習効果や一般精度に拡張しない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S09",
+      "start_s": 153,
+      "end_s": 167,
+      "stage": "design",
+      "message": "Claudeとドメイン知識の役割を結ぶ",
+      "visual": "実アプリの履歴と検査の根拠を背景に、モデルの判断・コードの計算・人が確認する範囲を指示する。チームの経験は確認した一件だけ短く挿入。",
+      "focus": "説明→計算→人が確認する範囲",
+      "voice_lines": [
+        "Claudeは条件を読み、検査結果から選び直します。",
+        "コードは数値を計算し、人は仮定と現物を確認します。",
+        "ロケット固有の条件を、この流れに組み込んでいます。"
+      ],
+      "evidence_ids": [
+        "E02",
+        "E03",
+        "E08"
+      ],
+      "disclosure": "モデル内部の思考を推測して演出しない。本人の経験を創作しない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    },
+    {
+      "id": "S10",
+      "start_s": 167,
+      "end_s": 175,
+      "stage": "exports",
+      "message": "利用者へ渡した能力と確認範囲で締める",
+      "visual": "成果物の画面と製品名で締める。実機未検証と適用範囲を読める短文で残す。タイトル・無音・余韻もこの175秒内に収める。",
+      "focus": "成果物→次の検討",
+      "voice_lines": [
+        "要求から、根拠を確かめられる設計案へ。",
+        "ここまでの結果はシミュレーションです。"
+      ],
+      "evidence_ids": [
+        "E06",
+        "E10"
+      ],
+      "disclosure": "実機検証、公開閲覧、提出完了を未実施のまま合格にしない。",
+      "status": "planned",
+      "media_kind": "app_capture"
+    }
+  ]
+}

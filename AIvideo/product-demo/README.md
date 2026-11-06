@@ -18,3 +18,23 @@ Built with Claude: Japan 2026の提出に向け、実アプリの「要求 → �
 - 実装を読んだこと、実行が成功したこと、収録できたこと、完成映像が確認済みであることを分ける。
 
 提出フォームの最新設問・概要の指定形式と文字数は未確認。計画の作成で課金APIを有効化したり、収録・動画公開・大会提出を行ったりはしない。
+
+## 初稿と次の作業
+
+- [狙いと5行のメッセージ](brief.md)
+- [175秒の構成データ](plan.json) / [日本語台本](script.ja.md) / [絵コンテ](storyboard.md)
+- [仮字幕SRT](captions/overview.ja.srt)：台本と同じ文。録音前の仮時刻
+- [収録・編集・採用の計画](capture-plan.md)
+- [主張・実装・今後集める証拠](evidence-map.md)
+- [今回選んだ既存スキル](selected-skills.md)
+
+`plan.json`を正本とし、台本・絵コンテ・仮字幕は標準Pythonだけで更新できる。
+
+```powershell
+python -X utf8 AIvideo/product-demo/tools/prepare.py
+python -X utf8 AIvideo/product-demo/tools/prepare.py --check
+```
+
+最初のコマンドは、Git対象外の作業用フォルダー、収録ログの空テンプレート、`output/media/product-demo/planning/storyboard.html`の構成ラフも作る。実アプリの収録・モデル呼出・音声生成・動画書出し・公開は行わない。2つ目は計画の時刻、参照、字幕、保存先、未採用状態を確認する。
+
+次は**S05の「検査→修正→再検査」を実際の一件で試し録り**し、案件と原稿を確定する。完成動画を採用する前に、実行・視聴・権限を別途確認する。
