@@ -11,7 +11,7 @@ __device__ bool clip_plane(float value,float slope,float &lo,float &hi) {
 __device__ float fin_distance(float x,float y,float z,float vx,float vy,float vz,const float *g) {
     float best=2.f,root=g[0]-g[6]-g[2];
     for(int blade=0;blade<4;++blade) {
-        float r=(blade==0 ? y : blade==1 ? z : blade==2 ? -y : -z)-.5f;
+        float r=(blade==0 ? y : blade==1 ? z : blade==2 ? -y : -z)-.5f-g[14];
         float t=(blade==0 ? z : blade==1 ? -y : blade==2 ? -z : y);
         float dr=(blade==0 ? vy : blade==1 ? vz : blade==2 ? -vy : -vz);
         float dt=(blade==0 ? vz : blade==1 ? -vy : blade==2 ? -vz : vy);
@@ -22,6 +22,15 @@ __device__ float fin_distance(float x,float y,float z,float vx,float vy,float vz
             && clip_plane(g[2]+(sweep+taper)*r-(x-root),(sweep+taper)*dr-vx,lo,hi)
             && clip_plane(.5f*g[13]-side,-change,lo,hi)
             && clip_plane(.5f*g[13]+side,change,lo,hi)) best=fminf(best,lo);
+        // External mounting shoe envelope; holes/fillets and strap roughness unresolved.
+        // The fin root sits at its outer radius, not inside the pressure bottle.
+        if(g[14]>0 && g[15]>0) {
+            lo=0; hi=1;
+            if(clip_plane(r+g[14],dr,lo,hi) && clip_plane(-r,-dr,lo,hi)
+                && clip_plane(x-root,vx,lo,hi) && clip_plane(g[2]-x+root,-vx,lo,hi)
+                && clip_plane(.5f*g[15]-t,-dt,lo,hi)
+                && clip_plane(.5f*g[15]+t,dt,lo,hi)) best=fminf(best,lo);
+        }
     }
     return best;
 }

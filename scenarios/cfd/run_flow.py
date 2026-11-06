@@ -117,6 +117,8 @@ def main():
             math.cos(rotation_angle),
             math.sin(rotation_angle),
             args.fin_thickness_mm / diameter,
+            dims.get("fin_root_offset", 0) / diameter,
+            dims.get("fin_shoe_width", 0) / diameter,
         ],
         dtype="f",
     )
@@ -137,7 +139,7 @@ def main():
     angle = math.radians(args.angle)
     along, across = math.cos(angle), math.sin(angle)
     transverse_extent = max(g[-1], g[0] - g[-1]) / diameter * abs(math.sin(rotation_angle)) + (
-        0.5 + dims["fin_span"] / diameter
+        0.5 + (dims["fin_span"] + dims.get("fin_root_offset", 0)) / diameter
     ) * abs(math.cos(rotation_angle))
     if args.rotate_geometry and transverse_extent > args.width / 2 - 0.75:
         p.error("rotated body is too close to the periodic transverse boundaries")
@@ -177,6 +179,7 @@ def main():
         )
     wall_args = (lookup, fractions, wall_mode)
     surface_stats = cp.zeros((4, len(surface_ids)), cp.float32)
+    fin_stats = cp.zeros((4, 6), cp.float32)
     surface_count = 0
     params = (
         *sizes,
@@ -280,6 +283,22 @@ def main():
                     ),
                 )
             surface_count += 1
+            if wall_mode and shape == 2 and len(surface_ids):
+                module.get_function("fin_probe")(
+                    ((len(surface_ids) + 127) // 128,),
+                    threads,
+                    (
+                        src,
+                        mask,
+                        surface_ids,
+                        np.int32(len(surface_ids)),
+                        *sizes,
+                        gpu_geometry,
+                        lookup,
+                        fractions,
+                        fin_stats,
+                    ),
+                )
         advance(
             blocks,
             threads,
@@ -401,6 +420,12 @@ def main():
         angle_deg=args.angle,
         rotated_geometry=args.rotate_geometry,
         surface_loads=surface_summary,
+        fin_coefficients=(
+            fin_stats.get() / (surface_count * 0.5 * speed**2 * math.pi * d**2 / 4)
+        ).tolist()
+        if args.surface_loads and wall_mode and shape == 2
+        else None,
+        fin_load_scope="free plates; body-axis force and moment about each root leading edge",
         geometry_sha256=hashlib.sha256(args.assembly.read_bytes()).hexdigest(),
         source_sha256={
             p.name: hashlib.sha256(p.read_bytes()).hexdigest()

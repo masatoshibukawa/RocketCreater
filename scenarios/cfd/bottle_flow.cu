@@ -163,6 +163,40 @@ extern "C" __global__ void advance(const float *src,float *dst,const unsigned *m
     }
 }
 
+// Integrate individual free-fin loads at the analytic intersection (excluding shoes).
+// The output is body-axis force and moment about each fin's root leading edge.
+extern "C" __global__ void fin_probe(const float *src,const unsigned *mask,
+        const int *ids,int count,int nx,int ny,int nz,int d,const float *g,
+        const int *lookup,const float *fractions,float *stats) {
+    int j=blockIdx.x*blockDim.x+threadIdx.x;
+    if(j>=count) return;
+    int k=ids[j],n=nx*ny*nz;
+    float dx=1.f/d,x=(k%nx+.5f)*dx-g[10],y=(k/nx%ny+.5f-ny*.5f)*dx;
+    float z=(k/(nx*ny)+.5f-nz*.5f)*dx;
+    float xb=g[11]*(x-g[8])-g[12]*y+g[8],yb=g[12]*(x-g[8])+g[11]*y;
+    float root=g[0]-g[6]-g[2],r0=.5f+g[14];
+    for(int i=1;i<19;++i) if(mask[k] & (1u<<i)) {
+        float q=fractions[j*19+i],vx=-ex[i]*dx,vy=-ey[i]*dx;
+        float wx=xb+q*(g[11]*vx-g[12]*vy),wy=yb+q*(g[12]*vx+g[11]*vy);
+        float wz=z-q*ez[i]*dx;
+        int blade=fabsf(wy)>fabsf(wz) ? (wy>0 ? 0 : 2) : (wz>0 ? 1 : 3);
+        float r=(blade==0 ? wy : blade==1 ? wz : blade==2 ? -wy : -wz);
+        if(r<r0+1e-5f) continue;
+        float s=(r-r0)/g[4],chord=wx-root-g[5]*s;
+        if(s>1+1e-5f || chord<-1e-5f || chord>g[2]+(g[3]-g[2])*s+1e-5f) continue;
+        int opposite=(i%2) ? i+1 : i-1;
+        float h=reflected(src,mask,lookup,fractions,k,i,n,nx,ny,1);
+        float impulse=h+src[opposite*n+k];
+        float fx=(-g[11]*ex[i]+g[12]*ey[i])*impulse;
+        float fy=(-g[12]*ex[i]-g[11]*ey[i])*impulse,fz=-ez[i]*impulse;
+        float ry=wy-(blade==0 ? r0 : blade==2 ? -r0 : 0);
+        float rz=wz-(blade==1 ? r0 : blade==3 ? -r0 : 0),rx=wx-root;
+        atomicAdd(stats+6*blade,fx); atomicAdd(stats+6*blade+1,fy);
+        atomicAdd(stats+6*blade+2,fz); atomicAdd(stats+6*blade+3,ry*fz-rz*fy);
+        atomicAdd(stats+6*blade+4,rz*fx-rx*fz); atomicAdd(stats+6*blade+5,rx*fy-ry*fx);
+    }
+}
+
 extern "C" __global__ void cut(const float *src,const unsigned *mask,float *slice,
                                int nx,int ny,int nz) {
     int j=blockIdx.x*blockDim.x+threadIdx.x,plane=nx*ny,n=plane*nz;

@@ -31,7 +31,7 @@ extern "C" __global__ void check(const float *g,float *v,const float *src,
 }
 """
     module = cp.RawModule(code=code, options=("--std=c++11",))
-    g = cp.asarray([4, 1, 1, 0.5, 1, 0.3, 0.1, 0, 2, 0, 3, 1, 0, 0.02], dtype="f")
+    g = cp.asarray([4, 1, 1, 0.5, 1, 0.3, 0.1, 0, 2, 0, 3, 1, 0, 0.02, 0, 0], dtype="f")
     src = cp.zeros((19, 27), dtype="f")
     src[2, 13:16] = 0.04
     src[2, 14] = 0.08

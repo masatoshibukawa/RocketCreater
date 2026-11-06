@@ -152,6 +152,12 @@ class MassDistribution:
         self.local_dry = self.dry_mass[:, None] * np.column_stack(
             [axial_span**2 / 12 + radial2 / 2, axial_span**2 / 12 + radial2 / 2, radial2]
         )
+        for i, item in enumerate(bill):
+            if "local_inertia_kg_m2" in item:
+                inertia = np.asarray(item["local_inertia_kg_m2"], dtype=float)
+                if inertia.shape != (3,) or not np.isfinite(inertia).all() or min(inertia) <= 0:
+                    raise ValueError("Invalid explicit local inertia")
+                self.local_dry[i] = inertia * masses[i] / (item["mass_g"] / 1000)
         mw0 = self.trace["water_kg"][0]
         water_cg = (
             (dry + mw0) * assembly["wet_cg_mm"] / 1000 - dry * assembly["loaded_cg_mm"] / 1000
