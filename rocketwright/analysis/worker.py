@@ -12,6 +12,7 @@ import numpy as np
 
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.agent.project_equipment import procurement_summary
+from rocketwright.analysis import aero_accuracy
 from rocketwright.analysis.record import compile_record
 from rocketwright.analysis.schema import Precision
 from rocketwright.manufacturing import PrintRequest, prepare_geometry
@@ -214,11 +215,121 @@ class Worker:
     def flight(self):
         return self.trajectory()
 
+    def run_case(self, assembly, out, speed, angle, cells, **changes):
+        r = dict(self.ctx["runtime"], **changes)
+        command = [
+            r.get("cfd_python") or sys.executable,
+            str(ROOT / "scenarios/cfd/run_flow.py"),
+            str(assembly),
+            str(out),
+            "--shape",
+            "flat",
+            "--wall",
+            "interpolated",
+            "--fin-thickness-mm",
+            str(self.spec.geometry.fin_thickness_mm),
+            "--cells",
+            str(cells),
+            "--width",
+            str(r.get("cfd_width", 10)),
+            "--upstream",
+            "3",
+            "--times",
+            str(r["cfd_times"]),
+            "--speed",
+            str(speed),
+            "--angle",
+            str(angle),
+            "--lattice-speed",
+            str(r.get("cfd_lattice_speed", 0.075)),
+            "--rotate-geometry",
+            "--surface-loads",
+            "--paired-samples",
+            "--volume",
+            "--no-preview",
+        ]
+        with out.with_suffix(".log").open("w", encoding="utf-8") as log:
+            p = subprocess.run(
+                command,
+                cwd=ROOT,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                timeout=max(0.1, self.deadline - time.monotonic()),
+            )
+        if p.returncode:
+            raise RuntimeError(f"CFD case {out.name} failed; inspect its log")
+        return read(out / "case.json")
+
+    def cfd_audit(self):
+        r = self.ctx["runtime"]
+        table = self.aero()
+        speed, angle = aero_accuracy.holdout(table.speeds, table.angles)
+        assembly = self.folder / "assembly.json"
+        write_json(assembly, self.assembly)
+        levels = [r["cfd_cells_coarse"], r["cfd_cells_fine"], r["cfd_cells_fine"] + 4]
+        cases = {
+            str(n): self.run_case(assembly, self.folder / f"grid-{n}", speed, angle, n)
+            for n in levels
+        }
+        cases["wide"] = self.run_case(
+            assembly,
+            self.folder / "wide",
+            speed,
+            angle,
+            levels[1],
+            cfd_width=r.get("cfd_width", 10) + 2,
+        )
+        cases["time"] = self.run_case(
+            assembly,
+            self.folder / "time",
+            speed,
+            angle,
+            levels[1],
+            cfd_lattice_speed=r.get("cfd_lattice_speed", 0.075) / 2,
+        )
+        cases["duration"] = self.run_case(
+            assembly,
+            self.folder / "duration",
+            speed,
+            angle,
+            levels[1],
+            cfd_times=r["cfd_times"] * 2,
+        )
+        names = ["Cx", "Cy", "Cm_z"]
+        vectors = {k: [v["mean"][n] for n in names] for k, v in cases.items()}
+        reference = vectors[str(levels[1])]
+        coeff = integrated_coefficients(
+            table.coefficients(speed, angle),
+            table.stations,
+            table.diameter,
+            self.assembly["loaded_cg_mm"] / 1000,
+        )[[0, 1, 5]]
+        differences = {
+            k: aero_accuracy.relative_change(reference, vectors[k])
+            for k in ("wide", "time", "duration")
+        }
+        differences["interpolation"] = aero_accuracy.relative_change(coeff, reference)
+        differences["third_grid"] = aero_accuracy.relative_change(
+            reference, vectors[str(levels[2])]
+        )
+        return dict(
+            condition=dict(speed_mps=speed, angle_deg=angle),
+            cells=levels,
+            differences=differences,
+            observed_orders={
+                n: aero_accuracy.grid_order(levels, [vectors[str(level)][i] for level in levels])
+                for i, n in enumerate(names)
+            },
+            cases=cases,
+            metrics={"aero_" + k: v for k, v in differences.items()},
+            scope="One independent ascent condition; finite differences, not a global error bound",
+        )
+
     def cfd(self, fine):
         runtime = self.ctx["runtime"]
         cells = runtime["cfd_cells_fine" if fine else "cfd_cells_coarse"]
-        speeds = [1.0, 35.0]
-        angles = [0, 5, 15, 45, 90, 135, 180]
+        speeds = runtime.get("cfd_speeds", [1, 35])
+        angles = runtime.get("cfd_angles", [0, 5, 15, 45, 90, 135, 180])
         folder = self.folder / "tunnel"
         folder.mkdir()
         write_json(folder / "table-config.json", dict(speeds_mps=speeds, angles_deg=angles))
@@ -227,44 +338,7 @@ class Worker:
         for speed in speeds:
             for angle in angles:
                 out = folder / f"v{speed:02.0f}-a{angle:03.0f}"
-                command = [
-                    runtime.get("cfd_python") or sys.executable,
-                    str(ROOT / "scenarios/cfd/run_flow.py"),
-                    str(assembly_file),
-                    str(out),
-                    "--shape",
-                    "flat",
-                    "--wall",
-                    "interpolated",
-                    "--fin-thickness-mm",
-                    str(self.spec.geometry.fin_thickness_mm),
-                    "--cells",
-                    str(cells),
-                    "--width",
-                    "10",
-                    "--upstream",
-                    "3",
-                    "--times",
-                    str(runtime["cfd_times"]),
-                    "--speed",
-                    str(speed),
-                    "--angle",
-                    str(angle),
-                    "--rotate-geometry",
-                    "--surface-loads",
-                    "--paired-samples",
-                    "--no-preview",
-                ]
-                with (folder / f"{out.name}.log").open("w", encoding="utf-8") as log:
-                    p = subprocess.run(
-                        command,
-                        cwd=ROOT,
-                        stdout=log,
-                        stderr=subprocess.STDOUT,
-                        timeout=max(0.1, self.deadline - time.monotonic()),
-                    )
-                if p.returncode:
-                    raise RuntimeError(f"CFD case {out.name} failed; inspect its log")
+                self.run_case(assembly_file, out, speed, angle, cells)
         table = TunnelDatabase(folder)
         cases = [read(p) for p in folder.glob("*/case.json")]
         averaging = max(
@@ -331,7 +405,11 @@ class Worker:
 
     def fin_force(self):
         f = self.base_flight()
-        # A screening distribution; CFD total forces do not identify per-fin tractions.
+        if "cfd_fine" in self.data:
+            return max(
+                abs(row["local_resultant"][2]) for row in aero_accuracy.fin_envelope(self.aero(), f)
+            )
+        # A screening distribution when individual CFD resultants are unavailable.
         q = f["max_q_pa"]
         alpha = math.radians(min(90, f["ascent_incidence_deg"]))
         area = math.pi * (self.spec.geometry.body_diameter_mm / 2000) ** 2
@@ -355,7 +433,9 @@ class Worker:
             tab=self.spec.assumptions.root_capture_mm / 1000,
         )
         result["load_scope"] = (
-            "max-q times max-incidence envelope; two loaded fins, assumed distribution"
+            "CFD concurrent fin force envelope; beam load shape remains assumed"
+            if "cfd_fine" in self.data
+            else "max-q times max-incidence envelope; two loaded fins, assumed distribution"
         )
         result["temperature_c"] = temp
         result["metrics"] = dict(
@@ -378,23 +458,54 @@ class Worker:
             / 1000
         )
         temp = self.data["thermal"]["final_c"]["fin"]
-        deck, _, _, mapping = fin_load_map.deck(
-            self.assembly,
-            self.cfg,
-            self.fin_force(),
-            center,
-            resolution=self.ctx["runtime"].get("fem_level", 2) - (0 if fine else 1),
-            temperature_c=temp,
+        level = self.ctx["runtime"].get("fem_level", 2) - (0 if fine else 1)
+        cases = (
+            aero_accuracy.fin_envelope(self.aero(), self.base_flight())
+            if "cfd_fine" in self.data
+            else [dict(analytic_envelope=True)]
         )
-        result = fem.run_deck(
-            self.ctx["runtime"]["calculix"],
-            self.folder,
-            "fin",
-            deck,
-            timeout_s=max(0.1, self.deadline - time.monotonic()),
+        outputs = []
+        for i, condition in enumerate(cases):
+            if "local_resultant" in condition:
+                deck, _, _, mapping = fin_load_map.resultant_deck(
+                    self.assembly,
+                    self.cfg,
+                    condition["local_resultant"],
+                    resolution=level,
+                    temperature_c=temp,
+                )
+            else:
+                deck, _, _, mapping = fin_load_map.deck(
+                    self.assembly,
+                    self.cfg,
+                    self.fin_force(),
+                    center,
+                    resolution=level,
+                    temperature_c=temp,
+                )
+            result = fem.run_deck(
+                self.ctx["runtime"]["calculix"],
+                self.folder,
+                f"fin-{i}",
+                deck,
+                timeout_s=max(0.1, self.deadline - time.monotonic()),
+            )
+            result.update(mapping=mapping, condition=condition)
+            outputs.append(result)
+        result = dict(
+            cases=outputs,
+            load_scope=(
+                (
+                    "CFD Fn and both root moments at concurrent extrema; "
+                    "reconstructed pressure, not local traction; tangential load omitted"
+                )
+                if "cfd_fine" in self.data
+                else "analytic flight envelope"
+            ),
         )
-        result["mapping"] = mapping
-        result["load_scope"] = "analytic fin load envelope from flight; not CFD surface traction"
+        for key in ("max_displacement_m", "p95_integration_vm_pa", "max_integration_vm_pa"):
+            if key in outputs[0]:
+                result[key] = max(r[key] for r in outputs)
         result["metrics"] = dict(
             fem_deflection_ratio=result["max_displacement_m"] / (g.fin_span_mm / 1000)
         )
@@ -403,6 +514,16 @@ class Worker:
             change = max(
                 abs(result[k] - old[k]) / max(abs(result[k]), 1e-12)
                 for k in ["max_displacement_m", "p95_integration_vm_pa"]
+            )
+            if len(old["cases"]) != len(outputs):
+                raise ValueError("FEM grids used different load cases")
+            change = max(
+                change,
+                max(
+                    abs(after[k] - before[k]) / max(abs(after[k]), 1e-12)
+                    for before, after in zip(old["cases"], outputs, strict=True)
+                    for k in ("max_displacement_m", "p95_integration_vm_pa")
+                ),
             )
             result["metrics"]["fem_mesh_change"] = change
         return result
@@ -488,6 +609,15 @@ class Worker:
                 self.data["cfd_fine"]["averaging_relative_change"]
                 <= precision.temporal_relative_limit
             )
+            if precision.require_aero_audit:
+                audit = self.data["cfd_audit"]["differences"]
+                checks.update(
+                    aero_interpolation=audit["interpolation"] <= precision.grid_relative_limit,
+                    aero_domain_size=audit["wide"] <= precision.grid_relative_limit,
+                    aero_lattice=audit["time"] <= precision.temporal_relative_limit,
+                    aero_duration=audit["duration"] <= precision.temporal_relative_limit,
+                    aero_third_grid=allowed is not None and audit["third_grid"] <= allowed,
+                )
         if precision.require_fem:
             fm = self.data["fem_fine"]["metrics"]
             checks["fem_mesh"] = fm["fem_mesh_change"] <= precision.structure_relative_limit
@@ -517,6 +647,7 @@ class Worker:
             return self.structure(kind.endswith("fine"))
         allowed = {
             "geometry",
+            "cfd_audit",
             "thermal",
             "propulsion",
             "screen",

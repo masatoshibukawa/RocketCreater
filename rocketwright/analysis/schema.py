@@ -45,6 +45,7 @@ class Precision(Strict):
     maximum_incidence_deg: float = Field(default=15, gt=0, le=30)
     minimum_static_margin_cal: float = Field(default=1, gt=0, le=3)
     require_cfd: bool = True
+    require_aero_audit: bool = True
     require_fem: bool = True
 
 

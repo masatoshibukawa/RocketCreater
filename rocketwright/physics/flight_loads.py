@@ -32,10 +32,10 @@ class TunnelDatabase:
         ):
             raise ValueError("Invalid tunnel interpolation axes")
         self.scale = scale
-        rows, hashes, geometry = [], {}, set()
+        rows, fin_rows, hashes, geometry = [], [], {}, set()
         removed = []
         for speed in self.speeds:
-            row = []
+            row, fins = [], []
             for angle in self.angles:
                 name = f"v{speed:02.0f}-a{angle:03.0f}"
                 directory = folder / name
@@ -64,10 +64,20 @@ class TunnelDatabase:
                     projected[:, [1, 5]] = 0
                 removed.append(float(np.linalg.norm(values - projected)))
                 row.append(projected)
+                fins.append(case.get("fin_coefficients"))
             rows.append(row)
+            fin_rows.append(fins)
         if len(geometry) != 1:
             raise ValueError("Tunnel table mixes geometries")
         self.table = np.asarray(rows)
+        self.fin_table = None
+        if all(v is not None for row in fin_rows for v in row):
+            self.fin_table = np.asarray(fin_rows, dtype=float)
+            if (
+                self.fin_table.shape != (len(self.speeds), len(self.angles), 4, 6)
+                or not np.isfinite(self.fin_table).all()
+            ):
+                raise ValueError("Invalid individual fin resultants")
         self.metadata = {
             "method": "bilinear numerical-tunnel load table",
             "case_hashes": hashes,
@@ -81,6 +91,9 @@ class TunnelDatabase:
         }
 
     def coefficients(self, speed, angle):
+        return self.interpolate(self.table, speed, angle)
+
+    def interpolate(self, values, speed, angle):
         speed = np.clip(speed, self.speeds[0], self.speeds[-1])
         angle = np.clip(angle, self.angles[0], self.angles[-1])
         i = min(max(np.searchsorted(self.speeds, speed) - 1, 0), len(self.speeds) - 2)
@@ -88,11 +101,28 @@ class TunnelDatabase:
         a = (speed - self.speeds[i]) / (self.speeds[i + 1] - self.speeds[i])
         b = (angle - self.angles[j]) / (self.angles[j + 1] - self.angles[j])
         return self.scale * (
-            (1 - a) * (1 - b) * self.table[i, j]
-            + a * (1 - b) * self.table[i + 1, j]
-            + (1 - a) * b * self.table[i, j + 1]
-            + a * b * self.table[i + 1, j + 1]
+            (1 - a) * (1 - b) * values[i, j]
+            + a * (1 - b) * values[i + 1, j]
+            + (1 - a) * b * values[i, j + 1]
+            + a * b * values[i + 1, j + 1]
         )
+
+    def fin_resultants(self, speed, angle, q):
+        """Local axes: chord aft, span outward, normal = chord cross span.
+
+        This follows the same meridional approximation as the trajectory table.
+        Moments are about the free plate root leading edge, not the vehicle CG.
+        """
+        if self.fin_table is None:
+            raise ValueError("CFD table lacks individual fin evidence")
+        raw = self.interpolate(self.fin_table, speed, angle)
+        result = []
+        for blade, row in enumerate(raw):
+            radial = np.array([[0, 1, 0], [0, 0, 1], [0, -1, 0], [0, 0, -1]])[blade]
+            chord = np.array([1, 0, 0])
+            basis = np.column_stack([chord, radial, np.cross(chord, radial)])
+            result.append(np.r_[row[:3] @ basis, self.diameter * row[3:] @ basis])
+        return q * self.area * np.asarray(result)
 
     def evaluate(self, air_velocity_body, q, cg):
         vb = np.asarray(air_velocity_body)

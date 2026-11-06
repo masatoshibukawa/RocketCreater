@@ -275,3 +275,20 @@ def test_user_reviews_diff_and_creates_revision_only_from_offered_proposal(tmp_p
     assert result["adaptive"]["revisions"][-1]["from_version"] == old_version
     with pytest.raises(Conflict):
         h.revise(s["id"], result["revision"], "shell", "not offered")
+
+
+def test_independent_aero_failures_offer_numerical_work_and_block_redesign(tmp_path):
+    _, h, s = started(tmp_path)
+    c, specification, precision, limits = h._campaign(s)
+    original = h.data
+    h.data = lambda campaign, key: (
+        {
+            "unmet": ["altitude", "aero_interpolation", "aero_domain_size", "aero_lattice"],
+            "metrics": {},
+        }
+        if key == "confirm"
+        else original(campaign, key)
+    )
+    choices, proposals, _ = h._choices(c, specification, precision, limits)
+    assert {"refine/table", "refine/domain", "refine/lattice"} <= choices["offered"].keys()
+    assert not proposals
