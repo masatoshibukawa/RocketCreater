@@ -19,7 +19,7 @@
 | S11 | [Multimedia Design for Learning — Noetelほか](https://journals.sagepub.com/doi/10.3102/00346543211052329) | メタ分析のレビュー、摘要・該当箇所。オンライン2021年、巻号2022年 | 強調、近接、分割、冗長性など。教育での理解・学習の結果 |
 | S12 | [Cueing and cognitive load — Xieほか 2017 / PLOS ONE](https://pmc.ncbi.nlm.nih.gov/articles/PMC5576760/) | メタ分析・メタ回帰、摘要・該当箇所 | 手がかりと認知負荷・学習。回帰から機序の因果を断定しない |
 | S13 | [Keep it Coherent — Sundararajan & Adesope 2020](https://link.springer.com/article/10.1007/s10648-020-09522-4) | メタ分析、公開摘要・該当箇所 | 関係のない魅力的情報の影響。演出全般の禁止にはしない |
-| S14 | [Nine Ways to Reduce Cognitive Load — Mayer & Moreno 2003](https://doi.org/10.1207/S15326985EP3801_6) | 理論・研究整理、公開概要と既確認の論文抜粋 | 処理容量と教材設計。すべての字幕を削る根拠にはしない |
+| S14 | [Nine Ways to Reduce Cognitive Load — Mayer & Moreno 2003](https://doi.org/10.1207/S15326985EP3801_6) | 理論・研究整理、公開摘要 | 処理容量と教材設計。すべての字幕を削る根拠にはしない |
 
 ## デモと音とアクセシビリティ
 
