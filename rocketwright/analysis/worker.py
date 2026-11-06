@@ -152,14 +152,14 @@ class Worker:
             return TunnelDatabase(self.data["cfd_fine"]["table_folder"], scale=scale)
         return AnalyticAero(self.record, scale=scale)
 
-    def trajectory(self, *, dt=None, scale=1, tilt=None, use_cfd=True):
+    def trajectory(self, *, dt=None, scale=1, tilt=None, use_cfd=True, aero_model=None):
         dt = dt or self.ctx["runtime"].get("flight_step_s", 0.02)
         cfg = self.cfg.flight.model_copy()
         if tilt is not None:
             cfg.initial_tilt_deg = tilt
         propulsion = self.data["propulsion"]
         mass = MassDistribution(self.design, self.assembly, propulsion)
-        aero = self.aero(scale) if use_cfd else AnalyticAero(self.record, scale)
+        aero = aero_model or (self.aero(scale) if use_cfd else AnalyticAero(self.record, scale))
         result = flight.run(
             self.design,
             self.assembly,
@@ -388,8 +388,23 @@ class Worker:
             if slope > 1e-9
             else None
         )
+        propagation = None
+        if "cfd_coarse" in self.data:
+            coarse = self.trajectory(
+                dt=step, aero_model=TunnelDatabase(self.data["cfd_coarse"]["table_folder"])
+            )
+            propagation = dict(
+                coarse_flight=coarse,
+                altitude_difference_m=abs(coarse["apogee_m"] - fine["apogee_m"]),
+                incidence_difference_deg=abs(
+                    coarse["ascent_incidence_deg"] - fine["ascent_incidence_deg"]
+                ),
+                max_q_difference_pa=abs(coarse["max_q_pa"] - fine["max_q_pa"]),
+                scope="Same integration step, different CFD grids; not a bound on model error",
+            )
         return dict(
             fine=fine,
+            grid_propagation=propagation,
             sensitivity_flight=sensitivity,
             altitude_change_m=change,
             aero_sensitivity_m_per_relative_coefficient=slope,
@@ -608,6 +623,12 @@ class Worker:
             checks["aero_averaging"] = (
                 self.data["cfd_fine"]["averaging_relative_change"]
                 <= precision.temporal_relative_limit
+            )
+            propagation = self.data["refine"]["grid_propagation"]
+            checks["aero_trajectory"] = (
+                propagation["altitude_difference_m"]
+                <= precision.altitude_error_m * precision.aero_allocation
+                and propagation["incidence_difference_deg"] <= precision.attitude_error_deg
             )
             if precision.require_aero_audit:
                 audit = self.data["cfd_audit"]["differences"]

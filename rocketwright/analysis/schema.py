@@ -37,6 +37,7 @@ class Assumptions(Strict):
 
 class Precision(Strict):
     altitude_error_m: float = Field(default=1.5, gt=0, le=20)
+    attitude_error_deg: float = Field(default=1, gt=0, le=10)
     aero_allocation: float = Field(default=0.5, gt=0, lt=1)
     grid_relative_limit: float = Field(default=0.05, gt=0, le=0.2)
     temporal_relative_limit: float = Field(default=0.03, gt=0, le=0.2)

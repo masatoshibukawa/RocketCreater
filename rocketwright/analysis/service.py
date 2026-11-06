@@ -295,6 +295,7 @@ class Harness:
             "aero_lattice",
             "aero_duration",
             "aero_third_grid",
+            "aero_trajectory",
         }
         if confirmation:
             a["quality_pending"] = sorted(numerical)
@@ -320,7 +321,7 @@ class Harness:
         runtime = Runtime.model_validate(a["runtime"])
         if (
             confirmation
-            and numerical & {"aero_grid", "aero_third_grid"}
+            and numerical & {"aero_grid", "aero_third_grid", "aero_trajectory"}
             and runtime.cfd_cells_fine < 32
         ):
             choices["offered"]["refine/cfd"] = dict(
