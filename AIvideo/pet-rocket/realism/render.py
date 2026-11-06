@@ -11,7 +11,7 @@ ROOT=Path(__file__).resolve().parent
 
 
 def signature():
-    files=[ROOT/n for n in ("scene.py","settings.json","asset-manifest.json")]
+    files=[ROOT/n for n in ("scene.py","appearance.py","settings.json","asset-manifest.json")]
     files += [ROOT.parent/n for n in ("scenario.json","simulation.json","render_scene.py","assets/nose_cone.stl","assets/fin_assembly.stl","renders/trajectory.npz")]
     return hashlib.sha256(b"".join(p.read_bytes() for p in files)).hexdigest()
 
