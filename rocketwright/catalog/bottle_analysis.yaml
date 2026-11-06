@@ -4,6 +4,10 @@ sources:
   solution_verification: https://www.grc.nasa.gov/www/wind/valid/tutorial/verassess.html
   resource_pool: rocketwright/catalog/bottle_resources.yaml
   existing_integrity: rocketwright/physics/bottle_integrity/harness.py
+  concrete_materials: rocketwright/catalog/bottle_concrete_fin.yaml
+  lasalle: https://www.egr.msu.edu/~khalil/NonlinearSystems/Sample/Lect_10.pdf
+  gronwall: https://people.math.sc.edu/howard/Notes/gronwall.pdf
+  barbalat: https://engineering.purdue.edu/~byao/Research/Supplements/Lyapunov.pdf
   assumptions: All parameter ranges and screening thresholds are project assumptions, not material ratings.
 variables:
   fin_span: {unit: m, role: design, bounds: [0.03, 0.14], invalidates: [geometry, aero, structure, mass, stability, flight]}
@@ -13,7 +17,8 @@ variables:
   fin_thickness: {unit: m, role: design, bounds: [0.00075, 0.003], invalidates: [geometry, structure, mass, aero, stability, flight]}
   fin_cant: {unit: deg, role: design, bounds: [-5, 5], invalidates: [geometry, aero, stability, flight]}
   fin_young: {unit: Pa, role: material, bounds: [5.0e8, 7.0e10], invalidates: [structure, stability, deformed_aero, flight]}
-  fin_density: {unit: kg/m3, role: material, bounds: [600, 1800], invalidates: [mass, structure, stability, flight]}
+  fin_density: {unit: kg/m3, role: material, bounds: [600, 2200], invalidates: [mass, structure, stability, flight]}
+  fin_root_offset: {unit: m, role: design, bounds: [0, 0.02], invalidates: [geometry, aero, mass, structure, flight]}
   root_stiffness: {unit: N/m, role: material, bounds: [5.0e4, 5.0e6], invalidates: [structure, stability, deformed_aero, flight]}
   warm_modulus_ratio: {unit: '1', role: material, bounds: [0.2, 1], invalidates: [structure, stability, flight]}
   nose_length: {unit: m, role: design, bounds: [0.05, 0.2], invalidates: [geometry, aero, mass, flight]}
@@ -41,6 +46,38 @@ targets:
   stability: {label: 飛行中の摂動応答, variables: [fin_cant, root_stiffness, fin_young, payload_station, water_fraction]}
   thermal: {label: 待機・噴射中の温度, variables: [gas_temperature, initial_pressure, body_thickness]}
 methods:
+  theorem_gate:
+    label: 原点・時間依存性・定理の適用条件の確認
+    layer: middle
+    category: stability applicability
+    phase: before stability certificate
+    inputs: [host-defined equation type, equilibrium, time horizon, proof prerequisites]
+    outputs: [eligible theorems, missing assumptions]
+    scope: Recognized frozen or scheduled reduced models only; finite traces cannot certify infinite-horizon assumptions.
+  lasalle:
+    label: 固定条件の姿勢原点に対するLaSalle解析
+    layer: middle
+    category: stability
+    phase: fixed operating point
+    inputs: [constant inertia, restoring stiffness, damping, unforced error equation]
+    outputs: [energy, derivative-zero set, largest invariant subset, conditional origin verdict]
+    scope: Exact scalar linear oscillator argument; does not prove the time-varying flight stable.
+  gronwall:
+    label: Grönwall–Bellmanによる有限時間誤差上限
+    layer: high
+    category: stability
+    phase: specified continuous flight phase
+    inputs: [piecewise-affine pitch matrices, coordinate scale, positive metric, forcing bound]
+    outputs: [logarithmic norm, finite-time gain bound, additive disturbance bound]
+    scope: Bounds the declared matrix interpolation; nonlinear remainder and event resets need separate bounds.
+  barbalat:
+    label: Barbalatの収束条件の確認
+    layer: high
+    category: stability applicability
+    phase: infinite-horizon error model
+    inputs: [lower-bounded V, nonpositive Vdot, uniform continuity, infinite horizon, state detection]
+    outputs: [W convergence verdict, separate state convergence verdict, missing prerequisites]
+    scope: W tending to zero alone does not prove the state tends to the origin.
   repair_audit:
     label: 上位目標未達から探索層を戻す
     layer: high
@@ -187,6 +224,7 @@ methods:
     scope: Simulated evidence cannot satisfy physical article qualification.
     implementation: planned
 evaluations:
+  theorem_applicability: {label: 定理の条件と結論の範囲, observables: [eligible, missing, model_scope], rule: Missing assumptions block the theorem; finite traces cannot fill them., evidence_level: model}
   error_audit: {label: 誤差源の切り分け, observables: [Cx, Cy, Cm_z, drift], rule: Compare like components and independent histories; do not hide moment error in a total norm., evidence_level: diagnostic}
   cfd_convergence: {label: 時間・格子・補間の精度, observables: [coefficient changes, held-out residual], rule: Apply declared numerical limits and retain failures; GCI needs suitable convergence behavior., evidence_level: numerical}
   stiffness: {label: 変形比・質量・固有振動, observables: [tip/span, mass_kg, mode_hz], rule: Rank feasible stiffness screens by mass; linear large-deflection output is diagnostic only., evidence_level: diagnostic}
@@ -197,6 +235,14 @@ evaluations:
   strength: {label: 強度と損傷, observables: [stress_demand, buckling, allowable], rule: Match material lot orientation temperature process and load path before allowing a margin., evidence_level: physical}
   acceptance: {label: 実機適合判定, observables: [numerical_pass, model_validated, physical_records], rule: Missing or out-of-domain evidence fails closed., evidence_level: physical}
 actions:
+  theorem-precheck:
+    {target: stability, method: theorem_gate, evaluation: theorem_applicability, uses: [stability_problem, theorem_code], addresses: [stability_unknown], priority: 100, cost_s: 1}
+  frozen-origin:
+    {target: stability, method: lasalle, evaluation: theorem_applicability, depends: [theorem-precheck], uses: [stability_problem, theorem_code], addresses: [stability_unknown], priority: 95, cost_s: 1, quality_requires: [lasalle_eligible]}
+  finite-error-bound:
+    {target: stability, method: gronwall, evaluation: theorem_applicability, depends: [theorem-precheck], uses: [stability_problem, theorem_code], addresses: [stability_unknown], priority: 95, cost_s: 2, quality_requires: [gronwall_eligible]}
+  asymptotic-prerequisites:
+    {target: stability, method: barbalat, evaluation: theorem_applicability, depends: [theorem-precheck], uses: [stability_problem, theorem_code], addresses: [stability_unknown], priority: 90, cost_s: 1, quality_requires: [barbalat_eligible]}
   repair-review:
     {target: mission, method: repair_audit, evaluation: mission, uses: [repair_evidence, code, requirements], addresses: [altitude_shortfall], priority: 90, cost_s: 2}
   geometry-candidates:

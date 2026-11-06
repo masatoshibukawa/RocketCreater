@@ -141,6 +141,9 @@ def assess(folder, solver):
     write_json(output / "aero-checks.json", checks)
     prop = loads.propulsion(design, cfg.loads)
     warm = thermal.wait(design, cfg, sealed=True)
+    warm["scope"] = (
+        "unchanged lumped thermal network; scenario only, not validated for new laminate/shoes"
+    )
     write_json(output / "thermal.json", warm)
     mass = MassDistribution(design, assembly, prop)
     fin_data = fin_coefficients(folder, table)
@@ -218,17 +221,66 @@ def assess(folder, solver):
                     )
                 )
     write_json(output / "flights.json", summaries)
+    baseline, perturbed = trajectories["nominal"], trajectories["tilt_plus2"]
+    shared = np.linspace(
+        max(baseline["rail_exit_s"], perturbed["rail_exit_s"]),
+        min(baseline["apogee_s"], perturbed["apogee_s"]),
+        201,
+    )
+    axes = []
+    for item in (baseline, perturbed):
+        trace = item["trace"]
+        directions = np.array([flight.rotation(quat)[:, 2] for quat in trace["quaternion"]])
+        values = np.column_stack(
+            [np.interp(shared, trace["time_s"], directions[:, j]) for j in range(3)]
+        )
+        axes.append(values / np.linalg.norm(values, axis=1)[:, None])
+    difference = np.degrees(np.arccos(np.clip((axes[0] * axes[1]).sum(1), -1, 1)))
     write_json(
-        output / "stability-theorems.json",
-        stability_theorems.flight_screen(
-            assembly, trajectories["nominal"], table, mass, cfg.flight
+        output / "finite-perturbation.json",
+        dict(
+            initial_tilt_change_deg=2,
+            time_s=shared.tolist(),
+            axis_difference_deg=difference.tolist(),
+            entry_difference_deg=float(difference[0]),
+            final_difference_deg=float(difference[-1]),
+            peak_difference_deg=float(difference.max()),
+            final_to_entry_ratio=float(difference[-1] / max(difference[0], 1e-9)),
+            scope="one finite nonlinear perturbation on common ascent times; not asymptotic proof",
         ),
     )
+    stability = stability_theorems.flight_screen(
+        assembly, trajectories["nominal"], table, mass, cfg.flight
+    )
+    write_json(output / "stability-theorems.json", stability)
+    if stability["completed"]:
+        row = stability["frozen_checks"][len(stability["frozen_checks"]) // 2]
+        stability_theorems.campaign(
+            output / "frozen-selection",
+            dict(
+                kind="frozen_pitch",
+                unforced=True,
+                scope="one frozen air-aligned operating point",
+                parameters=dict(
+                    inertia=row["inertia_kg_m2"],
+                    stiffness=row["stiffness_nm_rad"],
+                    damping=row["damping_nm_s_rad"],
+                ),
+            ),
+        )
+        stability_theorems.campaign(
+            output / "scheduled-selection",
+            dict(
+                kind="piecewise_affine_pitch",
+                parameters=stability["scheduled_model"],
+                scope="finite ascent reduction; not the full nonlinear rocket",
+            ),
+        )
     # Retain both force- and moment-governing actual simultaneous resultants.
     governing = [max(events, key=lambda e: e[k]) for k in ("force_n", "root_bending_nm")]
     write_json(output / "fin-events.json", governing)
     results = []
-    temperature = warm["final_c"]["fin"]
+    temperature = max(45.0, warm["final_c"]["fin"])
     for number, event in enumerate(governing):
         if number and event == governing[0]:
             continue
