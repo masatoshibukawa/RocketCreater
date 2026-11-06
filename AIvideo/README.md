@@ -15,6 +15,7 @@ Reusable production skills, research notes, source references, and templates for
 - [このPCに合う生成方法](research/2026-11-04/04_local_pc.ja.md)
 - [実践手順とSF予告編の制作案](research/2026-11-04/05_production_recipes.ja.md)
 - [ピッチとデモの方針](../docs/pitch-demo-strategy.md) — LLMとAPIで実現する体験、自分たちのドメイン知識、発表で示す証拠
+- [ピッチとプレゼンテーションの調査資料](../docs/presentation-research/2026-11-06/README.md) — 聴衆別の構成、スライド、話し方と質疑、出典と適用範囲
 
 ## Storage
 
