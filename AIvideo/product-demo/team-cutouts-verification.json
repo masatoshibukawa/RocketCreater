@@ -1,0 +1,51 @@
+{
+  "checks": "passed",
+  "assets": [
+    {
+      "member": "taichi-uchida",
+      "file": "output/media/product-demo/generated/team/taichi-uchida-cutout-v1.png",
+      "sha256": "3c1d83a8777a3394ec9bbc02c07be4212eb3059d497fb68cc1a552d092db48e1",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "fully_transparent_fraction": 0.343835611211587,
+      "alpha_at_least_250_fraction": 0.6333506304546345,
+      "metadata_keys": [],
+      "source_type": "public personal portfolio",
+      "source": "output/media/product-demo/capture/team/taichi-uchida-portfolio-portrait.webp",
+      "source_sha256": "10fa858697bcb5163333d96aebec8bc98bf519ae80f67c52f368e14e70c461a7",
+      "edit_method": "built-in image editing; background extraction candidate",
+      "identity_pair": "confirmed by user",
+      "visual_review": "Generated outputs inspected for subject framing, face/pose, glasses, hair and hands. Pixel identity is not asserted.",
+      "adoption": "candidate"
+    },
+    {
+      "member": "masato-shibukawa",
+      "file": "output/media/product-demo/generated/team/masato-shibukawa-cutout-v1.png",
+      "sha256": "e6af61a9bb0350f23d8c8a6c7d209135b40962daf74b93c0cb5c8cb06caa398d",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "fully_transparent_fraction": 0.4998416550292652,
+      "alpha_at_least_250_fraction": 0.4780428307247748,
+      "metadata_keys": [],
+      "source_type": "Slack member profile",
+      "source": "output/media/product-demo/capture/team/masato-shibukawa-slack-original.jpg",
+      "source_sha256": "c5ba6824406595e0e66da92bc12f377861e5ae53a9a679290647a288c280e8eb",
+      "edit_method": "built-in image editing; background extraction candidate",
+      "identity_pair": "confirmed by user",
+      "visual_review": "Generated outputs inspected for subject framing, face/pose, glasses, hair and hands. Pixel identity is not asserted.",
+      "adoption": "candidate"
+    }
+  ],
+  "photos_published_to_git": false,
+  "cockpit_composite_and_motion": "not_created"
+}
