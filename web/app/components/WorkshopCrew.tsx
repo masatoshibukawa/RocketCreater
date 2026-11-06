@@ -34,7 +34,7 @@ export default function WorkshopCrew({ embedded = false, hideScene = false }: { 
         </button>
       </div>
     </div> : null}
-    {visible && !hideScene ? <WorkshopScene scene="crew"/> : null}
+    {visible && !hideScene ? <WorkshopScene scene="crew" phase={crew.phase}/> : null}
     <div className="crew-description">
       <p role="status" aria-live="polite">{crew.label}</p>
       {!embedded ? <small>{reduced ? "端末の設定に合わせて静止表示 · " : paused ? "演出は静止中 · " : ""}工程の案内役です。実機の点検完了を示すものではありません。</small> : null}

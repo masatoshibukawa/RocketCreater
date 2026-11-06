@@ -136,3 +136,26 @@ def test_restart_recovers_interrupted_job_and_rejects_code_changes(store, monkey
     monkeypatch.setattr(module, "implementation_fingerprint", lambda: "changed-code")
     with pytest.raises(Conflict):
         store.require_adopted(s)
+
+
+def test_failed_analysis_does_not_publish_manufacturing_meshes(store):
+    from rocketwright.schema import Requirement
+
+    draft = spec().model_copy(
+        update={"requirement": Requirement(goal_kind="altitude", target_altitude_m=1000)}
+    )
+    s = store.create(draft)
+    s = store.analyse(s["id"], s["revision"])
+    assert not s["analysis"]["result"]["success"]
+    assert not any(f["name"] == "fin-assembly-mm.stl" for f in s["files"])
+    with pytest.raises(KeyError):
+        store.file(s["id"], "cad/fin-assembly-mm.stl")
+    with pytest.raises(Conflict):
+        store.adopt(s["id"], s["revision"])
+
+
+def test_input_capacity_cannot_exceed_external_geometry():
+    data = spec().model_dump(mode="json")
+    data["geometry"]["body_diameter_mm"] = 30
+    with pytest.raises(ValueError, match="最大体積"):
+        DesignSpec.model_validate(data)

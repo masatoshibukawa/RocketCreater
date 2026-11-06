@@ -11,8 +11,8 @@ drawings or videos.
 | Observed application state | Guide behavior |
 | --- | --- |
 | Active design tool call, flow-analysis job, production or manufacturing generation | Move at the busy tempo |
-| No job, queued job, between tool calls or question awaiting an answer | Move at the calm tempo |
-| A previously observed live operation finishes successfully | Show the cleanup message for six seconds, then wait |
+| No job, queued job, between tool calls or question awaiting an answer | Rest the tool and look around |
+| A previously observed live operation finishes successfully | Lower the hands and return the tool to the tray for six seconds, then wait |
 | Error, interruption, failed/unconverged result or lost flow-analysis connection | Stop moving and wait for review |
 
 Restoring an already completed result does not replay cleanup. A reference seed alone
@@ -38,6 +38,9 @@ The operation-state tests cover unfinished tool calls, question waits, tool fail
 cancellation, seed-only results, observed completion, cleanup expiry and concurrent jobs.
 The Python API stream test checks anti-buffering headers; paid design execution remains
 disabled unless explicitly enabled by the existing environment setting.
+
+Current-design CAD, printing, manual and film jobs also feed this presentation state.
+See [the saved design production flow](design-production-flow.md) for the current screen and API.
 
 For browser checks, use an isolated local replay server with clearly labeled recorded
 physics results. Verify inspection, waiting, cleanup, interruption, error, hidden/paused

@@ -118,6 +118,7 @@ export interface BottleDesign {
   has_fins: boolean;
   has_parachute: boolean;
   parachute_diameter_m: number | null;
+  geometry?: import("./designProjects").ProductionGeometry | null;
 }
 
 export type Design = BottleDesign | AmateurDesign | MultistageDesign;

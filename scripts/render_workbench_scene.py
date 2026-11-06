@@ -77,6 +77,9 @@ if photographic:
     appearance.surface_detail(shell)
     fin_mat = appearance.material("Assumed sheet fins", (0.25, 0.23, 0.18), 0.65)
     white = appearance.material("Unmeasured cover material", (0.72, 0.72, 0.66), 0.3)
+    if job.get("cad_files"):
+        fin_mat = appearance.material("Tough PLA Gray", (0.42, 0.44, 0.46), 0.52)
+        white = fin_mat
     ground_mat = appearance.asphalt(job_path.parent / "appearance")
 root = bpy.data.objects.new("Confirmed assembly", None)
 scene.collection.objects.link(root)

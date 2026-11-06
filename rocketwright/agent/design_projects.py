@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import math
 import os
 import re
 import threading
@@ -13,7 +14,7 @@ import uuid
 import zipfile
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from rocketwright.agent.local_runtime import LocalRuntimeError
 from rocketwright.agent.workbench import Conflict
@@ -68,6 +69,18 @@ class DesignSpec(BaseModel):
     measured_printed_mass_g: float | None = Field(default=None, gt=0, le=1000)
     material: str = Field(default="UltiMaker Tough PLA Gray", pattern="^UltiMaker Tough PLA Gray$")
 
+    @model_validator(mode="after")
+    def physical_envelope(self):
+        cylinder = math.pi * (self.geometry.body_diameter_mm / 2000) ** 2
+        cylinder *= self.geometry.body_height_mm / 1000
+        if self.design.bottle_volume_m3 > cylinder * 1.02:
+            raise ValueError("容量が入力したボトル外形の最大体積を超えています。")
+        if self.design.nozzle_diameter_m > self.geometry.body_diameter_mm / 1000:
+            raise ValueError("ノズル径がボトル胴径を超えています。")
+        if self.requirement and self.requirement.goal_kind.value != "altitude":
+            raise ValueError("この製作フローは高度を指定するペトロケ用です。")
+        return self
+
 
 class DesignProjects:
     def __init__(self, root: Path | None = None):
@@ -100,6 +113,17 @@ class DesignProjects:
 
     def get(self, project_id):
         state = self.load(project_id)
+        if state["analysis"] and "cad_sha256" not in state["analysis"]:
+            # Earlier saved records already carry the original CAD hashes in their registry.
+            state["analysis"]["cad_sha256"] = {
+                f["name"]: f["sha256"] for f in state["files"] if f["kind"] == "cad"
+            }
+        if not state["adopted"]:
+            state["files"] = [
+                f
+                for f in state["files"]
+                if f["name"].endswith((".png", ".json")) or f["name"] == "analysis-envelope-m.stl"
+            ]
         if state["active"] and state["active"].get("owner") != self.session:
             state["active"] = None
             state["error"] = "前回の処理は中断されました。保存済みの入力から再試行できます。"
@@ -247,6 +271,12 @@ class DesignProjects:
                 (self.base(project_id) / f"v{version}/snapshot.json").read_text(encoding="utf-8")
             )
         row = next((r for r in state["files"] if r["key"] == key), None)
+        if (
+            not state["adopted"]
+            and Path(key).suffix in {".stl", ".3mf", ".ufp", ".gcode"}
+            and key != "cad/analysis-envelope-m.stl"
+        ):
+            raise KeyError("採用前の製作データは配信しません")
         base = (self.base(project_id) / f"v{version}").resolve()
         path = (base / key).resolve()
         if not row or not path.is_relative_to(base) or path.is_symlink() or not path.is_file():
@@ -291,6 +321,7 @@ class DesignProjects:
                 printed_solid_mass_g=printed,
                 printed_mass_used_g=mass,
                 mass_basis="measured" if spec.measured_printed_mass_g else "solid_CAD_estimate",
+                cad_sha256={p.name: sha(p) for p in cad_dir.iterdir() if p.is_file()},
                 limitations=[
                     "抗力係数は仮定値。CFD格子収束・強度・実機の合格を示しません。",
                     "推定質量はCADの一様固体。充填後の実測質量で再解析してください。",
@@ -299,6 +330,12 @@ class DesignProjects:
             )
             state["adopted"] = False
             self.register_files(state, cad_dir, "cad")
+            # Inspection previews are available before adoption; manufacturing meshes are not.
+            state["files"] = [
+                f
+                for f in state["files"]
+                if f["name"].endswith((".png", ".json")) or f["name"] == "analysis-envelope-m.stl"
+            ]
 
         return self._run(project_id, revision, "analyse", worker, started_event=started_event)
 
@@ -323,6 +360,9 @@ class DesignProjects:
                 raise Conflict("この版の計算条件を満たす解析が必要です。")
             if a["implementation_sha256"] != implementation_fingerprint():
                 raise Conflict("解析コードが更新されました。再解析が必要です。")
+            for name, expected in a.get("cad_sha256", {}).items():
+                if sha(self.directory(project_id) / "cad" / name) != expected:
+                    raise Conflict("解析後にCADが変わりました。再解析が必要です。")
             for row in state["files"]:
                 self.file(project_id, row["key"])
             directory = self.directory(project_id) / "production"
@@ -387,6 +427,7 @@ class DesignProjects:
                     ]
                 )
             state["adopted"] = True
+            self.register_files(state, self.directory(project_id) / "cad", "cad")
             self.register_files(state, directory, "production")
 
         return self._run(project_id, revision, "adopt", worker)
@@ -458,6 +499,11 @@ class DesignProjects:
                 "の順で確認してください。\n"
                 "scripts/verify_package.py はファイル整合だけを読み取り検査します。"
                 "\n"
+            )
+            readme += (
+                "\n印刷用STLの*-mmと3MFはmm単位。UFP/G-codeはS5/Gray/AA0.4専用です。\n"
+                "analysis-envelope-m.stlはm単位の解析包絡で、印刷用ではありません。\n"
+                "試着リングは寸法確認用で、機体の印刷部品質量には含めません。\n"
             )
             manifest = dict(
                 schema_version=1,

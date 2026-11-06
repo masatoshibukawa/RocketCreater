@@ -1,5 +1,7 @@
 """Assembly trial instructions from the current adopted geometry and step records."""
 
+import csv
+import json
 from xml.sax.saxutils import escape
 
 from reportlab.graphics.shapes import Drawing, Polygon, String
@@ -16,6 +18,8 @@ from reportlab.platypus import (
 )
 
 from rocketwright.agent.manual import japanese_font
+from rocketwright.drawing import render_side_view_svg
+from rocketwright.schema import BottleDesign
 
 
 def write_project_manual(state, steps, output):
@@ -50,10 +54,14 @@ def write_project_manual(state, steps, output):
         ("ノーズ", f"長さ{g['nose_length_mm']:g} / 肉厚{g['nose_wall_mm']:g}"),
         (
             "フィン",
-            f"{g['fin_count']}枚・"
-            f"翼根{g['fin_root_mm']:g} / 翼端{g['fin_tip_mm']:g} / "
-            f"張出し{g['fin_span_mm']:g} / 後退{g['fin_sweep_mm']:g} / "
-            f"厚さ{g['fin_thickness_mm']:g}",
+            (
+                f"{g['fin_count']}枚・"
+                f"翼根{g['fin_root_mm']:g} / 翼端{g['fin_tip_mm']:g} / "
+                f"張出し{g['fin_span_mm']:g} / 後退{g['fin_sweep_mm']:g} / "
+                f"厚さ{g['fin_thickness_mm']:g}"
+            )
+            if spec["design"]["has_fins"]
+            else "この版では未使用",
         ),
         ("材料", spec["material"]),
         ("寸法の根拠", "実測入力" if g["dimensions_measured"] else "仮定入力・実物照合が必要"),
@@ -100,7 +108,7 @@ def write_project_manual(state, steps, output):
     )
     tail = 25 + length - g["fin_tail_inset_mm"] * scale
     root = g["fin_root_mm"] * scale
-    for sign in (-1, 1):
+    for sign in (-1, 1) if spec["design"]["has_fins"] else ():
         y = 100 + sign * radius
         figure.add(
             Polygon(
@@ -168,3 +176,60 @@ def write_project_manual(state, steps, output):
         title=spec["name"] + " 組立手順",
         author="RocketWright",
     ).build(story, onFirstPage=footer, onLaterPages=footer)
+
+    # A calculation sheet and portable data accompany the assembly instructions.
+    metrics = analysis["result"]["metrics"]
+    summary = [
+        p("設計・計算の確認票", heading),
+        p(f"{spec['name']} / v{state['version']}"),
+        p(
+            f"到達高度 {metrics['apogee_m']:.2f} m / "
+            f"降下速度 {metrics['descent_speed_mps']:.2f} m/s"
+        ),
+        p(f"乾燥質量 {analysis['design']['dry_mass_kg'] * 1000:.2f} g / {analysis['mass_basis']}"),
+        p("計算条件の確認", sub),
+        table,
+        p("未確認事項", sub),
+    ]
+    summary += [p(text) for text in analysis["limitations"]]
+    SimpleDocTemplate(
+        str(output.parent / "design-sheet.pdf"),
+        pagesize=A4,
+        leftMargin=42,
+        rightMargin=42,
+        topMargin=40,
+        bottomMargin=44,
+        title=spec["name"] + " 計算確認票",
+        author="RocketWright",
+    ).build(summary, onFirstPage=footer, onLaterPages=footer)
+    (output.parent / "calculation-report.md").write_text(
+        f"# {spec['name']} / v{state['version']}\n\n"
+        + "\n".join(f"- {k}: {v}" for k, v in metrics.items())
+        + "\n\n"
+        + "\n".join(analysis["limitations"]),
+        encoding="utf-8",
+    )
+    (output.parent / "side-view.svg").write_text(
+        render_side_view_svg(BottleDesign.model_validate(analysis["design"])), encoding="utf-8"
+    )
+    trace = analysis["result"]["trace"]
+    if trace:
+        with (output.parent / "flight.csv").open("w", newline="", encoding="utf-8") as file:
+            writer = csv.DictWriter(file, fieldnames=list(trace[0]))
+            writer.writeheader()
+            writer.writerows(trace)
+    (output.parent / "provenance.json").write_text(
+        json.dumps(
+            {
+                "project_id": state["id"],
+                "version": state["version"],
+                "input_sha256": analysis["input_sha256"],
+                "geometry_sha256": analysis["geometry_sha256"],
+                "implementation_sha256": analysis["implementation_sha256"],
+                "physical_print_verified": False,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )

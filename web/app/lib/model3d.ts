@@ -212,6 +212,19 @@ function buildAmateur(design: AmateurDesign): THREE.Group {
 }
 
 function buildBottle(design: BottleDesign): THREE.Group {
+  if (design.geometry) {
+    const p = design.geometry;
+    const group = new THREE.Group();
+    const r = p.body_diameter_mm / 2000;
+    const base = (p.body_height_mm * .9 - Math.min(18, p.nose_length_mm / 4)) / 1000;
+    cylinder(group, r, r, base, base / 2, matte(COLOR.pet));
+    nose(group, "conical", r, p.nose_length_mm / 1000, base, matte(COLOR.nose));
+    if (design.has_fins) fins(group, r, p.fin_tail_inset_mm / 1000, {
+      count: p.fin_count, rootChord: p.fin_root_mm / 1000, tipChord: p.fin_tip_mm / 1000,
+      span: p.fin_span_mm / 1000, sweep: p.fin_sweep_mm / 1000, thickness: p.fin_thickness_mm / 1000,
+    }, matte(COLOR.fin));
+    return group;
+  }
   const g = new THREE.Group();
   const d = Math.cbrt((4 * design.bottle_volume_m3) / (Math.PI * BOTTLE_ASPECT_RATIO));
   const r = d / 2;

@@ -1,5 +1,10 @@
 # Reference workshop UI
 
+The current-design production extension is documented in [saved design production](design-production-flow.md):
+editable persistent revisions, CAD-derived mass, adoption, assembly PDFs, S5 packages and local films.
+The reference library remains separate. The older boundaries below describe the original workshop
+rebuild; persistent projects and current-design film/manual production are now connected by this extension.
+
 The active Next.js home screen follows the docked workshop in
 `final output ui example/ux-spec.md`, its design tokens and drafts 01, 04, 07 and 08.
 The reference is a whole-screen composition: dark continuous docks, the stage bar,
@@ -35,9 +40,9 @@ The guides occupy the workshop foreground rather than a separate dashboard card.
 The concept model remains a dimensional illustration, not manufacturing CAD.
 The idle workshop picture is labeled as an illustration, not a generated design.
 Assembly preparation does not assert hand/tool clearance, physical verification,
-or completed assembly steps. New per-design photographic films, durable project
-versioning and editable part drafts require their own backend contracts; this UI
-does not substitute an existing case's artifacts for them.
+or completed assembly steps. Saved design projects now provide explicit dimensions,
+CAD-derived mass, persistent editable versions and adopted-version films/manuals.
+Reference-case artifacts remain separately labeled.
 
 ## Verification
 
