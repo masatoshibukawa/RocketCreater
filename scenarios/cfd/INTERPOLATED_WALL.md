@@ -22,9 +22,16 @@ Finite plate thickness can be represented between lattice nodes, but its local
 flow still requires a refinement study. Sphere accuracy does not establish
 rocket accuracy.
 
-`check_wall.py` runs ten checks on the actual GPU functions: sphere/cylinder/cone
+`check_wall.py` runs thirteen checks on the actual GPU functions: sphere/cylinder/cone
 intersections, a link passing through a body with both endpoints in fluid,
-finite plate entry/occupancy, a miss, and the three interpolation branches.
+finite plate and mounting-shoe entry/occupancy, misses, and three interpolation branches.
 Wind-tunnel control cases additionally compare surface and total loads. Case
 metadata records the scheme, thickness, and all three source hashes. Never mix
 old and new scheme results into a supposedly uniform convergence study.
+
+Optional `fin_root_offset` and `fin_shoe_width` assembly dimensions place the
+free plate outside an explicit rectangular shoe envelope. These are geometry
+approximations: slots are occupied by the plate; fillets, bolt heads and strap
+roughness are unresolved. The optional per-fin probe integrates free-plate
+loads at analytic wall intersections, excluding shoes and body. Its six values
+are body-axis force coefficients and moments about each root leading edge.

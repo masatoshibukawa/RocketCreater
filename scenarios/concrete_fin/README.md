@@ -1,5 +1,7 @@
 # One concrete 1.5 L candidate
 
+Executed outcomes and current limits: [RESULTS.md](RESULTS.md).
+
 This is a continuation of the D02 1.5 L / 60 g payload study, separate from the
 2 L printing trial. The catalog `bottle_concrete_fin.yaml` specifies Iten Resiten
 G10FR4 cut plates, Prusament PETG external shoes, M2 hardware and skirt retention.
@@ -24,6 +26,7 @@ The previous assembly's pass flags and holdout statistics are invalidated.
 python scenarios/concrete_fin/run.py prepare output/concrete-01 --input PRIOR/input.json
 python scenarios/concrete_fin/run.py tunnel output/concrete-01 --cells 24
 python scenarios/concrete_fin/run.py assess output/concrete-01 --solver PATH/ccx.exe
+python scenarios/concrete_fin/report.py output/concrete-01 output/concrete-report --site SITE/dist
 ```
 
 Before assessment, run `scenarios/cfd/run_flow.py` for `grid-d16-a005`,
