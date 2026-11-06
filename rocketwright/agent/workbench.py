@@ -201,7 +201,7 @@ class Workbench:
             self._write(state)
         return self.view(state)
 
-    def _run(self, project_id: str, revision: int, operation: str, worker):
+    def _run(self, project_id: str, revision: int, operation: str, worker, *, started_event=None):
         with self._guard:
             lock = self._locks.setdefault(project_id, threading.Lock())
         if not lock.acquire(blocking=False):
@@ -214,6 +214,8 @@ class Workbench:
             state["active"] = {"name": operation, "started_at": time.time()}
             state["error"] = None
             self._write(state)
+            if started_event is not None:
+                started_event.set()
             started = time.monotonic()
             try:
                 worker(state)

@@ -1,0 +1,284 @@
+{
+  "status": "slice_checked_physical_trial_pending",
+  "printer": "s5-gray-aa04",
+  "source_design": {
+    "tier": "bottle",
+    "bottle_volume_m3": 0.002,
+    "water_fill_frac": 0.33,
+    "initial_gauge_pressure_pa": 300000.0,
+    "nozzle_diameter_m": 0.009,
+    "dry_mass_kg": 0.12,
+    "payload_mass_kg": 0.0,
+    "has_fins": true,
+    "axial_drag_coefficient": null,
+    "has_parachute": false,
+    "parachute_diameter_m": null
+  },
+  "geometry_input": {
+    "body_diameter_mm": 110.0,
+    "body_height_mm": 315.0,
+    "nose_length_mm": 100.0,
+    "fin_root_mm": 100.0,
+    "fin_tip_mm": 36.0,
+    "fin_span_mm": 50.0,
+    "fin_sweep_mm": 14.0,
+    "fin_count": 3
+  },
+  "parameters_sha256": "703944ec065397602b996b1c9fafe8ca1f01db9ec0a86e0fa4cbe0f4e960125d",
+  "profile_sha256": "11a4636f883eb4c839111d35dafd85431e28dd46719353fa7b688624cbe12433",
+  "engine_sha256": "675227d0fcf128777f8d1325a8c2d4a38cedc3375c8f6ecc6f8c6b09bcfb9f70",
+  "physical_print_verified": false,
+  "limitations": [
+    "Larger attached brim is an unverified mitigation for the observed late tipping",
+    "Printed PLA parts replace assumed sheet parts: weigh and reanalyse before flight",
+    "Inspect adhesion, late-stage stability, fit and part quality on the physical printer"
+  ],
+  "package_scope": "one_fin_only",
+  "parts": [
+    {
+      "file": "fin-S5.ufp",
+      "sha256": "b21d3304ba352d2f25218792b17ba98d85e52ba40f7cd0be1b926163d0a274a0",
+      "target_machine": "Ultimaker S5",
+      "generator_version": "5.12.0",
+      "material_profile": "UltiMaker Gray Tough PLA",
+      "material_diameter_mm": 2.85,
+      "material_guid": "6660eb2e-aa40-49ad-ac9b-ada979f3de9b",
+      "nozzle_initial_temperature_c": 220.0,
+      "bed_initial_temperature_c": 60.0,
+      "estimated_time_seconds": 6797,
+      "estimated_filament_m": 2.085,
+      "estimated_mass_g": 16.49,
+      "layer_count": 363,
+      "model_layers": 363,
+      "missing_model_layers": [],
+      "empty_trailing_layers": [],
+      "support_segments": 0,
+      "used_tools": [
+        0
+      ],
+      "model_path_bounds_mm": [
+        [
+          116.308,
+          109.886,
+          0.2
+        ],
+        [
+          213.72,
+          130.11,
+          72.6
+        ]
+      ],
+      "model_paths_inside_s5": true,
+      "all_print_paths_inside_s5": true,
+      "all_print_path_bounds_mm": [
+        [
+          98.178,
+          99.096,
+          0.2
+        ],
+        [
+          213.72,
+          140.903,
+          72.6
+        ]
+      ],
+      "bed_footprint_bounds_mm": [
+        [
+          98.178,
+          99.096
+        ],
+        [
+          208.391,
+          140.903
+        ]
+      ],
+      "bed_footprint_hull_xy_mm": [
+        [
+          98.178,
+          115.544
+        ],
+        [
+          100.716,
+          108.313
+        ],
+        [
+          106.851,
+          101.969
+        ],
+        [
+          107.005,
+          101.87
+        ],
+        [
+          114.84,
+          99.096
+        ],
+        [
+          191.54,
+          99.096
+        ],
+        [
+          196.542,
+          100.549
+        ],
+        [
+          200.097,
+          102.541
+        ],
+        [
+          205.601,
+          107.882
+        ],
+        [
+          208.391,
+          115.768
+        ],
+        [
+          208.39,
+          124.164
+        ],
+        [
+          206.882,
+          129.259
+        ],
+        [
+          204.916,
+          132.645
+        ],
+        [
+          199.642,
+          138.097
+        ],
+        [
+          191.759,
+          140.903
+        ],
+        [
+          114.948,
+          140.903
+        ],
+        [
+          109.918,
+          139.427
+        ],
+        [
+          106.296,
+          137.305
+        ],
+        [
+          100.969,
+          132.135
+        ],
+        [
+          98.182,
+          124.263
+        ]
+      ],
+      "extrusion_speed_max_mm_s_by_type": {
+        "SKIRT": 20.0,
+        "WALL-OUTER": 23.881666666666668,
+        "WALL-INNER": 29.706666666666667,
+        "SKIN": 23.881666666666668,
+        "FILL": 35.0
+      },
+      "wall_line_count": 3,
+      "infill_pct": 20,
+      "layer_height_mm": 0.2,
+      "adhesion_type": "brim",
+      "brim_width_mm": 20,
+      "brim_location": "outside",
+      "brim_gap_mm": 0,
+      "physical_configuration_verified": false,
+      "print_started": false,
+      "limitations": [
+        "Path and metadata review only; not physical fit, strength or flight qualification",
+        "Bounds exclude machine-specific priming and non-extruding travel"
+      ],
+      "part": "fin",
+      "dimensions_mm": [
+        97.59527587890625,
+        20.64982032775879,
+        72.62693786621094
+      ],
+      "source_stl_sha256": "f51fe4520872ededc87cdbc214675198bd151a50f3a1146156416a03aba47a33",
+      "resolved_settings_sha256": "6069adb8b6bac0b89d2bccc04b0bfdd56ff68b4d0ed4953ba80b01254aac4ede",
+      "quantity_for_assembly": 3,
+      "solid_centroid_bed_xy_mm": [
+        166.44721603393555,
+        119.9999885559082
+      ],
+      "solid_centroid_support_margin_mm": 20.903,
+      "centroid_basis": "Uniform solid geometry, not measured infill mass or adhesion strength",
+      "print_rotation_y_deg": 45.0
+    }
+  ],
+  "geometry": {
+    "vertices": 449,
+    "triangles": 902,
+    "connected_components": 1,
+    "non_manifold_edges": 0,
+    "boundary_edges": 0,
+    "zero_area_triangles": 0,
+    "nonadjacent_intersection_pairs": 0,
+    "volume_mm3": 12510.122839789663,
+    "solid_mass_g_at_assumed_density": 15.512552321339182,
+    "centroid_mm": [
+      50.24485397338867,
+      10.324898719787598,
+      29.39240837097168
+    ],
+    "bounds_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        97.59527587890625,
+        20.64982032775879,
+        72.62693786621094
+      ]
+    ],
+    "dimensions_mm": [
+      97.59527587890625,
+      20.64982032775879,
+      72.62693786621094
+    ]
+  },
+  "comparison_to_failed_fin": {
+    "previous_stl_sha256": "fdb04dfeb5d7c6407ed21dd9432004daf8d922b2466ce02dc257c5f9dd3c7a21",
+    "same_bounds_mm": true,
+    "volume_difference_mm3": 0.00022214257114683278,
+    "note": "Regenerated mesh has numerical seam differences; do not claim byte identity."
+  },
+  "files": [
+    {
+      "name": "fin-mm.3mf",
+      "sha256": "9d7b98f495dca495c37fa2ceb119bbbe8b1350df787a14d95ee6ca7bff3de518"
+    },
+    {
+      "name": "fin-mm.stl",
+      "sha256": "f51fe4520872ededc87cdbc214675198bd151a50f3a1146156416a03aba47a33"
+    },
+    {
+      "name": "fin-preview.png",
+      "sha256": "5db495afc34b4d544c0ab30c8ae864bc1289044686cffa2bde3e9b516fe579f4"
+    },
+    {
+      "name": "fin-S5.gcode",
+      "sha256": "28bcf5c38f4cc4bbad76427f0c1cac0bc205e2d06585df16d5f57c77a470b278"
+    },
+    {
+      "name": "fin-S5.ufp",
+      "sha256": "b21d3304ba352d2f25218792b17ba98d85e52ba40f7cd0be1b926163d0a274a0"
+    },
+    {
+      "name": "fin-slice-check.json",
+      "sha256": "09163ca9bc52fc3c366e8f60463c87e1d2ed070e958fdae67434336f1e8062ab"
+    },
+    {
+      "name": "parameters.json",
+      "sha256": "703944ec065397602b996b1c9fafe8ca1f01db9ec0a86e0fa4cbe0f4e960125d"
+    }
+  ]
+}

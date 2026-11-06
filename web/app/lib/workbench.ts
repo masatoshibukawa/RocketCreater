@@ -5,6 +5,11 @@ import { apiUrl } from "./api";
 import type { BottleDesign, TracePoint } from "./types";
 
 export interface WorkbenchFile { name: string; key: string; kind: string; url: string; sha256: string }
+export interface VideoPlan {
+  status: string; model: string; design_caption: string; launch_caption: string;
+  wan_status: string; width: number; height: number; fps: number; frames_per_clip: number;
+  style?: "engineering" | "photographic"; design_frames?: number; launch_frames?: number;
+}
 export interface AnalysisOption {
   id: string; label: string; method: string; architecture: string;
   variant: string; pressure_kpa: number; fill_pct: number;
@@ -48,11 +53,12 @@ export interface WorkbenchProject {
   history: { chosen: string; reason: string; result: Record<string, unknown> }[];
   aero_loop: AeroLoop | null; aero_images: AeroImage[];
   last_elapsed_seconds?: number;
-  video_plan?: { status: string; model: string; design_caption: string; launch_caption: string;
-    wan_status: string; width: number; height: number; fps: number; frames_per_clip: number };
+  video_plan?: VideoPlan;
+  photographic_video_plan?: VideoPlan;
 }
 export interface RuntimeStatus {
   ollama: { available: boolean; models: string[] }; comfyui: { available: boolean; version?: string };
+  photographic?: { available: boolean; source: string; license: string };
 }
 const STORAGE_KEY = "rocketwright.workbench.v1";
 

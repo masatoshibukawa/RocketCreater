@@ -149,6 +149,35 @@ def test_workshop_replay_exports_same_design_and_integrity_checked_downloads(ben
         assert client.get(printed["url"]).status_code == 409
         assert client.post(endpoint, json={"revision": state["revision"]}).status_code == 409
         assert len(captured) == 1
+    # A photographic production must coexist with the shorter engineering clips.
+    from rocketwright.agent.production import plan_video
+
+    state = bench.get(state["id"])
+    state = plan_video(bench, state["id"], state["revision"], local=False)
+    engineering = state["video_plan"]
+    state = plan_video(bench, state["id"], state["revision"], local=False, style="photographic")
+    photo = state["photographic_video_plan"]
+    assert state["video_plan"] == engineering
+    assert photo["design_source"] == json.loads(frozen_report)["sim_source_id"]
+    assert (
+        photo["width"] == 1920 and photo["design_frames"] == 384 and photo["launch_frames"] == 288
+    )
+    import sys
+
+    import rocketwright.agent.production as production
+    from rocketwright.agent.production import render_video
+
+    monkeypatch.setattr(
+        production,
+        "media_settings",
+        lambda: {"blender": Path(sys.executable), "python": Path(sys.executable)},
+    )
+
+    modified = bench.load(state["id"])
+    modified["photographic_video_plan"]["width"] = 2000
+    bench._write(modified)
+    with pytest.raises(Conflict, match="settings changed"):
+        render_video(bench, state["id"], state["revision"], style="photographic")
     path.write_text("tampered")
     with pytest.raises(Conflict, match="changed"):
         bench.file(state["id"], report_file["key"])
@@ -260,8 +289,7 @@ def test_aero_image_serves_flow_pictures_only(monkeypatch, bench, tmp_path):
     base = f"/workbench/projects/{state['id']}/aero-images"
     with TestClient(app) as client:
         assert client.get(f"{base}/V015p00_A+00p00.png").status_code == 404  # no loop run yet
-        artifacts = _with_flow_images(bench, state, tmp_path)
-        (artifacts / "flow" / "linked.png").symlink_to(artifacts / "aoa_sweep.png")
+        _with_flow_images(bench, state, tmp_path)
 
         response = client.get(f"{base}/V015p00_A%2B04p00.png")
         assert response.status_code == 200
@@ -278,6 +306,23 @@ def test_aero_image_serves_flow_pictures_only(monkeypatch, bench, tmp_path):
             "linked.png",
         ):
             assert client.get(f"{base}/{name}").status_code == 404, name
+
+
+def test_aero_image_rejects_symbolic_link(monkeypatch, bench, tmp_path):
+    monkeypatch.setattr(routes, "DEFAULT_WORKBENCH", bench)
+    state = bench.create()
+    artifacts = _with_flow_images(bench, state, tmp_path)
+    try:
+        (artifacts / "flow" / "V015p00_A+08p00.png").symlink_to(artifacts / "aoa_sweep.png")
+    except OSError as exc:
+        if getattr(exc, "winerror", None) == 1314:
+            pytest.skip("Windows account cannot create symbolic links")
+        raise
+    with TestClient(app) as client:
+        response = client.get(
+            f"/workbench/projects/{state['id']}/aero-images/V015p00_A%2B08p00.png"
+        )
+        assert response.status_code == 404
 
 
 @pytest.mark.parametrize("name", ["../aoa_sweep.png", "..", "flow/a.png", "a..png", "a.PNG", ""])

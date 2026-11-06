@@ -1,12 +1,15 @@
 """Local production workbench routes; each mutation acknowledges one revision."""
 
+from typing import Literal
+
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from rocketwright.agent.library import DEFAULT_LIBRARY
 from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
-from rocketwright.agent.production import collect_wan, plan_video, render_video, submit_wan
+from rocketwright.agent.production import collect_wan, plan_video, queue_video, submit_wan
+from rocketwright.agent.video_appearance import appearance_runtime
 from rocketwright.agent.workbench import DEFAULT_WORKBENCH, Conflict, StepChoice
 from rocketwright.bottle_assembly import Workshop
 
@@ -49,6 +52,11 @@ class StepRequest(Revision):
 
 class PlanRequest(Revision):
     local: bool = True
+    style: Literal["engineering", "photographic"] = "engineering"
+
+
+class RenderRequest(Revision):
+    style: Literal["engineering", "photographic"] = "engineering"
 
 
 def call(operation, *args):
@@ -82,6 +90,7 @@ def runtime():
         }
     except LocalRuntimeError:
         pass
+    result["photographic"] = appearance_runtime()
     return result
 
 
@@ -145,12 +154,20 @@ def assembly_pdf(project_id: str, request: Revision):
 
 @router.post("/projects/{project_id}/video-plan")
 def video_plan(project_id: str, request: PlanRequest):
-    return call(plan_video, DEFAULT_WORKBENCH, project_id, request.revision, request.local)
+    return call(
+        plan_video,
+        DEFAULT_WORKBENCH,
+        project_id,
+        request.revision,
+        request.local,
+        None,
+        request.style,
+    )
 
 
-@router.post("/projects/{project_id}/render-video")
-def video_render(project_id: str, request: Revision):
-    return call(render_video, DEFAULT_WORKBENCH, project_id, request.revision)
+@router.post("/projects/{project_id}/render-video", status_code=202)
+def video_render(project_id: str, request: RenderRequest):
+    return call(queue_video, DEFAULT_WORKBENCH, project_id, request.revision, request.style)
 
 
 @router.post("/projects/{project_id}/wan")

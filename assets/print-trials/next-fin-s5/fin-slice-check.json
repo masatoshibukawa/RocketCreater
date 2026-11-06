@@ -1,0 +1,176 @@
+{
+  "file": "fin-S5.ufp",
+  "sha256": "b21d3304ba352d2f25218792b17ba98d85e52ba40f7cd0be1b926163d0a274a0",
+  "target_machine": "Ultimaker S5",
+  "generator_version": "5.12.0",
+  "material_profile": "UltiMaker Gray Tough PLA",
+  "material_diameter_mm": 2.85,
+  "material_guid": "6660eb2e-aa40-49ad-ac9b-ada979f3de9b",
+  "nozzle_initial_temperature_c": 220.0,
+  "bed_initial_temperature_c": 60.0,
+  "estimated_time_seconds": 6797,
+  "estimated_filament_m": 2.085,
+  "estimated_mass_g": 16.49,
+  "layer_count": 363,
+  "model_layers": 363,
+  "missing_model_layers": [],
+  "empty_trailing_layers": [],
+  "support_segments": 0,
+  "used_tools": [
+    0
+  ],
+  "model_path_bounds_mm": [
+    [
+      116.308,
+      109.886,
+      0.2
+    ],
+    [
+      213.72,
+      130.11,
+      72.6
+    ]
+  ],
+  "model_paths_inside_s5": true,
+  "all_print_paths_inside_s5": true,
+  "all_print_path_bounds_mm": [
+    [
+      98.178,
+      99.096,
+      0.2
+    ],
+    [
+      213.72,
+      140.903,
+      72.6
+    ]
+  ],
+  "bed_footprint_bounds_mm": [
+    [
+      98.178,
+      99.096
+    ],
+    [
+      208.391,
+      140.903
+    ]
+  ],
+  "bed_footprint_hull_xy_mm": [
+    [
+      98.178,
+      115.544
+    ],
+    [
+      100.716,
+      108.313
+    ],
+    [
+      106.851,
+      101.969
+    ],
+    [
+      107.005,
+      101.87
+    ],
+    [
+      114.84,
+      99.096
+    ],
+    [
+      191.54,
+      99.096
+    ],
+    [
+      196.542,
+      100.549
+    ],
+    [
+      200.097,
+      102.541
+    ],
+    [
+      205.601,
+      107.882
+    ],
+    [
+      208.391,
+      115.768
+    ],
+    [
+      208.39,
+      124.164
+    ],
+    [
+      206.882,
+      129.259
+    ],
+    [
+      204.916,
+      132.645
+    ],
+    [
+      199.642,
+      138.097
+    ],
+    [
+      191.759,
+      140.903
+    ],
+    [
+      114.948,
+      140.903
+    ],
+    [
+      109.918,
+      139.427
+    ],
+    [
+      106.296,
+      137.305
+    ],
+    [
+      100.969,
+      132.135
+    ],
+    [
+      98.182,
+      124.263
+    ]
+  ],
+  "extrusion_speed_max_mm_s_by_type": {
+    "SKIRT": 20.0,
+    "WALL-OUTER": 23.881666666666668,
+    "WALL-INNER": 29.706666666666667,
+    "SKIN": 23.881666666666668,
+    "FILL": 35.0
+  },
+  "wall_line_count": 3,
+  "infill_pct": 20,
+  "layer_height_mm": 0.2,
+  "adhesion_type": "brim",
+  "brim_width_mm": 20,
+  "brim_location": "outside",
+  "brim_gap_mm": 0,
+  "physical_configuration_verified": false,
+  "print_started": false,
+  "limitations": [
+    "Path and metadata review only; not physical fit, strength or flight qualification",
+    "Bounds exclude machine-specific priming and non-extruding travel"
+  ],
+  "part": "fin",
+  "dimensions_mm": [
+    97.59527587890625,
+    20.64982032775879,
+    72.62693786621094
+  ],
+  "source_stl_sha256": "f51fe4520872ededc87cdbc214675198bd151a50f3a1146156416a03aba47a33",
+  "resolved_settings_sha256": "6069adb8b6bac0b89d2bccc04b0bfdd56ff68b4d0ed4953ba80b01254aac4ede",
+  "quantity_for_assembly": 3,
+  "solid_centroid_bed_xy_mm": [
+    166.44721603393555,
+    119.9999885559082
+  ],
+  "solid_centroid_support_margin_mm": 20.903,
+  "centroid_basis": "Uniform solid geometry, not measured infill mass or adhesion strength",
+  "print_rotation_y_deg": 45.0
+}

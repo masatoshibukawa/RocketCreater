@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import uuid
 from pathlib import Path
 from typing import Literal
@@ -16,6 +17,7 @@ from urllib.parse import urlencode
 from pydantic import BaseModel, ConfigDict, Field
 
 from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
+from rocketwright.agent.video_appearance import freeze_assets, plan_key, recipe
 from rocketwright.agent.workbench import ROOT, SKILLS, Conflict
 
 
@@ -77,21 +79,29 @@ def media_settings():
     }
 
 
-def plan_video(bench, project_id, revision, local=True, director=None):
+def plan_video(bench, project_id, revision, local=True, director=None, style="engineering"):
+    key = plan_key(style)
+    kind = "photographic_video" if style == "photographic" else "video"
+
     def worker(state):
-        if not state["files"]:
+        if not any(f["kind"] == "production" for f in state["files"]):
             raise Conflict("Export the confirmed design before planning its videos")
-        if any(f["kind"] == "video" for f in state["files"]):
+        if any(f["kind"] == kind for f in state["files"]):
             raise Conflict("Videos already exist. Keep their approved direction unchanged.")
-        current = bench.view(state)
+        report = json.loads(
+            bench.file(project_id, "production/report.json").read_text(encoding="utf-8")
+        )
+        assembly = json.loads(
+            bench.file(project_id, "production/assembly.json").read_text(encoding="utf-8")
+        )
         if local:
             skills = [
                 {"path": p, "instructions": (ROOT / p).read_text(encoding="utf-8")}
                 for p in SKILLS["video"]
             ]
             context = {
-                "design": current["design"],
-                "dimensions_mm": current["plan"]["dimensions_mm"],
+                "design": report["design"],
+                "dimensions_mm": assembly["dimensions_mm"],
                 "evidence": state["history"][-2:],
                 "skills": skills,
                 "output": "separate design explanation and simulated launch CG",
@@ -115,43 +125,62 @@ def plan_video(bench, project_id, revision, local=True, director=None):
                 launch_motion="tracking_ascent",
                 reason="採用案の構成と計算した軌跡を順に確認する。",
             )
-        state["video_plan"] = bind_direction(direction) | {
-            "model": model,
-            "skills": SKILLS["video"],
-            "fps": 24,
-            "frames_per_clip": 96,
-            "width": 960,
-            "height": 540,
-            "audio": "none",
-            "design_source": state["history"][-1]["chosen"],
-            "status": "planned",
-            "wan_status": "not_submitted",
-        }
+        state[key] = (
+            bind_direction(direction)
+            | recipe(style)
+            | {
+                "model": model,
+                "skills": SKILLS["video"],
+                "audio": "none",
+                "design_source": report["sim_source_id"],
+                "status": "planned",
+                "wan_status": "not_submitted",
+            }
+        )
 
     return bench._run(project_id, revision, "video_direction", worker)
 
 
-def render_video(bench, project_id, revision):
+def render_video(bench, project_id, revision, style="engineering", *, started=None):
+    key = plan_key(style)
+    kind = "photographic_video" if style == "photographic" else "video"
+
     def worker(state):
         settings = media_settings()
         if not settings["blender"].is_file() or not settings["python"].is_file():
             raise LocalRuntimeError("Configure the installed Blender and video Python executables")
-        if state.get("video_plan", {}).get("status") != "planned":
+        plan = state.get(key, {})
+        if plan.get("status") != "planned":
             raise Conflict("Approve a shot plan before rendering")
-        validate_bound_direction(state["video_plan"])
-        if any(f["kind"] == "video" for f in state["files"]):
+        validate_bound_direction(plan)
+        expected_recipe = recipe(style)
+        if any(plan.get(k, v) != v for k, v in expected_recipe.items()):
+            raise Conflict("Render settings changed; review a new plan")
+        if any(f["kind"] == kind for f in state["files"]):
             raise Conflict("Videos already exist for this design")
-        directory = bench.directory(project_id) / "video"
+        directory = bench.directory(project_id) / (
+            "video-photographic" if style == "photographic" else "video"
+        )
         directory.mkdir(exist_ok=True)
-        current = bench.view(state)
+        # Bind the same frozen production snapshot as the print exports.
+        assembly = json.loads(
+            bench.file(project_id, "production/assembly.json").read_text(encoding="utf-8")
+        )
+        report = json.loads(
+            bench.file(project_id, "production/report.json").read_text(encoding="utf-8")
+        )
         job = {
-            "dimensions_mm": current["plan"]["dimensions_mm"],
-            "plan": state["video_plan"],
-            "design": current["design"],
-            "source_id": state["history"][-1]["chosen"],
+            "dimensions_mm": assembly["dimensions_mm"],
+            "plan": plan,
+            "design": report["design"],
+            "source_id": report["sim_source_id"],
             "evidence": state["history"][-2:],
-            "trace": json.loads(bench.file(project_id, "production/trace.json").read_text()),
+            "trace": json.loads(
+                bench.file(project_id, "production/trace.json").read_text(encoding="utf-8")
+            ),
         }
+        if style == "photographic":
+            freeze_assets(directory)
         job_path = directory / "job.json"
         job_path.write_text(json.dumps(job, ensure_ascii=False, indent=2), encoding="utf-8")
         env = os.environ.copy()
@@ -161,6 +190,8 @@ def render_video(bench, project_id, revision):
             [
                 str(settings["blender"]),
                 "--background",
+                "--python-exit-code",
+                "1",
                 "--python",
                 str(ROOT / "scripts/render_workbench_scene.py"),
                 "--",
@@ -182,7 +213,7 @@ def render_video(bench, project_id, revision):
                         cwd=ROOT,
                         env=env,
                         check=True,
-                        timeout=900,
+                        timeout=3600 if style == "photographic" else 900,
                         stdout=log,
                         stderr=subprocess.STDOUT,
                         creationflags=flags,
@@ -194,12 +225,43 @@ def render_video(bench, project_id, revision):
         verification = json.loads((directory / "verification.json").read_text())
         if not verification["passed"]:
             raise LocalRuntimeError("Video verification did not pass")
-        state["video_plan"]["status"] = "rendered"
-        bench.register_files(state, directory, "video")
+        if "Traceback (most recent call last)" in (directory / "render.log").read_text(
+            encoding="utf-8"
+        ):
+            raise LocalRuntimeError("Video render log contains an exception")
+        state[key]["status"] = "rendered"
+        bench.register_files(state, directory, kind)
         # Logs and executable scene files are local implementation details.
         state["files"] = [f for f in state["files"] if f["name"] not in {"render.log", "job.json"}]
 
-    return bench._run(project_id, revision, "render_design_and_launch", worker)
+    return bench._run(
+        project_id, revision, "render_design_and_launch", worker, started_event=started
+    )
+
+
+def queue_video(bench, project_id, revision, style="engineering"):
+    """Acknowledge the persisted running checkpoint before a long local render."""
+    recipe(style)
+    state = bench.get(project_id)
+    if state["revision"] != revision or state["active"]:
+        raise Conflict("Project revision changed or another operation is running")
+    started = threading.Event()
+    errors = []
+
+    def work():
+        try:
+            render_video(bench, project_id, revision, style, started=started)
+        except Exception as exc:
+            errors.append(exc)  # _run also persists tool failures for the browser poll.
+        finally:
+            started.set()  # Setup failures must also release the acknowledgement wait.
+
+    threading.Thread(target=work, name="local-video-render", daemon=True).start()
+    if not started.wait(timeout=5):
+        raise LocalRuntimeError("Render startup did not acknowledge; reload its saved status")
+    if errors:
+        raise errors[0]
+    return bench.get(project_id)
 
 
 def comfy_client():
