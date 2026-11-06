@@ -15,14 +15,18 @@ from pathlib import Path
 MODEL_TYPES = {"WALL-OUTER", "WALL-INNER", "SKIN", "FILL", "GAP-FILL"}
 
 
-def inspect(path: Path) -> dict:
+def inspect(path: Path, *, material_color: str = "Black") -> dict:
+    if material_color not in {"Black", "Gray"}:
+        raise ValueError("Only the verified Black and Gray Tough PLA profiles are supported")
     with zipfile.ZipFile(path) as archive:
         if archive.testzip() is not None:
             raise ValueError("UFP archive CRC failed")
         text = archive.read("/3D/model.gcode").decode("utf-8")
         metadata = json.loads(archive.read("/Cura/slicemetadata.json"))
         material = ET.fromstring(
-            archive.read("/Materials/ultimaker_tough_pla_black.xml.fdm_material")
+            archive.read(
+                f"/Materials/ultimaker_tough_pla_{material_color.lower()}.xml.fdm_material"
+            )
         )
     properties = {n.tag.rsplit("}", 1)[-1]: n.text for n in material.iter()}
     header = dict(re.findall(r"^;([A-Z0-9._]+):([^\n\r]+)", text, re.MULTILINE))
@@ -32,14 +36,16 @@ def inspect(path: Path) -> dict:
     if (
         properties.get("brand") != "Ultimaker"
         or properties.get("material") != "Tough PLA"
-        or properties.get("color") != "Black"
+        or properties.get("color") != material_color
         or diameter != 2.85
         or density <= 0
         or properties.get("GUID") != header.get("EXTRUDER_TRAIN.0.MATERIAL.GUID")
         or header.get("EXTRUDER_TRAIN.0.NOZZLE.NAME") != "AA 0.4"
         or float(header.get("EXTRUDER_TRAIN.0.NOZZLE.DIAMETER", "0")) != 0.4
     ):
-        raise ValueError("Expected matching Black Tough PLA 2.85 mm and AA 0.4 profiles")
+        raise ValueError(
+            f"Expected matching {material_color} Tough PLA 2.85 mm and AA 0.4 profiles"
+        )
     count = int(re.search(r"^;LAYER_COUNT:(\d+)", text, re.MULTILINE)[1])
     position = {"X": 0.0, "Y": 0.0, "Z": 0.0, "E": 0.0}
     layer, kind, tool, absolute_e = -1, "", 0, True
@@ -111,7 +117,7 @@ def inspect(path: Path) -> dict:
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
         "target_machine": header["TARGET_MACHINE.NAME"],
         "generator_version": header["GENERATOR.VERSION"],
-        "material_profile": "UltiMaker Black Tough PLA",
+        "material_profile": f"UltiMaker {material_color} Tough PLA",
         "material_diameter_mm": diameter,
         "material_guid": header["EXTRUDER_TRAIN.0.MATERIAL.GUID"],
         "nozzle_initial_temperature_c": float(header["EXTRUDER_TRAIN.0.INITIAL_TEMPERATURE"]),
@@ -145,8 +151,9 @@ def inspect(path: Path) -> dict:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("ufp", type=Path)
+    parser.add_argument("--material-color", choices=("Black", "Gray"), default="Black")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    result = inspect(args.ufp)
+    result = inspect(args.ufp, material_color=args.material_color)
     args.out.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result))
