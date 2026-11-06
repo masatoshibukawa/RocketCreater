@@ -50,13 +50,19 @@ def prompt_view(offered, context, max_chars=9000):
             method=row.get("method_label", row.get("method")),
             layer=row.get("layer"),
             score=round(row.get("score", 0), 3),
-            cost_s=round(row.get("cost_s", 0), 2),
+            cost_s=round(
+                (history.get("mean_cost_s") or row.get("estimated_followup_cost_s", 0))
+                if row.get("method") == "new_design_revision"
+                else row.get("cost_s", 0),
+                2,
+            ),
             target=target,
             parameters=row.get("parameters"),
             expected={
                 k: p[k]
                 for k in (
                     "delta_height_m",
+                    "raw_delta_height_m",
                     "delta_mass_g",
                     "delta_static_margin_cal",
                     "violation_reduction",
@@ -65,7 +71,7 @@ def prompt_view(offered, context, max_chars=9000):
             },
             history={
                 k: history[k]
-                for k in ("samples", "mean_delta_height_m", "mean_cost_s", "score_adjustment")
+                for k in ("samples", "residual_samples", "height_correction_m", "mean_cost_s")
                 if k in history
             },
             refinement_history=row.get("empirical_refinement"),
@@ -134,7 +140,9 @@ def choose(choices, context, limits, *, director=None, remaining_s=None):
                 "Select one offered action ID and explain why its target/method/evaluation "
                 "reduces uncertainty or an unmet requirement. Consider layers, dependencies, "
                 "resource cost, predicted joint constraint improvement, verified measured "
-                "outcomes and prior failures. Read method_label: modes means structural "
+                "outcomes, bounded prediction-error corrections and prior failures. "
+                "A history correction is provisional and never establishes a pass. "
+                "Read method_label: modes means structural "
                 "vibration modes, not software states. An analysis measures a design; only a "
                 "redesign action changes it. Current metrics override past explanations. "
                 "Compare altitude with static margin and incidence rather than altitude alone. "

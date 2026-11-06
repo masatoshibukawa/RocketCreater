@@ -59,7 +59,9 @@ def test_feedback_preserves_losses_and_rejects_other_code_or_precision(tmp_path)
     )
     found = experience.retrieve([row, row], s, change, code="solver1", precision=p)
     assert len(found) == 1
-    assert experience.estimate(found, 30)["score_adjustment"] < 0
+    learned = experience.estimate(found, 30)
+    assert learned["mean_delta_height_m"] < 0
+    assert learned["score_adjustment"] == 0  # No bound prediction error in legacy evidence.
     assert not experience.retrieve([row], s, change, code="solver2", precision=p)
     assert not experience.retrieve(
         [row], s, change, code="solver1", precision={**p, "altitude_error_m": 2}

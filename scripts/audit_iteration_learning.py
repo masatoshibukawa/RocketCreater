@@ -86,7 +86,7 @@ def audit(root, *, checkpoint=False):
             train_outcomes.append(
                 dict(
                     sample["outcome"],
-                    prediction_residual_m=(
+                    offline_prediction_residual_m=(
                         sample["outcome"]["delta"]["apogee_m"] - predicted
                         if predicted is not None
                         else None
@@ -105,11 +105,11 @@ def audit(root, *, checkpoint=False):
         n = estimate["samples"]
         weight = n / (n + 3)
         adjusted = (1 - weight) * base + weight * (estimate["mean_delta_height_m"] or 0)
-        residuals = [r for r in matches if r["prediction_residual_m"] is not None]
+        residuals = [r for r in matches if r["offline_prediction_residual_m"] is not None]
         residual_weight = len(residuals) / (len(residuals) + 3)
         correction = (
             (
-                sum(r["similarity"] * r["prediction_residual_m"] for r in residuals)
+                sum(r["similarity"] * r["offline_prediction_residual_m"] for r in residuals)
                 / sum(r["similarity"] for r in residuals)
                 * residual_weight
             )

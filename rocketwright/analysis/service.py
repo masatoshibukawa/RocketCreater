@@ -15,6 +15,7 @@ from rocketwright.analysis.aero_accuracy import holdout
 from rocketwright.analysis.record import scopes
 from rocketwright.analysis.runtime import Runtime, run
 from rocketwright.analysis.schema import Precision, SearchLimits
+from rocketwright.analysis.screening import violation
 from rocketwright.analysis.worker import read
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -325,19 +326,34 @@ class Harness:
                     proposal["change"],
                     code=code_hash(),
                     precision=precision.model_dump(),
+                    screen_step_s=a["runtime"]["flight_step_s"],
                 )
                 if limits.use_experience
                 else []
             )
-            learned = experience.estimate(retrieved, spec.requirement.target_altitude_m)
-            gain = prediction["violation_reduction"] if prediction else 0
-            # Explicit estimate, with shrinkage for sparse measured feedback.
-            score = (
-                60
-                + 80 * math.tanh(gain)
-                + learned["score_adjustment"]
-                - math.log1p(learned["mean_cost_s"] or cycle_s) / 3
+            learned = experience.estimate(
+                retrieved,
+                spec.requirement.target_altitude_m,
+                correction_limit_m=precision.altitude_error_m * precision.aero_allocation,
             )
+            gain = prediction["violation_reduction"] if prediction else 0
+            if prediction and learned["residual_samples"]:
+                prediction = copy.deepcopy(prediction)
+                correction = learned["height_correction_m"]
+                prediction["raw_delta_height_m"] = prediction["delta_height_m"]
+                prediction["delta_height_m"] += correction
+                prediction["predicted"]["apogee_m"] += correction
+                gain = violation(
+                    survey["baseline"],
+                    spec.requirement.target_altitude_m,
+                    precision.minimum_static_margin_cal,
+                ) - violation(
+                    prediction["predicted"],
+                    spec.requirement.target_altitude_m,
+                    precision.minimum_static_margin_cal,
+                )
+                prediction["violation_reduction"] = gain
+            score = 60 + 80 * math.tanh(gain) - math.log1p(learned["mean_cost_s"] or cycle_s) / 3
             choices["offered"][key] = dict(
                 target=proposal["change"],
                 method="new_design_revision",
@@ -597,6 +613,12 @@ class Harness:
             ),
             scope="same analytic 6DOF metric before and after; no physical validation",
         )
+        if pending.get("prediction") and pending.get("before_evidence"):
+            row["prediction_residual_m"] = (
+                row["delta"]["apogee_m"] - pending["prediction"]["delta_height_m"]
+            )
+            if not experience.verified(row):
+                row["status"] = "invalid_feedback_evidence"
         a.setdefault("observations", []).append(row)
         a["outcome_pending"] = None
 
@@ -611,8 +633,31 @@ class Harness:
         before = self._snapshot(c)
         old_spec = DesignSpec.model_validate(state["spec"])
         if before:
+            survey = self.data(c, "survey") or {}
+            prediction = survey.get("candidates", {}).get(decision["action"])
+            if prediction and prediction["spec_hash"] != policy.identity(
+                DesignSpec.model_validate(proposal["spec"])
+            ):
+                prediction = None
             a["outcome_pending"] = dict(
                 before=before,
+                before_evidence=copy.deepcopy(c.results["screen"]["value"]),
+                screen_step_s=a["runtime"]["flight_step_s"],
+                prediction=copy.deepcopy(prediction),
+                prediction_action=decision["action"],
+                prediction_evidence=(
+                    copy.deepcopy(c.results["survey"]["value"]) if prediction else None
+                ),
+                transition_id=experience.transition_id(old_spec, proposal["change"], before),
+                change_from=(
+                    getattr(
+                        getattr(old_spec, proposal["change"]["section"]),
+                        proposal["change"]["field"],
+                    )
+                    if proposal["change"]["section"]
+                    else getattr(old_spec, proposal["change"]["field"])
+                ),
+                change_to=proposal["change"]["value"],
                 features=experience.features(old_spec),
                 signature=experience.signature(proposal["change"], old_spec),
                 remaining_s=c.remaining_s,
