@@ -34,6 +34,7 @@ Claudeの案は機体の構成を定めないため、1.5 Lの製作例にある
 - [ローカル試験の起動と操作](docs/workbench.md)
 - [空力レイヤー（Barrowman・OpenFOAM・GPU LBM の差し替え、ビルド手順と実測）](docs/aero.md)
 - [既存Gemmaの再利用](AIvideo/local-director/README.md)
+- [ピッチとプレゼンテーションのテクニック](presentation-techniques/README.md)
 
 これは開発・試験用の統合です。製作部品のスライス、現物の寸法・強度・回収・飛行の確認、および最終提出チェックは別工程です。
 
@@ -73,6 +74,7 @@ Claudeの案は機体の構成を定めないため、1.5 Lの製作例にある
 ## リポジトリ構成
 
 ```
+presentation-techniques/ ピッチ・プレゼン・デモの調査資料、制作ワークシート、発表方針
 rocketwright/        Python パッケージ（バックエンド）
   schema.py          pydantic モデル：Requirement, Env, Design（tier で判別）, SimResult, DispersionResult
   classify.py        規則ベースの規模分類
