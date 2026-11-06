@@ -1,0 +1,763 @@
+{
+  "native_runs": [
+    {
+      "kind": "local_llm",
+      "project": "f770a0c8b34c4567937dafaacfd30946",
+      "version": 2,
+      "status": "unresolved",
+      "source_commit": "2e1b1e62b1f7c3daf158bc0cf757d60e8e446bf9",
+      "physical_qualification": false,
+      "spec": {
+        "name": "階層型解析の接続確認用・未製作案",
+        "design": {
+          "tier": "bottle",
+          "bottle_volume_m3": 0.0015,
+          "water_fill_frac": 0.25,
+          "initial_gauge_pressure_pa": 350000.0,
+          "nozzle_diameter_m": 0.009,
+          "dry_mass_kg": 0.15,
+          "payload_mass_kg": 0.06,
+          "has_fins": true,
+          "axial_drag_coefficient": null,
+          "has_parachute": true,
+          "parachute_diameter_m": 0.7,
+          "geometry": null
+        },
+        "geometry": {
+          "body_diameter_mm": 90.0,
+          "body_height_mm": 400.0,
+          "nose_length_mm": 80.0,
+          "fin_root_mm": 90.0,
+          "fin_tip_mm": 40.0,
+          "fin_span_mm": 120.0,
+          "fin_sweep_mm": 35.0,
+          "fin_count": 4,
+          "fin_thickness_mm": 2.4,
+          "nose_wall_mm": 1.6,
+          "fin_tail_inset_mm": 5.0,
+          "dimensions_measured": false
+        },
+        "requirement": {
+          "goal_kind": "altitude",
+          "target_altitude_m": 30.0,
+          "target_apogee_m": null,
+          "payload_mass_kg": 0.0,
+          "budget_jpy": null,
+          "recovery_required": false,
+          "tier_override": null,
+          "text": ""
+        },
+        "env": {
+          "launch_latitude_deg": 0.0,
+          "launch_altitude_m": 0.0,
+          "wind_speed_mps": 1.5,
+          "wind_direction_deg": 270.0,
+          "temperature_offset_k": 0.0,
+          "rail_length_m": 1.5,
+          "earth_rotation": false
+        },
+        "other_dry_mass_g": 150.0,
+        "measured_printed_mass_g": null,
+        "material": "UltiMaker Tough PLA Gray",
+        "assumptions": {
+          "mount": "standard",
+          "root_capture_mm": 10.5,
+          "other_mass_station_fraction": 0.55,
+          "payload_station_fraction": 0.15,
+          "solar_w_m2": 800.0,
+          "warm_wait_s": 120.0,
+          "pitch_damping": 10.0,
+          "initial_tilt_deg": 1.0,
+          "gust_mps": 0.5,
+          "opening_s": 0.15,
+          "evidence": {}
+        }
+      },
+      "precision": {
+        "altitude_error_m": 1.5,
+        "aero_allocation": 0.5,
+        "grid_relative_limit": 0.05,
+        "temporal_relative_limit": 0.03,
+        "structure_relative_limit": 0.05,
+        "deflection_span_limit": 0.05,
+        "maximum_incidence_deg": 15,
+        "minimum_static_margin_cal": 1,
+        "require_cfd": false,
+        "require_fem": true
+      },
+      "runtime": {
+        "cfd_enabled": false,
+        "cfd_cells_coarse": 12,
+        "cfd_cells_fine": 16,
+        "cfd_times": 40,
+        "fem_level": 4,
+        "flight_step_s": 0.02
+      },
+      "decisions": [
+        {
+          "action": "geometry",
+          "version": 1,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'geometry' action addresses the 'geometry_gap' unmet requirement. By establishing a conditional numerical model, it provides the foundational geometric definition necessary for subsequent calculations. This reduces uncertainty in the physical dimensions of the system, which is a prerequisite for accurate aerodynamic and structural evaluations, while maintaining a low resource cost (20.0s) and low complexity (low layer)."
+        },
+        {
+          "action": "thermal",
+          "version": 1,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'thermal' action addresses the 'thermal_gap' unmet requirement. By establishing a conditional numerical model for thermal behavior, it reduces uncertainty regarding the system's thermal stability. This is a low-cost (5.0s) and low-complexity (low layer) operation that provides necessary data for environmental tolerance without requiring material or hardware qualification."
+        },
+        {
+          "action": "propulsion",
+          "version": 1,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'propulsion' action addresses the 'propulsion_gap' unmet requirement. By establishing a conditional numerical model for propulsion, it reduces uncertainty regarding the thrust profile and energy output necessary to reach the target altitude. As a 'middle' layer operation with a low resource cost (5.0s), it provides the necessary propulsion data without the high cost of material or hardware qualification, serving as a critical dependency for calculating the final trajectory and meeting the altitude goal."
+        },
+        {
+          "action": "screen",
+          "version": 1,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'screen' action addresses the 'screen_gap' unmet requirement. By establishing a conditional numerical model, it reduces uncertainty regarding the system's visibility or display characteristics. As a 'high' layer operation, it provides a more complex evaluation than basic geometry or thermal models, yet it maintains a relatively low resource cost (10.0s) compared to physical testing. It addresses a specific gap in the requirements without necessitating high-cost material or hardware qualification."
+        },
+        {
+          "action": "redesign/pressure-350",
+          "version": 1,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'redesign/pressure-350' action directly addresses the 'altitude' unmet requirement by increasing the initial gauge pressure to 350,000 Pa. This targets the altitude shortfall by utilizing an unused operating pressure scenario to increase potential energy/thrust. As a 'high' layer operation, it involves a design revision that recalculates affected analyses, providing a high-impact method to bridge the gap between the current apogee (11.23m) and the target (30.0m) with a very low resource cost (1s)."
+        },
+        {
+          "action": "thermal",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'thermal' action addresses the 'thermal_gap' unmet requirement by establishing a conditional numerical model for thermal behavior. This reduces uncertainty regarding the system's thermal stability. It is a low-cost (5.0s) and low-complexity (low layer) operation that provides necessary data for environmental tolerance without requiring high-cost material or hardware qualification."
+        },
+        {
+          "action": "propulsion",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'propulsion' action addresses the 'propulsion_gap' unmet requirement by establishing a conditional numerical model. This reduces uncertainty regarding the thrust profile and energy output necessary to reach the target altitude. As a 'middle' layer operation with a low resource cost (5.0s), it provides critical data for trajectory calculation without the high cost of material or hardware qualification, serving as a necessary dependency for meeting the altitude goal."
+        },
+        {
+          "action": "screen",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'screen' action addresses the 'screen_gap' unmet requirement by establishing a conditional numerical model. As a 'high' layer operation, it provides a more complex evaluation of the system's visibility or display characteristics compared to basic models. It reduces uncertainty regarding these specific characteristics with a moderate resource cost (10.0s) while avoiding the high costs associated with material or hardware qualification."
+        },
+        {
+          "action": "modes",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'modes' action addresses the 'modes_gap' by establishing a conditional numerical model. While the primary unmet requirement is 'altitude', the 'modes' action is a 'middle' layer operation with a low resource cost (5.0s) that provides a foundational numerical model for system behavior. By establishing these models, it reduces uncertainty in the system's operational parameters, which is a necessary step in refining the trajectory and performance calculations required to reach the 30.0m target altitude."
+        },
+        {
+          "action": "fem_coarse",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'fem_coarse' action addresses the 'fem_coarse_gap' by establishing a conditional numerical model for structural integrity. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the target (30.0m). A 'middle' layer operation like 'fem_coarse' provides a necessary evaluation of structural limits and load paths at a moderate cost (30.0s) without the high cost of hardware qualification. This reduces uncertainty regarding the structural feasibility of the vehicle under higher stress loads required to reach the target altitude, serving as a critical dependency for structural optimization."
+        },
+        {
+          "action": "fem_fine",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'fem_fine' action addresses the 'fem_fine_gap' by providing a high-fidelity structural analysis. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is less than half of the 30.0m target. As a 'middle' layer operation, 'fem_fine' provides a detailed evaluation of structural integrity and load paths. This reduces uncertainty regarding the vehicle's ability to withstand the increased aerodynamic and structural stresses associated with a higher-velocity, higher-altitude flight profile. By refining the structural model beyond the 'fem_coarse' level, it serves as a critical dependency for ensuring the vehicle remains intact during the maneuvers required to reach the target altitude."
+        },
+        {
+          "action": "refine",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'refine' action addresses the 'refine_gap' by providing a high-level conditional numerical model. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the 30.0m target. The 'refine' action, as a 'high' layer operation, provides a sophisticated evaluation of the system's performance parameters. By refining the numerical models, it reduces uncertainty in the aerodynamic and structural calculations necessary to optimize the flight path and reach the target altitude, offering a more comprehensive evaluation than lower-layer actions while avoiding the high costs of hardware qualification."
+        },
+        {
+          "action": "stability",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'stability' action addresses the 'stability_gap' by providing a high-level conditional numerical model. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the 30.0m target. Stability is a critical dependency for high-altitude flight; ensuring the vehicle remains stable during the increased aerodynamic loads and higher velocities required to reach the target altitude reduces uncertainty in the flight path. As a 'high' layer operation, it provides a sophisticated evaluation of the system's stability parameters without the high cost of hardware qualification, ensuring the vehicle can maintain controlled flight as it scales up to meet the altitude requirement."
+        },
+        {
+          "action": "confirm",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'confirm' action addresses the 'confirm_gap' by providing a high-level conditional numerical model. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the target (30.0m). As a 'high' layer operation, 'confirm' provides a comprehensive evaluation of the system's performance parameters. By validating the current design's numerical integrity, it reduces uncertainty in the calculations necessary to optimize the flight path and scale the vehicle's performance to meet the target altitude, offering a high-level verification of the system's readiness without the high cost of hardware qualification."
+        },
+        {
+          "action": "refine/fem",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'refine/fem' action directly addresses the 'fem_mesh' unmet requirement by increasing the mesh resolution for the fin solid. This reduces uncertainty regarding the structural integrity and load paths of the vehicle. By providing a more detailed evaluation of deflection and p95 stress, it ensures the structure can withstand the aerodynamic loads associated with the higher velocities and altitudes required to reach the 30.0m target, serving as a necessary middle-layer dependency for structural reliability."
+        },
+        {
+          "action": "fem_coarse",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'fem_coarse' action addresses the 'fem_coarse_gap' by providing a middle-layer conditional numerical model for structural analysis. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the 30.0m target. To reach the target, the vehicle must withstand higher aerodynamic loads and velocities. 'fem_coarse' reduces uncertainty regarding the structural integrity and load paths of the vehicle by providing a baseline evaluation of stress and deflection. This is a necessary dependency for ensuring the structure remains intact as the design is scaled up to meet the altitude requirement, offering a lower resource cost than full hardware qualification while providing more structural insight than lower-level actions."
+        },
+        {
+          "action": "fem_fine",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'fem_fine' action addresses the 'fem_fine_gap' by providing a high-resolution structural analysis. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the 30.0m target. To reach the target, the vehicle must withstand higher aerodynamic loads and velocities. 'fem_fine' reduces uncertainty regarding structural integrity and load paths by providing a detailed evaluation of deflection and stress. This is a critical middle-layer dependency; by ensuring the structure can withstand the increased loads of a high-altitude flight path, it provides a more precise evaluation than 'fem_coarse' while remaining a lower-cost numerical model compared to hardware qualification."
+        },
+        {
+          "action": "confirm",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'confirm' action addresses the 'confirm_gap' by providing a high-level conditional numerical model. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the target (30.0m). As a 'high' layer operation, 'confirm' provides a comprehensive evaluation of the system's performance parameters. By validating the current design's numerical integrity, it reduces uncertainty in the calculations necessary to optimize the flight path and scale the vehicle's performance to meet the target altitude, offering a high-level verification of the system's readiness without the high cost of hardware qualification."
+        },
+        {
+          "action": "refine/fem",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'refine/fem' action directly addresses the 'fem_mesh' unmet requirement by increasing the mesh resolution for the fin solid. This reduces uncertainty regarding the structural integrity and load paths of the vehicle. By providing a more detailed evaluation of deflection and p95 stress, it ensures the structure can withstand the aerodynamic loads associated with the higher velocities and altitudes required to reach the 30.0m target, serving as a necessary middle-layer dependency for structural reliability."
+        },
+        {
+          "action": "fem_coarse",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'fem_coarse' action addresses the 'fem_coarse_gap' by providing a middle-layer conditional numerical model for structural analysis. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the 30.0m target. To reach the target, the vehicle must withstand higher aerodynamic loads and velocities. 'fem_coarse' reduces uncertainty regarding the structural integrity and load paths of the vehicle by providing a baseline evaluation of stress and deflection. This is a necessary dependency for ensuring the structure remains intact as the design is scaled up to meet the altitude requirement, offering a lower resource cost than full hardware qualification while providing more structural insight than lower-level actions."
+        },
+        {
+          "action": "fem_fine",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'fem_fine' action addresses the 'fem_fine_gap' by providing a high-resolution structural analysis. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the 30.0m target. To reach the target, the vehicle must withstand higher aerodynamic loads and velocities. 'fem_fine' reduces uncertainty regarding structural integrity and load paths by providing a detailed evaluation of deflection and stress. This is a critical middle-layer dependency; by ensuring the structure can withstand the increased loads of a high-altitude flight path, it provides a more precise evaluation than 'fem_coarse' while remaining a lower-cost numerical model compared to hardware qualification."
+        },
+        {
+          "action": "confirm",
+          "version": 2,
+          "planner": "local_llm",
+          "model": "gemma4:12b",
+          "reason": "The 'confirm' action addresses the 'confirm_gap' by providing a high-level conditional numerical model. While the primary unmet requirement is 'altitude', the current apogee (14.03m) is significantly below the target (30.0m). As a 'high' layer operation, 'confirm' provides a comprehensive evaluation of the system's performance parameters. By validating the current design's numerical integrity, it reduces uncertainty in the calculations necessary to optimize the flight path and scale the vehicle's performance to meet the target altitude, offering a high-level verification of the system's readiness without the high cost of hardware qualification."
+        }
+      ],
+      "execution_counts": {
+        "geometry": 1,
+        "thermal": 2,
+        "propulsion": 2,
+        "screen": 2,
+        "modes": 1,
+        "fem_coarse": 3,
+        "fem_fine": 3,
+        "refine": 1,
+        "stability": 1,
+        "confirm": 3
+      },
+      "failed_executions": 0,
+      "metrics": {
+        "geometry": {
+          "geometry_valid": true
+        },
+        "thermal": {
+          "thermal_balance": true
+        },
+        "propulsion": {
+          "propulsion_balance": true
+        },
+        "screen": {
+          "apogee_m": 14.025679861142708,
+          "max_air_speed_mps": 14.969499995519397,
+          "incidence_deg": 9.431438798637247,
+          "aero_domain_pass": true
+        },
+        "modes": {
+          "fin_deflection_ratio": 0.018280077454897185,
+          "positive_modes": true
+        },
+        "fem_coarse": {
+          "fem_deflection_ratio": 0.015288539956156354
+        },
+        "fem_fine": {
+          "fem_deflection_ratio": 0.015872611384447132,
+          "fem_mesh_change": 0.03679743768332189
+        },
+        "refine": {
+          "temporal_pass": true
+        },
+        "stability": {
+          "frozen_pitch_pass": true,
+          "perturbation_incidence_deg": 9.150705578571728
+        },
+        "confirm": {
+          "criteria_met": false
+        }
+      },
+      "last_completed_confirmation": {
+        "unmet": [
+          "altitude",
+          "static_margin"
+        ],
+        "checks": {
+          "altitude": false,
+          "attitude": true,
+          "static_margin": false,
+          "temporal": true,
+          "fin_deformation": true,
+          "modes": true,
+          "frozen_pitch": true,
+          "aero_domain": true,
+          "thermal_balance": true,
+          "propulsion_balance": true,
+          "payload_mass": true,
+          "recovery": true,
+          "cost_evidence": true,
+          "fem_mesh": true
+        },
+        "apogee_m": 14.022322346178724,
+        "static_margin_cal": 0.067830355934803
+      },
+      "cfd_case_count": 0,
+      "artifacts": [
+        {
+          "action": "geometry",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v1/adaptive/1a56023d2499422288a86beab0cedee4/00-geometry/data.json",
+          "sha256": "7f4adb28c02a08044c8d3bc84b9f913bdb9a7153be82f48e1faa48dd67349d1e",
+          "manifest_sha256": "a63af161692a62787f3e0dd1ec9cbbc30ae6252802a8c9dd512b793b8e6be08f"
+        },
+        {
+          "action": "thermal",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/0b9fce1c8a3142dda686fde8e4e61c7e/04-thermal/data.json",
+          "sha256": "7e2252740d8d315b92e7c91731231bbdb1439d3688929dd87ff8cae915428242",
+          "manifest_sha256": "7e6a1ea16bc82d65a06965e0e99de7c64b77e5e465adf44bed0f8c60bad20437"
+        },
+        {
+          "action": "propulsion",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/64bc73b0be844769b9eedb3f7d21e8c4/05-propulsion/data.json",
+          "sha256": "639c65f2461bb6ce356fea3f05032bd9142bb33140d07eac7b5f25659ed2a11a",
+          "manifest_sha256": "47bd039b9a2aff60903048498e68a31858e7b85189ec623c075d56a08e5d2c81"
+        },
+        {
+          "action": "screen",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/df8ea6e0d04847ccb19e66c1ff9bb860/06-screen/data.json",
+          "sha256": "4b35c97ce5d9d5e5080e1b5f53310cb026fcd7b90a68ffdab1396dd45c26a667",
+          "manifest_sha256": "02c812576ea28147ffa51ebaf3cb520791054e5347022299b1d3985746ceb60c"
+        },
+        {
+          "action": "modes",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/850b15b56b4d4a358022b045b665b841/07-modes/data.json",
+          "sha256": "7491ff1b460ef7c7dab75697d3b30b49fa227a6409b7b2731b29d017ffa62901",
+          "manifest_sha256": "89889018af1dab6bf0970180a48b74732a94a63f07830aae310bb8d4f346f427"
+        },
+        {
+          "action": "fem_coarse",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/8c728b099db64a75b7da97035e384087/16-fem_coarse/data.json",
+          "sha256": "244780afcb969cccc636e64fd51ca5060be468554e612133fd5401a09c293434",
+          "manifest_sha256": "245c70855644968fc78b712579ff35f292348efd5a78d2e089ac933b91de8a98"
+        },
+        {
+          "action": "fem_fine",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/07db851a610d424cb01ff79175cae7db/17-fem_fine/data.json",
+          "sha256": "373daa69a590c4908fe6775e953f42792922a2420780f863c02fa6a6970521cd",
+          "manifest_sha256": "6c4deb1a0759fc46a1cc370e93380b5165c7cc501166679ea9e477df973da3d3"
+        },
+        {
+          "action": "refine",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/d813b6cb2b2648eabb5521ff36f91178/10-refine/data.json",
+          "sha256": "4b476da8477e670e2ac23a07b9af962c8ae328e9da48b17b58148a627ea6033b",
+          "manifest_sha256": "963b50e7275dc029f233fc9fdb1951eb736f5c04e98dc81eae60906636b4facb"
+        },
+        {
+          "action": "stability",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/666df0d1031b4f01a4b3d41723c02269/11-stability/data.json",
+          "sha256": "bada83fb4dc1ba5d896b72bc474ab215b5d9e791d9811ad6f32ff6eadf55e5a3",
+          "manifest_sha256": "bb414f86b7f7d4bca02f33d7f6c9afb042a73786f6157bb71ac0ad2824ba5db8"
+        },
+        {
+          "action": "confirm",
+          "artifact": "output/release-live-projects/f770a0c8b34c4567937dafaacfd30946/v2/adaptive/14fea8bef2e44afbb4b9533dd26ec793/18-confirm/data.json",
+          "sha256": "7649d2b57d3e335c2347b281109ff1b6dd2afd6ac8900d06114fd9982ce0e680",
+          "manifest_sha256": "14c25117aa3435bf8fb8e71157cf793c92789e90209537da4882b5b6f6a694be"
+        }
+      ],
+      "caveat": "Last completed confirmation; later refinement settings may await execution. No hardware qualification."
+    },
+    {
+      "kind": "gpu_cfd_baseline",
+      "project": "d02eca2c704348dfbe1adb5d5a593f9d",
+      "version": 1,
+      "status": "budget_exhausted",
+      "source_commit": "2e1b1e62b1f7c3daf158bc0cf757d60e8e446bf9",
+      "physical_qualification": false,
+      "spec": {
+        "name": "階層型解析の接続確認用・未製作案",
+        "design": {
+          "tier": "bottle",
+          "bottle_volume_m3": 0.0015,
+          "water_fill_frac": 0.25,
+          "initial_gauge_pressure_pa": 300000.0,
+          "nozzle_diameter_m": 0.009,
+          "dry_mass_kg": 0.15,
+          "payload_mass_kg": 0.06,
+          "has_fins": true,
+          "axial_drag_coefficient": null,
+          "has_parachute": true,
+          "parachute_diameter_m": 0.7,
+          "geometry": null
+        },
+        "geometry": {
+          "body_diameter_mm": 90.0,
+          "body_height_mm": 400.0,
+          "nose_length_mm": 80.0,
+          "fin_root_mm": 90.0,
+          "fin_tip_mm": 40.0,
+          "fin_span_mm": 120.0,
+          "fin_sweep_mm": 35.0,
+          "fin_count": 4,
+          "fin_thickness_mm": 2.4,
+          "nose_wall_mm": 1.6,
+          "fin_tail_inset_mm": 5.0,
+          "dimensions_measured": false
+        },
+        "requirement": {
+          "goal_kind": "altitude",
+          "target_altitude_m": 30.0,
+          "target_apogee_m": null,
+          "payload_mass_kg": 0.0,
+          "budget_jpy": null,
+          "recovery_required": false,
+          "tier_override": null,
+          "text": ""
+        },
+        "env": {
+          "launch_latitude_deg": 0.0,
+          "launch_altitude_m": 0.0,
+          "wind_speed_mps": 1.5,
+          "wind_direction_deg": 270.0,
+          "temperature_offset_k": 0.0,
+          "rail_length_m": 1.5,
+          "earth_rotation": false
+        },
+        "other_dry_mass_g": 150.0,
+        "measured_printed_mass_g": null,
+        "material": "UltiMaker Tough PLA Gray",
+        "assumptions": {
+          "mount": "standard",
+          "root_capture_mm": 10.5,
+          "other_mass_station_fraction": 0.55,
+          "payload_station_fraction": 0.15,
+          "solar_w_m2": 800.0,
+          "warm_wait_s": 120.0,
+          "pitch_damping": 10.0,
+          "initial_tilt_deg": 1.0,
+          "gust_mps": 0.5,
+          "opening_s": 0.15,
+          "evidence": {}
+        }
+      },
+      "precision": {
+        "altitude_error_m": 1.5,
+        "aero_allocation": 0.5,
+        "grid_relative_limit": 0.05,
+        "temporal_relative_limit": 0.03,
+        "structure_relative_limit": 0.05,
+        "deflection_span_limit": 0.05,
+        "maximum_incidence_deg": 15,
+        "minimum_static_margin_cal": 1,
+        "require_cfd": true,
+        "require_fem": true
+      },
+      "runtime": {
+        "cfd_enabled": true,
+        "cfd_cells_coarse": 6,
+        "cfd_cells_fine": 8,
+        "cfd_times": 6.0,
+        "fem_level": 2,
+        "flight_step_s": 0.02
+      },
+      "decisions": [
+        {
+          "action": "geometry",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "thermal",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "propulsion",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "screen",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "cfd_coarse",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "cfd_fine",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "flight",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "modes",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "stability",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "fem_coarse",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "refine",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "fem_fine",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "confirm",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        },
+        {
+          "action": "refine/averaging",
+          "version": 1,
+          "planner": "baseline",
+          "model": null,
+          "reason": "Declared host priority baseline"
+        }
+      ],
+      "execution_counts": {
+        "geometry": 1,
+        "thermal": 1,
+        "propulsion": 1,
+        "screen": 1,
+        "cfd_coarse": 1,
+        "cfd_fine": 1,
+        "flight": 1,
+        "modes": 1,
+        "stability": 1,
+        "fem_coarse": 1,
+        "refine": 1,
+        "fem_fine": 1,
+        "confirm": 1
+      },
+      "failed_executions": 0,
+      "metrics": {
+        "geometry": {
+          "geometry_valid": true
+        },
+        "thermal": {
+          "thermal_balance": true
+        },
+        "propulsion": {
+          "propulsion_balance": true
+        },
+        "screen": {
+          "apogee_m": 11.230979701312911,
+          "max_air_speed_mps": 13.114586147527021,
+          "incidence_deg": 10.202160370535662,
+          "aero_domain_pass": true
+        },
+        "cfd_coarse": {},
+        "cfd_fine": {
+          "cfd_grid_change": 0.24333233198770865
+        },
+        "flight": {
+          "apogee_m": 9.386016556347444,
+          "max_air_speed_mps": 12.603960612822133,
+          "incidence_deg": 10.32760488870288,
+          "aero_domain_pass": true
+        },
+        "modes": {
+          "fin_deflection_ratio": 0.014190548454015276,
+          "positive_modes": true
+        },
+        "stability": {
+          "frozen_pitch_pass": true,
+          "perturbation_incidence_deg": 10.322010229314415
+        },
+        "fem_coarse": {
+          "fem_deflection_ratio": 0.00987597349870457
+        },
+        "refine": {
+          "temporal_pass": true
+        },
+        "fem_fine": {
+          "fem_deflection_ratio": 0.011154046237845598,
+          "fem_mesh_change": 0.22197749853496604
+        },
+        "confirm": {
+          "criteria_met": false
+        }
+      },
+      "last_completed_confirmation": {
+        "unmet": [
+          "altitude",
+          "static_margin",
+          "aero_grid",
+          "aero_averaging",
+          "fem_mesh"
+        ],
+        "checks": {
+          "altitude": false,
+          "attitude": true,
+          "static_margin": false,
+          "temporal": true,
+          "fin_deformation": true,
+          "modes": true,
+          "frozen_pitch": true,
+          "aero_domain": true,
+          "thermal_balance": true,
+          "propulsion_balance": true,
+          "payload_mass": true,
+          "recovery": true,
+          "cost_evidence": true,
+          "aero_grid": false,
+          "aero_averaging": false,
+          "fem_mesh": false
+        },
+        "apogee_m": 9.383842780852172,
+        "static_margin_cal": 0.067830355934803
+      },
+      "cfd_case_count": 28,
+      "artifacts": [
+        {
+          "action": "geometry",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/256350909b3b447f861dfb0ca738b82c/00-geometry/data.json",
+          "sha256": "7f4adb28c02a08044c8d3bc84b9f913bdb9a7153be82f48e1faa48dd67349d1e",
+          "manifest_sha256": "411bca39f669d1c1d2960e34c4827ccfa129fcec856a8f3255f6eaf94682337a"
+        },
+        {
+          "action": "thermal",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/27f6147ab0d54572be05d1e77c8db8fe/01-thermal/data.json",
+          "sha256": "6b2dbcd960fa00094678e371d33d9db5bf6f0c453bb7a852e77fb329c10665e1",
+          "manifest_sha256": "2ffce93633915ed917e107b8fc8e40a4ea1b44559b58ad8cb65e3faf995f78b3"
+        },
+        {
+          "action": "propulsion",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/858f940bb1f243229641281868166317/02-propulsion/data.json",
+          "sha256": "b9f755e608efdcf0e645fa783166ccbad0cb28661adec4416528b053c9bbc441",
+          "manifest_sha256": "928549e3a01aa45388716b97000d0ec6bc054d1540d1c73711ac4aaa0cbb707f"
+        },
+        {
+          "action": "screen",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/f4ba440d353c4c1aaa96b7ab0d0ff826/03-screen/data.json",
+          "sha256": "161441bde61951626c496050e7815af7fe9ee8494310869f0178323553b515b0",
+          "manifest_sha256": "4254d0dda94574b37ac6b3b403b42beed4d7663baa7dc0c57ce66ffcc47b1d99"
+        },
+        {
+          "action": "cfd_coarse",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/f25ebd21b664488989d93f87a2afda5c/04-cfd_coarse/data.json",
+          "sha256": "caa864ad38ebbc341464a1891524eef43fd3b8bbd64f464f62eb185589feb3d9",
+          "manifest_sha256": "d0db9e9d969eb3512ff8e5031457b08c913bfe53a5c1e5a370bc91ae97ee6354"
+        },
+        {
+          "action": "cfd_fine",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/b5077ee5d11f4d4d8e88d0abb4fa11ac/05-cfd_fine/data.json",
+          "sha256": "10ed12af99fdf85b3d65ba9fcabb5d245f04d77a52e431b342dd0a98906de4b8",
+          "manifest_sha256": "d0cf5589a9158ff0938922d3d62180ae1f52d83d50508453ac8e7348427c4ff6"
+        },
+        {
+          "action": "flight",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/c31e638a2c2240a183754b4c2b296913/06-flight/data.json",
+          "sha256": "f22f1d044614be8a2d898aa086944b185bdd77c0a47cd93c99cff93a2ad1f6ab",
+          "manifest_sha256": "5ffae68f47c4eba57bd45ed1ae4d513245eb2b905daaa0efccc7182fb0480698"
+        },
+        {
+          "action": "modes",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/0001790558f54a73a7acc58fd4cce1f6/07-modes/data.json",
+          "sha256": "383e4326a4c149d704eff22f20e192a12f77f650b736a1ff27d100da83defba9",
+          "manifest_sha256": "c503e98232cf53d2ce0ca12039b1297074b170cac2e8a9e5527dc86b3ade2012"
+        },
+        {
+          "action": "stability",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/e088261dcbdf403baa0ac9f92530abb8/08-stability/data.json",
+          "sha256": "68066b455840e9379c7d8d25c9c868d8816076da1c9866b2dc966e2e41c6ac98",
+          "manifest_sha256": "a3fcaf479736ca78fa55f6a857b1fd22c60a9319323b6813071a7c106b3e4a5d"
+        },
+        {
+          "action": "fem_coarse",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/d0ff27e9530a4286aad11d5d8d4e2c00/09-fem_coarse/data.json",
+          "sha256": "1123086772588db885ec23f444f4b6dc233b4f8e56c9816eab4d65908530e5f0",
+          "manifest_sha256": "7602fc8d2695cfd0ca95c7eab836699bea889bc63cc44a692e6c07e2627eafbf"
+        },
+        {
+          "action": "refine",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/ceb2e68784704f43a4f2fd8d57dd71ea/10-refine/data.json",
+          "sha256": "d11f528a2a4d5d40297a617cbde587a70bb83f2c6105eb7cdfb8b87fca04170c",
+          "manifest_sha256": "068d3221ee9dd6333a07b155eeefc95c103d3772c5edbe9391fbb83f9e35a9fb"
+        },
+        {
+          "action": "fem_fine",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/4f4bd97cc4924f7aa6dfffca66f56572/11-fem_fine/data.json",
+          "sha256": "c05f7cb183cf52977c0c604cdb98f295dc3c7f2e14a0fef1f7255c3f65c2690b",
+          "manifest_sha256": "d2d7c981a5f134c70c8f7f3a8b59eb0154d70e44f38c03575214d235d007662b"
+        },
+        {
+          "action": "confirm",
+          "artifact": "output/release-cfd-projects/d02eca2c704348dfbe1adb5d5a593f9d/v1/adaptive/f4b5e6fed8804058a017c6f0b199a919/12-confirm/data.json",
+          "sha256": "6e8cb4409950bdbaa60d4f9a31020c0ca149a62667b79c895907f5473f0dd096",
+          "manifest_sha256": "f5a956c7009c9f7176b0398a8faacfec6b83e01962dd6e4ab055a49a983c6785"
+        }
+      ],
+      "caveat": "Last completed confirmation; later refinement settings may await execution. No hardware qualification."
+    }
+  ],
+  "scope": "Native integration evidence; later selection-only regression is documented separately"
+}

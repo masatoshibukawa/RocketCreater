@@ -31,7 +31,9 @@ def deck(assembly, cfg, force_n, centroid_m, *, resolution, temperature_c):
 
     solved = root(lambda beta: weights(beta) @ positions - target, [0.0, 0.0])
     w = weights(solved.x)
-    if not solved.success or np.linalg.norm(w @ positions - target) > 1e-8:
+    # A uniform load can start at the exact root; MINPACK may report no progress
+    # despite a conserved resultant. Accept only the independently checked residual.
+    if not np.isfinite(w).all() or np.linalg.norm(w @ positions - target) > 1e-8:
         raise ValueError("CFD resultant cannot be represented by same-sign normal face pressure")
     start = lines.index("*DLOAD") + 1
     end = next(i for i in range(start, len(lines)) if lines[i].startswith("*"))

@@ -64,3 +64,34 @@ def test_normal_load_mapping_preserves_force_and_both_initial_moments():
         np.testing.assert_allclose(metadata["centroid_mapped_m"], [0.04, 0.06], atol=1e-9)
     with pytest.raises(ValueError):
         deck(assembly, cfg, 2.3, [0.04, 0.3], resolution=1, temperature_c=45)
+
+
+def test_uniform_centroid_load_accepts_a_zero_residual_root():
+    from rocketwright.analysis.record import compile_record
+    from rocketwright.physics.fin_load_map import deck
+    from tests.test_analysis_record import VOLUMES, spec
+
+    s = spec()
+    g = s.geometry
+    record = compile_record(s, VOLUMES)
+    _, center, _ = polygon_moments(
+        np.array(
+            [
+                [0, 0],
+                [g.fin_root_mm, 0],
+                [g.fin_sweep_mm + g.fin_tip_mm, g.fin_span_mm],
+                [g.fin_sweep_mm, g.fin_span_mm],
+            ]
+        )
+        / 1000
+    )
+    _, _, _, result = deck(
+        record["assembly"],
+        AnalysisConfig(**record["config"]),
+        2,
+        center,
+        resolution=1,
+        temperature_c=25,
+    )
+    np.testing.assert_allclose(result["centroid_mapped_m"], center, atol=1e-10)
+    assert result["force_mapped_n"] == pytest.approx(2)
