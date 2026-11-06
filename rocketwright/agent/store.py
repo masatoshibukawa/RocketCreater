@@ -3,7 +3,7 @@
 `render_drawing` / `export_report` (agent/tools.py) and `POST /artifacts/render` (api/main.py)
 generate SVG / Markdown / CSV / JSON artifacts, keep them here under ids such as `svg_1` and
 `rep_1`, and hand the model (or the UI) only the ids and download paths. `GET /artifacts/{id}.{ext}`
-serves the stored text. The store is bounded (oldest entries are evicted) and thread-safe.
+serves the stored content. The store is bounded (oldest entries are evicted) and thread-safe.
 """
 
 from __future__ import annotations
@@ -35,14 +35,15 @@ MEDIA_TYPES: dict[str, str] = {
     "md": "text/markdown; charset=utf-8",
     "csv": "text/csv; charset=utf-8",
     "json": "application/json",
+    "pdf": "application/pdf",
 }
 
 
 @dataclass(frozen=True)
 class Artifact:
     artifact_id: str  # e.g. "svg_1"
-    ext: str  # "svg" | "md" | "csv" | "json"
-    content: str
+    ext: str  # "svg" | "md" | "csv" | "json" | "pdf"
+    content: str | bytes
 
     @property
     def key(self) -> str:
@@ -121,8 +122,10 @@ def store_report(
     dispersion: DispersionResult | None = None,
     sources: dict[str, str] | None = None,
     store: ResultStore | None = None,
+    bom_csv: str | None = None,
 ) -> dict[str, Any]:
-    """Generate Markdown + JSON report and BOM CSV, store them under one `rep_<n>` id."""
+    """Generate Markdown + JSON report and BOM CSV, store them under one `rep_<n>` id. `bom_csv`
+    replaces the design's estimated BOM (a parts build has a real bill)."""
     st = store or DEFAULT_STORE
     rep_id = st.next_id("rep")
     md = export_report_markdown(
@@ -131,7 +134,7 @@ def store_report(
     data = export_report_json(
         design, result, requirement=requirement, dispersion=dispersion, sources=sources
     )
-    bom = export_bom_csv(design)
+    bom = export_bom_csv(design) if bom_csv is None else bom_csv
     st.put(Artifact(rep_id, "md", md))
     st.put(Artifact(rep_id, "json", json.dumps(data, ensure_ascii=False, indent=2)))
     st.put(Artifact(rep_id, "csv", bom))

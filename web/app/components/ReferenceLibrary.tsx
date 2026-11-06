@@ -44,8 +44,7 @@ export default function ReferenceLibrary() {
   }, [query, category]);
 
   const asset = (id: string) => library?.assets.find(a => a.id === id);
-  return <div className="wb-detail wb-library">
-    <p className="wb-eyebrow">REFERENCE / CAD · FILM · SOURCES</p>
+  return <div className="wb-detail">
     <h2>設計例と資料</h2>
     {error ? <p role="alert" className="wb-error">資料を取得できません: {error}</p> : null}
     {library ? <section aria-label="2Lの参照機体">

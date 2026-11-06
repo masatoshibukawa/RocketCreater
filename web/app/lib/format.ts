@@ -45,7 +45,7 @@ export function keyMetrics(tier: Tier | null): MetricSpec[] {
     ];
   }
   if (tier === "bottle") {
-    // physics/water.py has no Barrowman stability margin; show the landing distance instead
+    // physics/water.py has no stability margin: a parts build adds BOTTLE_MARGINS beside these
     return [
       { key: "apogee_m", label: "到達高度", format: metres },
       { key: "descent_speed_mps", label: "降下速度", format: mps },
@@ -60,6 +60,12 @@ export function keyMetrics(tier: Tier | null): MetricSpec[] {
     { key: "max_speed_mps", label: "最大速度", format: mps },
   ];
 }
+
+/** Bottle static margins: metrics only when a parts build gives the real fins (agent/tools.py). */
+export const BOTTLE_MARGINS: readonly MetricSpec[] = [
+  { key: "stability_margin_cal", label: "静安定余裕（注水時）", format: cal },
+  { key: "dry_stability_margin_cal", label: "静安定余裕（空のとき）", format: cal },
+];
 
 const METRIC_LABELS: Record<string, string> = {
   perigee_m: "近地点",
@@ -77,6 +83,7 @@ const METRIC_LABELS: Record<string, string> = {
   landing_distance_m: "着地距離",
   rail_exit_speed_mps: "ランチャー離脱速度",
   stability_margin_cal: "静安定余裕",
+  dry_stability_margin_cal: "空のときの静安定余裕",
   max_speed_mps: "最大速度",
   descent_speed_mps: "降下速度",
   flight_time_s: "飛行時間",

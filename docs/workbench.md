@@ -1,5 +1,7 @@
 # ローカル統合試験
 
+製作ワークベンチの画面はなくなり、機能は「自由な要求から設計」の画面に統合した（[README](../README.md#画面)）。このページの工程は画面からは操作できない。API（`/workbench/*`）とスクリプトとして残っているので、下の「操作」はAPIの呼び出し順として読む。
+
 ## 起動
 
 Python依存を既存の `pyproject.toml` から用意し、リポジトリルートでAPIを1プロセス起動する。
@@ -10,7 +12,7 @@ uv run uvicorn api.main:app --host 127.0.0.1 --port 8000
 
 `web/` で `pnpm install`、`pnpm run build`、`pnpm run start --hostname 127.0.0.1` を実行し、`http://127.0.0.1:3000` を開く。ブラウザーからの `/backend/` はNext.jsがローカルAPIへ転送する。APIの場所を変える場合はNext.jsの実行環境に `ROCKETWRIGHT_API_URL` を指定する。直接接続する既存環境には `NEXT_PUBLIC_API_BASE` も残している。
 
-課金APIは `ROCKETWRIGHT_ENABLE_CLOUD_DESIGN=0` が既定。`/design` は明示的に有効化するまでHTTP 423を返す。この試験で有効にする必要はない。
+課金APIは `ROCKETWRIGHT_ENABLE_CLOUD_DESIGN=0` が既定。`/design` は明示的に有効化するまでHTTP 423を返す。`/workbench/*` の試験で有効にする必要はないが、画面で設計を始めるには必要になる。
 
 既存LLMの起動は [ローカル制作支援](../AIvideo/local-director/README.md)、既存の動画推論環境は [ComfyUI/Wan2.2](../AIvideo/local-runtime/README.md) を参照する。別作業ツリーにメディア用ライブラリがある場合は、APIの実行環境に `ROCKETWRIGHT_MEDIA_ROOT` をその既存 `AIvideo` ディレクトリへ設定する。
 

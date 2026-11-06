@@ -10,13 +10,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
 from pydantic import BaseModel, Field
 
+from api.aero import router as aero_router
 from api.manufacturing import router as manufacturing_router
 from api.workbench import router as workbench_router
 from rocketwright import __version__
+from rocketwright.agent.design_package import design_package
 from rocketwright.agent.loop import run_design_loop
 from rocketwright.agent.store import DEFAULT_STORE, MEDIA_TYPES, store_drawing
+from rocketwright.agent.tools import DISPERSION_MAX_N
 from rocketwright.build import Build
-from rocketwright.schema import Design, DesignAdapter, Env, Requirement
+from rocketwright.schema import AmateurDesign, BottleDesign, Design, DesignAdapter, Env, Requirement
 from rocketwright.summary import design_summary, design_summary_from_build
 
 CORS_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
@@ -24,6 +27,7 @@ CORS_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
 app = FastAPI(title="RocketWright", version=__version__)
 app.include_router(workbench_router)
 app.include_router(manufacturing_router)
+app.include_router(aero_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
@@ -113,6 +117,33 @@ def summary_artifact(request: SummaryRequest) -> dict[str, object]:
     drawing = store_drawing(design, width_px=request.width_px or 800)
     out["drawing"] = {"id": drawing["id"], "url": drawing["download"]["svg"]}
     return out
+
+
+class PackageRequest(BaseModel):
+    design: Design
+    build: Build | None = None  # when given, the bill and the simulation are the parts build's
+    requirement: Requirement | None = None
+    env: Env | None = None
+    seed: int | None = None  # dispersion seed and size, so a run of the agent can be repeated
+    n: int | None = Field(default=None, ge=1, le=DISPERSION_MAX_N)
+
+
+@app.post("/artifacts/package")
+def package_artifact(request: PackageRequest) -> dict[str, object]:
+    """Production files of one design: everything it can support, and what it cannot."""
+    if not isinstance(request.design, AmateurDesign | BottleDesign):
+        raise HTTPException(422, "製作データはボトルとアマチュアの案だけに出します")
+    try:
+        return design_package(
+            request.design,
+            build=request.build,
+            requirement=request.requirement,
+            env=request.env,
+            seed=request.seed,
+            n=request.n,
+        )
+    except (KeyError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @app.get("/artifacts/{artifact_id}.{ext}")

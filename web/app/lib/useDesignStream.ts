@@ -31,7 +31,7 @@ export interface DesignStream extends DesignState {
 /** Chat line for a refused POST /design. 423 is the switched-off paid API, not a fault. */
 export function designRefusalMessage(status: number, detail: string): string {
   if (status === 423) {
-    return "Claude の設計は今オフです（課金 API の実行が無効です）。要求は送信されていません。条件を決めた計算は「製作ワークベンチ」で実行できます。";
+    return "Claude の設計は今オフです（課金 API の実行が無効です）。要求は送信されていません。";
   }
   return `バックエンドが HTTP ${status} を返しました ${detail.slice(0, 200)}`;
 }

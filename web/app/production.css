@@ -1,0 +1,42 @@
+/* The flow, production and library tabs of the centre column. */
+[hidden] { display: none !important; }
+.wb-detail { max-width: 960px; margin: 0 auto; }
+.wb-detail h2 { font-size: 22px; font-weight: 700; margin: 2px 0 10px; }
+.wb-detail h3 { font-size: 18px; font-weight: 700; margin: 24px 0 6px; }
+.wb-note { color: var(--muted); font-size: 15px; line-height: 1.75; }
+.wb-error { margin: 12px 0; padding: 12px; background: var(--bad-soft); border: 1px solid var(--bad); color: var(--bad); overflow-wrap: anywhere; font-size: 15px; }
+.wb-case-tag { color: var(--text); padding: 12px; background: var(--accent-soft); line-height: 1.7; font-size: 15px; margin: 14px 0; }
+.wb-limitations { color: var(--muted); padding-left: 20px; line-height: 1.75; font-size: 15px; overflow-wrap: anywhere; }
+.wb-limitations b { color: var(--text); }
+.wb-file-list { margin-top: 18px; }
+.wb-file-list a { border-top: 1px solid var(--border); padding: 11px 0; display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--accent-text); text-decoration: none; font-size: 15px; overflow-wrap: anywhere; }
+.wb-file-list a:hover { text-decoration: underline; }
+.wb-file-list small { color: var(--muted); font-size: 14px; white-space: nowrap; }
+.wb-print-exports { margin-top: 28px; border-top: 1px solid var(--border); }
+.wb-print-exports > p { font-size: 15px; }
+.wb-print-exports ul { font-size: 15px; padding-left: 20px; }
+.wb-table-scroll { overflow-x: auto; border: 1px solid var(--border); }
+.wb-table { width: 100%; border-collapse: collapse; font-size: 15px; white-space: nowrap; }
+.wb-table th, .wb-table td { padding: 7px 6px; text-align: right; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+.wb-table th { background: var(--panel-2); font-weight: 600; color: var(--text); }
+.wb-table tr:last-child td { border-bottom: 0; }
+.wb-flow { margin: 18px 0 0; }
+.wb-flow-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.wb-flow img { display: block; width: 100%; height: auto; border: 1px solid var(--border); }
+.wb-flow figcaption { margin-top: 8px; color: var(--muted); font-size: 15px; }
+.wb-video { margin: 24px 0; }
+.wb-video figcaption { font-size: 16px; margin-bottom: 10px; }
+.wb-video video { display: block; width: 100%; background: #101615; aspect-ratio: 16 / 9; }
+.wb-video a { display: block; text-align: right; margin-top: 10px; color: var(--accent-text); font-size: 15px; }
+.wb-reference-search { margin-top: 28px; border-top: 1px solid var(--border); }
+.wb-reference-search label { display: block; margin: 15px 0 7px; color: var(--muted); font-size: 15px; }
+.wb-reference-search input, .wb-reference-search select { width: 100%; padding: 10px; border: 1px solid var(--border-strong); border-radius: 3px; background: var(--panel); color: var(--text); font: inherit; }
+.wb-source { border-top: 1px solid var(--border); padding: 15px 0; content-visibility: auto; contain-intrinsic-size: auto 180px; }
+.wb-source h4 { margin: 8px 0; font-size: 17px; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; }
+.wb-source a { color: var(--accent-text); text-decoration: none; }
+.wb-source a:hover { text-decoration: underline; }
+.wb-source p { color: var(--muted); line-height: 1.75; font-size: 15px; }
+.wb-source small { color: var(--muted); font-size: 14px; }
+.center-tabs { flex-wrap: wrap; gap: 6px; }
+.center-tabs .btn { padding: 6px 8px; }
+.result-note { font-size: 14px; margin: 8px 0 0; }

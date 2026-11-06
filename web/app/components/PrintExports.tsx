@@ -4,22 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import { apiUrl, designKey } from "../lib/api";
 import type { Design } from "../lib/types";
 
-type File = { name: string; url: string; kind?: string };
+type File = { name: string; url: string };
 type Manifest = { status: string; brim_width_mm: number; brim_gap_mm: number;
   parts: { part: string; model_layers: number; estimated_mass_g: number;
     estimated_time_seconds: number; all_print_paths_inside_s5: boolean;
     quantity_for_assembly?: number }[] };
 type Bundle = { manifest: Manifest; files: File[] };
 
-export default function PrintExports({ design, files, manifest, onGenerate, disabled = false }: {
-  design?: Design | null; files?: File[]; manifest?: Manifest;
-  onGenerate?: () => void; disabled?: boolean;
-}) {
+export default function PrintExports({ design, disabled = false }: { design: Design | null; disabled?: boolean }) {
   const [ready, setReady] = useState<boolean | null>(null);
   const [bundle, setBundle] = useState<Bundle | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const key = design ? designKey(design) : "workbench";
+  const key = design ? designKey(design) : "";
   const controller = useRef<AbortController | null>(null);
   useEffect(() => {
     const abort = new AbortController();
@@ -34,7 +31,6 @@ export default function PrintExports({ design, files, manifest, onGenerate, disa
     return () => controller.current?.abort();
   }, [key]);
   async function generate() {
-    if (onGenerate) { onGenerate(); return; }
     if (!design || design.tier !== "bottle" || busy) return;
     const abort = new AbortController(); controller.current = abort;
     setBusy(true); setError("");
@@ -50,14 +46,14 @@ export default function PrintExports({ design, files, manifest, onGenerate, disa
       if (!abort.signal.aborted) setError(e instanceof Error ? e.message : String(e));
     } finally { if (!abort.signal.aborted) setBusy(false); }
   }
-  if (!onGenerate && design?.tier !== "bottle") return null;
-  const report = manifest ?? bundle?.manifest;
-  const outputs = files ? files.filter(f => f.kind === "manufacturing") : bundle?.files ?? [];
+  if (design?.tier !== "bottle") return null;
+  const report = bundle?.manifest;
+  const outputs = bundle?.files ?? [];
   return <section className="wb-print-exports" aria-label="設計ごとの3Dプリント出力">
     <h3>3Dプリンター用データ</h3>
     <p>UltiMaker S5 · Tough PLA Gray · AA 0.4</p>
     <p className="wb-note">この設計からフィン・ノーズ・試着リングを生成し、形状検査と機種別スライスを行います。除去用ブリム20 mm以上・隙間0 mm。フィンの終盤の転倒を受けた次の試作条件です。</p>
-    <button className="wb-primary" disabled={disabled || busy || ready !== true || Boolean(report)} onClick={() => void generate()}>
+    <button type="button" className="btn btn-primary" disabled={disabled || busy || ready !== true || Boolean(report)} onClick={() => void generate()}>
       {busy ? "形状生成・検査・スライス中…" : "この設計の印刷データを生成"}
     </button>
     {ready === false ? <p className="wb-note">このPCのBlender、CuraEngine 5.12.0、Cura材料定義を設定してください。</p> : null}

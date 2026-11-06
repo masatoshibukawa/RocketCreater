@@ -11,6 +11,9 @@ SIMPLIFICATION: only the pressure is re-tuned. Fill, nozzle and airframe stay as
 The first round settles "auto" on one backend and the rest stay on it: Cds of two solvers differ
 by far more than the tolerance, and L0 only echoes the design's Cd, so a fallback in a later round
 would look like convergence. A backend that fails after round 1 ends the loop with its error.
+
+An amateur rocket has no launch pressure to re-tune: `run_amateur_aero_loop` only flies with the
+CFD Cd until it settles, and the design stays as given.
 """
 
 from __future__ import annotations
@@ -23,10 +26,17 @@ from pydantic import BaseModel, ConfigDict
 from rocketwright.aero.base import AeroQuery, cd_for_physics
 from rocketwright.aero.registry import evaluate
 from rocketwright.geometry import AssembledShape
-from rocketwright.physics import water
-from rocketwright.schema import BottleDesign, Design, Env
+from rocketwright.physics import solid, water
+from rocketwright.schema import AmateurDesign, BottleDesign, Design, Env
 
-__all__ = ["AeroLoopResult", "AeroLoopRound", "run_aero_loop"]
+__all__ = [
+    "AeroLoopResult",
+    "AeroLoopRound",
+    "AmateurAeroResult",
+    "AmateurAeroRound",
+    "run_aero_loop",
+    "run_amateur_aero_loop",
+]
 
 CD_TOLERANCE_FRAC = 0.02
 DEFAULT_MAX_ROUNDS = 6
@@ -68,6 +78,32 @@ class AeroLoopResult(_Record):
     rounds: list[AeroLoopRound]
     converged: bool
     final_design: BottleDesign
+    artifacts_dir: str | None
+    notes: list[str]
+
+
+class AmateurAeroRound(_Record):
+    round: int
+    flight_cd: float
+    flight_apogee_m: float
+    max_speed_mps: float
+    cfd_speed_mps: float
+    cd: float  # CFD result on the flight model's drag area
+    cd_change_frac: float
+    x_cp_from_nose_m: float | None
+    static_margin_cal: float | None
+    apogee_m: float  # flown with `cd`
+    descent_speed_mps: float
+    elapsed_s: float
+    cached: bool
+    backend: str
+    fidelity: str
+
+
+class AmateurAeroResult(_Record):
+    rounds: list[AmateurAeroRound]
+    converged: bool
+    final_design: AmateurDesign
     artifacts_dir: str | None
     notes: list[str]
 
@@ -181,6 +217,82 @@ def run_aero_loop(
         rounds=rounds,
         converged=converged,
         final_design=current,
+        artifacts_dir=artifacts_dir,
+        notes=notes,
+    )
+
+
+def run_amateur_aero_loop(
+    design: Design,
+    env: Env,
+    *,
+    target_apogee_m: float,
+    backend: str = "auto",
+    max_rounds: int = DEFAULT_MAX_ROUNDS,
+    alphas_deg: tuple[float, ...] = DEFAULT_ALPHAS_DEG,
+    extra: Mapping[str, object] | None = None,
+) -> AmateurAeroResult:
+    """Iterate flight and CFD on an amateur design until the Cd stops moving."""
+    if not isinstance(design, AmateurDesign):
+        raise ValueError("run_amateur_aero_loop takes amateur designs only")
+    if max_rounds < 1:
+        raise ValueError("max_rounds must be >= 1")
+    if not target_apogee_m > 0:
+        raise ValueError("target_apogee_m must be > 0")
+
+    def fly(cd: float) -> dict[str, float]:
+        return solid.simulate(design, env, SIM_SEED, target_apogee_m=target_apogee_m, cd=cd).metrics
+
+    cd = solid.DEFAULT_CD
+    rounds: list[AmateurAeroRound] = []
+    notes: list[str] = []
+    artifacts_dir = None
+    converged = False
+    for number in range(1, max_rounds + 1):
+        started = time.monotonic()
+        flight = fly(cd)
+        speed = float(round(flight["max_speed_mps"]))
+        if speed < MIN_CFD_SPEED_MPS:
+            raise ValueError(f"the vehicle did not fly (top speed {flight['max_speed_mps']:.2f})")
+        query = AeroQuery(
+            design=design, speed_mps=speed, alphas_deg=alphas_deg, extra=dict(extra or {})
+        )
+        solved = evaluate(query, backend=backend)
+        backend = solved.backend
+        new_cd = cd_for_physics(solved, design)
+        after = fly(new_cd)
+        change = abs(new_cd - cd) / cd
+        rounds.append(
+            AmateurAeroRound(
+                round=number,
+                flight_cd=cd,
+                flight_apogee_m=flight["apogee_m"],
+                max_speed_mps=flight["max_speed_mps"],
+                cfd_speed_mps=speed,
+                cd=new_cd,
+                cd_change_frac=change,
+                x_cp_from_nose_m=solved.x_cp_from_nose_m,
+                static_margin_cal=solved.static_margin_cal,
+                apogee_m=after["apogee_m"],
+                descent_speed_mps=after["descent_speed_mps"],
+                elapsed_s=time.monotonic() - started,
+                cached=solved.cached,
+                backend=solved.backend,
+                fidelity=solved.fidelity,
+            )
+        )
+        notes += [n for n in solved.notes if n not in notes]
+        artifacts_dir = solved.artifacts_dir or artifacts_dir
+        cd = new_cd
+        if change < CD_TOLERANCE_FRAC:
+            converged = True
+            break
+    if not converged:
+        notes.append(f"not converged after {max_rounds} rounds")
+    return AmateurAeroResult(
+        rounds=rounds,
+        converged=converged,
+        final_design=design,
         artifacts_dir=artifacts_dir,
         notes=notes,
     )

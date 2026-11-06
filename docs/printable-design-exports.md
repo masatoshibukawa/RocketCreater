@@ -4,8 +4,8 @@
 
 ## 画面とAPI
 
-- 製作フローでは「製作ファイル」→「この設計の印刷データを生成」。独立確認後に出力した `production/report.json` と `assembly.json` を、保存済みハッシュで検査してから使う。
-- ボトル設計の候補画面でも、選択中の設計から同じ出力を生成できる。容量由来の代表寸法は未実測の仮定なので、試着リングで確認する。
+- 画面では「製作データ」タブ→「この設計の印刷データを生成」。表示中の合格案から生成する。容量由来の代表寸法は未実測の仮定なので、試着リングで確認する。
+- ワークベンチのプロジェクトはAPIから同じ出力を生成する。独立確認後に出力した `production/report.json` と `assembly.json` を、保存済みハッシュで検査してから使う。
 - 成果物は部品ごとのmm単位STL・3MF、プレビューPNG、S5用UFP・G-code、形状・スライス検査JSON、設計と設定の由来を記録する `print-manifest.json`、一括ZIP。3MFは形状交換用で、Curaの設定付きプロジェクトではない。
 - `GET /manufacturing/runtime`：ローカルの依存と対応プロファイル。
 - `POST /manufacturing/packages`：`design`、任意の明示的な `geometry`、`printer: "s5-gray-aa04"` を渡す。

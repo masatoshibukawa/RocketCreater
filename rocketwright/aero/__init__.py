@@ -10,8 +10,16 @@ from rocketwright.aero.base import (
     cd_for_physics,
     physics_ref_diameter_m,
 )
+from rocketwright.aero.flow_images import flow_image_path, flow_images
 from rocketwright.aero.lbm_gpu import LbmGpuBackend
-from rocketwright.aero.loop import AeroLoopResult, AeroLoopRound, run_aero_loop
+from rocketwright.aero.loop import (
+    AeroLoopResult,
+    AeroLoopRound,
+    AmateurAeroResult,
+    AmateurAeroRound,
+    run_aero_loop,
+    run_amateur_aero_loop,
+)
 from rocketwright.aero.openfoam_pipeline import OpenFoamPipelineBackend
 from rocketwright.aero.registry import (
     BACKEND_NAMES,
@@ -32,6 +40,8 @@ __all__ = [
     "AeroLoopRound",
     "AeroQuery",
     "AeroResult",
+    "AmateurAeroResult",
+    "AmateurAeroRound",
     "BarrowmanBackend",
     "LbmGpuBackend",
     "OpenFoamPipelineBackend",
@@ -40,10 +50,13 @@ __all__ = [
     "cache_key",
     "cd_for_physics",
     "evaluate",
+    "flow_image_path",
+    "flow_images",
     "get_backend",
     "physics_ref_diameter_m",
     "register",
     "run_aero_loop",
+    "run_amateur_aero_loop",
     "status",
 ]
 

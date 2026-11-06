@@ -36,8 +36,9 @@ const EMPTY: SummaryState = { summary: null, svg: null, loading: false, error: n
 export function useDesignSummary(
   design: Design | null,
   requirement: Record<string, unknown> | null,
+  build: Record<string, unknown> | null = null,
 ): SummaryState {
-  const key = design === null ? "" : canonicalJson(design);
+  const key = design === null ? "" : canonicalJson({ design, build });
   const [state, setState] = useState<SummaryState>(EMPTY);
 
   useEffect(() => {
@@ -54,8 +55,8 @@ export function useDesignSummary(
     // Keep the previous summary on screen while the new one loads (no flicker).
     setState((prev) => ({ ...prev, loading: true, error: null }));
     const timer = window.setTimeout(() => {
-      const parsed = JSON.parse(key) as Design;
-      fetchDesignSummary(parsed, requirement, controller.signal)
+      const parsed = JSON.parse(key) as { design: Design; build: Record<string, unknown> | null };
+      fetchDesignSummary(parsed.design, requirement, controller.signal, null, parsed.build)
         .then(async (summary) => {
           let svg: string | null = null;
           if (summary.drawing !== null) {

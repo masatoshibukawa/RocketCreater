@@ -92,6 +92,7 @@ def test_metric_labels_name_real_metrics():
     assert m
     labelled = set(re.findall(r"^\s*(\w+):", m.group(1), re.M))
     produced = _real_metrics("bottle") | _real_metrics("amateur") | _real_metrics("commercial")
+    produced |= {"dry_stability_margin_cal"}  # parts builds only: see the bottle margins test
     unknown = labelled - produced
     assert not unknown, f"METRIC_LABELS has keys no physics model produces: {unknown}"
 
@@ -211,16 +212,71 @@ def test_ogive_nose_points_up_in_the_3d_model():
     assert all(a >= b for a, b in zip(rs, rs[1:], strict=False))
 
 
-def test_home_opens_on_the_free_request_screen_with_a_way_to_the_workbench():
-    assert "const [workspace, setWorkspace] = useState(false);" in PAGE_TSX
-    strip = (WEB_APP / "components" / "StatusStrip.tsx").read_text(encoding="utf-8")
-    assert "製作ワークベンチへ" in strip
+def test_home_is_the_one_design_screen():
+    assert "WorkbenchPanel" not in PAGE_TSX
+    assert "setWorkspace" not in PAGE_TSX
+    for removed in ("WorkbenchPanel", "RocketViewport", "AnalysisEvidence", "SimulationPanel"):
+        assert not (WEB_APP / "components" / f"{removed}.tsx").exists(), removed
+    assert not (WEB_APP / "lib" / "workbench.ts").exists()
+    mentions = [f.name for f in TS_FILES if "ワークベンチ" in f.read_text(encoding="utf-8")]
+    assert not mentions, mentions
+
+
+def test_center_tabs_offer_what_the_workbench_had_and_only_where_it_applies():
+    tabs = _ts("lib/centerViews.ts")
+    labels = re.findall(r'label: "([^"]+)"', tabs)
+    assert labels == ["3D モデル", "シミュレーション", "流体解析", "製作データ", "設計例と資料"]
+    assert "isOrbital(tier)" in tabs
+    assert re.search(r'CONCEPT_LEVEL_VIEWS[^=]*=\s*\[\s*"model",\s*"simulation",\s*"library"', tabs)
+    for name in ("AeroLoopPanel", "ProductionPanel", "ReferenceLibrary", "ResultPanel"):
+        assert re.search(rf"<{name}\b", PAGE_TSX), name
+
+
+def test_web_paths_exist_in_the_api():
+    from api.main import app
+
+    routes = set(app.openapi()["paths"])
+    assert {"/aero/loop", "/aero/loop/{job_id}", "/aero/loop/{job_id}/images/{name}"} <= routes
+    assert "/artifacts/package" in routes
+    assert '"/aero/loop"' in _ts("lib/useAeroLoop.ts")
+    assert '"/artifacts/package"' in _ts("lib/api.ts")
+
+
+def test_aero_loop_panel_reads_the_jobs_fields():
+    from rocketwright.agent.design_aero import AeroJobs
+
+    view = AeroJobs().submit("k", dict)
+    hook = _ts("lib/useAeroLoop.ts")
+    body = hook[hook.index("export interface AeroJob") :]
+    fields = re.findall(r"^\s*(\w+):", body[: body.index("}")], re.M)
+    assert set(fields) == set(view)
+    assert "代表形状" in _ts("components/AeroLoopPanel.tsx")  # its margin is not the parts margin
+
+
+def test_bottle_margins_have_japanese_labels_and_real_metrics():
+    from rocketwright.agent.fake_client import DEMO_REQUIREMENTS
+    from rocketwright.agent.tools import execute_tool
+
+    auto = execute_tool(
+        "auto_design",
+        {"tier": "bottle", "requirement": {**DEMO_REQUIREMENTS["bottle"], "text": "x"}, "env": {}},
+        "auto",
+    )
+    body = FORMAT_TS[FORMAT_TS.index("export const BOTTLE_MARGINS") :]
+    specs = dict(re.findall(r'key: "(\w+)", label: "([^"]+)"', body[: body.index("];")]))
+    assert specs == {
+        "stability_margin_cal": "静安定余裕（注水時）",
+        "dry_stability_margin_cal": "静安定余裕（空のとき）",
+    }
+    assert set(specs) <= set(auto["sim"]["metrics"])
+    assert "BOTTLE_MARGINS" in _ts("components/ResultPanel.tsx")
 
 
 def test_a_switched_off_design_api_reads_as_off_in_the_chat():
     stream = (WEB_APP / "lib" / "useDesignStream.ts").read_text(encoding="utf-8")
     refusal = re.search(r"status === 423\) \{\s*return \"([^\"]+)\"", stream)
     assert refusal and "Claude の設計は今オフです" in refusal[1]
+    assert "ワークベンチ" not in refusal[1]
     assert "designRefusalMessage(res.status, detail)" in stream
 
 
