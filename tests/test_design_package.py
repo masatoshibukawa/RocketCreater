@@ -15,6 +15,7 @@ from api.main import app
 from rocketwright import manufacturing
 from rocketwright.agent.design_sheet import sheet_sections
 from rocketwright.agent.fake_client import DEMO_PASSING_INDEX, DEMO_REQUIREMENTS, demo_designs
+from rocketwright.agent.store import DEFAULT_STORE
 from rocketwright.agent.tools import execute_tool
 from rocketwright.manufacturing import PrintRequest, parameters
 from rocketwright.schema import BottleDesign, SimResult
@@ -49,7 +50,6 @@ def _file(package: dict, kind: str) -> str:
 
 def test_passing_bottle_gets_every_file_the_design_can_support():
     body = _package(design=_design("bottle"), requirement=_requirement("bottle"))
-    assert body["passed"] is True and body["failure_reasons"] == []
     assert [row["kind"] for row in body["files"]] == ["sheet", "report", "json", "bom", "drawing"]
     pdf = client.get(_file(body, "sheet"))
     assert pdf.status_code == 200
@@ -84,10 +84,24 @@ def test_report_carries_the_dispersion_of_the_given_seed_and_n():
     assert report["dispersion"]["success_rate"] == pytest.approx(expected["success_rate"])
 
 
-def test_a_failing_design_is_labelled_as_failing():
+def test_a_failing_design_gets_no_files():
     design = _design("bottle") | {"initial_gauge_pressure_pa": 150000.0}
-    body = _package(design=design, requirement=_requirement("bottle"))
-    assert body["passed"] is False and body["failure_reasons"]
+    before = len(DEFAULT_STORE)
+    r = client.post(
+        "/artifacts/package", json={"design": design, "requirement": _requirement("bottle")}
+    )
+    assert r.status_code == 409
+    assert "合格しませんでした" in r.json()["detail"]
+    assert len(DEFAULT_STORE) == before
+
+
+def test_a_design_is_judged_in_the_env_it_is_sent_with():
+    """The same design passes or fails with its launch conditions, so the screen sends them."""
+    design = _design("bottle")
+    body = {"design": design, "requirement": _requirement("bottle")}
+    assert client.post("/artifacts/package", json=body).status_code == 200
+    hot = {"temperature_offset_k": 0.0, "launch_altitude_m": 8000.0}
+    assert client.post("/artifacts/package", json=body | {"env": hot}).status_code == 409
 
 
 def test_parts_build_keeps_its_bill_and_stability():
@@ -96,7 +110,6 @@ def test_parts_build_keeps_its_bill_and_stability():
     body = _package(
         design=auto["design"], build=auto["build"], requirement=_requirement("bottle"), env={}
     )
-    assert body["passed"] is True
     bill = {row["part_id"] for row in auto["bill"]["parts"]}
     rows = list(csv.DictReader(io.StringIO(client.get(_file(body, "bom")).text)))
     assert {row["item_id"] for row in rows} == bill

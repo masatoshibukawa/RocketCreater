@@ -35,7 +35,7 @@ from rocketwright.schema import (
 )
 from rocketwright.summary import design_summary, design_summary_from_build
 
-__all__ = ["design_package"]
+__all__ = ["DesignNotPassed", "design_package"]
 
 _NO_RECIPE = (
     "この案は機体の構成を定めていません。1.5 L の製作例の値を使うと別の機体の資料になります"
@@ -63,6 +63,10 @@ FILE_LABELS = {
     "bom": "部品表（CSV）",
     "drawing": "側面図（SVG）",
 }
+
+
+class DesignNotPassed(ValueError):
+    """The repeated simulation failed: such a design gets no production files."""
 
 
 def _tool(name: str, tool_input: dict[str, Any]) -> dict[str, Any]:
@@ -101,8 +105,8 @@ def design_package(
     store: ResultStore | None = None,
 ) -> dict[str, Any]:
     """Repeat the design's simulation and dispersion, then store its files. `seed` and `n`
-    default to the workbench's confirmation seed and the agent's sample count. Whether the
-    design passed is reported, not assumed: the screen offers this only for a passing one."""
+    default to the workbench's confirmation seed and the agent's sample count. The repeat is
+    the judge, not the screen: a design that fails it raises DesignNotPassed."""
     st = store or DEFAULT_STORE
     common = {
         "env": (env or Env()).model_dump(mode="json"),
@@ -116,6 +120,8 @@ def design_package(
     else:
         design, result, summary = _from_build(build, common, requirement)
         cost, bom_csv = summary["cost_jpy"], _bom_csv(summary["bom"])
+    if not result.success:
+        raise DesignNotPassed(" / ".join(result.failure_reasons) or "the simulation failed")
 
     spread = _tool(
         "run_dispersion",
@@ -145,8 +151,6 @@ def design_package(
         urls = {"sheet": st.put(Artifact(st.next_id("pkg"), "pdf", sheet)).path, **urls}
     return {
         "tier": design.tier,
-        "passed": result.success,
-        "failure_reasons": list(result.failure_reasons),
         "success_rate": dispersion.success_rate,
         "files": [{"kind": k, "label": FILE_LABELS[k], "url": url} for k, url in urls.items()],
         "unavailable": list(

@@ -232,6 +232,14 @@ def test_center_tabs_offer_what_the_workbench_had_and_only_where_it_applies():
         assert re.search(rf"<{name}\b", PAGE_TSX), name
 
 
+def test_only_a_passing_flown_design_gets_production_data():
+    body = PAGE_TSX[PAGE_TSX.index("const passed: boolean") :]
+    body = body[: body.index("}, [")]
+    assert "seededFrom" in body and '"seed"' in body
+    assert "requestKey(request)" in _ts("components/ProductionPanel.tsx")
+    assert "requestKey(request)" in _ts("lib/useAeroLoop.ts")
+
+
 def test_web_paths_exist_in_the_api():
     from api.main import app
 

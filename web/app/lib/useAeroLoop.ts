@@ -2,12 +2,12 @@
 
 /**
  * The flow analysis of the displayed design. POST /aero/loop only starts a job, so nothing waits
- * on a long request; each unfinished job is polled until it ends. Jobs are kept per design, so
+ * on a long request; each unfinished job is polled until it ends. Jobs are kept per request, so
  * going back to a design shows its result, and the API shares a job between equal requests.
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { apiUrl, designKey } from "./api";
+import { apiUrl, requestKey } from "./api";
 import type { Design } from "./types";
 
 export interface AeroLoopRound {
@@ -43,23 +43,24 @@ const FORGOTTEN = "API が再起動したため解析の記録が消えました
 const isActive = (job: AeroJob): boolean => job.status === "queued" || job.status === "running";
 
 async function readJob(response: Response): Promise<AeroJob> {
-  const data = (await response.json().catch(() => ({}))) as AeroJob & { detail?: unknown };
-  if (!response.ok) throw new Error(typeof data.detail === "string" ? data.detail : `HTTP ${response.status}`);
-  return data;
+  if (response.ok) return (await response.json()) as AeroJob;
+  const data = (await response.json().catch(() => ({}))) as { detail?: unknown };
+  throw new Error(typeof data.detail === "string" ? data.detail : `HTTP ${response.status}`);
 }
 
 export function useAeroLoop(request: AeroRequest | null) {
-  const key = request ? `${designKey(request.design)}@${request.target_altitude_m}` : "";
+  const key = request ? requestKey(request) : "";
   const [jobs, setJobs] = useState<Record<string, AeroJob>>({});
-  const [starting, setStarting] = useState(false);
-  const [error, setError] = useState("");
+  const [startingKey, setStartingKey] = useState<string | null>(null);
+  const [failure, setFailure] = useState<{ key: string; message: string } | null>(null);
   const job = jobs[key] ?? null;
-  useEffect(() => setError(""), [key]);
+  const starting = startingKey === key;
+  const error = failure?.key === key ? failure.message : "";
 
   const run = useCallback(async () => {
     if (!request) return;
-    setStarting(true);
-    setError("");
+    setStartingKey(key);
+    setFailure(null);
     try {
       const response = await fetch(apiUrl("/aero/loop"), {
         method: "POST",
@@ -69,9 +70,9 @@ export function useAeroLoop(request: AeroRequest | null) {
       const started = await readJob(response);
       setJobs((all) => ({ ...all, [key]: started }));
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setFailure({ key, message: e instanceof Error ? e.message : String(e) });
     } finally {
-      setStarting(false);
+      setStartingKey(null);
     }
   }, [request, key]);
 

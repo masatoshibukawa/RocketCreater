@@ -33,6 +33,11 @@ export function designKey(design: Design): string {
   return stableStringify(design);
 }
 
+/** Same, for a whole request: its result depends on every field, not on the design alone. */
+export function requestKey(request: unknown): string {
+  return stableStringify(request);
+}
+
 function stableStringify(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
   if (typeof value === "object" && value !== null) {
@@ -172,8 +177,6 @@ export interface DesignPackageRequest {
 }
 
 export interface DesignPackage {
-  passed: boolean;
-  failure_reasons: string[];
   files: { kind: string; label: string; url: string }[];
   unavailable: { item: string; reason: string }[];
 }

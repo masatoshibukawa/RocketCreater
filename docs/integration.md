@@ -85,9 +85,9 @@ main由来のCFDコードにはWindowsで`os.getuid()`が存在しない既知�
 
 ## 画面の案の製作データ（`/artifacts/package`）
 
-「製作データ」タブが使う。`POST /artifacts/package`、本文 `{"design": …, "build": …?, "requirement": …?, "env": …?, "seed": n?, "n": n?}`。案のシミュレーションと多数回試行をやり直し、ファイルを `/artifacts/*` に置く。`build` があれば部品表と費用は部品の値になり、ボトルの静安定余裕もレポートに入る。企業級・重工級は 422。
+「製作データ」タブが使う。`POST /artifacts/package`、本文 `{"design": …, "build": …?, "requirement": …?, "env": …?, "seed": n?, "n": n?}`。案のシミュレーションと多数回試行をやり直し、合格ならファイルを `/artifacts/*` に置く。不合格は 409 で、ファイルを作らない。`build` があれば部品表と費用は部品の値になり、ボトルの静安定余裕もレポートに入る。企業級・重工級は 422。
 
-返り値の `files[]` は、ボトルで製作票 PDF、設計レポート（Markdown、JSON）、部品表 CSV、側面図 SVG。アマチュアは製作票がない。`passed` と `failure_reasons` はやり直した結果で、画面は合格案だけにボタンを出す。`unavailable[]` は作れないものと理由。
+返り値の `files[]` は、ボトルで製作票 PDF、設計レポート（Markdown、JSON）、部品表 CSV、側面図 SVG。アマチュアは製作票がない。画面は合格案だけにボタンを出し、実機の縮尺案（参照元の条件で飛んだ案）には出さない。`unavailable[]` は作れないものと理由。
 
 `rocketwright/agent/manual.py` の組立手順PDFは出さない。その入力は `bottle_assembly.assembly()` の計画で、1.5 Lの製作例の寸法・材料・部品を固定し、質量と Cd も書き換える。Claudeの案に当てはめると、シミュレーションした機体とは別の機体の手順になる。製作票は案の値・シミュレーションの結果・部品表・実物で確認する項目だけを載せ、手順の文章と機体の寸法は載せない。
 

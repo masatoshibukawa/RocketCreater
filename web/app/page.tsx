@@ -95,13 +95,15 @@ export default function Home() {
     return any ? any.download.bom : null;
   }, [displayed, exportInfos]);
 
-  // The parts build behind the displayed design; a trace-only re-run of it has none of its own.
-  const build = useMemo(() => {
-    if (!displayed) return null;
+  // Every attempt that flew this very design, the one on screen first: a trace-only re-run has
+  // neither the build nor the margins of the parts attempt, and an estimate_cost candidate no env.
+  const sameDesign = useMemo(() => {
+    if (!displayed) return [];
     const key = designKey(displayed.design);
-    const own = displayedAttempt?.build;
-    return own ?? stream.attempts.find((a) => a.build && a.design && designKey(a.design) === key)?.build ?? null;
+    const same = stream.attempts.filter((a) => a.design !== null && designKey(a.design) === key);
+    return [...same.filter((a) => a === displayedAttempt), ...same.filter((a) => a !== displayedAttempt)];
   }, [displayed, displayedAttempt, stream.attempts]);
+  const build = sameDesign.find((a) => a.build !== null)?.build ?? null;
 
   // /artifacts/summary for the displayed design (debounced, cached by design JSON).
   const summaryState = useDesignSummary(displayed?.design ?? null, stream.requirement, build);
@@ -112,25 +114,27 @@ export default function Home() {
   // A multistage run takes the flow and production tabs away while one of them is open.
   const view: CenterView = tabs.some((t) => t.id === centerView) ? centerView : "model";
 
-  // Everything the tools reported for this very design: the attempt on screen has the last word,
-  // and a parts attempt adds the bottle's static margins a trace-only re-run leaves out.
+  // Everything the tools reported for this very design; the attempt on screen has the last word.
   const resultMetrics = useMemo(() => {
     if (!displayed) return NO_METRICS;
-    const key = designKey(displayed.design);
-    const same = stream.attempts.filter((a) => a.design !== null && a.result && designKey(a.design) === key);
     const candidate = stream.candidates.find((c) => c.source_id === displayed.sourceId);
-    return Object.assign({}, candidate?.metrics, ...same.map((a) => a.result?.metrics), displayedAttempt?.result?.metrics) as Record<string, number>;
-  }, [displayed, displayedAttempt, stream.attempts, stream.candidates]);
+    const flown = [...sameDesign].reverse().map((a) => a.result?.metrics);
+    return Object.assign({}, candidate?.metrics, ...flown) as Record<string, number>;
+  }, [displayed, sameDesign, stream.candidates]);
 
-  // A failing attempt or a reference seed gets no production data (CLAUDE.md section 1).
+  // A failing attempt or a reference seed gets no production data (CLAUDE.md section 1). A seed
+  // flew in the reference's own conditions, which the tool inputs do not hold.
   const passed: boolean = useMemo(() => {
     const candidate = stream.candidates.find((c) => c.source_id === displayedId);
+    if (candidate?.seededFrom || displayed?.origin === "seed") return false;
     return candidate?.passed ?? displayedAttempt?.result?.success ?? false;
-  }, [displayedId, displayedAttempt, stream.candidates]);
+  }, [displayed, displayedId, displayedAttempt, stream.candidates]);
 
   // Conditions of the run on screen, so that the API repeats what the agent simulated.
-  const callEnv = displayedId ? stream.toolInputs[displayedId]?.env : undefined;
-  const env = typeof callEnv === "object" && callEnv !== null ? (callEnv as Record<string, unknown>) : null;
+  const callEnv = [displayedId, ...sameDesign.map((a) => a.id)]
+    .map((id) => (id ? stream.toolInputs[id]?.env : undefined))
+    .find((value) => typeof value === "object" && value !== null);
+  const env = (callEnv ?? null) as Record<string, unknown> | null;
   const rerun = useMemo(
     () => ({ requirement: stream.requirement, env, seed: dispersion?.seed ?? null, n: dispersion?.n ?? null }),
     [stream.requirement, env, dispersion],

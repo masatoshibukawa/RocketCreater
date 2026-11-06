@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { apiUrl, createDesignPackage, designKey, type DesignPackage, type DesignPackageRequest } from "../lib/api";
+import { apiUrl, createDesignPackage, requestKey, type DesignPackage, type DesignPackageRequest } from "../lib/api";
 import type { Design } from "../lib/types";
 import PrintExports from "./PrintExports";
 
@@ -15,7 +15,7 @@ interface ProductionPanelProps {
 /** 製作データ: the files a passing design can support, what it cannot, and the print data. */
 export default function ProductionPanel({ request, passed }: ProductionPanelProps) {
   const design: Design | null = request?.design ?? null;
-  const key = design ? designKey(design) : "";
+  const key = request ? requestKey(request) : "";
   const [made, setMade] = useState<DesignPackage | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -54,7 +54,6 @@ export default function ProductionPanel({ request, passed }: ProductionPanelProp
       : !passed ? <p className="wb-note">シミュレーションに合格した案を選ぶと作れます。</p> : null}
     {error ? <p role="alert" className="wb-error">{error}</p> : null}
     {made ? <>
-      {!made.passed ? <p role="alert" className="wb-error">再計算ではこの案は合格しませんでした: {made.failure_reasons.join(" / ")}</p> : null}
       <div className="wb-file-list">{made.files.map(file => <a key={file.kind} href={apiUrl(file.url)} download><span>{file.label}</span><small>{file.url.split(".").at(-1)?.toUpperCase()} ↓</small></a>)}</div>
       <h3>この案から作れないもの</h3>
       <ul className="wb-limitations">{made.unavailable.map(row => <li key={row.item}><b>{row.item}</b>: {row.reason}</li>)}</ul>

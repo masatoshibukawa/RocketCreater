@@ -47,8 +47,9 @@ export default function PrintExports({ design, disabled = false }: { design: Des
     } finally { if (!abort.signal.aborted) setBusy(false); }
   }
   if (design?.tier !== "bottle") return null;
-  const report = bundle?.manifest;
-  const outputs = bundle?.files ?? [];
+  // The same design under a failing attempt must not keep offering what a passing one made.
+  const report = disabled ? undefined : bundle?.manifest;
+  const outputs = disabled ? [] : bundle?.files ?? [];
   return <section className="wb-print-exports" aria-label="設計ごとの3Dプリント出力">
     <h3>3Dプリンター用データ</h3>
     <p>UltiMaker S5 · Tough PLA Gray · AA 0.4</p>

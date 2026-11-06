@@ -14,7 +14,7 @@ from api.aero import router as aero_router
 from api.manufacturing import router as manufacturing_router
 from api.workbench import router as workbench_router
 from rocketwright import __version__
-from rocketwright.agent.design_package import design_package
+from rocketwright.agent.design_package import DesignNotPassed, design_package
 from rocketwright.agent.loop import run_design_loop
 from rocketwright.agent.store import DEFAULT_STORE, MEDIA_TYPES, store_drawing
 from rocketwright.agent.tools import DISPERSION_MAX_N
@@ -142,6 +142,8 @@ def package_artifact(request: PackageRequest) -> dict[str, object]:
             seed=request.seed,
             n=request.n,
         )
+    except DesignNotPassed as exc:
+        raise HTTPException(409, f"再計算でこの案は合格しませんでした: {exc}") from exc
     except (KeyError, ValueError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
