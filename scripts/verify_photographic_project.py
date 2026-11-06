@@ -30,15 +30,15 @@ def main():
     parser.add_argument("project_id")
     parser.add_argument("report", type=Path, help="new JSON report file")
     parser.add_argument("--regenerate", action="store_true", help="retain previous videos")
+    parser.add_argument("--quality", choices=["preview", "final"], default="final")
     args = parser.parse_args()
     if args.report.exists():
         raise ValueError("Choose a new measurement report; previous records are preserved")
     store = DesignProjects(args.root.resolve())
     state = store.get(args.project_id)
     store.require_adopted(state)
-    if state["active"] or (
-        not args.regenerate and any(f["kind"] == "photographic_video" for f in state["files"])
-    ):
+    kind = "photographic_preview" if args.quality == "preview" else "photographic_video"
+    if state["active"] or (not args.regenerate and any(f["kind"] == kind for f in state["files"])):
         raise ValueError("The project is busy or already has registered photographic outputs")
     asset_files()
     directory = store.directory(args.project_id) / "video-photographic"
@@ -67,6 +67,7 @@ def main():
             text=True,
         ).strip(),
         style="photographic",
+        quality=args.quality,
         started_at_utc=now(),
         timing_scope="direction request through verified and registered videos",
         stages=[],
@@ -119,10 +120,10 @@ def main():
                 state["revision"],
                 style="photographic",
                 regenerate=args.regenerate,
+                quality=args.quality,
             )
-        directory = (
-            store.directory(state["id"]) / state["photographic_video_plan"]["output_directory"]
-        )
+        output_key = "preview_directory" if args.quality == "preview" else "output_directory"
+        directory = store.directory(state["id"]) / state["photographic_video_plan"][output_key]
         result["output_directory"] = directory.name
         if (
             state["version"] != result["version"]
@@ -145,6 +146,7 @@ def main():
             dict(name=p.name, bytes=p.stat().st_size, sha256=sha(p))
             for p in directory.glob("*.mp4")
         ]
+        result["cache"] = json.loads((directory / "render-cache.json").read_text())
         result["passed"] = result["verification"]["passed"]
     except Exception as error:
         result["error"] = str(error)

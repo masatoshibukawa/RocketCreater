@@ -103,7 +103,16 @@ def progress(store, project_id, active):
     )
 
 
-def queue(store, project_id, revision, operation, style="engineering", *, regenerate=False):
+def queue(
+    store,
+    project_id,
+    revision,
+    operation,
+    style="engineering",
+    *,
+    regenerate=False,
+    quality="final",
+):
     from rocketwright.agent.design_projects import ROOT, implementation_fingerprint
     from rocketwright.manufacturing import fingerprint
 
@@ -119,6 +128,10 @@ def queue(store, project_id, revision, operation, style="engineering", *, regene
         raise ValueError("Unknown render style")
     if regenerate and operation != "render_video":
         raise ValueError("Only video production can be regenerated")
+    if quality not in {"preview", "final"} or (
+        quality == "preview" and (operation != "render_video" or style != "photographic")
+    ):
+        raise ValueError("Lightweight previews require photographic video production")
     store.get(project_id)  # Reconcile an abandoned checkpoint before claiming it.
     with file_lock(store.base(project_id) / "operation.lock"):
         state = store.load(project_id)
@@ -130,6 +143,7 @@ def queue(store, project_id, revision, operation, style="engineering", *, regene
             name=operation,
             style=style,
             regenerate=regenerate,
+            quality=quality,
             phase="queued",
             started_at=time.time(),
             owner="detached",
@@ -237,6 +251,7 @@ def main():
                 int(revision),
                 style,
                 regenerate=bool(active.get("regenerate")),
+                quality=active.get("quality", "final"),
             )
         else:
             getattr(store, operation)(project_id, int(revision))

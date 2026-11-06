@@ -85,8 +85,8 @@ def test_current_project_api_dispatches_explicit_regeneration(store, monkeypatch
     state = adopted(store)
     calls = []
 
-    def queue(bench, project_id, revision, operation, style, *, regenerate):
-        calls.append((project_id, revision, operation, style, regenerate))
+    def queue(bench, project_id, revision, operation, style, *, regenerate, quality):
+        calls.append((project_id, revision, operation, style, regenerate, quality))
         return bench.get(project_id)
 
     monkeypatch.setattr(routes, "DEFAULT_PROJECTS", store)
@@ -97,4 +97,48 @@ def test_current_project_api_dispatches_explicit_regeneration(store, monkeypatch
             json={"revision": state["revision"], "style": "photographic", "regenerate": True},
         )
     assert response.status_code == 202
-    assert calls == [(state["id"], state["revision"], "render_video", "photographic", True)]
+    assert calls == [
+        (state["id"], state["revision"], "render_video", "photographic", True, "final")
+    ]
+
+
+def test_preview_preserves_final_plan_and_final_movie(store, monkeypatch):
+    state = adopted(store)
+    state = production.plan_video(
+        store, state["id"], state["revision"], local=False, style="photographic"
+    )
+    monkeypatch.setattr(production, "freeze_assets", lambda directory: {})
+    monkeypatch.setattr(
+        production,
+        "media_settings",
+        lambda: dict(blender=Path(sys.executable), python=Path(sys.executable), libs=store.root),
+    )
+
+    def native_fixture(command, **kwargs):
+        path = Path(command[-1] if "--background" in command else command[2])
+        if "--background" not in command:
+            (path.parent / "launch-cg.mp4").write_bytes(path.parent.name.encode())
+            (path.parent / "verification.json").write_text('{"passed":true}')
+        return subprocess.CompletedProcess(command, 0)
+
+    monkeypatch.setattr(production.subprocess, "run", native_fixture)
+    state = production.render_video(store, state["id"], state["revision"], "photographic")
+    final = next(f.copy() for f in state["files"] if f["name"].endswith(".mp4"))
+    original = store.file(state["id"], final["key"]).read_bytes()
+    state = production.render_video(
+        store, state["id"], state["revision"], "photographic", quality="preview"
+    )
+    assert state["photographic_video_plan"]["width"] == 1920
+    assert state["photographic_video_plan"]["status"] == "rendered"
+    assert state["photographic_video_plan"]["output_directory"] == "video-photographic"
+    assert (
+        next(f for f in state["files"] if f["key"] == final["key"])["kind"] == "photographic_video"
+    )
+    assert store.file(state["id"], final["key"]).read_bytes() == original
+    assert any(f["kind"] == "photographic_preview" for f in state["files"])
+    execution = json.loads(
+        (store.directory(state["id"]) / "video-photographic-preview/job.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert execution["plan"]["width"] == 960 and execution["plan"]["samples"] == 8

@@ -1,6 +1,7 @@
 """Revision-aware current-design production routes. Loopback tools only; no paid API."""
 
 from functools import partial
+from typing import Literal
 
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
@@ -24,6 +25,7 @@ class EditRequest(Revision):
 
 class ProjectRenderRequest(RenderRequest):
     regenerate: bool = False
+    quality: Literal["preview", "final"] = "final"
 
 
 class RestoreRequest(Revision):
@@ -217,7 +219,7 @@ def direction(project_id: str, request: PlanRequest):
 def render(project_id: str, request: ProjectRenderRequest):
     call(DEFAULT_PROJECTS.require_adopted, call(DEFAULT_PROJECTS.get, project_id))
     return call(
-        partial(queue, regenerate=request.regenerate),
+        partial(queue, regenerate=request.regenerate, quality=request.quality),
         DEFAULT_PROJECTS,
         project_id,
         request.revision,
