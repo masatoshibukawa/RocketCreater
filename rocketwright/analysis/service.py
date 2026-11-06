@@ -10,7 +10,7 @@ from pathlib import Path
 from rocketwright.adaptive import Campaign, Requirements, digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.agent.workbench import Conflict
-from rocketwright.analysis import catalog, experience, planner, policy, refinement
+from rocketwright.analysis import catalog, experience, planner, policy, predictor, refinement
 from rocketwright.analysis.record import scopes
 from rocketwright.analysis.runtime import Runtime, run
 from rocketwright.analysis.schema import Precision, SearchLimits
@@ -45,6 +45,10 @@ class Harness:
         precision, limits = precision or Precision(), limits or SearchLimits()
         precision = Precision.model_validate(precision.model_dump())
         limits = SearchLimits.model_validate(limits.model_dump())
+        if limits.planner == "claude" and self.director is None:
+            from rocketwright.analysis.claude import ClaudeDirector
+
+            self.director = ClaudeDirector()
 
         def work(state):
             if state["adopted"] or state.get("adaptive"):
@@ -311,6 +315,7 @@ class Harness:
                     code=code_hash(),
                     precision=precision.model_dump(),
                     screen_step_s=a["runtime"]["flight_step_s"],
+                    limit=24 if limits.learned_predictor else 6,
                 )
                 if limits.use_experience
                 else []
@@ -320,6 +325,28 @@ class Harness:
                 spec.requirement.target_altitude_m,
                 correction_limit_m=precision.altitude_error_m * precision.aero_allocation,
             )
+            fitted = {}
+            if limits.learned_predictor and prediction and survey:
+                change = proposal["change"]
+                before_value = (
+                    getattr(getattr(spec, change["section"]), change["field"])
+                    if change["section"]
+                    else getattr(spec, change["field"])
+                )
+                if isinstance(change["value"], (int, float)):
+                    fitted = predictor.estimate(
+                        retrieved,
+                        dict(
+                            features=experience.features(spec),
+                            before=self._snapshot(c),
+                            step=(change["value"] - before_value) / max(abs(before_value), 1),
+                            raw_delta=prediction["delta_height_m"],
+                        ),
+                        correction_limit_m=precision.altitude_error_m * precision.aero_allocation,
+                    )
+                    if fitted.get("status") == "fitted":
+                        learned["height_correction_m"] = fitted["height_correction_m"]
+                        learned["mean_cost_s"] = fitted["predicted_cost_s"]
             gain = prediction["violation_reduction"] if prediction else 0
             if prediction and learned["residual_samples"]:
                 prediction = copy.deepcopy(prediction)
@@ -352,6 +379,8 @@ class Harness:
                 prediction=prediction,
                 experience=learned,
                 retrieved_outcomes=retrieved,
+                retrieved_cases=predictor.snippets(retrieved),
+                learned_prediction=fitted,
                 estimated_followup_cost_s=cycle_s,
             )
         runtime = Runtime.model_validate(a["runtime"])
@@ -624,6 +653,21 @@ class Harness:
 
     def _persist(self, c):
         a = self.state["adaptive"]
+        for row in a.get("observations", []):
+            if (
+                row.get("status") == "measured"
+                and "learning_evidence" not in row
+                and experience.verified(row)
+            ):
+                folder = self.store.base(self.state["id"]) / "feedback" / uuid.uuid4().hex
+                path = folder / "observation.json"
+                write_json(path, row)
+                write_json(folder / "manifest.json", {path.name: sha(path)})
+                row["learning_evidence"] = dict(
+                    artifact=str(path.resolve()),
+                    sha256=sha(path),
+                    manifest_sha256=sha(folder / "manifest.json"),
+                )
         a.update(results=c.results, history=c.history, remaining_s=c.remaining_s, pending=None)
         self.store._write(self.state)
 

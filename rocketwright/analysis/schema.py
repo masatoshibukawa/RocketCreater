@@ -74,12 +74,13 @@ class SearchLimits(Strict):
     max_actions: int = Field(default=160, ge=1, le=500)
     budget_s: float = Field(default=3600, gt=0, le=86400)
     memory_gib: float = Field(default=8, gt=0, le=128)
-    planner: Literal["local_llm", "baseline"] = "local_llm"
+    planner: Literal["local_llm", "claude", "baseline"] = "local_llm"
     fallback: Literal["stop", "baseline"] = "stop"
     planner_timeout_s: float = Field(default=90, gt=0, le=180)
     skip_forced_choices: bool = True
     # Exploration never changes acceptance precision. Fixed-candidate audits can disable it.
     exploratory_redesign: bool = True
     use_experience: bool = True
+    learned_predictor: bool = True
     survey_candidates: int = Field(default=32, ge=1, le=64)
     reserve_confirmation_fraction: float = Field(default=0.3, ge=0.1, le=0.8)
