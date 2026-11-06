@@ -41,6 +41,8 @@ def test_design_streams_events(monkeypatch):
     with client.stream("POST", "/design", json={"text": "go to 2 km", "seed": 5}) as r:
         assert r.status_code == 200
         assert r.headers["content-type"].startswith("text/event-stream")
+        assert "no-transform" in r.headers["cache-control"]
+        assert r.headers["x-accel-buffering"] == "no"
         body = "".join(r.iter_text())
 
     frames = [f for f in body.split("\n\n") if f.strip()]

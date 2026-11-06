@@ -4,7 +4,7 @@ import { useState } from "react";
 import { apiUrl } from "../lib/api";
 import { fmt } from "../lib/format";
 import { useAeroLoop, type AeroRequest } from "../lib/useAeroLoop";
-import { useCrewTask } from "../lib/WorkshopContext";
+import { useCrewTask, useWorkshop } from "../lib/WorkshopContext";
 
 interface AeroLoopPanelProps {
   /** Null until there is a design and a target altitude to fly it to. */
@@ -16,6 +16,7 @@ const signedDegrees = (alpha: number): string => `${alpha > 0 ? "+" : ""}${fmt(a
 
 /** Runs the flight/CFD loop on the displayed design and shows its rounds and flow pictures. */
 export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps) {
+  const { visible } = useWorkshop();
   const { job, starting, error, connectionLost, run } = useAeroLoop(request);
   const [picked, setPicked] = useState<string | null>(null);
   const working = starting || job?.status === "queued" || job?.status === "running";
@@ -55,7 +56,7 @@ export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps
           : job?.status === "running" ? `流体解析を実行中 · 経過 ${fmt(job.elapsed_s ?? 0, 0)} 秒`
           : loop ? "この実行には流れの画像がありません。" : "計算した流れの画像がここに映ります"}
       </p>}
-      <img className="backscreen-crew" src="/workshop/crew.webp" alt=""/>
+      {visible ? <img className="backscreen-crew" src="/workshop/crew.webp" alt=""/> : null}
     </div>
     {loop ? <>
       <p className="wb-case-tag">{loop.converged ? "抗力係数が収束しました" : "抗力係数は収束していません"} · {loop.rounds.length}周 · 計算手段 {loop.rounds.at(-1)?.backend ?? "—"}</p>
