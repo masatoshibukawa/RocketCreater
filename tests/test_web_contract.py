@@ -175,7 +175,7 @@ def test_chain_tools_are_labelled_and_reduced():
     assert "設計の決定順" in chain_panel
     for field in ("funnel", "alternatives", "invalidated", "why"):
         assert field in chain_panel, field
-    assert "notes={" in PAGE_TSX and "chain={" in PAGE_TSX
+    assert "notes={" in PAGE_TSX
     assert "notes" in _ts("components/ModelViewer.tsx")
 
 
@@ -225,10 +225,10 @@ def test_home_is_the_one_design_screen():
 def test_workshop_stages_follow_the_reference_and_keep_real_tools_connected():
     tabs = _ts("lib/workshopNavigation.ts")
     labels = re.findall(r'label: "([^"]+)"', tabs)
-    assert labels == ["条件", "設計", "解析", "比較", "組立", "出力"]
+    assert labels == ["設計", "解析", "出力"]
     assert 'aria-label="設計の工程"' in PAGE_TSX
     assert "isOrbital(tier)" in PAGE_TSX
-    for name in ("AeroLoopPanel", "ProductionPanel", "ReferenceLibrary", "ResultPanel"):
+    for name in ("AeroLoopPanel", "ProductionPanel", "ChatPanel", "ResultPanel", "BomPanel"):
         assert re.search(rf"<{name}\b", PAGE_TSX), name
 
 
@@ -307,3 +307,14 @@ def test_workshop_art_ships_with_the_web_app_and_stays_decoration():
     # Errors stop the crew, and the shared motion control stops them too.
     assert "motionEnabled" in _ts("components/WorkshopScene.tsx")
     assert '"attention"' in _ts("components/WorkshopScene.tsx")
+
+
+def test_a_final_candidate_keeps_the_design_that_was_flown():
+    assert "flown?.design ?? fd.design" in _ts("lib/designState.ts")
+
+
+def test_docks_resize_and_the_screen_stays_three_stages():
+    assert PAGE_TSX.count("<DockHandle") == 2
+    assert "useDockWidths" in PAGE_TSX
+    for removed in ("DesignComparison", "ReferenceLibrary", "workshop-rail", "inspector-tabs"):
+        assert removed not in PAGE_TSX, removed

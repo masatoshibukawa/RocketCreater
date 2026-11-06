@@ -716,6 +716,7 @@ def test_chain_tools_are_registered_strict_and_the_tool_list_stays_small():
     assert set(defs["auto_design"]["input_schema"]["properties"]) == {"tier", "requirement", "env"}
     # every definition is sent on every turn: keep the list under ~10k tokens (len/4 estimate)
     assert len(json.dumps(get_tool_definitions())) / 4 < 10_000
+    assert "fin_tail_inset_mm" not in json.dumps(get_tool_definitions())  # production's field
 
 
 def test_design_stage_tool_ranks_and_invalidates_downstream():
