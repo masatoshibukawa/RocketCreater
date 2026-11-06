@@ -106,21 +106,22 @@ function DesignScreen() {
     return typeof east === "number" && typeof north === "number" ? { east_m: east, north_m: north } : null;
   }, [displayedAttempt]);
 
-  // run_dispersion result of the displayed design; otherwise the latest run.
+  // run_dispersion result of the displayed design. Another design's result is never shown for it.
   const dispersion: DispersionResult | null = useMemo(() => {
+    if (!displayed) return null;
+    const key = designKey(displayed.design);
     const own = displayedId ? stream.dispersions[displayedId] : undefined;
-    return own ?? stream.dispersion;
-  }, [displayedId, stream.dispersions, stream.dispersion]);
+    const same = Object.values(stream.dispersions).filter((d) => d.design && designKey(d.design) === key);
+    return own ?? same.at(-1) ?? null;
+  }, [displayed, displayedId, stream.dispersions]);
 
-  // Download maps from export_report / render_drawing results; the BOM CSV for the displayed
-  // design when the agent exported it (else any exported BOM, else none).
+  // Download maps from export_report / render_drawing results; the BOM CSV of the displayed
+  // design when the agent exported it, else none.
   const exportInfos = useMemo(() => exportInfoFromEvents(stream.events), [stream.events]);
   const csvUrl: string | null = useMemo(() => {
     if (!displayed) return null;
     const own = exportsForDesign(exportInfos, displayed.design).find((e) => typeof e.download.bom === "string");
-    if (own) return own.download.bom;
-    const any = exportInfos.find((e) => typeof e.download.bom === "string");
-    return any ? any.download.bom : null;
+    return own ? own.download.bom : null;
   }, [displayed, exportInfos]);
 
   // Every attempt that flew this very design, the one on screen first: a trace-only re-run has
