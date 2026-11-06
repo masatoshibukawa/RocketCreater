@@ -1,0 +1,4 @@
+interface:
+  display_name: "チタン・Ti6Al4V Grade 5/23等"
+  short_description: "チタンのグレード・機種別工程・熱処理と疲労評価を揃える"
+  default_prompt: "$3d-metal-titanium を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

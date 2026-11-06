@@ -1,0 +1,4 @@
+interface:
+  display_name: "HP Metal Jet S100 / S100P / S100D"
+  short_description: "S100の構成別硬化・有効域・材料検証区分と焼結工程を確認する"
+  default_prompt: "$3d-printer-hp-metal-jet-s100 を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

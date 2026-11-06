@@ -23,3 +23,31 @@ description: "カーボン系と金属の3Dプリンター、材料、造形方�
 「カーボン」は材質/補強方式か社名かも確認する。[Carbon社DLS](https://www.carbon3d.com/carbon-dls-technology)は液体レジンを使う光造形で、連続炭素繊維の方式とは別。社名を指すなら[レジンのスキル](../../materials/3d-material-engineering-resin/SKILL.md)と当該機種・製品の指定工程へ振り分ける。
 
 材料対応は商品・世代・装置構成・プロファイルごとに「公式対応/条件付き試作/非対応/不明」で返す。メーカーの金属並みという比較から等方性・耐熱・寿命を補完しない。[施設と品質の条件](../../../11_カーボンと金属/facility-and-quality.md)を必要な方式だけ読み、[記録JSON](../../../11_カーボンと金属/industrial-record.example.json)へ根拠と残る条件を残す。
+
+## 機種が分かっている場合
+
+| 機種 | スキル |
+| --- | --- |
+| UltiMaker Factor 4 / Factor 4+ | [専用スキル](../printers/3d-printer-ultimaker-factor/SKILL.md) |
+| Raise3D E2CF | [専用スキル](../printers/3d-printer-raise3d-e2cf/SKILL.md) |
+| Markforged Mark Two | [専用スキル](../printers/3d-printer-markforged-mark-two/SKILL.md) |
+| Markforged FX10 | [専用スキル](../printers/3d-printer-markforged-fx10/SKILL.md) |
+| Anisoprint Composer A4/A3 | [専用スキル](../printers/3d-printer-anisoprint-composer/SKILL.md) |
+| Raise3D Forge1 / MetalFuse | [専用スキル](../printers/3d-printer-raise3d-forge1/SKILL.md) |
+| Markforged Metal X | [専用スキル](../printers/3d-printer-markforged-metal-x/SKILL.md) |
+| EOS M 290 | [専用スキル](../printers/3d-printer-eos-m290/SKILL.md) |
+| HP Metal Jet S100 / S100P / S100D | [専用スキル](../printers/3d-printer-hp-metal-jet-s100/SKILL.md) |
+| Colibrium Additive Spectra L | [専用スキル](../printers/3d-printer-colibrium-spectra-l/SKILL.md) |
+| Meltio M600 | [専用スキル](../printers/3d-printer-meltio-m600/SKILL.md) |
+| DMG MORI LASERTEC 65 DED hybrid 2nd Generation | [専用スキル](../printers/3d-printer-dmg-lasertec-65-ded/SKILL.md) |
+
+## 金属の合金系から選ぶ
+
+| 合金系 | スキル |
+| --- | --- |
+| ステンレス鋼・316L/17-4PH | [材料スキル](../../materials/3d-metal-stainless-steel/SKILL.md) |
+| 工具鋼・H13/A2/D2等 | [材料スキル](../../materials/3d-metal-tool-steel/SKILL.md) |
+| チタン・Ti6Al4V Grade 5/23等 | [材料スキル](../../materials/3d-metal-titanium/SKILL.md) |
+| アルミニウム・AlSi10Mg等 | [材料スキル](../../materials/3d-metal-aluminum/SKILL.md) |
+| ニッケル合金・IN625/IN718等 | [材料スキル](../../materials/3d-metal-nickel-alloy/SKILL.md) |
+| 銅・Cu/CuCrZr等 | [材料スキル](../../materials/3d-metal-copper/SKILL.md) |

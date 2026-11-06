@@ -29,6 +29,17 @@ description: "3Dプリントの材料選定、製品別設定、機種との適�
 | 工学用・高靱性・柔軟・耐熱レジン | [工学用・高靱性・柔軟・耐熱レジン](../3d-material-engineering-resin/SKILL.md) |
 | 水洗いレジン | [水洗いレジン](../3d-material-water-wash-resin/SKILL.md) |
 
+## 金属の合金系から選ぶ
+
+| 合金系 | 読むスキル |
+| --- | --- |
+| ステンレス鋼・316L/17-4PH | [金属材料スキル](../3d-metal-stainless-steel/SKILL.md) |
+| 工具鋼・H13/A2/D2等 | [金属材料スキル](../3d-metal-tool-steel/SKILL.md) |
+| チタン・Ti6Al4V Grade 5/23等 | [金属材料スキル](../3d-metal-titanium/SKILL.md) |
+| アルミニウム・AlSi10Mg等 | [金属材料スキル](../3d-metal-aluminum/SKILL.md) |
+| ニッケル合金・IN625/IN718等 | [金属材料スキル](../3d-metal-nickel-alloy/SKILL.md) |
+| 銅・Cu/CuCrZr等 | [金属材料スキル](../3d-metal-copper/SKILL.md) |
+
 ## 組み合わせから選ぶ
 
 | 依頼 | 読むスキル |
