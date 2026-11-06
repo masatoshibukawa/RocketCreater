@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source": "assets/print-trials/2026-11-06-fin-retry02/fin-retry02-trial-200x.mp4",
+  "source_sha256": "a25f43c30f3b86581864e48bbc73f7269cd0f323baab00d461f63e9a8d8b661d",
+  "source_fps": 10,
+  "source_frames": 351,
+  "source_nominal_speed_multiplier": 200,
+  "start_frame_inclusive": 15,
+  "end_frame_exclusive": 317,
+  "last_included_frame": 316,
+  "first_toppling_frame_observed": 317,
+  "selection_review": "Initial-layer printing through the final observed upright frame; boundary frames 306-324 inspected visually",
+  "source_recording_gap": "Original two recording segments retain an approximately 58-second capture gap during nozzle reheating",
+  "demo_duration_s": 6,
+  "demo_fps": 30,
+  "output_directory": "output/media/product-demo/generated/print-progress",
+  "source_geometry_sha256": "fdb04dfeb5d7c6407ed21dd9432004daf8d922b2466ce02dc257c5f9dd3c7a21",
+  "design_binding": "Existing 2L PET v2 fin trial; not verified as the same design as the planned 1.5L/30m app case",
+  "intended_caption": "フィンの印刷試作 / 実写・早送り",
+  "scope": "Printing progress excerpt. Original failed trial and its complete recording are preserved; no finished-part or flight-quality claim."
+}

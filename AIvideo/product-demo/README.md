@@ -27,6 +27,7 @@ Built with Claude: Japan 2026の提出に向け、実アプリの「要求 → �
 - [収録・編集・採用の計画](capture-plan.md)
 - [主張・実装・今後集める証拠](evidence-map.md)
 - [今回選んだ既存スキル](selected-skills.md)
+- [3Dプリンター実写の6秒クリップ](print-progress.md)：既存の印刷試作を、転倒前まで全区間早送りにした素材候補
 
 `plan.json`を正本とし、台本・絵コンテ・仮字幕は標準Pythonだけで更新できる。
 
