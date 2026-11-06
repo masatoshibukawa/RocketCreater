@@ -474,6 +474,31 @@ def _aero_eval(design: Design, backend: Any) -> tuple[dict[str, float], dict[str
     return {"cd": summary["cd_for_flight_model"]}, summary
 
 
+def _with_stability(result: SimResult, design: Design, fin_set: Any = None) -> SimResult:
+    """Add the bottle's static margins: physics.water is a point mass and reports none. Not a
+    pass/fail rule yet: the margin is shown to the agent, reviewers and the user."""
+    if not isinstance(design, BottleDesign):
+        return result
+    from rocketwright.bottle_stability import bottle_stability  # lazy: aero imports physics
+
+    stability = bottle_stability(design, fin_set)
+    if stability is None:
+        return result
+    metrics = {
+        **result.metrics,
+        "stability_margin_cal": stability.wet_margin_cal,
+        "dry_stability_margin_cal": stability.dry_margin_cal,
+    }
+    return result.model_copy(
+        update={"metrics": metrics, "warnings": [*result.warnings, *stability.warnings()]}
+    )
+
+
+def _build_fin_set(build: Any, catalog: PartsCatalog) -> Any:
+    fin_set_id = getattr(build, "fin_set_id", None)
+    return None if fin_set_id is None else catalog.get(fin_set_id, "bottle_fin_set")
+
+
 def _with_aero(result: SimResult, summary: dict[str, Any] | None) -> SimResult:
     """Attach the aero numbers (unit-suffixed metrics) and their provenance (warnings)."""
     if summary is None:
@@ -921,7 +946,7 @@ def _tool_design_from_parts(inp: dict[str, Any]) -> dict[str, Any]:
         return out
     aero_kw, aero_summary = _aero_eval(design, inp.get("aero_backend"))
     sim = _simulate_dispatch(design, env, seed, req, cost_jpy=bill.cost_jpy, **aero_kw)
-    sim = _with_aero(sim, aero_summary)
+    sim = _with_stability(_with_aero(sim, aero_summary), design, _build_fin_set(build, catalog))
     if aero_summary is not None:
         out["aero"] = aero_summary
     build_warnings = [f"build: {i.message}" for i in issues]
@@ -981,6 +1006,7 @@ def _tool_auto_design(inp: dict[str, Any]) -> dict[str, Any]:
     tier, req, env = _chain_inputs(inp)
     res = auto_design(req, env, _parts_catalog(), tier=tier)
     sim = _simulate_dispatch(res.design, env, None, req, cost_jpy=res.bill.cost_jpy)
+    sim = _with_stability(sim, res.design, _build_fin_set(res.build, _parts_catalog()))
     sim = sim.model_copy(
         update={"warnings": list(sim.warnings) + [f"build: {i.message}" for i in res.issues]}
     ).model_dump(mode="json")
@@ -1017,6 +1043,7 @@ def _tool_simulate(inp: dict[str, Any]) -> dict[str, Any]:
         design = tuned
     aero_kw, aero_summary = _aero_eval(design, inp.get("aero_backend"))
     sim = _with_aero(_simulate_dispatch(design, env, seed, req, **aero_kw), aero_summary)
+    sim = _with_stability(sim, design)
     out = sim.model_dump(mode="json")
     if aero_summary is not None:
         out["aero"] = aero_summary
@@ -1040,10 +1067,11 @@ def _tool_dispersion(inp: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"cost_jpy must be a non-negative number or null, got {cost!r}")
     run = _dispersion_dispatch(design, env, n, seed, req, None if cost is None else float(cost))
     out = run.result.model_dump(mode="json")
+    nominal = _with_stability(run.nominal, design)
     out["nominal"] = {
-        "success": run.nominal.success,
-        "failure_reasons": list(run.nominal.failure_reasons),
-        "metrics": dict(run.nominal.metrics),
+        "success": nominal.success,
+        "failure_reasons": list(nominal.failure_reasons),
+        "metrics": dict(nominal.metrics),
     }
     return out
 
