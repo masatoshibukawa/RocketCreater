@@ -20,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
 from rocketwright.agent.project_jobs import cancel_path, cancelled, resource
 from rocketwright.agent.video_appearance import freeze_assets, plan_key, recipe
+from rocketwright.agent.video_cache import digest
 from rocketwright.agent.workbench import ROOT, SKILLS, Conflict
 
 
@@ -144,36 +145,50 @@ def plan_video(bench, project_id, revision, local=True, director=None, style="en
 
 
 def render_video(
-    bench, project_id, revision, style="engineering", *, started=None, regenerate=False
+    bench,
+    project_id,
+    revision,
+    style="engineering",
+    *,
+    started=None,
+    regenerate=False,
+    quality="final",
 ):
     key = plan_key(style)
+    execution_recipe = recipe(style, quality)
     kind = "photographic_video" if style == "photographic" else "video"
+    if quality == "preview":
+        kind = "photographic_preview"
 
     def worker(state):
         settings = media_settings()
         if not settings["blender"].is_file() or not settings["python"].is_file():
             raise LocalRuntimeError("Configure the installed Blender and video Python executables")
-        plan = state.get(key, {})
-        if plan.get("status") != "planned" and not (
-            regenerate and plan.get("status") == "rendered"
+        approved_plan = state.get(key, {})
+        if approved_plan.get("status") != "planned" and not (
+            (regenerate or quality == "preview") and approved_plan.get("status") == "rendered"
         ):
             raise Conflict("Approve a shot plan before rendering")
-        validate_bound_direction(plan)
+        validate_bound_direction(approved_plan)
         expected_recipe = recipe(style)
-        if any(plan.get(k, v) != v for k, v in expected_recipe.items()):
+        if any(approved_plan.get(k, v) != v for k, v in expected_recipe.items()):
             raise Conflict("Render settings changed; review a new plan")
+        plan = dict(approved_plan) | execution_recipe | {"quality": quality}
         existing = any(f["kind"] == kind for f in state["files"])
         if existing and not regenerate:
             raise Conflict("Videos already exist for this design")
         base_name = "video-photographic" if style == "photographic" else "video"
+        if quality == "preview":
+            base_name += "-preview"
+        pending_key = "pending_preview_directory" if quality == "preview" else "pending_directory"
         directory_name = base_name
         if existing:
-            directory_name = plan.get("pending_directory") or base_name + "-" + uuid.uuid4().hex
+            directory_name = approved_plan.get(pending_key) or base_name + "-" + uuid.uuid4().hex
             if not re.fullmatch(re.escape(base_name) + r"-[a-f0-9]{32}", directory_name):
                 raise Conflict("Invalid pending video directory")
-            plan["pending_directory"] = directory_name
+            approved_plan[pending_key] = directory_name
         directory = bench.directory(project_id) / directory_name
-        state["active"].update(style=style, video_directory=directory_name)
+        state["active"].update(style=style, quality=quality, video_directory=directory_name)
         directory.mkdir(exist_ok=True)
         # Bind the same frozen production snapshot as the print exports.
         assembly = json.loads(
@@ -199,7 +214,10 @@ def render_video(
                 "fin": str(bench.file(project_id, "cad/fin-assembly-mm.stl").resolve()),
             }
         if style == "photographic":
-            freeze_assets(directory)
+            job["appearance_sha256"] = digest(freeze_assets(directory))
+        job["cache_directory"] = str(
+            Path(os.getenv("ROCKETWRIGHT_RENDER_CACHE", ROOT / "output/render-cache")).resolve()
+        )
         job["render_identity"] = hashlib.sha256(
             json.dumps(
                 {
@@ -282,9 +300,13 @@ def render_video(
             encoding="utf-8"
         ):
             raise LocalRuntimeError("Video render log contains an exception")
-        state[key]["status"] = "rendered"
-        state[key]["output_directory"] = directory_name
-        state[key].pop("pending_directory", None)
+        if quality == "final":
+            state[key]["status"] = "rendered"
+            state[key]["output_directory"] = directory_name
+        else:
+            state[key]["preview_status"] = "rendered"
+            state[key]["preview_directory"] = directory_name
+        state[key].pop(pending_key, None)
         for row in state["files"]:
             if row["kind"] == kind:
                 row["kind"] = kind + "_history"

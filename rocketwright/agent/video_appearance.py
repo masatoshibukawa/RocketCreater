@@ -14,10 +14,25 @@ RenderStyle = Literal["engineering", "photographic"]
 MANIFEST = ROOT / "AIvideo/pet-rocket/realism/asset-manifest.json"
 
 
-def recipe(style: str) -> dict:
+def recipe(style: str, quality="final") -> dict:
+    if quality not in {"preview", "final"}:
+        raise ValueError("Unknown video quality")
+    if quality == "preview" and style != "photographic":
+        raise ValueError("Lightweight previews require photographic style")
     if style == "engineering":
         return dict(style=style, width=960, height=540, fps=24, frames_per_clip=96)
     if style == "photographic":
+        if quality == "preview":
+            return dict(
+                style=style,
+                width=960,
+                height=540,
+                fps=12,
+                frames_per_clip=144,
+                design_frames=192,
+                launch_frames=144,
+                samples=8,
+            )
         return dict(
             style=style,
             width=1920,

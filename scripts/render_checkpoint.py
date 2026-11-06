@@ -32,8 +32,15 @@ class Checkpoint:
         except (ValueError, OSError):
             old = {}
         self.frames = (
-            old.get("frames", {}) if old.get("identity") == job.get("render_identity") else {}
+            old.get("frames", {})
+            if (job.get("clip_identities") or old.get("identity") == job.get("render_identity"))
+            else {}
         )
+        self.frames = {
+            k: v
+            for k, v in self.frames.items()
+            if not job.get("clip_identities") or v.get("identity") == self.identity(k)
+        }
         self.total = sum(
             job["plan"].get(m + "_frames", job["plan"]["frames_per_clip"])
             for m in ("design", "launch")
@@ -43,6 +50,10 @@ class Checkpoint:
         path = self.job.get("cancel_file")
         if path and Path(path).exists():
             raise RuntimeError("Render cancelled; verified frames retained")
+
+    def identity(self, key):
+        mode = key.split("-frames/")[0]
+        return self.job.get("clip_identities", {}).get(mode, self.job.get("render_identity"))
 
     def valid(self, path):
         self.check_cancel()
@@ -58,13 +69,18 @@ class Checkpoint:
             return True
         return False
 
-    def finished(self, path, seconds):
+    def finished(self, path, seconds, *, reused=False):
         self.check_cancel()
         key = Path(path).relative_to(self.directory).as_posix()
         self.frames[key] = dict(
-            sha256=hashlib.sha256(Path(path).read_bytes()).hexdigest(), seconds=seconds
+            sha256=hashlib.sha256(Path(path).read_bytes()).hexdigest(),
+            seconds=seconds,
+            identity=self.identity(key),
         )
-        self.samples.append(seconds)
+        if reused:
+            self.reused += 1
+        else:
+            self.samples.append(seconds)
         write(self.path, dict(identity=self.job.get("render_identity"), frames=self.frames))
         self.update()
 

@@ -17,18 +17,39 @@ job = json.loads(job_path.read_text(encoding="utf-8"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from render_checkpoint import Checkpoint  # noqa: E402 -- Blender does not add the script directory.
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from video_scene_templates import stage  # noqa: E402
+
+from rocketwright.agent.video_cache import MediaCache, file_sha, pixel_key, template_for  # noqa: E402
+
 output = job_path.parent
 preview = "--preview" in sys.argv
 if preview:
     output = output / "preview"
     output.mkdir(exist_ok=True)
-checkpoint = Checkpoint(output, job)
 g = {k: v / 1000 for k, v in job["dimensions_mm"].items()}
 g["fin_count"] = job["dimensions_mm"].get("fin_count", 4)
 plan = job["plan"]
 photographic = plan.get("style") == "photographic"
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "AIvideo/pet-rocket/realism"))
 import appearance  # noqa: E402 -- Shared photo-based recipes, no frozen CAD/physics.
+
+cache_root = Path(job.get("cache_directory", output / "local-cache"))
+cache = MediaCache(cache_root)
+template = template_for(job["dimensions_mm"])
+code = {
+    p: file_sha(Path(__file__).resolve().parents[1] / p)
+    for p in (
+        "scripts/render_workbench_scene.py",
+        "scripts/video_scene_templates.py",
+        "AIvideo/pet-rocket/realism/appearance.py",
+        "rocketwright/agent/video_cache.py",
+    )
+}
+job["clip_identities"] = {
+    mode: pixel_key(job, mode, code, bpy.app.version_string) for mode in ("design", "launch")
+}
+checkpoint = Checkpoint(output, job)
 
 bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)
@@ -82,7 +103,6 @@ if photographic:
     if job.get("cad_files"):
         fin_mat = appearance.material("Tough PLA Gray", (0.42, 0.44, 0.46), 0.52)
         white = fin_mat
-    ground_mat = appearance.asphalt(job_path.parent / "appearance")
 root = bpy.data.objects.new("Confirmed assembly", None)
 scene.collection.objects.link(root)
 r = g["body_diameter"] / 2
@@ -205,36 +225,9 @@ if job.get("cad_files"):
             obj.parent = root
             obj.data.materials.append(white if part == "nose" else fin_mat)
 
-bpy.ops.mesh.primitive_plane_add(size=400)
-ground = bpy.context.object
-ground.location.z = -0.01
-ground.data.materials.append(ground_mat)
-if photographic:
-    ground.hide_render = True
-    bench_mat = appearance.material("Workshop bench", (0.22, 0.25, 0.27), 0.3, metallic=0.7)
-    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0.78))
-    bench = bpy.context.object
-    bench.name = "Illustrative workbench"
-    bench.dimensions = (1.8, 1.15, 0.08)
-    bench.data.materials.append(bench_mat)
-    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0.821))
-    mat = bpy.context.object
-    mat.name = "Cutting mat"
-    mat.dimensions = (0.9, 0.7, 0.002)
-    mat.data.materials.append(appearance.material("Cutting mat", (0.025, 0.07, 0.061), 0.8))
-bpy.ops.object.light_add(type="AREA", location=(2, -2, 4))
-bpy.context.object.data.energy = 350
-bpy.context.object.data.shape = "DISK"
-bpy.context.object.data.size = 4
-bpy.ops.object.light_add(type="SUN", location=(0, 0, 10))
-bpy.context.object.data.energy = 1.5
-bpy.ops.object.camera_add()
-camera = bpy.context.object
-scene.camera = camera
-camera.data.lens = 45
-if photographic:
-    camera.data.dof.use_dof = True
-    camera.data.dof.aperture_fstop = 8
+job["asset_directory"] = str(job_path.parent / "appearance")
+stage_objects, stage_report = stage(job, cache_root, appearance, template)
+ground, bench, mat, camera = (stage_objects[k] for k in ("ground", "bench", "mat", "camera"))
 
 
 def look_at(position, target):
@@ -306,7 +299,7 @@ fps = plan["fps"]
 count = plan["frames_per_clip"]
 if preview:
     count = 1
-camera_distance = length * 4.5  # Complete assembly inside the caption-safe frame.
+camera_distance = template["camera_distance_m"]
 geometry_source = hashlib.sha256(
     json.dumps(job["dimensions_mm"], sort_keys=True).encode()
 ).hexdigest()
@@ -317,12 +310,15 @@ mesh_hashes = {
     for obj in root.children
     if obj.type == "MESH"
 }
+cache_report = {"stage": stage_report, "clips": {}, "quality": plan.get("quality", "final")}
 for mode in ("design", "launch"):
+    clip_identity = job["clip_identities"][mode]
+    restored, rendered, resumed = 0, 0, 0
     count = plan.get(mode + "_frames", plan["frames_per_clip"])
     if photographic:
-        appearance.photo_world(mode, job_path.parent / "appearance")
-        ground.hide_render = mode == "design"
-        bench.hide_render = mat.hide_render = mode != "design"
+        scene.world = stage_objects["worlds"][mode]
+    ground.hide_render = photographic and mode == "design"
+    bench.hide_render = mat.hide_render = not photographic or mode != "design"
     states = []
     frames = output / (mode + "-frames")
     frames.mkdir(exist_ok=True)
@@ -405,10 +401,20 @@ for mode in ("design", "launch"):
                 camera.location - root.location - Vector((0, 0, length / 2))
             ).length
         scene.render.filepath = str(frames / f"{index:04d}.png")
-        if not checkpoint.valid(scene.render.filepath):
+        if checkpoint.valid(scene.render.filepath):
+            resumed += 1
+        elif cache.restore("frames", clip_identity, f"{index:04d}.png", scene.render.filepath):
+            restored += 1
+            checkpoint.finished(scene.render.filepath, 0, reused=True)
+        else:
             frame_started = time.time()
             bpy.ops.render.render(write_still=True)
-            checkpoint.finished(scene.render.filepath, time.time()-frame_started)
+            checkpoint.finished(scene.render.filepath, time.time() - frame_started)
+            cache.store("frames", clip_identity, f"{index:04d}.png", scene.render.filepath)
+            rendered += 1
+    cache_report["clips"][mode] = dict(
+        identity=clip_identity, restored=restored, resumed=resumed, rendered=rendered, frames=count
+    )
     if mode == "design" and not preview:
         # Pack licensed textures so the saved scene has no absolute image paths.
         if photographic:
@@ -419,16 +425,19 @@ for mode in ("design", "launch"):
             writer = csv.DictWriter(stream, fieldnames=list(states[0]))
             writer.writeheader()
             writer.writerows(states)
+(output / "render-cache.json").write_text(json.dumps(cache_report, indent=2), encoding="utf-8")
 (output / "scene-source.json").write_text(
     json.dumps(
         {
             "style": plan.get("style", "engineering"),
             "dimensions_sha256": geometry_source,
             "mesh_vertex_hashes": mesh_hashes,
+            "template": template,
             "source_id": job["source_id"],
             "bottle_detail": "unmeasured illustrative PET envelope",
             "camera": "fixed elevated CG viewpoint, not filmed observation"
-            if photographic else "illustrative tracking camera",
+            if photographic
+            else "illustrative tracking camera",
             "physical_validation": "not_performed",
         },
         indent=2,

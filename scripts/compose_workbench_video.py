@@ -14,8 +14,11 @@ parser.add_argument("--libs", type=Path)
 args = parser.parse_args()
 if args.libs and args.libs.is_dir():
     sys.path.insert(0, str(args.libs))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import imageio_ffmpeg  # noqa: E402 -- Optional isolated media libraries above.
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402
+
+from rocketwright.agent.video_cache import MediaCache, composition_key, file_sha  # noqa: E402
 
 job = json.loads(args.job.read_text(encoding="utf-8"))
 directory = args.job.parent
@@ -29,8 +32,9 @@ font = (
 small = ImageFont.truetype(str(font_path), 15) if font_path.is_file() else font
 records = []
 photographic = plan.get("style") == "photographic"
-for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-cg.mp4")):
-    path = directory / filename
+
+
+def encode(mode, path, frame_count):
     writer = imageio_ffmpeg.write_frames(
         str(path),
         (plan["width"], plan["height"]),
@@ -41,7 +45,6 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
         output_params=["-movflags", "+faststart", "-map_metadata", "-1"],
     )
     writer.send(None)
-    frame_count = plan.get(mode + "_frames", plan["frames_per_clip"])
     for i in range(frame_count):
         if job.get("cancel_file") and Path(job["cancel_file"]).exists():
             writer.close()
@@ -89,8 +92,27 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
                 font=small,
                 fill=(150, 165, 168),
             )
+        if photographic:
+            draw.rounded_rectangle(
+                (18, 16, min(image.width - 18, 650), 55), radius=6, fill=(10, 13, 16)
+            )
+            draw.text((30, 23), plan[mode + "_caption"], font=font, fill=(225, 235, 237))
         writer.send(image.tobytes())
     writer.close()
+
+
+cache_report = json.loads((directory / "render-cache.json").read_text())
+cache = MediaCache(job.get("cache_directory", directory / "local-cache"))
+for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-cg.mp4")):
+    path = directory / filename
+    frame_count = plan.get(mode + "_frames", plan["frames_per_clip"])
+    identity = composition_key(
+        job, mode, cache_report["clips"][mode]["identity"], file_sha(__file__), font_path
+    )
+    reused = cache.restore("movies", identity, filename, path)
+    if not reused:
+        encode(mode, path, frame_count)
+    cache_report["clips"][mode]["composition_reused"] = reused
     reader = imageio_ffmpeg.read_frames(str(path), pix_fmt="rgb24")
     metadata = next(reader)
     hashes = set()
@@ -99,6 +121,10 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
         decoded += 1
         hashes.add(hashlib.sha256(frame).hexdigest())
     reader.close()
+    if decoded != frame_count or len(hashes) < 2:
+        raise RuntimeError("Movie did not completely decode into changing frames")
+    if not reused:
+        cache.store("movies", identity, filename, path)
     # ffmpeg's successful complete decode is separate from visual/physical review.
     records.append(
         {
@@ -112,6 +138,7 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
             "audio": "none",
         }
     )
+(directory / "render-cache.json").write_text(json.dumps(cache_report, indent=2), encoding="utf-8")
 shutil.copyfile(directory / "design-frames/0000.png", directory / "design-reference.png")
 shutil.copyfile(directory / "launch-frames/0000.png", directory / "launch-reference.png")
 trajectory_check = {"passed": False, "frames": 0, "max_position_error_m": None}
