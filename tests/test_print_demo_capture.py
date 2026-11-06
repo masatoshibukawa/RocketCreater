@@ -8,8 +8,8 @@ from types import SimpleNamespace
 from scripts import capture_print_demo as recorder
 
 
-def test_pause_transition_then_missing_job_preserves_all_frames(tmp_path, monkeypatch):
-    states = iter(["printing", "pausing", "paused", None])
+def test_pause_and_resume_then_missing_job_preserves_all_frames(tmp_path, monkeypatch):
+    states = iter(["printing", "pausing", "paused", "resuming", "printing", None])
     requests = []
 
     class ReadOnlyPrinter:
@@ -47,11 +47,11 @@ def test_pause_transition_then_missing_job_preserves_all_frames(tmp_path, monkey
     result = recorder.capture(args)
 
     assert result["status"] == "target_job_no_longer_available"
-    assert result["frame_count"] == result["encoded_frames"] == 3
-    assert encoded_counts == [3]
-    assert result["last_frame"]["job_state"] == "paused"
-    assert requests.count(args.camera) == 3
-    assert len(requests) == 7
+    assert result["frame_count"] == result["encoded_frames"] == 5
+    assert encoded_counts == [5]
+    assert result["last_frame"]["job_state"] == "printing"
+    assert requests.count(args.camera) == 5
+    assert len(requests) == 11
 
 
 def test_changed_job_is_not_photographed(tmp_path, monkeypatch):
