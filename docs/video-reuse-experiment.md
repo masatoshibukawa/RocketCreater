@@ -42,6 +42,8 @@
 
 描画ソースは`df32311`、API・プローブ・計測の追加ソースは`6cdae02`。最終の証拠コミットでは描画コードを変更しない。保存済み素材のライセンス・ハッシュは従来のappearance manifestを保持する。共有キャッシュはローカルの`output/`にありGitへ含めない。
 
+今回の証拠ディレクトリは`.gitattributes`で改行変換を無効にし、JSONも含めて計測時のバイト列を保持する。ローカルファイルだけでなく、Gitに格納した各オブジェクトと検査用マニフェストの全ハッシュ一致も確認する。
+
 ```powershell
 $env:PYTHONPATH = (Get-Location).Path
 $env:ROCKETWRIGHT_BLENDER = 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe'
