@@ -1,8 +1,12 @@
+import pytest
+
+from rocketwright.adaptive import digest
 from rocketwright.agent.design_projects import sha, write_json
 from scripts.report_design_search import summary
 
 
-def test_requested_refinement_is_not_reported_as_completed_confirmation(tmp_path):
+@pytest.mark.parametrize("failed_retry", [False, True])
+def test_requested_refinement_is_not_reported_as_completed_confirmation(tmp_path, failed_retry):
     folder = tmp_path / "projects" / "final"
     artifact = folder / "confirm" / "data.json"
     old = dict(cfd_cells_fine=20, calculix="private/solver.exe")
@@ -21,18 +25,29 @@ def test_requested_refinement_is_not_reported_as_completed_confirmation(tmp_path
         artifact.parent / "manifest.json",
         {"data.json": sha(artifact), "input.json": sha(artifact.parent / "input.json")},
     )
+    completed = dict(
+        execution_status="completed",
+        value=dict(artifact=str(artifact), sha256=sha(artifact)),
+    )
+    completed["artifact_hash"] = digest(completed)
+    write_json(artifact.parent / "result.json", completed)
     write_json(
         folder / "state.json",
         dict(
             adaptive=dict(
                 runtime=requested,
                 decisions=[],
-                history=[],
-                results=dict(
-                    confirm=dict(
+                history=[
+                    dict(
+                        action="confirm",
                         execution_status="completed",
-                        value=dict(artifact=str(artifact), sha256=sha(artifact)),
+                        artifact_hash=completed["artifact_hash"],
                     )
+                ],
+                results=dict(
+                    confirm=dict(execution_status="failed", value=dict(error="timeout"))
+                    if failed_retry
+                    else completed
                 ),
             )
         ),
@@ -67,3 +82,4 @@ def test_requested_refinement_is_not_reported_as_completed_confirmation(tmp_path
     assert completed["apogee_m"] == 22
     assert "private/solver.exe" not in str(result)
     assert result["evidence"]["referenced_files"] == 2
+    assert result["evidence"]["verified_gpu_case_files"] == 0
