@@ -8,6 +8,7 @@ import ModelViewer from "./ModelViewer";
 import VideoOutputs from "./VideoOutputs";
 import ProjectEquipmentEditor from "./ProjectEquipmentEditor";
 import ProjectObservations from "./ProjectObservations";
+import ProjectComparison from "./ProjectComparison";
 
 const STORAGE = "rocketwright-production-project-v1";
 const DIMENSIONS: [keyof Omit<ProductionGeometry, "dimensions_measured">, string][] = [
@@ -154,6 +155,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
       {mode === "files" ? <button className="btn btn-primary" disabled={working || !project.adopted || !!draft} onClick={() => void action("archive")}>この版の一括ZIPを作る</button> : null}
       <div className="wb-file-list">{project.files.filter(mainFile).map(f => <a key={f.url} href={apiUrl(f.url)} download>{projectFileLabel(f.name)}<small>v{f.version}</small></a>)}</div>
       <details><summary>CAD・印刷・検査の詳細ファイル</summary><div className="wb-file-list">{project.files.filter(f => !mainFile(f) && !f.name.endsWith(".mp4")).map(f => <a key={f.url} href={apiUrl(f.url)} download>{projectFileLabel(f.name)}<small>v{f.version} · {f.kind}</small></a>)}</div></details>
+      <ProjectComparison key={`${project.id}:${project.version}:${project.revision}`} project={project}/>
       {project.versions.length ? <details><summary>保存した版と差戻し</summary>{project.versions.map(v => <p key={v.version}>v{v.version} · {v.adopted ? "採用済み" : "検討案"} · 胴径{v.spec.geometry.body_diameter_mm.toFixed(1)} mm · 翼根{v.spec.geometry.fin_root_mm.toFixed(1)} mm <button className="btn" disabled={working || !!draft} onClick={() => void action("restore", { version: v.version })}>この入力を新しい版に戻す</button></p>)}</details> : null}
     </> : null}
   </section>;

@@ -262,6 +262,9 @@ class DesignProjects:
     def new_version(self, state, spec: DesignSpec):
         """Called under the project operation lock by human edits and host redesigns."""
         spec = DesignSpec.model_validate(spec.model_dump())
+        from rocketwright.agent.project_revisions import reuse_previous_cad
+
+        old = {k: state[k] for k in ("version", "spec", "analysis")}
         self._write(state)
         state["versions"].append(
             dict(
@@ -281,7 +284,9 @@ class DesignProjects:
             video_plan=None,
             photographic_video_plan=None,
             observations=[],
+            cad_reuse=None,
         )
+        reuse_previous_cad(self, state, old, state["spec"])
         if state.get("adaptive"):
             state["adaptive"].update(status="running", accepted_spec_hash=None)
 
@@ -301,6 +306,24 @@ class DesignProjects:
         if old is None:
             raise KeyError("保存された版がありません")
         return self.edit(project_id, revision, DesignSpec.model_validate(old["spec"]))
+
+    def compare(self, project_id, version):
+        from rocketwright.agent.project_revisions import difference
+
+        state = self.get(project_id)
+        if not 1 <= version < state["version"]:
+            raise ValueError("比較する旧版がありません。")
+        old = json.loads(
+            (self.base(project_id) / f"v{version}/snapshot.json").read_text(encoding="utf-8")
+        )
+        result = difference(old["spec"], state["spec"])
+        a, b = old.get("analysis"), state.get("analysis")
+        delta = {}
+        if a and b:
+            for key in ("apogee_m", "descent_speed_mps", "max_speed_mps"):
+                if key in a["result"]["metrics"] and key in b["result"]["metrics"]:
+                    delta[key] = b["result"]["metrics"][key] - a["result"]["metrics"][key]
+        return dict(from_version=version, to_version=state["version"], **result, result_delta=delta)
 
     def register_files(self, state, directory, kind):
         base = self.base(state["id"]) / f"v{state['version']}"
@@ -371,12 +394,24 @@ class DesignProjects:
             spec = DesignSpec.model_validate(state["spec"])
             directory = self.directory(project_id)
             cad_dir = directory / "cad"
+            reuse = state.get("cad_reuse")
+            valid_reuse = bool(
+                reuse
+                and reuse["geometry_sha256"] == fingerprint(spec.geometry.model_dump())
+                and all(
+                    (cad_dir / name).is_file() and sha(cad_dir / name) == expected
+                    for name, expected in reuse["cad_sha256"].items()
+                )
+            )
             # Failed/interrupted runs may leave partial CAD; keep it for inspection.
-            if cad_dir.exists():
+            if cad_dir.exists() and not valid_reuse:
                 cad_dir.rename(directory / ("cad-incomplete-" + uuid.uuid4().hex[:8]))
             design = spec.design.model_copy(update={"geometry": spec.geometry})
-            with resource_lease(self, state, "renderer"):
-                _, geometry = prepare_geometry(PrintRequest(design=design), cad_dir)
+            if valid_reuse:
+                geometry = json.loads((cad_dir / "geometry-check.json").read_text(encoding="utf-8"))
+            else:
+                with resource_lease(self, state, "renderer"):
+                    _, geometry = prepare_geometry(PrintRequest(design=design), cad_dir)
             printed = sum(
                 r["volume_mm3"]
                 * STOCKS[spec.material]["density"]

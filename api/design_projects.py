@@ -85,6 +85,11 @@ def project(project_id: str):
     return call(DEFAULT_PROJECTS.get, project_id)
 
 
+@router.get("/{project_id}/compare/{version}")
+def compare(project_id: str, version: int):
+    return call(DEFAULT_PROJECTS.compare, project_id, version)
+
+
 @router.post("/{project_id}/edit")
 def edit(project_id: str, request: EditRequest):
     return call(DEFAULT_PROJECTS.edit, project_id, request.revision, request.spec)

@@ -203,18 +203,49 @@ def test_unpriced_budget_is_not_a_pass_even_after_prototype_adoption(store):
 
 def test_observations_keep_version_history_and_invalidate_documents(store):
     from rocketwright.agent.project_assembly import Observation
+
     s = adopted(store)
     s = store.manual(s["id"], s["revision"])
-    s = store.observe(s["id"], s["revision"], Observation(
-        step="nose_fit", status="observed", operator="test operator",
-        observed_on="2026-11-06", note="fit trial only; no flight claim",
-        measured_values={"clearance_mm": .4},
-    ))
+    s = store.observe(
+        s["id"],
+        s["revision"],
+        Observation(
+            step="nose_fit",
+            status="observed",
+            operator="test operator",
+            observed_on="2026-11-06",
+            note="fit trial only; no flight claim",
+            measured_values={"clearance_mm": 0.4},
+        ),
+    )
     assert s["observations"][0]["version"] == 1
     assert not any(row["kind"] in {"manual", "package"} for row in s["files"])
     assert s["adopted"]
     s = store.edit(s["id"], s["revision"], spec())
     assert not s["observations"]
     import json
+
     old = json.loads((store.base(s["id"]) / "v1/observations/observations.json").read_text())
     assert old[0]["note"].startswith("fit trial")
+
+
+def test_revision_comparison_reuses_cad_but_recalculates_changed_physics(store, monkeypatch):
+    s = adopted(store)
+    changed = spec()
+    changed.design = changed.design.model_copy(update={"initial_gauge_pressure_pa": 300000})
+    s = store.edit(s["id"], s["revision"], changed)
+    assert s["cad_reuse"]["from_version"] == 1 and s["analysis"] is None
+    diff = store.compare(s["id"], 1)
+    assert "CAD" in diff["preserved"] and "flight" in diff["invalidated"]
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("unchanged CAD must not run Blender again")
+
+    monkeypatch.setattr(module, "prepare_geometry", forbidden)
+    s = store.analyse(s["id"], s["revision"])
+    assert s["analysis"]["design"]["initial_gauge_pressure_pa"] == 300000
+    renamed = changed.model_copy(update={"name": "renamed project"})
+    s = store.edit(s["id"], s["revision"], renamed)
+    assert s["analysis"]["reused_from_version"] == 2
+    assert not s["adopted"]
+    assert s["analysis"]["input_sha256"] == module.fingerprint(s["spec"])
