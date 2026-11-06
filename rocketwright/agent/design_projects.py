@@ -19,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from rocketwright.agent.local_runtime import LocalRuntimeError
 from rocketwright.agent.project_requirements import assess_requirements, validate_requirements
 from rocketwright.agent.workbench import Conflict
+from rocketwright.analysis.schema import MOUNTS, STOCKS, Assumptions
 from rocketwright.geometry import airframe
 from rocketwright.manufacturing import (
     PrintGeometry,
@@ -53,6 +54,7 @@ def implementation_fingerprint():
         "rocketwright/physics/water.py",
         "rocketwright/geometry.py",
         "rocketwright/agent/project_requirements.py",
+        "rocketwright/analysis/schema.py",
         "scripts/build_print_parts.py",
         "3d model/prototypes/pet-rocket-coke-2l/build.py",
         "3d model/prototypes/pet-rocket-coke-2l/parameters.json",
@@ -69,7 +71,10 @@ class DesignSpec(BaseModel):
     env: Env = Field(default_factory=Env)
     other_dry_mass_g: float = Field(gt=0, le=2000)
     measured_printed_mass_g: float | None = Field(default=None, gt=0, le=1000)
-    material: str = Field(default="UltiMaker Tough PLA Gray", pattern="^UltiMaker Tough PLA Gray$")
+    material: str = Field(
+        default="UltiMaker Tough PLA Gray", pattern="^(UltiMaker Tough PLA Gray|Prusament PETG)$"
+    )
+    assumptions: Assumptions = Field(default_factory=Assumptions)
 
     @model_validator(mode="after")
     def physical_envelope(self):
@@ -163,6 +168,7 @@ class DesignProjects:
             versions=[],
             video_plan=None,
             photographic_video_plan=None,
+            adaptive=None,
             created_at=time.time(),
         )
         self._write(state)
@@ -304,14 +310,23 @@ class DesignProjects:
             design = spec.design.model_copy(update={"geometry": spec.geometry})
             _, geometry = prepare_geometry(PrintRequest(design=design), cad_dir)
             printed = sum(
-                r["solid_mass_g_at_assumed_density"]
+                r["volume_mm3"]
+                * STOCKS[spec.material]["density"]
+                * 1e-6
                 * (spec.geometry.fin_count if name == "fin" else 1)
                 for name, r in geometry.items()
                 if name != "fit-ring"
             )
             mass = spec.measured_printed_mass_g or printed
             design = design.model_copy(
-                update={"dry_mass_kg": (spec.other_dry_mass_g + mass) / 1000}
+                update={
+                    "dry_mass_kg": (
+                        spec.other_dry_mass_g
+                        + mass
+                        + MOUNTS[spec.assumptions.mount]["additional_mass_g"]
+                    )
+                    / 1000
+                }
             )
             target = spec.requirement.target_altitude_m if spec.requirement else None
             result = water.simulate(design, spec.env, target_apogee_m=target)
@@ -457,6 +472,8 @@ class DesignProjects:
     def print_package(self, project_id, revision, *, started_event=None):
         def worker(state):
             self.require_adopted(state)
+            if state["spec"]["material"] != "UltiMaker Tough PLA Gray":
+                raise Conflict("PETG用の印刷プロファイルは未登録です。PLA設定へ流用しません。")
             for row in state["files"]:
                 self.file(project_id, row["key"])
             output = self.directory(project_id) / ("print-" + uuid.uuid4().hex[:8])
