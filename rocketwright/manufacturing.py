@@ -159,7 +159,9 @@ def parameters(request: PrintRequest) -> dict:
         tip_trailing_offset=g.fin_root_mm - g.fin_tip_mm - g.fin_sweep_mm,
         slot_centers=[0.2 * g.fin_root_mm, 0.78 * g.fin_root_mm],
         slot_height=min(8, 0.1 * g.fin_root_mm),
-        print_rotation_y_deg=45,
+        print_rotation_y_deg=math.degrees(
+            math.atan2(g.fin_root_mm - g.fin_tip_mm - g.fin_sweep_mm, g.fin_span_mm)
+        ),
     )
     c["print_assumption"].update(
         bed_mm=[330, 240, 300], outer_brim_mm=20, material="UltiMaker Tough PLA Gray"
@@ -420,6 +422,33 @@ def prepare(request: PrintRequest, directory: Path) -> dict:
     reviews = [slice_part(directory, name, profile, paths) for name in geometries]
     for review in reviews:
         review["quantity_for_assembly"] = c["fin"]["count"] if review["part"] == "fin" else 1
+        geometry = geometries[review["part"]]
+        center = [(lo + hi) / 2 for lo, hi in zip(*geometry["bounds_mm"], strict=True)]
+        bed_center = [
+            profile["bed_mm"][i] / 2 + geometry["centroid_mm"][i] - center[i] for i in range(2)
+        ]
+        hull = review["bed_footprint_hull_xy_mm"]
+        margins = []
+        for a, b in zip(hull, hull[1:] + hull[:1], strict=True):
+            dx, dy = b[0] - a[0], b[1] - a[1]
+            margins.append(
+                (dx * (bed_center[1] - a[1]) - dy * (bed_center[0] - a[0])) / math.hypot(dx, dy)
+            )
+        if len(hull) < 3 or min(margins) < 2:
+            raise ValueError(
+                "Solid-geometry centroid needs a wider support footprint or different pose"
+            )
+        review["solid_centroid_bed_xy_mm"] = bed_center
+        review["solid_centroid_support_margin_mm"] = round(min(margins), 3)
+        review["centroid_basis"] = (
+            "Uniform solid geometry, not measured infill mass or adhesion strength"
+        )
+        review["print_rotation_y_deg"] = (
+            c["fin"]["print_rotation_y_deg"] if review["part"] == "fin" else 0
+        )
+        (directory / f"{review['part']}-slice-check.json").write_text(
+            json.dumps(review, indent=2), encoding="utf-8"
+        )
     manifest = {
         "status": "slice_checked_physical_trial_pending",
         "printer": request.printer,

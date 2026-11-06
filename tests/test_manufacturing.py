@@ -1,5 +1,6 @@
 """Design-bound local CAD/slice exports, range gates and verified downloads."""
 
+import math
 import xml.etree.ElementTree as ET
 import zipfile
 from collections import Counter
@@ -39,6 +40,9 @@ def test_geometry_follows_new_design_and_keeps_explicit_units():
     assert a["bottle"]["body_diameter"] != b["bottle"]["body_diameter"]
     assert a["print_assumption"]["outer_brim_mm"] == 20
     assert a["bottle"]["fit_measured"] is False
+    f = a["fin"]
+    angle = math.radians(f["print_rotation_y_deg"])
+    assert abs(f["span"] * math.sin(angle) - f["tip_trailing_offset"] * math.cos(angle)) < 1e-8
 
 
 def test_zero_trailing_offset_is_a_valid_planform_but_outside_tip_is_rejected():
@@ -110,6 +114,7 @@ def test_actual_api_builds_closed_design_bound_parts_and_machine_slices(
         for p in manifest["parts"]:
             assert p["all_print_paths_inside_s5"] and not p["missing_model_layers"]
             assert p["brim_width_mm"] >= 20 and p["brim_gap_mm"] == 0
+            assert p["solid_centroid_support_margin_mm"] >= 2
             assert max(p["extrusion_speed_max_mm_s_by_type"].values()) <= 35.01
         files = {f["name"]: f for f in result["files"]}
         assert {"fin-mm.3mf", "fin-S5.ufp", "nose-S5.ufp", "print-package.zip"} <= files.keys()
