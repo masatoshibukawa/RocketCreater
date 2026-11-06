@@ -1,0 +1,19 @@
+.crew-panel { flex-shrink: 0; border: 1px solid var(--border, #dce2df); border-radius: 10px; background: #f4f6f3; overflow: hidden; color: #344d45; }
+.crew-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px 0; flex-wrap: wrap; }
+.crew-heading, .crew-controls { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+.crew-heading strong { font-weight: 600; }
+.crew-phase { border-radius: 20px; padding: 2px 8px; background: #e2e9e3; font-size: 11px; }
+.crew-phase-attention { background: #f0e5ce; color: #795c23; }
+.crew-controls label { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+.crew-controls input { accent-color: #416a58; }
+.crew-controls .btn { font-size: 11px; padding: 4px 8px; min-height: 28px; background: #fff; }
+.crew-controls :focus-visible { outline: 2px solid #416a58; outline-offset: 2px; }
+.crew-stage { height: 130px; position: relative; }
+.crew-stage canvas, .crew-stage svg { display: block; width: 100%; height: 100%; }
+.crew-fallback canvas { display: none; }
+.crew-fallback-label { position: absolute; bottom: 3px; right: 10px; font-size: 10px; color: #64776e; }
+.crew-description { padding: 0 12px 9px; }
+.crew-description p { margin: 0 0 3px; font-size: 12px; line-height: 1.5; }
+.crew-description small { display: block; font-size: 10px; line-height: 1.5; color: #708278; }
+.column-center { overflow-y: auto; }
+@media (max-width: 600px) { .crew-stage { height: 140px; } .crew-toolbar { padding-inline: 10px; } }

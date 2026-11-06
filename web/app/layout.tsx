@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import "./production.css";
+import "./workshop-crew.css";
 
 export const metadata: Metadata = {
   title: "RocketWright",

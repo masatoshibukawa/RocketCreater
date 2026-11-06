@@ -15,6 +15,7 @@ import { buildProceduralModel, disposeGroup } from "../lib/model3d";
 import { canonicalJson } from "../lib/designState";
 import { TIER_LABEL, isOrbital, type Design, type DimensionSummary, type DisplayOrigin, type ReferenceInfo, type Tier } from "../lib/types";
 import TierBadge from "./TierBadge";
+import { useWorkshop } from "../lib/WorkshopContext";
 
 interface ModelViewerProps {
   design: Design | null;
@@ -83,6 +84,7 @@ function fitToView(s: Scene3D, model: THREE.Object3D): void {
 }
 
 export default function ModelViewer({ design, tier, origin, reference, dimensions, notes }: ModelViewerProps) {
+  const { motionEnabled } = useWorkshop();
   const hostRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<Scene3D | null>(null);
   const designKey = design === null ? "" : canonicalJson(design);
@@ -123,7 +125,7 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.autoRotate = true;
+    controls.autoRotate = false;
     controls.autoRotateSpeed = 0.9;
     controls.enablePan = false;
 
@@ -164,6 +166,10 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
       sceneRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (sceneRef.current) sceneRef.current.controls.autoRotate = motionEnabled;
+  }, [motionEnabled]);
 
   // Rebuild the model when the design changes.
   useEffect(() => {

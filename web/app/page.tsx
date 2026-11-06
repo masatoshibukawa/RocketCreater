@@ -6,7 +6,6 @@ import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
 import CostPanel from "./components/CostPanel";
-import CrewBanner from "./components/CrewBanner";
 import DetailsPanel from "./components/DetailsPanel";
 import DrawingPanel from "./components/DrawingPanel";
 import FlightChart from "./components/FlightChart";
@@ -15,6 +14,9 @@ import ProductionPanel from "./components/ProductionPanel";
 import ReferenceLibrary from "./components/ReferenceLibrary";
 import ResultPanel from "./components/ResultPanel";
 import StatusStrip from "./components/StatusStrip";
+import WorkshopCrew from "./components/WorkshopCrew";
+import { WorkshopProvider, useCrewTask } from "./lib/WorkshopContext";
+import { designCrewTask } from "./lib/workshopActivity";
 import { designKey, exportInfoFromEvents, exportsForDesign, type DesignPackageRequest } from "./lib/api";
 import { centerTabs, type CenterView } from "./lib/centerViews";
 import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
@@ -22,14 +24,19 @@ import { carriesParachute } from "./lib/flightPlayback";
 import { useDesignStream } from "./lib/useDesignStream";
 import { useDesignSummary } from "./lib/useDesignSummary";
 import type { AeroRequest } from "./lib/useAeroLoop";
-import { isOrbital, type DispersionResult, type DisplayedDesign, type LandingPoint, type TracePoint } from "./lib/types";
+import type { DispersionResult, DisplayedDesign, LandingPoint, TracePoint } from "./lib/types";
 
 const NO_TRACE: TracePoint[] = [];
 const NO_METRICS: Record<string, number> = {};
 
 export default function Home() {
+  return <WorkshopProvider><DesignScreen/></WorkshopProvider>;
+}
+
+function DesignScreen() {
   const [centerView, setCenterView] = useState<CenterView>("model");
   const stream = useDesignStream();
+  useCrewTask("design", designCrewTask(stream));
   const { start, answer, stop, reset } = stream;
   // Manual pick from 詳細 (attempt log / cards / reviews); null = follow the display rule.
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -199,12 +206,6 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            {stream.status === "streaming" && !isOrbital(tier) ? (
-              <CrewBanner
-                attemptCount={stream.attemptCount}
-                latestApogeeM={stream.attempts.at(-1)?.result?.metrics.apogee_m}
-              />
-            ) : null}
             {view === "model" ? (
               <ModelViewer
                 design={displayed?.design ?? null}
@@ -243,6 +244,7 @@ export default function Home() {
                 <ReferenceLibrary />
               </div>
             ) : null}
+            <WorkshopCrew/>
             {view === "model" ? (
               <CostPanel
                 summary={summary}
