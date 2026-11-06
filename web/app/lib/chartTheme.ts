@@ -1,17 +1,17 @@
-/** Recharts styling shared by the flight and dispersion charts (light palette, globals.css). */
+/** Recharts styling shared by flight and dispersion charts in the dark workshop. */
 
-export const AXIS_STYLE = { fill: "#3d4752", fontSize: 14 };
-export const GRID_STROKE = "#e3e8ef";
+export const AXIS_STYLE = { fill: "#b3bac5", fontSize: 12 };
+export const GRID_STROKE = "#3b4655";
 export const TOOLTIP_STYLE = {
-  backgroundColor: "#ffffff",
-  border: "1px solid #d7dde6",
+  backgroundColor: "#202832",
+  border: "1px solid #657287",
   borderRadius: 6,
   fontSize: 14,
-  color: "#1f2933",
+  color: "#f2f4f7",
 };
 
 export const SERIES = {
-  altitude: "#2f6fed",
+  altitude: "#67a6ff",
   ascent: "#7c5cd6",
   landing: "#2a9d6f",
   ellipse: "#e0952a",

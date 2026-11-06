@@ -25,9 +25,12 @@ interface ModelViewerProps {
   dimensions: DimensionSummary | null;
   /** Build warnings to flag under the overlay (motor certification Level 1/2, coupler). */
   notes: string[];
+  frameRequest?: number;
+  active?: boolean;
+  statusLabel?: string;
 }
 
-const BACKGROUND = 0xffffff;
+const BACKGROUND = 0x191b1e;
 
 interface Scene3D {
   renderer: THREE.WebGLRenderer;
@@ -83,10 +86,12 @@ function fitToView(s: Scene3D, model: THREE.Object3D): void {
   cam.updateProjectionMatrix();
 }
 
-export default function ModelViewer({ design, tier, origin, reference, dimensions, notes }: ModelViewerProps) {
+export default function ModelViewer({ design, tier, origin, reference, dimensions, notes, frameRequest = 0, active = true, statusLabel }: ModelViewerProps) {
   const { motionEnabled, visible } = useWorkshop();
   const hostRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<Scene3D | null>(null);
+  const activeRef = useRef(active);
+  activeRef.current = active;
   const designKey = design === null ? "" : canonicalJson(design);
 
   // Renderer lifecycle: one per mount (React strict mode mounts twice in dev; cleanup is full).
@@ -113,6 +118,7 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
     light.shadow.radius = 4;
     scene.add(light);
     scene.add(light.target);
+    const rim = new THREE.DirectionalLight(0xbad7ff, 2.5); rim.position.set(-2, 3, -3); scene.add(rim);
 
     const ground = new THREE.Mesh(
       new THREE.CircleGeometry(1, 48),
@@ -146,8 +152,7 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
 
     const tick = (): void => {
       s.frame = window.requestAnimationFrame(tick);
-      controls.update();
-      renderer.render(scene, camera);
+      if (activeRef.current && !document.hidden) { controls.update(); renderer.render(scene, camera); }
     };
     tick();
 
@@ -188,6 +193,8 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
     fitToView(s, model);
   }, [designKey]);
 
+  useEffect(() => { const s = sceneRef.current; if (s?.model) fitToView(s, s.model); }, [frameRequest]);
+
   const dimText =
     dimensions && dimensions.length_m !== null && dimensions.diameter_m !== null
       ? `全長 ${fmtLength(dimensions.length_m)} / 直径 ${fmtLength(dimensions.diameter_m)}`
@@ -210,7 +217,7 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
             お手本：{reference.name}
           </span>
         )}
-        {origin !== null && <span className="chip chip-accent">{ORIGIN_LABEL[origin]}</span>}
+        {origin !== null && <span className="chip chip-accent">{statusLabel ?? ORIGIN_LABEL[origin]}</span>}
       </div>
       {design !== null && notes.length > 0 && (
         <div className="model-notes" role="note">

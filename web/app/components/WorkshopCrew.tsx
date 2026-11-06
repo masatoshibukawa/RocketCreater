@@ -9,7 +9,7 @@ const PHASE_LABEL: Record<CrewPhase, string> = {
 };
 
 /** A separate presentation stage; its controls never change design or job state. */
-export default function WorkshopCrew() {
+export default function WorkshopCrew({ embedded = false, hideScene = false }: { embedded?: boolean; hideScene?: boolean }) {
   const { task, visible, paused, reduced, motionEnabled, setVisible, setPaused } = useWorkshop();
   const [crew, setCrew] = useState(INITIAL_CREW);
   useEffect(() => {
@@ -23,8 +23,8 @@ export default function WorkshopCrew() {
     return () => window.clearTimeout(timer);
   }, [crew.phase, crew.cleanupUntil, task]);
 
-  return <section className="crew-panel" aria-label="整備チーム" data-phase={crew.phase}>
-    <div className="crew-toolbar">
+  return <section className={`crew-panel${embedded ? " crew-embedded" : ""}`} aria-label="整備チーム" data-phase={crew.phase} hidden={embedded && hideScene}>
+    {!embedded ? <div className="crew-toolbar">
       <div className="crew-heading"><strong>整備チーム</strong><span className={`crew-phase crew-phase-${crew.phase}`}>{PHASE_LABEL[crew.phase]}</span></div>
       <div className="crew-controls">
         <label><input type="checkbox" checked={visible} onChange={e => setVisible(e.target.checked)}/>表示</label>
@@ -32,11 +32,11 @@ export default function WorkshopCrew() {
           {paused ? "動きを再開" : "動きを止める"}
         </button>
       </div>
-    </div>
-    {visible ? <CrewCanvas phase={crew.phase} animate={motionEnabled && crew.phase !== "attention"}/> : null}
+    </div> : null}
+    {visible && !hideScene ? <CrewCanvas phase={crew.phase} animate={motionEnabled && crew.phase !== "attention"}/> : null}
     <div className="crew-description">
       <p role="status" aria-live="polite">{crew.label}</p>
-      <small>{reduced ? "端末の設定に合わせて静止表示 · " : paused ? "演出は静止中 · " : ""}工程の案内役です。実機の点検完了を示すものではありません。</small>
+      {!embedded ? <small>{reduced ? "端末の設定に合わせて静止表示 · " : paused ? "演出は静止中 · " : ""}工程の案内役です。実機の点検完了を示すものではありません。</small> : null}
     </div>
   </section>;
 }

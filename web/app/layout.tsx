@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import "./production.css";
 import "./workshop-crew.css";
+import "./workshop-shell.css";
 
 export const metadata: Metadata = {
   title: "RocketWright",

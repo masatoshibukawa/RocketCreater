@@ -11,10 +11,12 @@ interface ProductionPanelProps {
   request: DesignPackageRequest | null;
   /** The displayed design passed its simulation. Only such a design gets production data. */
   passed: boolean;
+  onGenerated?: (value: DesignPackage) => void;
+  onPrintGenerated?: (files: { name: string; url: string }[]) => void;
 }
 
 /** 製作データ: the files a passing design can support, what it cannot, and the print data. */
-export default function ProductionPanel({ request, passed }: ProductionPanelProps) {
+export default function ProductionPanel({ request, passed, onGenerated, onPrintGenerated }: ProductionPanelProps) {
   const design: Design | null = request?.design ?? null;
   const key = request ? requestKey(request) : "";
   const [made, setMade] = useState<DesignPackage | null>(null);
@@ -39,7 +41,7 @@ export default function ProductionPanel({ request, passed }: ProductionPanelProp
     setError("");
     try {
       const next = await createDesignPackage(request, abort.signal);
-      if (!abort.signal.aborted) setMade(next);
+      if (!abort.signal.aborted) { setMade(next); onGenerated?.(next); }
     } catch (e) {
       if (!abort.signal.aborted) setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -61,6 +63,6 @@ export default function ProductionPanel({ request, passed }: ProductionPanelProp
       <h3>この案から作れないもの</h3>
       <ul className="wb-limitations">{made.unavailable.map(row => <li key={row.item}><b>{row.item}</b>: {row.reason}</li>)}</ul>
     </> : null}
-    <PrintExports design={design} disabled={!passed}/>
+    <PrintExports design={design} disabled={!passed} onGenerated={onPrintGenerated}/>
   </section>;
 }
