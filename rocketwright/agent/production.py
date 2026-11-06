@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import uuid
 from pathlib import Path
 from typing import Literal
@@ -140,7 +141,7 @@ def plan_video(bench, project_id, revision, local=True, director=None, style="en
     return bench._run(project_id, revision, "video_direction", worker)
 
 
-def render_video(bench, project_id, revision, style="engineering"):
+def render_video(bench, project_id, revision, style="engineering", *, started=None):
     key = plan_key(style)
     kind = "photographic_video" if style == "photographic" else "video"
 
@@ -233,7 +234,34 @@ def render_video(bench, project_id, revision, style="engineering"):
         # Logs and executable scene files are local implementation details.
         state["files"] = [f for f in state["files"] if f["name"] not in {"render.log", "job.json"}]
 
-    return bench._run(project_id, revision, "render_design_and_launch", worker)
+    return bench._run(
+        project_id, revision, "render_design_and_launch", worker, started_event=started
+    )
+
+
+def queue_video(bench, project_id, revision, style="engineering"):
+    """Acknowledge the persisted running checkpoint before a long local render."""
+    recipe(style)
+    state = bench.get(project_id)
+    if state["revision"] != revision or state["active"]:
+        raise Conflict("Project revision changed or another operation is running")
+    started = threading.Event()
+    errors = []
+
+    def work():
+        try:
+            render_video(bench, project_id, revision, style, started=started)
+        except Exception as exc:
+            errors.append(exc)  # _run also persists tool failures for the browser poll.
+        finally:
+            started.set()  # Setup failures must also release the acknowledgement wait.
+
+    threading.Thread(target=work, name="local-video-render", daemon=True).start()
+    if not started.wait(timeout=5):
+        raise LocalRuntimeError("Render startup did not acknowledge; reload its saved status")
+    if errors:
+        raise errors[0]
+    return bench.get(project_id)
 
 
 def comfy_client():

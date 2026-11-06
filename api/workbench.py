@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from rocketwright.agent.library import DEFAULT_LIBRARY
 from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
-from rocketwright.agent.production import collect_wan, plan_video, render_video, submit_wan
+from rocketwright.agent.production import collect_wan, plan_video, queue_video, submit_wan
 from rocketwright.agent.video_appearance import appearance_runtime
 from rocketwright.agent.workbench import DEFAULT_WORKBENCH, Conflict, StepChoice
 from rocketwright.bottle_assembly import Workshop
@@ -165,9 +165,9 @@ def video_plan(project_id: str, request: PlanRequest):
     )
 
 
-@router.post("/projects/{project_id}/render-video")
+@router.post("/projects/{project_id}/render-video", status_code=202)
 def video_render(project_id: str, request: RenderRequest):
-    return call(render_video, DEFAULT_WORKBENCH, project_id, request.revision, request.style)
+    return call(queue_video, DEFAULT_WORKBENCH, project_id, request.revision, request.style)
 
 
 @router.post("/projects/{project_id}/wan")

@@ -26,7 +26,7 @@ export default function WorkbenchPanel({ onOpenDesign }: { onOpenDesign: () => v
   const files = project?.files ?? [];
   const metrics = pinned ? last?.chosen.startsWith("flight/") ? last.result : null : [...(project?.history ?? [])].reverse().find(row => row.chosen.startsWith("flight/"))?.result;
   const confirmation = last?.chosen.startsWith("confirm/") ? last.result : null;
-  const caption = working ? busy === "aero-loop" || project?.active?.name === "aero_loop" ? "流体解析を実行中" : project?.active?.name.startsWith("component/") ? "構成・重心・振動を解析中" : project?.active?.name.startsWith("flight/") ? "飛行軌跡を計算中" : busy === "print-package" ? "部品を生成・検査・スライス中" : busy === "render-video" ? "設計説明と打ち上げCGを制作中" : "工程を実行中" : project?.confirmed ? "採用案の解析を確認しました" : "次の工程を選んでください";
+  const caption = working ? busy === "aero-loop" || project?.active?.name === "aero_loop" ? "流体解析を実行中" : project?.active?.name.startsWith("component/") ? "構成・重心・振動を解析中" : project?.active?.name.startsWith("flight/") ? "飛行軌跡を計算中" : busy === "print-package" ? "部品を生成・検査・スライス中" : busy === "render-video" || project?.active?.name === "render_design_and_launch" ? "設計説明と打ち上げCGを制作中" : "工程を実行中" : project?.confirmed ? "採用案の解析を確認しました" : "次の工程を選んでください";
   return <main className="wb-shell">
     <header className="wb-header"><div className="wb-wordmark"><span className="wb-logo" aria-hidden="true">↟</span>RocketWright<span className="wb-divider">/</span><span className="wb-project-name">ペットボトル / 製作設計</span></div><div className="wb-header-actions"><button onClick={onOpenDesign}>自由な要求から設計</button><button disabled={working} onClick={() => { setChoice(""); setReason(""); void act("create"); }}>新しい設計</button></div></header>
     <div className="wb-body">

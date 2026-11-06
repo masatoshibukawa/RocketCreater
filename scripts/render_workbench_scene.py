@@ -30,6 +30,7 @@ scene = bpy.context.scene
 scene.render.engine = "CYCLES"
 scene.cycles.samples = plan.get("samples", 8)
 scene.cycles.use_denoising = True
+scene.render.use_persistent_data = True
 if photographic:
     scene.cycles.max_bounces = 12
     scene.cycles.transmission_bounces = 10
@@ -233,6 +234,9 @@ if photographic:
         cumulative.append(cumulative[-1] + (zb - za) * math.pi * (ra * ra + ra * rb + rb * rb) / 3)
 
     def water_volume(volume):
+        if abs(volume - liquid.get("represented_volume_m3", -1)) < 1e-12:
+            return
+        liquid["represented_volume_m3"] = volume
         liquid.hide_render = volume < 1e-8
         if liquid.hide_render:
             return

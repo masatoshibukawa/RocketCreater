@@ -62,3 +62,45 @@ def test_local_director_filters_cloud_models_and_requests_unload(monkeypatch):
     assert model == "gemma3:4b"
     assert calls[-1][1]["keep_alive"] == 0
     assert calls[-1][1]["think"] is False
+
+
+def test_long_render_acknowledges_persisted_status_and_rejects_duplicates(monkeypatch, tmp_path):
+    import threading
+
+    from fastapi.testclient import TestClient
+
+    import api.workbench as routes
+    import rocketwright.agent.production as production
+    from api.main import app
+    from rocketwright.agent.workbench import Workbench
+
+    bench = Workbench(tmp_path)
+    state = bench.create()
+    release, finished = threading.Event(), threading.Event()
+
+    def controlled(bench, project_id, revision, style, *, started):
+        def worker(state):
+            assert release.wait(timeout=5)
+
+        try:
+            return bench._run(
+                project_id, revision, "render_design_and_launch", worker, started_event=started
+            )
+        finally:
+            finished.set()
+
+    monkeypatch.setattr(production, "render_video", controlled)
+    monkeypatch.setattr(routes, "DEFAULT_WORKBENCH", bench)
+    endpoint = f"/workbench/projects/{state['id']}"
+    try:
+        with TestClient(app) as client:
+            response = client.post(endpoint + "/render-video", json={"revision": 0})
+            assert response.status_code == 202
+            assert response.json()["active"]["name"] == "render_design_and_launch"
+            assert bench.get(state["id"])["active"]
+            assert client.post(endpoint + "/render-video", json={"revision": 0}).status_code == 409
+    finally:
+        release.set()
+        assert finished.wait(timeout=5)
+    assert bench.get(state["id"])["active"] is None
+    assert bench.get(state["id"])["revision"] == 1
