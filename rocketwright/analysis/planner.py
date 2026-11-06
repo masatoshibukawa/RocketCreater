@@ -87,13 +87,27 @@ def prompt_view(offered, context, max_chars=9000):
                     "predicted_cost_s",
                 )
             }
-            if row.get("learned_prediction")
+            if row.get("learned_prediction", {}).get("status") == "fitted"
             else None,
             retrieved_cases=row.get("retrieved_cases", []),
         )
         fitted = row.get("learned_prediction", {})
         if fitted.get("status") == "fitted":
             view["choices"][key]["cost_s"] = round(fitted["predicted_cost_s"], 2)
+
+    def compact(value):
+        if isinstance(value, dict):
+            return {
+                k: compact(v) for k, v in value.items() if v is not None and v != {} and v != []
+            }
+        if isinstance(value, list):
+            return [compact(v) for v in value]
+        if isinstance(value, float):
+            return float(f"{value:.6g}")
+        return value
+
+    # Display rounding only; full evidence and numerical pass checks are unchanged.
+    view = compact(view)
 
     def size():
         return len(json.dumps(view, ensure_ascii=False, separators=(",", ":")))

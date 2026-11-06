@@ -1,4 +1,4 @@
-"""Run stage 5 redesign, stage 6 one complete CFD/FEM audit, then stage 7 scenarios."""
+"""Run stage 5 redesign, budgeted stage 6 CFD/FEM verification, then stage 7 scenarios."""
 
 import argparse
 import json
@@ -145,17 +145,17 @@ def run(template, training, root, runtime, planner, through):
             fallback="stop",
             max_versions=1,
             max_actions=40,
-            budget_s=12000,
+            budget_s=9000,
             memory_gib=24,
             exploratory_redesign=False,
         ),
     )
-    state = execute(h, final_store, state, source, stop_at_confirmation=True)
+    state = execute(h, final_store, state, source)
     project = final_store.base(state["id"]).resolve()
     report["stage6_project"] = str(project)
     stage6, _ = summary(project, "source-hash:" + source)
     stage6["verification_scope"] = (
-        "One complete audit at unchanged precision; no full refinement table rerun"
+        "Budgeted complete cycles at unchanged precision; completed settings recorded separately"
     )
     stage6["next_choices"] = h.options(state["id"])
     write_json(root / "stage6-summary.json", stage6)
@@ -177,7 +177,7 @@ def main():
     p.add_argument("training", type=Path)
     p.add_argument("output", type=Path)
     p.add_argument("runtime", type=Path)
-    p.add_argument("--planner", choices=("claude", "local_llm", "baseline"), default="claude")
+    p.add_argument("--planner", choices=("claude", "local_llm", "baseline"), default="local_llm")
     p.add_argument("--through", type=int, choices=(5, 6, 7), default=7)
     args = p.parse_args()
     report = run(

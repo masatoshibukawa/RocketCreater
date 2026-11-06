@@ -72,3 +72,37 @@ def test_planner_receives_cited_examples_and_fitted_estimates(tmp_path):
     assert len(shown["retrieved_cases"]) == 2
     assert shown["cost_s"] == round(fitted["predicted_cost_s"], 2)
     assert str(tmp_path) not in str(view)
+
+
+def test_rich_prediction_pool_preserves_families_within_context_budget(tmp_path):
+    import json
+
+    from rocketwright.analysis.planner import prompt_view
+
+    data = rows(tmp_path)
+    fitted = predictor.estimate(data, query(data[0]), correction_limit_m=1)
+    offered = {}
+    for i in range(32):
+        offered[f"redesign/{i}"] = dict(
+            target=dict(section="geometry", field=f"variable-{i % 16}", value=1.234567891),
+            method="new_design_revision",
+            layer="high",
+            score=50 - i,
+            estimated_followup_cost_s=500,
+            retrieved_cases=predictor.snippets(data) if i == 0 else [],
+            learned_prediction=fitted if i == 0 else dict(status="insufficient_samples", samples=0),
+            experience=dict(samples=0, residual_samples=0, height_correction_m=0, mean_cost_s=None),
+            prediction=dict(
+                delta_height_m=0.123456789123,
+                raw_delta_height_m=0.123456789123,
+                delta_static_margin_cal=0.123456789123,
+                violation_reduction=0.123456789123,
+            ),
+        )
+    view, omitted = prompt_view(offered, dict(precision={"altitude_error_m": 1.5}))
+    assert len(json.dumps(view, ensure_ascii=False, separators=(",", ":"))) <= 9000
+    assert {r["target"]["field"] for r in view["choices"].values()} == {
+        f"variable-{i}" for i in range(16)
+    }
+    assert view["choices"]["redesign/0"]["retrieved_cases"]
+    assert not (set(omitted) & set(view["choices"]))
