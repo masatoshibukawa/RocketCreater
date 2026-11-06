@@ -84,7 +84,9 @@ def progress(store, project_id, active):
             )
     directory = store.directory(project_id)
     style = active.get("style", "engineering")
-    directory /= "video-photographic" if style == "photographic" else "video"
+    directory /= active.get("video_directory") or (
+        "video-photographic" if style == "photographic" else "video"
+    )
     path = directory / "progress.json"
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -101,7 +103,7 @@ def progress(store, project_id, active):
     )
 
 
-def queue(store, project_id, revision, operation, style="engineering"):
+def queue(store, project_id, revision, operation, style="engineering", *, regenerate=False):
     from rocketwright.agent.design_projects import ROOT, implementation_fingerprint
     from rocketwright.manufacturing import fingerprint
 
@@ -115,6 +117,8 @@ def queue(store, project_id, revision, operation, style="engineering"):
         raise ValueError("Unknown production operation")
     if style not in {"engineering", "photographic"}:
         raise ValueError("Unknown render style")
+    if regenerate and operation != "render_video":
+        raise ValueError("Only video production can be regenerated")
     store.get(project_id)  # Reconcile an abandoned checkpoint before claiming it.
     with file_lock(store.base(project_id) / "operation.lock"):
         state = store.load(project_id)
@@ -125,6 +129,7 @@ def queue(store, project_id, revision, operation, style="engineering"):
             id=job_id,
             name=operation,
             style=style,
+            regenerate=regenerate,
             phase="queued",
             started_at=time.time(),
             owner="detached",
@@ -226,7 +231,13 @@ def main():
         ):
             raise Conflict("Queued input or implementation changed")
         if operation == "render_video":
-            render_video(store, project_id, int(revision), style)
+            render_video(
+                store,
+                project_id,
+                int(revision),
+                style,
+                regenerate=bool(active.get("regenerate")),
+            )
         else:
             getattr(store, operation)(project_id, int(revision))
     except Exception as exc:

@@ -1,5 +1,7 @@
 """Revision-aware current-design production routes. Loopback tools only; no paid API."""
 
+from functools import partial
+
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict, Field
@@ -18,6 +20,10 @@ router = APIRouter(prefix="/design-projects", tags=["design-production"])
 
 class EditRequest(Revision):
     spec: DesignSpec
+
+
+class ProjectRenderRequest(RenderRequest):
+    regenerate: bool = False
 
 
 class RestoreRequest(Revision):
@@ -208,10 +214,15 @@ def direction(project_id: str, request: PlanRequest):
 
 
 @router.post("/{project_id}/render-video", status_code=202)
-def render(project_id: str, request: RenderRequest):
+def render(project_id: str, request: ProjectRenderRequest):
     call(DEFAULT_PROJECTS.require_adopted, call(DEFAULT_PROJECTS.get, project_id))
     return call(
-        queue, DEFAULT_PROJECTS, project_id, request.revision, "render_video", request.style
+        partial(queue, regenerate=request.regenerate),
+        DEFAULT_PROJECTS,
+        project_id,
+        request.revision,
+        "render_video",
+        request.style,
     )
 
 

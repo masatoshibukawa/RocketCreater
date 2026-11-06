@@ -143,7 +143,9 @@ def plan_video(bench, project_id, revision, local=True, director=None, style="en
     return bench._run(project_id, revision, "video_direction", worker)
 
 
-def render_video(bench, project_id, revision, style="engineering", *, started=None):
+def render_video(
+    bench, project_id, revision, style="engineering", *, started=None, regenerate=False
+):
     key = plan_key(style)
     kind = "photographic_video" if style == "photographic" else "video"
 
@@ -152,17 +154,26 @@ def render_video(bench, project_id, revision, style="engineering", *, started=No
         if not settings["blender"].is_file() or not settings["python"].is_file():
             raise LocalRuntimeError("Configure the installed Blender and video Python executables")
         plan = state.get(key, {})
-        if plan.get("status") != "planned":
+        if plan.get("status") != "planned" and not (
+            regenerate and plan.get("status") == "rendered"
+        ):
             raise Conflict("Approve a shot plan before rendering")
         validate_bound_direction(plan)
         expected_recipe = recipe(style)
         if any(plan.get(k, v) != v for k, v in expected_recipe.items()):
             raise Conflict("Render settings changed; review a new plan")
-        if any(f["kind"] == kind for f in state["files"]):
+        existing = any(f["kind"] == kind for f in state["files"])
+        if existing and not regenerate:
             raise Conflict("Videos already exist for this design")
-        directory = bench.directory(project_id) / (
-            "video-photographic" if style == "photographic" else "video"
-        )
+        base_name = "video-photographic" if style == "photographic" else "video"
+        directory_name = base_name
+        if existing:
+            directory_name = plan.get("pending_directory") or base_name + "-" + uuid.uuid4().hex
+            if not re.fullmatch(re.escape(base_name) + r"-[a-f0-9]{32}", directory_name):
+                raise Conflict("Invalid pending video directory")
+            plan["pending_directory"] = directory_name
+        directory = bench.directory(project_id) / directory_name
+        state["active"].update(style=style, video_directory=directory_name)
         directory.mkdir(exist_ok=True)
         # Bind the same frozen production snapshot as the print exports.
         assembly = json.loads(
@@ -272,6 +283,11 @@ def render_video(bench, project_id, revision, style="engineering", *, started=No
         ):
             raise LocalRuntimeError("Video render log contains an exception")
         state[key]["status"] = "rendered"
+        state[key]["output_directory"] = directory_name
+        state[key].pop("pending_directory", None)
+        for row in state["files"]:
+            if row["kind"] == kind:
+                row["kind"] = kind + "_history"
         bench.register_files(state, directory, kind)
         # Logs and executable scene files are local implementation details.
         state["files"] = [f for f in state["files"] if f["name"] not in {"render.log", "job.json"}]

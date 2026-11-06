@@ -1,4 +1,4 @@
-"""Read-only adopted-CAD audit; run with Blender --background --python FILE -- V4 REPORT."""
+"""Read-only adopted-CAD audit: Blender --background --python FILE -- V4 REPORT [VIDEO_DIR]."""
 
 import hashlib
 import json
@@ -20,7 +20,8 @@ def mesh_signature(obj):
 
 base = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
 report = Path(sys.argv[sys.argv.index("--") + 2]).resolve()
-directory = base / "video-photographic"
+arguments = sys.argv[sys.argv.index("--") + 1 :]
+directory = base / (arguments[2] if len(arguments) > 2 else "video-photographic")
 job = json.loads((directory / "job.json").read_text(encoding="utf-8"))
 geometry = json.loads((base / "cad/geometry-check.json").read_text(encoding="utf-8"))
 parameters = json.loads((base / "cad/parameters.json").read_text(encoding="utf-8"))
@@ -79,6 +80,7 @@ report.write_text(
         dict(
             passed=True,
             source_id=job["source_id"],
+            video_directory=directory.name,
             scope="saved design scene; exact CAD vertices/faces, bounds, scale and placement",
             blender_version=bpy.app.version_string,
             render_engine=bpy.context.scene.render.engine,

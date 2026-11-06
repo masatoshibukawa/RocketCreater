@@ -106,6 +106,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
   }
   const videos = project?.files.filter(f => f.kind === (style === "photographic" ? "photographic_video" : "video") && f.name.endsWith(".mp4")) ?? [];
+  const videoHistory = project?.files.filter(f => f.kind === (style === "photographic" ? "photographic_video_history" : "video_history") && f.name.endsWith(".mp4")) ?? [];
   const plan = style === "photographic" ? project?.photographic_video_plan : project?.video_plan;
   const result = project?.analysis?.result;
   const mainFile = (f: { kind: string; name: string }) => f.kind === "manual" || f.kind === "package" || ["design.json", "bom.csv", "print-package.zip"].includes(f.name);
@@ -158,9 +159,10 @@ export default function DesignProduction({ source, mode, onProjectChange, active
       {mode === "assembly" || mode === "files" ? <ProjectObservations key={`observations:${project.id}:${project.version}`} project={project} disabled={working || !!draft} save={action}/> : null}
       {mode === "video" ? <>
         <div className="project-actions"><label>仕上げ<select value={style} disabled={working} onChange={e => setStyle(e.target.value as typeof style)}><option value="photographic">写真調 1080p / 16秒・12秒</option><option value="engineering">簡易CG / 各4秒</option></select></label><label><input type="checkbox" checked={local} disabled={working} onChange={e => setLocal(e.target.checked)}/>Gemmaで演出を提案</label></div>
-        <div className="project-actions"><button className="btn" disabled={working || !outputReady || !!draft || videos.length > 0} onClick={() => void action("video-plan", { style, local })}>この版の演出案を作る</button><button className="btn btn-primary" disabled={working || !outputReady || plan?.status !== "planned" || !!draft || videos.length > 0} onClick={() => void action("render-video", { style })}>設計説明・飛行動画を制作</button></div>
+        <div className="project-actions"><button className="btn" disabled={working || !outputReady || !!draft || videos.length > 0} onClick={() => void action("video-plan", { style, local })}>この版の演出案を作る</button><button className="btn btn-primary" disabled={working || !outputReady || !["planned", "rendered"].includes(plan?.status ?? "") || !!draft} onClick={() => void action("render-video", { style, regenerate: videos.length > 0 })}>{videos.length ? "元の動画を残して再制作" : "設計説明・飛行動画を制作"}</button></div>
         {plan ? <p className="wb-note">演出案（計算データを可視化）：{plan.reason}</p> : null}
         {videos.map(f => <figure key={f.url}><figcaption>{f.name} / v{f.version}・計算結果のCG・無音</figcaption><video controls preload="metadata" src={apiUrl(f.url)}/><a className="btn" href={apiUrl(f.url)} download>MP4を保存</a></figure>)}
+        {videoHistory.length ? <details><summary>以前に制作した動画</summary><div className="wb-file-list">{videoHistory.map(f => <a key={f.url} href={apiUrl(f.url)} download>{f.name}<small>v{f.version}・以前の仕上げ</small></a>)}</div></details> : null}
         <details><summary>保存済みの参考映像を見る</summary><VideoOutputs/></details>
       </> : null}
       {mode === "files" ? <button className="btn btn-primary" disabled={working || !outputReady || !!draft} onClick={() => void action("archive")}>この版の一括ZIPを作る</button> : null}

@@ -29,28 +29,37 @@ def main():
     parser.add_argument("root", type=Path)
     parser.add_argument("project_id")
     parser.add_argument("report", type=Path, help="new JSON report file")
+    parser.add_argument("--regenerate", action="store_true", help="retain previous videos")
     args = parser.parse_args()
     if args.report.exists():
         raise ValueError("Choose a new measurement report; previous records are preserved")
     store = DesignProjects(args.root.resolve())
     state = store.get(args.project_id)
     store.require_adopted(state)
-    if state["active"] or any(f["kind"] == "photographic_video" for f in state["files"]):
+    if state["active"] or (
+        not args.regenerate and any(f["kind"] == "photographic_video" for f in state["files"])
+    ):
         raise ValueError("The project is busy or already has registered photographic outputs")
     asset_files()
     directory = store.directory(args.project_id) / "video-photographic"
-    inputs = {
-        f["key"]: f["sha256"] for f in state["files"] if f["kind"] in {"cad", "production"}
+    plan_reused = bool(state.get("photographic_video_plan"))
+    pending = (state.get("photographic_video_plan") or {}).get("pending_directory")
+    checkpoint = store.directory(args.project_id) / pending if pending else directory
+    has_previous = any(f["kind"] == "photographic_video" for f in state["files"])
+    inputs = {f["key"]: f["sha256"] for f in state["files"] if f["kind"] in {"cad", "production"}}
+    previous_videos = {
+        f["key"]: f["sha256"]
+        for f in state["files"]
+        if f["kind"] == "photographic_video" and f["name"].endswith(".mp4")
     }
     result = dict(
-        source_commit=subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], text=True
-        ).strip(),
+        source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
         measurement_script_sha256=sha(Path(__file__)),
         project_id=state["id"],
         version=state["version"],
         input_sha256=fingerprint(state["spec"]),
         input_artifact_sha256=inputs,
+        previous_video_sha256=previous_videos,
         python=platform.python_version(),
         platform=platform.system(),
         gpu=subprocess.check_output(
@@ -61,7 +70,10 @@ def main():
         started_at_utc=now(),
         timing_scope="direction request through verified and registered videos",
         stages=[],
-        cold_frames=not any(directory.glob("*-frames/*.png")),
+        cold_frames=True
+        if args.regenerate and has_previous and not pending
+        else not any(checkpoint.glob("*-frames/*.png")),
+        plan_reused=plan_reused,
         passed=False,
         visual_review="pending",
         paid_api_used=False,
@@ -96,19 +108,28 @@ def main():
             )
         result["direction_s"] = time.perf_counter() - planning
         result["direction_model"] = state["photographic_video_plan"]["model"]
-        result["plan_reused"] = result["direction_s"] < 0.01
         print("DIRECTION", result["direction_s"], result["direction_model"], flush=True)
-        with patch.object(production.subprocess, "run", measured_run), patch.object(
-            production, "resource", measured_resource
+        with (
+            patch.object(production.subprocess, "run", measured_run),
+            patch.object(production, "resource", measured_resource),
         ):
             state = production.render_video(
-                store, state["id"], state["revision"], style="photographic"
+                store,
+                state["id"],
+                state["revision"],
+                style="photographic",
+                regenerate=args.regenerate,
             )
-        if state["version"] != result["version"] or fingerprint(state["spec"]) != result[
-            "input_sha256"
-        ]:
+        directory = (
+            store.directory(state["id"]) / state["photographic_video_plan"]["output_directory"]
+        )
+        result["output_directory"] = directory.name
+        if (
+            state["version"] != result["version"]
+            or fingerprint(state["spec"]) != result["input_sha256"]
+        ):
             raise ValueError("Design inputs changed during generation")
-        for key, expected in inputs.items():
+        for key, expected in (inputs | previous_videos).items():
             if sha(store.file(state["id"], key)) != expected:
                 raise ValueError("Source artifact changed during generation: " + key)
         result["verification"] = json.loads(
@@ -116,9 +137,7 @@ def main():
         )
         checkpoint = json.loads((directory / "frame-checkpoint.json").read_text(encoding="utf-8"))
         result["frame_render_s_by_clip"] = {
-            mode: sum(
-                r["seconds"] for p, r in checkpoint["frames"].items() if p.startswith(mode)
-            )
+            mode: sum(r["seconds"] for p, r in checkpoint["frames"].items() if p.startswith(mode))
             for mode in ("design", "launch")
         }
         result["progress"] = json.loads((directory / "progress.json").read_text(encoding="utf-8"))
