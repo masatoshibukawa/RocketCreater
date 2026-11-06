@@ -1,0 +1,8 @@
+# Preserve the exact bytes covered by the generated checksums on every OS.
+*.gcode -text
+*.json -text
+*.stl -text
+*.3mf -text
+*.ufp -text
+*.png -text
+*.zip -text
