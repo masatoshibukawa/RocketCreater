@@ -8,7 +8,9 @@
 
 呼び出し例: `$presentation-techniques 研究発表を質疑込み15分で構成して`、`$presentation-techniques Claude大会の3分の動作動画をレビューして`。参照資料の募集条件は調査時点の記録なので、実際の応募時は開催回の最新案内と照合します。
 
-[スキルの検証記録](validation.md)に、形式・参照・分類の確認と、12の想定入力に対する机上確認を残しています。
+[スキルの検証記録](validation.md)に、形式・参照・分類の確認と、想定入力に対する机上確認を残しています。
+
+スライド作成は [スライド設計スキル](categories/presentation-visuals/presentation-slides/SKILL.md)へ進みます。[メッセージから制作する手順](categories/presentation-visuals/presentation-slides/references/message-first-workflow.md)、[PowerPointと表示確認](categories/presentation-visuals/presentation-slides/references/powerpoint-and-qa.md)、[元メモの採用判断と出典](categories/presentation-visuals/presentation-slides/references/sources-and-decisions.md)を必要に応じて読みます。2026年11月7日の追加検証も検証記録にあります。
 
 ## 資料の入口
 

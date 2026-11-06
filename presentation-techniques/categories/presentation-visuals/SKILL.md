@@ -1,6 +1,6 @@
 ---
 name: presentation-visuals
-description: プレゼンのスライドや図表を、投影・配布の条件と主張に合わせて改善するときに使う。
+description: プレゼンのスライドや図表を、投影・配布の条件と主張に合わせて作成・改善するときに使う。
 ---
 
 # スライド・図表
@@ -13,7 +13,7 @@ description: プレゼンのスライドや図表を、投影・配布の条件�
 
 | サブカテゴリ | 選ぶ目的 |
 | --- | --- |
-| [スライド設計](presentation-slides/SKILL.md) | 投影・配布・読み物に合わせて情報を配置する |
+| [スライド設計](presentation-slides/SKILL.md) | メッセージの骨子から図のラフ、投影・配布用の制作と確認へ進む |
 | [科学図表・数式](presentation-scientific-figures/SKILL.md) | 分布、独立性、不確実性、仮定を伝える |
 
 目的と関係しない資料は追加しない。分類の背景や元文書の網羅性を調べる場合は [分類表](../../taxonomy.md) を参照する。

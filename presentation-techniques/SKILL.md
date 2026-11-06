@@ -12,7 +12,7 @@ description: ピッチ、研究発表、ハッカソンのデモ、講演の構�
 | 選ぶカテゴリ | 読む場面 |
 | --- | --- |
 | [目的・構成・時間](categories/presentation-planning/SKILL.md) | 発表の目的・聴衆・論証・持ち時間を設計するときに使う。媒体や用途が決まっている場合は対応する専門モジュールへ進む。 |
-| [スライド・図表](categories/presentation-visuals/SKILL.md) | プレゼンのスライドや図表を、投影・配布の条件と主張に合わせて改善するときに使う。 |
+| [スライド・図表](categories/presentation-visuals/SKILL.md) | メッセージの骨子から図のラフ、スライド制作・改稿と表示確認へ進むときに使う。 |
 | [話し方・質疑・練習](categories/presentation-delivery/SKILL.md) | プレゼンの話し方、質疑応答、理解確認と本番リハーサルを改善するときに使う。 |
 | [ビジネスピッチ](categories/presentation-business/SKILL.md) | 投資家への資金調達ピッチ、顧客への製品紹介、社内の予算・試行提案を作るときに使う。 |
 | [研究プレゼン](categories/presentation-academic/SKILL.md) | 学会発表、研究進捗・論文紹介、ポスター、学位審査、一般向け研究紹介、研究費ピッチを作るときに使う。 |
