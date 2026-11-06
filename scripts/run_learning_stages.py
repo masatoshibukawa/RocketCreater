@@ -57,6 +57,35 @@ def execute(h, store, state, source, *, stop_at_confirmation=False):
     return state
 
 
+def finish_stage6(report, root, source):
+    """Export a completed run without rerunning or relabelling its numerical evidence."""
+    projects = list((root / "stage6" / "projects").glob("*/state.json"))
+    if len(projects) != 1 or report["source_hash"] != source or code_hash() != source:
+        raise ValueError("Expected one stage-6 project from the current frozen source")
+    project = projects[0].parent.resolve()
+    state = read(project / "state.json")
+    if state["adaptive"]["status"] == "running":
+        raise ValueError("Stage 6 is still running; do not export it as completed")
+    h = Harness(DesignProjects(project.parent))
+    stage6, _, _ = summary(project, "source-hash:" + source)
+    stage6["verification_scope"] = (
+        "Budgeted complete cycles at unchanged precision; completed settings recorded separately"
+    )
+    stage6["next_choices"] = h.options(state["id"])
+    write_json(root / "stage6-summary.json", stage6)
+    report["stage6_project"] = str(project)
+    report["stage6"] = dict(
+        status=state["adaptive"]["status"],
+        checks=stage6["checks"],
+        unmet=stage6["unmet"],
+        source_hash=source,
+        completed_one_confirmation=True,
+    )
+    report["evidence"] = {stage: verified_files(root / stage) for stage in ("stage5", "stage6")}
+    write_json(root / "report.json", report)
+    return report
+
+
 def run(template, training, root, runtime, planner, through):
     source = code_hash()
     if training["source_hash"] != source:
@@ -151,24 +180,7 @@ def run(template, training, root, runtime, planner, through):
         ),
     )
     state = execute(h, final_store, state, source)
-    project = final_store.base(state["id"]).resolve()
-    report["stage6_project"] = str(project)
-    stage6, _ = summary(project, "source-hash:" + source)
-    stage6["verification_scope"] = (
-        "Budgeted complete cycles at unchanged precision; completed settings recorded separately"
-    )
-    stage6["next_choices"] = h.options(state["id"])
-    write_json(root / "stage6-summary.json", stage6)
-    report["stage6"] = dict(
-        status=state["adaptive"]["status"],
-        checks=stage6["checks"],
-        unmet=stage6["unmet"],
-        source_hash=source,
-        completed_one_confirmation=True,
-    )
-    report["evidence"] = verified_files(root)
-    write_json(root / "report.json", report)
-    return report
+    return finish_stage6(report, root, source)
 
 
 def main():
@@ -179,15 +191,22 @@ def main():
     p.add_argument("runtime", type=Path)
     p.add_argument("--planner", choices=("claude", "local_llm", "baseline"), default="local_llm")
     p.add_argument("--through", type=int, choices=(5, 6, 7), default=7)
+    p.add_argument("--resume-stage6-report", action="store_true")
     args = p.parse_args()
-    report = run(
-        DesignSpec.model_validate(read(args.spec)),
-        read(args.training),
-        args.output.resolve(),
-        Runtime.model_validate(read(args.runtime)),
-        args.planner,
-        args.through,
-    )
+    if args.resume_stage6_report:
+        report = read(args.output / "report.json")
+        if report["planner"] != args.planner:
+            raise ValueError("Report planner differs from the requested planner")
+        report = finish_stage6(report, args.output.resolve(), code_hash())
+    else:
+        report = run(
+            DesignSpec.model_validate(read(args.spec)),
+            read(args.training),
+            args.output.resolve(),
+            Runtime.model_validate(read(args.runtime)),
+            args.planner,
+            args.through,
+        )
     if args.through == 7:
         subprocess.run(
             [

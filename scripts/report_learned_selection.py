@@ -7,8 +7,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from rocketwright.agent.design_projects import sha, write_json
-from rocketwright.analysis import predictor
+from rocketwright.agent.design_projects import DesignSpec, sha, write_json
+from rocketwright.analysis import experience, predictor
+from rocketwright.analysis.schema import Precision
 
 
 def export(source, target):
@@ -37,6 +38,24 @@ def export(source, target):
         )
     }
     output["raw_report_sha256"] = sha(source)
+    mean_errors = []
+    precision = Precision(require_cfd=False, require_fem=False)
+    for trial in report["trials"]:
+        if trial["split"] != "evaluate":
+            continue
+        spec = DesignSpec.model_validate(trial["spec"])
+        retrieved = experience.retrieve(
+            report["training_rows"],
+            spec,
+            dict(section="geometry", field="fin_root_mm", value=spec.geometry.fin_root_mm * 0.85),
+            code=report["source_hash"],
+            precision=precision.model_dump(),
+            limit=24,
+        )
+        mean = experience.estimate(retrieved, spec.requirement.target_altitude_m)
+        mean_errors.append(trial["row"]["prediction_residual_m"] - mean["height_correction_m"])
+    output["mean_residual_mae_m"] = sum(abs(v) for v in mean_errors) / len(mean_errors)
+    output["mean_residual_errors_m"] = mean_errors
     output["trials"] = [
         dict(
             split=t["split"],
@@ -55,25 +74,32 @@ def export(source, target):
         "Predicts simulated altitude changes, not actual flight altitude accuracy",
         "Prescribed host experiments; no live Claude request in this collection",
         "An earlier out-of-range evaluation requested 74.8 mm root; retained but excluded",
-        "Verified training trials reused unchanged; elapsed time covers evaluation rerun only",
+        "Runtime/version and any reused-training evidence are recorded separately",
     ]
     write_json(target.with_suffix(".json"), output)
     fig, axes = plt.subplots(1, 2, figsize=(10, 4.5), layout="constrained")
     audits = report["audits"]
     x = np.arange(len(audits))
-    width = 0.34
+    width = 0.24
     axes[0].bar(
-        x - width / 2,
+        x - width,
         [abs(r["raw_error_m"]) for r in audits],
         width,
         label="Physics forecast",
         color="#8596a0",
     )
     axes[0].bar(
-        x + width / 2,
+        x,
+        [abs(v) for v in mean_errors],
+        width,
+        label="Mean residual",
+        color="#d9a441",
+    )
+    axes[0].bar(
+        x + width,
         [abs(r["corrected_error_m"]) for r in audits],
         width,
-        label="Learned residual",
+        label="Ridge residual",
         color="#177e89",
     )
     axes[0].set(
@@ -106,7 +132,7 @@ def export(source, target):
         "LLM weights unchanged / simulated evidence only",
         fontsize=12,
     )
-    fig.savefig(target.with_suffix(".png"), dpi=180)
+    fig.savefig(target.with_suffix(".png"), dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 

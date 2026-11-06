@@ -1,0 +1,284 @@
+{
+  "source_hash": "135e902dd2068536f43982526c8f3e299b2566c49b195bfd8d0dfde849f84210",
+  "training_ids": [
+    "f19314bc9e226a8c445b34c6c2a00206bba6a9b63a9a6a73a566c59cc06e26a9",
+    "8bed103a005fe2bc1a0b4da9ede1cc750a8e508b351d1c8fe1511fee8b6358c9",
+    "34ebe83c76f88dba79ed27f6d8968d3e84001bb5df79ecc66a8a4265d4d2685d",
+    "1b95d8990ede183bf2d179b6a39fabe6f1ec71a78b95a48bb064d40db6604553"
+  ],
+  "evaluation_ids": [
+    "49e629c8745291da534404ddde01d2ba429359d75b72edf615693da061b51229",
+    "a68930d58c9f6ed3390ffbff7e81c9e7f5f782a5e986163181e98ccddc9f8836"
+  ],
+  "audits": [
+    {
+      "transition_id": "49e629c8745291da534404ddde01d2ba429359d75b72edf615693da061b51229",
+      "prediction": {
+        "status": "fitted",
+        "samples": 4,
+        "model": {
+          "features": [
+            "raw_delta",
+            "fill",
+            "pressure",
+            "mass",
+            "thickness",
+            "root",
+            "span",
+            "step"
+          ],
+          "center": [
+            0.16146442541577066,
+            0.9166666666666667,
+            1.0,
+            0.9950083021688961,
+            0.7999999999999999,
+            0.9000000000000001,
+            1.1999999999999997,
+            -0.14999999999999997
+          ],
+          "offset": [
+            0.03054492955528699,
+            2.76945511814622
+          ],
+          "coefficients": [
+            [
+              6.310968619805846e-07,
+              -1.6411177549982115e-05
+            ],
+            [
+              -0.0001580503388631876,
+              0.0012156950753573167
+            ],
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ],
+            [
+              4.660810659968444e-34,
+              1.8162980096830693e-32
+            ],
+            [
+              -9.321621319936889e-34,
+              -3.6325960193661387e-32
+            ],
+            [
+              1.165202664992111e-34,
+              4.5407450242076733e-33
+            ]
+          ],
+          "ridge": 3.0,
+          "training_ids": [
+            "34ebe83c76f88dba79ed27f6d8968d3e84001bb5df79ecc66a8a4265d4d2685d",
+            "8bed103a005fe2bc1a0b4da9ede1cc750a8e508b351d1c8fe1511fee8b6358c9",
+            "f19314bc9e226a8c445b34c6c2a00206bba6a9b63a9a6a73a566c59cc06e26a9",
+            "1b95d8990ede183bf2d179b6a39fabe6f1ec71a78b95a48bb064d40db6604553"
+          ],
+          "training_hashes": [
+            "78e0c910ac68f9257d78d9933a6c92815c9697aeae22f40271c0d19d4b139a88",
+            "520887d63948a833b96ffb4ba70b488c34c447a23a9282de0736e48b514c87ed",
+            "d1b8377959e7a9132b68d29dbcc64d8b3d590f4fc39a918b9ae63e7894cb5cee",
+            "3719a12f425d4cb98b663d0b88e28fbd063241ba8dd39f664ff0a61550a49502"
+          ]
+        },
+        "model_hash": "2df960629e4a78de52b284ee3f8c951f1bc5af8597dafd452d7d9caa5d52e3ff",
+        "height_correction_m": 0.01745424764121718,
+        "predicted_cost_s": 14.949939225214546,
+        "correction_limit_m": 0.75,
+        "scope": "local simulated residual and cost; not a pass",
+        "uncertainty": "not calibrated; compare on unseen initial families"
+      },
+      "raw_error_m": 0.03456133353862967,
+      "corrected_error_m": 0.01710708589741249,
+      "actual_cost_s": 14.783000000054017,
+      "cost_error_s": -0.1669392251605295
+    },
+    {
+      "transition_id": "a68930d58c9f6ed3390ffbff7e81c9e7f5f782a5e986163181e98ccddc9f8836",
+      "prediction": {
+        "status": "fitted",
+        "samples": 4,
+        "model": {
+          "features": [
+            "raw_delta",
+            "fill",
+            "pressure",
+            "mass",
+            "thickness",
+            "root",
+            "span",
+            "step"
+          ],
+          "center": [
+            0.1616690999782196,
+            0.9270814383062306,
+            1.0,
+            0.995008302168896,
+            0.7999999999999999,
+            0.8999999999999999,
+            1.1999999999999997,
+            -0.14999999999999997
+          ],
+          "offset": [
+            0.03050230947660174,
+            2.7698035357273127
+          ],
+          "coefficients": [
+            [
+              5.250014713492735e-07,
+              -1.2936294415005819e-05
+            ],
+            [
+              -0.00016456467104130777,
+              0.0012837860658964121
+            ],
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -7.252551053956226e-35,
+              -4.694321957549584e-33
+            ],
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -7.252551053956226e-35,
+              -4.694321957549584e-33
+            ],
+            [
+              -1.4505102107912453e-34,
+              -9.388643915099168e-33
+            ],
+            [
+              1.8131377634890566e-35,
+              1.173580489387396e-33
+            ]
+          ],
+          "ridge": 3.0,
+          "training_ids": [
+            "1b95d8990ede183bf2d179b6a39fabe6f1ec71a78b95a48bb064d40db6604553",
+            "34ebe83c76f88dba79ed27f6d8968d3e84001bb5df79ecc66a8a4265d4d2685d",
+            "8bed103a005fe2bc1a0b4da9ede1cc750a8e508b351d1c8fe1511fee8b6358c9",
+            "f19314bc9e226a8c445b34c6c2a00206bba6a9b63a9a6a73a566c59cc06e26a9"
+          ],
+          "training_hashes": [
+            "3719a12f425d4cb98b663d0b88e28fbd063241ba8dd39f664ff0a61550a49502",
+            "78e0c910ac68f9257d78d9933a6c92815c9697aeae22f40271c0d19d4b139a88",
+            "520887d63948a833b96ffb4ba70b488c34c447a23a9282de0736e48b514c87ed",
+            "d1b8377959e7a9132b68d29dbcc64d8b3d590f4fc39a918b9ae63e7894cb5cee"
+          ]
+        },
+        "model_hash": "45ef76e7023d5c5466f61b098ffdf6e55fff7e41d5609c3d352c7d58dab1fdad",
+        "height_correction_m": 0.01741520026126362,
+        "predicted_cost_s": 14.958698136515792,
+        "correction_limit_m": 0.75,
+        "scope": "local simulated residual and cost; not a pass",
+        "uncertainty": "not calibrated; compare on unseen initial families"
+      },
+      "raw_error_m": 0.03377661110515717,
+      "corrected_error_m": 0.016361410843893552,
+      "actual_cost_s": 14.82700000028126,
+      "cost_error_s": -0.13169813623453308
+    }
+  ],
+  "raw_mae_m": 0.03416897232189342,
+  "corrected_mae_m": 0.016734248370653022,
+  "cost_mae_s": 0.1493186806975313,
+  "evidence": {
+    "manifests": 72,
+    "referenced_files": 342,
+    "verified_gpu_case_files": 0
+  },
+  "reused_training_evidence": null,
+  "elapsed_s": 272.06199999991804,
+  "general_efficiency_improvement_proved": false,
+  "physical_qualification": false,
+  "live_llm_calls": 0,
+  "scope": "Native prescribed transitions; two held-out geometries; simulation residuals only",
+  "raw_report_sha256": "4109475bf5bf3d6156970f7f7121ba9b2de4aabba957da7e16effa9d02446b35",
+  "mean_residual_mae_m": 0.01672690402706807,
+  "mean_residual_errors_m": [
+    0.017107088078465674,
+    0.016346719975670464
+  ],
+  "trials": [
+    {
+      "split": "train",
+      "transition_id": "f19314bc9e226a8c445b34c6c2a00206bba6a9b63a9a6a73a566c59cc06e26a9",
+      "fill": 0.2,
+      "root_mm": 90.0,
+      "forecast_delta_m": 0.766471232393009,
+      "actual_delta_m": 0.7969842260593438,
+      "cost_s": 15.109000000171363,
+      "observation_sha256": "d1b8377959e7a9132b68d29dbcc64d8b3d590f4fc39a918b9ae63e7894cb5cee"
+    },
+    {
+      "split": "train",
+      "transition_id": "8bed103a005fe2bc1a0b4da9ede1cc750a8e508b351d1c8fe1511fee8b6358c9",
+      "fill": 0.25,
+      "root_mm": 90.0,
+      "forecast_delta_m": 0.8135729748765392,
+      "actual_delta_m": 0.8451521730904972,
+      "cost_s": 14.469000000040978,
+      "observation_sha256": "520887d63948a833b96ffb4ba70b488c34c447a23a9282de0736e48b514c87ed"
+    },
+    {
+      "split": "train",
+      "transition_id": "34ebe83c76f88dba79ed27f6d8968d3e84001bb5df79ecc66a8a4265d4d2685d",
+      "fill": 0.3,
+      "root_mm": 90.0,
+      "forecast_delta_m": 0.829207237821322,
+      "actual_delta_m": 0.8607691129702921,
+      "cost_s": 15.109999999869615,
+      "observation_sha256": "78e0c910ac68f9257d78d9933a6c92815c9697aeae22f40271c0d19d4b139a88"
+    },
+    {
+      "split": "train",
+      "transition_id": "1b95d8990ede183bf2d179b6a39fabe6f1ec71a78b95a48bb064d40db6604553",
+      "fill": 0.35,
+      "root_mm": 90.0,
+      "forecast_delta_m": 0.818487172113425,
+      "actual_delta_m": 0.8468998305763726,
+      "cost_s": 15.139999999897555,
+      "observation_sha256": "3719a12f425d4cb98b663d0b88e28fbd063241ba8dd39f664ff0a61550a49502"
+    },
+    {
+      "split": "evaluate",
+      "transition_id": "49e629c8745291da534404ddde01d2ba429359d75b72edf615693da061b51229",
+      "fill": 0.275,
+      "root_mm": 92.0,
+      "forecast_delta_m": 0.8375618835160878,
+      "actual_delta_m": 0.8721232170547175,
+      "cost_s": 14.783000000054017,
+      "observation_sha256": "85fcd872a4e58e0bc0793d0fa98237b3f9dfc0d89644d9795d182a5442196b34"
+    },
+    {
+      "split": "evaluate",
+      "transition_id": "a68930d58c9f6ed3390ffbff7e81c9e7f5f782a5e986163181e98ccddc9f8836",
+      "fill": 0.325,
+      "root_mm": 94.0,
+      "forecast_delta_m": 0.8514150393061222,
+      "actual_delta_m": 0.8851916504112793,
+      "cost_s": 14.82700000028126,
+      "observation_sha256": "324ba68b2176a8ff10e746ef1e5a24a8d2bf397f120db6ab96e180fdbaf1aeb0"
+    }
+  ],
+  "limits": [
+    "Four training transitions and two held-out geometries only; no general efficiency proof",
+    "Predicts simulated altitude changes, not actual flight altitude accuracy",
+    "Prescribed host experiments; no live Claude request in this collection",
+    "An earlier out-of-range evaluation requested 74.8 mm root; retained but excluded",
+    "Runtime/version and any reused-training evidence are recorded separately"
+  ]
+}
