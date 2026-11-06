@@ -88,6 +88,12 @@ def test_manual_archive_integrity_and_tampering(store, tmp_path):
     archive = store.file(s["id"], "package/design-package.zip")
     with zipfile.ZipFile(archive) as z:
         assert z.testzip() is None
+        assert "source/rocketwright/agent/project_package.py" in z.namelist()
+        assert "reproduction/requirements.txt" in z.namelist()
+        assert "scripts/reproduce_package.py" in z.namelist()
+        assert not any("node_modules" in name or "/.env" in name for name in z.namelist())
+        expected = json.loads(z.read("reproduction/input.json"))
+        assert expected["source_version"] == s["version"] and not expected["adaptive_required"]
         assert json.loads(z.read("manifest.json"))["physical_print_verified"] is False
         z.extractall(tmp_path / "unpacked")
     assert verify(tmp_path / "unpacked") > 5

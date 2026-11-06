@@ -707,6 +707,17 @@ class DesignProjects:
                 "analysis-envelope-m.stlはm単位の解析包絡で、印刷用ではありません。\n"
                 "試着リングは寸法確認用で、機体の印刷部品質量には含めません。\n"
             )
+            readme += (
+                "\n## 再生成\n\nPython 3.11以上と、環境票のBlender/Curaを用意してください。\n"
+                "新しい仮想環境へ `pip install -r reproduction/requirements.txt` で導入します。\n"
+                "`python scripts/reproduce_package.py . --check` で環境と全ファイルを確認し、\n"
+                "`python scripts/reproduce_package.py . ../regenerated` で別フォルダーへ再生成。\n"
+                "--skip-video は部分検証です。プリンター送信・課金API・LLM呼出しは行いません。\n"
+                "外部実行ファイルは同梱しません。ROCKETWRIGHT_BLENDER / ROCKETWRIGHT_CURA_ENGINE / "
+                "ROCKETWRIGHT_CURA_RESOURCESで既存ツールを指定できます。\n"
+                "入力・判断履歴・出典・ライセンスと実行環境はreproduction/とsource/にあります。\n"
+                "別PCの確認結果は、そのPCでの実行を別に記録してください。\n"
+            )
             manifest = dict(
                 schema_version=1,
                 project_id=state["id"],
@@ -718,6 +729,9 @@ class DesignProjects:
             with zipfile.ZipFile(output / "design-package.zip", "w", zipfile.ZIP_DEFLATED) as z:
                 for row in rows:
                     z.write(self.file(project_id, row["key"]), row["key"])
+                from rocketwright.agent.project_package import add_reproduction
+
+                rows.extend(add_reproduction(z, self, state, ROOT))
                 z.writestr("README.md", readme)
                 z.writestr("manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
                 z.write(ROOT / "scripts/verify_design_package.py", "scripts/verify_package.py")
