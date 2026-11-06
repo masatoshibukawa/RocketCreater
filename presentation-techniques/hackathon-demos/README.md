@@ -17,6 +17,9 @@
 ## 調査資料
 
 - [大会の違いと評価項目](01-events-and-judging.md)
+- [デモの物語と技術の伝え方](02-demo-and-technical-depth.md)
+- [ライブ・動画・音声とトラブル対策](03-live-video-and-reliability.md)
+- [1・2・3・5分の台本と質疑・練習](04-scripts-and-questions.md)
 - [6言語の比較と参加者の失敗・改善](05-language-and-cases.md)
 - [受賞事例9作品の特徴と取り入れる方法](06-winner-patterns.md) — 8件は公式結果と照合、1件は本人の受賞報告
 - [6言語41件の出典と確認範囲](sources.md)
