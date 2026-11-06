@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dプリントの速度・流量校正"
+  short_description: "特徴別の速度と加速度、流量上限、短い層の冷却を合わせて試作を安定させる"
+  default_prompt: "$3d-print-speed-calibration を使い、機種と材料に合う速度・加速度・流量・冷却を確認し、比較試行を準備してください。"

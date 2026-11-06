@@ -16,6 +16,8 @@ description: "AIを使う3Dモデル制作と3Dプリントの総合依頼を整
 | Blender/CADで直したい、壁厚・公差・分割を設計したい | [モデル修正と設計](categories/3d-model-preparation/SKILL.md) | 編集原本、実寸の形状、印刷用メッシュ、検査結果 |
 | スライス、FDM/光造形、出力・後処理を進めたい | [印刷と後処理](categories/3d-model-printing/SKILL.md) | スライサープロジェクト、機種用データ、確認記録 |
 | 穴が消える、折れる、剥がれる、支持から落ちる等の不良 | [トラブル対処](categories/3d-model-troubleshooting/SKILL.md) | 原因の仮説、局所修正、条件を揃えた再試作 |
+| 接地面が小さい、高い部品が途中で倒れる | [接地と転倒対策](categories/3d-print-bed-stability/SKILL.md) | 初層の実接続、姿勢・補助接地、全高の比較試行 |
+| 速度が速い、揺れる、高速部が欠ける、先端が溶ける | [速度・流量校正](categories/3d-print-speed-calibration/SKILL.md) | 特徴別速度、加速度、流量と冷却の確認 |
 | 置物、寸法付き部品、浮き彫りを具体的に作りたい | [制作レシピ](categories/3d-model-recipes/SKILL.md) | 条件に合わせた手順、形状・入力・試作計画 |
 | 条件・結果を記録したい、検収・外注・受け渡しをしたい | [チェックと記録](categories/3d-model-records/SKILL.md) | 制作記録、試行ログ、検査と受け渡し資料 |
 | 根拠を探したい、仕様を再確認したい、多言語で調べたい | [多言語調査と出典](categories/3d-model-research/SKILL.md) | 適用条件付きの知見、一次資料、出典の更新 |
