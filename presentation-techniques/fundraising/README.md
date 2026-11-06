@@ -14,9 +14,11 @@
 4. **調達額を達成目標へ結び付ける。** 必要な人員・開発・販売の費用と、資金で何を検証し、どの状態に到達するかを対応させる。[YCのシード調達ガイド](https://www.ycombinator.com/library/4A-a-guide-to-seed-fundraising)、[Bpifranceの構成案](https://bpifrance-creation.fr/encyclopedie/porteur-projet-preparation-droits-obligations/preparation/plan-type-pitch-presenter)
 5. **面談を対話として設計する。** 説明で時間を使い切らず、投資家の懸念を聞く。最後に追加資料・次回面談などの次の行動を合意する。[Coralの面談の助言](https://coralcap.co/2019/07/3-mistakes-to-avoid-when-you-pitch-to-a-vc)、[YC](https://www.ycombinator.com/library/4A-a-guide-to-seed-fundraising)
 
-## 言語ごとの調査
+## 資料の入口
 
+- [構成と投資家に示す証拠](01-investor-pitch-playbook.md) — 調達段階、12枚の構成、数字、市場、競合、チーム、資金使途、AI事業
 - [6言語の助言と使い分け](02-language-and-context.md) — 原語の検索語、資料ごとの重点、言語と文化を混同しない比較、翻訳時の確認
+- [練習と面談のテンプレート](03-practice-and-templates.md) — 60秒・3分・10分の台本、想定質問、初回連絡、フォローアップ、制作手順
 - [15件の出典と適用範囲](sources.md) — 原著のURL、支持する主張、古い数値や一般化の扱い
 
 国別の性格を推定するより、相手の投資対象・専門性・検討段階と、送付用か登壇用かを先に確かめる。同じ言語でも、短時間の登壇と、社内で回覧される資料では情報量が異なる。
