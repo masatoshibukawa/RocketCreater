@@ -25,7 +25,7 @@ APIはローカルのWeb APIであり、課金型のモデルAPIを呼ばない�
 | `ROCKETWRIGHT_CURA_RESOURCES` | Curaの `share/cura/resources` |
 | `ROCKETWRIGHT_PRINT_ROOT` | 単体生成APIの出力先。既定は `output/print-packages` |
 
-Web/APIの起動方法は [ローカル統合試験](workbench.md) を参照。製作プロジェクトは `?project=<32桁のID>` で再表示できる。
+Web/APIの起動方法は [ローカル統合試験](workbench.md) を参照。製作プロジェクトの開き直しは画面からはできない。`GET /workbench/projects/<32桁のID>` で読む。
 
 ## 今回の失敗から変えた条件
 
