@@ -25,7 +25,8 @@ export interface DesignProject {
   adopted: boolean; active: { name: string; started_at: number } | null; error: string | null;
   analysis: { design: BottleDesign; result: { success: boolean; metrics: Record<string, number>;
     trace: TracePoint[]; warnings: string[]; failure_reasons: string[] }; printed_mass_used_g: number;
-    printed_solid_mass_g: number; mass_basis: string; limitations: string[] } | null;
+    printed_solid_mass_g: number; mass_basis: string; limitations: string[];
+    requirements?: { scope: string; all_requirements_passed: boolean; checks: { id: string; label: string; status: string; reason: string }[] } } | null;
   files: ProjectFile[]; versions: { version: number; adopted: boolean; spec: ProductionSpec }[];
   history: { operation: string; version: number; at: number }[];
   video_plan: { status: string; reason: string } | null;

@@ -191,6 +191,8 @@ def write_project_manual(state, steps, output):
         table,
         p("未確認事項", sub),
     ]
+    for check in analysis.get("requirements", {}).get("checks", []):
+        summary.append(p(f"{check['label']} / {check['status']} : {check['reason']}"))
     summary += [p(text) for text in analysis["limitations"]]
     SimpleDocTemplate(
         str(output.parent / "design-sheet.pdf"),

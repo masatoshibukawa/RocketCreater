@@ -17,6 +17,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from rocketwright.agent.local_runtime import LocalRuntimeError
+from rocketwright.agent.project_requirements import assess_requirements, validate_requirements
 from rocketwright.agent.workbench import Conflict
 from rocketwright.geometry import airframe
 from rocketwright.manufacturing import (
@@ -51,6 +52,7 @@ def implementation_fingerprint():
         "rocketwright/manufacturing.py",
         "rocketwright/physics/water.py",
         "rocketwright/geometry.py",
+        "rocketwright/agent/project_requirements.py",
         "scripts/build_print_parts.py",
         "3d model/prototypes/pet-rocket-coke-2l/build.py",
         "3d model/prototypes/pet-rocket-coke-2l/parameters.json",
@@ -79,6 +81,7 @@ class DesignSpec(BaseModel):
             raise ValueError("ノズル径がボトル胴径を超えています。")
         if self.requirement and self.requirement.goal_kind.value != "altitude":
             raise ValueError("この製作フローは高度を指定するペトロケ用です。")
+        validate_requirements(self)
         return self
 
 
@@ -144,6 +147,7 @@ class DesignProjects:
         return sorted(rows, key=lambda x: x["updated_at"], reverse=True)[:100]
 
     def create(self, spec: DesignSpec):
+        spec = DesignSpec.model_validate(spec.model_dump())
         state = dict(
             id=uuid.uuid4().hex,
             name=spec.name,
@@ -195,6 +199,7 @@ class DesignProjects:
             lock.release()
 
     def edit(self, project_id, revision, spec: DesignSpec):
+        spec = DesignSpec.model_validate(spec.model_dump())
         def worker(state):
             state["versions"].append(
                 dict(
@@ -318,6 +323,7 @@ class DesignProjects:
                 geometry_sha256=fingerprint(spec.geometry.model_dump()),
                 design=design.model_dump(mode="json"),
                 result=result.model_dump(mode="json"),
+                requirements=assess_requirements(spec, result),
                 printed_solid_mass_g=printed,
                 printed_mass_used_g=mass,
                 mass_basis="measured" if spec.measured_printed_mass_g else "solid_CAD_estimate",
@@ -427,6 +433,7 @@ class DesignProjects:
                     ]
                 )
             state["adopted"] = True
+            state["adoption_scope"] = "prototype_screening"
             self.register_files(state, self.directory(project_id) / "cad", "cad")
             self.register_files(state, directory, "production")
 

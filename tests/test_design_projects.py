@@ -142,7 +142,11 @@ def test_failed_analysis_does_not_publish_manufacturing_meshes(store):
     from rocketwright.schema import Requirement
 
     draft = spec().model_copy(
-        update={"requirement": Requirement(goal_kind="altitude", target_altitude_m=1000)}
+        update={
+            "requirement": Requirement(
+                goal_kind="altitude", target_altitude_m=1000, payload_mass_kg=0.06
+            )
+        }
     )
     s = store.create(draft)
     s = store.analyse(s["id"], s["revision"])
@@ -159,3 +163,39 @@ def test_input_capacity_cannot_exceed_external_geometry():
     data["geometry"]["body_diameter_mm"] = 30
     with pytest.raises(ValueError, match="最大体積"):
         DesignSpec.model_validate(data)
+
+
+def test_requirement_payload_and_recovery_must_match_computed_inputs():
+    data = spec().model_dump(mode="json")
+    data["requirement"] = dict(goal_kind="altitude", target_altitude_m=24, payload_mass_kg=1)
+    with pytest.raises(ValueError, match="搭載質量"):
+        DesignSpec.model_validate(data)
+    data["requirement"].update(payload_mass_kg=0.06, recovery_required=True)
+    data["design"]["has_parachute"] = False
+    with pytest.raises(ValueError, match="回収"):
+        DesignSpec.model_validate(data)
+
+
+def test_unpriced_budget_is_not_a_pass_even_after_prototype_adoption(store):
+    from rocketwright.schema import Requirement
+
+    baseline = store.create(spec())
+    baseline = store.analyse(baseline["id"], baseline["revision"])
+    value = spec().model_copy(
+        update={
+            "requirement": Requirement(
+                goal_kind="altitude",
+                target_altitude_m=baseline["analysis"]["result"]["metrics"]["apogee_m"],
+                payload_mass_kg=0.06,
+                budget_jpy=1,
+            )
+        }
+    )
+    s = store.create(value)
+    s = store.analyse(s["id"], s["revision"])
+    assert s["analysis"]["result"]["success"]
+    checks = s["analysis"]["requirements"]
+    assert not checks["all_requirements_passed"]
+    assert next(r for r in checks["checks"] if r["id"] == "budget")["status"] == "not_evaluated"
+    s = store.adopt(s["id"], s["revision"])
+    assert s["adoption_scope"] == "prototype_screening"

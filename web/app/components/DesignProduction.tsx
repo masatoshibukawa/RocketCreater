@@ -119,7 +119,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
         {draft.design.has_parachute ? num("回収傘の直径 m", draft.design.parachute_diameter_m, value => setDraft({ ...draft, design: { ...draft.design, parachute_diameter_m: value } })) : null}
         {num("初期圧力差 kPa（計算条件）", draft.design.initial_gauge_pressure_pa/1000, value => setDraft({ ...draft, design: { ...draft.design, initial_gauge_pressure_pa: value*1000 } }))}
         {num("水の充填率 %", draft.design.water_fill_frac*100, value => setDraft({ ...draft, design: { ...draft.design, water_fill_frac: value/100 } }))}
-        {num("搭載質量 g", draft.design.payload_mass_kg*1000, value => setDraft({ ...draft, design: { ...draft.design, payload_mass_kg: value/1000 } }))}
+        {num("搭載質量 g", draft.design.payload_mass_kg*1000, value => setDraft({ ...draft, design: { ...draft.design, payload_mass_kg: value/1000 }, requirement: draft.requirement ? { ...draft.requirement, payload_mass_kg: value/1000 } : null }))}
         <label>目標高度 m（任意）<input type="number" min="1" step="any" value={Number(draft.requirement?.target_altitude_m) || ""} onChange={e => setDraft({ ...draft, requirement: e.target.value ? { goal_kind: "altitude", payload_mass_kg: draft.design.payload_mass_kg, budget_jpy: 3000, recovery_required: true, ...draft.requirement, target_altitude_m: Number(e.target.value) } : null })}/></label>
       </div>
       <p className="wb-note">材料：{draft.material}。実測質量がないときは、同じCADの一様固体の質量で計算します。充填率による実際の部品質量や取付強度は未確認です。</p>
@@ -129,7 +129,8 @@ export default function DesignProduction({ source, mode, onProjectChange, active
     </form> : null}
     {error || project?.error ? <p role="alert" className="wb-error">{error ?? project?.error}</p> : null}
     {project ? <>
-      <p className="wb-case-tag" role="status">{project.active ? OPERATION[project.active.name] ?? "制作中" : project.adopted ? "この版を採用済み · 実機未検証" : project.analysis ? result?.success ? "再解析済み · 採用待ち" : "計算条件が未達 · 編集して再解析" : "編集を保存済み · 再解析が必要"}</p>
+      <p className="wb-case-tag" role="status">{project.active ? OPERATION[project.active.name] ?? "制作中" : project.adopted ? "試作版として採用済み" : project.analysis ? result?.success ? "数値スクリーニング済み · 採用待ち" : "計算条件が未達 · 編集して再解析" : "編集を保存済み · 再解析が必要"}</p>
+      {project.analysis?.requirements ? <details open><summary>要求ごとの確認</summary>{project.analysis.requirements.checks.map(check => <p key={check.id}>{check.label}：{({pass:"計算・入力確認済み",fail:"未達",not_evaluated:"未評価",not_required:"要求なし"} as Record<string,string>)[check.status]} · {check.reason}</p>)}</details> : null}
       <div className="project-actions"><button className="btn" disabled={working || project.adopted || !!draft} onClick={() => void action("analyse")}>CADと飛行を再解析</button><button className="btn btn-primary" disabled={working || !result?.success || project.adopted || !!draft} onClick={() => void action("adopt")}>この版を採用</button></div>
       {result ? <div className="wb-note"><b>計算高度 {result.metrics.apogee_m?.toFixed(2)} m / 乾燥質量 {(project.analysis!.design.dry_mass_kg*1000).toFixed(2)} g</b><p>印刷部品 {project.analysis!.printed_mass_used_g.toFixed(2)} g（{project.analysis!.mass_basis === "measured" ? "実測入力" : "CADの一様固体推定"}）。{project.spec.requirement ? "保存した目標高度で判定" : "目標高度は未指定"}。</p>{result.failure_reasons.map(t => <p key={t}>{t}</p>)}<details><summary>解析の前提と限界</summary>{project.analysis!.limitations.map(t => <p key={t}>{t}</p>)}</details></div> : null}
       {project.analysis && mode !== "video" ? <div className="project-model"><ModelViewer design={project.analysis.design} tier="bottle" origin="attempt" reference={null} dimensions={null} notes={[]} active={active} statusLabel={`採用候補 v${project.version} の寸法付き包絡`}/></div> : null}
