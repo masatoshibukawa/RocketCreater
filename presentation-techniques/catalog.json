@@ -1,0 +1,680 @@
+{
+  "schema_version": 1,
+  "reviewed_date": "2026-11-07",
+  "reviewed_commit": "c40dac00ea82309492545bdeb6b482c5f4df6aa8",
+  "scope": "All 51 research Markdown documents present before the taxonomy and skills were added; new navigation, validation and skill files are excluded from the research-document count.",
+  "categories": [
+    {
+      "id": "planning",
+      "name": "目的・構成・時間",
+      "skill": "presentation-planning",
+      "subs": [
+        {
+          "skill": "presentation-audience-goals",
+          "name": "聴衆と目的",
+          "purpose": "誰のどの判断を助ける発表かを定める"
+        },
+        {
+          "skill": "presentation-argument-evidence",
+          "name": "構成・物語・根拠",
+          "purpose": "主張、比較、経験、証拠を結び付ける"
+        },
+        {
+          "skill": "presentation-duration",
+          "name": "時間別の設計",
+          "purpose": "1・2・3・5・10・15・30分と質疑枠を設計する"
+        }
+      ]
+    },
+    {
+      "id": "visuals",
+      "name": "スライド・図表",
+      "skill": "presentation-visuals",
+      "subs": [
+        {
+          "skill": "presentation-slides",
+          "name": "スライド設計",
+          "purpose": "投影・配布・読み物に合わせて情報を配置する"
+        },
+        {
+          "skill": "presentation-scientific-figures",
+          "name": "科学図表・数式",
+          "purpose": "分布、独立性、不確実性、仮定を伝える"
+        }
+      ]
+    },
+    {
+      "id": "delivery",
+      "name": "話し方・質疑・練習",
+      "skill": "presentation-delivery",
+      "subs": [
+        {
+          "skill": "presentation-speaking",
+          "name": "声・間・身体・チーム",
+          "purpose": "説明と画面、視線、役割交代をそろえる"
+        },
+        {
+          "skill": "presentation-questions",
+          "name": "質疑応答",
+          "purpose": "質問に直接答え、根拠と未確認範囲を示す"
+        },
+        {
+          "skill": "presentation-rehearsal",
+          "name": "理解確認とリハーサル",
+          "purpose": "初見の理解、尺、本番環境から修正する"
+        }
+      ]
+    },
+    {
+      "id": "business",
+      "name": "ビジネスピッチ",
+      "skill": "presentation-business",
+      "subs": [
+        {
+          "skill": "presentation-fundraising",
+          "name": "資金調達",
+          "purpose": "投資判断に必要な事業・進捗・チーム・資金使途を示す"
+        },
+        {
+          "skill": "presentation-proposals",
+          "name": "顧客デモ・社内提案",
+          "purpose": "導入や予算・試行の意思決定を助ける"
+        }
+      ]
+    },
+    {
+      "id": "academic",
+      "name": "研究プレゼン",
+      "skill": "presentation-academic",
+      "subs": [
+        {
+          "skill": "presentation-research-talks",
+          "name": "学会・研究成果の口頭発表",
+          "purpose": "問い、貢献、方法、結果、解釈、範囲を論証する"
+        },
+        {
+          "skill": "presentation-lab-journal",
+          "name": "進捗報告・論文紹介",
+          "purpose": "次の研究判断と、論文の主張の批判的検討を進める"
+        },
+        {
+          "skill": "presentation-posters",
+          "name": "ポスター",
+          "purpose": "短い入口から図と対話へ進める"
+        },
+        {
+          "skill": "presentation-defense",
+          "name": "学位・資格審査",
+          "purpose": "貢献、方法の選択、担当、技術質問を説明する"
+        },
+        {
+          "skill": "presentation-research-outreach",
+          "name": "一般向け研究紹介・3MT",
+          "purpose": "専門外向けに研究を伝え、競技固有の媒体規則を守る"
+        },
+        {
+          "skill": "presentation-grant-pitches",
+          "name": "研究費・研究計画",
+          "purpose": "支援の理由、実行可能性、予備的根拠、リスクを示す"
+        }
+      ]
+    },
+    {
+      "id": "demos",
+      "name": "ハッカソン・デモ・動画・音",
+      "skill": "presentation-demos",
+      "subs": [
+        {
+          "skill": "presentation-software-hackathons",
+          "name": "一般ソフトウェア大会",
+          "purpose": "大会別の審査と、動作・技術難所・完成範囲を対応させる"
+        },
+        {
+          "skill": "presentation-provider-domain",
+          "name": "LLM事業者・専門分野の大会",
+          "purpose": "モデルの貢献とドメイン知識を利用者の成果へつなぐ"
+        },
+        {
+          "skill": "presentation-demo-video-audio",
+          "name": "実演・録画・編集・音楽",
+          "purpose": "入力から結果を見せ、音声・字幕・BGMと障害時の切替を設計する"
+        }
+      ]
+    },
+    {
+      "id": "localization",
+      "name": "言語・文化・アクセシビリティ",
+      "skill": "presentation-localization",
+      "subs": [
+        {
+          "skill": "presentation-multilingual",
+          "name": "多言語・文化・伝達条件",
+          "purpose": "国籍で決め付けず用語・単位・字幕・習熟度へ適応する"
+        }
+      ]
+    },
+    {
+      "id": "analysis",
+      "name": "事例分析・調査",
+      "skill": "presentation-analysis",
+      "subs": [
+        {
+          "skill": "presentation-ted-analysis",
+          "name": "TED・講演分析",
+          "purpose": "発話・構成・背景から工夫を取り出し、映像観察と区別する"
+        },
+        {
+          "skill": "presentation-event-research",
+          "name": "募集・講評・受賞者調査",
+          "purpose": "版と賞を照合し、公開事実・自己申告・推論を区別する"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "path": "README.md",
+      "title": "ピッチとプレゼンテーションのテクニック",
+      "primary": "presentation-audience-goals",
+      "related": [
+        "presentation-event-research"
+      ],
+      "analysis": "既存の全分野への入口。用途別と横断技法別の二つの経路を加える対象。"
+    },
+    {
+      "path": "pitch-demo-strategy.md",
+      "title": "ピッチとデモで示すLLMの価値とドメイン知識",
+      "primary": "presentation-provider-domain",
+      "related": [
+        "presentation-argument-evidence"
+      ],
+      "analysis": "本チャットのLLM/API・なぜ自分たちかの方針。Codex回の観察とClaude日本大会の条件を分離。"
+    },
+    {
+      "path": "research/2026-11-06/01-audience-and-structure.md",
+      "title": "聴衆に合わせた目的と構成",
+      "primary": "presentation-audience-goals",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-proposals"
+      ],
+      "analysis": "聴衆の判断を起点に冒頭・構成・証拠・結びを選ぶ基礎。"
+    },
+    {
+      "path": "research/2026-11-06/02-slides-and-evidence.md",
+      "title": "スライドで主張と根拠を伝える",
+      "primary": "presentation-slides",
+      "related": [
+        "presentation-scientific-figures"
+      ],
+      "analysis": "主張見出し、近接、強調、冗長性。実験の精密な適用範囲は新しい研究発表資料を併読。"
+    },
+    {
+      "path": "research/2026-11-06/03-delivery-and-questions.md",
+      "title": "話し方と練習と質疑応答",
+      "primary": "presentation-speaking",
+      "related": [
+        "presentation-questions",
+        "presentation-rehearsal"
+      ],
+      "analysis": "声・身体・質疑・チームの練習。7/38/55や10/20/30の普遍化を避ける。"
+    },
+    {
+      "path": "research/2026-11-06/04-demo-video-and-audio.md",
+      "title": "デモ映像と編集と音の設計",
+      "primary": "presentation-demo-video-audio",
+      "related": [
+        "presentation-multilingual"
+      ],
+      "analysis": "入力から成果物、編集による省略、BGM研究の条件差、字幕・聞き取り。"
+    },
+    {
+      "path": "research/2026-11-06/05-language-and-culture.md",
+      "title": "言語と文化と聴衆に合わせる",
+      "primary": "presentation-multilingual",
+      "related": [
+        "presentation-audience-goals"
+      ],
+      "analysis": "国別類型の根拠の限界、訛りと理解、全文字幕、対象者への確認。"
+    },
+    {
+      "path": "research/2026-11-06/06-hackathon-and-case-studies.md",
+      "title": "ハッカソンの審査と事例から学ぶ",
+      "primary": "presentation-provider-domain",
+      "related": [
+        "presentation-event-research"
+      ],
+      "analysis": "Codex/Gemini/Anthropicの条件・紹介から仮説を作る。後続の詳細調査へ接続。"
+    },
+    {
+      "path": "research/2026-11-06/07-production-workbook.md",
+      "title": "台本と実演を作るワークシート",
+      "primary": "presentation-rehearsal",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-demo-video-audio",
+        "presentation-provider-domain"
+      ],
+      "analysis": "主張と画面の対応、なぜ自分たちか、比較、初見理解の検証用シート。"
+    },
+    {
+      "path": "research/2026-11-06/README.md",
+      "title": "ピッチとプレゼンテーションの調査資料",
+      "primary": "presentation-audience-goals",
+      "related": [
+        "presentation-event-research"
+      ],
+      "analysis": "基礎調査の索引と、研究・助言・大会条件・制作案の区別。"
+    },
+    {
+      "path": "research/2026-11-06/sources.md",
+      "title": "出典と適用範囲",
+      "primary": "presentation-event-research",
+      "related": [
+        "presentation-slides",
+        "presentation-speaking",
+        "presentation-demo-video-audio",
+        "presentation-multilingual"
+      ],
+      "analysis": "38出典の確認範囲。教育の学習効果を受賞・投資へ直接換算しない。"
+    },
+    {
+      "path": "ted-talks/01-ken-robinson.md",
+      "title": "Sir Ken Robinsonのユーモアと教育の問い",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-speaking"
+      ],
+      "analysis": "逸話・会話・ユーモアと主張への復帰。19分の脱線量を短時間へ移さない。"
+    },
+    {
+      "path": "ted-talks/02-simon-sinek.md",
+      "title": "Simon Sinekの単純な枠組みと反復",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-speaking"
+      ],
+      "analysis": "枠組み・対比・反復。生物学や成功の因果の正しさとは別評価。"
+    },
+    {
+      "path": "ted-talks/03-brene-brown.md",
+      "title": "Brené Brownの自己開示と研究の物語",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-speaking"
+      ],
+      "analysis": "自己開示と仮説の変更。経験が設計判断を変えた場面へ応用。"
+    },
+    {
+      "path": "ted-talks/04-hans-rosling.md",
+      "title": "Hans Roslingのデータ実演と見方の更新",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-scientific-figures",
+        "presentation-speaking"
+      ],
+      "analysis": "図の読み方を先に示し、変化を追う。平均と内部差・相関と因果を区別。"
+    },
+    {
+      "path": "ted-talks/05-chimamanda-adichie.md",
+      "title": "Adichieの複数の物語と視点の反転",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-speaking"
+      ],
+      "analysis": "複数の立場と自分の誤り。事実と集団を代表することを区別。"
+    },
+    {
+      "path": "ted-talks/06-tim-urban.md",
+      "title": "Tim Urbanの擬人化と終盤の転換",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-speaking"
+      ],
+      "analysis": "擬人化の足場と終盤の転換。比喩を実際の脳機序としない。"
+    },
+    {
+      "path": "ted-talks/comparison.md",
+      "title": "6本の違いとピッチへの応用",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-speaking"
+      ],
+      "analysis": "6講演の比較と短いピッチへの転用、観察事実と解釈の記録用シート。"
+    },
+    {
+      "path": "ted-talks/README.md",
+      "title": "TED Talksの構成と話し方の事例集",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-speaking"
+      ],
+      "analysis": "TED/TEDxを区別した6講演の索引。字幕を読み、全編映像・音声の採点は未実施。"
+    },
+    {
+      "path": "ted-talks/sources.md",
+      "title": "TEDトーク分析の出典",
+      "primary": "presentation-ted-analysis",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-speaking"
+      ],
+      "analysis": "公式の講演・日英文字起こし・本人の準備記録等。全文転載ではなく参照入口。"
+    },
+    {
+      "path": "fundraising/01-investor-pitch-playbook.md",
+      "title": "資金調達ピッチの構成と投資家に示す証拠",
+      "primary": "presentation-fundraising",
+      "related": [
+        "presentation-argument-evidence"
+      ],
+      "analysis": "段階別の証拠、顧客・市場・競争・事業・進捗・調達使途。架空数字と実績を分ける。"
+    },
+    {
+      "path": "fundraising/02-language-and-context.md",
+      "title": "6言語の資金調達ピッチの助言と使い分け",
+      "primary": "presentation-multilingual",
+      "related": [
+        "presentation-fundraising"
+      ],
+      "analysis": "6言語の原語助言を比較。言語差を国民性にせず、通貨・単位・定義をそろえる。"
+    },
+    {
+      "path": "fundraising/03-practice-and-templates.md",
+      "title": "資金調達ピッチの練習と面談のテンプレート",
+      "primary": "presentation-fundraising",
+      "related": [
+        "presentation-questions",
+        "presentation-rehearsal"
+      ],
+      "analysis": "面談、依頼、進捗・数値の定義、質疑と練習。文章作成は外部送信の許可を含まない。"
+    },
+    {
+      "path": "fundraising/README.md",
+      "title": "スタートアップの資金調達ピッチ",
+      "primary": "presentation-fundraising",
+      "related": [
+        "presentation-duration"
+      ],
+      "analysis": "投資家ピッチの入口。短い登壇・面談・単独で読むデックを区別。"
+    },
+    {
+      "path": "fundraising/sources.md",
+      "title": "資金調達ピッチの原語資料と適用範囲",
+      "primary": "presentation-event-research",
+      "related": [
+        "presentation-fundraising",
+        "presentation-multilingual"
+      ],
+      "analysis": "6言語15出典。成功率や法的・財務的相場を算出する資料ではない。"
+    },
+    {
+      "path": "by-duration/01-short-pitches.md",
+      "title": "1分から5分のビジネスピッチ",
+      "primary": "presentation-duration",
+      "related": [
+        "presentation-fundraising",
+        "presentation-proposals"
+      ],
+      "analysis": "1・2・3・5分の役割・連続時間案。枚数や秒数は制作案。"
+    },
+    {
+      "path": "by-duration/02-long-presentations.md",
+      "title": "10分から30分のビジネスプレゼン",
+      "primary": "presentation-duration",
+      "related": [
+        "presentation-fundraising",
+        "presentation-proposals"
+      ],
+      "analysis": "10・15・30分の説明と会話。面談全体と本編のみの時間を区別。"
+    },
+    {
+      "path": "by-duration/03-purpose-and-rehearsal.md",
+      "title": "目的に応じた時間配分とピッチの練習",
+      "primary": "presentation-duration",
+      "related": [
+        "presentation-audience-goals",
+        "presentation-proposals",
+        "presentation-rehearsal"
+      ],
+      "analysis": "資金調達・顧客・社内の目的で尺を再配分し、計時と初見理解で調整。"
+    },
+    {
+      "path": "by-duration/README.md",
+      "title": "時間別のビジネスプレゼンとピッチ",
+      "primary": "presentation-duration",
+      "related": [
+        "presentation-audience-goals"
+      ],
+      "analysis": "7つの時間枠の入口。速度を上げるより、判断に不要な詳細を外す。"
+    },
+    {
+      "path": "by-duration/sources.md",
+      "title": "時間別ピッチの出典と適用範囲",
+      "primary": "presentation-event-research",
+      "related": [
+        "presentation-duration"
+      ],
+      "analysis": "YC等の原助言と独自の時間配分を分離。標準ルールとしない。"
+    },
+    {
+      "path": "hackathon-demos/01-events-and-judging.md",
+      "title": "大会の違いとデモ発表の評価項目",
+      "primary": "presentation-software-hackathons",
+      "related": [
+        "presentation-event-research"
+      ],
+      "analysis": "技育祭/CAMP/博/展と開催年・段階、全体賞・企業賞、動作条件を区別。"
+    },
+    {
+      "path": "hackathon-demos/02-demo-and-technical-depth.md",
+      "title": "デモの物語と技術の伝え方",
+      "primary": "presentation-software-hackathons",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-provider-domain"
+      ],
+      "analysis": "一場面の入力→結果、制約→判断→実装→証拠。楽しさも価値である。"
+    },
+    {
+      "path": "hackathon-demos/03-live-video-and-reliability.md",
+      "title": "ライブ実演と動画の作り方とトラブル対策",
+      "primary": "presentation-demo-video-audio",
+      "related": [
+        "presentation-software-hackathons",
+        "presentation-rehearsal"
+      ],
+      "analysis": "実際の共有画面・機器、録画・字幕・BGM、代替手段、提出URLの再生。"
+    },
+    {
+      "path": "hackathon-demos/04-scripts-and-questions.md",
+      "title": "ハッカソンの時間別台本と質疑と練習",
+      "primary": "presentation-software-hackathons",
+      "related": [
+        "presentation-duration",
+        "presentation-questions",
+        "presentation-rehearsal"
+      ],
+      "analysis": "1・2・3・5分の台本案、実装と期間内差分、質疑、制作シート。"
+    },
+    {
+      "path": "hackathon-demos/05-language-and-cases.md",
+      "title": "6言語の助言と参加者の失敗から学ぶこと",
+      "primary": "presentation-multilingual",
+      "related": [
+        "presentation-software-hackathons",
+        "presentation-rehearsal"
+      ],
+      "analysis": "6言語と本人の失敗記録。CORS/共有画面/PC障害と説明の作り直し。"
+    },
+    {
+      "path": "hackathon-demos/06-winner-patterns.md",
+      "title": "受賞作品の特徴とデモに取り入れる方法",
+      "primary": "presentation-event-research",
+      "related": [
+        "presentation-software-hackathons",
+        "presentation-provider-domain"
+      ],
+      "analysis": "9作品、8件は公式受賞と照合。非受賞対照なし・映像全編未採点。"
+    },
+    {
+      "path": "hackathon-demos/README.md",
+      "title": "ソフトウェアハッカソンのデモ発表",
+      "primary": "presentation-software-hackathons",
+      "related": [
+        "presentation-event-research"
+      ],
+      "analysis": "一般ソフトウェア大会の入口。評価項目を確認できる動作へ変換。"
+    },
+    {
+      "path": "hackathon-demos/sources.md",
+      "title": "ハッカソンのデモ発表と受賞分析の出典",
+      "primary": "presentation-event-research",
+      "related": [
+        "presentation-software-hackathons",
+        "presentation-multilingual"
+      ],
+      "analysis": "6言語41出典。要項・運営助言・参加記・README・受賞の確度を記録。"
+    },
+    {
+      "path": "domain-hackathons/01-japan-and-chat.md",
+      "title": "Built with Claude: Japan 2026と指定チャットの分析",
+      "primary": "presentation-provider-domain",
+      "related": [
+        "presentation-event-research"
+      ],
+      "analysis": "指定チャットの全7ターンとガイドを再構成。最新認証フォームは未確認。"
+    },
+    {
+      "path": "domain-hackathons/02-events-and-domain-expertise.md",
+      "title": "大会の目的と、専門知識を募集する理由",
+      "primary": "presentation-provider-domain",
+      "related": [
+        "presentation-event-research",
+        "presentation-research-talks",
+        "presentation-grant-pitches"
+      ],
+      "analysis": "10開催回の目的と専門性。Research/Build、必須/トラック/特別賞/提供を分離。"
+    },
+    {
+      "path": "domain-hackathons/03-winners-and-counterexamples.md",
+      "title": "受賞作品と、単純な勝ち筋では説明できない事例",
+      "primary": "presentation-event-research",
+      "related": [
+        "presentation-provider-domain"
+      ],
+      "analysis": "25作品。22公式受賞＋3公式Finalist。反例で単純なAPI必須・自動化最大仮説を修正。"
+    },
+    {
+      "path": "domain-hackathons/04-demo-playbook.md",
+      "title": "専門知識とClaudeの価値を示す3分デモ",
+      "primary": "presentation-provider-domain",
+      "related": [
+        "presentation-demo-video-audio",
+        "presentation-argument-evidence"
+      ],
+      "analysis": "経験→制約・評価→モデルとツール→利用者成果、比較計画と180秒の動作動画案。"
+    },
+    {
+      "path": "domain-hackathons/README.md",
+      "title": "LLM事業者と専門分野のハッカソン",
+      "primary": "presentation-provider-domain",
+      "related": [
+        "presentation-event-research"
+      ],
+      "analysis": "専門分野・事業者大会の入口。募集目的と知識が効いた判断を示す。"
+    },
+    {
+      "path": "domain-hackathons/sources.md",
+      "title": "出典と確認範囲",
+      "primary": "presentation-event-research",
+      "related": [
+        "presentation-provider-domain"
+      ],
+      "analysis": "37公開＋3提供資料。原チャット・認証情報の再配布を避け、取得の限界を保存。"
+    },
+    {
+      "path": "academic-presentations/01-purpose-and-structure.md",
+      "title": "目的・構成・主張と根拠",
+      "primary": "presentation-research-talks",
+      "related": [
+        "presentation-lab-journal",
+        "presentation-grant-pitches",
+        "presentation-argument-evidence"
+      ],
+      "analysis": "7つの研究の場を区別。理論・定性を含む貢献ごとに証拠と適用範囲を選ぶ。"
+    },
+    {
+      "path": "academic-presentations/02-slides-and-figures.md",
+      "title": "スライドと科学図表",
+      "primary": "presentation-scientific-figures",
+      "related": [
+        "presentation-slides",
+        "presentation-research-talks"
+      ],
+      "analysis": "MRIの110人実験を結果指標別に限定。分布、対応、反復、SD/SE/CIと数式。"
+    },
+    {
+      "path": "academic-presentations/03-formats-and-posters.md",
+      "title": "発表形式ごとの設計",
+      "primary": "presentation-posters",
+      "related": [
+        "presentation-research-talks",
+        "presentation-lab-journal",
+        "presentation-defense",
+        "presentation-research-outreach",
+        "presentation-grant-pitches"
+      ],
+      "analysis": "口頭・進捗・論文紹介・ポスター・審査・3MT/MT180の規則を分ける。"
+    },
+    {
+      "path": "academic-presentations/04-delivery-questions-language.md",
+      "title": "話し方・質疑・言語",
+      "primary": "presentation-questions",
+      "related": [
+        "presentation-speaking",
+        "presentation-multilingual",
+        "presentation-defense"
+      ],
+      "analysis": "図の解読、未検証への応答、英語の準備負担、字幕・遠隔、補足資料。"
+    },
+    {
+      "path": "academic-presentations/05-timing-and-workbook.md",
+      "title": "時間配分と制作ワークシート",
+      "primary": "presentation-research-talks",
+      "related": [
+        "presentation-duration",
+        "presentation-rehearsal",
+        "presentation-grant-pitches"
+      ],
+      "analysis": "本編のみ3・5・10・15・20・30分案、主張と根拠の表、研究としての評価設計。"
+    },
+    {
+      "path": "academic-presentations/README.md",
+      "title": "研究プレゼンテーション",
+      "primary": "presentation-research-talks",
+      "related": [
+        "presentation-audience-goals"
+      ],
+      "analysis": "研究発表7形式の入口。学術誌掲載の助言と効果実験を区別。"
+    },
+    {
+      "path": "academic-presentations/sources.md",
+      "title": "研究プレゼンの出典と確認範囲",
+      "primary": "presentation-event-research",
+      "related": [
+        "presentation-research-talks",
+        "presentation-scientific-figures",
+        "presentation-multilingual"
+      ],
+      "analysis": "4言語26出典。実験・調査・図表解説・大学助言・特定制度の確度を区別。"
+    }
+  ]
+}
