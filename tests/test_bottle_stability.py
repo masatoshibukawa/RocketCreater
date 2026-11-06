@@ -73,3 +73,32 @@ def test_design_from_parts_uses_the_chosen_fin_set():
     out = execute_tool("design_from_parts", {"build": build, "env": {}}, "t")
     assert out["sim"] is not None, out
     assert any("bottle_fin_set_pp_sheet_4" in w for w in out["sim"]["warnings"])
+
+
+def test_a_non_restoring_parts_build_fails_and_the_wide_fins_pass():
+    build = {
+        "tier": "bottle",
+        "bottle_id": "pet_bottle_1p5l",
+        "water_fill_frac": 0.4,
+        "initial_gauge_pressure_pa": 250000.0,
+        "nozzle_id": "bottle_nozzle_15mm",
+        "payload_mass_kg": 0.06,
+    }
+    narrow = {**build, "fin_set_id": "bottle_fin_set_pp_sheet_4"}
+    wide = {**build, "fin_set_id": "bottle_fin_set_pp_sheet_4_wide"}
+    failed = execute_tool("design_from_parts", {"build": narrow, "env": {}}, "t")["sim"]
+    passed = execute_tool("design_from_parts", {"build": wide, "env": {}}, "t")["sim"]
+    assert any("does not restore" in r for r in failed["failure_reasons"])
+    assert failed["metrics"]["stability_margin_cal"] <= 0
+    assert passed["metrics"]["stability_margin_cal"] > 0
+    assert not any("does not restore" in r for r in passed["failure_reasons"])
+
+
+def test_simulate_design_without_a_part_only_warns():
+    out = execute_tool(
+        "simulate_design",
+        {"design": DESIGN.model_dump(mode="json"), "env": {}, "seed": None, "requirement": None},
+        "t",
+    )
+    assert not any("does not restore" in r for r in out["failure_reasons"])
+    assert any("does not restore" in w for w in out["warnings"])

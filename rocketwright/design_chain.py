@@ -981,7 +981,8 @@ class _Chain:
     def default_bottle_fins(self) -> str | None:
         sets = sorted(
             self.catalog.by_kind("bottle_fin_set", "bottle"),
-            key=lambda f: (f.mass_kg, f.price_jpy, f.id),
+            # upstream stages are judged with these fins, so start from the most stable set
+            key=lambda f: (-f.span_m, -f.count, f.mass_kg, f.price_jpy, f.id),
         )
         return sets[0].id if sets else None
 
@@ -1130,6 +1131,8 @@ class _Chain:
                         margin = stability.static_margin_cal(
                             design, motor.total_mass_kg, motor_length_m=motor.length_m
                         )
+                    elif isinstance(design, BottleDesign) and build.fin_set_id is not None:
+                        margin = self._bottle_margin(design, build.fin_set_id)
                 static = (issues, design, bill, margin)
                 self._static[key] = static
             issues, design, bill, margin = static
@@ -1141,6 +1144,13 @@ class _Chain:
             ev.sim = self.raw_sim(build)
             ev.reasons = self.judge(ev)
         return ev
+
+    def _bottle_margin(self, design: BottleDesign, fin_set_id: str) -> float:
+        """The lower of the wet and dry static margins of a bottle on its catalog fins."""
+        from rocketwright.bottle_stability import bottle_stability  # lazy: aero imports physics
+
+        result = bottle_stability(design, self.catalog.get(fin_set_id, "bottle_fin_set"))
+        return min(result.wet_margin_cal, result.dry_margin_cal)
 
     def judge(self, ev: _Eval) -> list[str]:
         """Physics failure reasons plus the requirement-level rules of agent.tools._finalize /
@@ -1156,6 +1166,11 @@ class _Chain:
             and not ev.design.has_parachute
         ):
             reasons.append("recovery is required but the design has no parachute")
+        if isinstance(ev.design, BottleDesign) and ev.margin_cal is not None:
+            if ev.margin_cal <= 0.0:
+                reasons.append(
+                    f"stability: margin {ev.margin_cal:.2f} cal: the vehicle does not restore"
+                )
         return reasons
 
     # ----------------------------------------------------------------- labels and why

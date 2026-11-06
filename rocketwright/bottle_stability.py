@@ -14,7 +14,10 @@ from rocketwright.geometry import AssembledShape, airframe
 from rocketwright.parts import BottleFinSet
 from rocketwright.schema import BottleDesign, FinSet
 
-__all__ = ["BottleStability", "bottle_stability"]
+__all__ = ["BottleStability", "MIN_MARGIN_CAL", "bottle_stability"]
+
+# Provisional: restoring at all, the same test as bottle_assembly's static_restoring_dry_and_wet.
+MIN_MARGIN_CAL = 0.0
 
 _QUERY_SPEED_MPS = 15.0  # Barrowman is speed independent; AeroQuery needs a value
 _QUERY_ALPHAS_DEG = (0.0, 4.0)
@@ -29,19 +32,23 @@ class BottleStability:
     dry_cg_from_nose_m: float
     fins: str
 
-    def warnings(self) -> list[str]:
-        out = [f"stability: Barrowman estimate on {self.fins}; CG is estimated, not measured"]
-        if self.wet_margin_cal <= 0:
+    def failures(self) -> list[str]:
+        out = []
+        if self.wet_margin_cal <= MIN_MARGIN_CAL:
             out.append(
                 f"stability: margin {self.wet_margin_cal:.2f} cal with water loaded: "
                 "the vehicle does not restore itself at liftoff"
             )
-        if self.dry_margin_cal <= 0:
+        if self.dry_margin_cal <= MIN_MARGIN_CAL:
             out.append(
                 f"stability: margin {self.dry_margin_cal:.2f} cal when empty: "
                 "the vehicle does not restore itself during the coast"
             )
         return out
+
+    def warnings(self) -> list[str]:
+        note = f"stability: Barrowman estimate on {self.fins}; CG is estimated, not measured"
+        return [note, *self.failures()]
 
 
 def _shape(design: BottleDesign, fin_set: BottleFinSet) -> AssembledShape:

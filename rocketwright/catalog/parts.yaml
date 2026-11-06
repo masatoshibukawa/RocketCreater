@@ -826,6 +826,16 @@ parts: &parts
     notes: "Four 80 x 120 mm fins of 0.75 mm PP sheet (PP ~900 kg/m3 -> 0.68 kg/m2) plus tape; mass and price estimated."
     count: 4
     span_m: 0.08
+  - id: bottle_fin_set_pp_sheet_4_wide
+    kind: bottle_fin_set
+    tier: bottle
+    name: "4 wide polypropylene-sheet (PP 板 / 0.75 mm) fins, taped to the bottle"
+    mass_kg: 0.040
+    price_jpy: 400
+    provisional: true
+    notes: "Four 120 x 120 mm fins of 0.75 mm PP sheet (PP ~900 kg/m3 -> 0.68 kg/m2) plus tape; mass and price estimated. Span chosen so the static margin stays positive with water loaded."
+    count: 4
+    span_m: 0.12
   # Fin-and-nose sets "as flown" by the two reference papers (catalog/references/bottle.yaml):
   # the paper's rocket minus the catalog bottle and nozzle. Provisional: the mass is whatever
   # closes the published (or estimated) empty mass of the rocket, not a measured part.

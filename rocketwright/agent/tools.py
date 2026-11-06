@@ -475,8 +475,9 @@ def _aero_eval(design: Design, backend: Any) -> tuple[dict[str, float], dict[str
 
 
 def _with_stability(result: SimResult, design: Design, fin_set: Any = None) -> SimResult:
-    """Add the bottle's static margins: physics.water is a point mass and reports none. Not a
-    pass/fail rule yet: the margin is shown to the agent, reviewers and the user."""
+    """Add the bottle's static margins: physics.water is a point mass and reports none. With a
+    fin part the geometry is the real one, so a non-restoring design fails; without one the
+    fins are only representative and the margin stays a warning."""
     if not isinstance(design, BottleDesign):
         return result
     from rocketwright.bottle_stability import bottle_stability  # lazy: aero imports physics
@@ -489,8 +490,14 @@ def _with_stability(result: SimResult, design: Design, fin_set: Any = None) -> S
         "stability_margin_cal": stability.wet_margin_cal,
         "dry_stability_margin_cal": stability.dry_margin_cal,
     }
+    reasons = [*result.failure_reasons, *(stability.failures() if fin_set is not None else [])]
     return result.model_copy(
-        update={"metrics": metrics, "warnings": [*result.warnings, *stability.warnings()]}
+        update={
+            "metrics": metrics,
+            "warnings": [*result.warnings, *stability.warnings()],
+            "failure_reasons": reasons,
+            "success": not reasons,
+        }
     )
 
 
