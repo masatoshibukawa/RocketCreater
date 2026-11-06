@@ -267,6 +267,11 @@ class Harness:
             screen = self.data(c, "screen")
             if screen and screen["apogee_m"] < spec.requirement.target_altitude_m:
                 unmet = ["altitude"]
+            snapshot = self._snapshot(c)
+            if snapshot and snapshot["static_margin_cal"] < precision.minimum_static_margin_cal:
+                unmet.append("static_margin")
+            if snapshot and snapshot["incidence_deg"] > precision.maximum_incidence_deg:
+                unmet.append("attitude")
         # Numerical uncertainty remains an acceptance obligation during provisional exploration.
         numerical = set(unmet) & {
             "aero_grid",
