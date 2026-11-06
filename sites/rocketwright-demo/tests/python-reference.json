@@ -1,0 +1,240 @@
+{
+  "sources": {
+    "rocketwright/physics/water.py": "e0ddc6f1b73fda90e5b5010335c9f851a619bccdae62903003442047462d81f5",
+    "rocketwright/physics/recovery.py": "7bf94350d3006dac0ba2bfe169ef80953b4321ccb4fb6c3fc305279f4c31c757",
+    "rocketwright/physics/atmosphere.py": "4a51b5d5a08378df3a2a86a2a06a2cccf7ee276635e69c0f78ac69dcb7c3b2ae"
+  },
+  "cases": [
+    {
+      "name": "standard",
+      "input": {
+        "target": 20,
+        "volume": 1.5,
+        "fill": 35,
+        "pressure": 330,
+        "dryMass": 180,
+        "payload": 60,
+        "nozzle": 9,
+        "parachute": 0.6,
+        "budget": 3000
+      },
+      "metrics": {
+        "apogee_m": 19.905318164785193,
+        "apogee_time_s": 2.1665645615036877,
+        "max_speed_mps": 19.603353394947526,
+        "max_accel_mps2": 66.94681839635135,
+        "peak_thrust_n": 41.98738581522758,
+        "thrust_phase_duration_s": 0.407328980269331,
+        "water_exhausted_speed_mps": 18.49383119854446,
+        "water_impulse_ns": 10.813657353301158,
+        "air_impulse_ns": 0.3474029154765497,
+        "rail_exit_speed_mps": 11.351138586500849,
+        "descent_speed_mps": 3.01147141070774,
+        "landing_east_m": 0.0,
+        "landing_north_m": 0.0,
+        "landing_distance_m": 0.0,
+        "flight_time_s": 8.776395919692524,
+        "liftoff_mass_kg": 0.765,
+        "water_mass_kg": 0.525
+      }
+    },
+    {
+      "name": "two_litres",
+      "input": {
+        "target": 20,
+        "volume": 2,
+        "fill": 30,
+        "pressure": 330,
+        "dryMass": 220,
+        "payload": 60,
+        "nozzle": 9,
+        "parachute": 0.6,
+        "budget": 3000
+      },
+      "metrics": {
+        "apogee_m": 21.31893631199631,
+        "apogee_time_s": 2.2555230944293907,
+        "max_speed_mps": 20.5206878261713,
+        "max_accel_mps2": 68.06048781128794,
+        "peak_thrust_n": 41.98738581522758,
+        "thrust_phase_duration_s": 0.443791058268944,
+        "water_exhausted_speed_mps": 18.973272322771763,
+        "water_impulse_ns": 13.12120771273262,
+        "air_impulse_ns": 0.5326578997490027,
+        "rail_exit_speed_mps": 10.923475632715279,
+        "descent_speed_mps": 3.2528712751424984,
+        "landing_east_m": 0.0,
+        "landing_north_m": 0.0,
+        "landing_distance_m": 0.0,
+        "flight_time_s": 8.809405651943873,
+        "liftoff_mass_kg": 0.88,
+        "water_mass_kg": 0.6
+      }
+    },
+    {
+      "name": "low_fill",
+      "input": {
+        "target": 20,
+        "volume": 1.5,
+        "fill": 15,
+        "pressure": 250,
+        "dryMass": 180,
+        "payload": 60,
+        "nozzle": 9,
+        "parachute": 0.6,
+        "budget": 3000
+      },
+      "metrics": {
+        "apogee_m": 9.24110881133718,
+        "apogee_time_s": 1.4495105532623438,
+        "max_speed_mps": 13.218858022938392,
+        "max_accel_mps2": 92.85373914423404,
+        "peak_thrust_n": 31.808625617596654,
+        "thrust_phase_duration_s": 0.17239706079840705,
+        "water_exhausted_speed_mps": 11.707151986537754,
+        "water_impulse_ns": 4.861927669280822,
+        "air_impulse_ns": 0.4230266368479388,
+        "rail_exit_speed_mps": 12.967818301385453,
+        "descent_speed_mps": 3.01070060320273,
+        "landing_east_m": 0.0,
+        "landing_north_m": 0.0,
+        "landing_distance_m": 0.0,
+        "flight_time_s": 4.518931936945149,
+        "liftoff_mass_kg": 0.46499999999999997,
+        "water_mass_kg": 0.225
+      }
+    },
+    {
+      "name": "high_fill",
+      "input": {
+        "target": 20,
+        "volume": 1.5,
+        "fill": 75,
+        "pressure": 150,
+        "dryMass": 180,
+        "payload": 60,
+        "nozzle": 9,
+        "parachute": 0.6,
+        "budget": 3000
+      },
+      "metrics": {
+        "apogee_m": 0.011416645479498153,
+        "apogee_time_s": 0.1401321128654817,
+        "max_speed_mps": 0.12223582646596991,
+        "max_accel_mps2": 13.981813458284245,
+        "peak_thrust_n": 19.08517537055799,
+        "thrust_phase_duration_s": 0.0,
+        "water_exhausted_speed_mps": 0.0,
+        "water_impulse_ns": 1.7939542452750499,
+        "air_impulse_ns": 0.0,
+        "rail_exit_speed_mps": 0.0,
+        "descent_speed_mps": 0.0,
+        "landing_east_m": 0.0,
+        "landing_north_m": 0.0,
+        "landing_distance_m": 0.0,
+        "flight_time_s": 0.1401321128654817,
+        "liftoff_mass_kg": 1.3650000000000002,
+        "water_mass_kg": 1.1250000000000002
+      }
+    },
+    {
+      "name": "does_not_lift",
+      "input": {
+        "target": 20,
+        "volume": 3,
+        "fill": 80,
+        "pressure": 50,
+        "dryMass": 500,
+        "payload": 200,
+        "nozzle": 5,
+        "parachute": 0.6,
+        "budget": 3000
+      },
+      "metrics": {
+        "apogee_m": 0.0,
+        "apogee_time_s": 0.0,
+        "max_speed_mps": 0.0,
+        "max_accel_mps2": 0.6333856156431034,
+        "peak_thrust_n": 1.9634954084936207,
+        "thrust_phase_duration_s": 0.0,
+        "water_exhausted_speed_mps": 0.0,
+        "water_impulse_ns": 0.0,
+        "air_impulse_ns": 0.0,
+        "rail_exit_speed_mps": 0.0,
+        "descent_speed_mps": 0.0,
+        "landing_east_m": 0.0,
+        "landing_north_m": 0.0,
+        "landing_distance_m": 0.0,
+        "flight_time_s": 0.0,
+        "liftoff_mass_kg": 3.1000000000000005,
+        "water_mass_kg": 2.4000000000000004
+      }
+    },
+    {
+      "name": "light_payload",
+      "input": {
+        "target": 20,
+        "volume": 1.5,
+        "fill": 35,
+        "pressure": 400,
+        "dryMass": 80,
+        "payload": 0,
+        "nozzle": 12,
+        "parachute": 0.6,
+        "budget": 3000
+      },
+      "metrics": {
+        "apogee_m": 31.759732588204756,
+        "apogee_time_s": 2.201631848852968,
+        "max_speed_mps": 43.77134603200687,
+        "max_accel_mps2": 427.3720316475176,
+        "peak_thrust_n": 90.47786842338604,
+        "thrust_phase_duration_s": 0.20525415450666168,
+        "water_exhausted_speed_mps": 39.78410273855625,
+        "water_impulse_ns": 12.369669460939743,
+        "air_impulse_ns": 0.4337497420475838,
+        "rail_exit_speed_mps": 22.383847243046066,
+        "descent_speed_mps": 1.7391687194633096,
+        "landing_east_m": 0.0,
+        "landing_north_m": 0.0,
+        "landing_distance_m": 0.0,
+        "flight_time_s": 20.46307608527271,
+        "liftoff_mass_kg": 0.605,
+        "water_mass_kg": 0.525
+      }
+    },
+    {
+      "name": "small_chute",
+      "input": {
+        "target": 20,
+        "volume": 1.5,
+        "fill": 35,
+        "pressure": 330,
+        "dryMass": 180,
+        "payload": 200,
+        "nozzle": 9,
+        "parachute": 0.3,
+        "budget": 3000
+      },
+      "metrics": {
+        "apogee_m": 12.06775478292835,
+        "apogee_time_s": 1.7708842028312766,
+        "max_speed_mps": 13.815179892439046,
+        "max_accel_mps2": 46.39490145329016,
+        "peak_thrust_n": 41.98738581522758,
+        "thrust_phase_duration_s": 0.40732172129952815,
+        "water_exhausted_speed_mps": 13.166450573089906,
+        "water_impulse_ns": 11.013066801416588,
+        "air_impulse_ns": 0.3474029154765497,
+        "rail_exit_speed_mps": 9.720305855695143,
+        "descent_speed_mps": 7.577277793125616,
+        "landing_east_m": 0.0,
+        "landing_north_m": 0.0,
+        "landing_distance_m": 0.0,
+        "flight_time_s": 3.363508244393625,
+        "liftoff_mass_kg": 0.905,
+        "water_mass_kg": 0.525
+      }
+    }
+  ]
+}

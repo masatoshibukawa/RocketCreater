@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="条件を入力し、ペットボトルロケットの簡易飛行解析・候補比較・結果保存を試せるRocketWright機能デモ。">
+  <title>RocketWright | 機能デモ</title>
+  <link rel="stylesheet" href="../workbench.css">
+  <link rel="stylesheet" href="functional.css">
+  <script type="module" src="functional.mjs"></script>
+</head>
+<body>
+  <div class="demo-banner"><strong>機能デモ</strong><span>入力値からブラウザで簡易計算 · ペットボトル / 海面 / 無風 / 鉛直</span><a class="quiet-button" href="../">画面デモへ</a></div>
+  <header class="topbar"><span class="wordmark" aria-label="RocketWright">RW</span><strong class="functional-title">ペットボトル / 飛行解析</strong><span class="top-spacer"></span><button class="quiet-button" id="reset">最初から</button></header>
+  <main class="functional-shell">
+    <aside class="input-panel" aria-label="設計条件">
+      <div class="panel-heading"><h1>設計条件</h1><span class="heading-spacer"></span><span>INPUT</span></div>
+      <form id="conditions">
+        <p class="input-intro">条件を変えて解析し、目標との差を確かめます。</p>
+        <label>目標高度 <span>m</span><input name="target" type="number" min="1" max="200" step="any" value="20" required></label>
+        <label>ボトル容量 <span>L</span><input name="volume" type="number" min="0.5" max="3" step="any" value="1.5" required></label>
+        <label>水の充填率 <span>%</span><input name="fill" type="number" min="5" max="80" step="any" value="35" required></label>
+        <label>初期ゲージ圧 <span>kPa</span><input name="pressure" type="number" min="50" max="400" step="any" value="330" required></label>
+        <label>乾燥質量 <span>g</span><input name="dryMass" type="number" min="50" max="500" step="any" value="180" required></label>
+        <label>搭載質量 <span>g</span><input name="payload" type="number" min="0" max="200" step="any" value="60" required></label>
+        <label>ノズル径 <span>mm</span><input name="nozzle" type="number" min="5" max="16" step="any" value="9" required></label>
+        <label>パラシュート径 <span>m</span><input name="parachute" type="number" min="0.3" max="1.2" step="any" value="0.6" required></label>
+        <label>材料予算 <span>円</span><input name="budget" type="number" min="0" max="100000" step="any" value="3000" required></label>
+        <button class="action-primary" type="submit">この条件で解析</button>
+        <button class="action-secondary" id="compare" type="button">水量を変えた9案を比較</button>
+        <div class="preset-actions"><button type="button" id="sample">標準例で試す</button><button type="button" id="budget-example">予算不足の例</button></div>
+        <p class="input-note">入力範囲は計算デモの範囲です。ボトル・発射装置の許容値を示すものではありません。</p>
+      </form>
+    </aside>
+    <section class="result-panel" aria-label="解析結果">
+      <nav class="functional-tabs" aria-label="結果の表示" role="tablist"><button role="tab" aria-selected="true" aria-controls="result-view" id="tab-result" data-tab="result">飛行結果</button><button role="tab" aria-selected="false" aria-controls="shape-view" id="tab-shape" data-tab="shape">概形と条件</button><button role="tab" aria-selected="false" aria-controls="report-view" id="tab-report" data-tab="report">レポート</button></nav>
+      <p id="dirty-note" class="dirty-note" role="status" hidden>入力が変わりました。表示中の結果は前回の条件です。再解析すると更新されます。</p>
+      <p id="error" role="alert" class="functional-error" hidden></p>
+      <div id="welcome" class="welcome"><span class="welcome-mark" aria-hidden="true">↟</span><h2>条件を変えて、結果を確かめる</h2><p>左の「この条件で解析」を押してください。<br>機体の簡易飛行計算、条件判定、グラフ、結果保存まで試せます。</p><p class="input-note">小さな画面では、設計条件の下に結果を表示します。</p></div>
+      <div id="results" hidden>
+        <section id="result-view" role="tabpanel" aria-labelledby="tab-result" data-pane="result"><div class="result-heading"><div><p class="eyebrow">NOMINAL FLIGHT</p><h2>飛行結果</h2></div><span id="verdict" class="verdict"></span></div><div id="metrics" class="functional-metrics"></div><svg id="trajectory" role="img" aria-label="飛行時間と高度の計算結果"></svg><p class="chart-caption">青線：計算高度 / 帯：目標高度の±10% / 最高点でパラシュート開傘を仮定</p><p id="run-conditions" class="run-conditions"></p></section>
+        <section id="shape-view" role="tabpanel" aria-labelledby="tab-shape" data-pane="shape" hidden><p class="eyebrow">CONCEPT / INPUTS</p><h2>概形と解析条件</h2><div class="shape-layout"><div id="shape"></div><dl id="input-summary" class="input-summary"></dl></div><p class="input-note">概形は表示用の近似です。製造用CADや印刷用STLではありません。</p></section>
+        <section id="report-view" role="tabpanel" aria-labelledby="tab-report" data-pane="report" hidden><p class="eyebrow">REPORT / RESULTS</p><h2>計算の記録</h2><pre id="report"></pre></section>
+        <div class="exports"><h3>この結果を保存</h3><div><button data-export="json">結果 JSON ↓</button><button data-export="csv">飛行データ CSV ↓</button><button data-export="md">レポート MD ↓</button><button data-export="svg">概形 SVG ↓</button></div></div>
+      </div>
+      <details class="model-notes"><summary>計算モデルと確認範囲</summary><p>既存の水ロケットモデルの式をブラウザで計算します。水噴射・断熱膨張・空気の残留インパルス・重力・抗力・定常降下を扱います。</p><p>一定Cd=0.8、残留空気の効率0.25、フィンあり、海面・無風・鉛直、最高点で開傘を仮定。姿勢安定性、CFD、材料強度、製造用CAD、実機確認は含みません。費用2,300円は既存モデルの暫定値です。</p><p>この機能デモはペットボトルの簡易解析を対象にしています。Claudeとの対話、3Dプリンター制御、動画の新規生成は含みません。</p><a href="https://github.com/masatoshibukawa/RocketCreater" target="_blank" rel="noopener noreferrer">ソースとモデルの説明 ↗</a></details>
+    </section>
+    <aside class="workflow-panel" aria-label="判定と候補比較"><div class="panel-heading"><h2>解析と比較</h2><span class="heading-spacer"></span><span>WORKFLOW</span></div><div class="workflow-content"><p id="progress" role="status" aria-live="polite">条件の入力を待っています</p><h3>条件判定</h3><div id="checks"><p class="input-note">解析後に判定と数値を表示します。</p></div><h3>比較候補</h3><p class="input-note">水量比較では、他の入力を固定し、目標高度に近い順で9案を並べます。</p><div id="candidates"><p class="input-note">まだ候補はありません。</p></div><h3>この画面で試せること</h3><ol class="workflow-list"><li>条件を入力して解析</li><li>未達の理由と数値を確認</li><li>水の充填率を変えて比較</li><li>候補を選び、結果を保存</li></ol></div></aside>
+  </main>
+  <footer class="statusbar"><span class="connection-dot"></span><span>RocketWright</span><span class="status-divider"></span><span>機能デモ / ブラウザ内計算</span><span class="top-spacer"></span><span>実機の確認前</span></footer>
+</body>
+</html>

@@ -4,11 +4,11 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = fileURLToPath(new URL("./dist/", import.meta.url));
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8" };
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8" };
 const server = createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, "http://127.0.0.1").pathname);
-    const filename = path.resolve(root, `.${pathname === "/" ? "/index.html" : pathname}`);
+    const filename = path.resolve(root, `.${pathname.endsWith("/") ? pathname + "index.html" : pathname}`);
     const relative = path.relative(root, filename);
     if (relative.startsWith("..") || path.isAbsolute(relative)) {
       response.writeHead(403).end();

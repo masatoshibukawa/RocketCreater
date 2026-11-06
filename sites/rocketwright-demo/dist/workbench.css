@@ -20,6 +20,7 @@ dialog{width:min(1140px,95vw);max-height:90dvh;background:#252525;border:1px sol
 .demo-banner strong{font-weight:600;color:#e0eaff;white-space:nowrap}
 .demo-banner>span{flex:1;color:#c0cce0}
 .demo-banner .quiet-button{font-size:11px;min-height:28px;border-color:#62718a}
+.functional-link{text-decoration:none;color:#d8e4ff}
 .demo-questions{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
 .demo-questions button{border:1px solid #505050;border-radius:3px;padding:6px 8px;font-size:11px}
 #demo-guide-dialog{max-width:630px}
@@ -28,6 +29,6 @@ dialog{width:min(1140px,95vw);max-height:90dvh;background:#252525;border:1px sol
 .demo-steps p{color:#bdbdbd;margin:4px 0}
 .demo-limit{padding:12px;background:#1c2939;color:#d0daed}
 @media(max-width:850px){.left-panel,.chat-panel{top:calc(39px + var(--demo-height))}.demo-banner{height:var(--demo-height);gap:8px}.demo-banner>span{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:10px}}
-@media(max-width:500px){:root{--demo-height:58px}.demo-banner{padding-inline:8px;gap:6px;flex-wrap:wrap;align-content:center}.demo-banner strong{font-size:10px}.demo-banner>span{flex-basis:calc(100% - 110px);font-size:9px}.demo-banner .quiet-button{min-height:24px;font-size:10px}.demo-banner #demo-guide{margin-left:auto}.topbar .quiet-button[data-download]{font-size:9px}}
+@media(max-width:500px){:root{--demo-height:70px}.demo-banner{padding-inline:8px;gap:6px;flex-wrap:wrap;align-content:center}.demo-banner strong{font-size:10px}.demo-banner>span{flex-basis:calc(100% - 110px);font-size:9px}.demo-banner .quiet-button{min-height:24px;font-size:10px}.demo-banner #demo-guide{margin-left:auto}.topbar .quiet-button[data-download]{font-size:9px}}
 @media(pointer:coarse) and (max-width:850px){.left-panel,.chat-panel{top:calc(44px + var(--demo-height))}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
