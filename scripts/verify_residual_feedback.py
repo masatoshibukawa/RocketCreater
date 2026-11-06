@@ -95,6 +95,7 @@ def run(template, root, runtime):
                         signature=r["signature"],
                         transition_id=r["transition_id"],
                         delta=r["delta"],
+                    cost_s=r["cost_s"],
                         residual_m=r["prediction_residual_m"],
                         prediction_sha256=r["prediction_evidence"]["sha256"],
                         before_sha256=r["before_evidence"]["sha256"],
@@ -114,7 +115,7 @@ def run(template, root, runtime):
         automatic_weight_training=False,
         general_efficiency_improvement_proved=False,
         physical_qualification=False,
-        scope="New regression campaigns, separate from the exhausted multi-start search budget",
+        scope="Separate regression budget; not a continuation/reset of the multi-start campaign",
     )
     write_json(root / "report.json", result)
     return result

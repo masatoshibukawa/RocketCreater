@@ -10,8 +10,7 @@ from pathlib import Path
 from rocketwright.adaptive import Campaign, Requirements, digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.agent.workbench import Conflict
-from rocketwright.analysis import catalog, experience, planner, policy
-from rocketwright.analysis.aero_accuracy import holdout
+from rocketwright.analysis import catalog, experience, planner, policy, refinement
 from rocketwright.analysis.record import scopes
 from rocketwright.analysis.runtime import Runtime, run
 from rocketwright.analysis.schema import Precision, SearchLimits
@@ -150,22 +149,7 @@ class Harness:
                 action.uses.append("flight_numerics")
             if key.startswith("cfd_"):
                 action.uses.append("cfd_numerics")
-                cells = runtime.cfd_cells_coarse if key == "cfd_coarse" else runtime.cfd_cells_fine
-                if key == "cfd_audit":
-                    cells += 4
-                # Conservative arrays/workspace estimate, recomputed for size and numerical level.
-                width = runtime.cfd_width + (2 if key == "cfd_audit" else 0)
-                action.memory_gib = cells**3 * width**2 * 18 * 512 / 1024**3
-                action.cost_s *= (
-                    (cells / 12) ** 4
-                    * runtime.cfd_times
-                    / 40
-                    * (width / 10) ** 2
-                    * 0.075
-                    / runtime.cfd_lattice_speed
-                )
-                if key != "cfd_audit":
-                    action.cost_s *= len(runtime.cfd_speeds) * len(runtime.cfd_angles) / 14
+                refinement.scale_cfd_action(key, action, runtime)
                 action.bounds["air_speed_mps"] = (0, 35)
                 action.uses.append("air_speed_mps")
                 action.bounds.update(body_length_diameters=(0, 12), fin_radius_diameters=(0, 4.25))
@@ -449,8 +433,24 @@ class Harness:
                     addresses=[failure],
                     scope="Bounded host numerical refinement",
                 )
-        for key, row in choices["offered"].items():
+        for key, row in list(choices["offered"].items()):
             if not key.startswith("refine/"):
+                continue
+            followup = refinement.followup(
+                catalog.pool(precision), runtime, key, available=set(c.pool.actions)
+            )
+            row.update(followup)
+            rejected = []
+            if 1 + followup["estimated_followup_cost_s"] > c.remaining_s:
+                rejected.append("refinement_completion_budget")
+            if followup["required_memory_gib"] > limits.memory_gib:
+                rejected.append("refinement_completion_memory")
+            if followup["required_actions"] > limits.max_actions - len(a["decisions"]):
+                rejected.append("refinement_completion_actions")
+            if rejected:
+                choices["rejected"][key] = rejected
+                choices.setdefault("refinement_plans", {})[key] = followup
+                del choices["offered"][key]
                 continue
             history = [
                 r
@@ -726,6 +726,7 @@ class Harness:
             return
         selection_context = dict(
             version=state["version"],
+            remaining_s=c.remaining_s,
             metrics=c.metrics,
             current_screen_metrics=self._snapshot(c),
             unmet=choices["unmet"],
@@ -760,7 +761,9 @@ class Harness:
             a["status"] = "planner_failed"
             self._persist(c)
             return
-        if c.remaining_s < choices["offered"][key]["cost_s"]:
+        chosen = choices["offered"][key]
+        if c.remaining_s < chosen["cost_s"] + chosen.get("estimated_followup_cost_s", 0):
+            decision["errors"].append("followup_budget_after_selection")
             a["status"] = "budget_exhausted"
             self._persist(c)
             return
@@ -779,26 +782,9 @@ class Harness:
                     remaining_s=c.remaining_s,
                     history_index=len(c.history),
                 )
-            r = a["runtime"]
-            if key == "refine/cfd":
-                r["cfd_cells_coarse"], r["cfd_cells_fine"] = (
-                    r["cfd_cells_fine"],
-                    r["cfd_cells_fine"] + 4,
-                )
-            elif key == "refine/fem":
-                r["fem_level"] += 1
-            elif key == "refine/averaging":
-                r["cfd_times"] = min(100, r["cfd_times"] * 1.5)
-            elif key == "refine/time":
-                r["flight_step_s"] /= 2
-            elif key == "refine/table":
-                speed, angle = holdout(r["cfd_speeds"], r["cfd_angles"])
-                r["cfd_speeds"] = sorted(set(r["cfd_speeds"]) | {speed})
-                r["cfd_angles"] = sorted(set(r["cfd_angles"]) | {angle})
-            elif key == "refine/domain":
-                r["cfd_width"] = min(14, r["cfd_width"] + 2)
-            elif key == "refine/lattice":
-                r["cfd_lattice_speed"] = max(0.025, r["cfd_lattice_speed"] / 2)
+            a["runtime"] = refinement.updated(
+                Runtime.model_validate(a["runtime"]), key
+            ).model_dump()
             c.remaining_s -= 1
             self._persist(c)
         else:

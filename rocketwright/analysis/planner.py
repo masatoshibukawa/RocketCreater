@@ -21,6 +21,7 @@ def prompt_view(offered, context, max_chars=9000):
             k: context.get(k)
             for k in (
                 "version",
+                "remaining_s",
                 "metrics",
                 "current_screen_metrics",
                 "unmet",
@@ -52,7 +53,7 @@ def prompt_view(offered, context, max_chars=9000):
             score=round(row.get("score", 0), 3),
             cost_s=round(
                 (history.get("mean_cost_s") or row.get("estimated_followup_cost_s", 0))
-                if row.get("method") == "new_design_revision"
+                if "estimated_followup_cost_s" in row
                 else row.get("cost_s", 0),
                 2,
             ),
