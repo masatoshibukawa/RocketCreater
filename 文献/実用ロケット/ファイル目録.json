@@ -1,0 +1,149 @@
+{
+  "checked_on": "2026-11-07",
+  "files": [
+    {
+      "path": "原本/LV003-H3-brochure.pdf",
+      "url": "https://www.jaxa.jp/projects/pr/brochure/pdf/01/rocket09.pdf",
+      "bytes": 2473717,
+      "sha256": "7ce15b108f5490f6c974a243e1166b6f0d5adedf084bc966f98e34b97511628e",
+      "pages": 2,
+      "source_id": "LV003",
+      "credit": "JAXA",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.jaxa.jp/policy_j.html",
+        "conditions": "一般利用規程は複製・配布・公衆送信に事前許可を求める。今回のGit公開に適用できる個別許諾は未確認。"
+      }
+    },
+    {
+      "path": "原本/LV004-H3-PDR-2016.pdf",
+      "url": "https://www.jaxa.jp/press/2016/06/files/20160614_h3_01_j.pdf",
+      "bytes": 1781606,
+      "sha256": "cbbd389b92caca019245214109f97822fc4f0e6a99faf09bd04ea571441bd64f",
+      "pages": 16,
+      "source_id": "LV004",
+      "credit": "JAXA",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.jaxa.jp/policy_j.html",
+        "conditions": "一般利用規程は複製・配布・公衆送信に事前許可を求める。今回のGit公開に適用できる個別許諾は未確認。"
+      }
+    },
+    {
+      "path": "原本/LV005-H3-development-2017-ja.pdf",
+      "url": "https://www.mhi.com/jp/technology/review/sites/g/files/jwhtju2326/files/tr/pdf/544/544030.pdf",
+      "bytes": 2806519,
+      "sha256": "fbf4ce3d5bd025c7f388ac39300f5bbf229721afa739d35884aada7ccad2f102",
+      "pages": 8,
+      "source_id": "LV005",
+      "credit": "三菱重工業（奈良登喜雄ほか）",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.mhi.com/jp/technology/review/sites/g/files/jwhtju2326/files/tr/pdf/544/544030.pdf",
+        "conditions": "原本全体の公開再配布許諾を確認できないためローカル限定。閲覧可能であることだけでは再配布可能としない。"
+      }
+    },
+    {
+      "path": "原本/LV005-H3-development-2017-en.pdf",
+      "url": "https://www.mhi.com/technology/review/sites/g/files/jwhtju2326/files/tr/pdf/e544/e544032.pdf",
+      "bytes": 3740138,
+      "sha256": "e08c33f6b4229745f83e659751bafe44acded2677ea6e4c68fe569e98e53527c",
+      "pages": 8,
+      "source_id": "LV005",
+      "credit": "三菱重工業（奈良登喜雄ほか）",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.mhi.com/jp/technology/review/sites/g/files/jwhtju2326/files/tr/pdf/544/544030.pdf",
+        "conditions": "原本全体の公開再配布許諾を確認できないためローカル限定。閲覧可能であることだけでは再配布可能としない。"
+      }
+    },
+    {
+      "path": "原本/LV006-H3-development-2021-en.pdf",
+      "url": "https://www.mhi.com/technology/review/sites/g/files/jwhtju2326/files/tr/pdf/e584/e584040.pdf",
+      "bytes": 2291332,
+      "sha256": "7c053d2431ccc00f829d346729fe872db0b8af19dc6201409087648af95f6186",
+      "pages": 8,
+      "source_id": "LV006",
+      "credit": "Mitsubishi Heavy Industries（Y. Mihara et al.）",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.mhi.com/technology/review/sites/g/files/jwhtju2326/files/tr/pdf/e584/e584040.pdf",
+        "conditions": "原本全体の公開再配布許諾を確認できないためローカル限定。閲覧可能であることだけでは再配布可能としない。"
+      }
+    },
+    {
+      "path": "原本/LV007-H3-TF2-press-kit-2024.pdf",
+      "url": "https://www.rocket.jaxa.jp/rocket/h3/tf2_special/file/H3TF2_PressKit.pdf",
+      "bytes": 12432835,
+      "sha256": "803ca3e8c3f585a807119d965a2dfba8409d75b753249936a7c921d8058417de",
+      "pages": 134,
+      "source_id": "LV007",
+      "credit": "JAXA",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.jaxa.jp/policy_j.html",
+        "conditions": "一般利用規程は複製・配布・公衆送信に事前許可を求める。今回のGit公開に適用できる個別許諾は未確認。"
+      }
+    },
+    {
+      "path": "原本/LV008-H3-evolution-2025-ja.pdf",
+      "url": "https://www.mhi.com/jp/technology/review/sites/g/files/jwhtju2326/files/2025-10/624120.pdf",
+      "bytes": 3062209,
+      "sha256": "33bbf8a63e5800e16f0e821ded461f650c15959f1d7eb4f4cd67b66df440a371",
+      "pages": 6,
+      "source_id": "LV008",
+      "credit": "三菱重工業（志村康治ほか）",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.mhi.com/jp/technology/review/sites/g/files/jwhtju2326/files/2025-10/624120.pdf",
+        "conditions": "原本全体の公開再配布許諾を確認できないためローカル限定。閲覧可能であることだけでは再配布可能としない。"
+      }
+    },
+    {
+      "path": "原本/LV008-H3-evolution-2025-en.pdf",
+      "url": "https://www.mhi.com/technology/review/sites/g/files/jwhtju2326/files/2025-12/e624120.pdf",
+      "bytes": 2921903,
+      "sha256": "6ce7f2684d95f5efc743630e8bed2ab43839aaa1ec47ec86e09101c33c38f123",
+      "pages": 7,
+      "source_id": "LV008",
+      "credit": "三菱重工業（志村康治ほか）",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.mhi.com/jp/technology/review/sites/g/files/jwhtju2326/files/2025-10/624120.pdf",
+        "conditions": "原本全体の公開再配布許諾を確認できないためローカル限定。閲覧可能であることだけでは再配布可能としない。"
+      }
+    },
+    {
+      "path": "原本/LV009-H3-papercraft.pdf",
+      "url": "https://www.rocket.jaxa.jp/assets/img/column/kids/data/h3_papercraft.pdf",
+      "bytes": 1377115,
+      "sha256": "9afd109db07b9a4081110555ffde86074d98ff5df0ffe1bdcd4e4f56c4555c5a",
+      "pages": 6,
+      "source_id": "LV009",
+      "credit": "JAXA",
+      "checked_on": "2026-11-07",
+      "redistribution": {
+        "status": "local_only",
+        "license": "再配布許諾未確認",
+        "evidence": "https://www.jaxa.jp/policy_j.html",
+        "conditions": "一般利用規程は複製・配布・公衆送信に事前許可を求める。今回のGit公開に適用できる個別許諾は未確認。"
+      }
+    }
+  ]
+}
