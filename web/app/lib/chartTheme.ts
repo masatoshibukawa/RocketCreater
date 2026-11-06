@@ -1,6 +1,6 @@
 /** Recharts styling shared by flight and dispersion charts in the dark workshop. */
 
-export const AXIS_STYLE = { fill: "#b3bac5", fontSize: 12 };
+export const AXIS_STYLE = { fill: "#b3bac5", fontSize: 14 };
 export const GRID_STROKE = "#3b4655";
 export const TOOLTIP_STYLE = {
   backgroundColor: "#202832",

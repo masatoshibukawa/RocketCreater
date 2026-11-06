@@ -23,9 +23,7 @@ polling continues through connection loss and tab changes while its uncertainty 
 
 Display and motion settings are saved locally. Reduced-motion preferences stop the guide
 loops and model auto-rotation; manual model rotation remains available. Hiding the guides
-unmounts their renderer. Hidden documents suspend the guide loop. WebGL failure shows
-a static illustration and the same textual status. Renderer resources are disposed on unmount.
-
+unmounts their renderer. Hidden documents suspend the guide loop.
 ## Verification
 
 From `web`, with Node 24 or newer for native TypeScript stripping:
