@@ -27,6 +27,26 @@ def assess_requirements(spec, result):
             observed=result.metrics,
         )
     ]
+    if req:
+        observed = result.metrics["apogee_m"]
+        passed = (
+            observed >= req.target_altitude_m
+            if spec.altitude_rule == "minimum"
+            else abs(observed - req.target_altitude_m) <= 0.1 * req.target_altitude_m
+        )
+        rows.append(
+            dict(
+                id="altitude_goal",
+                label="高度の要求",
+                status="pass" if passed else "fail",
+                required=req.target_altitude_m,
+                observed=observed,
+                unit="m",
+                reason="指定した最低高度で判定"
+                if spec.altitude_rule == "minimum"
+                else "目標の±10%以内で判定",
+            )
+        )
     rows.append(
         dict(
             id="payload",

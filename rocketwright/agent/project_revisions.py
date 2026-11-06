@@ -35,7 +35,7 @@ def difference(before, after):
             groups.update(("mass", "structure", "flight", "assembly", "manual", "video", "ZIP"))
         elif key.startswith(("design.", "env.", "other_dry_mass_g", "measured_printed_mass_g")):
             groups.update(("mass", "flight", "structure", "manual", "video", "ZIP"))
-        elif key.startswith("requirement."):
+        elif key.startswith("requirement.") or key=="altitude_rule":
             groups.update(("requirements", "confirmation", "manual", "video", "ZIP"))
         else:
             groups.update(("assembly", "requirements", "manual", "video", "ZIP"))

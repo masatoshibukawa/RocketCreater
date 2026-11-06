@@ -91,6 +91,7 @@ def compile_record(spec, cad_metrics):
         body_diameter=g.body_diameter_mm,
         nose_length=g.nose_length_mm,
         bottle_length=g.body_height_mm,
+        skirt_length=0,
         fin_root=g.fin_root_mm,
         fin_tip=g.fin_tip_mm,
         fin_span=g.fin_span_mm,
@@ -178,6 +179,7 @@ def scopes(spec, *, precision, code_hash):
             requirements=dict(
                 requirement=spec.requirement.model_dump() if spec.requirement else None,
                 precision=precision.model_dump(),
+                altitude_rule=spec.altitude_rule,
             ),
             code=code_hash,
         ).items()

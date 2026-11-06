@@ -185,10 +185,23 @@ class Harness:
         confirmation = self.data(c, "confirm")
         if confirmation:
             unmet = confirmation["unmet"]
+            if (
+                "altitude" in unmet
+                and confirmation["flight"]["apogee_m"] > spec.requirement.target_altitude_m
+            ):
+                unmet = [*unmet, "altitude_high"]
         else:
             screen = self.data(c, "screen")
-            if screen and screen["apogee_m"] < spec.requirement.target_altitude_m:
+            if screen and (
+                screen["apogee_m"]
+                < spec.requirement.target_altitude_m
+                * (1 if spec.altitude_rule == "minimum" else 0.9)
+                or spec.altitude_rule == "band_10pct"
+                and screen["apogee_m"] > 1.1 * spec.requirement.target_altitude_m
+            ):
                 unmet = ["altitude"]
+                if screen["apogee_m"] > spec.requirement.target_altitude_m:
+                    unmet.append("altitude_high")
         # Numerical uncertainty must be reduced before optimizing against an unreliable prediction.
         numerical = set(unmet) & {"aero_grid", "fem_mesh", "temporal"}
         proposals = {} if numerical else policy.proposals(spec, limits, unmet, a["visited"])

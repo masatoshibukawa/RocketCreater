@@ -71,6 +71,7 @@ class FixtureHarness(Harness):
             if kind == "confirm":
                 value.update(
                     unmet=[] if self.confirmation else ["altitude"],
+                    flight={"apogee_m": 10},
                     metrics={"criteria_met": self.confirmation},
                 )
             path = folder / "data.json"

@@ -28,6 +28,7 @@ export interface ProductionSpec {
   requirement: Record<string, unknown> | null; env: Record<string, unknown>;
   other_dry_mass_g: number; measured_printed_mass_g: number | null; material: string;
   equipment?: ProjectEquipment;
+  altitude_rule?: "band_10pct" | "minimum";
 }
 export interface ProjectFile { name: string; key: string; kind: string; url: string; version: number; sha256: string }
 export function projectFileLabel(name: string): string {

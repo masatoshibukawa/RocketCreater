@@ -37,6 +37,32 @@ class CampaignRequest(Revision):
     limits: SearchLimits = Field(default_factory=SearchLimits)
 
 
+class IntentRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    text: str = Field(min_length=1, max_length=4000)
+    project_id: str | None = None
+
+
+class AcceptIntent(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    ticket_id: str
+    candidate_id: str
+
+
+@router.post("/intent")
+def intent(request: IntentRequest):
+    from rocketwright.agent.project_intake import propose
+
+    return call(propose, DEFAULT_PROJECTS, request.text, request.project_id)
+
+
+@router.post("/intent/accept")
+def accept_intent(request: AcceptIntent):
+    from rocketwright.agent.project_intake import accept
+
+    return call(accept, DEFAULT_PROJECTS, request.ticket_id, request.candidate_id)
+
+
 @router.post("/{project_id}/adaptive/start")
 def adaptive_start(project_id: str, request: CampaignRequest):
     return call(

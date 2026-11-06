@@ -397,7 +397,13 @@ class Worker:
         static = self.assembly["cp_mm"] - self.assembly["wet_cg_mm"]
         static /= self.spec.geometry.body_diameter_mm
         checks = dict(
-            altitude=target is not None and min(base["apogee_m"], result["apogee_m"]) >= target,
+            altitude=target is not None
+            and (
+                min(base["apogee_m"], result["apogee_m"]) >= target
+                if self.spec.altitude_rule == "minimum"
+                else max(abs(base["apogee_m"] - target), abs(result["apogee_m"] - target))
+                <= 0.1 * target
+            ),
             attitude=max(
                 base["ascent_incidence_deg"],
                 result["ascent_incidence_deg"],

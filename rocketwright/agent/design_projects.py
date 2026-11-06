@@ -13,6 +13,7 @@ import time
 import uuid
 import zipfile
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -80,6 +81,7 @@ class DesignSpec(BaseModel):
     )
     assumptions: Assumptions = Field(default_factory=Assumptions)
     equipment: Equipment = Field(default_factory=Equipment)
+    altitude_rule: Literal["band_10pct", "minimum"] = "band_10pct"
 
     @model_validator(mode="after")
     def physical_envelope(self):
@@ -431,8 +433,26 @@ class DesignProjects:
                     / 1000
                 }
             )
-            target = spec.requirement.target_altitude_m if spec.requirement else None
+            target = (
+                spec.requirement.target_altitude_m
+                if spec.requirement and spec.altitude_rule == "band_10pct"
+                else None
+            )
             result = water.simulate(design, spec.env, target_apogee_m=target)
+            if (
+                spec.requirement
+                and spec.altitude_rule == "minimum"
+                and result.metrics["apogee_m"] < spec.requirement.target_altitude_m
+            ):
+                result = result.model_copy(
+                    update={
+                        "success": False,
+                        "failure_reasons": [
+                            *result.failure_reasons,
+                            "要求した最低高度に達していません。",
+                        ],
+                    }
+                )
             frame = airframe(design)
             (cad_dir / "analysis-envelope-m.stl").write_bytes(frame.stl_bytes())
             state["analysis"] = dict(

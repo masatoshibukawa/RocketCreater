@@ -38,6 +38,12 @@ export default function DesignProduction({ source, mode, onProjectChange, active
     setProject(value); onProjectChange(value);
     try { localStorage.setItem(STORAGE, value.id); } catch { /* Storage may be unavailable. */ }
   }, [onProjectChange]);
+  useEffect(() => {
+    if(!projectId || projectId===project?.id) return;
+    const controller=new AbortController();
+    void projectRequest<DesignProject>(`/${projectId}`,undefined,controller.signal).then(accept).catch(()=>{});
+    return ()=>controller.abort();
+  },[projectId,project?.id,accept]);
   const refreshList = useCallback(async () => {
     const data = await projectRequest<{ projects: typeof projects }>(); setProjects(data.projects);
   }, []);
@@ -126,6 +132,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
         {num("搭載質量 g", draft.design.payload_mass_kg*1000, value => setDraft({ ...draft, design: { ...draft.design, payload_mass_kg: value/1000 }, requirement: draft.requirement ? { ...draft.requirement, payload_mass_kg: value/1000 } : null }))}
         <label>目標高度 m（任意）<input type="number" min="1" step="any" value={Number(draft.requirement?.target_altitude_m) || ""} onChange={e => setDraft({ ...draft, requirement: e.target.value ? { goal_kind: "altitude", payload_mass_kg: draft.design.payload_mass_kg, budget_jpy: 3000, recovery_required: true, ...draft.requirement, target_altitude_m: Number(e.target.value) } : null })}/></label>
       </div>
+      <label>高度の判定<select value={draft.altitude_rule??"band_10pct"} onChange={e=>setDraft({...draft,altitude_rule:e.target.value as "minimum"|"band_10pct"})}><option value="band_10pct">目標の±10%以内</option><option value="minimum">指定した高度以上</option></select></label>
       <ProjectEquipmentEditor spec={draft} onChange={setDraft}/>
       <p className="wb-note">材料：{draft.material}。実測質量がないときは、同じCADの一様固体の質量で計算します。充填率による実際の部品質量や取付強度は未確認です。</p>
       {project ? <p className="wb-note">変更する寸法：{DIMENSIONS.filter(([key]) => draft.geometry[key] !== project.spec.geometry[key]).map(([, label]) => label).join("、") || "なし"}。質量・計算条件も保存した入力で再解析します。変更後はCAD・印刷・手順書・動画を新しい版から生成します。</p> : null}
