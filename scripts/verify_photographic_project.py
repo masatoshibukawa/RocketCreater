@@ -41,11 +41,13 @@ def main():
     if state["active"] or (not args.regenerate and any(f["kind"] == kind for f in state["files"])):
         raise ValueError("The project is busy or already has registered photographic outputs")
     asset_files()
-    directory = store.directory(args.project_id) / "video-photographic"
+    base_name = "video-photographic-preview" if args.quality == "preview" else "video-photographic"
+    directory = store.directory(args.project_id) / base_name
     plan_reused = bool(state.get("photographic_video_plan"))
-    pending = (state.get("photographic_video_plan") or {}).get("pending_directory")
+    pending_key = "pending_preview_directory" if args.quality == "preview" else "pending_directory"
+    pending = (state.get("photographic_video_plan") or {}).get(pending_key)
     checkpoint = store.directory(args.project_id) / pending if pending else directory
-    has_previous = any(f["kind"] == "photographic_video" for f in state["files"])
+    has_previous = any(f["kind"] == kind for f in state["files"])
     inputs = {f["key"]: f["sha256"] for f in state["files"] if f["kind"] in {"cad", "production"}}
     previous_videos = {
         f["key"]: f["sha256"]
@@ -147,6 +149,9 @@ def main():
             for p in directory.glob("*.mp4")
         ]
         result["cache"] = json.loads((directory / "render-cache.json").read_text())
+        result["cold_pixels"] = all(
+            clip["rendered"] == clip["frames"] for clip in result["cache"]["clips"].values()
+        )
         result["passed"] = result["verification"]["passed"]
     except Exception as error:
         result["error"] = str(error)

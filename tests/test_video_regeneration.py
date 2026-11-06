@@ -76,7 +76,8 @@ def test_regeneration_failure_preserves_old_movie_and_retry_uses_pending_directo
     assert state["version"] == 1
 
 
-def test_current_project_api_dispatches_explicit_regeneration(store, monkeypatch):
+@pytest.mark.parametrize("quality", ["final", "preview"])
+def test_current_project_api_dispatches_explicit_regeneration(store, monkeypatch, quality):
     from fastapi.testclient import TestClient
 
     import api.design_projects as routes
@@ -94,11 +95,16 @@ def test_current_project_api_dispatches_explicit_regeneration(store, monkeypatch
     with TestClient(app) as client:
         response = client.post(
             f"/design-projects/{state['id']}/render-video",
-            json={"revision": state["revision"], "style": "photographic", "regenerate": True},
+            json={
+                "revision": state["revision"],
+                "style": "photographic",
+                "regenerate": True,
+                "quality": quality,
+            },
         )
     assert response.status_code == 202
     assert calls == [
-        (state["id"], state["revision"], "render_video", "photographic", True, "final")
+        (state["id"], state["revision"], "render_video", "photographic", True, quality)
     ]
 
 
