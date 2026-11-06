@@ -8,7 +8,7 @@ interface StatusStripProps {
   attemptCount: number;
 }
 
-/** App name and a one-line status (待機中 / 設計中 (試行 n) / 完了 / エラー). */
+/** Compact design-run status in the workshop footer; visual controls do not settle jobs. */
 export default function StatusStrip({ status, attemptCount }: StatusStripProps) {
   const { task } = useWorkshop();
   let label: string;

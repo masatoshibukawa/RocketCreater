@@ -197,6 +197,13 @@ function DesignScreen() {
   const printKey = displayed ? designKey(displayed.design) : "";
   const printFiles = printed?.key === printKey ? printed.files : [];
   const handlePrintGenerated = useCallback((files: { name: string; url: string }[]) => setPrinted({ key: printKey, files }), [printKey]);
+  const viewingReferenceFilm = stage === "exports" && outputView === "video";
+  function closeTargets() { setLeftOpen(false); document.getElementById("target-toggle")?.focus(); }
+  function toggleTargets() {
+    if (leftOpen) { closeTargets(); return; }
+    setLeftOpen(true);
+    window.requestAnimationFrame(() => document.getElementById("workshop-targets")?.focus());
+  }
   const chooseStage = (next: WorkshopStage) => {
     setStage(next); setLeftOpen(false); setExpanded(false);
     setRightTab(next === "brief" ? "consult" : "explain");
@@ -236,8 +243,8 @@ function DesignScreen() {
         <span className="rail-spacer"/>
         <button className="rail-button" type="button" aria-label="設定を開く" onClick={() => settings.current?.showModal()}><WorkshopIcon name="settings"/></button>
       </nav>
-      <aside className={`workshop-left${leftOpen ? " is-open" : ""}`} aria-label="工程の対象">
-        <div className="dock-heading"><h1>{WORKSHOP_STAGES.find(s => s.id === stage)?.title ?? "設計例と資料"}</h1><button className="mobile-close icon-button" type="button" aria-label="対象一覧を閉じる" onClick={() => setLeftOpen(false)}><WorkshopIcon name="close" size={18}/></button></div>
+      <aside id="workshop-targets" tabIndex={-1} className={`workshop-left${leftOpen ? " is-open" : ""}`} aria-label="工程の対象" onKeyDown={e => { if (e.key === "Escape") { e.stopPropagation(); closeTargets(); } }}>
+        <div className="dock-heading"><h1>{WORKSHOP_STAGES.find(s => s.id === stage)?.title ?? "設計例と資料"}</h1><button className="mobile-close icon-button" type="button" aria-label="対象一覧を閉じる" onClick={closeTargets}><WorkshopIcon name="close" size={18}/></button></div>
         <div className="left-dock-scroll">
           <label className="case-selector">表示する案<select value={selectedId ?? ""} onChange={e => setSelectedId(e.target.value || null)}><option value="">最新の結果に追従</option>{stream.candidates.map((c, i) => <option key={c.source_id} value={c.source_id}>{c.seededFrom ? "参照の初期案" : `案 ${i + 1}`} · {c.source_id}</option>)}</select></label>
           {stage === "analysis" ? <div className="dock-list" role="group" aria-label="解析の表示">{([['aero','流体解析'],['flight','飛行と回収'],['chart','高度の推移']] as const).map(([id,label]) => <button key={id} type="button" className={analysisView === id ? "dock-row is-active" : "dock-row"} aria-pressed={analysisView === id} onClick={() => { setAnalysisView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "aero" ? "analysis" : "play"} size={18}/>{label}</button>)}</div> : null}
@@ -253,7 +260,7 @@ function DesignScreen() {
       </aside>
       <section className={`workshop-center${showCrew ? " has-crew" : ""}`} aria-label={`${stageLabel(stage)}の表示`}>
         <div className="workshop-toolbar">
-          <button className="btn mobile-target-toggle" type="button" onClick={() => setLeftOpen(!leftOpen)}>対象一覧</button>
+          <button id="target-toggle" className="btn mobile-target-toggle" type="button" aria-controls="workshop-targets" aria-expanded={leftOpen} onClick={toggleTargets}>対象一覧</button>
           {hasModel ? <div className="tool-tabs" role="group" aria-label="機体の表示"><button type="button" aria-pressed={modelView === "model"} onClick={() => setModelView("model")}><WorkshopIcon name="design" size={18}/>3D モデル</button><button type="button" aria-pressed={modelView === "drawing"} onClick={() => setModelView("drawing")}><WorkshopIcon name="exports" size={18}/>側面図</button></div> : <span className="toolbar-context"><WorkshopIcon name={stage}/>{stageLabel(stage)}</span>}
           <span className="toolbar-spacer"/>
           {hasModel && modelView === "model" ? <button className="icon-button" type="button" aria-label="機体全体を表示" disabled={!displayed} onClick={() => setFrameRequest(n => n+1)}><WorkshopIcon name="expand" size={18}/></button> : null}
@@ -287,9 +294,9 @@ function DesignScreen() {
       <aside ref={inspector} className={`workshop-right${rightOpen ? " is-open" : ""}`} aria-label="解説と設計の相談">
         <div className="inspector-tabs" role="group" aria-label="右パネルの表示">{([['explain','解説'],['history','履歴'],['consult','相談']] as const).map(([id,label]) => <button key={id} type="button" aria-pressed={rightTab === id} onClick={() => setRightTab(id)}>{label}</button>)}<button className="mobile-close icon-button" type="button" aria-label="解説と相談を閉じる" onClick={() => setRightOpen(false)}><WorkshopIcon name="close" size={18}/></button></div>
         <div className="inspector-scroll" hidden={rightTab !== "explain"}>
-          <div className="explanation-title"><span/>{stage === "analysis" ? analysisView === "aero" ? "機体まわりの流れを確かめる" : "飛行と回収の結果を確かめる" : stage === "exports" ? "同じ設計から、成果物を作る" : stage === "assembly" ? "組立に必要な条件を確認する" : "機体の形と飛び方を、一緒に検討する"}</div>
-          <section className="meaning-block"><h2><WorkshopIcon name="info"/>何を確かめる？</h2><p>{stage === "analysis" ? "空気の流れや飛行の変化を、計算結果の図から確認します。" : stage === "exports" ? "対象の案と条件をそろえ、図面・部品表・印刷用ファイルを作ります。" : stage === "assembly" ? "部品の向き、材料、必要な工具を整理します。" : "目的に合う構成と、無理なく回収できる条件を探します。"}</p></section>
-          <section className="meaning-block"><h2><WorkshopIcon name="analysis"/>今わかること</h2><p>{task.status === "working" || task.status === "waiting" || task.status === "attention" ? task.label : displayed ? "表示中の案の形状と、届いた計算結果を確認できます。" : "まずは目標、積載物、回収方法を教えてください。"}</p>{displayed ? <ResultPanel tier={tier} metrics={resultMetrics}/> : null}</section>
+          <div className="explanation-title"><span/>{viewingReferenceFilm ? "設計例の映像を確認する" : stage === "analysis" ? analysisView === "aero" ? "機体まわりの流れを確かめる" : "飛行と回収の結果を確かめる" : stage === "exports" ? "同じ設計から、成果物を作る" : stage === "assembly" ? "組立に必要な条件を確認する" : "機体の形と飛び方を、一緒に検討する"}</div>
+          <section className="meaning-block"><h2><WorkshopIcon name="info"/>何を確かめる？</h2><p>{viewingReferenceFilm ? "保存済みの設計例で、部品構成と上昇予測の映像を確認できます。" : stage === "analysis" ? "空気の流れや飛行の変化を、計算結果の図から確認します。" : stage === "exports" ? "対象の案と条件をそろえ、図面・部品表・印刷用ファイルを作ります。" : stage === "assembly" ? "部品の向き、材料、必要な工具を整理します。" : "目的に合う構成と、無理なく回収できる条件を探します。"}</p></section>
+          <section className="meaning-block"><h2><WorkshopIcon name="analysis"/>今わかること</h2><p>{viewingReferenceFilm ? "映像の対象は、中央に記載された設計例です。保存できるファイルには再生と保存の操作が表示されます。" : task.status === "working" || task.status === "waiting" || task.status === "attention" ? task.label : displayed ? "表示中の案の形状と、届いた計算結果を確認できます。" : "まずは目標、積載物、回収方法を教えてください。"}</p>{displayed && !viewingReferenceFilm ? <ResultPanel tier={tier} metrics={resultMetrics}/> : null}</section>
           <section className="meaning-block"><h2><WorkshopIcon name="history"/>まだ決められないこと</h2><p>{!displayed ? "設計案と計算結果はまだありません。" : stage === "assembly" ? "手・工具のアクセス、締結の条件、実機での組立確認は未評価です。" : stage === "exports" ? "スライス検査と、実際に印刷できたことは別に確認します。現在の設計の動画は未生成です。" : "計算の対象外の条件と、実物の強度・組立性は未確認です。"}</p></section>
           {stream.status === "error" ? <div className="inspector-error" role="alert">{stream.messages.filter(m => m.role === "error").at(-1)?.text ?? "処理に失敗しました。相談の記録を確認してください。"}</div> : null}
           {stage === "design" || stage === "brief" ? <><CostPanel summary={summary} fallbackCostJpy={fallbackCost} loading={summaryState.loading} error={summaryState.error}/><button className="btn inspector-primary" type="button" onClick={() => { chooseStage(displayed ? "analysis" : "brief"); if (!displayed) setRightTab("consult"); }}>{displayed ? "解析の画面へ" : "目的を相談する"}<WorkshopIcon name="arrow" size={18}/></button></> : null}
