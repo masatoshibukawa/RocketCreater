@@ -25,6 +25,10 @@ def verified_files(root):
     return dict(manifests=manifests, referenced_files=count)
 
 
+def runtime_view(runtime):
+    return {k: v for k, v in runtime.items() if k != "calculix"}
+
+
 def summary(root):
     report = json.loads((root / "report.json").read_text(encoding="utf-8"))
     evidence = verified_files(root)
@@ -75,6 +79,28 @@ def summary(root):
     confirmation = final.get("confirmation") if final else None
     final_summary = None
     if final:
+        state = json.loads(
+            (root / "projects" / final["project_id"] / "state.json").read_text(encoding="utf-8")
+        )
+        completed = {}
+        for key, result in state["adaptive"]["results"].items():
+            if result["execution_status"] != "completed":
+                continue
+            artifact = Path(result["value"]["artifact"])
+            inputs = json.loads((artifact.parent / "input.json").read_text(encoding="utf-8"))
+            completed[key] = dict(
+                data_sha256=result["value"]["sha256"],
+                runtime=runtime_view(inputs["runtime"]),
+                metrics=result["value"].get("metrics", {}),
+            )
+            if key == "confirm":
+                data = json.loads(artifact.read_text(encoding="utf-8"))
+                completed[key].update(
+                    checks=data["checks"],
+                    unmet=data["unmet"],
+                    apogee_m=data["flight"]["apogee_m"],
+                    static_margin_cal=data["static_margin_cal"],
+                )
         final_summary = dict(
             status=final["status"],
             project_id=final["project_id"],
@@ -84,6 +110,15 @@ def summary(root):
             unmet=(confirmation or {}).get("unmet"),
             apogee_m=(confirmation or {}).get("flight", {}).get("apogee_m"),
             static_margin_cal=(confirmation or {}).get("static_margin_cal"),
+            latest_requested_runtime=runtime_view(state["adaptive"]["runtime"]),
+            last_completed_artifacts=completed,
+            artifact_scope=(
+                "Completed artifacts may be superseded by requested settings; "
+                "only current confirmation can pass"
+            ),
+            completed_gpu_case_files=len(
+                list((root / "projects" / final["project_id"]).rglob("case.json"))
+            ),
         )
     return dict(
         source_hash=report["source_hash"],
