@@ -103,7 +103,7 @@ export default function ChatPanel({
         )}
       </div>
       <form className="chat-form" onSubmit={submit}>
-        <div className="examples">
+        <details className="example-prompts"><summary>例から始める</summary><div className="examples">
           {EXAMPLES.map((ex) => (
             <button
               key={ex}
@@ -116,7 +116,7 @@ export default function ChatPanel({
               {ex}
             </button>
           ))}
-        </div>
+        </div></details>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}

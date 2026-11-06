@@ -222,12 +222,12 @@ def test_home_is_the_one_design_screen():
     assert not mentions, mentions
 
 
-def test_center_tabs_offer_what_the_workbench_had_and_only_where_it_applies():
-    tabs = _ts("lib/centerViews.ts")
+def test_workshop_stages_follow_the_reference_and_keep_real_tools_connected():
+    tabs = _ts("lib/workshopNavigation.ts")
     labels = re.findall(r'label: "([^"]+)"', tabs)
-    assert labels == ["3D モデル", "シミュレーション", "流体解析", "製作データ", "設計例と資料"]
-    assert "isOrbital(tier)" in tabs
-    assert re.search(r'CONCEPT_LEVEL_VIEWS[^=]*=\s*\[\s*"model",\s*"simulation",\s*"library"', tabs)
+    assert labels == ["条件", "設計", "解析", "比較", "組立", "出力"]
+    assert 'aria-label="設計の工程"' in PAGE_TSX
+    assert "isOrbital(tier)" in PAGE_TSX
     for name in ("AeroLoopPanel", "ProductionPanel", "ReferenceLibrary", "ResultPanel"):
         assert re.search(rf"<{name}\b", PAGE_TSX), name
 
@@ -303,5 +303,6 @@ def test_workshop_art_ships_with_the_web_app_and_stays_decoration():
         assert all((public / path.lstrip("/")).is_file() for path in paths)
     # A rocket workshop is not the picture for an orbital run.
     assert "isOrbital(tier)" in _ts("components/ModelViewer.tsx")
+    assert "isOrbital(tier)" in PAGE_TSX
     # The crew stand under the real flow picture; the drafted charts never reach the page.
     assert 'src={apiUrl(image.url)}' in _ts("components/AeroLoopPanel.tsx")

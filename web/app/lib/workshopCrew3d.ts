@@ -74,7 +74,7 @@ function person(index: number) {
 
 export function makeWorkshopCrew() {
   const root = new THREE.Group(); root.name = "Presentation-only workshop crew";
-  const floor = material(0xe4e8e4), metal = material(0x536b6b), wood = material(0xd8d1bc);
+  const floor = material(0x303236), metal = material(0x48545c), wood = material(0x82745b);
   box(root, [11.8, .12, 3.7], floor, 0, -.09);
   box(root, [2.9, .1, .95], wood, -.15, .96, -.48);
   for (const x of [-1.35, 1.05]) for (const z of [-.8, -.15]) box(root, [.09, .9, .09], metal, x, .45, z);
