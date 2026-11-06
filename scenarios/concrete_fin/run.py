@@ -16,6 +16,7 @@ from rocketwright.physics.bottle_integrity import fem, flight, loads, thermal  #
 from rocketwright.physics.bottle_integrity.harness import write_json  # noqa: E402
 from rocketwright.physics.bottle_integrity.schema import AnalysisConfig  # noqa: E402
 from rocketwright.physics.concrete_fin import write_candidate  # noqa: E402
+from rocketwright.physics.fin_candidates import beam  # noqa: E402
 from rocketwright.physics.flight_loads import MassDistribution, TunnelDatabase, recover  # noqa: E402
 from rocketwright.schema import BottleDesign  # noqa: E402
 
@@ -281,6 +282,40 @@ def assess(folder, solver):
     write_json(output / "fin-events.json", governing)
     results = []
     temperature = max(45.0, warm["final_c"]["fin"])
+    g = assembly["dimensions_mm"]
+    material = cfg.fin_material
+    modulus = material.young_pa * np.interp(
+        temperature, [material.reference_c, material.warm_c], [1, material.warm_ratio]
+    )
+    modes = []
+    for factor in (0.25, 1, 4):
+        response = beam(
+            g["fin_span"] / 1000,
+            g["fin_root"] / 1000,
+            g["fin_tip"] / 1000,
+            cfg.fin_thickness_m,
+            modulus,
+            material.density,
+            cfg.fin_root_k_n_m * factor,
+            governing[0]["force_n"],
+            tab=g["fin_tab"] / 1000,
+            n=40,
+        )
+        modes.append(
+            dict(
+                root_stiffness_factor=factor,
+                first_modes_hz=response["first_modes_hz"],
+                linear_deflection_m=response["max_deflection_m"],
+            )
+        )
+    write_json(
+        output / "modal-screen.json",
+        dict(
+            cases=modes,
+            temperature_c=temperature,
+            scope="bending beam with root compliance; no torsion, flight damping, flutter or slosh",
+        ),
+    )
     for number, event in enumerate(governing):
         if number and event == governing[0]:
             continue

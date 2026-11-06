@@ -18,7 +18,7 @@ def main():
         .replace("// WALL_HELPERS", (folder / "interpolated_wall.cuh").read_text())
     )
     code += r"""
-extern "C" __global__ void check(const float *g,float *v,const float *src,
+extern "C" __global__ void check(const float *g,const float *shoe,float *v,const float *src,
         const unsigned *mask,const int *lookup,const float *fractions) {
     v[0]=exact_distance(1,-.2,0,0,1,0,0,g);
     v[1]=exact_distance(2,2,.7,0,0,-.4,0,g);
@@ -28,6 +28,9 @@ extern "C" __global__ void check(const float *g,float *v,const float *src,
     v[5]=exact_distance(2,2,.4,-.6,0,0,1.2,g);
     v[6]=fin_distance(3.2,1,0,0,0,0,g);
     for(int j=0;j<3;++j) v[7+j]=reflected(src,mask,lookup,fractions,13+j,1,27,3,3,1);
+    v[10]=fin_distance(3.2,.6,.1,0,0,-.2,shoe);
+    v[11]=fin_distance(3.2,.6,0,0,0,0,shoe);
+    v[12]=fin_distance(2.5,.6,.1,0,0,-.2,shoe);
 }
 """
     module = cp.RawModule(code=code, options=("--std=c++11",))
@@ -41,12 +44,19 @@ extern "C" __global__ void check(const float *g,float *v,const float *src,
     lookup[13:16] = cp.arange(3, dtype=cp.int32)
     fractions = cp.full((3, 19), 0.5, dtype="f")
     fractions[:, 1] = cp.asarray([0.25, 0.5, 0.75], dtype="f")
-    out = cp.zeros(10, dtype="f")
-    module.get_function("check")((1,), (1,), (g, out, src, mask, lookup, fractions))
-    expected = np.array([0.2, 0.5, 0.375, 0.45, 2, 0.25, 0, 0.06, 0.08, 1 / 30])
+    shoe = g.copy()
+    shoe[14:16] = cp.asarray([0.2, 0.08], dtype="f")
+    out = cp.zeros(13, dtype="f")
+    module.get_function("check")((1,), (1,), (g, shoe, out, src, mask, lookup, fractions))
+    expected = np.array([0.2, 0.5, 0.375, 0.45, 2, 0.25, 0, 0.06, 0.08, 1 / 30, 0.3, 0, 2])
     np.testing.assert_allclose(out.get(), expected, atol=2e-6, rtol=2e-6)
     print(
-        json.dumps({"gpu_checks": 10, "max_absolute_error": float(abs(out.get() - expected).max())})
+        json.dumps(
+            {
+                "gpu_checks": len(expected),
+                "max_absolute_error": float(abs(out.get() - expected).max()),
+            }
+        )
     )
     if handle:
         handle.close()

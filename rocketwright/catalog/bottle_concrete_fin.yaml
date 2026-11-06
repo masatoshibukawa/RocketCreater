@@ -12,7 +12,7 @@ fin:
   young_pa: 17236893232.5
   source_young_psi: 2500000
   source_specimen_thickness_mm: 3.175
-  flexural_strength_crosswise_typical_pa: 455745457.0673
+  flexural_strength_crosswise_typical_pa: 455743457.0784
   strength_allowable_pa: null
   poisson_assumption: 0.3
   warm_stiffness_multiplier_assumption: 0.8

@@ -1,0 +1,239 @@
+{
+  "candidate": "D02-G10-120-C1",
+  "design": {
+    "tier": "bottle",
+    "bottle_volume_m3": 0.0015,
+    "water_fill_frac": 0.25,
+    "initial_gauge_pressure_pa": 400000.0,
+    "nozzle_diameter_m": 0.009,
+    "dry_mass_kg": 0.2200783,
+    "payload_mass_kg": 0.06,
+    "has_fins": true,
+    "axial_drag_coefficient": 0.5277283278631213,
+    "has_parachute": true,
+    "parachute_diameter_m": 0.5950714871308219
+  },
+  "flights": {
+    "nominal": {
+      "apogee_m": 19.53577263188284,
+      "impact_speed_mps": 4.972643606610593,
+      "max_q_pa": 228.0295289407729,
+      "ascent_incidence_deg": 18.588781745115366,
+      "peak_roll_rad_s": 1.0469396899778584e-16,
+      "drift_m": 10.78766954119824,
+      "rail_exit_speed_mps": 14.010750488053608,
+      "section_equilibrium_residual": 1.9212409441138334e-13
+    },
+    "calm": {
+      "apogee_m": 19.696735256052158,
+      "impact_speed_mps": 4.5900251833671195,
+      "max_q_pa": 227.3351881736737,
+      "ascent_incidence_deg": 1.0487784922422636,
+      "peak_roll_rad_s": 0.0,
+      "drift_m": 0.7157130429394133,
+      "rail_exit_speed_mps": 14.032677435914044,
+      "section_equilibrium_residual": 1.776911950912563e-13
+    },
+    "crosswind": {
+      "apogee_m": 19.266967662661504,
+      "impact_speed_mps": 5.954083370082111,
+      "max_q_pa": 233.88237231512718,
+      "ascent_incidence_deg": 42.56873013991559,
+      "peak_roll_rad_s": 4.837316154634121e-16,
+      "drift_m": 21.923486301664784,
+      "rail_exit_speed_mps": 13.995953532642206,
+      "section_equilibrium_residual": 2.0922152899061075e-13
+    },
+    "low_damping": {
+      "apogee_m": 19.431561175359697,
+      "impact_speed_mps": 4.989519241225862,
+      "max_q_pa": 228.24198952996136,
+      "ascent_incidence_deg": 16.78205199289907,
+      "peak_roll_rad_s": 2.5772390062657606e-16,
+      "drift_m": 10.248215215418329,
+      "rail_exit_speed_mps": 14.010750488053608,
+      "section_equilibrium_residual": 1.9212409441138334e-13
+    },
+    "tilt_plus2": {
+      "apogee_m": 19.49322850090787,
+      "impact_speed_mps": 4.982634532567054,
+      "max_q_pa": 225.7841464848973,
+      "ascent_incidence_deg": 16.086008770968583,
+      "peak_roll_rad_s": 1.1463298146037121e-16,
+      "drift_m": 12.154302505611936,
+      "rail_exit_speed_mps": 14.013832897717295,
+      "section_equilibrium_residual": 2.1688206786052433e-13
+    }
+  },
+  "structure": [
+    {
+      "event": {
+        "condition": "crosswind",
+        "time_s": 0.28614319155626416,
+        "blade": 1,
+        "force_n": 0.7065311472618567,
+        "root_bending_nm": 0.03537160763113396,
+        "centroid_m": [
+          0.031432312875984095,
+          0.050063762607233546
+        ],
+        "q_pa": 213.19628986793023,
+        "incidence_deg": 15.362958361922836,
+        "speed_mps": 18.818784788348665
+      },
+      "meshes": [
+        {
+          "completed": true,
+          "solver": "CalculiX Version 2.23",
+          "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+          "deck_sha256": "3e6b1a419b28aaa5a2e4b4f18ec234045207b22e20c8d733ea8ef078ebda12b0",
+          "max_displacement_m": 0.002269762252185252,
+          "max_integration_vm_pa": 2512563.763422039,
+          "p95_integration_vm_pa": 1898651.0367795753,
+          "nodal_force_sum_n": [
+            -0.00027119164546882596,
+            -0.01210587817660456,
+            0.7067208176091463
+          ],
+          "solver_stress_unit_pa": 1.0,
+          "solver_force_unit_n": 1.0,
+          "nodes": 2373,
+          "strength_status": "unknown_without_matching_material_evidence"
+        },
+        {
+          "completed": true,
+          "solver": "CalculiX Version 2.23",
+          "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+          "deck_sha256": "87b42908c2ea8927a59ac08e06abc199070ca9468ed4ca4e91f49eccbc41dff1",
+          "max_displacement_m": 0.002347564738607662,
+          "max_integration_vm_pa": 2512370.901580341,
+          "p95_integration_vm_pa": 1881295.8148619633,
+          "nodal_force_sum_n": [
+            -0.00027467228659947435,
+            -0.012544045710693497,
+            0.7067131393873718
+          ],
+          "solver_stress_unit_pa": 1.0,
+          "solver_force_unit_n": 1.0,
+          "nodes": 5141,
+          "strength_status": "unknown_without_matching_material_evidence"
+        }
+      ],
+      "mesh_change": {
+        "max_displacement_m": 0.03314178524787115,
+        "p95_integration_vm_pa": 0.009225142468562542
+      },
+      "numerical_pass": true,
+      "temperature_c": 45.0,
+      "material_allowable": null
+    }
+  ],
+  "stability": {
+    "analyzed_points": 76,
+    "frozen_asymptotic_count": 76,
+    "gronwall_endpoint_log10_gain": -1.2085538572729455,
+    "gronwall_all_intervals_contracting": false,
+    "scope": "finite horizon of piecewise-affine 2-state model; not nonlinear-flight proof"
+  },
+  "aero_checks": {
+    "observables": [
+      "Cx",
+      "Cy",
+      "Cm_z"
+    ],
+    "grid16_to24": [
+      0.2948787382219947,
+      0.08750214906985691,
+      0.42537134679978145
+    ],
+    "grid24_to28": [
+      0.06392320592033787,
+      0.08278780581428762,
+      0.2742082513827032
+    ],
+    "heldout_v18_a5": [
+      0.002397207627599777,
+      0.004217368679656128,
+      0.02335830421273652
+    ],
+    "numerical_pass": false,
+    "scope": "component checks at one incidence; no global error bound, no physical validation",
+    "further_checks": [
+      "other-angle grid study",
+      "domain and duration checks",
+      "independent validation"
+    ]
+  },
+  "status": {
+    "executed": true,
+    "numerical_aero_pass": false,
+    "altitude_target_m": 30,
+    "nominal_altitude_pass": false,
+    "hardware_qualification": false,
+    "source_input_sha256": "ce701f4dabbb7565a7f9b4f4af55edcf3972c9c023fe4598fe6646be69577958",
+    "limitations": [
+      "CFD remains unvalidated",
+      "normal-load structural surrogate, not full FSI",
+      "joint stiffness is geometric estimate; bolt/contact/strap strength unknown",
+      "thin-sheet and warm material properties unverified",
+      "other hardware unchanged and unqualified"
+    ]
+  },
+  "modes": {
+    "cases": [
+      {
+        "root_stiffness_factor": 0.25,
+        "first_modes_hz": [
+          21.243871821619532,
+          140.9088456172793
+        ],
+        "linear_deflection_m": 0.005249992004116507
+      },
+      {
+        "root_stiffness_factor": 1,
+        "first_modes_hz": [
+          30.022812196563702,
+          163.9588586400485
+        ],
+        "linear_deflection_m": 0.0026544537907361838
+      },
+      {
+        "root_stiffness_factor": 4,
+        "first_modes_hz": [
+          34.52898570612724,
+          185.71289187101408
+        ],
+        "linear_deflection_m": 0.0020055692379161087
+      }
+    ],
+    "temperature_c": 45.0,
+    "scope": "bending beam with root compliance; no torsion, flight damping, flutter or slosh"
+  },
+  "finite_perturbation": {
+    "initial_tilt_change_deg": 2,
+    "entry_difference_deg": 1.9999883153449245,
+    "final_difference_deg": 4.63994468649991,
+    "peak_difference_deg": 4.63994468649991,
+    "final_to_entry_ratio": 2.3199858973674505,
+    "scope": "one finite nonlinear perturbation on common ascent times; not asymptotic proof"
+  },
+  "source_hashes": {
+    "input.json": "ce701f4dabbb7565a7f9b4f4af55edcf3972c9c023fe4598fe6646be69577958",
+    "tunnel\\v08-a000\\case.json": "1676747acf6885cdaaceea6d245a5eb74b4258aacc6502910acb26db2500e38d",
+    "tunnel\\v08-a005\\case.json": "0c3b74dade3e6170e41ebe5a83a18ba42bcfcf9ca2a4a8d4a42b99761ceafdf1",
+    "tunnel\\v08-a010\\case.json": "8ec9e8a22aba1a52fbe6840e41be443e5ad7b14cb032685dea568847c250571b",
+    "tunnel\\v08-a015\\case.json": "2a937811b88b5adbdae3528f259c6f3bd7b4a4eb9c91504cfbcd8100b31cc2ae",
+    "tunnel\\v08-a045\\case.json": "a4c479486b458e3de29958336a473260b08dcf0b030846844b3a2e7c2a139168",
+    "tunnel\\v08-a090\\case.json": "64ceb59654e97e1827072470fc2773d13ef1a289e5e42a5f7738c7f0c13bb41a",
+    "tunnel\\v08-a135\\case.json": "046159e11e9fcd781481cdc9a191a4dac2b4ebe2ebeabf1ed81292249bc83b3c",
+    "tunnel\\v08-a180\\case.json": "48bd2a3ae4380772a79dde4e581967ff78ea6c1504b7f1cf5b5af6a0cc1ded3d",
+    "tunnel\\v30-a000\\case.json": "003145f2e8947e3258f78edfcd0d9200d93a33119518cf2342c1e00fd1da2c08",
+    "tunnel\\v30-a005\\case.json": "b8aa7f0fbe0e895425e99a34851c4cd5cad260cde5476d4ea32796bf9f7a3334",
+    "tunnel\\v30-a010\\case.json": "4bfd7a46b518cd1c73fb7e422a20d81f3f285371eb9d2c85f6ff4ace77d3c617",
+    "tunnel\\v30-a015\\case.json": "1d9accf3bc32bcb33881832aa1811a43e7005280ed066a511ed1eb951eadd6bf",
+    "tunnel\\v30-a045\\case.json": "d4f395271baa5962ab7ea24616a9023dda11912f9cc8451d8a32f4cf81d1c4ac",
+    "tunnel\\v30-a090\\case.json": "489212db1c57e7cbe7eee3faa915866a3b10259f7a5eeb1fb95636bb45d16e47",
+    "tunnel\\v30-a135\\case.json": "183356957bf11e3d1a9d730c2fd2fb18aaf0149760e8d4c9427b2b0cb495ee84",
+    "tunnel\\v30-a180\\case.json": "ec5068d18aabe857f2912ae9fa23205ba61f6160223906c18280a65f0b054cbb"
+  }
+}
