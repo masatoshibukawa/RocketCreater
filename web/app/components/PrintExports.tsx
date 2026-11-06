@@ -7,7 +7,8 @@ import type { Design } from "../lib/types";
 type File = { name: string; url: string; kind?: string };
 type Manifest = { status: string; brim_width_mm: number; brim_gap_mm: number;
   parts: { part: string; model_layers: number; estimated_mass_g: number;
-    estimated_time_seconds: number; all_print_paths_inside_s5: boolean }[] };
+    estimated_time_seconds: number; all_print_paths_inside_s5: boolean;
+    quantity_for_assembly?: number }[] };
 type Bundle = { manifest: Manifest; files: File[] };
 
 export default function PrintExports({ design, files, manifest, onGenerate, disabled = false }: {
@@ -63,7 +64,8 @@ export default function PrintExports({ design, files, manifest, onGenerate, disa
     {error ? <p role="alert" className="wb-error">{error}</p> : null}
     {report ? <>
       <p role="status">スライス検査済み · 実機での再試作は未確認</p>
-      <ul>{report.parts.map(p => <li key={p.part}>{p.part} · {p.model_layers}層 · 約{Math.ceil(p.estimated_time_seconds / 60)}分 · {p.estimated_mass_g.toFixed(1)} g · 土台を含めベッド内</li>)}</ul>
+      <p className="wb-note">各印刷ファイルは部品1個分です。</p>
+      <ul>{report.parts.map(p => <li key={p.part}>{p.part} · 必要{p.quantity_for_assembly ?? 1}個 · 1個あたり{p.model_layers}層・約{Math.ceil(p.estimated_time_seconds / 60)}分・{p.estimated_mass_g.toFixed(1)} g · 土台を含めベッド内</li>)}</ul>
       <p className="wb-note">PLA製部品へ変更した後は、質量を測定して飛行解析を更新してください。耐圧部品は出力しません。</p>
     </> : null}
     <div className="wb-file-list">{outputs.map(f => <a href={apiUrl(f.url)} download key={f.url}>{f.name} ↗</a>)}</div>

@@ -125,10 +125,14 @@ for row in states:
         errors.append(abs(float(row[axis]) - (a[axis] + (b[axis] - a[axis]) * mix)))
 expected_count = plan.get("launch_frames", plan["frames_per_clip"])
 trajectory_check = {
-    "passed": len(states) == expected_count and max(errors, default=1) < 1e-8,
+    "passed": len(states) == expected_count and max(errors, default=1) < 1e-5,
     "frames": len(states),
     "max_position_error_m": max(errors, default=None),
     "attitude": "illustrative, not integrated attitude dynamics",
+    "position_basis": states[0].get("position_basis", "solver_position_commands")
+    if states
+    else None,
+    "scope": "Position records against solver interpolation; not independent image tracking",
 }
 (directory / "verification.json").write_text(
     json.dumps(

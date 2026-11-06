@@ -364,10 +364,11 @@ for mode in ("design", "launch"):
                 {
                     "frame": index,
                     "simulation_time_s": t,
-                    "east_m": position[0],
-                    "north_m": position[1],
-                    "altitude_m": position[2],
+                    "east_m": float(root.location.x),
+                    "north_m": float(root.location.y),
+                    "altitude_m": float(root.location.z),
                     "camera_altitude_m": camera.location.z,
+                    "position_basis": "object_transform_readback",
                 }
             )
         if photographic:

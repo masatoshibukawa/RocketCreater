@@ -40,7 +40,8 @@ export const CHECK_LABELS: Record<string, string> = {
 export interface WorkbenchProject {
   print_package?: { status: string; brim_width_mm: number; brim_gap_mm: number;
     parts: { part: string; model_layers: number; estimated_mass_g: number;
-      estimated_time_seconds: number; all_print_paths_inside_s5: boolean }[] };
+      estimated_time_seconds: number; all_print_paths_inside_s5: boolean;
+      quantity_for_assembly?: number }[] };
   id: string; revision: number; confirmed: boolean; recommendation: string | null;
   workshop: { pressure_ceiling_kpa: number };
   active: { name: string; started_at: number } | null; error: string | null;
