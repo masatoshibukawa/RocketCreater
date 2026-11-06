@@ -1,0 +1,4 @@
+interface:
+  display_name: "金属レーザー粉末床溶融・LPBF"
+  short_description: "金属LPBFの粉末・熱と支持・粉抜き・熱処理と加工代を揃える"
+  default_prompt: "$3d-print-metal-lpbf を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

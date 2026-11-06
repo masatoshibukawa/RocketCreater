@@ -36,6 +36,7 @@ description: "3Dプリントの材料選定、製品別設定、機種との適�
 | その機械で使えるか、プレート・ノズル・送り装置が合うか | [機種と材料の適合](../3d-material-machine-match/SKILL.md) |
 | 複数色、異種材料、支持材、レジン混合 | [複数材料と支持材](../3d-material-pairing/SKILL.md) |
 | 別材料・別製品に変えたい | [材料の置き換え](../3d-material-substitution/SKILL.md) |
+| 連続繊維、金属の機器・合金・粉末/ワイヤー・焼結を扱う | [カーボン・金属の索引](../../industrial/3d-carbon-metal-printing/SKILL.md) |
 
 材料系ごとの条件は[調査資料](../../../10_材料と組み合わせ/README.md)から選ぶ。機械構成は[機種別索引](../../printers/3d-printer-profiles/SKILL.md)、スライスと後処理は[印刷スキル](../../categories/3d-model-printing/SKILL.md)を併用する。PC・OS・CPU別の検出や認証は[接続スキル](../../connections/3d-printer-connection/SKILL.md)で扱う。
 

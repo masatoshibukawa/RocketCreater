@@ -4,6 +4,8 @@
 
 入口は[材料索引スキル](../3d-model-skills/materials/3d-print-materials/SKILL.md)。条件は[材料記録の基準](../3d-model-skills/materials/3d-print-materials/references/material-contract.md)で揃える。
 
+連続繊維と金属の機器・合金・造形方式・脱脂/焼結は[追加カテゴリー](../11_カーボンと金属/README.md)と[専用索引](../3d-model-skills/industrial/3d-carbon-metal-printing/SKILL.md)を参照する。
+
 | 判断したいこと | スキル・資料 |
 | --- | --- |
 | この実機で使えるか | [機種と材料の適合スキル](../3d-model-skills/materials/3d-material-machine-match/SKILL.md) |

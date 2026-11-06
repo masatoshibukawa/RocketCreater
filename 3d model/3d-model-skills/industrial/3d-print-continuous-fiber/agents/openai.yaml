@@ -1,0 +1,4 @@
+interface:
+  display_name: "連続繊維による3Dプリント補強"
+  short_description: "連続繊維の経路・配置可能層・荷重方向と樹脂の組を評価する"
+  default_prompt: "$3d-print-continuous-fiber を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"
