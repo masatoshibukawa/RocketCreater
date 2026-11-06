@@ -13,7 +13,7 @@ TPU/TPEの製品名とShore硬度・尺度を確認する。AとDを同じ数字
 
 柔らかい材料は押し込み時に座屈・巻き付きし得る。スプール抵抗、チューブの曲がり、ギヤとノズル間の拘束、メーカー指定の押付け・リトラクションを確認する。速度だけ落として、巻き付いたまま再ロードを続けない。
 
-Bowden構成でも製品と機種で可否が変わるため一律に禁止しない。直接給材でも、最も柔らかい材が使えると断定しない。AMS/AMS lite等では普通のTPUと専用対応製品を[Bambu公式表](https://wiki.bambulab.com/en/general/filament-guide-material-table)で区別し、必要なら対応する外部給材経路を使う。
+Bowden構成でも製品と機種で可否が変わるため一律に禁止しない。直接給材でも、最も柔らかい材が使えると断定しない。普通のTPU95AはAMS liteの非対応材料として扱い、接続を進めない。[Bambu公式表](https://wiki.bambulab.com/en/general/filament-guide-material-table)のTPU非対応と専用対応製品を区別し、専用品もAMSとAMS liteそれぞれの可否を確認する。今回の一般的なTPUなら、許可された外部給材での単材試作を検討する。
 
 ## 造形と取り外し
 
