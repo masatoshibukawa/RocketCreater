@@ -24,3 +24,12 @@ API呼び出しには候補・要求・数値結果の判断表示を送信す�
 ## 検証範囲
 
 接続契約の自動テストと実API検証は別に記録する。新しい条件で収集した学習例と評価例を分離し、高度差と計算時間の予測誤差を比較する。段階5・6・7の結果は、使った選択器、実行コード、精度条件とともに報告する。APIキー未設定の環境ではClaudeによる通し検証を完了としない。
+
+```powershell
+python -m scripts.collect_learning_trials scenarios/adaptive_design/spec.json output/learning-trials
+python -m scripts.run_learning_stages scenarios/adaptive_design/spec.json output/learning-trials/report.json output/claude-stages host-runtime.json --planner claude --through 7
+```
+
+学習用の4条件と、訓練に含めない形状の2条件を事前に固定する。収集時の変更はホストが指定した実験であり、LLMの選択性能とは数えない。ソースが変わった履歴は再生成し、コード識別子を書き換えて流用しない。
+
+段階5は元の30 m・1口径の要求を保って最多3版を再設計する。段階6はその候補でCFD表・独立点監査・飛行・FEM・確認を一巡する。最初の確認後の細分化候補も記録するが、細分化した全表を再計算したとは扱わない。段階7の運用分岐は300 kPaから始める独立試験であり、製作用の圧力承認ではない。従来の分岐専用精度と、段階6の合格基準を混同しない。
