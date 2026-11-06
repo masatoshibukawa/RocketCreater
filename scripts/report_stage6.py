@@ -261,7 +261,7 @@ def figure(data, locations, destination):
         ax.legend()
         ax.grid(alpha=0.2)
     fig.suptitle("Stage 6 numerical verification | Unqualified physical design", fontsize=15)
-    fig.savefig(destination)
+    fig.savefig(destination, bbox_inches="tight", pad_inches=0.15)
 
 
 def main():
