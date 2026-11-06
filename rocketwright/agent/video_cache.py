@@ -100,7 +100,7 @@ def replace(source, target):
 
 class MediaCache:
     def __init__(self, root):
-        self.root = Path(root)
+        self.root = Path(root).resolve()
         self.manifests = {}
 
     def directory(self, category, identity):
