@@ -91,7 +91,6 @@ def compile_record(spec, cad_metrics):
         body_diameter=g.body_diameter_mm,
         nose_length=g.nose_length_mm,
         bottle_length=g.body_height_mm,
-        skirt_length=0,
         fin_root=g.fin_root_mm,
         fin_tip=g.fin_tip_mm,
         fin_span=g.fin_span_mm,
@@ -102,8 +101,11 @@ def compile_record(spec, cad_metrics):
         fin_tab=a.root_capture_mm,
         fin_root_offset=0,
         fin_shoe_width=0,
+        skirt_length=0,  # flat CFD base; no recessed skirt is inferred
     )
     assembly = dict(
+        key="design-" + digest(spec.model_dump(mode="json"))[:16],
+        axial_cd=spec.design.axial_drag_coefficient or 0.55,
         dimensions_mm=dimensions,
         bill=bill,
         dry_mass_g=dry * 1000,

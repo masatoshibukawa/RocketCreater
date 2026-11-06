@@ -22,10 +22,13 @@ def code_hash():
     paths = list((ROOT / "rocketwright").rglob("*.py"))
     paths += list((ROOT / "scenarios/cfd").glob("*.py"))
     paths += list((ROOT / "scenarios/cfd").glob("*.cu"))
+    paths += list((ROOT / "scenarios/cfd").glob("*.cuh"))
     paths += [
         ROOT / "scripts/build_print_parts.py",
         ROOT / "3d model/prototypes/pet-rocket-coke-2l/build.py",
     ]
+    paths += list((ROOT / "rocketwright/catalog").rglob("*.json"))
+    paths += [ROOT / "3d model/prototypes/pet-rocket-coke-2l/parameters.json"]
     return digest({p.relative_to(ROOT).as_posix(): sha(p) for p in paths})
 
 
@@ -95,11 +98,40 @@ class Harness:
         runtime = Runtime.model_validate(a["runtime"])
         inputs = scopes(spec, precision=precision, code_hash=code_hash())
         inputs["fin_count"] = spec.geometry.fin_count
-        inputs["numerics"] = digest(runtime.model_dump())
+        inputs["body_length_diameters"] = spec.geometry.overall_mm / spec.geometry.body_diameter_mm
+        inputs["fin_radius_diameters"] = (
+            0.5 + spec.geometry.fin_span_mm / spec.geometry.body_diameter_mm
+        )
+        inputs["fem_numerics"] = digest(
+            dict(
+                level=runtime.fem_level,
+                solver_sha256=sha(Path(runtime.calculix))
+                if runtime.calculix and Path(runtime.calculix).is_file()
+                else None,
+            )
+        )
+        inputs["cfd_numerics"] = digest(
+            runtime.model_dump(include={"cfd_cells_coarse", "cfd_cells_fine", "cfd_times"})
+        )
+        inputs["flight_numerics"] = digest(runtime.flight_step_s)
         p = catalog.pool(precision)
         for key, action in p.actions.items():
-            if key.startswith(("cfd_", "fem_")):
-                action.uses.append("numerics")
+            if key != "geometry":
+                action.uses.append("requirements")
+            if key.startswith("fem_"):
+                action.uses.append("fem_numerics")
+            if key in {"screen", "flight", "refine", "stability", "confirm"}:
+                action.uses.append("flight_numerics")
+            if key.startswith("cfd_"):
+                action.uses.append("cfd_numerics")
+                cells = runtime.cfd_cells_fine if key.endswith("fine") else runtime.cfd_cells_coarse
+                # Conservative arrays/workspace estimate, recomputed for size and numerical level.
+                action.memory_gib = cells**3 * 100 * 18 * 512 / 1024**3
+                action.cost_s *= (cells / 12) ** 3 * runtime.cfd_times / 40
+                action.bounds["air_speed_mps"] = (0, 35)
+                action.uses.append("air_speed_mps")
+                action.bounds.update(body_length_diameters=(0, 12), fin_radius_diameters=(0, 4.25))
+                action.uses += ["body_length_diameters", "fin_radius_diameters"]
         requirement = Requirements(
             altitude_target_m=spec.requirement.target_altitude_m,
             altitude_numerical_budget_m=precision.altitude_error_m,
@@ -126,6 +158,9 @@ class Harness:
                     if h["action"] == key:
                         h["fingerprint"] = "invalidated-artifact:" + h["fingerprint"]
                 a["decisions"].append(dict(event="invalidated_artifact", action=key))
+        c._refresh_metrics()
+        inputs_speed = c.metrics.get("max_air_speed_mps")
+        c.inputs["air_speed_mps"] = inputs_speed
         c._refresh_metrics()
         return c, spec, precision, limits
 
@@ -187,7 +222,10 @@ class Harness:
             unmet = confirmation["unmet"]
             if (
                 "altitude" in unmet
-                and confirmation["flight"]["apogee_m"] > spec.requirement.target_altitude_m
+                and confirmation.get("flight", {}).get(
+                    "apogee_m", spec.requirement.target_altitude_m
+                )
+                > spec.requirement.target_altitude_m
             ):
                 unmet = [*unmet, "altitude_high"]
         else:
@@ -203,7 +241,7 @@ class Harness:
                 if screen["apogee_m"] > spec.requirement.target_altitude_m:
                     unmet.append("altitude_high")
         # Numerical uncertainty must be reduced before optimizing against an unreliable prediction.
-        numerical = set(unmet) & {"aero_grid", "fem_mesh", "temporal"}
+        numerical = set(unmet) & {"aero_grid", "aero_averaging", "fem_mesh", "temporal"}
         proposals = {} if numerical else policy.proposals(spec, limits, unmet, a["visited"])
         if self.state["version"] - a["starting_version"] + 1 >= limits.max_versions:
             proposals = {}
@@ -242,6 +280,28 @@ class Harness:
                 addresses=["fem_mesh"],
                 scope="Increase FEM resolutions within the host maximum",
             )
+        if "aero_averaging" in numerical and runtime.cfd_times < 100:
+            choices["offered"]["refine/averaging"] = dict(
+                target="unsteady flow",
+                method="longer_averaging",
+                evaluation="split-window force/moment differences",
+                layer="low",
+                score=105,
+                cost_s=1,
+                addresses=["aero_averaging"],
+                scope="Increase flow duration within the host maximum",
+            )
+        if "temporal" in numerical and runtime.flight_step_s > 0.0025:
+            choices["offered"]["refine/time"] = dict(
+                target="flight integration",
+                method="halve_time_step",
+                evaluation="height difference and allocated budget",
+                layer="high",
+                score=100,
+                cost_s=1,
+                addresses=["temporal"],
+                scope="Decrease flight step within the host minimum",
+            )
         if len(a["decisions"]) >= limits.max_actions or a["remaining_s"] <= 0:
             for key in choices["offered"]:
                 choices["rejected"][key] = ["campaign_budget"]
@@ -277,6 +337,8 @@ class Harness:
         state["adaptive"] = a
 
     def _one(self, state):
+        if state["adopted"]:
+            raise Conflict("Edit the adopted design into a new version before further analysis")
         c, spec, precision, limits = self._campaign(state)
         a = state["adaptive"]
         if a["pending"]:
@@ -320,7 +382,10 @@ class Harness:
                 version=state["version"],
                 metrics=c.metrics,
                 unmet=choices["unmet"],
-                recent_decisions=a["decisions"][-4:],
+                recent_decisions=[
+                    {k: d.get(k) for k in ("action", "reason", "planner")}
+                    for d in a["decisions"][-4:]
+                ],
                 requirement=spec.requirement.model_dump(),
                 precision=precision.model_dump(),
             ),
@@ -352,8 +417,12 @@ class Harness:
                     r["cfd_cells_fine"],
                     r["cfd_cells_fine"] + 4,
                 )
-            else:
+            elif key == "refine/fem":
                 r["fem_level"] += 1
+            elif key == "refine/averaging":
+                r["cfd_times"] = min(100, r["cfd_times"] * 1.5)
+            elif key == "refine/time":
+                r["flight_step_s"] /= 2
             c.remaining_s -= 1
             self._persist(c)
         else:

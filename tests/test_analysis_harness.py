@@ -1,4 +1,5 @@
 import copy
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -129,8 +130,6 @@ def test_restart_edit_and_tampered_artifact_cannot_reuse_success(tmp_path):
     s = h.run(s["id"], s["revision"])
     assert s["adaptive"]["status"] == "screening_criteria_met"
     old = s["adaptive"]["results"]["geometry"]["value"]["artifact"]
-    from pathlib import Path
-
     Path(old).write_text("{}")
     restarted = FixtureHarness(DesignProjects(store.root))
     options = restarted.options(s["id"])
@@ -154,3 +153,96 @@ def test_capability_and_fin_count_gate_cfd_without_claiming_pass(tmp_path):
     rejected = state["adaptive"]["last_choices"]["rejected"]["cfd_coarse"]
     assert "missing_capability" in rejected and "outside_domain:fin_count" in rejected
     assert state["adaptive"]["status"] == "unresolved"
+
+
+def test_numerical_failure_offers_refinement_before_redesign(tmp_path):
+    _, h, s = started(tmp_path)
+    c, specification, precision, limits = h._campaign(s)
+    original = h.data
+    h.data = lambda campaign, key: (
+        {"unmet": ["altitude", "aero_grid", "temporal"], "metrics": {"criteria_met": False}}
+        if key == "confirm"
+        else original(campaign, key)
+    )
+    choices, proposals, _ = h._choices(c, specification, precision, limits)
+    assert "refine/cfd" in choices["offered"]
+    assert "refine/time" in choices["offered"]
+    assert not proposals
+
+
+def test_interrupted_attempt_keeps_time_and_retry_accounting(tmp_path):
+    store, h, s = started(tmp_path)
+    c, _, _, _ = h._campaign(s)
+    import time
+
+    s["adaptive"]["pending"] = dict(
+        action="geometry",
+        fingerprint=c.fingerprint("geometry"),
+        at=time.time() - 10,
+        timeout_s=30,
+        reserved_s=20,
+    )
+    s["adaptive"]["remaining_s"] -= 20
+    store._write(s)
+    s = h.step(s["id"], s["revision"])
+    history = s["adaptive"]["history"]
+    assert [r["execution_status"] for r in history] == ["interrupted", "completed"]
+    assert s["adaptive"]["remaining_s"] <= s["adaptive"]["limits"]["budget_s"] - 40
+
+
+def test_api_rejects_runtime_paths_and_stale_revision(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from api import design_projects as routes
+    from api.main import app
+
+    store = DesignProjects(tmp_path / "projects")
+    monkeypatch.setattr(routes, "DEFAULT_PROJECTS", store)
+    s = store.create(spec())
+    client = TestClient(app)
+    url = f"/design-projects/{s['id']}/adaptive"
+    response = client.post(
+        url + "/start",
+        json={
+            "revision": 0,
+            "precision": {"require_cfd": False, "require_fem": False},
+            "limits": {"planner": "baseline"},
+        },
+    )
+    assert response.status_code == 200
+    assert list(client.get(url + "/options").json()["offered"]) == ["geometry"]
+    assert client.post(url + "/step", json={"revision": 0}).status_code == 409
+    assert (
+        client.post(
+            url + "/start", json={"revision": 1, "runtime": {"calculix": "model-selected.exe"}}
+        ).status_code
+        == 422
+    )
+
+
+def test_fem_refinement_preserves_thermal_and_flight_fingerprints(tmp_path):
+    _, h, state = started(tmp_path)
+    initial, _, _, _ = h._campaign(state)
+    state["adaptive"]["runtime"]["fem_level"] = 3
+    refined, _, _, _ = h._campaign(state)
+    assert initial.fingerprint("thermal") == refined.fingerprint("thermal")
+    assert initial.fingerprint("screen") == refined.fingerprint("screen")
+
+
+def test_existing_search_starts_import_without_old_mass_or_pass_claims():
+    from rocketwright.analysis import seeds
+
+    s = spec()
+    s.measured_printed_mass_g = 20
+    choices = seeds.options()
+    assert {v["label"] for v in choices.values()}
+    assert len(choices) == 3
+    for key in choices:
+        imported = seeds.import_seed(key, s)
+        assert imported.geometry == s.geometry
+        assert imported.other_dry_mass_g == s.other_dry_mass_g
+        assert imported.requirement == s.requirement
+        assert imported.measured_printed_mass_g is None
+        assert imported.assumptions.evidence["initial_search_id"] == key
+    with pytest.raises(ValueError):
+        seeds.import_seed("unregistered", s)

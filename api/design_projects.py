@@ -9,6 +9,7 @@ from rocketwright.agent.design_projects import DEFAULT_PROJECTS, DesignSpec, que
 from rocketwright.agent.production import plan_video
 from rocketwright.agent.project_assembly import Observation
 from rocketwright.agent.project_jobs import queue
+from rocketwright.analysis import seeds
 from rocketwright.analysis.schema import Precision, SearchLimits
 from rocketwright.analysis.service import Harness
 
@@ -61,6 +62,23 @@ def accept_intent(request: AcceptIntent):
     from rocketwright.agent.project_intake import accept
 
     return call(accept, DEFAULT_PROJECTS, request.ticket_id, request.candidate_id)
+
+
+class SeedRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    seed_id: str
+    template: DesignSpec
+
+
+@router.get("/initial-seeds")
+def initial_seeds():
+    return {"seeds": call(seeds.options)}
+
+
+@router.post("/from-seed")
+def from_seed(request: SeedRequest):
+    spec = call(seeds.import_seed, request.seed_id, request.template)
+    return call(DEFAULT_PROJECTS.create, spec)
 
 
 @router.post("/{project_id}/adaptive/start")

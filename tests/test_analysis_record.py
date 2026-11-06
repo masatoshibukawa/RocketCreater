@@ -76,3 +76,18 @@ def test_no_fabricated_geometry_or_invalid_volume_enters_record():
         compile_record(spec(), {})
     with pytest.raises(ValueError):
         compile_record(spec(), {"fin": {"volume_mm3": -1}, "nose": {"volume_mm3": 2}})
+
+
+def test_cfd_grid_comparison_includes_the_force_arm_moment():
+    import numpy as np
+
+    from rocketwright.analysis.worker import integrated_coefficients
+
+    first = np.zeros((1, 1, 2, 6))
+    first[..., 0, 1] = 1
+    second = np.zeros_like(first)
+    second[..., 1, 1] = 1
+    before = integrated_coefficients(first, [0.2, 0.8], 0.1, 0.5)
+    after = integrated_coefficients(second, [0.2, 0.8], 0.1, 0.5)
+    np.testing.assert_allclose(before[..., :3], after[..., :3])
+    assert abs(after[0, 0, 5] - before[0, 0, 5]) == pytest.approx(6)
