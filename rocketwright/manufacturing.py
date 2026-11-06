@@ -21,10 +21,10 @@ from pathlib import Path
 from typing import Literal
 
 import numpy as np
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict
 
 from rocketwright.agent.local_runtime import LocalRuntimeError
-from rocketwright.schema import BottleDesign
+from rocketwright.schema import BottleDesign, BottleGeometry
 from scripts.check_ultimaker_slice import inspect
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,26 +40,12 @@ def fingerprint(value: dict) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, allow_nan=False).encode()).hexdigest()
 
 
-class PrintGeometry(BaseModel):
-    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
-    body_diameter_mm: float = Field(ge=30, le=200)
-    body_height_mm: float = Field(ge=50, le=500)
-    nose_length_mm: float = Field(ge=30, le=280)
-    fin_root_mm: float = Field(ge=35, le=200)
-    fin_tip_mm: float = Field(ge=10, le=180)
-    fin_span_mm: float = Field(ge=15, le=150)
-    fin_sweep_mm: float = Field(ge=0)
-    fin_count: int = Field(default=4, ge=3, le=6)
-
-    @model_validator(mode="after")
-    def contained_tip(self):
-        if self.fin_tip_mm + self.fin_sweep_mm > self.fin_root_mm:
-            raise ValueError("Fin tip and sweep must fit inside the root chord")
-        return self
-
+class PrintGeometry(BottleGeometry):
     @classmethod
     def from_design(cls, design: BottleDesign):
-        # Same representative bottle envelope as geometry.py; explicitly unmeasured.
+        if design.geometry is not None:
+            return cls.model_validate(design.geometry.model_dump())
+        # Explicitly unmeasured defaults; editing saves these in the design.
         d = (4 * design.bottle_volume_m3 / (math.pi * 3.5)) ** (1 / 3) * 1000
         return cls(
             body_diameter_mm=d,
@@ -68,6 +54,7 @@ class PrintGeometry(BaseModel):
             fin_root_mm=d,
             fin_tip_mm=0.35 * d,
             fin_span_mm=0.8 * d,
+            fin_tail_inset_mm=0.25 * 3.5 * d,
             fin_sweep_mm=0.35 * d,
         )
 
@@ -126,6 +113,8 @@ def runtime() -> dict:
 
 def parameters(request: PrintRequest) -> dict:
     g = request.geometry or PrintGeometry.from_design(request.design)
+    if request.design.geometry and g.model_dump() != request.design.geometry.model_dump():
+        raise ValueError("Print dimensions differ from the analysed design")
     c = json.loads((ROOT / "3d model/prototypes/pet-rocket-coke-2l/parameters.json").read_text())
     c["revision"] = "design-bound-print-v1"
     c["include_fins"] = request.design.has_fins
@@ -138,6 +127,7 @@ def parameters(request: PrintRequest) -> dict:
     )
     # Match the source nose length, rather than copying the frozen 2 L nose height.
     n = c["nose"]
+    n["wall"] = g.nose_wall_mm
     n["skirt_height"] = min(28, g.nose_length_mm / 4)
     outer = g.body_diameter_mm / 2 + c["bottle"]["radial_clearance"] + n["wall"]
     cap = n["tip_radius"]
@@ -153,6 +143,8 @@ def parameters(request: PrintRequest) -> dict:
     n["slope"] = (low + high) / 2
     c["fin"].update(
         count=g.fin_count,
+        thickness=g.fin_thickness_mm,
+        mount_tail_z=g.fin_tail_inset_mm,
         root_chord=g.fin_root_mm,
         tip_chord=g.fin_tip_mm,
         span=g.fin_span_mm,
@@ -390,13 +382,12 @@ def slice_part(directory: Path, name: str, profile: dict, paths: dict[str, Path]
     return review
 
 
-def prepare(request: PrintRequest, directory: Path) -> dict:
+def prepare_geometry(request: PrintRequest, directory: Path) -> tuple[dict, dict]:
     paths = tools()
-    if not all(p.is_file() for p in paths.values()):
+    if not paths["blender"].is_file():
         raise LocalRuntimeError(
             "Install/configure local Blender, CuraEngine 5.12.0 and Cura materials"
         )
-    profile = json.loads(PROFILE_PATH.read_text())
     c = parameters(request)
     directory.mkdir(parents=True, exist_ok=False)
     config_path = directory / "parameters.json"
@@ -419,6 +410,14 @@ def prepare(request: PrintRequest, directory: Path) -> dict:
     for name in geometries:
         remove_png_text(directory / f"{name}-preview.png")
         write_model_3mf(directory / f"{name}-mm.stl")
+    return c, geometries
+
+
+def prepare(request: PrintRequest, directory: Path) -> dict:
+    c, geometries = prepare_geometry(request, directory)
+    config_path = directory / "parameters.json"
+    paths = tools()
+    profile = json.loads(PROFILE_PATH.read_text())
     reviews = [slice_part(directory, name, profile, paths) for name in geometries]
     for review in reviews:
         review["quantity_for_assembly"] = c["fin"]["count"] if review["part"] == "fin" else 1
