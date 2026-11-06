@@ -1,0 +1,16 @@
+{
+  "style": "photographic",
+  "dimensions_sha256": "a12e6649f21789134369e2f206602a7668ea0f663cc939c9dec70a1aa9cbe0fc",
+  "mesh_vertex_hashes": {
+    "Adopted CAD fin0": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+    "Adopted CAD fin1": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+    "Adopted CAD fin2": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+    "Adopted CAD fin3": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+    "Adopted CAD nose0": "82de43da5f2eec8a9d10ed2c1d767a5a9334efac563fbe207d25c067315c8774",
+    "Bottle": "b4962bbf01b8a0a6d226ae7bd2c65723a80282c493a5deda6dc5b47a21a92d72",
+    "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+  "bottle_detail": "unmeasured illustrative PET envelope",
+  "physical_validation": "not_performed"
+}

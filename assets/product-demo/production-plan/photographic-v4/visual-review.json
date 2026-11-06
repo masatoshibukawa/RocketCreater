@@ -1,0 +1,135 @@
+{
+  "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+  "checked_at_utc": "2026-11-06T20:56:23.628033+00:00",
+  "source_commit": "74971ca49896417e878ffe23a6d5ae46e80d01c6",
+  "mesh_audit_commit": "7bd9699f423dba440faf2ac209b22cffabe1a0d7",
+  "mesh_audit_script_sha256": "73eff80ca33beba7889cfd8fbcc1dc4c8b74e7aeb634c368062af07ef1fc5abd",
+  "technical_verification_passed": true,
+  "browser_playback_to_end": true,
+  "browser_console_errors_observed": [],
+  "visual_quality_approval": "needs_improvement",
+  "visual_review_method": "Assistant inspection of 22 timed encoded-frame samples, two full-resolution encoded stills and browser playback screenshots; not continuous visual review of every frame.",
+  "continuous_full_visual_review": false,
+  "sample_frames": {
+    "design-explanation.mp4": [
+      0,
+      48,
+      96,
+      144,
+      192,
+      240,
+      288,
+      336,
+      383
+    ],
+    "launch-cg.mp4": [
+      0,
+      24,
+      48,
+      72,
+      96,
+      120,
+      144,
+      168,
+      192,
+      216,
+      240,
+      264,
+      287
+    ]
+  },
+  "observations": [
+    "Design clip: adopted nose and four fins remain attached and inside frame in reviewed samples; transparent PET body, reflections and bench are visible.",
+    "Both clips: disclosure is legible in full-resolution samples; no cropped caption or blank sample observed.",
+    "Launch positions: automatic transform readback agrees with solver interpolation to 9.18e-7 m; this is not independent image tracking."
+  ],
+  "open_findings": [
+    {
+      "id": "transparent-body-contrast",
+      "clip": "launch-cg.mp4",
+      "sample_range_seconds": [
+        1,
+        9
+      ],
+      "status": "open",
+      "finding": "The transparent body outline is too faint against the bright sky; nose and fins can appear visually disconnected although the adopted mesh placement passes.",
+      "next_check": "Improve photographic lighting/background/camera contrast without changing adopted CAD or solver trajectory, rerender and repeat timing/visual review."
+    }
+  ],
+  "limitations": [
+    "Photographic physically based CG, not filmed flight or Wan output.",
+    "Illustrative unmeasured PET detail, attitude and environment; time-compressed flight; no audio.",
+    "No new physical print, flight or P12 precision qualification.",
+    "One local generation run; cached assets and installed runtime excluded from total time.",
+    "Verification is pinned to source 74971ca; main advanced to 267e22d during generation and was not merged into this run."
+  ],
+  "raw_reports_unchanged": true,
+  "raw_report_note": "measurement.json and automated-verification.json were captured before visual review and retain visual_review=pending; this separate review records the actual findings.",
+  "files": [
+    {
+      "path": "appearance-sources.json",
+      "bytes": 2135,
+      "sha256": "39d9938b636f28692f841246e7027fc911051c4ce51e4bede73b9df0abbc0eee"
+    },
+    {
+      "path": "automated-verification.json",
+      "bytes": 1069,
+      "sha256": "21b96f9d1634cd76a21b5aa539f4349953f99b6a875b54818a6841decf4848d4"
+    },
+    {
+      "path": "browser-playback.json",
+      "bytes": 569,
+      "sha256": "441e04806455c3df70af3cae64c21191740c0f0b29d2b8a9574b25c147789b4f"
+    },
+    {
+      "path": "design-explanation-contact.jpg",
+      "bytes": 232205,
+      "sha256": "cdcd25a076b434bba264a79e5e843085b082e43cfa449fe604a4cca3251be2ef"
+    },
+    {
+      "path": "design-explanation-preview.jpg",
+      "bytes": 206342,
+      "sha256": "2116ada985f37b0c97437c73494a22128c5f6f44be605c75de58e33f7464a581"
+    },
+    {
+      "path": "design-explanation.mp4",
+      "bytes": 1525122,
+      "sha256": "769e29ea78a8bbe7dccc6fd13a5beea8911558bcbc1cbb5050a8ace5117aa80c"
+    },
+    {
+      "path": "launch-cg-contact.jpg",
+      "bytes": 156549,
+      "sha256": "8cd4800ccb3969cd64618fb2c2f57c35fb200a712c043feab21908706256bcaf"
+    },
+    {
+      "path": "launch-cg-preview.jpg",
+      "bytes": 66835,
+      "sha256": "25dd62de072c607a78a0dfc568ef41842b3266e0c184268b22f605b321ae1fda"
+    },
+    {
+      "path": "launch-cg.mp4",
+      "bytes": 1071506,
+      "sha256": "0a446232a5387d23270304bd4c63ce0eb116ca6b86683b8cd784e8c5036fe9d4"
+    },
+    {
+      "path": "measurement.json",
+      "bytes": 5682,
+      "sha256": "f0afbbbfafe03ed0d67c490b04f36e3f9dc9473e95ad78d6098858a76eacb7a2"
+    },
+    {
+      "path": "mesh-verification.json",
+      "bytes": 3286,
+      "sha256": "e1c6edf201c577720475ae9c2403bcd8118c10b86b57948222f75828ed38df65"
+    },
+    {
+      "path": "scene-source.json",
+      "bytes": 954,
+      "sha256": "da397f39a3b79965fabeb0a69bcf1f00576d293bed89046b491413f2b827eef9"
+    },
+    {
+      "path": "workshop-photographic.png",
+      "bytes": 153231,
+      "sha256": "8a9ee2faf20e3c35280c75936af9f35741f08e94def2d3dc9225145b36be03f8"
+    }
+  ]
+}
