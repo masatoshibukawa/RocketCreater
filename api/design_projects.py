@@ -34,6 +34,13 @@ def create(request: CreateRequest):
     return call(DEFAULT_PROJECTS.create, request.spec)
 
 
+@router.get("/catalog")
+def catalog():
+    from rocketwright.agent.project_catalog import reconciled_catalog
+
+    return call(reconciled_catalog)
+
+
 @router.get("/{project_id}")
 def project(project_id: str):
     return call(DEFAULT_PROJECTS.get, project_id)
