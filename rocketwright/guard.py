@@ -35,10 +35,13 @@ def _rx(*patterns: str) -> list[re.Pattern[str]]:
     return [re.compile(p, re.IGNORECASE) for p in patterns]
 
 
+# "Hit the target altitude" names a goal, not a place.
+_NOT_A_GOAL = r"(?!\s+(altitude|apogee|height|orbit|perigee|mass|speed))"
+
 # Order matters: the first matching category is reported.
 CATEGORY_PATTERNS: dict[str, list[re.Pattern[str]]] = {
     "propellant": _rx(
-        r"推進剤[のを]?(配合|製造|調合|作|つく|合成)",
+        r"推進(剤|薬)[のを]?(配合|製造|調合|作|つく|合成)",
         r"燃料[のを]?(配合|製造|調合|作|つく|合成)",
         r"(火薬|固体燃料|液体燃料|酸化剤)[のを]?(配合|製造|調合|作|つく)",
         r"propellant\s+(recipe|formulation|mix(ture|ing)?|composition|manufactur\w*|synthesis)",
@@ -49,9 +52,10 @@ CATEGORY_PATTERNS: dict[str, list[re.Pattern[str]]] = {
     ),
     "engine_internals": _rx(
         r"(エンジン|モータ[ー]?)[の]?内部(設計|構造)",
-        r"(ノズル|燃焼室|グレイン|インジェクタ[ー]?)[の]?(設計|形状|寸法)",
-        r"\bnozzle\s+(design|geometry|contour|throat)",
-        r"\b(design|size|shape)\s+(the|an?|my)\s+(rocket\s+|motor\s+|engine\s+)?nozzle",
+        r"(燃焼室|グレイン|インジェクタ[ー]?)[の]?(設計|形状|寸法)",
+        r"(ターボポンプ|ガスジェネレータ[ー]?|燃焼器)[をの]?(設計|開発|自作|製作)",
+        r"(エンジン|モータ[ー]?)[をの]?(自作|手作り|自分で(作|つく))",
+        r"\bturbo\s*pump\s+(design|sizing)|\bdesign\s+(a|the|my)\s+turbo\s*pump",
         r"\bnozzle\b.*\bcombustion\b",
         r"\bgrain\s+(geometry|design|shape|core)",
         r"\b(combustion\s+chamber|injector|throat)\s+(design|sizing|geometry)",
@@ -71,24 +75,39 @@ CATEGORY_PATTERNS: dict[str, list[re.Pattern[str]]] = {
     ),
     "weapon_target": _rx(
         r"地上の(特定の)?(地点|目標|場所|建物)[をに](狙|当|落と|命中)",
-        r"(地点|目標|建物|場所)[をに]?(狙|命中)",
+        r"(?<!着)(?<!落下)(?<!回収)(?<!着水)(地点|目標|建物|場所)[をに]?(狙|命中)",
         r"弾頭",
         r"再突入(体|機|ビークル|カプセル)",
-        r"(爆薬|爆発物|ミサイル)",
-        r"\bhit\s+(a|the)\s+target",
-        r"\b(strike|hit|impact)\s+(a|the|some)?\s*(ground\s+)?(target|location|coordinates?|building|city|town)",
+        r"(爆薬|爆発物|爆弾|ミサイル|兵器|武器|大陸間弾道)",
+        r"(?<![a-z])icbm(?![a-z])",
+        r"(駅|ビル|建物|都市|市街|首都|基地|大使館|官邸|国会|空港|家|人|車)[にへを]"
+        r"(落と(?!さな|さず)|当て|ぶつけ|命中|着弾|狙)",
+        r"\bhit\s+(a|the)\s+target" + _NOT_A_GOAL,
+        r"\b(strike|hit|impact)\s+(a|the|some)?\s*(ground\s+)?"
+        r"(target" + _NOT_A_GOAL + r"|location|coordinates?|building|city|town)",
         r"\bwarhead",
         r"\bre-?entry\s+(vehicle|body|capsule)",
         r"\b(missile|explosive|munition|weapon)",
-        r"\btarget\s+at\s+[\d.]+\s*[ns]?\s*,?\s*[\d.]+\s*[ew]?",
+        r"\btarget\s+at\s+-?\d+(\.\d+)?\s*°?\s*[ns]\b[\s,]*-?\d+(\.\d+)?\s*°?\s*[ew]\b",
+        r"\btarget\s+at\s+-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?",
     ),
 }
+
+# A water rocket's nozzle is a catalog part and its diameter a design variable, so nozzle
+# sizing is refused only outside that context.
+_BOTTLE_CONTEXT = re.compile(r"ペットボトル|水ロケット|ペトロケ|ボトル|water\s*rocket|bottle", re.I)
+_NOZZLE_PATTERNS = _rx(
+    r"ノズル[の]?(設計|形状|寸法)",
+    r"\bnozzle\s+(design|geometry|contour|throat)",
+    r"\b(design|size|shape)\s+(the|an?|my)\s+(rocket\s+|motor\s+|engine\s+)?nozzle",
+)
 
 # Flagged, not refused.
 _LEGAL_PATTERNS = _rx(
     r"許可[をの]?(取|とっ|申請|代行)",
     r"申請[をの]?(代行|して|お願い)",
-    r"(合法|違法|法的|法律)",
+    r"(合法|違法|法的|法律|法規|規制|届出)",
+    r"許可[がはを]?(要|必要|い[るり])",
     r"\b(get|obtain|secure|file|apply\s+for)\s+(the\s+|a\s+)?(launch\s+)?(permit|permission|approval|licen[cs]e|waiver)",
     r"\bis\s+(it|this)\s+legal",
     r"\b(legal(ity|ly)?|lawful|regulat(ion|ory))\b",
@@ -129,6 +148,8 @@ _LEGAL_SUGGESTION = (
 def check_scope(text: str) -> GuardResult:
     """Screen a free-text request. Refused categories return allowed=False."""
     for category, patterns in CATEGORY_PATTERNS.items():
+        if category == "engine_internals" and not _BOTTLE_CONTEXT.search(text):
+            patterns = [*patterns, *_NOZZLE_PATTERNS]
         for pattern in patterns:
             if pattern.search(text):
                 return GuardResult(
