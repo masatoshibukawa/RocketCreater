@@ -59,4 +59,6 @@
 5. OSのアプリ通信許可、対応プラグイン、VPN／ゲストネットワーク等の経路を確認する。ファイアウォール・ウイルス対策を一括無効化して解決しない。必要な例外はメーカーのネットワーク要件で特定する。
 6. ネットワーク機能がその構成で未対応なら、適合する媒体経路を案内する。送信テストは、印刷開始を含まない機能を選び、転送と実機開始を分けて確認する。
 
+手動IP指定はネットワークのアクセス制御を越える方法ではない。通信経路と許可が必要な点は自動検出と同じである。詳しいソフト操作は[9ソフトの接続スキル](../3d-model-skills/connections/3d-printer-connection/SKILL.md)を使う。
+
 [UltiMaker：ネットワーク診断](https://support.ultimaker.com/s/article/1667337573408)、[必要な通信条件](https://support.ultimaker.com/s/article/1667337958118)、[Formlabs：接続と通信条件](https://formlabs.com/support/Connectivity-and-Security/)

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PrusaSlicerの接続"
+  short_description: "PrusaSlicerの接続のPC対応と接続方式、検出・認証・転送を順に確認する"
+  default_prompt: "$3d-print-connect-prusa を使い、既存の機材情報とPC・ソフトの版から接続手順を選び、検出・認証・転送のどこで止まるか確認してください。"

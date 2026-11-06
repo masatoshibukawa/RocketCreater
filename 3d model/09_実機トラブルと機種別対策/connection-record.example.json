@@ -1,0 +1,19 @@
+{
+  "printer_model": null,
+  "hardware_variant": null,
+  "firmware_version": null,
+  "software_name": null,
+  "software_version": null,
+  "network_module_version": null,
+  "pc_os_version": null,
+  "pc_cpu_architecture": null,
+  "transport": null,
+  "discovery_status": "not_checked",
+  "authentication_verified": null,
+  "transfer_verified": null,
+  "print_start_requested": false,
+  "print_start_observed": false,
+  "physical_result": "not_printed",
+  "evidence_note_without_secrets": null,
+  "next_check": null
+}
