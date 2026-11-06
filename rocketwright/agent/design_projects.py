@@ -290,7 +290,7 @@ class DesignProjects:
         )
         reuse_previous_cad(self, state, old, state["spec"])
         if state.get("adaptive"):
-            state["adaptive"].update(status="running", accepted_spec_hash=None)
+            state["adaptive"].update(status="running", accepted_spec_hash=None, quality_pending=[])
 
     def adaptive_step(self, project_id, revision, *, started_event=None):
         from rocketwright.analysis.service import Harness
