@@ -100,12 +100,44 @@ P12の精度/安定性の未達と、利用者がスキップしたP13/P14はそ
 機体位置・採用STL・取付位置・寸法・質量・計算軌跡には変更を加えない。
 透明PETには仮定した薄い青み、粗さ0.06〜0.12、光の吸収を使い、透過は維持する。
 材質値と俯瞰位置は表現用で、実測した材料光学特性や撮影条件ではない。
-選択した設定では反射調整板は使っていない。
 
 初期・中間・最終の比較描画で胴体の輪郭を確認した。
-制作ソース `d8494ac` から1080p/24 fps・32 samples・672枚の全編を再生成中。
+制作ソース `d8494ac` から1080p/24 fps・32 samples・672枚の全編を再生成した。
 前のGemma演出案を使い、課金API・新しいLLM呼出し・新しい形状生成は行わない。
-完成後の全復号、CAD照合、目視確認、所要時間の結果は完走後に追記する。
+完成した改善版では、確認した飛行25時刻すべてで胴体の輪郭を読み取れ、
+部品が離れて見える指摘を解消した。設計説明9時刻と原寸の代表画像も確認。
+全フレームの連続目視や、あらゆる設計・撮影条件での品質保証とは扱わない。
+
+全672フレームの復号、保存シーンの5個の採用CAD、初回と同じ7個のメッシュ頂点ハッシュ、
+288行の計算時刻/機体位置の一致を確認。カメラ高度は一定で、機体の位置を変えていない。
+統合画面で改善版2本が終端に到達し、取得した再生エラー/コンソールエラーは0。
+旧動画2本も実APIから元のハッシュのまま取得できた。
+
+| 本番生成の工程 | 実測時間 |
+| --- | ---: |
+| 初回実行・一時停止まで | 35分10.6秒 |
+| 修正・検査・再開までの間隔 | 5分10.0秒 |
+| 再開実行・登録完了まで | 5分52.7秒 |
+| **初回開始から登録完了まで** | **46分13.3秒** |
+
+再開実行の内訳はBlender5分26.4秒、動画化/全復号25.6秒、その他約0.6秒。
+2実行の処理時間の合計は41分3.3秒。修復を挟んだ実経過時間と区別する。
+これは素材/環境の導入や、先行する比較描画・実装時間を含めない。
+並行GPU処理があるため、初回28分4.2秒との差を材質変更だけの性能差とは扱わない。
+
+途中でWindowsの一時的な読み取りロックにより進捗JSONの置換が拒否された。
+`8d15fea`で保存の再試行を加え、失敗が続く場合も直前の完全なJSONを保持するよう修正。
+失敗記録を残し、画像生成コード・入力が不変であることと保存559枚の全SHA256を照合した上で、
+進捗保存だけの修正に対するキャッシュ識別子を一度移行した。再開で残り113枚を描画。
+任意のコード変更でキャッシュを再利用する機能を追加したものではない。
+
+- [改善した飛行動画](../assets/product-demo/production-plan/photographic-v4-corrected/launch-cg.mp4)・
+  [設計説明動画](../assets/product-demo/production-plan/photographic-v4-corrected/design-explanation.mp4)
+- [6秒時点の比較画像](../assets/product-demo/production-plan/photographic-v4-corrected/before-after.jpg)・
+  [飛行25時刻](../assets/product-demo/production-plan/photographic-v4-corrected/launch-cg-contact.jpg)
+- [目視/ハッシュ記録](../assets/product-demo/production-plan/photographic-v4-corrected/visual-review.json)・
+  [総時間](../assets/product-demo/production-plan/photographic-v4-corrected/total-time.json)・
+  [再開監査](../assets/product-demo/production-plan/photographic-v4-corrected/recovery-audit.json)
 
 画面の「元の動画を残して再制作」は、既存動画と同じ設計版に別の制作フォルダーを作る。
 全検査を通るまで以前の動画を通常表示に残し、成功時に新作を表示して以前のものを
@@ -117,6 +149,8 @@ python scripts/verify_photographic_project.py ROOT PROJECT_ID NEW_REPORT.json --
 blender --background --python-exit-code 1 --python scripts/audit_workbench_scene.py -- V4_DIR REPORT.json VIDEO_DIR
 ```
 
-旧動画保持・再制作失敗・再試行・APIフラグ受渡しを含む関連26試験、Ruff、TypeScript、
+旧動画保持・再制作失敗・再試行・APIフラグ受渡し・Windows保存再試行を含む関連27試験、Ruff、TypeScript、
 Next本番ビルドが成功。実APIでも進行中の重複要求を409で拒否し、同じジョブを保持した。
-これらのソフトウェア試験を、完成動画の画質や物理検証の合格とは扱わない。
+再制作の引数受渡しはAPI試験、長時間実行は実制作経路を呼ぶ計測CLIで確認し、
+画面では進捗・再生・履歴を確認した。物理検証やP12の合格を追加したものではない。
+最新mainとの競合は、前述の解析3ファイルに加えて設計ループの文書と`web/app/page.tsx`も残る。

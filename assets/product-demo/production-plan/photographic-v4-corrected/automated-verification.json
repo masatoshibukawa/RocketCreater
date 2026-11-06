@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "files": [
+    {
+      "file": "design-explanation.mp4",
+      "fps": 24.0,
+      "size": [
+        1920,
+        1080
+      ],
+      "duration": 16.0,
+      "changing_frames": true,
+      "full_decode": true,
+      "decoded_frames": 384,
+      "audio": "none"
+    },
+    {
+      "file": "launch-cg.mp4",
+      "fps": 24.0,
+      "size": [
+        1920,
+        1080
+      ],
+      "duration": 12.0,
+      "changing_frames": true,
+      "full_decode": true,
+      "decoded_frames": 288,
+      "audio": "none"
+    }
+  ],
+  "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+  "style": "photographic",
+  "rendered_trajectory": {
+    "passed": true,
+    "frames": 288,
+    "max_position_error_m": 9.177030335649761e-07,
+    "attitude": "illustrative, not integrated attitude dynamics",
+    "position_basis": "object_transform_readback",
+    "scope": "Position records against solver interpolation; not independent image tracking"
+  },
+  "visual_review": "pending",
+  "physical_validation": "not_performed"
+}

@@ -1,0 +1,175 @@
+{
+  "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+  "checked_at_utc": "2026-11-06T22:49:12.017326+00:00",
+  "pixel_recipe_source_commit": "d8494ac89b715d0186f41bd82395f7668cea51b1",
+  "checkpoint_repair_commit": "8d15fead462cd73fd739890cf4ccfbb992115798",
+  "technical_verification_passed": true,
+  "visual_quality_approval": "approved_for_body_visibility_in_reviewed_samples",
+  "resolved_finding": "transparent-body-contrast",
+  "visual_review_method": "Assistant review of 9 design and 25 flight encoded-frame samples, two full-resolution stills and a same-time before/after comparison; browser playback to end and screenshots.",
+  "continuous_full_visual_review": false,
+  "sample_frames": {
+    "design-explanation.mp4": [
+      0,
+      48,
+      96,
+      144,
+      192,
+      240,
+      288,
+      336,
+      383
+    ],
+    "launch-cg.mp4": [
+      0,
+      12,
+      24,
+      36,
+      48,
+      60,
+      72,
+      84,
+      96,
+      108,
+      120,
+      132,
+      144,
+      156,
+      168,
+      180,
+      192,
+      204,
+      216,
+      228,
+      240,
+      252,
+      264,
+      276,
+      287
+    ]
+  },
+  "observations": [
+    "The PET outline connects nose and fins against terrain across all 25 reviewed flight samples.",
+    "No blank or clipped sampled frame or unreadable full-resolution disclosure was observed.",
+    "Both actual current v4 movies reach their end in the integrated browser; old video URLs remain available with registered hashes."
+  ],
+  "open_findings": [],
+  "camera_elevation_m": 18.969594955444336,
+  "camera_elevation_constant": true,
+  "trajectory_csv_position_and_time_rows_identical_to_initial": true,
+  "all_seven_mesh_vertex_hashes_identical_to_initial": true,
+  "raw_reports_unchanged": true,
+  "verification_start_method": "Instrumented CLI delegates to production.render_video(regenerate=True); API regeneration dispatch is covered by tests. Browser progress, playback and history were observed.",
+  "cache_recovery_scope": "One audited identity migration for a JSON-publication-only patch; identical pixel code/job inputs and all 559 cached frame hashes were checked. Normal production remains code-bound.",
+  "limitations": [
+    "Assumed cool PET optical properties and fixed elevated CG viewpoint, not measured material or a filmed observation.",
+    "Unmeasured PET detail, illustrative attitude/environment, time-compressed solver replay and no audio.",
+    "Sampled visual review is not continuous inspection of every frame, universal quality validation or physical qualification.",
+    "P12 precision/stability remains unresolved; P13/P14 were not rerun.",
+    "Parallel local GPU work and one repaired interruption are included in observed elapsed time; this is not a controlled performance comparison.",
+    "Latest main is not integrated into the source-pinned verification."
+  ],
+  "checks": {
+    "related_python_tests": 27,
+    "ruff": "passed",
+    "typescript": "passed",
+    "next_production_build": "passed"
+  },
+  "files": [
+    {
+      "path": "api-guard.json",
+      "bytes": 150,
+      "sha256": "45e5b7091b7f8a0917858e82521d47685440f0749d1bebe9fb1f18ef09e0b1c9"
+    },
+    {
+      "path": "appearance-sources.json",
+      "bytes": 2135,
+      "sha256": "39d9938b636f28692f841246e7027fc911051c4ce51e4bede73b9df0abbc0eee"
+    },
+    {
+      "path": "automated-verification.json",
+      "bytes": 1069,
+      "sha256": "21b96f9d1634cd76a21b5aa539f4349953f99b6a875b54818a6841decf4848d4"
+    },
+    {
+      "path": "before-after.jpg",
+      "bytes": 68970,
+      "sha256": "abade764837ca0ae25b127972681eec679a72469e8a06b3c993d4041ffe05fe6"
+    },
+    {
+      "path": "browser-playback.json",
+      "bytes": 717,
+      "sha256": "f2bab1a8dd418d52206e65fca3b9a3d7797d0177008caaf79a8489c057f0b725"
+    },
+    {
+      "path": "delivery-verification.json",
+      "bytes": 1059,
+      "sha256": "d85e782f92755369c23e80bd9ad8fe471d7e2e459d3347b03fe023c02ef9f77d"
+    },
+    {
+      "path": "design-explanation-contact.jpg",
+      "bytes": 230935,
+      "sha256": "2c62f213a2c8ba3c3f3e091d94cb5e5125aad2b22d2981ceaab36367bce8f239"
+    },
+    {
+      "path": "design-explanation-preview.jpg",
+      "bytes": 204087,
+      "sha256": "210502ba7d5c991126352adf65e839a830f8b55c40c464daf7debd38824dc75d"
+    },
+    {
+      "path": "design-explanation.mp4",
+      "bytes": 1449560,
+      "sha256": "91740c9e7a03290cce56c04818a4976bbb4048911104df24470c38e54216599d"
+    },
+    {
+      "path": "interrupted-measurement.json",
+      "bytes": 3824,
+      "sha256": "358d5b4b377d6052f254f866fd27c365879c3692deff355bf64e919ea4eb14c1"
+    },
+    {
+      "path": "launch-cg-contact.jpg",
+      "bytes": 429893,
+      "sha256": "1a821459d000352f5bbd3e48eba51146e29b66ebd29cb75a135499c5a2819b4f"
+    },
+    {
+      "path": "launch-cg-preview.jpg",
+      "bytes": 69162,
+      "sha256": "c11e92505025dfd0454498b4eb9a72b408b061bb206c1f5d91777f2ca405e25f"
+    },
+    {
+      "path": "launch-cg.mp4",
+      "bytes": 3923782,
+      "sha256": "3d45a4fbb327892e75bb9a8e19b3e9aebcb63109e220b1c23735c766aadb5be3"
+    },
+    {
+      "path": "measurement.json",
+      "bytes": 6029,
+      "sha256": "210b03b102f8086217e0f1893487eddc063b6a993c8416671ed882bd2c69d79c"
+    },
+    {
+      "path": "mesh-verification.json",
+      "bytes": 3363,
+      "sha256": "d180e07f65735526c3dceae677861a0f4a8672bd4d943b8f057a14c2232a641f"
+    },
+    {
+      "path": "recovery-audit.json",
+      "bytes": 1229,
+      "sha256": "42b4da9c572ee6f2a025c7a35e075a898d8e346699094b734961677133977314"
+    },
+    {
+      "path": "scene-source.json",
+      "bytes": 1022,
+      "sha256": "a53463a9f28537435a7c4f26b36ce2425568c59fa260acb8da1713e3eebb9125"
+    },
+    {
+      "path": "total-time.json",
+      "bytes": 376,
+      "sha256": "ee84354200093d10f0a03279880111c94713dcf1cfc69e42631e2215d5d8fbd4"
+    },
+    {
+      "path": "workshop-photographic.png",
+      "bytes": 182624,
+      "sha256": "201281fe1ca723a32aa441aba32b971fb7d1d56da409f0676a6f909aad642218"
+    }
+  ]
+}
