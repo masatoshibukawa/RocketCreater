@@ -285,3 +285,21 @@ NERO-Eindhoven / Nederlandse Federatie voor Raket-Onderzoek · 年不明（1996�
 [配布元・出典](https://nerorockets.org/nero/neh-projects-e36.htm) · [原本取得先](https://nerorockets.org/nero/neh-projects-e36.htm) · [保存HTML](<原本/MH23.html>)
 
 利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mh24"></a>
+
+## MH24 — A Record Flight of the Hybrid Sounding Rocket HEROS 3
+
+- 著者・発行元：Mario Kobald; Christian Schmierer; Ulrich Fischer; Konstantin Tomilin; Anna Petrarolo。年・版：2018。言語：en。
+- 種別：ハイブリッド実験機の飛行報告。2016年のHEROS 3飛行を記録する2018年論文。DOI: 10.2322/tastj.16.312。計画段階の説明と実績報告を区別。公開閲覧だけでは再配布許諾としない。
+- [出典](https://elib.dlr.de/119887/)。
+- このPCのみの原本（Gitには未収録）：[MH24.pdf](%E5%8E%9F%E6%9C%AC/MH24.pdf)。6頁、3,332,490 bytes。再配布許諾未確認。
+
+<a id="mh25"></a>
+
+## MH25 — Systematic design of a parachute recovery system for the stratos III student built sounding rocket
+
+- 著者・発行元：Lars Pepermans; Mark Rozemeijer; Esmée Menting; Noah Suard; Sayyam Khurana。年・版：2018。言語：en。
+- 種別：会議論文の大学書誌・抄録。Stratos IIIの回収設計。保存するのは大学書誌・抄録ページで論文全文ではない。DOIは10.2514/6.2018-3626だが、ページ内の論文番号表記に3625もあり不一致を保持。
+- [出典](https://research.tudelft.nl/en/publications/systematic-design-of-a-parachute-recovery-system-for-the-stratos-/)。
+- このPCのみの原本（Gitには未収録）：[MH25.html](%E5%8E%9F%E6%9C%AC/MH25.html)。—頁、55,545 bytes。再配布許諾未確認。

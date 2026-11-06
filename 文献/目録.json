@@ -1648,6 +1648,544 @@
       "file_manifest": "追加収集-20261107.json",
       "redistribution": "MIT",
       "checked_on": "2026-11-07"
+    },
+    {
+      "id": "D41",
+      "category": "設計図・製作資料",
+      "lang": "en",
+      "title": "Open Access Water Rocketry Project",
+      "author": "Marimo Labs",
+      "year": null,
+      "kind": "公開3Dモデルの配布案内",
+      "source": "https://marimolabs.com/pages/water-rocketry",
+      "note": "発射台・水ロケットの3Dモデル配布案内。設計はCC BY-NC-SA 4.0と明記。今回保存するHTMLと配布先リンクはモデル本体ではなく、サイト全体の再配布許諾は未確認。",
+      "checked_on": "2026-11-07",
+      "download": "https://marimolabs.com/pages/water-rocketry",
+      "local": {
+        "path": "原本/D41.html",
+        "bytes": 181170,
+        "sha256": "42f5fd176150607828cd8a75c8a2bbbbaf419c0f4a1a001221918926dbe36eee",
+        "format": "html"
+      },
+      "files": [
+        {
+          "path": "原本/D41.html",
+          "url": "https://marimolabs.com/pages/water-rocketry",
+          "bytes": 181170,
+          "sha256": "42f5fd176150607828cd8a75c8a2bbbbaf419c0f4a1a001221918926dbe36eee",
+          "status": "local_only",
+          "license": "再配布許諾未確認"
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://marimolabs.com/pages/water-rocketry",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "D42",
+      "category": "設計図・製作資料",
+      "lang": "en,sw",
+      "title": "Water Rocket Launch / Kurusha Roketi ya Maji",
+      "author": "IEEE TryEngineering",
+      "year": "2013（教材ページ初出）・保存版の改訂年不明",
+      "kind": "授業用教材・翻訳",
+      "source": "https://tryengineering.org/resource/lesson-plan/water-rocket-launch/",
+      "note": "IEEEの英語授業教材。公式ページがスワヒリ語訳へのリンクを提供しているが、英語PDF・スワヒリ語DOCXとも403で未保存。swは配布元の翻訳表示で確認、本文未確認。",
+      "checked_on": "2026-11-07",
+      "download": "https://tryengineering.org/wp-content/uploads/Water-Rocket-Launch.pptx.pdf",
+      "local": null,
+      "language_basis": "en: 配布ページ本文; sw: 公式翻訳リンクの表示（原文未取得）",
+      "files": [],
+      "download_status": "未保存（取得先・書誌のみ）",
+      "download_attempts": [
+        {
+          "url": "https://tryengineering.org/wp-content/uploads/Water-Rocket-Launch.pptx.pdf",
+          "status": "failed",
+          "reason": "HTTP Error 403: Forbidden"
+        },
+        {
+          "url": "https://tryengineering.org/wp-content/uploads/146-KURUSHA-ROKETI-YA-MAJI-EDITED.docx",
+          "status": "failed",
+          "reason": "HTTP Error 403: Forbidden"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "D43",
+      "category": "設計図・製作資料",
+      "lang": "de,en",
+      "title": "Water Rocket Challenge Guide 2024 / 2026",
+      "author": "ESERO Luxembourg",
+      "year": "2024・2026",
+      "kind": "大会教材の言語・年代別版",
+      "source": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-DE.pdf",
+      "note": "既存D33（2025年フランス語版）を補うドイツ語・英語の年度別教材。大会条件を版ごとに比較する。複数翻訳を独立した研究論文として数えない。",
+      "checked_on": "2026-11-07",
+      "download": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-DE.pdf",
+      "local": {
+        "path": "原本/D43.pdf",
+        "bytes": 4580414,
+        "sha256": "a94b8fcb5306cfc8880e3a8a3e52ca855f330adb684f75150f4be180d37b524d",
+        "format": "pdf",
+        "pages": 25
+      },
+      "files": [
+        {
+          "path": "原本/D43.pdf",
+          "url": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-DE.pdf",
+          "bytes": 4580414,
+          "sha256": "a94b8fcb5306cfc8880e3a8a3e52ca855f330adb684f75150f4be180d37b524d",
+          "status": "local_only",
+          "license": "再配布許諾未確認",
+          "pages": 25
+        },
+        {
+          "path": "原本/D43-2024-en.pdf",
+          "url": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-EN.pdf",
+          "bytes": 4459499,
+          "sha256": "0f10125db52e502e5ed1d7d5c57d24828dc364bc53967758e24936f828a1e122",
+          "status": "local_only",
+          "license": "再配布許諾未確認",
+          "pages": 23
+        },
+        {
+          "path": "原本/D43-2026-en.pdf",
+          "url": "https://www.esero.lu/wp-content/uploads/2026/01/Water-Rocket-Challenge-Guide-2026-EN.pdf",
+          "bytes": 4673339,
+          "sha256": "6b64311fcc71b5d65db41e1e6affef3805aa794ca9d79db0473d1aaaee7e96b2",
+          "status": "local_only",
+          "license": "再配布許諾未確認",
+          "pages": 23
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-DE.pdf",
+          "status": "saved"
+        },
+        {
+          "url": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-EN.pdf",
+          "status": "saved"
+        },
+        {
+          "url": "https://www.esero.lu/wp-content/uploads/2026/01/Water-Rocket-Challenge-Guide-2026-EN.pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "D44",
+      "category": "設計図・製作資料",
+      "lang": "es",
+      "title": "Lanzamiento de cohetes — Calcula y diseña tu propio lanzamiento",
+      "author": "ESERO España / ESA",
+      "year": "2020-06（第3版）",
+      "kind": "紙・空気ロケットの比較教材",
+      "source": "https://esero.es/wp-content/uploads/2021/05/lanzamiento-de-cohetes.pdf",
+      "note": "ESERO Spainのスペイン語初等教育教材。紙・空気ロケットを水ロケット学習の比較先として収録。公開検索本文で2020年6月第3版を確認。現在のPDF取得は404で未保存。",
+      "checked_on": "2026-11-07",
+      "download": "https://esero.es/wp-content/uploads/2021/05/lanzamiento-de-cohetes.pdf",
+      "local": null,
+      "files": [],
+      "download_status": "未保存（取得先・書誌のみ）",
+      "download_attempts": [
+        {
+          "url": "https://esero.es/wp-content/uploads/2021/05/lanzamiento-de-cohetes.pdf",
+          "status": "failed",
+          "reason": "HTTP Error 404: Not Found"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "D45",
+      "category": "設計図・製作資料",
+      "lang": "de",
+      "title": "Mess- und Steuerinstrument für Wasserraketen",
+      "author": "Tobias Schüttler / LMU München・DLR School Lab",
+      "year": null,
+      "kind": "大学の計測教材紹介",
+      "source": "https://www.didaktik.physik.uni-muenchen.de/materialien/neue_medien/arduino/wasserraketen/index.html",
+      "note": "水ロケットに搭載する計測・制御教材の大学公開ページ。動画は同梱せず配布元リンクを保持する。",
+      "checked_on": "2026-11-07",
+      "download": "https://www.didaktik.physik.uni-muenchen.de/materialien/neue_medien/arduino/wasserraketen/index.html",
+      "local": {
+        "path": "原本/D45.html",
+        "bytes": 21827,
+        "sha256": "3c8cc15d058a7132d3f4b8dfda313878094c2926685b2380f347d0b105afb6af",
+        "format": "html"
+      },
+      "files": [
+        {
+          "path": "原本/D45.html",
+          "url": "https://www.didaktik.physik.uni-muenchen.de/materialien/neue_medien/arduino/wasserraketen/index.html",
+          "bytes": 21827,
+          "sha256": "3c8cc15d058a7132d3f4b8dfda313878094c2926685b2380f347d0b105afb6af",
+          "status": "local_only",
+          "license": "再配布許諾未確認"
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://www.didaktik.physik.uni-muenchen.de/materialien/neue_medien/arduino/wasserraketen/index.html",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R35",
+      "category": "論文・研究資料",
+      "lang": "pt",
+      "title": "Conhecimento da engenharia associado ao lançamento de foguete de garrafa pet: experiência com meninas de escolas públicas do município de Gurupi-TO",
+      "author": "Flávia Borges de Menezes et al.",
+      "year": "2022",
+      "kind": "教育実践論文",
+      "source": "https://rsdjournal.org/rsd/article/view/33662",
+      "note": "PETロケットを用いた工学教育実践。教育効果の調査と機体性能試験を区別する。DOI: 10.33448/rsd-v11i11.33662。",
+      "checked_on": "2026-11-07",
+      "download": "https://rsdjournal.org/rsd/article/download/33662/28621/379021",
+      "local": {
+        "path": "原本/R35.pdf",
+        "bytes": 1214612,
+        "sha256": "09031e6531263b3aa97ddbebdb9661d5c55452c9a2fa46617ac47e035dbcc208",
+        "format": "pdf",
+        "pages": 20
+      },
+      "files": [
+        {
+          "path": "原本/R35.pdf",
+          "url": "https://rsdjournal.org/rsd/article/download/33662/28621/379021",
+          "bytes": 1214612,
+          "sha256": "09031e6531263b3aa97ddbebdb9661d5c55452c9a2fa46617ac47e035dbcc208",
+          "status": "publish",
+          "license": "CC-BY-4.0",
+          "pages": 20
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://rsdjournal.org/rsd/article/download/33662/28621/379021",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R36",
+      "category": "論文・研究資料",
+      "lang": "id",
+      "title": "Exploring Students Potential and Creativity Through Science Exploration with Water Rockets and a Stunning Interactive Approach",
+      "author": "Nailinnajah; Masnal Khamal Septiana; Melinda Triwardani; Nur Fadilla Aulia Luthfi",
+      "year": "2024-07-31",
+      "kind": "教育会議論文",
+      "source": "https://jurnal.uns.ac.id/SHES/article/view/91951",
+      "note": "水ロケットを用いた参加型学習の報告。本文言語を保存PDFで確認し、英語表題と区別。DOI: 10.20961/shes.v7i3.91951。",
+      "checked_on": "2026-11-07",
+      "download": "https://jurnal.uns.ac.id/SHES/article/download/91951/46425",
+      "local": {
+        "path": "原本/R36.pdf",
+        "bytes": 248527,
+        "sha256": "3f3cb8daded190feb04b6490225d55ae251e2709b4c09cf5bad233ef5096a3f9",
+        "format": "pdf",
+        "pages": 6
+      },
+      "files": [
+        {
+          "path": "原本/R36.pdf",
+          "url": "https://jurnal.uns.ac.id/SHES/article/download/91951/46425",
+          "bytes": 248527,
+          "sha256": "3f3cb8daded190feb04b6490225d55ae251e2709b4c09cf5bad233ef5096a3f9",
+          "status": "publish",
+          "license": "CC-BY-SA-4.0",
+          "pages": 6
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://jurnal.uns.ac.id/SHES/article/download/91951/46425",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R37",
+      "category": "論文・研究資料",
+      "lang": "en",
+      "title": "Water Rocket Theory and Experiment: Bridging Ideal Models and Real Results in STEM Education",
+      "author": "Chan-min Chung",
+      "year": "2025",
+      "kind": "理論と実験の研究論文",
+      "source": "https://eiet.iikii.com.sg/5/3/17327",
+      "note": "理想化モデルと実験結果を教育用途で比較。DOI: 10.35745/eiet2025v05.03.0011。",
+      "checked_on": "2026-11-07",
+      "download": "https://eiet.iikii.com.sg/download/water-rocket-theory-and-experiment-bridging-ideal-models-and-real-results-in-stem-education-17327.pdf",
+      "local": {
+        "path": "原本/R37.pdf",
+        "bytes": 1217224,
+        "sha256": "06f3603c183b242a4e5a7e2d8eea2feeaeb6df085505a06f6c764329ba8395c5",
+        "format": "pdf",
+        "pages": 11
+      },
+      "files": [
+        {
+          "path": "原本/R37.pdf",
+          "url": "https://eiet.iikii.com.sg/download/water-rocket-theory-and-experiment-bridging-ideal-models-and-real-results-in-stem-education-17327.pdf",
+          "bytes": 1217224,
+          "sha256": "06f3603c183b242a4e5a7e2d8eea2feeaeb6df085505a06f6c764329ba8395c5",
+          "status": "publish",
+          "license": "CC-BY-4.0",
+          "pages": 11
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://eiet.iikii.com.sg/download/water-rocket-theory-and-experiment-bridging-ideal-models-and-real-results-in-stem-education-17327.pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R38",
+      "category": "論文・研究資料",
+      "lang": "id",
+      "title": "Simulasi Numerik Pengaruh Tekanan Udara Awal Dan Volume Air Terhadap Kinerja Roket Air Menggunakan Metode Runge Kutta Orde 4 (RK4)",
+      "author": "Hilman Nuha Ramadhan; Freddy Haryanto",
+      "year": "2025-09（本文表記）",
+      "kind": "数値解析論文",
+      "source": "https://jurnal.usk.ac.id/JAcPS/article/view/48613",
+      "note": "初期圧力・水量と飛行をRK4で解析するインドネシア語論文。DOI: 10.24815/jacps.v14i3.48613。巻号ページはJuly 2025、本文はSeptember 2025としている。",
+      "checked_on": "2026-11-07",
+      "download": "https://jurnal.usk.ac.id/JAcPS/article/download/48613/24777",
+      "local": {
+        "path": "原本/R38.pdf",
+        "bytes": 879557,
+        "sha256": "8065387fe1170b97fc316f5804b254ba0ef00660982690c262c1d6b9374c621e",
+        "format": "pdf",
+        "pages": 11
+      },
+      "files": [
+        {
+          "path": "原本/R38.pdf",
+          "url": "https://jurnal.usk.ac.id/JAcPS/article/download/48613/24777",
+          "bytes": 879557,
+          "sha256": "8065387fe1170b97fc316f5804b254ba0ef00660982690c262c1d6b9374c621e",
+          "status": "publish",
+          "license": "CC-BY-4.0",
+          "pages": 11
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://jurnal.usk.ac.id/JAcPS/article/download/48613/24777",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R39",
+      "category": "論文・研究資料",
+      "lang": "en",
+      "title": "The Development of ‘Do-It-Yourself’ Water Rocket Launcher Kit for Pre-Service Science Teachers",
+      "author": "Ahmad Faiz Shaharin et al.",
+      "year": "2022",
+      "kind": "物理教育会議論文",
+      "source": "https://iopscience.iop.org/article/10.1088/1742-6596/2309/1/012044",
+      "note": "教員養成向けの水ロケット教材開発。著者・題名・掲載誌・DOIを保持する条件を発行元が明記。",
+      "checked_on": "2026-11-07",
+      "download": "https://iopscience.iop.org/article/10.1088/1742-6596/2309/1/012044/pdf",
+      "local": null,
+      "files": [],
+      "download_status": "未保存（取得先・書誌のみ）",
+      "download_attempts": [
+        {
+          "url": "https://iopscience.iop.org/article/10.1088/1742-6596/2309/1/012044/pdf",
+          "status": "failed",
+          "reason": "b'<head><title>Radware Bot Manager Captcha</title><script type=\"text/javascript\">\\n'"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R40",
+      "category": "論文・研究資料",
+      "lang": "ja",
+      "title": "水ロケットの中学校技術科および高等学校工業科の授業への適用可能性の検討",
+      "author": "望月高昭・坂口謙一",
+      "year": "2017",
+      "kind": "大学紀要・教育研究",
+      "source": "https://u-gakugei.repo.nii.ac.jp/record/34678",
+      "note": "紀要69集291–300頁の教材適用に関する文献レビュー。取得元が503を返したため原本未保存。公開元の索引抽出で書誌を確認した。",
+      "checked_on": "2026-11-07",
+      "download": "https://u-gakugei.repo.nii.ac.jp/record/34678/files/18804330_69_24.pdf",
+      "local": null,
+      "files": [],
+      "download_status": "未保存（取得先・書誌のみ）",
+      "download_attempts": [
+        {
+          "url": "https://u-gakugei.repo.nii.ac.jp/record/34678/files/18804330_69_24.pdf",
+          "status": "failed",
+          "reason": "HTTP Error 503: Service Temporarily Unavailable"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R41",
+      "category": "論文・研究資料",
+      "lang": "ja",
+      "title": "宇宙教育における水ロケットとその効果",
+      "author": "竹前俊昭 / 宇宙航空研究開発機構",
+      "year": "2005",
+      "kind": "学会誌・宇宙教育",
+      "source": "https://www.jstage.jst.go.jp/article/kjsass/53/620/53_282/_article/-char/ja/",
+      "note": "宇宙教育での水ロケットの位置づけを扱う2000年代の資料。DOI: 10.14822/kjsass.53.620_282。",
+      "checked_on": "2026-11-07",
+      "download": "https://www.jstage.jst.go.jp/article/kjsass/53/620/53_282/_pdf",
+      "local": {
+        "path": "原本/R41.pdf",
+        "bytes": 372969,
+        "sha256": "c7a68ba8792e241bad4ff6d65c7174ed9a9ec0dde4e99200c65471673137a9e4",
+        "format": "pdf",
+        "pages": 4
+      },
+      "files": [
+        {
+          "path": "原本/R41.pdf",
+          "url": "https://www.jstage.jst.go.jp/article/kjsass/53/620/53_282/_pdf",
+          "bytes": 372969,
+          "sha256": "c7a68ba8792e241bad4ff6d65c7174ed9a9ec0dde4e99200c65471673137a9e4",
+          "status": "local_only",
+          "license": "再配布許諾未確認",
+          "pages": 4
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://www.jstage.jst.go.jp/article/kjsass/53/620/53_282/_pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R42",
+      "category": "論文・研究資料",
+      "lang": "zh-Hant",
+      "title": "水火箭之設計與應用 / The design and application of water-rocket",
+      "author": "呂理得・黃正熙・王士賓 / 黎明技術學院",
+      "year": "2014",
+      "kind": "中国語の設計・教育研究",
+      "source": "https://libap.nhu.edu.tw:8081/Ejournal/AU01250109.pdf",
+      "note": "2014年1月の黎明學報に掲載。PET機に加えて救難用ロープ発射器と水ロケット車を扱う。誌名は保存原本で確認した。",
+      "checked_on": "2026-11-07",
+      "download": "https://libap.nhu.edu.tw:8081/Ejournal/AU01250109.pdf",
+      "local": {
+        "path": "原本/R42.pdf",
+        "bytes": 1349795,
+        "sha256": "a5a462bfc924885d408fe7bea4507a9be028f7a97ae0b3aac5ec2dd6052a303b",
+        "format": "pdf",
+        "pages": 6
+      },
+      "files": [
+        {
+          "path": "原本/R42.pdf",
+          "url": "https://libap.nhu.edu.tw:8081/Ejournal/AU01250109.pdf",
+          "bytes": 1349795,
+          "sha256": "a5a462bfc924885d408fe7bea4507a9be028f7a97ae0b3aac5ec2dd6052a303b",
+          "status": "local_only",
+          "license": "再配布許諾未確認",
+          "pages": 6
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://libap.nhu.edu.tw:8081/Ejournal/AU01250109.pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R43",
+      "category": "論文・研究資料",
+      "lang": "id",
+      "title": "Analisis Uji Peluncuran Roket Air Berbasis Carbon Fiber Menggunakan Sistem Telemetri",
+      "author": "Qonitatul Hidayah; Umi Salamah; Margi Sasono",
+      "year": "2022",
+      "kind": "飛行計測研究",
+      "source": "https://jtaf.fmipa.unila.ac.id/index.php/jtaf/article/view/288",
+      "note": "テレメトリーによる飛行計測論文。DOI: 10.23960/jtaf.v10i1.288。一般的なPET機と材料条件が異なる。原本取得は403のため未保存。",
+      "checked_on": "2026-11-07",
+      "download": "https://jtaf.fmipa.unila.ac.id/index.php/jtaf/article/download/288/285",
+      "local": null,
+      "files": [],
+      "download_status": "未保存（取得先・書誌のみ）",
+      "download_attempts": [
+        {
+          "url": "https://jtaf.fmipa.unila.ac.id/index.php/jtaf/article/download/288/285",
+          "status": "failed",
+          "reason": "HTTP Error 403: Forbidden"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
+    },
+    {
+      "id": "R44",
+      "category": "論文・研究資料",
+      "lang": "zh-Hant",
+      "title": "水火箭研究報告（澳門新華學校）",
+      "author": "新華學校（小幼部）5・6年級研究班; 指導：胡駿輝",
+      "year": "2011",
+      "kind": "学校の科学研究報告",
+      "source": "https://mirror1.dsedj.gov.mo/science/proj/pridiy1011/pdf/sch02.pdf",
+      "note": "2011年3月31日完成の学校研究報告。表紙に独立した表題がないため目録題名は内容記述。学術誌の査読論文とは区別する。",
+      "checked_on": "2026-11-07",
+      "download": "https://mirror1.dsedj.gov.mo/science/proj/pridiy1011/pdf/sch02.pdf",
+      "local": {
+        "path": "原本/R44.pdf",
+        "bytes": 1168892,
+        "sha256": "f51ebe61005e795423aaf443a861f3375bb1b2b0367f0855f8f974536dfd8bd4",
+        "format": "pdf",
+        "pages": 14
+      },
+      "files": [
+        {
+          "path": "原本/R44.pdf",
+          "url": "https://mirror1.dsedj.gov.mo/science/proj/pridiy1011/pdf/sch02.pdf",
+          "bytes": 1168892,
+          "sha256": "f51ebe61005e795423aaf443a861f3375bb1b2b0367f0855f8f974536dfd8bd4",
+          "status": "local_only",
+          "license": "再配布許諾未確認",
+          "pages": 14
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://mirror1.dsedj.gov.mo/science/proj/pridiy1011/pdf/sch02.pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "追加収集-20261107.json"
     }
   ]
 }

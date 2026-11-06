@@ -182,3 +182,48 @@ Hermann Oberth（原著）; Deutsches Museum（所蔵紹介） · 1923年の書�
 - 対象：機体部品と回収部品（推進方式共通）。14 ORCデータベースと9 ORK部品見本を保存。ORKは完成した飛行機体9機ではない。メーカー図面原本とmfrdata資料は上流のApache-2.0だけで再配布判断しないため除外。
 - [配布元](https://github.com/DrRocketry/DBCook-OpenRocket-Database) · [保存モデル](%E3%83%A2%E3%83%87%E3%83%AB/MC15-DBCook/)
 - 37ファイル、1.98 MiB。ライセンス：Apache-2.0。版：`1332e8659afff388476493b2c3c3e05361319268`。原本は未改変。
+
+<a id="mc16"></a>
+
+## MC16 — Cambridge Rocketry Simulator – A Stochastic Six-Degrees-of-Freedom Rocket Flight Simulator
+
+- 著者・発行元：Willem J. Eerland; Simon Box; András Sóbester。年・版：2017。言語：en。
+- 種別：公開ソフトウェア論文。確率的な六自由度飛行シミュレータ。論文のCC BYとソフトウェアのGPLを区別する。DOI: 10.5334/jors.137。
+- [出典](https://openresearchsoftware.metajnl.com/articles/10.5334/jors.137)。
+- 公開原本：[MC16.pdf](%E5%8E%9F%E6%9C%AC/MC16.pdf)。6頁、996,374 bytes。条件：CC-BY-4.0（未改変）。
+
+<a id="mc17"></a>
+
+## MC17 — Cambridge Rocketry Simulator v3.1 — User Guide
+
+- 著者・発行元：Willem Eerland（ガイド）; Simon Box・Willem Johannis Eerland（ソフトウェア登録）。年・版：2016-10-04（ガイド改訂）。言語：en。
+- 種別：飛行シミュレータ利用ガイド。Zenodoの固定版利用ガイド。ソフトウェア名はv3.1、リポジトリ登録版ラベルはv1。インストーラーは保存・実行していない。
+- [出典](https://zenodo.org/records/161850)。
+- 公開原本：[MC17.pdf](%E5%8E%9F%E6%9C%AC/MC17.pdf)。20頁、593,058 bytes。条件：GPL-2.0-only（未改変）。
+- 公開原本：[MC17-GPL-2.0.txt](%E5%8E%9F%E6%9C%AC/MC17-GPL-2.0.txt)。—頁、17,984 bytes。条件：GPL-2.0-only（未改変）。
+
+<a id="mc18"></a>
+
+## MC18 — Le Vol de la Fusée, Stabilité et Trajectographie
+
+- 著者・発行元：Planète Sciences; Gil Denis; Xavier Millon ほか。年・版：2008（第2版）。言語：fr。
+- 種別：安定性・軌道解析の技術教材。1999・2000年の旧資料を統合したフランス語技術教材。表紙は2008年7月、版説明は8月30日としており、同一PDF内の表記差を保持する。
+- [出典](https://www.planete-sciences.org/espace/IMG/pdf/vol-de-la-fusee.pdf)。
+- このPCのみの原本（Gitには未収録）：[MC18.pdf](%E5%8E%9F%E6%9C%AC/MC18.pdf)。96頁、3,034,227 bytes。再配布許諾未確認。
+
+<a id="mc19"></a>
+
+## MC19 — Model Rocketry in the High School. Grades 9–12. Course Guide.
+
+- 著者・発行元：Roger Grossenbacher / Estes Industries。年・版：1985。言語：en。
+- 種別：歴史的な高校授業ガイドの書誌・抄録。1985年・27頁の授業ガイド。ERIC登録の書誌と抄録を確認。本文PDFのURLは404で取得できず、全文保存はしていない。
+- [出典](https://eric.ed.gov/?id=ED281775)。原本未保存。取得状況と配布先は目録に記録。
+
+<a id="mc20"></a>
+
+## MC20 — Desenvolvimento de um sistema de recuperação para um minifoguete
+
+- 著者・発行元：Maíra Fernanda Oliveira de Miranda / Universidade Federal de Uberlândia。年・版：2021。言語：pt。
+- 種別：航空工学の卒業論文。模型ロケットのパラシュート回収系を対象とするポルトガル語卒論。未改変・非商用条件で収録し、推進方式共通の資料に置く。
+- [出典](https://repositorio.ufu.br/handle/123456789/32169)。
+- 公開原本：[MC20.pdf](%E5%8E%9F%E6%9C%AC/MC20.pdf)。59頁、21,961,412 bytes。条件：CC-BY-NC-ND-3.0-US（未改変）。

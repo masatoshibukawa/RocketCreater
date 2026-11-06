@@ -4919,14 +4919,341 @@
       "status": "publish",
       "sha256": "24a1d4c033710de60e6e4aed69769cb4cc6591f03f4e6ceaaad1627adb086cdf",
       "validation": "upstream Git blob matched; OpenRocket XML parsed"
+    },
+    {
+      "source_id": "D41",
+      "path": "原本/D41.html",
+      "url": "https://marimolabs.com/pages/water-rocketry",
+      "bytes": 181170,
+      "sha256": "42f5fd176150607828cd8a75c8a2bbbbaf419c0f4a1a001221918926dbe36eee",
+      "credit": "Marimo Labs",
+      "license": "再配布許諾未確認",
+      "evidence": "https://marimolabs.com/pages/water-rocketry",
+      "status": "local_only",
+      "validation": "source file saved; SHA-256 recorded"
+    },
+    {
+      "source_id": "D43",
+      "path": "原本/D43.pdf",
+      "url": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-DE.pdf",
+      "bytes": 4580414,
+      "sha256": "a94b8fcb5306cfc8880e3a8a3e52ca855f330adb684f75150f4be180d37b524d",
+      "credit": "ESERO Luxembourg",
+      "license": "再配布許諾未確認",
+      "evidence": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-DE.pdf",
+      "status": "local_only",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 25
+    },
+    {
+      "source_id": "D43",
+      "path": "原本/D43-2024-en.pdf",
+      "url": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-EN.pdf",
+      "bytes": 4459499,
+      "sha256": "0f10125db52e502e5ed1d7d5c57d24828dc364bc53967758e24936f828a1e122",
+      "credit": "ESERO Luxembourg",
+      "license": "再配布許諾未確認",
+      "evidence": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-DE.pdf",
+      "status": "local_only",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 23
+    },
+    {
+      "source_id": "D43",
+      "path": "原本/D43-2026-en.pdf",
+      "url": "https://www.esero.lu/wp-content/uploads/2026/01/Water-Rocket-Challenge-Guide-2026-EN.pdf",
+      "bytes": 4673339,
+      "sha256": "6b64311fcc71b5d65db41e1e6affef3805aa794ca9d79db0473d1aaaee7e96b2",
+      "credit": "ESERO Luxembourg",
+      "license": "再配布許諾未確認",
+      "evidence": "https://www.esero.lu/wp-content/uploads/2024/06/Water-Rocket-Challenge-Guide-2024-DE.pdf",
+      "status": "local_only",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 23
+    },
+    {
+      "source_id": "D45",
+      "path": "原本/D45.html",
+      "url": "https://www.didaktik.physik.uni-muenchen.de/materialien/neue_medien/arduino/wasserraketen/index.html",
+      "bytes": 21827,
+      "sha256": "3c8cc15d058a7132d3f4b8dfda313878094c2926685b2380f347d0b105afb6af",
+      "credit": "Tobias Schüttler / LMU München・DLR School Lab",
+      "license": "再配布許諾未確認",
+      "evidence": "https://www.didaktik.physik.uni-muenchen.de/materialien/neue_medien/arduino/wasserraketen/index.html",
+      "status": "local_only",
+      "validation": "source file saved; SHA-256 recorded"
+    },
+    {
+      "source_id": "R35",
+      "path": "原本/R35.pdf",
+      "url": "https://rsdjournal.org/rsd/article/download/33662/28621/379021",
+      "bytes": 1214612,
+      "sha256": "09031e6531263b3aa97ddbebdb9661d5c55452c9a2fa46617ac47e035dbcc208",
+      "credit": "Flávia Borges de Menezes et al.",
+      "license": "CC-BY-4.0",
+      "evidence": "https://rsdjournal.org/rsd/article/view/33662",
+      "status": "publish",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 20
+    },
+    {
+      "source_id": "R36",
+      "path": "原本/R36.pdf",
+      "url": "https://jurnal.uns.ac.id/SHES/article/download/91951/46425",
+      "bytes": 248527,
+      "sha256": "3f3cb8daded190feb04b6490225d55ae251e2709b4c09cf5bad233ef5096a3f9",
+      "credit": "Nailinnajah; Masnal Khamal Septiana; Melinda Triwardani; Nur Fadilla Aulia Luthfi",
+      "license": "CC-BY-SA-4.0",
+      "evidence": "https://jurnal.uns.ac.id/SHES/article/view/91951",
+      "status": "publish",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 6
+    },
+    {
+      "source_id": "R37",
+      "path": "原本/R37.pdf",
+      "url": "https://eiet.iikii.com.sg/download/water-rocket-theory-and-experiment-bridging-ideal-models-and-real-results-in-stem-education-17327.pdf",
+      "bytes": 1217224,
+      "sha256": "06f3603c183b242a4e5a7e2d8eea2feeaeb6df085505a06f6c764329ba8395c5",
+      "credit": "Chan-min Chung",
+      "license": "CC-BY-4.0",
+      "evidence": "https://eiet.iikii.com.sg/5/3/17327",
+      "status": "publish",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 11
+    },
+    {
+      "source_id": "R38",
+      "path": "原本/R38.pdf",
+      "url": "https://jurnal.usk.ac.id/JAcPS/article/download/48613/24777",
+      "bytes": 879557,
+      "sha256": "8065387fe1170b97fc316f5804b254ba0ef00660982690c262c1d6b9374c621e",
+      "credit": "Hilman Nuha Ramadhan; Freddy Haryanto",
+      "license": "CC-BY-4.0",
+      "evidence": "https://jurnal.usk.ac.id/JAcPS/article/view/48613",
+      "status": "publish",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 11
+    },
+    {
+      "source_id": "R41",
+      "path": "原本/R41.pdf",
+      "url": "https://www.jstage.jst.go.jp/article/kjsass/53/620/53_282/_pdf",
+      "bytes": 372969,
+      "sha256": "c7a68ba8792e241bad4ff6d65c7174ed9a9ec0dde4e99200c65471673137a9e4",
+      "credit": "竹前俊昭 / 宇宙航空研究開発機構",
+      "license": "再配布許諾未確認",
+      "evidence": "https://www.jstage.jst.go.jp/article/kjsass/53/620/53_282/_article/-char/ja/",
+      "status": "local_only",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 4
+    },
+    {
+      "source_id": "R42",
+      "path": "原本/R42.pdf",
+      "url": "https://libap.nhu.edu.tw:8081/Ejournal/AU01250109.pdf",
+      "bytes": 1349795,
+      "sha256": "a5a462bfc924885d408fe7bea4507a9be028f7a97ae0b3aac5ec2dd6052a303b",
+      "credit": "呂理得・黃正熙・王士賓 / 黎明技術學院",
+      "license": "再配布許諾未確認",
+      "evidence": "https://libap.nhu.edu.tw:8081/Ejournal/AU01250109.pdf",
+      "status": "local_only",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 6
+    },
+    {
+      "source_id": "R44",
+      "path": "原本/R44.pdf",
+      "url": "https://mirror1.dsedj.gov.mo/science/proj/pridiy1011/pdf/sch02.pdf",
+      "bytes": 1168892,
+      "sha256": "f51ebe61005e795423aaf443a861f3375bb1b2b0367f0855f8f974536dfd8bd4",
+      "credit": "新華學校（小幼部）5・6年級研究班; 指導：胡駿輝",
+      "license": "再配布許諾未確認",
+      "evidence": "https://mirror1.dsedj.gov.mo/science/proj/pridiy1011/pdf/sch02.pdf",
+      "status": "local_only",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 14
+    },
+    {
+      "source_id": "MS30",
+      "path": "モデルロケット/固体/原本/MS30.html",
+      "url": "https://spaceteam.at/en/lamarr-en/albatross_en",
+      "bytes": 199880,
+      "sha256": "dd313d8710cdd9c3830d7929746a1e34af102e1486620f0305f84a8f8383aad7",
+      "credit": "TU Wien Space Team",
+      "license": "再配布許諾未確認",
+      "evidence": "https://spaceteam.at/en/lamarr-en/albatross_en",
+      "status": "local_only",
+      "validation": "source file saved; SHA-256 recorded"
+    },
+    {
+      "source_id": "MC16",
+      "path": "モデルロケット/共通/原本/MC16.pdf",
+      "url": "https://openresearchsoftware.metajnl.com/articles/137/files/submission/proof/137-1-1684-1-10-20170221.pdf",
+      "bytes": 996374,
+      "sha256": "795ce138c85d46142a03c299033af179c5ecb3d1b6d2efbbee82bbec34c9639f",
+      "credit": "Willem J. Eerland; Simon Box; András Sóbester",
+      "license": "CC-BY-4.0",
+      "evidence": "https://openresearchsoftware.metajnl.com/articles/10.5334/jors.137",
+      "status": "publish",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 6
+    },
+    {
+      "source_id": "MC17",
+      "path": "モデルロケット/共通/原本/MC17.pdf",
+      "url": "https://zenodo.org/records/161850/files/user_guide.pdf?download=1",
+      "bytes": 593058,
+      "sha256": "3a9868fea2a0cdbbf68f8302da60541ecd331d2fbff097b0fdda6b0c4ec59301",
+      "credit": "Willem Eerland（ガイド）; Simon Box・Willem Johannis Eerland（ソフトウェア登録）",
+      "license": "GPL-2.0-only",
+      "evidence": "https://zenodo.org/records/161850",
+      "status": "publish",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 20
+    },
+    {
+      "source_id": "MC18",
+      "path": "モデルロケット/共通/原本/MC18.pdf",
+      "url": "https://www.planete-sciences.org/espace/IMG/pdf/vol-de-la-fusee.pdf",
+      "bytes": 3034227,
+      "sha256": "ab9e9e716c3cef6d958e872bd95c507874f2e4f07c70076f49fc3825d89ab70a",
+      "credit": "Planète Sciences; Gil Denis; Xavier Millon ほか",
+      "license": "再配布許諾未確認",
+      "evidence": "https://www.planete-sciences.org/espace/IMG/pdf/vol-de-la-fusee.pdf",
+      "status": "local_only",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 96
+    },
+    {
+      "source_id": "MC20",
+      "path": "モデルロケット/共通/原本/MC20.pdf",
+      "url": "https://repositorio.ufu.br/bitstream/123456789/32169/1/DesenvolvimentoSistemaRecupera%c3%a7%c3%a3o.pdf",
+      "bytes": 21961412,
+      "sha256": "a61279b2772fc9ef0424a638ff26b0d9bee86c5e555ac0c1d0102e30b86876c8",
+      "credit": "Maíra Fernanda Oliveira de Miranda / Universidade Federal de Uberlândia",
+      "license": "CC-BY-NC-ND-3.0-US",
+      "evidence": "https://repositorio.ufu.br/handle/123456789/32169",
+      "status": "publish",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 59
+    },
+    {
+      "source_id": "MH24",
+      "path": "モデルロケット/ハイブリッド/原本/MH24.pdf",
+      "url": "https://elib.dlr.de/119887/1/Kobald2018A%20Record%20Flight%20of%20the%20Hybrid%20Sounding%20Rocket%20HEROS%203_JSASS.pdf",
+      "bytes": 3332490,
+      "sha256": "cddd2b3b1a40b037346e1a729d1eccef3f6866af24667639d8afd660733bb36d",
+      "credit": "Mario Kobald; Christian Schmierer; Ulrich Fischer; Konstantin Tomilin; Anna Petrarolo",
+      "license": "再配布許諾未確認",
+      "evidence": "https://elib.dlr.de/119887/",
+      "status": "local_only",
+      "validation": "PDF parsed; SHA-256 recorded",
+      "pages": 6
+    },
+    {
+      "source_id": "MH25",
+      "path": "モデルロケット/ハイブリッド/原本/MH25.html",
+      "url": "https://research.tudelft.nl/en/publications/systematic-design-of-a-parachute-recovery-system-for-the-stratos-/",
+      "bytes": 55545,
+      "sha256": "8ae4d48d29cb18435d7dc895649caeb103375ce700ee7d22f1b5623a87083c56",
+      "credit": "Lars Pepermans; Mark Rozemeijer; Esmée Menting; Noah Suard; Sayyam Khurana",
+      "license": "再配布許諾未確認",
+      "evidence": "https://research.tudelft.nl/en/publications/systematic-design-of-a-parachute-recovery-system-for-the-stratos-/",
+      "status": "local_only",
+      "validation": "source file saved; SHA-256 recorded"
+    },
+    {
+      "source_id": "ML19",
+      "path": "モデルロケット/液体/原本/ML19.html",
+      "url": "https://spaceteam.at/2026/01/15/unser-raketenstart-bei-der-euroc25/",
+      "bytes": 181258,
+      "sha256": "c1235916e464337f507cf71a68693d33819fd621781e64f08553aba7a4497bb3",
+      "credit": "TU Wien Space Team",
+      "license": "再配布許諾未確認",
+      "evidence": "https://spaceteam.at/2026/01/15/unser-raketenstart-bei-der-euroc25/",
+      "status": "local_only",
+      "validation": "source file saved; SHA-256 recorded"
+    },
+    {
+      "source_id": "ML19",
+      "path": "モデルロケット/液体/原本/ML19-en.html",
+      "url": "https://spaceteam.at/en/2026/01/15/our-rocket-launch-at-euroc-2025",
+      "bytes": 179177,
+      "sha256": "dab42d4966d813fea221b3c5bae88f13cf4c6eef5f13515c4fc82d9726457576",
+      "credit": "TU Wien Space Team",
+      "license": "再配布許諾未確認",
+      "evidence": "https://spaceteam.at/2026/01/15/unser-raketenstart-bei-der-euroc25/",
+      "status": "local_only",
+      "validation": "source file saved; SHA-256 recorded"
+    },
+    {
+      "source_id": "MC17",
+      "path": "モデルロケット/共通/原本/MC17-GPL-2.0.txt",
+      "url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
+      "bytes": 17984,
+      "sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "credit": "Free Software Foundation",
+      "license": "GPL-2.0-only",
+      "evidence": "https://zenodo.org/records/161850",
+      "status": "publish",
+      "validation": "source file saved; SHA-256 recorded"
     }
   ],
   "counts": {
-    "files": 322,
-    "bytes": 72984736,
-    "published_files": 322,
-    "local_only_files": 0,
-    "pdf_files": 29,
-    "pdf_pages": 30
-  }
+    "references_added": 29,
+    "water_references_added": 16,
+    "model_references_added": 13,
+    "files": 344,
+    "bytes": 123903966,
+    "published_files": 330,
+    "published_bytes": 100113484,
+    "local_only_files": 14,
+    "local_only_bytes": 23790482,
+    "pdf_files": 44,
+    "pdf_pages": 360,
+    "not_downloaded_urls": 8
+  },
+  "download_failures": [
+    {
+      "source_id": "D42",
+      "url": "https://tryengineering.org/wp-content/uploads/Water-Rocket-Launch.pptx.pdf",
+      "reason": "HTTP Error 403: Forbidden"
+    },
+    {
+      "source_id": "D42",
+      "url": "https://tryengineering.org/wp-content/uploads/146-KURUSHA-ROKETI-YA-MAJI-EDITED.docx",
+      "reason": "HTTP Error 403: Forbidden"
+    },
+    {
+      "source_id": "D44",
+      "url": "https://esero.es/wp-content/uploads/2021/05/lanzamiento-de-cohetes.pdf",
+      "reason": "HTTP Error 404: Not Found"
+    },
+    {
+      "source_id": "R39",
+      "url": "https://iopscience.iop.org/article/10.1088/1742-6596/2309/1/012044/pdf",
+      "reason": "b'<head><title>Radware Bot Manager Captcha</title><script type=\"text/javascript\">\\n'"
+    },
+    {
+      "source_id": "R40",
+      "url": "https://u-gakugei.repo.nii.ac.jp/record/34678/files/18804330_69_24.pdf",
+      "reason": "HTTP Error 503: Service Temporarily Unavailable"
+    },
+    {
+      "source_id": "R43",
+      "url": "https://jtaf.fmipa.unila.ac.id/index.php/jtaf/article/download/288/285",
+      "reason": "HTTP Error 403: Forbidden"
+    },
+    {
+      "source_id": "MS29",
+      "url": "https://school.gifu-net.ed.jp/ena-hs/ssh/H27ssh/sc3/31503.pdf",
+      "reason": "b'\\xef\\xbb\\xbf\\r\\n<head>\\r\\n  <meta charset=\"UTF-8\">\\r\\n  <style>\\r\\nbody {\\r\\n    font-family: -appl'"
+    },
+    {
+      "source_id": "MC19",
+      "url": "https://files.eric.ed.gov/fulltext/ED281775.pdf",
+      "reason": "HTTP Error 404: Not Found"
+    }
+  ]
 }

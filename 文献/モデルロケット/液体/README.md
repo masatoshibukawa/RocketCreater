@@ -227,3 +227,13 @@ Peter Aagaard Brixen / Danmarks Tekniske Universitet · 2020年11月4日 · da �
 [配布元・出典](https://www.dtu.dk/nyheder/Alle-nyheder/Nyhed?id=b52469fa-10f8-491f-aeee-94602708e3c1) · [原本取得先](https://www.dtu.dk/nyheder/Alle-nyheder/Nyhed?id=b52469fa-10f8-491f-aeee-94602708e3c1) · [保存HTML](<原本/ML18.html>)
 
 利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="ml19"></a>
+
+## ML19 — Unser Raketenstart bei der EuRoC 2025 / Our Rocket Launch at EuRoC 2025
+
+- 著者・発行元：TU Wien Space Team。年・版：2026-01-15（2025年の飛行報告）。言語：de, en。
+- 種別：大学チームの液体機飛行報告。Hedyの2025年飛行を2026年に公表した独英報告。既存ML11・ML12の計画・設計資料と対照できる。著者報告の実績であり独立した第三者検証とは区別する。
+- [出典](https://spaceteam.at/2026/01/15/unser-raketenstart-bei-der-euroc25/)。
+- このPCのみの原本（Gitには未収録）：[ML19.html](%E5%8E%9F%E6%9C%AC/ML19.html)。—頁、181,258 bytes。再配布許諾未確認。
+- このPCのみの原本（Gitには未収録）：[ML19-en.html](%E5%8E%9F%E6%9C%AC/ML19-en.html)。—頁、179,177 bytes。再配布許諾未確認。

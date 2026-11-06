@@ -335,3 +335,20 @@ Jacob Schrum; Cody Crosby / OpenRocketQD contributors · 2025年4月2日のコ�
 - 対象：大学の高出力固体実験機。ノーズ・尾翼の選択CAD、過去案を含む14 ORK、設計メモ。購入部品CADや他リポジトリ依存品は未同梱。全機アセンブリの完全再現一式ではない。予測値は実測値と区別する。
 - [配布元](https://github.com/psas/lv3.0-airframe) · [保存モデル](%E3%83%A2%E3%83%87%E3%83%AB/MS28-PSAS-LV3/)
 - 66ファイル、26.02 MiB。ライセンス：BSD-2-Clause。版：`cabca568560ea2410fd4d29c69f59f0df3a2acd8`。原本は未改変。
+
+<a id="ms29"></a>
+
+## MS29 — ペイロード搭載型モデルロケットの製作
+
+- 著者・発行元：岐阜県立恵那高等学校 SSH。年・版：2015年度。言語：ja。
+- 種別：高校の実験報告。市販固体モーター、OpenRocketによる予測、回収失敗と改善を記録。計算と実飛行の差を読む資料。
+- [出典](https://school.gifu-net.ed.jp/ena-hs/ssh/H27ssh/sc3/31503.pdf)。原本未保存。取得状況と配布先は目録に記録。
+
+<a id="ms30"></a>
+
+## MS30 — ALBATROSS — Solid Recovery Test Rocket for Lamarr
+
+- 著者・発行元：TU Wien Space Team。年・版：不明。言語：en。
+- 種別：大学チームの回収試験機紹介。液体機Hedyの回収試験を目的とした固体試験機。目的機と推進方式を混同せず固体に分類する。
+- [出典](https://spaceteam.at/en/lamarr-en/albatross_en)。
+- このPCのみの原本（Gitには未収録）：[MS30.html](%E5%8E%9F%E6%9C%AC/MS30.html)。—頁、199,880 bytes。再配布許諾未確認。
