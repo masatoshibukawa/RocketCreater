@@ -14,6 +14,7 @@ Reusable production skills, research notes, source references, and templates for
 - [2026年11月4日の調査結果](research/2026-11-04/README.md)
 - [このPCに合う生成方法](research/2026-11-04/04_local_pc.ja.md)
 - [実践手順とSF予告編の制作案](research/2026-11-04/05_production_recipes.ja.md)
+- [ピッチとデモの方針](../docs/pitch-demo-strategy.md) — LLMとAPIで実現する体験、自分たちのドメイン知識、発表で示す証拠
 
 ## Storage
 
