@@ -1,5 +1,5 @@
 {
-  "checked_on": "2026-11-05",
+  "checked_on": "2026-11-07",
   "records": [
     {
       "id": "MS01",
@@ -1768,6 +1768,66 @@
         "format": "html"
       },
       "download_status": "保存済み"
+    },
+    {
+      "id": "MS27",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Rocket A-1 — 3D printed flying model rocket",
+      "author": "Alicja Musiał (@alicjamusial)",
+      "year": "2021",
+      "kind": "Fusion 360・STL・OpenRocket機体",
+      "scope": "市販Klima固体モーター用の模型機体",
+      "note": "胴体・尾翼・ノーズの3 STL、編集用F3D、ORK 1機体を保存。著者の飛行報告と計算上の高度を区別。未改変のCC BY-SA 4.0資料で、改変配布には同条件が必要。",
+      "source": "https://github.com/alicjamusial/rocket-a-1",
+      "download": "https://github.com/alicjamusial/rocket-a-1/tree/b80102fde3fb13c61e3ca3f1d3574b88f5eceaa1",
+      "local": null,
+      "models_directory": "固体/モデル/MS27-Rocket-A1",
+      "file_manifest": "../追加収集-20261107.json",
+      "redistribution": "CC-BY-SA-4.0",
+      "checked_on": "2026-11-07"
+    },
+    {
+      "id": "MS28",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "PSAS Launch Vehicle 3 — selected airframe CAD and OpenRocket models",
+      "author": "Portland State Aerospace Society",
+      "year": "2014–2018",
+      "kind": "SolidWorks・STL・IGES・OpenRocket機体",
+      "scope": "大学の高出力固体実験機",
+      "note": "ノーズ・尾翼の選択CAD、過去案を含む14 ORK、設計メモ。購入部品CADや他リポジトリ依存品は未同梱。全機アセンブリの完全再現一式ではない。予測値は実測値と区別する。",
+      "source": "https://github.com/psas/lv3.0-airframe",
+      "download": "https://github.com/psas/lv3.0-airframe/tree/cabca568560ea2410fd4d29c69f59f0df3a2acd8",
+      "local": null,
+      "models_directory": "固体/モデル/MS28-PSAS-LV3",
+      "file_manifest": "../追加収集-20261107.json",
+      "redistribution": "BSD-2-Clause",
+      "checked_on": "2026-11-07"
+    },
+    {
+      "id": "MC15",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "DBCook OpenRocket parts database",
+      "author": "David B. Cook (@DrRocketry)",
+      "year": "2022",
+      "kind": "部品データベース・ORK・データ生成ソース",
+      "scope": "機体部品と回収部品（推進方式共通）",
+      "note": "14 ORCデータベースと9 ORK部品見本を保存。ORKは完成した飛行機体9機ではない。メーカー図面原本とmfrdata資料は上流のApache-2.0だけで再配布判断しないため除外。",
+      "source": "https://github.com/DrRocketry/DBCook-OpenRocket-Database",
+      "download": "https://github.com/DrRocketry/DBCook-OpenRocket-Database/tree/1332e8659afff388476493b2c3c3e05361319268",
+      "local": null,
+      "models_directory": "共通/モデル/MC15-DBCook",
+      "file_manifest": "../追加収集-20261107.json",
+      "redistribution": "Apache-2.0",
+      "checked_on": "2026-11-07"
     }
   ]
 }

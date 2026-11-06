@@ -6,3 +6,6 @@ CAD/D22-FreeCAD/** -text -whitespace
 CAD/D23-TSoGiants/** -text -whitespace
 モデルロケット/*/原本/** -text -whitespace
 モデルロケット/*/モデル/** -text -whitespace
+CAD/D40-waterRocketToolbox/** -text -whitespace
+# Upstream XML comment uses a seven-equals heading underline, not a conflict.
+モデルロケット/共通/モデル/MC15-DBCook/orc/bluetube.orc conflict-marker-size=32

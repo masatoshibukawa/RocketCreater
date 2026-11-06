@@ -173,3 +173,12 @@ Hermann Oberth（原著）; Deutsches Museum（所蔵紹介） · 1923年の書�
 [配布元・出典](https://www.deutsches-museum.de/forschung/bibliothek/unsere-schaetze/mobilitaet/rakete-zu-den-planetenraeumen) · [原本取得先](https://www.deutsches-museum.de/forschung/bibliothek/unsere-schaetze/mobilitaet/rakete-zu-den-planetenraeumen) · [保存HTML](<原本/MC14.html>)
 
 利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+
+<a id="mc15"></a>
+
+## MC15 — DBCook OpenRocket parts database
+
+- 発行元：David B. Cook (@DrRocketry)。年代：2022。本文言語：en。
+- 対象：機体部品と回収部品（推進方式共通）。14 ORCデータベースと9 ORK部品見本を保存。ORKは完成した飛行機体9機ではない。メーカー図面原本とmfrdata資料は上流のApache-2.0だけで再配布判断しないため除外。
+- [配布元](https://github.com/DrRocketry/DBCook-OpenRocket-Database) · [保存モデル](%E3%83%A2%E3%83%87%E3%83%AB/MC15-DBCook/)
+- 37ファイル、1.98 MiB。ライセンス：Apache-2.0。版：`1332e8659afff388476493b2c3c3e05361319268`。原本は未改変。

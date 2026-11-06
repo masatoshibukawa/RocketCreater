@@ -317,3 +317,21 @@ Jacob Schrum; Cody Crosby / OpenRocketQD contributors · 2025年4月2日のコ�
 [配布元・出典](https://github.com/schrum2/OpenRocketQD/tree/5f6d84cc34b72bc1881aab4410f2322babb3aaa9) · [保存ファイル](<モデル/MS26-OpenRocketQD>)
 
 利用条件：GPL-2.0（リポジトリLICENSE）。個別ソースの著作者表示・由来を保持。
+
+<a id="ms27"></a>
+
+## MS27 — Rocket A-1 — 3D printed flying model rocket
+
+- 発行元：Alicja Musiał (@alicjamusial)。年代：2021。本文言語：en。
+- 対象：市販Klima固体モーター用の模型機体。胴体・尾翼・ノーズの3 STL、編集用F3D、ORK 1機体を保存。著者の飛行報告と計算上の高度を区別。未改変のCC BY-SA 4.0資料で、改変配布には同条件が必要。
+- [配布元](https://github.com/alicjamusial/rocket-a-1) · [保存モデル](%E3%83%A2%E3%83%87%E3%83%AB/MS27-Rocket-A1/)
+- 12ファイル、4.50 MiB。ライセンス：CC-BY-SA-4.0。版：`b80102fde3fb13c61e3ca3f1d3574b88f5eceaa1`。原本は未改変。
+
+<a id="ms28"></a>
+
+## MS28 — PSAS Launch Vehicle 3 — selected airframe CAD and OpenRocket models
+
+- 発行元：Portland State Aerospace Society。年代：2014–2018。本文言語：en。
+- 対象：大学の高出力固体実験機。ノーズ・尾翼の選択CAD、過去案を含む14 ORK、設計メモ。購入部品CADや他リポジトリ依存品は未同梱。全機アセンブリの完全再現一式ではない。予測値は実測値と区別する。
+- [配布元](https://github.com/psas/lv3.0-airframe) · [保存モデル](%E3%83%A2%E3%83%87%E3%83%AB/MS28-PSAS-LV3/)
+- 66ファイル、26.02 MiB。ライセンス：BSD-2-Clause。版：`cabca568560ea2410fd4d29c69f59f0df3a2acd8`。原本は未改変。
