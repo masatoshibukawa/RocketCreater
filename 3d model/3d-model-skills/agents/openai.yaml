@@ -1,4 +1,4 @@
 interface:
   display_name: "3Dモデル制作の索引"
-  short_description: "AI生成からモデル修正・印刷・後処理まで、必要な専門スキルへ案内する"
-  default_prompt: "$3d-model-skills を使い、この制作依頼を整理し、必要なカテゴリーのスキルを使って進めてください。"
+  short_description: "生成・設計・実機の不良対策・機種別条件・PC接続の専門スキルへ案内する"
+  default_prompt: "$3d-model-skills を使い、この依頼を整理し、工程・機種・接続方法に合うスキルを選んで進めてください。"
