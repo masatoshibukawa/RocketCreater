@@ -18,12 +18,13 @@
 | 制作レシピ | [3d-model-recipes](3d-model-skills/categories/3d-model-recipes/SKILL.md) |
 | チェックと記録 | [3d-model-records](3d-model-skills/categories/3d-model-records/SKILL.md) |
 | 多言語調査と出典 | [3d-model-research](3d-model-skills/categories/3d-model-research/SKILL.md) |
+| 材料と組み合わせ | [3d-print-materials](3d-model-skills/materials/3d-print-materials/SKILL.md) |
 
 利用時は`3d model/3d-model-skills/SKILL.mdを使って…`のように入口を指定する。ここでは指定場所にスキル原本を保存しており、自動検出やインストールの設定は行っていない。
 
 ## カテゴリー別の資料
 
-工程と用途で分類し、実機での失敗と機種・接続別の追加調査を9番目にまとめた。フォルダー番号は読む順番の目安で、文書名の番号は元の工程順を保持している。
+工程と用途で分類し、実機・機種・接続の追加調査を9番目、材料と組み合わせを10番目にまとめた。フォルダー番号は読む順番の目安で、文書名の番号は元の工程順を保持している。
 
 | カテゴリー / フォルダー | 主な内容 | 読む資料 |
 | --- | --- | --- |
@@ -36,6 +37,7 @@
 | `07_チェックと記録` | 工程別チェック、保存、費用、受け渡し、記入用テンプレート | [チェックと記録](07_チェックと記録/10_checklists-and-records.md) |
 | `08_多言語調査と出典` | 7言語の検索と知見、用語対照、資料の違いと限界、39件の出典 | [多言語調査](08_多言語調査と出典/09_multilingual-research.md)、[出典一覧CSV](08_多言語調査と出典/sources.csv) |
 | `09_実機トラブルと機種別対策` | 接地・転倒・速度・加速度・流量・光造形、17機種、9ソフト、OS/CPU別接続 | [実機対策の入口](09_実機トラブルと機種別対策/README.md)、[接続表](09_実機トラブルと機種別対策/connections.md)、[PC別確認](09_実機トラブルと機種別対策/pc-connection-checks.md) |
+| `10_材料と組み合わせ` | 材料製品の条件、機械・ノズル・プレート・支持材の適合、異材と材料変更 | [材料の入口](10_材料と組み合わせ/README.md)、[組み合わせ表](10_材料と組み合わせ/compatibility.md) |
 
 記入用テンプレートは`07_チェックと記録/templates/`にまとめている：[仕様メモ](07_チェックと記録/templates/project-brief.md)、[印刷記録CSV](07_チェックと記録/templates/print-log.csv)、[比較試験CSV](07_チェックと記録/templates/experiment-log.csv)、[制作記録JSON](07_チェックと記録/templates/project-record.example.json)。
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "3Dモデル制作の索引"
-  short_description: "生成・設計・実機の不良対策・機種別条件・PC接続の専門スキルへ案内する"
-  default_prompt: "$3d-model-skills を使い、この依頼を整理し、工程・機種・接続方法に合うスキルを選んで進めてください。"
+  short_description: "生成・設計・材料の組み合わせ・実機対策・機種・接続の専門スキルへ案内する"
+  default_prompt: "$3d-model-skills を使い、この依頼を整理し、工程・材料・機種・接続方法に合うスキルを選んで進めてください。"

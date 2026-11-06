@@ -13,6 +13,8 @@ description: "FDM/FFFまたは光造形のモデルを対象機種・材料で�
 
 型番が分かったら[機種別索引](../../printers/3d-printer-profiles/SKILL.md)から該当する1機種を読む。既存の実機失敗はS5向けの記録で、他の機種の資料ベースの判断とは分ける。接続・検出・送信は[接続索引](../../connections/3d-printer-connection/SKILL.md)から該当ソフトのスキルを使う。
 
+材料を新たに選ぶ・変える・支持材を組み合わせる場合は[材料索引](../../materials/3d-print-materials/SKILL.md)を使い、製品と機械・周辺品の適合を確認する。
+
 形状や嵌合が不十分なら[モデル修正と設計](../3d-model-preparation/SKILL.md)へ戻る。プリンター未定なら機種別G-codeや露光データを推測で作らず、印刷用メッシュまでの確認を進める。
 
 ## FDM/FFF
