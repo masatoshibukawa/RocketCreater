@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { apiUrl, createDesignPackage, requestKey, type DesignPackage, type DesignPackageRequest } from "../lib/api";
 import type { Design } from "../lib/types";
 import PrintExports from "./PrintExports";
+import { useCrewTask } from "../lib/WorkshopContext";
 
 interface ProductionPanelProps {
   /** Null while no design is displayed. */
@@ -20,6 +21,8 @@ export default function ProductionPanel({ request, passed }: ProductionPanelProp
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
+  useCrewTask("production", { id: key, status: busy ? "working" : error ? "attention" : made ? "done" : "idle",
+    label: busy ? "製作ファイルと数値の出典を点検中" : error ? "ファイル作成を止めて、エラーの確認を待っています" : "製作ファイルができました。内容を確認できます" });
 
   useEffect(() => {
     setMade(null);

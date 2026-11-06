@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { apiUrl, designKey } from "../lib/api";
 import type { Design } from "../lib/types";
+import { useCrewTask } from "../lib/WorkshopContext";
 
 type File = { name: string; url: string };
 type Manifest = { status: string; brim_width_mm: number; brim_gap_mm: number;
@@ -18,6 +19,9 @@ export default function PrintExports({ design, disabled = false }: { design: Des
   const [error, setError] = useState("");
   const key = design ? designKey(design) : "";
   const controller = useRef<AbortController | null>(null);
+  useCrewTask("manufacturing", { id: key,
+    status: disabled || design?.tier !== "bottle" ? "idle" : busy ? "working" : error ? "attention" : bundle ? "done" : "idle",
+    label: busy ? "部品の形状とスライス結果を点検中" : error ? "印刷データのエラー確認を待っています" : "印刷データの生成が終了しました。実機での確認は別途必要です" });
   useEffect(() => {
     const abort = new AbortController();
     fetch(apiUrl("/manufacturing/runtime"), { signal: abort.signal })

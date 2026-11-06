@@ -53,6 +53,7 @@ export function useAeroLoop(request: AeroRequest | null) {
   const [jobs, setJobs] = useState<Record<string, AeroJob>>({});
   const [startingKey, setStartingKey] = useState<string | null>(null);
   const [failure, setFailure] = useState<{ key: string; message: string } | null>(null);
+  const [lostConnections, setLostConnections] = useState<Record<string, boolean>>({});
   const job = jobs[key] ?? null;
   const starting = startingKey === key;
   const error = failure?.key === key ? failure.message : "";
@@ -61,6 +62,7 @@ export function useAeroLoop(request: AeroRequest | null) {
     if (!request) return;
     setStartingKey(key);
     setFailure(null);
+    setLostConnections(all => ({ ...all, [key]: false }));
     try {
       const response = await fetch(apiUrl("/aero/loop"), {
         method: "POST",
@@ -91,10 +93,13 @@ export function useAeroLoop(request: AeroRequest | null) {
       }
       const next = await readJob(response);
       setJobs((all) => ({ ...all, [designId]: next }));
+      setLostConnections(all => all[designId] ? { ...all, [designId]: false } : all);
     };
     const timer = setInterval(() => {
-      // A network slip is simply retried on the next tick.
-      for (const [designId, jobId] of pairs) refresh(designId, jobId).catch(() => undefined);
+      // Keep retrying, but never present the last running snapshot as a live connection.
+      for (const [designId, jobId] of pairs) refresh(designId, jobId).catch(() => {
+        if (!controller.signal.aborted) setLostConnections(all => all[designId] ? all : { ...all, [designId]: true });
+      });
     }, POLL_MS);
     return () => {
       clearInterval(timer);
@@ -102,5 +107,5 @@ export function useAeroLoop(request: AeroRequest | null) {
     };
   }, [active]);
 
-  return { job, starting, error, run };
+  return { job, starting, error, connectionLost: Boolean(lostConnections[key]) && Boolean(job && isActive(job)), run };
 }
