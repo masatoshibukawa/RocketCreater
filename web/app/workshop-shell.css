@@ -203,6 +203,8 @@ button:disabled { cursor:default; opacity:.45; }
 .workshop-app .msg { background:#2b3037; border:1px solid #3e4856; border-radius:5px; padding:10px 12px; margin:10px 0; font-size:14px; overflow-wrap:anywhere; }
 .workshop-app .msg-user { background:#263344; border-color:#405676; }
 .workshop-app .msg-error { background:#382325; border-color:#7a454d; color:#ffc2c2; }
+.workshop-app .msg-notice { background:#332c17; border-color:#6f6234; color:#f1e2b2; }
+.production-note { padding:0 32px; }
 .workshop-app .msg-system { background:none; border:0; color:#9ba9bc; font-size:14px; padding:0 2px; margin:8px 0; }
 .workshop-app .msg-thinking { background:#242a33; border-color:#354152; color:#b2c5dd; }
 .workshop-app .msg-role { color:#b9cce8; font-size:14px; margin-bottom:6px; }

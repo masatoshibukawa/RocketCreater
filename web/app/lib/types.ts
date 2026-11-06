@@ -370,7 +370,7 @@ export interface ExportInfo {
   download: Record<string, string>;
 }
 
-export type ChatRole = "user" | "agent" | "thinking" | "question" | "error" | "system";
+export type ChatRole = "user" | "agent" | "thinking" | "question" | "error" | "notice" | "system";
 
 export interface ChatMessage {
   key: string;

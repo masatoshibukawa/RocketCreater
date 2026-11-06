@@ -124,6 +124,7 @@ export type Action =
   | { type: "event"; event: AgentEvent }
   | { type: "stream_end" }
   | { type: "fail"; message: string }
+  | { type: "notice"; message: string }
   | { type: "reset" };
 
 export function reduce(state: DesignState, action: Action): DesignState {
@@ -132,6 +133,8 @@ export function reduce(state: DesignState, action: Action): DesignState {
       return initialState;
     case "start":
       return push({ ...initialState, status: "streaming", request: action.text }, "user", action.text);
+    case "notice":
+      return push({ ...state, status: "idle" }, "notice", action.message);
     case "fail":
       return push(
         { ...state, status: "error", errors: [...state.errors, action.message] },

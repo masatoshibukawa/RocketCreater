@@ -229,8 +229,13 @@ def _initial_user_message(
     return "\n\n".join(lines)
 
 
+_ASKING_ENDING = re.compile(r"(ください|でしょうか|ますか|ですか|教えて)[。.！!\s]*$")
+
+
 def _looks_like_question(text: str) -> bool:
-    return "?" in text or "？" in text
+    """A reply that is not the final JSON and asks the user for something. Japanese requests
+    often end without a question mark ("目標の高度を教えてください。")."""
+    return "?" in text or "？" in text or bool(_ASKING_ENDING.search(text.strip()))
 
 
 def _design_source_ids(design: dict[str, Any]) -> set[str]:

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AeroLoopPanel from "./components/AeroLoopPanel";
 import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
@@ -21,7 +21,8 @@ import { WorkshopProvider, useCrewTask, useWorkshop } from "./lib/WorkshopContex
 import { WORKSHOP_STAGES, stageLabel, type WorkshopStage, type AnalysisView, type OutputView } from "./lib/workshopNavigation";
 import { designCrewTask } from "./lib/workshopActivity";
 import { apiUrl, designKey, exportInfoFromEvents, exportsForDesign, requestKey, type DesignPackage, type DesignPackageRequest } from "./lib/api";
-import { fmt } from "./lib/format";
+import { fmt, fmtJpy } from "./lib/format";
+import { fmtAltitude, fmtMass } from "./lib/units";
 import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
 import { carriesParachute } from "./lib/flightPlayback";
 import { caseLabels } from "./lib/caseLabels";
@@ -56,6 +57,8 @@ function DesignScreen() {
   const [generated, setGenerated] = useState<{ key: string; package: DesignPackage } | null>(null);
   const [printed, setPrinted] = useState<{ key: string; files: { name: string; url: string }[] } | null>(null);
   const stream = useDesignStream();
+  // A question needs an answer in the left dock, which narrow screens keep closed.
+  useEffect(() => { if (stream.pendingQuestion !== null) setLeftOpen(true); }, [stream.pendingQuestion]);
   const [productionProject, setProductionProject] = useState<DesignProject | null>(null);
   const activeRequirement = productionProject ? productionProject.spec.requirement : stream.requirement;
   useCrewTask("design", designCrewTask(stream));
@@ -223,9 +226,9 @@ function DesignScreen() {
   const hasModel = stage === "design";
   const showCrew = (hasModel && modelView === "model" && displayed !== null) || stage === "analysis" || stage === "exports";
   const requirementRows = [
-    ["目標の高度", typeof activeRequirement?.target_altitude_m === "number" ? `${fmt(activeRequirement.target_altitude_m, 0)} m` : productionProject ? "未指定" : "未入力"],
-    ["積載物の質量", productionProject ? `${fmt(productionProject.spec.design.payload_mass_kg * 1000, 0)} g` : typeof activeRequirement?.payload_mass_kg === "number" ? `${fmt(activeRequirement.payload_mass_kg * 1000, 0)} g` : "未入力"],
-    ["予算", typeof activeRequirement?.budget_jpy === "number" ? `${fmt(activeRequirement.budget_jpy, 0)} 円` : "未入力"],
+    ["目標の高度", typeof activeRequirement?.target_altitude_m === "number" ? fmtAltitude(activeRequirement.target_altitude_m) : productionProject ? "未指定" : "未入力"],
+    ["積載物の質量", productionProject ? fmtMass(productionProject.spec.design.payload_mass_kg) : typeof activeRequirement?.payload_mass_kg === "number" ? fmtMass(activeRequirement.payload_mass_kg) : "未入力"],
+    ["予算", typeof activeRequirement?.budget_jpy === "number" ? fmtJpy(activeRequirement.budget_jpy) : "未入力"],
     ["規模", tier ? TIER_LABEL[tier] : "要求から判定"],
   ];
   function saveDesign() {
@@ -256,7 +259,7 @@ function DesignScreen() {
       <section className={`workshop-center${showCrew ? " has-crew" : ""}`} aria-label={`${stageLabel(stage)}の表示`}>
         <div className="workshop-toolbar">
           <button id="target-toggle" className="btn mobile-target-toggle" type="button" aria-controls="workshop-targets" aria-expanded={leftOpen} onClick={toggleTargets}>相談</button>
-          {hasModel ? <div className="tool-tabs" role="group" aria-label="機体の表示"><button type="button" aria-pressed={modelView === "model"} onClick={() => setModelView("model")}><WorkshopIcon name="design" size={18}/>3D モデル</button><button type="button" aria-pressed={modelView === "drawing"} onClick={() => setModelView("drawing")}><WorkshopIcon name="exports" size={18}/>側面図</button></div> : stage === "analysis" ? <div className="tool-tabs" role="group" aria-label="解析の表示">{ANALYSIS_VIEWS.map(([id, label]) => <button key={id} type="button" aria-pressed={analysisView === id} onClick={() => setAnalysisView(id)}><WorkshopIcon name={id === "aero" ? "analysis" : "play"} size={18}/>{label}</button>)}</div>
+          {hasModel ? <div className="tool-tabs" role="group" aria-label="機体の表示"><button type="button" aria-pressed={modelView === "model"} onClick={() => setModelView("model")}><WorkshopIcon name="design" size={18}/>3D モデル</button><button type="button" aria-pressed={modelView === "drawing"} onClick={() => setModelView("drawing")}><WorkshopIcon name="exports" size={18}/>側面図</button></div> : stage === "analysis" ? <div className="tool-tabs" role="group" aria-label="解析の表示">{ANALYSIS_VIEWS.map(([id, label]) => <button key={id} type="button" aria-pressed={analysisView === id} onClick={() => setAnalysisView(id)}><WorkshopIcon name={id === "aero" ? "analysis" : "play"} size={18}/>{id === "flight" && isOrbital(tier) ? "上昇と軌道" : label}</button>)}</div>
             : stage === "exports" ? <div className="tool-tabs" role="group" aria-label="成果物の表示">{OUTPUT_VIEWS.map(([id, label]) => <button key={id} type="button" aria-pressed={outputView === id} onClick={() => setOutputView(id)}><WorkshopIcon name={id === "video" ? "play" : "exports"} size={18}/>{label}</button>)}</div>
             : <span className="toolbar-context"><WorkshopIcon name={stage}/>{stageLabel(stage)}</span>}
           <span className="toolbar-spacer"/>
@@ -278,10 +281,11 @@ function DesignScreen() {
             {analysisView === "flight" ? <div className="flight-workspace"><FlightPlayer key={displayedId ?? "none"} trace={trace} metrics={flight?.metrics ?? NO_METRICS} warnings={flight?.warnings ?? []} parachute={carriesParachute(displayed?.design)} emptyMessage="計算した飛行の時系列が届くと再生できます"/></div> : null}
             <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedLabel}/></div>
           </div>
-          {stage === "exports" && outputView === "production" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
+          {stage === "exports" && outputView !== "drawing" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
           <div className="production-stack" hidden={stage !== "exports" || outputView === "drawing" || isOrbital(tier)}>
           <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
-          <div className="production-workspace" hidden={stage !== "exports" || isOrbital(tier)}><DesignProduction source={packageRequest} mode={outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} active={stage === "exports"}/></div>
+          {tier === "amateur" ? <p className="wb-note production-note">寸法を保存して版を管理する機能は、ペットボトルロケットだけです。</p> : null}
+          <div className="production-workspace" hidden={stage !== "exports" || (tier !== null && tier !== "bottle")}><DesignProduction source={packageRequest} mode={outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} active={stage === "exports"}/></div>
           </div>
           <WorkshopCrew embedded hideScene={!showCrew}/>
         </div>
@@ -302,7 +306,7 @@ function DesignScreen() {
         <DockHandle side="right" label="結果の幅を変える" width={docks.right} onResize={docks.setRight}/>
       </aside> : null}
     </div>
-    <footer className="workshop-footer">{productionProject ? <span role="status">{productionProject.active ? "処理中" : productionProject.adopted ? "採用版を保存済み" : "設計版を確認中"}</span> : <StatusStrip status={stream.status} attemptCount={stream.attemptCount}/>}<span className="footer-divider"/><span className="footer-task">{task.label}</span><span className="toolbar-spacer"/><span className="footer-units">単位: m, g, 円</span><button className="btn" type="button" aria-pressed={paused} disabled={reduced} onClick={() => setPaused(!paused)}><WorkshopIcon name={paused ? "play" : "pause"} size={16}/>{reduced ? "動きを減らす設定" : paused ? "動きを再開" : "動きを止める"}</button>{stream.status === "streaming" ? <button type="button" className="btn stop-design" onClick={stop}>設計を中断</button> : null}</footer>
+    <footer className="workshop-footer">{productionProject ? <span role="status">{productionProject.active ? "処理中" : productionProject.adopted ? "採用版を保存済み" : "設計版を確認中"}</span> : <StatusStrip status={stream.status} attemptCount={stream.attemptCount} awaitingAnswer={stream.pendingQuestion !== null}/>}<span className="footer-divider"/><span className="footer-task">{task.label}</span><span className="toolbar-spacer"/><span className="footer-units">単位: m, g, 円</span><button className="btn" type="button" aria-pressed={paused} disabled={reduced} onClick={() => setPaused(!paused)}><WorkshopIcon name={paused ? "play" : "pause"} size={16}/>{reduced ? "動きを減らす設定" : paused ? "動きを再開" : "動きを止める"}</button>{stream.status === "streaming" ? <button type="button" className="btn stop-design" onClick={stop}>設計を中断</button> : null}</footer>
     <dialog ref={settings} className="workshop-settings" aria-labelledby="settings-title"><div className="dock-heading"><h2 id="settings-title">表示と出力先</h2><button className="icon-button" type="button" aria-label="設定を閉じる" onClick={() => settings.current?.close()}><WorkshopIcon name="close"/></button></div><div className="settings-content"><h3>工房の表示</h3><label><input type="checkbox" checked={visible} onChange={e => setVisible(e.target.checked)}/>整備員を表示</label><label><input type="checkbox" checked={paused} disabled={reduced} onChange={e => setPaused(e.target.checked)}/>演出とカメラの動きを止める</label><p>{reduced ? "端末の設定に合わせ、動きを減らしています。" : "表示設定はこのブラウザーに保存します。"}</p><h3>3Dプリントの出力先</h3><p>UltiMaker S5 · Tough PLA Gray · AA 0.4</p><small>製作データで選択中の案を生成し、ファイルを保存できます。</small></div><form method="dialog"><button className="btn" type="submit">閉じる</button></form></dialog>
   </main>;
 }

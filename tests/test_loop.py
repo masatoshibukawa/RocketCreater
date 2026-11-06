@@ -631,3 +631,24 @@ def test_system_prompt_describes_the_staged_chain_workflow():
     assert "closest to" in text
     # the orbital tiers keep the reference-seeded workflow
     assert "tune=true" in text and "simulate_design" in text
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "予算はいくらですか？",
+        "What is the budget?",
+        "目標の高度を教えてください。",
+        "回収は必要でしょうか",
+    ],
+)
+def test_a_reply_that_asks_for_something_is_a_question(text):
+    from rocketwright.agent.loop import _looks_like_question
+
+    assert _looks_like_question(text)
+
+
+def test_a_plain_statement_is_not_a_question():
+    from rocketwright.agent.loop import _looks_like_question
+
+    assert not _looks_like_question("設計が完了しました。合格案は 2 件です。")

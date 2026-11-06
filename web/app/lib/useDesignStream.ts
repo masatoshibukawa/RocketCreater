@@ -110,7 +110,9 @@ export function useDesignStream(): DesignStream {
         });
         if (!res.ok) {
           const detail = await res.text().catch(() => "");
-          dispatch({ type: "fail", message: designRefusalMessage(res.status, detail) });
+          const message = designRefusalMessage(res.status, detail);
+          // The switched-off paid API is a setting, not a fault: say so without the error state.
+          dispatch(res.status === 423 ? { type: "notice", message } : { type: "fail", message });
           return;
         }
         if (!res.body) {

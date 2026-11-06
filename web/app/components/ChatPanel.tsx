@@ -28,6 +28,7 @@ const ROLE_LABEL: Record<ChatMessage["role"], string> = {
   thinking: "考え中",
   question: "質問",
   error: "エラー",
+  notice: "お知らせ",
   system: "",
 };
 

@@ -13,6 +13,7 @@ import {
   thrustOf,
 } from "../lib/flightPlayback";
 import { fmt } from "../lib/format";
+import { fmtAltitude } from "../lib/units";
 import type { TracePoint } from "../lib/types";
 
 interface FlightPlayerProps {
@@ -194,7 +195,7 @@ export default function FlightPlayer({ trace, metrics, warnings, parachute, empt
           {summary.map((row) => (
             <div key={row.key}>
               <dt>{row.label}</dt>
-              <dd>{fmt(metrics[row.key], row.digits)} {row.unit}</dd>
+              <dd>{row.unit === "m" && Math.abs(metrics[row.key]) >= 10000 ? fmtAltitude(metrics[row.key]) : `${fmt(metrics[row.key], row.digits)} ${row.unit}`}</dd>
             </div>
           ))}
         </dl>
