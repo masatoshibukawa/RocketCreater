@@ -11,6 +11,7 @@ from rocketwright.aero.base import (
     physics_ref_diameter_m,
 )
 from rocketwright.aero.lbm_gpu import LbmGpuBackend
+from rocketwright.aero.loop import AeroLoopResult, AeroLoopRound, run_aero_loop
 from rocketwright.aero.openfoam_pipeline import OpenFoamPipelineBackend
 from rocketwright.aero.registry import (
     BACKEND_NAMES,
@@ -27,6 +28,8 @@ __all__ = [
     "BACKEND_NAMES",
     "AeroBackend",
     "AeroCase",
+    "AeroLoopResult",
+    "AeroLoopRound",
     "AeroQuery",
     "AeroResult",
     "BarrowmanBackend",
@@ -40,6 +43,7 @@ __all__ = [
     "get_backend",
     "physics_ref_diameter_m",
     "register",
+    "run_aero_loop",
     "status",
 ]
 

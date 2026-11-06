@@ -15,15 +15,18 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from rocketwright import aero
 from rocketwright.agent.local_runtime import LocalDirector
 from rocketwright.bottle_assembly import Workshop
-from rocketwright.bottle_candidates import REQUIREMENT, flight_tool
+from rocketwright.bottle_candidates import PRESSURE_KPA, REQUIREMENT, flight_tool
 from rocketwright.bottle_packet import write_packet
-from rocketwright.bottle_search import PASS_RATE, Action, Search, baseline_choice
+from rocketwright.bottle_search import PASS_RATE, TARGET, Action, Search, baseline_choice
+from rocketwright.geometry import assembled_shape
 from rocketwright.report import export_bom_csv, export_report_json, export_report_markdown
 from rocketwright.schema import SimResult
 
 ROOT = Path(__file__).resolve().parents[2]
+AERO_BACKEND_ENV = "ROCKETWRIGHT_AERO_BACKEND"
 STEPS = {
     "component": "構成・重心・振動",
     "flight": "飛行・抗力の範囲",
@@ -127,6 +130,7 @@ class Workbench:
             "error": None,
             "files": [],
             "proposal": None,
+            "aero_loop": None,
         }
         self._write(state)
         return self.view(state)
@@ -177,6 +181,7 @@ class Workbench:
             "confirmed": confirmed,
             "design": search.design(last).model_dump(mode="json") if last else None,
             "plan": plan,
+            "aero_loop": state.get("aero_loop"),  # absent from projects saved before it existed
             "skills": SKILLS,
             "eta_seconds": None,
         }
@@ -273,14 +278,17 @@ class Workbench:
                 }
             )
 
+    def _confirmed(self, search: Search) -> list[Action]:
+        return [
+            a
+            for a, r in search.results.items()
+            if a.method == "confirm" and r["success_rate"] >= PASS_RATE
+        ]
+
     def export(self, project_id: str, revision: int):
         def worker(state):
             search = self.search(state)
-            confirmed = [
-                a
-                for a, r in search.results.items()
-                if a.method == "confirm" and r["success_rate"] >= PASS_RATE
-            ]
+            confirmed = self._confirmed(search)
             if not confirmed:
                 raise Conflict("Confirm an eligible design before exporting production files")
             if state["files"]:
@@ -310,6 +318,65 @@ class Workbench:
             self.register_files(state, directory, "production")
 
         return self._run(project_id, revision, "export_production", worker)
+
+    def aero_loop(self, project_id: str, revision: int):
+        """Flight/CFD loop on the confirmed design, stored beside it in `aero_loop`: a CFD-based
+        alternative to read. History, the frozen design and production files stay as they are."""
+
+        backend = os.getenv(AERO_BACKEND_ENV, "auto")
+        if backend not in aero.BACKEND_NAMES:
+            raise ValueError(f"{AERO_BACKEND_ENV} must be one of {aero.BACKEND_NAMES}")
+
+        def worker(state):
+            search = self.search(state)
+            confirmed = self._confirmed(search)
+            if not confirmed:
+                raise Conflict("Confirm an eligible design before running the aero loop")
+            action = confirmed[-1]
+            design = search.design(action)
+            plan = search.plan(action, design)
+            ceiling = search.workshop.pressure_ceiling_kpa
+            result = aero.run_aero_loop(
+                design,
+                search.env,
+                target_apogee_m=TARGET,
+                pressures_kpa=[p for p in PRESSURE_KPA if p <= ceiling],
+                backend=backend,
+                shape=assembled_shape(plan["dimensions_mm"]),
+                cg_from_nose_m=plan["wet_cg_mm"] / 1000,  # least stable: water loaded
+            )
+            confirmation = search.results[action]
+            n, seed = confirmation["n"], confirmation["seed"]
+            spread = flight_tool(
+                "run_dispersion",
+                result.final_design,
+                f"{action.id}/aero-loop",
+                n=n,
+                seed=seed,
+                env=search.env,
+            )
+            state["aero_loop"] = result.model_dump(mode="json") | {
+                "source_action": action.id,
+                "backend_requested": backend,
+                "target_apogee_m": TARGET,
+                "cg_from_nose_m": plan["wet_cg_mm"] / 1000,
+                "baseline": {
+                    "pressure_kpa": design.initial_gauge_pressure_pa / 1000,
+                    "cd": design.axial_drag_coefficient,
+                    "success_rate": confirmation["success_rate"],
+                },
+                "dispersion": {
+                    "n": n,
+                    "seed": seed,
+                    "success_rate": spread["success_rate"],
+                    "passes": round(n * spread["success_rate"]),
+                    "failure_counts": spread["failure_counts"],
+                    "apogee_m": spread["quantiles"]["apogee_m"],
+                    "descent_speed_mps": spread["quantiles"]["descent_speed_mps"],
+                },
+            }
+
+        return self._run(project_id, revision, "aero_loop", worker)
 
     def manual(self, project_id: str, revision: int):
         def worker(state):

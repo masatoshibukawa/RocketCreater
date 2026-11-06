@@ -4,8 +4,8 @@
 (registration order = preference) and falls back to the L0 Barrowman backend. Results of
 cacheable (CFD) backends are stored as JSON under `$ROCKETWRIGHT_AERO_CACHE` (default
 `~/.cache/rocketwright/aero/`), keyed by sha256 of (backend name, airframe STL bytes, speed,
-angles), so the same shape at the same condition is never solved twice. The CG is not part of
-the key: a hit recomputes the static margin for the query's CG.
+angles, options, assembled shape), so the same shape at the same condition is never solved
+twice. The CG is not part of the key: a hit recomputes the static margin for the query's CG.
 """
 
 from __future__ import annotations
@@ -72,11 +72,13 @@ def cache_key(backend: str, query: AeroQuery) -> str:
     h = hashlib.sha256()
     h.update(backend.encode())
     h.update(b"\0")
-    h.update(airframe(query.design).stl_bytes())
+    h.update(airframe(query.design, shape=query.shape).stl_bytes())
     h.update(
         json.dumps([round(query.speed_mps, 6), [round(a, 6) for a in query.alphas_deg]]).encode()
     )
     h.update(json.dumps(query.extra, sort_keys=True, default=str).encode())
+    if query.shape is not None:  # absent for shape=None so existing cache entries stay valid
+        h.update(repr(query.shape).encode())
     return h.hexdigest()
 
 

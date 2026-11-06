@@ -13,10 +13,10 @@
 ```
 Design ─ rocketwright/geometry.py ─ STL（メートル、ノーズ先端が原点、+x が機尾側）＋寸法 dict
             │
-AeroQuery(design, speed_mps, alphas_deg, cg_from_nose_m)
+AeroQuery(design, speed_mps, alphas_deg, cg_from_nose_m, extra, shape)
             │
 registry.evaluate(query, backend="auto" | 名前)
-   │   キャッシュ：sha256(バックエンド名, STL バイト列, 速度, 迎角) → $ROCKETWRIGHT_AERO_CACHE
+   │   キャッシュ：sha256(バックエンド名, STL バイト列, 速度, 迎角, 設定, 組立形状) → $ROCKETWRIGHT_AERO_CACHE
    ├─ openfoam_pipeline（L2）  Docker の外部プロセス：snappyHexMesh + simpleFoam（k-ω SST）
    ├─ lbm_gpu（L2）            外部プロセス：scenarios/cfd/run_flow.py（GPU の格子ボルツマン法）
    └─ barrowman（L0）          今の定数（DEFAULT_CD）と Barrowman 式。常に使える
@@ -40,6 +40,7 @@ AeroResult(cd, cn_alpha_per_rad, x_cp_from_nose_m, static_margin_cal, per_case, 
 ### 形状の割り切り（`# SIMPLIFICATION:`）
 
 - bottle：drawing.py の規則（径 d = (4V/3.5π)^(1/3)、半楕円ノーズ 0.8d、胴 3.5d、ネック 0.3d）。ノズル端は閉じる。`BottleDesign` にフィン寸法がないので、drawing.py の代表形（4 枚、翼根 1.0d、翼端 0.35×翼根、スパン 0.8d、厚さ 2 mm）を仮定している。
+- 組立形状（`AeroQuery.shape`）：`geometry.assembled_shape(plan["dimensions_mm"])` が作る `AssembledShape` を渡すと、上の規則の代わりに実機の外形を解く。`bottle_packet.side_view` の図と同じで、円錐ノーズ、スカート端までの直円筒、平らな底、フィンは底から `fin_tail_inset` 前。ノズルと底の凹みは閉じたまま。`dimensions_mm` にフィンの厚さがないので 2 mm を仮定している。形状は `BottleDesign` に持たせない（`Design` のスキーマがエージェントのツール定義に入るため）。
 - bottle の重心は離床時の概算（乾燥質量は全長の中央、積載物はノーズ根元、水は胴の後端に詰めた円柱）。
 - 胴とフィンは重なった別々の閉曲面。一体化はパイプライン側（manifold の和集合）が行う。
 - 1 つの代表速度（bottle 15 m/s、amateur 50 m/s）で求めた C_D を飛行全体で一定として使う。
@@ -57,7 +58,7 @@ uv run python scripts/aero_eval.py examples/designs/bottle.json --backend barrow
 
 エージェントのツールでは `simulate_design` / `design_from_parts` の `aero_backend` に `auto`・`barrowman`・`openfoam_pipeline`・`lbm_gpu` を渡す（`null` か `none` で無効）。結果には `metrics.aero_cd_ratio`、`aero_static_margin_cal`、`aero_x_cp_m`、出典つきの `warnings`、要約の `aero` が付く。
 
-`run_dispersion` は今のところこの層を通らない（モジュールの定数 C_D のまま）。
+`run_dispersion` はこの層を通らない（design の `axial_drag_coefficient`、なければモジュールの定数 C_D を使う）。CFD の C_D を多数回試行に反映するには §7 のループの最終 design を渡す。
 
 ### OpenFOAM イメージの作成
 
@@ -83,7 +84,7 @@ VIRTUAL_ENV=~/tools/lbm-venv uv pip install numpy "cupy-cuda12x>=13,<14"
 `assembly.json` は `lbm_gpu.assembly_for()` が設計から作る。カーネルの形状の範囲に収めるため、次の制約がある。
 
 - 機体は「ノーズ＋直円筒＋平底」のみ（円錐は `--shape flat`、半楕円とオジャイブは `--shape rounded_flat`）。bottle の肩とネックは再現されない。
-- フィンは厚さゼロの 4 枚固定。他の枚数は `supports()` が断る。
+- フィンは厚さゼロの 4 枚固定。他の枚数は `supports()` が断る。組立形状の枚数は `evaluate()` が `ValueError` で断り、`auto` では理由を `notes` に残して次のバックエンドへ進む。組立形状の平面形は `assembly_for()` がそのままカーネルに渡すが、厚さは効かない。
 - 領域が 15 胴径なので、全長 10 胴径を超える機体は断る。速度は 35 m/s まで、|α| は 15° まで（`run_flow.py` の制限）。
 
 ## 3. ライセンス
@@ -139,4 +140,4 @@ OpenFOAM は GPL-3.0 で、[docs/simulators.md §4.3](simulators.md) の方針�
 
 ## 6. テスト
 
-`tests/test_geometry.py`、`tests/test_aero.py`。Docker と GPU は使わない（CFD は偽物のバックエンドか、実行で得た出力ファイル `tests/fixtures/aero_openfoam/` で置き換える）。
+`tests/test_geometry.py`、`tests/test_aero.py`、`tests/test_aero_loop.py`。Docker と GPU は使わない（CFD は偽物のバックエンドか、実行で得た出力ファイル `tests/fixtures/aero_openfoam/` で置き換える）。

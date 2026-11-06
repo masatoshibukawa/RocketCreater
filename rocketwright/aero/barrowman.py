@@ -5,7 +5,8 @@
   so passing it to simulate(cd=...) reproduces today's flight exactly.
 * amateur: C_N_alpha and x_cp from physics.stability (nose + fins, Barrowman).
 * bottle: the same Barrowman nose + fin terms on rocketwright.geometry's representative bottle
-  shape (half-ellipse nose, four fins). SIMPLIFICATION: the aft shoulder and neck are ignored.
+  shape (half-ellipse nose, four fins) or on the query's assembled shape.
+  SIMPLIFICATION: the representative bottle's aft shoulder and neck are ignored.
 """
 
 from __future__ import annotations
@@ -38,7 +39,7 @@ class BarrowmanBackend:
         ok, why = self.supports(design)
         if not ok:
             raise ValueError(why)
-        geo = airframe(design).params
+        geo = airframe(design, shape=query.shape).params
         cg = query.cg_from_nose_m if query.cg_from_nose_m is not None else geo["cg_from_nose_m"]
         d_phys = physics_ref_diameter_m(design)
         notes: list[str] = []
@@ -55,7 +56,7 @@ class BarrowmanBackend:
                 notes.append("cd is the design's own axial_drag_coefficient")
             d_geo = geo["body_diameter_m"]
             cn_n = stability.NOSE_CN
-            x_n = stability.NOSE_CP_FRACTION["elliptical"] * geo["nose_length_m"]
+            x_n = stability.NOSE_CP_FRACTION[geo["nose_shape"]] * geo["nose_length_m"]
             cn_f, x_f = 0.0, 0.0
             if geo["fin_count"]:
                 fins = FinSet(
@@ -72,7 +73,10 @@ class BarrowmanBackend:
             # Barrowman's C_N is per pi d_geo^2 / 4: re-reference to the drag area.
             cn_alpha = (cn_n + cn_f) * (d_geo / d_phys) ** 2
             source = "physics.water.DEFAULT_CD + Barrowman nose/fins on geometry.py's bottle shape"
-            notes.append("bottle shoulder and neck ignored in C_N_alpha / x_cp (SIMPLIFICATION)")
+            if query.shape is None:
+                notes.append(
+                    "bottle shoulder and neck ignored in C_N_alpha / x_cp (SIMPLIFICATION)"
+                )
         margin = None if cg is None else (x_cp - cg) / d_phys
         cases = [
             AeroCase(

@@ -9,7 +9,8 @@ amateur design maps onto it within the kernel's shape family:
 * SIMPLIFICATION: the kernel's body is a nose plus a straight cylinder with a flat base
   (`--shape flat` = conical nose, `--shape rounded_flat` = half-ellipse nose; ogives use the
   rounded one). The bottle's rounded shoulder and neck are not represented.
-* the kernel always draws four zero-thickness fins: other fin counts are not supported.
+* the kernel always draws four zero-thickness fins: other fin counts are not supported, and
+  an assembled shape's fin thickness has no effect here.
 * the domain is 15 body diameters plus the upstream gap: airframes longer than
   MAX_FINENESS diameters are refused.
 
@@ -35,7 +36,7 @@ from typing import Any
 import numpy as np
 
 from rocketwright.aero.base import AeroCase, AeroQuery, AeroResult
-from rocketwright.geometry import airframe
+from rocketwright.geometry import AssembledShape, airframe
 from rocketwright.schema import AmateurDesign, BottleDesign, Design
 
 __all__ = ["LbmGpuBackend", "assembly_for", "parse_cases"]
@@ -72,9 +73,21 @@ def _shape(params: dict[str, Any]) -> str:
     return "flat" if params["nose_shape"] == "conical" else "rounded_flat"
 
 
-def assembly_for(design: Design, cg_from_nose_m: float | None = None) -> dict[str, Any]:
+def _kernel_limits(p: dict[str, Any]) -> tuple[bool, str]:
+    if p["fin_count"] not in (0, 4):
+        return False, "the LBM kernel draws exactly four fins"
+    if p["length_m"] / p["body_diameter_m"] > MAX_FINENESS:
+        return False, f"longer than {MAX_FINENESS:g} body diameters (domain is 15 D)"
+    return True, ""
+
+
+def assembly_for(
+    design: Design,
+    cg_from_nose_m: float | None = None,
+    shape: AssembledShape | None = None,
+) -> dict[str, Any]:
     """run_flow.py's assembly.json for a design (millimetres)."""
-    p = airframe(design).params
+    p = airframe(design, shape=shape).params
     cg = cg_from_nose_m if cg_from_nose_m is not None else p["cg_from_nose_m"]
     if cg is None:
         raise ValueError("the LBM run needs a CG (moment reference)")
@@ -170,22 +183,20 @@ class LbmGpuBackend:
     def supports(self, design: Design) -> tuple[bool, str]:
         if not isinstance(design, AmateurDesign | BottleDesign):
             return False, "aero covers the bottle and amateur tiers only"
-        p = airframe(design).params
-        if p["fin_count"] not in (0, 4):
-            return False, "the LBM kernel draws exactly four fins"
-        if p["length_m"] / p["body_diameter_m"] > MAX_FINENESS:
-            return False, f"longer than {MAX_FINENESS:g} body diameters (domain is 15 D)"
-        return True, ""
+        return _kernel_limits(airframe(design).params)
 
     def evaluate(self, query: AeroQuery) -> AeroResult:
         if query.speed_mps > MAX_SPEED_MPS:
             raise ValueError(f"run_flow.py accepts speeds up to {MAX_SPEED_MPS:g} m/s")
         if max(abs(a) for a in query.alphas_deg) > MAX_ALPHA_DEG:
             raise ValueError(f"run_flow.py accepts |alpha| <= {MAX_ALPHA_DEG:g} deg")
+        p = airframe(query.design, shape=query.shape).params
+        ok, why = _kernel_limits(p)  # supports() sees only the design, not an assembled shape
+        if not ok:
+            raise ValueError(why)
         python = _python() or sys.executable
-        p = airframe(query.design).params
         cg = query.cg_from_nose_m if query.cg_from_nose_m is not None else p["cg_from_nose_m"]
-        asm = assembly_for(query.design, cg)
+        asm = assembly_for(query.design, cg, query.shape)
         cells = int(query.extra.get("cells", DEFAULT_CELLS))
         work = Path(tempfile.mkdtemp(prefix="rw-lbm-"))
         (work / "assembly.json").write_text(json.dumps(asm, indent=2), encoding="utf-8")
