@@ -31,6 +31,7 @@ def test_requested_refinement_is_not_reported_as_completed_confirmation(tmp_path
     )
     completed["artifact_hash"] = digest(completed)
     write_json(artifact.parent / "result.json", completed)
+    write_json(folder / "unfinished" / "case.json", {"partial_attempt": True})
     write_json(
         folder / "state.json",
         dict(
@@ -76,10 +77,15 @@ def test_requested_refinement_is_not_reported_as_completed_confirmation(tmp_path
     assert final["checks"] is None and final["apogee_m"] is None
     assert final["accepted_spec_hash"] is None
     assert final["latest_requested_runtime"]["cfd_cells_fine"] == 24
-    completed = final["last_completed_artifacts"]["confirm"]
-    assert completed["runtime"]["cfd_cells_fine"] == 20
-    assert completed["checks"]["aero_grid"] is False
-    assert completed["apogee_m"] == 22
+    reported = final["last_completed_artifacts"]["confirm"]
+    assert reported["runtime"]["cfd_cells_fine"] == 20
+    assert reported["checks"]["aero_grid"] is False
+    assert reported["apogee_m"] == 22
     assert "private/solver.exe" not in str(result)
     assert result["evidence"]["referenced_files"] == 2
     assert result["evidence"]["verified_gpu_case_files"] == 0
+    assert final["gpu_case_files_saved"] == 1 and final["completed_gpu_case_files"] == 0
+    completed["value"]["sha256"] = "altered-after-completion"
+    write_json(artifact.parent / "result.json", completed)
+    with pytest.raises(ValueError, match="Invalid archived"):
+        summary(tmp_path)
