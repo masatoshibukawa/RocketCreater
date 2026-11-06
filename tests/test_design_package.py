@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 import api.manufacturing as routes
 from api.main import app
 from rocketwright import manufacturing
-from rocketwright.agent.design_sheet import sheet_sections
+from rocketwright.agent.design_sheet import safety_notes, sheet_sections
 from rocketwright.agent.fake_client import DEMO_PASSING_INDEX, DEMO_REQUIREMENTS, demo_designs
 from rocketwright.agent.store import DEFAULT_STORE
 from rocketwright.agent.tools import execute_tool
@@ -202,3 +202,11 @@ def test_sheet_never_quotes_the_recipe_dimensions():
     """The 1.5 L recipe's numbers belong to its own vehicle, not to a free design."""
     text = json.dumps(_sections(_design("bottle")), ensure_ascii=False)
     assert not re.search(r"搭載室|傘室|スカート|型紙", text)
+
+
+def test_the_sheet_carries_launch_safety_notes_with_the_designs_pressure():
+    design = BottleDesign.model_validate(_design("bottle"))
+    notes = safety_notes(design)
+    assert notes[0].startswith(f"圧力は {design.initial_gauge_pressure_pa / 1000:.0f} kPa まで")
+    assert any("保護めがね" in note for note in notes)
+    assert any("離れて" in note for note in notes)

@@ -40,6 +40,17 @@ PENDING_CHECKS = (
     "回収装置の収納・放出、着地時の荷重",
     "材料の購入額と、実地で使用できる条件・場所",
 )
+SAFETY_TITLE = "打ち上げるときの安全"
+# Wording drafted on 2026-11-07 from common water-rocket practice; the project owner reviews it.
+_SAFETY_NOTES = (
+    "加圧は、機体と発射台から離れて行う。機体の正面と真上に、顔や体を出さない",
+    "傷、へこみ、白く変色した所のあるボトルは使わない。炭酸飲料用でないボトルは使わない",
+    "保護めがねを着ける",
+    "打ち上げの前に、周りと風下に人がいないことを確かめ、声を掛けてから発射する",
+    "人、建物、道路、電線の方へ向けない。広くて、落ちてきても安全な場所で行う",
+    "発射できなかったときは、すぐに近づかない。離れた位置から圧力を抜いてから近づく",
+    "子どもだけで行わない",
+)
 RESULT_ROWS = (
     ("到達高度", "apogee_m", "m", 2),
     ("降下速度", "descent_speed_mps", "m/s", 2),
@@ -51,6 +62,15 @@ MARGIN_ROWS = (
     ("静安定余裕（注水時）", "stability_margin_cal"),
     ("静安定余裕（空のとき）", "dry_stability_margin_cal"),
 )
+
+
+def safety_notes(design: BottleDesign) -> tuple[str, ...]:
+    """Precautions printed on the sheet. The first names the pressure this design was flown at."""
+    pressure = (
+        f"圧力は {design.initial_gauge_pressure_pa / 1000:.0f} kPa までにする。"
+        "ボトルと発射台に表示された上限も超えない"
+    )
+    return (pressure, *_SAFETY_NOTES)
 
 
 def sheet_sections(
@@ -154,6 +174,8 @@ def render_design_sheet(
     cost = f"{summary['cost_jpy']:,.0f}"
     story.append(p(f"費用の合計 {cost} 円（見積り。購入価格の保証ではありません）"))
 
+    story.append(p(SAFETY_TITLE, section))
+    story.extend(p(f"・{text}") for text in safety_notes(design))
     story.append(p("製作の前に実物で確認すること", section))
     story.extend(p(f"□ {text}") for text in PENDING_CHECKS)
     if result.warnings:
