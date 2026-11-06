@@ -1,6 +1,6 @@
 {
   "file": "fin-S5.ufp",
-  "sha256": "b21d3304ba352d2f25218792b17ba98d85e52ba40f7cd0be1b926163d0a274a0",
+  "sha256": "4bb2e482b00028d63f949b80bb98029b587cb163205e1074acee421d8568b494",
   "target_machine": "Ultimaker S5",
   "generator_version": "5.12.0",
   "material_profile": "UltiMaker Gray Tough PLA",

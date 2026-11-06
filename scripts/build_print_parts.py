@@ -17,8 +17,9 @@ cad = runpy.run_path(str(root / "3d model/prototypes/pet-rocket-coke-2l/build.py
 cad["validate_parameters"](config)
 bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)
-fin = cad["make_fin"](config)
-fin = cad["print_copy"](fin, config["fin"]["print_rotation_y_deg"])
+assembly_fin = cad["make_fin"](config)
+fin = cad["print_copy"](assembly_fin, config["fin"]["print_rotation_y_deg"])
+bpy.data.objects.remove(assembly_fin, do_unlink=True)
 profile, _ = cad["nose_profile"](config)
 nose = cad["revolve"]("Nose", profile, config["resolution"])
 r = config["bottle"]["body_diameter"] / 2 + config["bottle"]["radial_clearance"]
@@ -58,6 +59,11 @@ scene.camera = camera
 for name, obj in parts.items():
     for other in parts.values():
         other.hide_render = other != obj
+    report[name]["preview_visible_meshes"] = [
+        other.name for other in bpy.data.objects if other.type == "MESH" and not other.hide_render
+    ]
+    if len(report[name]["preview_visible_meshes"]) != 1:
+        raise ValueError("A part preview must contain only its own mesh")
     center = sum((obj.matrix_world @ Vector(v) for v in obj.bound_box), Vector()) / 8
     extent = max(obj.dimensions)
     camera.location = center + Vector((extent * 2, -extent * 3, extent * 2))

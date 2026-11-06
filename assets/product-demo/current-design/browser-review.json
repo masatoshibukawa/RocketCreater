@@ -1,0 +1,60 @@
+{
+  "case": "1.5 L workshop / D02 carton_wide / numerical fixture",
+  "source_id": "confirm/D02/9/325/25/carton_wide",
+  "local_direction_model": "gemma4:12b",
+  "cloud_generation_api_calls": 0,
+  "full_decode_frames": {
+    "design-explanation.mp4": 384,
+    "launch-cg.mp4": 288
+  },
+  "browser_playback": "Both clips reached ended, no media errors; 1920x1080, 16s and 12s",
+  "browser_download_sha256_matches": true,
+  "visual_inspection": "Representative frames and screenshots; not continuous human review of all frames",
+  "console_errors_at_completion": [],
+  "design_link_reload": "Opened the saved project directly after hydration",
+  "physical_validation": "not_performed",
+  "source_files": {
+    "assembly.json": "07988ffcb1017b1de658954310da5183dcd8ba1284cc5e205ca7f1798cbe874c",
+    "report.json": "7de33bd9bb10699ffe5926633e9c7fd0ca2a627275e428ffce8e12a2490d995b",
+    "trace.json": "37dd28c52203a18eeac3446e60f703b2b0aa4439bc2ea280326829b41bd647d6"
+  },
+  "trajectory_scope": "This long take records solver-position commands. Later code was separately tested with Blender transform readback at 480x270, 4 frames total; error 2.639e-7 m.",
+  "files": [
+    {
+      "name": "appearance-sources.json",
+      "sha256": "39d9938b636f28692f841246e7027fc911051c4ce51e4bede73b9df0abbc0eee"
+    },
+    {
+      "name": "design-explanation.mp4",
+      "sha256": "126aed1bbdbf9f0ae572afb5709f2c68317a69062c245edccc62307c99af8a85"
+    },
+    {
+      "name": "design-film-ui.jpg",
+      "sha256": "869b3ee57ab9d8f2e766b510f84cc097349414be9e28cc7466bed45909547afa"
+    },
+    {
+      "name": "flight-film-ui.jpg",
+      "sha256": "ed350c8c9cc54a2863a1b93434107f1a0b1091a241318a8350aa15e605d37cb4"
+    },
+    {
+      "name": "launch-cg.mp4",
+      "sha256": "614884c1163a789402bf9946c8bc82a3a94baab3813a34d5ede661eb9e093175"
+    },
+    {
+      "name": "print-exports-ui.jpg",
+      "sha256": "75362f7fe8ab80a155c1e15dffe9f0346dc3c5ba65bc6dfcc38aa99f07002639"
+    },
+    {
+      "name": "rendered-trajectory.csv",
+      "sha256": "b70a144b64eed572df9cd6ee65fac6e1fc15d25af4243328cf3a198d895a8e1e"
+    },
+    {
+      "name": "scene-source.json",
+      "sha256": "b444bcd880e1107afccad353254c86937065d8373c977b4a1b0bc7b8e853e484"
+    },
+    {
+      "name": "verification.json",
+      "sha256": "0d26e48cc0fedb04c0247114c962cfdaa559ff689e8996dcd8e679ea6939b062"
+    }
+  ]
+}

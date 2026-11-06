@@ -117,6 +117,8 @@ def test_actual_api_builds_closed_design_bound_parts_and_machine_slices(
             assert p["solid_centroid_support_margin_mm"] >= 2
             assert max(p["extrusion_speed_max_mm_s_by_type"].values()) <= 35.01
         files = {f["name"]: f for f in result["files"]}
+        geometry_report = client.get(files["geometry-check.json"]["url"]).json()
+        assert all(len(part["preview_visible_meshes"]) == 1 for part in geometry_report.values())
         assert {"fin-mm.3mf", "fin-S5.ufp", "nose-S5.ufp", "print-package.zip"} <= files.keys()
         model = client.get(files["fin-mm.3mf"]["url"]).content
         import io

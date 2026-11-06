@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
@@ -24,6 +24,10 @@ const NO_METRICS: Record<string, number> = {};
 
 export default function Home() {
   const [workspace, setWorkspace] = useState(false);
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("project") ?? "";
+    if (/^[a-f0-9]{32}$/.test(id)) setWorkspace(true);
+  }, []);
   const [centerView, setCenterView] = useState<"model" | "simulation">("model");
   const stream = useDesignStream();
   const { start, answer, stop, reset } = stream;

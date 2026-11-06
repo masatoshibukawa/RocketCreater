@@ -37,7 +37,7 @@
   "parts": [
     {
       "file": "fin-S5.ufp",
-      "sha256": "b21d3304ba352d2f25218792b17ba98d85e52ba40f7cd0be1b926163d0a274a0",
+      "sha256": "4bb2e482b00028d63f949b80bb98029b587cb163205e1074acee421d8568b494",
       "target_machine": "Ultimaker S5",
       "generator_version": "5.12.0",
       "material_profile": "UltiMaker Gray Tough PLA",
@@ -243,6 +243,9 @@
       97.59527587890625,
       20.64982032775879,
       72.62693786621094
+    ],
+    "preview_visible_meshes": [
+      "FinPrint"
     ]
   },
   "comparison_to_failed_fin": {
@@ -253,28 +256,28 @@
   },
   "files": [
     {
-      "name": "fin-mm.3mf",
-      "sha256": "9d7b98f495dca495c37fa2ceb119bbbe8b1350df787a14d95ee6ca7bff3de518"
-    },
-    {
       "name": "fin-mm.stl",
       "sha256": "f51fe4520872ededc87cdbc214675198bd151a50f3a1146156416a03aba47a33"
     },
     {
-      "name": "fin-preview.png",
-      "sha256": "5db495afc34b4d544c0ab30c8ae864bc1289044686cffa2bde3e9b516fe579f4"
-    },
-    {
-      "name": "fin-S5.gcode",
-      "sha256": "28bcf5c38f4cc4bbad76427f0c1cac0bc205e2d06585df16d5f57c77a470b278"
+      "name": "fin-mm.3mf",
+      "sha256": "788677e75385efddb54d14a227ca2b417923af6e3927da5b8cfc3092f4262b45"
     },
     {
       "name": "fin-S5.ufp",
-      "sha256": "b21d3304ba352d2f25218792b17ba98d85e52ba40f7cd0be1b926163d0a274a0"
+      "sha256": "4bb2e482b00028d63f949b80bb98029b587cb163205e1074acee421d8568b494"
+    },
+    {
+      "name": "fin-S5.gcode",
+      "sha256": "3b8c61d5fd85767035febcfc77c78121379515de9af9b38736f9e53fac11f60b"
+    },
+    {
+      "name": "fin-preview.png",
+      "sha256": "1f163df094db2f6eb1e891cd2120606f20066b8c1214f7578e5a90b622bac0ec"
     },
     {
       "name": "fin-slice-check.json",
-      "sha256": "09163ca9bc52fc3c366e8f60463c87e1d2ed070e958fdae67434336f1e8062ab"
+      "sha256": "5200f3030105f7820231da266bac9f9d4e2f505a5152a2e66b21e79e9cbf7490"
     },
     {
       "name": "parameters.json",

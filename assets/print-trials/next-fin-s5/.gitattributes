@@ -1,6 +1,6 @@
 # Preserve the exact bytes covered by the generated checksums on every OS.
-*.gcode -text
-*.json -text
+*.gcode -text -diff linguist-generated=true
+*.json -text whitespace=cr-at-eol
 *.stl -text
 *.3mf -text
 *.ufp -text

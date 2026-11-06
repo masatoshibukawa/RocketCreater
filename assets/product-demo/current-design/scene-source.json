@@ -1,0 +1,18 @@
+{
+  "style": "photographic",
+  "dimensions_sha256": "1af2ca25a2a1ea1812df13049e466fce4d793fda984a7827b231ff86119c06ac",
+  "mesh_vertex_hashes": {
+    "Bottle": "95c2b9393eab587688d6ee4a364542878db638acd9d5df63a8c52bc7a8839230",
+    "Cone": "0e193ba2e499156139e285f09b29a01fcfaa644edf5521ed8c814f073bf6993b",
+    "Fin 1": "d18847c7fc479cfe18681f164e6dad738f64084a1f7cd462e41ad4ff813532b4",
+    "Fin 2": "d18847c7fc479cfe18681f164e6dad738f64084a1f7cd462e41ad4ff813532b4",
+    "Fin 3": "d18847c7fc479cfe18681f164e6dad738f64084a1f7cd462e41ad4ff813532b4",
+    "Fin 4": "d18847c7fc479cfe18681f164e6dad738f64084a1f7cd462e41ad4ff813532b4",
+    "Payload bay": "dcc822d83ae94dfa96e7f0779339acc80fc39a3e1536eb83a75d305adba6c217",
+    "Recovery bay": "4b175ad03db179fef9f313b7b0088bda6653fe9637d4cac33389785450cd4710",
+    "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_id": "confirm/D02/9/325/25/carton_wide",
+  "bottle_detail": "unmeasured illustrative PET envelope",
+  "physical_validation": "not_performed"
+}

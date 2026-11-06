@@ -1,0 +1,53 @@
+{
+  "provider": "Poly Haven",
+  "license_url": "https://polyhaven.com/license",
+  "api_terms": "https://github.com/Poly-Haven/Public-API/blob/master/ToS.md",
+  "checked_date": "2026-11-05",
+  "files": [
+    {
+      "file": "cache/outdoor.exr",
+      "asset": "small_rural_road",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/small_rural_road_4k.exr",
+      "source": "https://polyhaven.com/a/small_rural_road",
+      "bytes": 21670628,
+      "sha256": "f7ea4a8ffacbd3947f96a9190aebd8c2ecdff13c153224a7b5f6328b97381b94",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "cache/workshop.exr",
+      "asset": "artist_workshop",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/artist_workshop_4k.exr",
+      "source": "https://polyhaven.com/a/artist_workshop",
+      "bytes": 23151289,
+      "sha256": "39b66568e3c0e086bbf172a6cf182f1bf4fb4a6a3a510ba9f5cf7891e43cac6d",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "cache/ground-diff.jpg",
+      "asset": "asphalt_02",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/asphalt_02/asphalt_02_diff_2k.jpg",
+      "source": "https://polyhaven.com/a/asphalt_02",
+      "bytes": 3075676,
+      "sha256": "28f5ba8690553f192c0e5e1a5ff40f34765b4b93f4cc7059b1a3e9c795b6c28c",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "cache/ground-normal.jpg",
+      "asset": "asphalt_02",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/asphalt_02/asphalt_02_nor_gl_2k.jpg",
+      "source": "https://polyhaven.com/a/asphalt_02",
+      "bytes": 4943950,
+      "sha256": "ffe49db71a0fd34c1e259625df66a302a237597d6ef655307987ec4e45bc6f21",
+      "license": "CC0-1.0"
+    },
+    {
+      "file": "cache/ground-rough.jpg",
+      "asset": "asphalt_02",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/asphalt_02/asphalt_02_rough_2k.jpg",
+      "source": "https://polyhaven.com/a/asphalt_02",
+      "bytes": 2230457,
+      "sha256": "b9a516b61b7040a9245ac206642d5f767ad9589a0169c4a1668221429e8a998c",
+      "license": "CC0-1.0"
+    }
+  ]
+}
