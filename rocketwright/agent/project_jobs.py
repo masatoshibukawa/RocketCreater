@@ -56,6 +56,32 @@ def cancel_path(store, project_id, job_id):
 
 
 def progress(store, project_id, active):
+    if active.get("analysis_folder"):
+        base = store.base(project_id).resolve()
+        folder = (base / active["analysis_folder"]).resolve()
+        if folder.is_relative_to(base) and not folder.is_symlink():
+            phase = active.get("phase", "running")
+            name = active.get("analysis_name", "analysis")
+            elapsed = max(0, time.time() - active.get("analysis_started_at", time.time()))
+            total = None
+            if name.startswith("cfd"):
+                folder = folder / "tunnel" if name != "cfd_audit" else folder
+                try:
+                    config = json.loads((folder / "table-config.json").read_text(encoding="utf-8"))
+                    total = len(config["speeds_mps"]) * len(config["angles_deg"])
+                except (OSError, ValueError, KeyError):
+                    total = 6 if name == "cfd_audit" else None
+            completed = sum(p.is_file() and not p.is_symlink() for p in folder.glob("*/case.json"))
+            remaining = elapsed / completed * (total - completed) if total and completed else None
+            return dict(
+                phase=phase if phase.startswith("waiting_") else name,
+                completed=completed,
+                total=total,
+                elapsed_s=elapsed,
+                eta_s=[max(0, remaining * 0.7), max(0, remaining * 1.6)]
+                if remaining is not None and not phase.startswith("waiting_")
+                else None,
+            )
     directory = store.directory(project_id)
     style = active.get("style", "engineering")
     directory /= "video-photographic" if style == "photographic" else "video"

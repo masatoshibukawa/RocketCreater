@@ -160,7 +160,7 @@ function DesignScreen() {
   // A failing attempt or a reference seed gets no production data (CLAUDE.md section 1). A seed
   // flew in the reference's own conditions, which the tool inputs do not hold.
   const passed: boolean = useMemo(() => {
-    if (productionProject) return productionProject.adopted && !!productionProject.analysis?.result.success;
+    if (productionProject) return productionProject.adopted && !productionProject.analysis_stale && !!productionProject.analysis?.result.success;
     const candidate = stream.candidates.find((c) => c.source_id === displayedId);
     if (candidate?.seededFrom || displayed?.origin === "seed") return false;
     return candidate?.passed ?? displayedAttempt?.result?.success ?? false;

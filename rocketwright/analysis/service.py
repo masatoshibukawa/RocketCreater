@@ -217,6 +217,14 @@ class Harness:
             try:
 
                 def invoke():
+                    self.state["active"].update(
+                        analysis_name=kind,
+                        analysis_folder=folder.resolve()
+                        .relative_to(self.store.base(self.state["id"]).resolve())
+                        .as_posix(),
+                        analysis_started_at=time.time(),
+                    )
+                    self.store._write(self.state)
                     run(
                         [
                             sys.executable,
@@ -259,11 +267,19 @@ class Harness:
 
     def _choices(self, c, spec, precision, limits):
         choices = c.options()
+        for key, row in choices["offered"].items():
+            action = c.pool.actions[key]
+            row.update(
+                target_label=c.pool.targets[action.target].label,
+                method_label=c.pool.methods[action.method].label,
+                evaluation_label=c.pool.evaluations[action.evaluation].label,
+            )
         a = self.state["adaptive"]
         unmet = []
         confirmation = self.data(c, "confirm")
         if confirmation:
             unmet = confirmation["unmet"]
+            a["confirmation_pending"] = list(unmet)
             if (
                 "altitude" in unmet
                 and confirmation.get("flight", {}).get(
@@ -404,7 +420,9 @@ class Harness:
         choices["offered"] = dict(
             sorted(choices["offered"].items(), key=lambda kv: (-kv[1]["score"], kv[0]))
         )
-        choices["unmet"] = unmet
+        choices["unmet"] = sorted(
+            set(unmet) | numerical | set(a.get("confirmation_pending", []))
+        )
         return choices, proposals, confirmation
 
     def _persist(self, c):

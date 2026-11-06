@@ -257,6 +257,7 @@ def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
     c, specification, precision, limits = h._campaign(state)
     choices, proposals, _ = h._choices(c, specification, precision, limits)
     assert not proposals  # altitude shortfall cannot bypass unfinished precision work
+    assert "fem_mesh" in choices["unmet"]
     assert not any(k.startswith("refine/") for k in choices["offered"])
     assert not any(k.startswith("redesign/") for k in choices["offered"])
 

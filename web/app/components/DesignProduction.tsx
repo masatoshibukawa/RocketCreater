@@ -68,6 +68,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
     return () => { abort.abort(); clearTimeout(timer); };
   }, [project?.id, project?.active?.started_at, accept]);
   const working = busy || !!project?.active;
+  const outputReady = project?.adopted && !project.analysis_stale;
   useCrewTask("design-production", { id: project ? `${project.id}:v${project.version}` : "new",
     status: working ? "working" : error || project?.error ? "attention" : project?.adopted ? "done" : "idle",
     label: project?.active ? OPERATION[project.active.name] ?? "採用版の資料を作成中" : "保存した設計と次の工程を確認できます" });
@@ -141,29 +142,31 @@ export default function DesignProduction({ source, mode, onProjectChange, active
       <div className="project-actions"><button className="btn btn-primary" disabled={working} type="submit">{project ? "変更を新しい版に保存" : "案件を保存"}</button><button className="btn" type="button" onClick={() => setDraft(null)}>編集を閉じる</button></div>
     </form> : null}
     {error || project?.error ? <p role="alert" className="wb-error">{error ?? project?.error}</p> : null}
+    {project?.input_migration?.map(line=><p className="wb-note" key={line}>{line}</p>)}
+    {project?.analysis_stale?<p role="status">保存した計算は以前の入力・実装による結果です。採用済みなら編集して新しい版を作り、再解析してください。以前の成果物はその版の記録として保持します。</p>:null}
     {project ? <>
-      <p className="wb-case-tag" role="status">{project.active ? OPERATION[project.active.name] ?? "制作中" : project.adopted ? "試作版として採用済み" : project.analysis ? result?.success ? "数値スクリーニング済み · 採用待ち" : "計算条件が未達 · 編集して再解析" : "編集を保存済み · 再解析が必要"}</p>
+      <p className="wb-case-tag" role="status">{project.active ? OPERATION[project.active.name] ?? "制作中" : project.analysis_stale ? "保存した計算の再確認が必要" : project.adopted ? "試作版として採用済み" : project.analysis ? result?.success ? "数値スクリーニング済み · 採用待ち" : "計算条件が未達 · 編集して再解析" : "編集を保存済み · 再解析が必要"}</p>
       {project.active ? <div role="status"><p>{project.active.phase?.startsWith("waiting_") ? "機材の空きを待っています" : "保存したジョブを実行中"} · {project.active.id?.slice(0,8)}</p>
         {project.active.progress?.total ? <><progress value={project.active.progress.completed} max={project.active.progress.total}/><p>描画 {project.active.progress.completed}/{project.active.progress.total} フレーム · 再利用 {project.active.progress.reused??0}</p></> : null}
         <p>{project.active.progress?.eta_s ? `描画の残り目安 ${Math.ceil(project.active.progress.eta_s[0]/60)}〜${Math.ceil(project.active.progress.eta_s[1]/60)}分（直近の実測時間から算出）` : "残り時間は未計測です"}</p>
         <button className="btn" disabled={busy} onClick={()=>void action("cancel")}>区切りで中断・再開用に保存</button></div> : null}
       {project.analysis?.requirements ? <details open><summary>要求ごとの確認</summary>{project.analysis.requirements.checks.map(check => <p key={check.id}>{check.label}：{({pass:"計算・入力確認済み",fail:"未達",not_evaluated:"未評価",not_required:"要求なし"} as Record<string,string>)[check.status]} · {check.reason}</p>)}</details> : null}
-      <div className="project-actions"><button className="btn" disabled={working || project.adopted || !!draft} onClick={() => void action("analyse")}>CADと飛行を再解析</button><button className="btn btn-primary" disabled={working || !result?.success || project.adopted || !!draft} onClick={() => void action("adopt")}>この版を採用</button></div>
+      <div className="project-actions"><button className="btn" disabled={working || project.adopted || !!draft} onClick={() => void action("analyse")}>CADと飛行を再解析</button><button className="btn btn-primary" disabled={working || !result?.success || project.analysis_stale || project.adopted || !!draft} onClick={() => void action("adopt")}>この版を採用</button></div>
       {result ? <div className="wb-note"><b>計算高度 {result.metrics.apogee_m?.toFixed(2)} m / 乾燥質量 {(project.analysis!.design.dry_mass_kg*1000).toFixed(2)} g</b><p>印刷部品 {project.analysis!.printed_mass_used_g.toFixed(2)} g（{project.analysis!.mass_basis === "measured" ? "実測入力" : "CADの一様固体推定"}）。{project.spec.requirement ? "保存した目標高度で判定" : "目標高度は未指定"}。</p>{result.failure_reasons.map(t => <p key={t}>{t}</p>)}<details><summary>解析の前提と限界</summary>{project.analysis!.limitations.map(t => <p key={t}>{t}</p>)}</details></div> : null}
       {project.analysis && mode !== "video" ? <div className="project-model"><ModelViewer design={project.analysis.design} tier="bottle" origin="attempt" reference={null} dimensions={null} notes={[]} active={active} statusLabel={`採用候補 v${project.version} の寸法付き包絡`}/></div> : null}
-      {mode === "assembly" || mode === "files" ? <div className="project-actions"><button className="btn" disabled={working || !project.adopted || !!draft} onClick={() => void action("manual")}>この版の組立PDFを生成</button><button className="btn" disabled={working || !project.adopted || !!draft} onClick={() => void action("print")}>この版のS5印刷データを生成</button></div> : null}
-      {mode === "assembly" || mode === "files" ? <ProjectObservations key={`${project.id}:${project.version}`} project={project} disabled={working || !!draft} save={action}/> : null}
+      {mode === "assembly" || mode === "files" ? <div className="project-actions"><button className="btn" disabled={working || !outputReady || !!draft} onClick={() => void action("manual")}>この版の組立PDFを生成</button><button className="btn" disabled={working || !outputReady || !!draft} onClick={() => void action("print")}>この版のS5印刷データを生成</button></div> : null}
+      {mode === "assembly" || mode === "files" ? <ProjectObservations key={`observations:${project.id}:${project.version}`} project={project} disabled={working || !!draft} save={action}/> : null}
       {mode === "video" ? <>
         <div className="project-actions"><label>仕上げ<select value={style} disabled={working} onChange={e => setStyle(e.target.value as typeof style)}><option value="photographic">写真調 1080p / 16秒・12秒</option><option value="engineering">簡易CG / 各4秒</option></select></label><label><input type="checkbox" checked={local} disabled={working} onChange={e => setLocal(e.target.checked)}/>Gemmaで演出を提案</label></div>
-        <div className="project-actions"><button className="btn" disabled={working || !project.adopted || !!draft || videos.length > 0} onClick={() => void action("video-plan", { style, local })}>この版の演出案を作る</button><button className="btn btn-primary" disabled={working || !project.adopted || plan?.status !== "planned" || !!draft || videos.length > 0} onClick={() => void action("render-video", { style })}>設計説明・飛行動画を制作</button></div>
+        <div className="project-actions"><button className="btn" disabled={working || !outputReady || !!draft || videos.length > 0} onClick={() => void action("video-plan", { style, local })}>この版の演出案を作る</button><button className="btn btn-primary" disabled={working || !outputReady || plan?.status !== "planned" || !!draft || videos.length > 0} onClick={() => void action("render-video", { style })}>設計説明・飛行動画を制作</button></div>
         {plan ? <p className="wb-note">演出案（計算データを可視化）：{plan.reason}</p> : null}
         {videos.map(f => <figure key={f.url}><figcaption>{f.name} / v{f.version}・計算結果のCG・無音</figcaption><video controls preload="metadata" src={apiUrl(f.url)}/><a className="btn" href={apiUrl(f.url)} download>MP4を保存</a></figure>)}
         <details><summary>保存済みの参考映像を見る</summary><VideoOutputs/></details>
       </> : null}
-      {mode === "files" ? <button className="btn btn-primary" disabled={working || !project.adopted || !!draft} onClick={() => void action("archive")}>この版の一括ZIPを作る</button> : null}
+      {mode === "files" ? <button className="btn btn-primary" disabled={working || !outputReady || !!draft} onClick={() => void action("archive")}>この版の一括ZIPを作る</button> : null}
       <div className="wb-file-list">{project.files.filter(mainFile).map(f => <a key={f.url} href={apiUrl(f.url)} download>{projectFileLabel(f.name)}<small>v{f.version}</small></a>)}</div>
       <details><summary>CAD・印刷・検査の詳細ファイル</summary><div className="wb-file-list">{project.files.filter(f => !mainFile(f) && !f.name.endsWith(".mp4")).map(f => <a key={f.url} href={apiUrl(f.url)} download>{projectFileLabel(f.name)}<small>v{f.version} · {f.kind}</small></a>)}</div></details>
-      <ProjectComparison key={`${project.id}:${project.version}:${project.revision}`} project={project}/>
+      <ProjectComparison key={`comparison:${project.id}:${project.version}`} project={project}/>
       {project.versions.length ? <details><summary>保存した版と差戻し</summary>{project.versions.map(v => <p key={v.version}>v{v.version} · {v.adopted ? "採用済み" : "検討案"} · 胴径{v.spec.geometry.body_diameter_mm.toFixed(1)} mm · 翼根{v.spec.geometry.fin_root_mm.toFixed(1)} mm <button className="btn" disabled={working || !!draft} onClick={() => void action("restore", { version: v.version })}>この入力を新しい版に戻す</button></p>)}</details> : null}
     </> : null}
   </section>;

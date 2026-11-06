@@ -53,6 +53,8 @@ def sha(path):
 def implementation_fingerprint():
     files = [
         "rocketwright/schema.py",
+        "rocketwright/agent/design_projects.py",
+        "rocketwright/agent/project_revisions.py",
         "rocketwright/manufacturing.py",
         "rocketwright/physics/water.py",
         "rocketwright/geometry.py",
@@ -82,6 +84,20 @@ class DesignSpec(BaseModel):
     assumptions: Assumptions = Field(default_factory=Assumptions)
     equipment: Equipment = Field(default_factory=Equipment)
     altitude_rule: Literal["band_10pct", "minimum"] = "band_10pct"
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_legacy_rail(cls, value):
+        if not isinstance(value, dict) or "rail_m" not in (value.get("assumptions") or {}):
+            return value
+        value = dict(value)
+        assumptions = dict(value["assumptions"])
+        rail = assumptions.pop("rail_m")
+        env = dict(value.get("env") or {})
+        if "rail_length_m" in env and env["rail_length_m"] != rail:
+            raise ValueError("旧形式と環境入力のガイド長が異なります。同じ値へ修正してください。")
+        env["rail_length_m"] = rail
+        return {**value, "assumptions": assumptions, "env": env}
 
     @model_validator(mode="after")
     def physical_envelope(self):
@@ -128,6 +144,19 @@ class DesignProjects:
 
     def get(self, project_id):
         state = self.load(project_id)
+        analysis = state.get("analysis")
+        state["analysis_stale"] = bool(
+            analysis
+            and (
+                analysis.get("input_sha256") != fingerprint(state["spec"])
+                or analysis.get("implementation_sha256") != implementation_fingerprint()
+            )
+        )
+        state["input_migration"] = (
+            ["旧形式のガイド長を環境条件へ引き継ぎます。旧版の入力と成果物は保持します。"]
+            if "rail_m" in state["spec"].get("assumptions", {})
+            else []
+        )
         if state["analysis"] and "cad_sha256" not in state["analysis"]:
             # Earlier saved records already carry the original CAD hashes in their registry.
             state["analysis"]["cad_sha256"] = {
@@ -281,6 +310,8 @@ class DesignProjects:
             name=spec.name,
             spec=spec.model_dump(mode="json"),
             analysis=None,
+            analysis_stale=False,
+            input_migration=[],
             adopted=False,
             files=[],
             video_plan=None,
@@ -290,7 +321,12 @@ class DesignProjects:
         )
         reuse_previous_cad(self, state, old, state["spec"])
         if state.get("adaptive"):
-            state["adaptive"].update(status="running", accepted_spec_hash=None, quality_pending=[])
+            state["adaptive"].update(
+                status="running",
+                accepted_spec_hash=None,
+                quality_pending=[],
+                confirmation_pending=[],
+            )
 
     def adaptive_step(self, project_id, revision, *, started_event=None):
         from rocketwright.analysis.service import Harness
@@ -392,7 +428,13 @@ class DesignProjects:
         def worker(state):
             if state["adopted"]:
                 raise Conflict("採用版は保持します。編集して新しい版で再解析してください。")
-            state.update(analysis=None, files=[], video_plan=None, photographic_video_plan=None)
+            state.update(
+                analysis=None,
+                analysis_stale=False,
+                files=[],
+                video_plan=None,
+                photographic_video_plan=None,
+            )
             spec = DesignSpec.model_validate(state["spec"])
             directory = self.directory(project_id)
             cad_dir = directory / "cad"

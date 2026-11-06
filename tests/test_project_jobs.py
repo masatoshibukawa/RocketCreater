@@ -5,10 +5,33 @@ import sys
 import pytest
 
 from rocketwright.agent.design_projects import DesignProjects
-from rocketwright.agent.project_jobs import file_lock
+from rocketwright.agent.project_jobs import file_lock, progress
 from rocketwright.agent.workbench import Conflict
 from scripts.render_checkpoint import Checkpoint
 from tests.test_project_equipment import spec
+
+
+def test_cfd_progress_counts_completed_cases_and_keeps_queue_eta_unknown(tmp_path):
+    store = DesignProjects(tmp_path)
+    state = store.create(spec())
+    folder = store.base(state["id"]) / "v1/adaptive/trial/tunnel"
+    folder.mkdir(parents=True)
+    (folder / "table-config.json").write_text(
+        json.dumps(dict(speeds_mps=[1, 35], angles_deg=[0, 5]))
+    )
+    active = dict(
+        analysis_folder="v1/adaptive/trial",
+        analysis_name="cfd_fine",
+        phase="waiting_renderer",
+        analysis_started_at=0,
+    )
+    first = progress(store, state["id"], active)
+    assert first["total"] == 4 and first["completed"] == 0 and first["eta_s"] is None
+    (folder / "v01-a000").mkdir()
+    (folder / "v01-a000/case.json").write_text("{}")
+    active["phase"] = "running_renderer"
+    result = progress(store, state["id"], active)
+    assert result["completed"] == 1 and result["total"] == 4 and result["eta_s"][0] > 0
 
 
 def test_os_lock_survives_store_restart_and_rejects_second_process(tmp_path):
