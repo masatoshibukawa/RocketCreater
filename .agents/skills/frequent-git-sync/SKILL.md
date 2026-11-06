@@ -1,6 +1,6 @@
 ---
 name: frequent-git-sync
-description: Keep active repository chat work synchronized with regular safe pulls and immediate interference alerts. Require small frequent commits, immediate pushes, and current pull requests for file-changing tasks, including code, documentation, configuration, and skills.
+description: Keep active repository chat work synchronized with regular safe pulls, latest-PR checks, and immediate interference alerts. Require small frequent commits, immediate pushes, and current pull requests for file-changing tasks, including code, documentation, configuration, and skills.
 ---
 
 # Frequent Git synchronization
@@ -9,7 +9,7 @@ The repository owner requires continuous Git synchronization during active chat 
 
 ## Required cadence
 
-- Check incoming changes at task start, between work units, before committing or pushing, and before handoff. While actively working, do this at least every 10 minutes, at the next tool boundary after a long operation. Fetch first and pull safely as described below. These checks happen during active execution; do not start unattended background polling when the chat is idle.
+- Check incoming changes and the latest repository PR activity at task start, between work units, before committing or pushing, after pushing, and before handoff. While actively working, do this at least every 10 minutes, at the next tool boundary after a long operation. Fetch and pull safely, and perform the PR checks below; a Git fetch does not retrieve PR reviews or CI state. These checks happen during active execution; do not start unattended background polling when the chat is idle.
 - Commit each coherent, verified unit of work as soon as it is ready. During longer work, aim for a checkpoint at least every 15 minutes; split the work into smaller valid units instead of leaving completed changes uncommitted. Do not create empty commits or knowingly broken changes just to meet the interval.
 - Push the task branch immediately after every commit. Do not accumulate multiple local commits before pushing.
 - After every successful push, update the task's open PR title and description to match the current implementation, verification results, and remaining work. Create a draft PR after the first push when no open PR exists for the task. Do not create duplicate PRs or repetitive progress comments.
@@ -17,7 +17,7 @@ The repository owner requires continuous Git synchronization during active chat 
 
 ## Start from the actual repository state
 
-1. Inspect the working tree, staged changes, branch, upstream, remotes, and PR state before editing. Record pre-existing changes so they are not accidentally included. Fetch and assess incoming changes before starting the next unit of work.
+1. Inspect the working tree, staged changes, branch, upstream, remotes, and latest repository/task PR state before editing. Record pre-existing changes so they are not accidentally included. Fetch and assess incoming changes before starting the next unit of work.
 2. Reuse the branch and open PR belonging to the current task. If working on the default/protected branch or a branch whose PR is already closed, create a task branch before committing. Do not move unrelated work or reuse an unrelated PR.
 3. Identify the repository's required checks and the smallest meaningful verification for each planned unit.
 
@@ -28,6 +28,15 @@ The repository owner requires continuous Git synchronization during active chat 
 3. When the fast-forward is safe, pull the configured upstream with `git pull --ff-only --no-autostash`. Review the incoming diff and rerun relevant checks if the incoming changes affect the task. Do not automatically merge the default branch into a feature branch.
 4. Immediately tell the user when incoming changes overlap local work, the histories diverge, Git reports a conflict, another chat changes the branch or HEAD unexpectedly, or a detected interface change interferes with the current task. Name the branch and affected files, distinguish a possible overlap from an actual conflict, and state the blocked operation and a safe next step. Do not wait until the final response to disclose interference.
 5. Pause only the affected synchronization and continue independent work where possible. Do not automatically stash, reset, discard changes, rebase, or create a merge commit to make the pull succeed. Ask for a decision only when reconciling the changes requires a choice about user intent or ownership. Resolve any actual conflict before treating synchronization as complete.
+
+## Check the latest pull requests
+
+1. List this repository's PRs by most recently updated activity, including newly created/updated open PRs and PRs merged or closed since the previous check. Start with recent activity on the first check; expand or paginate when necessary to cover updates since the previous check. Always inspect the task PR separately so a busy repository cannot hide it.
+2. Keep a small in-chat baseline of the last check time, relevant PR numbers/states, and head/base SHAs. Inspect new or changed PR details and diffs when their scope overlaps the task or its dependencies. Refresh the task PR's current-head review and CI state even if its `updated_at` has not changed; CI can finish without a PR metadata update.
+3. For the task PR and related PRs, check head/base changes, draft/open/merged/closed state, new reviews and comments, unresolved review threads, mergeability, and CI checks/workflow runs for the current head SHA. Recheck once after creating or updating the task PR; do not block indefinitely waiting for CI.
+4. Immediately report findings that affect the task: relevant review requests or unresolved findings, failing current-head checks, confirmed merge conflicts, overlapping changes, or dependency/base changes. Include the PR link, affected files or dependency, and the practical next step. Handle in-scope findings under the current task and continue independent work when coordination is needed; do not silently expand the assignment to unrelated PRs.
+5. Treat unavailable or pending checks and unknown mergeability as unverified, not as passing CI or a confirmed conflict. Old-commit results do not establish the current head's status. If access is blocked, report what could not be checked rather than claiming the latest PRs were reviewed.
+6. These recurring checks are read-only. They do not authorize posting comments, approving reviews, resolving threads, merging/closing PRs, requesting reviewers, or rerunning workflows. Continue the already-required task PR title/body maintenance; preserve other contributors' PRs and comments.
 
 ## Commit a coherent unit
 
@@ -48,4 +57,4 @@ The repository owner requires continuous Git synchronization during active chat 
 
 - For permission, authentication, or network failures, use the environment's supported approval or authentication flow. Retry only after a concrete correction; never keep retrying unchanged failures or bypass restrictions. Report a blocked pull or interference promptly, even if other work can continue.
 - If the directory is not a Git repository, no suitable remote is configured, or PR access is unavailable, do not initialize a repository or invent an external destination. Complete independent local work and report exactly which synchronization steps could not be completed.
-- In the final handoff, state the incoming synchronization status, latest task commit, push status, PR link, verification results, and any task changes still uncommitted or unpushed. Keep unrelated pre-existing changes separate. Never describe a required synchronization step as complete without observing success.
+- In the final handoff, state the incoming synchronization status, latest task commit, push status, PR link, verification results, material PR findings or unverified PR checks, and any task changes still uncommitted or unpushed. Keep unrelated pre-existing changes separate. Never describe a required synchronization step as complete without observing success.
