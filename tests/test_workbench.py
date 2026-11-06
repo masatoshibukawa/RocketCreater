@@ -149,6 +149,33 @@ def test_workshop_replay_exports_same_design_and_integrity_checked_downloads(ben
         assert client.get(printed["url"]).status_code == 409
         assert client.post(endpoint, json={"revision": state["revision"]}).status_code == 409
         assert len(captured) == 1
+    # A photographic production must coexist with the shorter engineering clips.
+    from rocketwright.agent.production import plan_video
+
+    state = bench.get(state["id"])
+    state = plan_video(bench, state["id"], state["revision"], local=False)
+    engineering = state["video_plan"]
+    state = plan_video(bench, state["id"], state["revision"], local=False, style="photographic")
+    photo = state["photographic_video_plan"]
+    assert state["video_plan"] == engineering
+    assert photo["design_source"] == json.loads(frozen_report)["sim_source_id"]
+    assert (
+        photo["width"] == 1920 and photo["design_frames"] == 384 and photo["launch_frames"] == 288
+    )
+    import sys
+
+    import rocketwright.agent.production as production
+    from rocketwright.agent.production import render_video
+
+    monkeypatch.setattr(production, "media_settings", lambda: {
+        "blender": Path(sys.executable), "python": Path(sys.executable)
+    })
+
+    modified = bench.load(state["id"])
+    modified["photographic_video_plan"]["width"] = 2000
+    bench._write(modified)
+    with pytest.raises(Conflict, match="settings changed"):
+        render_video(bench, state["id"], state["revision"], style="photographic")
     path.write_text("tampered")
     with pytest.raises(Conflict, match="changed"):
         bench.file(state["id"], report_file["key"])

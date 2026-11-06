@@ -1,6 +1,7 @@
 """Composite trusted evidence labels and fully decode each resulting MP4."""
 
 import argparse
+import csv
 import hashlib
 import json
 import shutil
@@ -27,6 +28,7 @@ font = (
 )
 small = ImageFont.truetype(str(font_path), 15) if font_path.is_file() else font
 records = []
+photographic = plan.get("style") == "photographic"
 for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-cg.mp4")):
     path = directory / filename
     writer = imageio_ffmpeg.write_frames(
@@ -39,24 +41,36 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
         output_params=["-movflags", "+faststart", "-map_metadata", "-1"],
     )
     writer.send(None)
-    for i in range(plan["frames_per_clip"]):
+    frame_count = plan.get(mode + "_frames", plan["frames_per_clip"])
+    for i in range(frame_count):
         with Image.open(directory / f"{mode}-frames/{i:04d}.png") as source:
             image = source.convert("RGB")
         draw = ImageDraw.Draw(image)
-        draw.rectangle((0, 0, image.width, 86), fill=(10, 13, 16))
-        draw.text(
-            (26, 15),
-            "RocketWright  /  " + ("設計の構成" if mode == "design" else "飛行解析の再生"),
-            font=font,
-            fill=(225, 235, 237),
-        )
-        draw.text(
-            (26, 49),
-            plan["design_caption" if mode == "design" else "launch_caption"],
-            font=small,
-            fill=(162, 195, 199),
-        )
-        draw.rectangle((0, image.height - 62, image.width, image.height), fill=(10, 13, 16))
+        if photographic:
+            draw.rectangle(
+                (18, image.height - 62, image.width - 18, image.height - 12), fill=(10, 13, 16)
+            )
+            draw.text(
+                (30, image.height - 52),
+                "RocketWright / CG・数値解析 / 未実測の形状表現・音声なし",
+                font=font,
+                fill=(225, 235, 237),
+            )
+        else:
+            draw.rectangle((0, 0, image.width, 86), fill=(10, 13, 16))
+            draw.text(
+                (26, 15),
+                "RocketWright  /  " + ("設計の構成" if mode == "design" else "飛行解析の再生"),
+                font=font,
+                fill=(225, 235, 237),
+            )
+            draw.text(
+                (26, 49),
+                plan["design_caption" if mode == "design" else "launch_caption"],
+                font=small,
+                fill=(162, 195, 199),
+            )
+            draw.rectangle((0, image.height - 62, image.width, image.height), fill=(10, 13, 16))
         if mode == "design":
             label = (
                 f"全長 {job['dimensions_mm']['overall']:.0f} mm  /  "
@@ -64,13 +78,14 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
             )
         else:
             label = "軌跡は計算結果・機体姿勢と地面は概形表示 / 飛行時間を短縮再生"
-        draw.text((26, image.height - 51), label, font=small, fill=(205, 218, 220))
-        draw.text(
-            (26, image.height - 28),
-            "数値解析の可視化 / 実機未検証 / 音声なし",
-            font=small,
-            fill=(150, 165, 168),
-        )
+        if not photographic:
+            draw.text((26, image.height - 51), label, font=small, fill=(205, 218, 220))
+            draw.text(
+                (26, image.height - 28),
+                "数値解析の可視化 / 実機未検証 / 音声なし",
+                font=small,
+                fill=(150, 165, 168),
+            )
         writer.send(image.tobytes())
     writer.close()
     reader = imageio_ffmpeg.read_frames(str(path), pix_fmt="rgb24")
@@ -89,17 +104,37 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
             "size": metadata["size"],
             "duration": metadata["duration"],
             "changing_frames": len(hashes) > 1,
-            "full_decode": decoded == plan["frames_per_clip"],
+            "full_decode": decoded == frame_count,
             "decoded_frames": decoded,
             "audio": "none",
         }
     )
 shutil.copyfile(directory / "design-frames/0000.png", directory / "design-reference.png")
 shutil.copyfile(directory / "launch-frames/0000.png", directory / "launch-reference.png")
+trajectory_check = {"passed": False, "frames": 0, "max_position_error_m": None}
+with (directory / "rendered-trajectory.csv").open(encoding="utf-8") as stream:
+    states = list(csv.DictReader(stream))
+errors = []
+for row in states:
+    t = float(row["simulation_time_s"])
+    trace = job["trace"]
+    right = next((i for i, p in enumerate(trace) if p["t_s"] >= t), len(trace) - 1)
+    a, b = trace[max(0, right - 1)], trace[right]
+    mix = (t - a["t_s"]) / max(1e-9, b["t_s"] - a["t_s"])
+    for axis in ("east_m", "north_m", "altitude_m"):
+        errors.append(abs(float(row[axis]) - (a[axis] + (b[axis] - a[axis]) * mix)))
+expected_count = plan.get("launch_frames", plan["frames_per_clip"])
+trajectory_check = {
+    "passed": len(states) == expected_count and max(errors, default=1) < 1e-8,
+    "frames": len(states),
+    "max_position_error_m": max(errors, default=None),
+    "attitude": "illustrative, not integrated attitude dynamics",
+}
 (directory / "verification.json").write_text(
     json.dumps(
         {
-            "passed": all(
+            "passed": trajectory_check["passed"]
+            and all(
                 r["changing_frames"]
                 and r["full_decode"]
                 and r["fps"] == plan["fps"]
@@ -108,6 +143,8 @@ shutil.copyfile(directory / "launch-frames/0000.png", directory / "launch-refere
             ),
             "files": records,
             "source_id": job["source_id"],
+            "style": plan.get("style", "engineering"),
+            "rendered_trajectory": trajectory_check,
             "visual_review": "pending",
             "physical_validation": "not_performed",
         },

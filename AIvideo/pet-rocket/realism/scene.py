@@ -16,6 +16,8 @@ ROOT=Path(__file__).resolve().parent
 PARENT=ROOT.parent
 sys.path.insert(0,str(PARENT))
 import render_scene as base
+sys.path.insert(0,str(ROOT))
+import appearance
 
 CONFIG=json.loads((ROOT/"settings.json").read_text())
 SIM=json.loads((PARENT/"simulation.json").read_text())
@@ -35,40 +37,11 @@ def state(t):
 
 
 def photo_world(film):
-    world=bpy.data.worlds.new("Photo environment / Poly Haven CC0")
-    world.use_nodes=True
-    n=world.node_tree.nodes;l=world.node_tree.links
-    env=n.new("ShaderNodeTexEnvironment")
-    env.image=bpy.data.images.load(str(ROOT/"cache"/("workshop.exr" if film=="design" else "outdoor.exr")))
-    tex=n.new("ShaderNodeTexCoord");mapping=n.new("ShaderNodeMapping")
-    mapping.inputs["Rotation"].default_value[2]=1.3 if film=="design" else 2.65
-    l.new(tex.outputs["Generated"],mapping.inputs["Vector"])
-    l.new(mapping.outputs["Vector"],env.inputs["Vector"])
-    l.new(env.outputs["Color"],n["Background"].inputs["Color"])
-    n["Background"].inputs["Strength"].default_value=.8
-    bpy.context.scene.world=world
+    return appearance.photo_world(film, ROOT/"cache")
 
 
-def surface_detail(mat,layered=False):
-    n=mat.node_tree.nodes;l=mat.node_tree.links;shader=n.get("Principled BSDF")
-    tex=n.new("ShaderNodeTexCoord")
-    noise=n.new("ShaderNodeTexNoise");noise.inputs["Scale"].default_value=1500
-    l.new(tex.outputs["Object"],noise.inputs["Vector"])
-    ramp=n.new("ShaderNodeMapRange")
-    ramp.inputs["From Min"].default_value=0;ramp.inputs["From Max"].default_value=1
-    ramp.inputs["To Min"].default_value=.23 if layered else .022
-    ramp.inputs["To Max"].default_value=.38 if layered else .075
-    l.new(noise.outputs["Fac"],ramp.inputs["Value"])
-    l.new(ramp.outputs["Result"],shader.inputs["Roughness"])
-    bump=n.new("ShaderNodeBump");bump.inputs["Strength"].default_value=.14 if layered else .045
-    bump.inputs["Distance"].default_value=.000025 if layered else .000008
-    if layered:
-        wave=n.new("ShaderNodeTexWave");wave.bands_direction="Z"
-        wave.inputs["Scale"].default_value=2200;wave.inputs["Distortion"].default_value=.3
-        l.new(tex.outputs["Object"],wave.inputs["Vector"])
-        l.new(wave.outputs["Color"],bump.inputs["Height"])
-    else:l.new(noise.outputs["Fac"],bump.inputs["Height"])
-    l.new(bump.outputs["Normal"],shader.inputs["Normal"])
+def surface_detail(mat, layered=False):
+    return appearance.surface_detail(mat, layered)
 
 
 def smooth_source(mesh):
@@ -91,22 +64,7 @@ def smooth_source(mesh):
 
 
 def asphalt():
-    mat=base.material("Photographed asphalt / Poly Haven CC0",(.1,.1,.1),.9)
-    n=mat.node_tree.nodes;l=mat.node_tree.links;shader=n.get("Principled BSDF")
-    uv=n.new("ShaderNodeTexCoord");scale=n.new("ShaderNodeVectorMath");scale.operation="SCALE"
-    scale.inputs[3].default_value=1/3
-    l.new(uv.outputs["Object"],scale.inputs[0])
-    images={}
-    for key,file in [("color","ground-diff.jpg"),("normal","ground-normal.jpg"),("rough","ground-rough.jpg")]:
-        node=n.new("ShaderNodeTexImage");node.image=bpy.data.images.load(str(ROOT/"cache"/file))
-        if key!="color":node.image.colorspace_settings.name="Non-Color"
-        l.new(scale.outputs["Vector"],node.inputs["Vector"]);images[key]=node
-    l.new(images["color"].outputs["Color"],shader.inputs["Base Color"])
-    l.new(images["rough"].outputs["Color"],shader.inputs["Roughness"])
-    normal=n.new("ShaderNodeNormalMap");normal.inputs["Strength"].default_value=.6
-    l.new(images["normal"].outputs["Color"],normal.inputs["Color"])
-    l.new(normal.outputs["Normal"],shader.inputs["Normal"])
-    return mat
+    return appearance.asphalt(ROOT/"cache")
 
 
 def bottle_geometry(pet,root):
