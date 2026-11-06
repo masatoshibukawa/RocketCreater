@@ -180,8 +180,8 @@ function DesignScreen() {
   const aeroRequest: AeroRequest | null = useMemo(() => {
     const target = activeRequirement?.target_altitude_m;
     if (!displayed || typeof target !== "number" || target <= 0) return null;
-    return { design: displayed.design, target_altitude_m: target, ...rerun };
-  }, [displayed, activeRequirement, rerun]);
+    return { design: displayed.design, target_altitude_m: target, build, ...rerun };
+  }, [displayed, activeRequirement, build, rerun]);
 
   const handleStart = useCallback(
     (text: string, seed: number | null) => {

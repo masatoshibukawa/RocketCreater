@@ -15,6 +15,7 @@ from rocketwright.agent.design_aero import (
     run_design_aero,
 )
 from rocketwright.agent.tools import DISPERSION_MAX_N
+from rocketwright.build import Build
 from rocketwright.schema import AmateurDesign, BottleDesign, Design, Env, Requirement
 
 router = APIRouter(prefix="/aero", tags=["aero"])
@@ -28,6 +29,7 @@ class AeroLoopRequest(BaseModel):
     env: Env | None = None
     seed: int | None = None  # dispersion seed and size, so a run of the agent can be repeated
     n: int | None = Field(default=None, ge=1, le=DISPERSION_MAX_N)
+    build: Build | None = None  # the parts, so that the flow sees the fins the design chose
 
 
 @router.post("/loop", status_code=202)
@@ -48,6 +50,7 @@ def start_loop(request: AeroLoopRequest):
             backend=backend,
             seed=request.seed,
             n=request.n,
+            build=request.build,
         )
 
     key = json.dumps([request.model_dump(mode="json"), backend], sort_keys=True)

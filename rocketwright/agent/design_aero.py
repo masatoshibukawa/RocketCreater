@@ -19,9 +19,11 @@ from dataclasses import dataclass, replace
 from typing import Any
 
 from rocketwright import aero
-from rocketwright.agent.tools import DISPERSION_DEFAULT_N, execute_tool
+from rocketwright.agent.tools import DISPERSION_DEFAULT_N, execute_tool, parts_fin_set
 from rocketwright.agent.workbench import AERO_BACKEND_ENV
 from rocketwright.bottle_candidates import CONFIRMATION_SEED, PRESSURE_KPA
+from rocketwright.bottle_stability import bottle_shape
+from rocketwright.build import Build
 from rocketwright.physics import solid
 from rocketwright.schema import (
     AmateurDesign,
@@ -110,10 +112,11 @@ def run_design_aero(
     backend: str = "auto",
     seed: int | None = None,
     n: int | None = None,
+    build: Build | None = None,
 ) -> dict[str, Any]:
     """Loop result for the UI. On a bottle it is a CFD-based alternative beside the design, which
     stays as it is. `artifacts_dir` is the server's own path and stays out of AeroJobs.view."""
-    common = {"tier": design.tier, "target_altitude_m": target_altitude_m}
+    common = {"tier": design.tier, "target_altitude_m": target_altitude_m, "parts_fins": False}
     if isinstance(design, AmateurDesign):
         result = aero.run_amateur_aero_loop(
             design, env, target_apogee_m=target_altitude_m, backend=backend
@@ -121,12 +124,15 @@ def run_design_aero(
         baseline = {"pressure_kpa": None, "cd": solid.DEFAULT_CD}
         spread = None  # AmateurDesign has no Cd field, so a dispersion cannot fly the CFD Cd
     elif isinstance(design, BottleDesign):
+        fin_set = parts_fin_set(build) if build is not None and design.has_fins else None
+        common["parts_fins"] = fin_set is not None
         result = aero.run_aero_loop(
             design,
             env,
             target_apogee_m=target_altitude_m,
             pressures_kpa=bottle_pressures_kpa(design),
             backend=backend,
+            shape=None if fin_set is None else bottle_shape(design, fin_set),
         )
         baseline = {
             "pressure_kpa": design.initial_gauge_pressure_pa / 1000.0,

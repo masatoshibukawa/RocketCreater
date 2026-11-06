@@ -341,3 +341,30 @@ def test_a_design_without_pictures_lists_none(jobs):
 def test_result_design_is_a_valid_design(jobs):
     job = _finished(client.post("/aero/loop", json=_body()).json()["id"])
     assert DesignAdapter.validate_python(job["result"]["final_design"]).tier == "bottle"
+
+
+def test_the_flow_sees_the_fins_the_parts_chose(fake_backend, monkeypatch):
+    seen = []
+    loop = aero.run_aero_loop
+    monkeypatch.setattr(
+        aero, "run_aero_loop", lambda *a, **k: seen.append(k["shape"]) or loop(*a, **k)
+    )
+    fake_backend(FakeCFD(cds=(0.3,)))
+    build = {
+        "tier": "bottle",
+        "bottle_id": "pet_bottle_1p5l",
+        "water_fill_frac": 0.4,
+        "initial_gauge_pressure_pa": 300000,
+        "nozzle_id": "bottle_nozzle_full_bore_22mm",
+        "fin_set_id": "bottle_fin_set_pp_sheet_4_wide",
+        "parachute_id": "bottle_parachute_30cm_plastic",
+        "launcher_id": None,
+        "payload_mass_kg": 0.06,
+    }
+    design = _design("bottle") | {"has_fins": True}
+    job = _finished(client.post("/aero/loop", json=_body(design=design, build=build)).json()["id"])
+    assert job["status"] == "done", job["error"]
+    assert job["result"]["parts_fins"] is True
+    assert seen[-1].fins.span_m == pytest.approx(0.12) and seen[-1].fins.count == 4
+    without = _finished(client.post("/aero/loop", json=_body(design=design)).json()["id"])
+    assert without["result"]["parts_fins"] is False and seen[-1] is None

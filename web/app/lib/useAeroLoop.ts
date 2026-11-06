@@ -19,6 +19,8 @@ export interface AeroLoopResult {
   tier: string; rounds: AeroLoopRound[]; converged: boolean; notes: string[];
   baseline: { pressure_kpa: number | null; cd: number | null };
   dispersion: { n: number; passes: number; success_rate: number } | null;
+  /** The flow saw the fins of the chosen part, not the representative ones. */
+  parts_fins: boolean;
 }
 /** What the running solver reports (rocketwright/aero/live.py); series are [iteration, value]. */
 export interface AeroLive {
@@ -52,6 +54,7 @@ export interface AeroRequest {
   env: Record<string, unknown> | null;
   seed: number | null;
   n: number | null;
+  build: Record<string, unknown> | null;
 }
 
 const POLL_MS = 1500;
