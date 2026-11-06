@@ -104,7 +104,7 @@ def source_documents(plan):
     return {
         ROOT / "script.ja.md": "\n".join(script).rstrip() + "\n",
         ROOT / "storyboard.md": "\n".join(board) + "\n",
-        ROOT / "captions/overview.ja.srt": "\n".join(cues) + "\n",
+        ROOT / "captions/overview.ja.srt": "\n".join(cues).rstrip() + "\n",
     }
 
 
