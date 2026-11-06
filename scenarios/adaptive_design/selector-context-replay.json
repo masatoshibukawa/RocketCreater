@@ -1,0 +1,55 @@
+{
+  "scope": "Two saved-context replays; not a policy-efficiency proof",
+  "rows": [
+    {
+      "previous": "redesign/nose_length_mm-0.8",
+      "selected": "redesign/pressure-400",
+      "reason": "The primary unmet requirement is 'altitude', with a current apogee of 11.23m against a target of 30.0m. The 'redesign/pressure-400' action targets the 'initial_gauge_pressure_pa' and provides the highest expected 'delta_height_m' (5.648m) among all available options, resulting in the highest 'violation_reduction' (0.188). This significantly reduces the gap to the target altitude compared to other redesign options.",
+      "planner": "local_llm",
+      "original_chars": 38096,
+      "prompt_chars": 8746,
+      "offered": 28,
+      "shown": 18,
+      "omitted": [
+        "redesign/fin_root_mm-1.15",
+        "redesign/fin_span_mm-0.8",
+        "redesign/fin-station-15",
+        "redesign/nozzle-7",
+        "redesign/fin_sweep_mm-0.7",
+        "redesign/nose_length_mm-0.8",
+        "redesign/fill-0.35",
+        "redesign/fin_tip_mm-0.7",
+        "redesign/fill-0.3",
+        "redesign/material-PETG"
+      ],
+      "elapsed_s": 5.9060000001918525,
+      "errors": []
+    },
+    {
+      "previous": "redesign/fin_span_mm-0.8",
+      "selected": "redesign/pressure-400",
+      "reason": "The primary unmet requirement is 'altitude', with a current apogee of 11.51m against a target of 30.0m. The 'redesign/pressure-400' action targets the 'initial_gauge_pressure_pa' and provides the highest expected 'delta_height_m' (5.7598m) among all available options. This significantly reduces the gap to the target altitude compared to other redesign options, while maintaining a high score and low cost. Unlike 'redesign/equipment-station-0.25', which only improves static margin, or 'redesign/pressure-350', which offers a lower altitude gain, 'redesign/pressure-400' provides the most substantial progress toward the primary altitude goal.",
+      "planner": "local_llm",
+      "original_chars": 42257,
+      "prompt_chars": 8966,
+      "offered": 28,
+      "shown": 18,
+      "omitted": [
+        "redesign/fin_root_mm-1.15",
+        "redesign/fin_span_mm-0.8",
+        "redesign/fin-station-15",
+        "redesign/nozzle-7",
+        "redesign/fin_sweep_mm-0.7",
+        "redesign/nose_length_mm-0.8",
+        "redesign/fill-0.35",
+        "redesign/fin_tip_mm-0.7",
+        "redesign/material-PETG",
+        "redesign/fill-0.3"
+      ],
+      "elapsed_s": 6.609000000171363,
+      "errors": []
+    }
+  ],
+  "source_commit": "aeeb15a",
+  "automatic_weight_training": false
+}
