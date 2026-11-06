@@ -11,6 +11,11 @@
 | Sir Ken Robinson — Do schools kill creativity? | TED2006 | ユーモア、会話の再現、個人の逸話と大きな主張 | [分析と文字起こしへの入口](01-ken-robinson.md) |
 | Simon Sinek — How great leaders inspire action | TEDxPuget Sound 2009 | 単純な枠組み、対比、反復 | [分析と文字起こしへの入口](02-simon-sinek.md) |
 | Brené Brown — The power of vulnerability | TEDxHouston 2010 | 自己開示、研究と自分の変化、対話 | [分析と文字起こしへの入口](03-brene-brown.md) |
+| Hans Rosling — The best stats you've ever seen | TED2006 | データの読み方、実演、比較の粒度 | [分析と文字起こしへの入口](04-hans-rosling.md) |
+| Chimamanda Ngozi Adichie — The danger of a single story | TEDGlobal 2009 | 複数の物語、自分も含めた視点の反転 | [分析と文字起こしへの入口](05-chimamanda-adichie.md) |
+| Tim Urban — Inside the mind of a master procrastinator | TED2016 | 擬人化、比喩、終盤の転換 | [分析と文字起こしへの入口](06-tim-urban.md) |
+
+[6本の比較とピッチへの応用](comparison.md)では、使い分け、RocketCreater向けの組み合わせ、映像を見返す観察シートをまとめる。
 
 ## 文字起こしの使い方
 

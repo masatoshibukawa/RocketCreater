@@ -9,6 +9,17 @@
 | T01 | [Sir Ken Robinson — Do schools kill creativity?](https://www.ted.com/talks/sir_ken_robinson_do_schools_kill_creativity) / [英語](https://www.ted.com/talks/sir_ken_robinson_do_schools_kill_creativity/transcript?language=en) / [日本語](https://www.ted.com/talks/sir_ken_robinson_do_schools_kill_creativity/transcript?language=ja) | [TED登壇者情報](https://www.ted.com/speakers/sir_ken_robinson) |
 | T02 | [Simon Sinek — How great leaders inspire action](https://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action) / [英語](https://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action/transcript?language=en) / [日本語](https://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action/transcript?language=ja) | [TED登壇者情報](https://www.ted.com/speakers/simon_sinek) |
 | T03 | [Brené Brown — The power of vulnerability](https://www.ted.com/talks/brene_brown_the_power_of_vulnerability) / [英語](https://www.ted.com/talks/brene_brown_the_power_of_vulnerability/transcript?language=en) / [日本語](https://www.ted.com/talks/brene_brown_the_power_of_vulnerability/transcript?language=ja) | [TED登壇者情報](https://www.ted.com/speakers/brene_brown) |
+| T04 | [Hans Rosling — The best stats you've ever seen](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen) / [英語](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen/transcript?language=en) / [日本語](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen/transcript?language=ja) | [TED登壇者情報](https://www.ted.com/speakers/hans_rosling) |
+| T05 | [Chimamanda Ngozi Adichie — The danger of a single story](https://www.ted.com/talks/chimamanda_ngozi_adichie_the_danger_of_a_single_story) / [英語](https://www.ted.com/talks/chimamanda_ngozi_adichie_the_danger_of_a_single_story/transcript?language=en) / [日本語](https://www.ted.com/talks/chimamanda_ngozi_adichie_the_danger_of_a_single_story/transcript?language=ja) | [TED登壇者情報](https://www.ted.com/speakers/chimamanda_ngozi_adichie) |
+| T06 | [Tim Urban — Inside the mind of a master procrastinator](https://www.ted.com/talks/tim_urban_inside_the_mind_of_a_master_procrastinator) / [英語](https://www.ted.com/talks/tim_urban_inside_the_mind_of_a_master_procrastinator/transcript?language=en) / [日本語](https://www.ted.com/talks/tim_urban_inside_the_mind_of_a_master_procrastinator/transcript?language=ja) | [TED登壇者情報](https://www.ted.com/speakers/tim_urban) |
+
+## 本人と関連団体による背景資料
+
+| 資料 | 確認したこと | 分析での使い方 |
+| --- | --- | --- |
+| [Doing a TED Talk The Full Story — Tim Urban / 2016-03-02](https://waitbutwhy.com/2016/03/doing-a-ted-talk-the-full-story.html) | 本人が語る準備と、台本・構成・即興の区別 | 自然な話し方と準備の関係を考える本人の経験として使用 |
+| [History — Gapminder](https://www.gapminder.org/about/about-gapminder/history/) | 団体の設立者、設立年、2006年のTED講演との関係 | Roslingのデモを支えた専門性とチームの背景 |
+| [Debunking myths about the third world — Gapminder](https://www.gapminder.org/videos/hans-rosling-ted-2006-debunking-myths-about-the-third-world/) | 2006年講演とアニメーションソフトの説明、語りの紹介 | データ実演の形式。実況の比喩は団体自身の紹介として記載 |
 
 ## 確認方法
 
