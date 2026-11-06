@@ -48,8 +48,10 @@ function DesignScreen() {
   const [rightOpen, setRightOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const settings = useRef<HTMLDialogElement>(null);
+  const inspector = useRef<HTMLElement>(null);
   const { task, visible, setVisible, paused, setPaused, reduced } = useWorkshop();
   const [generated, setGenerated] = useState<{ key: string; package: DesignPackage } | null>(null);
+  const [printed, setPrinted] = useState<{ key: string; files: { name: string; url: string }[] } | null>(null);
   const stream = useDesignStream();
   useCrewTask("design", designCrewTask(stream));
   const { start, answer, stop, reset } = stream;
@@ -192,12 +194,15 @@ function DesignScreen() {
   const packageKey = packageRequest ? requestKey(packageRequest) : "";
   const currentPackage = generated?.key === packageKey ? generated.package : null;
   const handleGenerated = useCallback((value: DesignPackage) => setGenerated({ key: packageKey, package: value }), [packageKey]);
+  const printKey = displayed ? designKey(displayed.design) : "";
+  const printFiles = printed?.key === printKey ? printed.files : [];
+  const handlePrintGenerated = useCallback((files: { name: string; url: string }[]) => setPrinted({ key: printKey, files }), [printKey]);
   const chooseStage = (next: WorkshopStage) => {
     setStage(next); setLeftOpen(false); setExpanded(false);
     setRightTab(next === "brief" ? "consult" : "explain");
   };
   const hasModel = stage === "brief" || stage === "design" || stage === "assembly";
-  const showCrew = (hasModel && modelView === "model" && (displayed !== null || stream.status === "streaming")) || stage === "analysis";
+  const showCrew = (hasModel && modelView === "model" && displayed !== null) || stage === "analysis";
   const requirementRows = [
     ["目標の高度", typeof stream.requirement?.target_altitude_m === "number" ? `${fmt(stream.requirement.target_altitude_m, 0)} m` : "未入力"],
     ["積載物の質量", typeof stream.requirement?.payload_mass_kg === "number" ? `${fmt(stream.requirement.payload_mass_kg * 1000, 0)} g` : "未入力"],
@@ -236,11 +241,12 @@ function DesignScreen() {
         <div className="left-dock-scroll">
           <label className="case-selector">表示する案<select value={selectedId ?? ""} onChange={e => setSelectedId(e.target.value || null)}><option value="">最新の結果に追従</option>{stream.candidates.map((c, i) => <option key={c.source_id} value={c.source_id}>{c.seededFrom ? "参照の初期案" : `案 ${i + 1}`} · {c.source_id}</option>)}</select></label>
           {stage === "analysis" ? <div className="dock-list" role="group" aria-label="解析の表示">{([['aero','流体解析'],['flight','飛行と回収'],['chart','高度の推移']] as const).map(([id,label]) => <button key={id} type="button" className={analysisView === id ? "dock-row is-active" : "dock-row"} aria-pressed={analysisView === id} onClick={() => { setAnalysisView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "aero" ? "analysis" : "play"} size={18}/>{label}</button>)}</div> : null}
-          {stage === "exports" ? <div className="dock-list" role="group" aria-label="成果物の表示">{([['production','製作票・印刷データ'],['drawing','設計図 SVG'],['video','設計解説・打ち上げ CG']] as const).map(([id,label]) => <button key={id} type="button" className={outputView === id ? "dock-row is-active" : "dock-row"} aria-pressed={outputView === id} onClick={() => { setOutputView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "video" ? "play" : "exports"} size={18}/><span>{label}<small>{id === "video" ? "保存済みの設計例" : id === "drawing" ? summary?.drawing ? "保存可能" : "未生成" : currentPackage ? "保存可能" : "未生成"}</small></span></button>)}</div> : null}
+          {stage === "exports" ? <div className="dock-list" role="group" aria-label="成果物の表示">{([['production','製作票・印刷データ'],['drawing','設計図 SVG'],['video','設計解説・打ち上げ CG']] as const).map(([id,label]) => <button key={id} type="button" className={outputView === id ? "dock-row is-active" : "dock-row"} aria-pressed={outputView === id} onClick={() => { setOutputView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "video" ? "play" : "exports"} size={18}/><span>{label}<small>{id === "video" ? "保存済みの設計例" : id === "drawing" ? summary?.drawing ? "保存可能" : "未生成" : currentPackage || printFiles.length ? "保存可能" : "未生成"}</small></span></button>)}</div> : null}
           <section className="dock-section"><h2>条件の概要</h2><dl className="dock-properties">{requirementRows.map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
             <button type="button" className="text-button" onClick={() => { chooseStage("brief"); setRightOpen(true); }}>条件について相談する <span>↗</span></button></section>
           {stage === "compare" ? <section className="dock-section"><h2>計算された候補</h2><div className="dock-list">{stream.candidates.filter(c => !c.seededFrom).map((c,i) => <button key={c.source_id} type="button" className={displayedId === c.source_id ? "dock-row is-active" : "dock-row"} onClick={() => setSelectedId(c.source_id)}><WorkshopIcon name="design" size={18}/><span>案 {i+1}<small>{c.passed ? "計算上の条件を満たす" : "要見直し"}</small></span></button>)}{stream.candidates.length === 0 ? <p className="dock-empty">候補はまだありません</p> : null}</div></section>
-            : <section className="dock-section"><h2>{stage === "exports" ? "保存できるファイル" : "機体の構成"}</h2>{stage === "exports" && currentPackage ? <div className="dock-list">{currentPackage.files.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="exports" size={18}/>{f.label}</a>)}</div>
+            : <section className="dock-section"><h2>{stage === "exports" ? "保存できるファイル" : "機体の構成"}</h2>{stage === "exports" && (currentPackage || printFiles.length > 0) ? <div className="dock-list">{currentPackage?.files.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="exports" size={18}/>{f.label}</a>)}{printFiles.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="design" size={18}/>{f.name}</a>)}</div>
+              : stage === "exports" ? <p className="dock-empty">ファイルを生成すると、ここから保存できます。</p>
               : summary?.bom.length ? <ul className="component-tree">{summary.bom.map((part,i) => <li key={`${part.item_id}-${i}`}><WorkshopIcon name="design" size={16}/><span>{part.name}<small>{part.qty} 点</small></span></li>)}</ul> : <p className="dock-empty">設計案が届くと表示します</p>}</section>}
           <div className="dock-context"><WorkshopIcon name="info" size={16}/><p>{displayed ? `${displayed.origin === "seed" ? "参照の初期案" : passed ? "計算結果のある案" : "検討中の案"}を表示しています。` : "目的を一文で伝えるところから始められます。"}</p></div>
         </div>
@@ -253,12 +259,12 @@ function DesignScreen() {
           {hasModel && modelView === "model" ? <button className="icon-button" type="button" aria-label="機体全体を表示" disabled={!displayed} onClick={() => setFrameRequest(n => n+1)}><WorkshopIcon name="expand" size={18}/></button> : null}
           <button className="icon-button expand-workspace" type="button" aria-label={expanded ? "ドックを表示" : "中央の表示を拡大"} aria-pressed={expanded} onClick={() => setExpanded(!expanded)}><WorkshopIcon name="expand" size={18}/></button>
           <label className="crew-visibility">整備員を表示<input type="checkbox" checked={visible} onChange={e => setVisible(e.target.checked)}/><span/></label>
-          <button className="btn mobile-inspector-toggle" type="button" onClick={() => setRightOpen(!rightOpen)}>解説・相談</button>
+          <button className="btn mobile-inspector-toggle" type="button" onClick={() => { setRightOpen(!rightOpen); inspector.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); }}>解説・相談</button>
         </div>
         <div className="workshop-canvas">
           <div className="hero-view" hidden={!hasModel || modelView !== "model"}>
             <div className="hero-heading"><span>{stage === "assembly" ? "組立前に、部品の関係を確認する" : displayed ? "機体の形と構成を確かめる" : "条件を確認して、設計を始める"}</span><p>{displayed ? "計算で使った設計値から作る概念モデル" : "何を、どこまで飛ばしたいですか？"}</p></div>
-            <ModelViewer design={displayed?.design ?? null} tier={tier} origin={displayed?.origin ?? null} reference={stream.reference} dimensions={summary?.dimensions ?? null} notes={notes} frameRequest={frameRequest} active={hasModel && modelView === "model"}/>
+            <ModelViewer design={displayed?.design ?? null} tier={tier} origin={displayed?.origin ?? null} statusLabel={displayed?.origin === "seed" ? "参照の初期案" : passed ? "条件を満たす案" : "検討中の案"} reference={stream.reference} dimensions={summary?.dimensions ?? null} notes={notes} frameRequest={frameRequest} active={hasModel && modelView === "model"}/>
             {!displayed ? <span className="scene-image-label">工房のイメージ · 設計データはまだありません</span> : null}
             {stage === "assembly" ? <div className="assembly-context"><b>組立の準備</b><span>形状の概略を確認できます。手・工具の干渉と実機の組立性は未評価です。</span></div> : null}
           </div>
@@ -270,7 +276,7 @@ function DesignScreen() {
             <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedId}/></div>
           </div>
           {stage === "compare" ? <DesignComparison candidates={stream.candidates} selectedId={displayedId} onSelect={setSelectedId}/> : null}
-          <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated}/></div>
+          <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
           {stage === "exports" && outputView === "production" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
           {stage === "exports" && outputView === "video" ? <VideoOutputs/> : null}
           {stage === "library" ? <div className="reference-workspace"><ReferenceLibrary/></div> : null}
@@ -278,7 +284,7 @@ function DesignScreen() {
         </div>
         <div className="workspace-caption"><span>{displayedId ? `表示対象: ${displayedId}` : "まだ設計案がありません"}</span>{selectedId ? <button type="button" className="text-button" onClick={() => setSelectedId(null)}>最新へ戻る ↻</button> : <span>最新の結果に追従</span>}</div>
       </section>
-      <aside className={`workshop-right${rightOpen ? " is-open" : ""}`} aria-label="解説と設計の相談">
+      <aside ref={inspector} className={`workshop-right${rightOpen ? " is-open" : ""}`} aria-label="解説と設計の相談">
         <div className="inspector-tabs" role="group" aria-label="右パネルの表示">{([['explain','解説'],['history','履歴'],['consult','相談']] as const).map(([id,label]) => <button key={id} type="button" aria-pressed={rightTab === id} onClick={() => setRightTab(id)}>{label}</button>)}<button className="mobile-close icon-button" type="button" aria-label="解説と相談を閉じる" onClick={() => setRightOpen(false)}><WorkshopIcon name="close" size={18}/></button></div>
         <div className="inspector-scroll" hidden={rightTab !== "explain"}>
           <div className="explanation-title"><span/>{stage === "analysis" ? analysisView === "aero" ? "機体まわりの流れを確かめる" : "飛行と回収の結果を確かめる" : stage === "exports" ? "同じ設計から、成果物を作る" : stage === "assembly" ? "組立に必要な条件を確認する" : "機体の形と飛び方を、一緒に検討する"}</div>

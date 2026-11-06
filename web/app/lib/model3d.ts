@@ -40,16 +40,16 @@ const SEGMENTS = 48;
 const COLOR = {
   body: 0xf4f6f8,
   bodyAlt: 0xdfe5ec,
-  fin: 0xd64545,
+  fin: 0x2d61b3,
   nose: 0xe8edf3,
   interstage: 0x5b6670,
   bell: 0x3b434c,
   bellInner: 0x1f252b,
   booster: 0xe9eef3,
-  pet: 0xbfe0f5,
+  pet: 0xe0ecf8,
   water: 0x4aa3e0,
-  cap: 0xd64545,
-  chute: 0xf0a030,
+  cap: 0x31578f,
+  chute: 0x315c9c,
   payload: 0x7c5cd6,
 };
 
@@ -243,10 +243,12 @@ function buildBottle(design: BottleDesign): THREE.Group {
     new THREE.LatheGeometry(pts, SEGMENTS),
     new THREE.MeshPhysicalMaterial({
       color: COLOR.pet,
-      roughness: 0.15,
-      metalness: 0,
+      roughness: 0.12,
+      metalness: 0.08,
+      clearcoat: 1,
+      clearcoatRoughness: 0.08,
       transparent: true,
-      opacity: 0.38,
+      opacity: 0.24,
       side: THREE.DoubleSide,
       depthWrite: false,
     }),
@@ -254,6 +256,14 @@ function buildBottle(design: BottleDesign): THREE.Group {
   shell.castShadow = true;
   shell.renderOrder = 2;
   g.add(shell);
+
+  // Illustrative molded rings remain inside the same envelope; they add no design dimensions.
+  const ringMaterial = new THREE.MeshStandardMaterial({ color: 0xc3d6e7, roughness: .24, transparent: true, opacity: .45 });
+  for (let i = 1; i <= 7; i += 1) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r * .975, r * .015, 6, SEGMENTS), ringMaterial);
+    ring.rotation.x = Math.PI / 2; ring.position.y = neck + shoulder + (body - shoulder) * i / 8;
+    g.add(ring);
+  }
 
   // water: fills the lower part of the body (the rocket stands neck-down on the pad)
   const waterH = Math.max(0, Math.min(1, design.water_fill_frac)) * (body + shoulder);

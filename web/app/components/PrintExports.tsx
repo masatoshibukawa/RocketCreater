@@ -12,7 +12,7 @@ type Manifest = { status: string; brim_width_mm: number; brim_gap_mm: number;
     quantity_for_assembly?: number }[] };
 type Bundle = { manifest: Manifest; files: File[] };
 
-export default function PrintExports({ design, disabled = false }: { design: Design | null; disabled?: boolean }) {
+export default function PrintExports({ design, disabled = false, onGenerated }: { design: Design | null; disabled?: boolean; onGenerated?: (files: File[]) => void }) {
   const [ready, setReady] = useState<boolean | null>(null);
   const [bundle, setBundle] = useState<Bundle | null>(null);
   const [busy, setBusy] = useState(false);
@@ -45,7 +45,7 @@ export default function PrintExports({ design, disabled = false }: { design: Des
       });
       const data = await response.json();
       if (!response.ok) throw new Error(typeof data.detail === "string" ? data.detail : "印刷データを生成できませんでした");
-      if (!abort.signal.aborted) setBundle(data);
+      if (!abort.signal.aborted) { setBundle(data); onGenerated?.(data.files); }
     } catch (e) {
       if (!abort.signal.aborted) setError(e instanceof Error ? e.message : String(e));
     } finally { if (!abort.signal.aborted) setBusy(false); }
