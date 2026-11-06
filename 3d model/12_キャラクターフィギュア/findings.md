@@ -26,7 +26,7 @@ Meshy [Auto SplitのMarkdown仕様](https://docs.meshy.ai/api/auto-split.md)で�
 
 ## 4. テクスチャから多色印刷へ進む経路がある
 
-[BambuのTexture-to-Color](https://wiki.bambulab.com/en/software/bambu-studio/texture-to-color)と[2.7.1の公開資料](https://wiki.bambulab.com/en/software/bambu-studio/release/release-note-2-7-1)では、2.7.1以降にテクスチャ付きOBJ/glTF/GLB/FBXを色塗りへ変換する機能を記載する。複数モデルの同時変換、Draco圧縮、macOSの圧縮FBX等に制限がある。
+[BambuのTexture-to-Color](https://wiki.bambulab.com/en/software/bambu-studio/texture-to-color)と[2.7.1の公開資料](https://wiki.bambulab.com/en/software/bambu-studio/release/release-note-2-7-1)では、2.7.1以降にテクスチャ付きOBJ/glTF/GLB/FBXを色塗りへ変換する機能を記載する。モデルは1つずつ読み込み、Draco圧縮glTF/GLBは非対応。macOSでは圧縮FBXの対応にも依存ライブラリ由来の制限がある。非対応入力はテクスチャを維持した非Dracoの対応形式などへ書き出し直し、再読込で形状・色・変換可否を確認する。拡張子を変えるだけでは圧縮方式は変わらない。
 
 色を絞り実フィラメントへ割り当てる工程なので、元画像の色が無制限にそのまま印刷されるわけではない。細い瞳や頬、境界の欠け、暗色から明色へのパージを確認する。[パージの公式説明](https://wiki.bambulab.com/en/software/bambu-studio/reduce-wasting-during-filament-change)も色の遷移方向で必要量が異なるとしている。塗装・色別部品の組立・対応機の多色を、見た目と手間・材料消費で比較する。
 
@@ -34,7 +34,9 @@ Meshy [Auto SplitのMarkdown仕様](https://docs.meshy.ai/api/auto-split.md)で�
 
 [Form 4世代の形状表](https://formlabs.com/global/support/Design-specifications-for-3D-models-Form-4-generation)は樹脂・層高等の条件付きの試験値。細い耳/爪は造形できても支持除去・洗浄・持ち運びで折れることがあり、根元、長さ、層方向、材料の靱性と仕上げ工程を含む原寸試片で確認する。
 
-[Lychee吸盤検出](https://docs.mango3d.io/doc/resin-documentation/resin-holes/suction-cup-detector/)のDeleteは模様を消すだけで、空洞を修正しない。[3D穴の書出し](https://docs.mango3d.io/doc/resin-documentation/resin-export/export-3d/)には形状/設定上の制限がある。プロジェクトで穴を置いたことと、最終STL/スライスへ実際の穴が反映されたことを分ける。[洗浄手順](https://formlabs.com/support/Washing-Prints/)も内部の流れと排液を確認する。
+[Lychee吸盤検出](https://docs.mango3d.io/doc/resin-documentation/resin-holes/suction-cup-detector/)のDeleteは模様を消すだけで、空洞を修正しない。[3D穴の書出し](https://docs.mango3d.io/doc/resin-documentation/resin-export/export-3d/)は、参照版では中空モデルの外面と内面の2面を通す穴を想定し、複数面との交差や穴同士の重なりに制限がある。大きな穴プリミティブをBoolean切断の代用にはしない。Detect Holes in Errorで赤い不適合穴を修正し、Export 3Dの排液穴出力を有効にして加工済みSTL/OBJを再読込する。元のSTLをコピーする操作では準備内容は反映されない。版/プランによる機能差も照合する。
+
+スライス生成と3Dモデル出力は別経路なので、3D穴の変換エラーだけでスライスの穴も同じだと決めず、実際の使用経路の出力を確認する。プロジェクトで穴を置いたことと、最終STL/スライスへ穴が反映されたことを分ける。[洗浄手順](https://formlabs.com/support/Washing-Prints/)も内部の流れと排液を確認する。
 
 ## 6. 仮組みと塗膜を設計工程へ戻す
 

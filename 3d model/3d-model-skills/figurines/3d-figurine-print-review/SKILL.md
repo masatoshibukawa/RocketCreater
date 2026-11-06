@@ -18,13 +18,15 @@ description: "FDM/光造形フィギュアを最終サイズで確認し、顔�
 
 接点の傷を隠せる面、断面の変化とisland、耳・尻尾の初期層を全層で確認する。一律45度や自動支持だけで確定しない。[Form 4の最小形状表](https://formlabs.com/global/support/Design-specifications-for-3D-models-Form-4-generation)は機種/樹脂/層高の試験条件付きで、取り外して持てる耳・爪の耐久設計値とは別。
 
-小型フィギュアを常に中空化しない。中空にするなら、造形中の吸盤、各空洞の排液・通気、洗浄・乾燥・必要な内部硬化と後で閉じる経路を設計する。[Lycheeの吸盤検出](https://docs.mango3d.io/doc/resin-documentation/resin-holes/suction-cup-detector/)のDeleteは警告模様を消すだけ。空洞を直したことにはならない。[穴の書出し](https://docs.mango3d.io/doc/resin-documentation/resin-export/export-3d/)と最終スライスを再確認する。
+小型フィギュアを常に中空化しない。中空にするなら、造形中の吸盤、各空洞の排液・通気、洗浄・乾燥・必要な内部硬化と後で閉じる経路を設計する。[Lycheeの吸盤検出](https://docs.mango3d.io/doc/resin-documentation/resin-holes/suction-cup-detector/)のDeleteは警告模様を消すだけ。空洞を直したことにはならない。
+
+[Lycheeの3D穴の書出し](https://docs.mango3d.io/doc/resin-documentation/resin-export/export-3d/)では、参照版は中空の外面/内面2面への交差が条件。複数面との交差や重なる穴は検証し、Detect Holes in Errorの赤い穴を修正する。Export 3Dで排液穴を有効にした加工済みSTL/OBJを再読込し、原本STLのコピーで代用しない。スライス生成は別経路なので、使用版/プランの機能と最終層画像も照合する。
 
 [island検出](https://docs.mango3d.io/doc/resin-documentation/resin-support/island)は層高と検出設定に依存する。重要な形状の未支持を探し、微小な印すべてへ同じ太い支持を付けて表情を壊さない。失敗後は機種手順で残片等を処理し、同じデータで無条件に再出力しない。
 
 ## 色の経路
 
-単色＋塗装、色別部品の組立、対応機の多色のどれを使うかを決める。STLから元のテクスチャが自動復元されるとはみなさない。Bambu Studioの[Texture-to-Color](https://wiki.bambulab.com/en/software/bambu-studio/texture-to-color)は、取得時の資料では2.7.1以降、対応テクスチャ付き形式と機種/給材の条件がある。色数を絞り、瞳・頬・腹・耳先の境界が最終サイズで残るか確認する。
+単色＋塗装、色別部品の組立、対応機の多色のどれを使うかを決める。STLから元のテクスチャが自動復元されるとはみなさない。Bambu Studioの[Texture-to-Color](https://wiki.bambulab.com/en/software/bambu-studio/texture-to-color)は、取得時の資料では2.7.1以降。テクスチャ付きOBJ/glTF/GLB/FBXを1モデルずつ読み込む。Draco圧縮glTF/GLBは非対応、macOSの圧縮FBXにも制限があるため、必要なら非Dracoの対応形式等へ再出力し、形状/テクスチャを確認する。機種/給材の実能力に色数を絞り、瞳・頬・腹・耳先の境界が最終サイズで残るか確認する。
 
 [色/材料の割当て](https://wiki.bambulab.com/en/software/bambu-studio/multi-color-printing)、実スロット、[濃色→淡色のパージ](https://wiki.bambulab.com/en/software/bambu-studio/reduce-wasting-during-filament-change)をプレビューと試片で確認する。内部へ流した色が薄い明色の顔へ透けないかも見る。表示色が似ているだけで材料の熱/接着の適合を認めない。
 
