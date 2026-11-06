@@ -1,0 +1,6 @@
+jpype1
+numpy
+matplotlib
+tqdm
+ribs[all]
+fire

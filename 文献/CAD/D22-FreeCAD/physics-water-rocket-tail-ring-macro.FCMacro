@@ -1,0 +1,410 @@
+#!/usr/bin/env python3
+# ======================================================================
+#  WASSERRAKETE - FLOSSEN-CONE, STUELPT SICH UEBER SCHULTER+HALS+DECKEL
+#  Kein gedrucktes Gewinde noetig! Das Teil wird komplett ueber die
+#  Flasche samt Original-Drehverschluss gestuelpt. Unten ist ein Loch,
+#  durch das der Verschluss RAUSRAGT - dort schraubst du dann einen
+#  gekauften Ventil-/Launcher-Adapter direkt auf den echten Deckel.
+#  Das gedruckte Teil haelt durch Presssitz auf der Schulter + Klebung,
+#  nicht durchs Gewinde.
+#
+#  ALLE MASSE IN ZENTIMETER (cm). Skript rechnet intern in mm um.
+#  Abhaengigkeiten: nur numpy + scipy (kein CadQuery/OpenSCAD noetig)
+# ======================================================================
+
+import os
+import numpy as np
+from scipy.spatial import ConvexHull
+import struct
+
+CM = 10.0   # 1 cm = 10 mm -> Umrechnungsfaktor, NICHT AENDERN
+
+# ======================================================================
+#  PARAMETER: FLASCHE
+# ======================================================================
+FLASCHEN_SCHULTER_DURCHMESSER_CM = 7.0   # cm - GEMESSEN (Maßband, zweimal konsistent bestaetigt)
+SCHULTER_SPIEL_CM = 0.3                    # cm - erhoeht (3mm) wegen Massband-statt-Schieblehre-Ungenauigkeit
+
+FLASCHEN_HALS_DURCHMESSER_CM = 3.8   # cm - GEMESSEN (Kappenbreite als Sicherheitswert genommen,
+                                       #      echter glatter Hals ist evtl. minimal schmaler - das ist
+                                       #      die sichere Richtung, Oeffnung wird dadurch nie zu eng)
+HALS_SPIEL_CM = 0.3   # cm - erhoeht (3mm) wegen Massband-statt-Schieblehre-Ungenauigkeit
+
+HALS_LAENGE_BIS_VERSCHLUSS_CM = 5.5   # cm - NOCH NICHT GEMESSEN, Platzhalter! Bitte nachmessen:
+                                        #      Laenge von da, wo die Schulter zu Ende rundet, bis zum
+                                        #      Anfang des Verschluss-Gewindes. GESAMTLAENGE_CM MUSS
+                                        #      kleiner sein als dieser Wert, sonst umschliesst das Teil
+                                        #      den Verschluss doch.
+
+# ======================================================================
+#  PARAMETER: GEOMETRIE DES CONES
+# ======================================================================
+WANDSTAERKE_CM        = 0.3    # cm - Wandstaerke der Huelle
+GESAMTLAENGE_CM       = 5.2    # cm - Laenge der S-Kurve von Schulter- auf Halsbreite
+                                #      (MUSS kleiner als HALS_LAENGE_BIS_VERSCHLUSS_CM sein!)
+KOERPER_UEBERLAPP_CM  = 4.0    # cm - ZUSAETZLICHES gerades Stueck OBERHALB der Schulter-Kurve,
+                                #      das weiter den zylindrischen Flaschenkoerper hochgeht.
+                                #      Macht das Teil hoeher, OHNE es dicker zu machen.
+RAND_VERRUNDUNG_OBEN_CM  = 0.4  # cm - Verrundung am oberen (weiten) Rand
+RAND_VERRUNDUNG_UNTEN_CM = 0.25 # cm - Verrundung am unteren (Deckel-Loch) Rand
+
+# ======================================================================
+#  PARAMETER: FLOSSEN (sitzen auf dem Cone, Position von oben gemessen)
+# ======================================================================
+FLOSSEN_ANZAHL           = 4
+FLOSSEN_Z_POSITION_CM    = 2.0    # cm - Position INNERHALB des geraden Koerper-Ueberlapp-Stuecks
+                                   #      (gemessen ab dem Beginn der S-Kurve nach OBEN). Hier ist
+                                   #      die Wand konstant dick - garantiert kein Durchstossen.
+FLOSSEN_SPANNWEITE_CM    = 6.0    # cm - radiale Ausdehnung nach aussen (Wurzel bis zur Spitze)
+FLOSSEN_WURZEL_LAENGE_CM = 3.2    # cm - Breite der runden Wurzel (der "Bauch" des Tropfens)
+FLOSSEN_PFEILUNG_CM      = 2.2    # cm - wie weit die Spitze (der "Tropfen-Schwanz") nach hinten
+                                   #      versetzt ist relativ zur Wurzel-Mitte - mehr = aerodynamischer
+FLOSSEN_WURZEL_DICKE_CM  = 0.4    # cm - Dicke/Rundung an der Wurzel (Tropfen-"Bauch")
+FLOSSEN_SPITZE_DICKE_CM  = 0.35   # cm - Rundung an der Spitze (KEIN spitzer Punkt, sondern
+                                   #      leicht abgerundete Kuppe - groesser = rundlicher)
+FLOSSEN_EINBETTUNG_CM    = 0.03  # cm - MINIMAL, nur zum Verschmelzen mit der Huelle
+FLOSSEN_WURZEL_VERRUNDUNG_CM = 0.03  # cm - kleine Verrundung, absichtlich klein gehalten
+
+# --- Aufloesung ---
+N_THETA        = 128
+FILLET_SEGMENTE = 8
+KUGEL_PUNKTE   = 30
+
+AUSGABE_DATEI = os.path.join(os.path.expanduser("~"), "Desktop", "flossen_cone_ueberstuelp.stl")
+
+
+# ======================================================================
+#  Sicherheits-Checks
+# ======================================================================
+assert FLASCHEN_SCHULTER_DURCHMESSER_CM > FLASCHEN_HALS_DURCHMESSER_CM, \
+    "Schulter sollte breiter sein als der Hals (sonst kein Cone moeglich)."
+assert GESAMTLAENGE_CM < HALS_LAENGE_BIS_VERSCHLUSS_CM, \
+    "GESAMTLAENGE_CM muss KLEINER als HALS_LAENGE_BIS_VERSCHLUSS_CM sein, sonst reicht das " \
+    "Teil bis zum Verschluss runter und umschliesst ihn - der soll aber frei rausragen!"
+halbe_hoehe_wurzel = FLOSSEN_WURZEL_LAENGE_CM / 2
+assert FLOSSEN_Z_POSITION_CM - halbe_hoehe_wurzel >= 0, \
+    "FLOSSEN_Z_POSITION_CM zu nah am unteren Ende des geraden Stuecks - Flosse wuerde in die Kurve ragen."
+assert FLOSSEN_Z_POSITION_CM + halbe_hoehe_wurzel <= KOERPER_UEBERLAPP_CM, \
+    "FLOSSEN_Z_POSITION_CM + halbe Wurzellaenge darf KOERPER_UEBERLAPP_CM nicht ueberschreiten - " \
+    "Flosse wuerde oben ueber das gerade Stueck hinausragen. Entweder KOERPER_UEBERLAPP_CM " \
+    "erhoehen oder FLOSSEN_WURZEL_LAENGE_CM verkleinern."
+
+
+# ======================================================================
+#  Generische Hilfsfunktionen
+# ======================================================================
+def unit2(v):
+    n = np.linalg.norm(v)
+    return v / n if n > 1e-12 else v
+
+
+def fillet_corner_2d(p_prev, p_corner, p_next, radius, n_seg=FILLET_SEGMENTE):
+    if radius <= 1e-9:
+        return [p_corner]
+    v1, v2 = p_prev - p_corner, p_next - p_corner
+    len1, len2 = np.linalg.norm(v1), np.linalg.norm(v2)
+    if len1 < 1e-9 or len2 < 1e-9:
+        return [p_corner]
+    u1, u2 = v1 / len1, v2 / len2
+    ang = np.arccos(np.clip(np.dot(u1, u2), -1.0, 1.0))
+    if ang < 1e-6 or ang > np.pi - 1e-6:
+        return [p_corner]
+    tan_dist = radius / np.tan(ang / 2)
+    tan_dist = min(tan_dist, len1 * 0.9, len2 * 0.9)
+    r_eff = tan_dist * np.tan(ang / 2)
+    t1 = p_corner + u1 * tan_dist
+    t2 = p_corner + u2 * tan_dist
+    bis = unit2(u1 + u2)
+    center = p_corner + bis * (r_eff / np.sin(ang / 2))
+    a1 = np.arctan2(t1[1] - center[1], t1[0] - center[0])
+    a2 = np.arctan2(t2[1] - center[1], t2[0] - center[0])
+    da = (a2 - a1 + np.pi) % (2 * np.pi) - np.pi
+    return [center + r_eff * np.array([np.cos(a1 + da * k / n_seg),
+                                        np.sin(a1 + da * k / n_seg)])
+            for k in range(n_seg + 1)]
+
+
+def build_profile_from_corners(corners):
+    pts_only = [c[0] for c in corners]
+    n = len(corners)
+    profile = []
+    for i in range(n):
+        p_prev = pts_only[i - 1]
+        p_corner, radius = corners[i]
+        p_next = pts_only[(i + 1) % n]
+        profile.extend(fillet_corner_2d(p_prev, p_corner, p_next, radius))
+    return np.array(profile)
+
+
+def revolve_profile(profile_2d):
+    M = len(profile_2d)
+    thetas = np.linspace(0, 2 * np.pi, N_THETA, endpoint=False)
+    verts = np.zeros((N_THETA, M, 3))
+    for i, th in enumerate(thetas):
+        verts[i, :, 0] = profile_2d[:, 0] * np.cos(th)
+        verts[i, :, 1] = profile_2d[:, 0] * np.sin(th)
+        verts[i, :, 2] = profile_2d[:, 1]
+    triangles = []
+    for i in range(N_THETA):
+        i2 = (i + 1) % N_THETA
+        for j in range(M):
+            j2 = (j + 1) % M
+            a, b = verts[i, j], verts[i, j2]
+            c, d = verts[i2, j2], verts[i2, j]
+            triangles.append((a, b, c))
+            triangles.append((a, c, d))
+    tri = np.array(triangles)
+    return drop_degenerate(fix_orientation_outward(tri))
+
+
+def fix_orientation_outward(tri):
+    centroids = tri.mean(axis=1)
+    r_xy = np.linalg.norm(centroids[:, :2], axis=1)
+    idx = np.argmax(r_xy)
+    a, b, c = tri[idx]
+    normal = np.cross(b - a, c - a)
+    outward_ref = np.array([centroids[idx, 0], centroids[idx, 1], 0.0])
+    if np.dot(normal, outward_ref) < 0:
+        tri = tri[:, [0, 2, 1], :]
+    return tri
+
+
+def drop_degenerate(tri, min_area=1e-8):
+    a, b, c = tri[:, 0], tri[:, 1], tri[:, 2]
+    areas = 0.5 * np.linalg.norm(np.cross(b - a, c - a), axis=1)
+    return tri[areas > min_area]
+
+
+def write_binary_stl(path, triangles, header=b"Flossen Cone Ueberstuelp"):
+    n = len(triangles)
+    with open(path, "wb") as f:
+        f.write(header.ljust(80, b"\0")[:80])
+        f.write(struct.pack("<I", n))
+        for tri in triangles:
+            a, b, c = tri
+            normal = np.cross(b - a, c - a)
+            norm_len = np.linalg.norm(normal)
+            if norm_len > 1e-12:
+                normal = normal / norm_len
+            f.write(struct.pack("<3f", *normal))
+            for v in (a, b, c):
+                f.write(struct.pack("<3f", *v))
+            f.write(struct.pack("<H", 0))
+
+
+def open_file_os(path):
+    try:
+        import platform
+        import subprocess
+        system = platform.system()
+        if system == "Darwin":
+            subprocess.run(["open", path], check=False)
+        elif system == "Windows":
+            os.startfile(path)  # noqa
+        else:
+            subprocess.run(["xdg-open", path], check=False)
+    except Exception as e:
+        print(f"Konnte Datei nicht automatisch oeffnen ({e}). Bitte manuell oeffnen: {path}")
+
+
+def insert_into_freecad(path, doc_name):
+    try:
+        import FreeCAD
+        import Mesh
+        doc = FreeCAD.ActiveDocument
+        if doc is None:
+            doc = FreeCAD.newDocument(doc_name)
+        Mesh.insert(path, doc.Name)
+        doc.recompute()
+        try:
+            FreeCADGui = __import__("FreeCADGui")
+            FreeCADGui.ActiveDocument.ActiveView.viewIsometric()
+            FreeCADGui.SendMsgToActiveView("ViewFit")
+        except Exception:
+            pass
+        return True
+    except ImportError:
+        return False
+
+
+# ======================================================================
+#  FLOSSEN: konvexe Huelle ueber 4 Hilfskugeln
+# ======================================================================
+def sphere_points(center, radius, n_points=KUGEL_PUNKTE):
+    i = np.arange(n_points)
+    phi = np.arccos(1 - 2 * (i + 0.5) / n_points)
+    golden = np.pi * (1 + 5 ** 0.5)
+    theta = golden * i
+    x = np.sin(phi) * np.cos(theta)
+    y = np.sin(phi) * np.sin(theta)
+    z = np.cos(phi)
+    return np.stack([x, y, z], axis=1) * radius + center
+
+
+def lokale_radien(z, z0, z1, schulter_r, hals_r, aussen_r_oben, aussen_r_unten):
+    """Liefert (innen_r, aussen_r) an einer beliebigen Hoehe z auf der
+    S-Kurve - exakt dieselbe Formel wie beim Bau der Huelle."""
+    tt = np.clip((z0 - z) / (z0 - z1), 0.0, 1.0)
+    sm = (1 - np.cos(np.pi * tt)) / 2
+    innen = schulter_r + (hals_r - schulter_r) * sm
+    aussen = aussen_r_oben + (aussen_r_unten - aussen_r_oben) * sm
+    return innen, aussen
+
+
+def build_fins(z_mitte, z0, z1, schulter_r, hals_r, aussen_r_oben, aussen_r_unten):
+    r_wurzel = FLOSSEN_WURZEL_DICKE_CM * CM / 2
+    r_spitze = FLOSSEN_SPITZE_DICKE_CM * CM / 2
+    embed = FLOSSEN_EINBETTUNG_CM * CM
+    fillet_wurzel = FLOSSEN_WURZEL_VERRUNDUNG_CM * CM
+    spannweite = FLOSSEN_SPANNWEITE_CM * CM
+    wurzel_laenge = FLOSSEN_WURZEL_LAENGE_CM * CM
+    pfeilung = FLOSSEN_PFEILUNG_CM * CM
+
+    # Tropfenform: breite, runde Wurzel (2 Kugeln bilden den "Bauch")
+    # verjuengt sich zu EINEM einzigen Punkt an der Spitze (der "Schwanz")
+    # - kein Trapez mit zwei Spitzen-Ecken mehr, sondern ein echter Tropfen.
+    root_front_z = z_mitte + wurzel_laenge / 2
+    root_back_z = root_front_z - wurzel_laenge
+    tip_z = z_mitte - pfeilung   # EIN Punkt, nach hinten versetzt (Pfeilung)
+
+    SICHERHEITSABSTAND = 0.06 * CM  # mm Restwand, die IMMER stehen bleiben muss
+
+    def geklemmte_wurzel(z_pos, gewuenschter_radius_der_kugel):
+        innen_r, aussen_r = lokale_radien(z_pos, z0, z1, schulter_r, hals_r,
+                                           aussen_r_oben, aussen_r_unten)
+        center_x = aussen_r - embed
+        radius = gewuenschter_radius_der_kugel
+        min_erlaubt = innen_r + SICHERHEITSABSTAND
+        # Kugel darf nicht weiter nach innen reichen als min_erlaubt
+        if center_x - radius < min_erlaubt:
+            radius = max(0.3 * CM, center_x - min_erlaubt)
+        return center_x, radius
+
+    root_front_x, root_front_kugel = geklemmte_wurzel(root_front_z, r_wurzel + fillet_wurzel)
+    root_back_x, root_back_kugel = geklemmte_wurzel(root_back_z, r_wurzel + fillet_wurzel)
+
+    _, lokaler_aussen_r_fuer_spitze = lokale_radien(root_front_z, z0, z1, schulter_r, hals_r,
+                                                     aussen_r_oben, aussen_r_unten)
+    tip_x = lokaler_aussen_r_fuer_spitze + spannweite
+
+    centers_radii = [
+        (np.array([root_front_x, 0.0, root_front_z]), root_front_kugel),
+        (np.array([root_back_x, 0.0, root_back_z]), root_back_kugel),
+        (np.array([tip_x, 0.0, tip_z]), r_spitze),
+    ]
+
+    all_points = np.vstack([sphere_points(c, r) for c, r in centers_radii])
+    hull = ConvexHull(all_points)
+    tris = all_points[hull.simplices]
+    normals_ref = hull.equations[:, :3]
+    edge1 = tris[:, 1] - tris[:, 0]
+    edge2 = tris[:, 2] - tris[:, 0]
+    normals_calc = np.cross(edge1, edge2)
+    dots = np.einsum('ij,ij->i', normals_calc, normals_ref)
+    flip = dots < 0
+    tris[flip] = tris[flip][:, [0, 2, 1], :]
+    fin_local = tris
+
+    # --- HARTE Nachbearbeitung: die konvexe Huelle kann durch flache
+    #     Facetten zwischen unterschiedlich grossen Kugeln naeher an die
+    #     Achse heranreichen als die Kugeln selbst - deshalb wird JEDER
+    #     Vertex hier zusaetzlich radial nach aussen gezwungen, falls er
+    #     die tatsaechliche Innenwand an seiner Hoehe verletzen wuerde.
+    #     Das ist die eigentliche Garantie gegen Durchstossen. ---
+    SICHERHEITSABSTAND_HART = 0.06 * CM
+    pts = fin_local.reshape(-1, 3)
+    px, py, pz = pts[:, 0], pts[:, 1], pts[:, 2]
+    pr = np.sqrt(px ** 2 + py ** 2)
+    innen_an_pz, _ = lokale_radien(pz, z0, z1, schulter_r, hals_r, aussen_r_oben, aussen_r_unten)
+    min_erlaubt_pz = innen_an_pz + SICHERHEITSABSTAND_HART
+    verletzt = pr < min_erlaubt_pz
+    skalierung = np.where(verletzt, min_erlaubt_pz / np.maximum(pr, 1e-6), 1.0)
+    px_neu = px * skalierung
+    py_neu = py * skalierung
+    if verletzt.any():
+        print(f"  [Info] {verletzt.sum()} von {len(pr)} Flossen-Eckpunkten wurden nach aussen "
+              f"korrigiert (waeren sonst in die Innenwand eingedrungen).")
+    fin_local = np.stack([px_neu, py_neu, pz], axis=1).reshape(fin_local.shape)
+
+    all_fins = []
+    for k in range(FLOSSEN_ANZAHL):
+        angle = 2 * np.pi * k / FLOSSEN_ANZAHL
+        c, s = np.cos(angle), np.sin(angle)
+        R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
+        all_fins.append(fin_local @ R.T)
+    return np.concatenate(all_fins, axis=0)
+
+
+# ======================================================================
+#  HAUPTGEOMETRIE: Hohler Cone von Schulterbreite (oben, offen) auf
+#  Deckelbreite (unten, offen - Deckel ragt hier raus), Flossen auf
+#  der Aussenseite montiert.
+# ======================================================================
+def build_flossen_cone():
+    schulter_r = FLASCHEN_SCHULTER_DURCHMESSER_CM * CM / 2 + SCHULTER_SPIEL_CM * CM
+    hals_r = FLASCHEN_HALS_DURCHMESSER_CM * CM / 2 + HALS_SPIEL_CM * CM
+    wand = WANDSTAERKE_CM * CM
+    gesamtlaenge = GESAMTLAENGE_CM * CM
+    rand_oben = RAND_VERRUNDUNG_OBEN_CM * CM
+    rand_unten = RAND_VERRUNDUNG_UNTEN_CM * CM
+
+    aussen_r_oben = schulter_r + wand
+    aussen_r_unten = hals_r + wand
+
+    koerper_ueberlapp = KOERPER_UEBERLAPP_CM * CM
+    z_top = koerper_ueberlapp   # oberstes Ende (gerades Stueck), z=0 bleibt Beginn der S-Kurve
+    z0 = 0.0
+    z1 = -gesamtlaenge
+
+    # --- Durchgehend RUNDE S-Kurve (Smoothstep) statt gerader Kegelstumpf-
+    #     Linie: Steigung ist an BEIDEN Enden null, dadurch komplett
+    #     rundlich/organisch wie eine echte Flaschenschulter, nicht nur an
+    #     den zwei Kanten verrundet. ---
+    n_kurve = 40
+    t = np.linspace(0.0, 1.0, n_kurve)
+    smooth = (1 - np.cos(np.pi * t)) / 2   # 0 -> 1, Steigung 0 an beiden Enden
+    aussen_r_kurve = aussen_r_oben + (aussen_r_unten - aussen_r_oben) * smooth
+    innen_r_kurve = schulter_r + (hals_r - schulter_r) * smooth
+    z_kurve = z0 + (z1 - z0) * t
+
+    aussen_pts = np.stack([aussen_r_kurve, z_kurve], axis=1)
+    innen_pts = np.stack([innen_r_kurve, z_kurve], axis=1)[::-1]  # rueckwaerts fuer geschlossene Schleife
+
+    corners = [
+        (np.array([aussen_r_oben, z_top]), rand_oben),   # ganz oben: gerades Stueck (Koerper-Ueberlapp)
+    ] + [(p, 0.0) for p in aussen_pts] + [(p, 0.0) for p in innen_pts] + [
+        (np.array([schulter_r, z_top]), rand_oben),      # zurueck hoch zum offenen oberen Rand
+    ]
+    profile = build_profile_from_corners(corners)
+    huelle = revolve_profile(profile)
+
+    z_fin = FLOSSEN_Z_POSITION_CM * CM   # positiv: liegt im geraden Stueck oberhalb z0=0
+    fins = build_fins(z_fin, z0, z1, schulter_r, hals_r, aussen_r_oben, aussen_r_unten)
+
+    return np.concatenate([huelle, fins], axis=0)
+
+
+# ======================================================================
+#  Hauptprogramm
+# ======================================================================
+def main():
+    print("=== Flossen-Cone (ueberstuelpen, kein Gewinde) ===")
+    tris = build_flossen_cone()
+    write_binary_stl(AUSGABE_DATEI, tris)
+    print(f"Fertig: {AUSGABE_DATEI}  ({len(tris)} Dreiecke)")
+
+    pts = tris.reshape(-1, 3)
+    print("Bounding Box (mm):")
+    print("  X:", pts[:, 0].min(), "bis", pts[:, 0].max())
+    print("  Y:", pts[:, 1].min(), "bis", pts[:, 1].max())
+    print("  Z:", pts[:, 2].min(), "bis", pts[:, 2].max())
+
+    if insert_into_freecad(AUSGABE_DATEI, "FlossenCone"):
+        print("Mesh wurde in FreeCAD eingefuegt und angezeigt.")
+    else:
+        print("(Nicht in FreeCAD - versuche Standard-Viewer zu oeffnen.)")
+        open_file_os(AUSGABE_DATEI)
+
+
+if __name__ == "__main__":
+    main()

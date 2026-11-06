@@ -1,3 +1,216 @@
-# Third-party study copies remain on this computer.
-*/原本/
-*/モデル/
+# Only explicitly reviewed third-party files are tracked.
+*/原本/**
+!*/原本/**/
+*/モデル/**
+!*/モデル/**/
+!ハイブリッド/モデル/MH01-RocketPy/LICENSE
+!ハイブリッド/モデル/MH01-RocketPy/README.md
+!ハイブリッド/モデル/MH01-RocketPy/data/motors/cesaroni/Cesaroni_7579M1520-P.eng
+!ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/DragCoeffOR_off.csv
+!ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/DragCoeffOR_on.csv
+!ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/altimeter_halcyon.csv
+!ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/engine_Halcyon_4thHotfire.eng
+!ハイブリッド/モデル/MH01-RocketPy/data/rockets/astg/gnss_halcyon.csv
+!ハイブリッド/モデル/MH01-RocketPy/data/rockets/defiance/DragCurve.csv
+!ハイブリッド/モデル/MH01-RocketPy/data/rockets/defiance/Thrust_curve.csv
+!ハイブリッド/モデル/MH01-RocketPy/data/rockets/prometheus/2022-06-24-serial-5115-flight-0001-TeleMetrum.csv
+!ハイブリッド/モデル/MH01-RocketPy/data/weather/euroc_2023_all_windows.nc
+!ハイブリッド/モデル/MH01-RocketPy/data/weather/spaceport_america_pressure_levels_2023_hourly.nc
+!ハイブリッド/モデル/MH01-RocketPy/docs/examples/defiance_flight_sim.ipynb
+!ハイブリッド/モデル/MH01-RocketPy/docs/examples/halcyon_flight_sim.ipynb
+!ハイブリッド/モデル/MH01-RocketPy/docs/examples/prometheus_2022_flight_sim.ipynb
+!ハイブリッド/モデル/MH01-RocketPy/docs/user/motors/hybridmotor.rst
+!ハイブリッド/モデル/MH01-RocketPy/pyproject.toml
+!ハイブリッド/モデル/MH13-OpenRocket/LICENSE.TXT
+!ハイブリッド/モデル/MH13-OpenRocket/README.md
+!ハイブリッド/モデル/MH13-OpenRocket/core/src/main/resources/datafiles/examples/Simulation extensions.ork
+!ハイブリッド/モデル/MH13-OpenRocket/core/src/main/resources/datafiles/examples/Simulation scripting.ork
+!固体/モデル/MS14-OpenRocket/LICENSE.TXT
+!固体/モデル/MS14-OpenRocket/README.md
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/3D printable nose cone and fins.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/A simple model rocket.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/ARC payload rocket.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Airstart timing.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Chute release.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Clustered motors.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Deployable payload.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Dual parachute deployment.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Parallel booster staging.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Pods--airframes and winglets.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Pods--powered with recovery deployment.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Three stage low power rocket.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Tube fin rocket.ork
+!固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/Two stage high power rocket.ork
+!固体/モデル/MS15-Rockit/LICENSE
+!固体/モデル/MS15-Rockit/README.md
+!固体/モデル/MS15-Rockit/examples/d/d_engine.json
+!固体/モデル/MS15-Rockit/examples/d/d_engine_body.png
+!固体/モデル/MS15-Rockit/examples/d/d_engine_body.scad
+!固体/モデル/MS15-Rockit/examples/d/d_engine_body.stl
+!固体/モデル/MS15-Rockit/examples/d/d_engine_collar.png
+!固体/モデル/MS15-Rockit/examples/d/d_engine_collar.scad
+!固体/モデル/MS15-Rockit/examples/d/d_engine_collar.stl
+!固体/モデル/MS15-Rockit/examples/d/d_engine_collar_test.png
+!固体/モデル/MS15-Rockit/examples/d/d_engine_collar_test.scad
+!固体/モデル/MS15-Rockit/examples/d/d_engine_collar_test.stl
+!固体/モデル/MS15-Rockit/examples/d/d_engine_engine_mount.png
+!固体/モデル/MS15-Rockit/examples/d/d_engine_engine_mount.scad
+!固体/モデル/MS15-Rockit/examples/d/d_engine_engine_mount.stl
+!固体/モデル/MS15-Rockit/examples/d/d_engine_fin.png
+!固体/モデル/MS15-Rockit/examples/d/d_engine_fin.scad
+!固体/モデル/MS15-Rockit/examples/d/d_engine_fin.stl
+!固体/モデル/MS15-Rockit/examples/d/d_engine_launchlug.png
+!固体/モデル/MS15-Rockit/examples/d/d_engine_launchlug.scad
+!固体/モデル/MS15-Rockit/examples/d/d_engine_launchlug.stl
+!固体/モデル/MS15-Rockit/examples/d/d_engine_nosecone.png
+!固体/モデル/MS15-Rockit/examples/d/d_engine_nosecone.scad
+!固体/モデル/MS15-Rockit/examples/d/d_engine_nosecone.stl
+!固体/モデル/MS15-Rockit/examples/d/d_engine_tail.png
+!固体/モデル/MS15-Rockit/examples/d/d_engine_tail.scad
+!固体/モデル/MS15-Rockit/examples/d/d_engine_tail.stl
+!固体/モデル/MS15-Rockit/examples/e/e_engine.json
+!固体/モデル/MS15-Rockit/examples/images/example_launch.png
+!固体/モデル/MS15-Rockit/examples/images/exploded_rocket.png
+!固体/モデル/MS15-Rockit/examples/images/launchpad.jpg
+!固体/モデル/MS15-Rockit/examples/images/makerbot.jpg
+!固体/モデル/MS15-Rockit/examples/images/model_rocket_motors.jpg
+!固体/モデル/MS15-Rockit/examples/images/openscad.png
+!固体/モデル/MS15-Rockit/examples/images/openspace.jpg
+!固体/モデル/MS15-Rockit/examples/images/print_ex1.jpg
+!固体/モデル/MS15-Rockit/examples/images/print_ex2.jpg
+!固体/モデル/MS15-Rockit/examples/images/python-logo.jpg
+!固体/モデル/MS15-Rockit/examples/images/terminal_install.png
+!固体/モデル/MS15-Rockit/examples/images/two_stage_launch.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine.json
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_body.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_body.scad
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_body.stl
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar.scad
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar.stl
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar_test.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar_test.scad
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_collar_test.stl
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_engine_mount.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_engine_mount.scad
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_engine_mount.stl
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_fin.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_fin.scad
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_fin.stl
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_launchlug.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_launchlug.scad
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_launchlug.stl
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_nosecone.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_nosecone.scad
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_nosecone.stl
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_tail.png
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_tail.scad
+!固体/モデル/MS15-Rockit/examples/mini/mini_engine_tail.stl
+!固体/モデル/MS15-Rockit/examples/mini_8fin/rocket.json
+!固体/モデル/MS15-Rockit/examples/mini_8fin/rocket_tail.png
+!固体/モデル/MS15-Rockit/examples/mini_8fin/rocket_tail.scad
+!固体/モデル/MS15-Rockit/examples/mini_8fin/rocket_tail.stl
+!固体/モデル/MS15-Rockit/examples/mini_8fin_spin/rocket.json
+!固体/モデル/MS15-Rockit/examples/mini_8fin_spin/rocket_tail.png
+!固体/モデル/MS15-Rockit/examples/mini_8fin_spin/rocket_tail.scad
+!固体/モデル/MS15-Rockit/examples/mini_8fin_spin/rocket_tail.stl
+!固体/モデル/MS15-Rockit/examples/std/standard_engine.json
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_body.png
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_body.scad
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_body.stl
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_collar.png
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_collar.scad
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_collar.stl
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_collar_test.png
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_collar_test.scad
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_collar_test.stl
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_engine_mount.png
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_engine_mount.scad
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_engine_mount.stl
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_fin.png
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_fin.scad
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_fin.stl
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_launchlug.png
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_launchlug.scad
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_launchlug.stl
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_nosecone.png
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_nosecone.scad
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_nosecone.stl
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_tail.png
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_tail.scad
+!固体/モデル/MS15-Rockit/examples/std/standard_engine_tail.stl
+!固体/モデル/MS16-RocketPy/LICENSE
+!固体/モデル/MS16-RocketPy/README.md
+!固体/モデル/MS16-RocketPy/data/motors/aerotech/AeroTech_K828FJ.eng
+!固体/モデル/MS16-RocketPy/data/motors/cesaroni/Cesaroni_4895L1395-P.eng
+!固体/モデル/MS16-RocketPy/data/rockets/EPFL_Bella_Lui/bella_lui_flight_data_filtered.csv
+!固体/モデル/MS16-RocketPy/data/rockets/NDRT_2020/ndrt_2020_flight_data.csv
+!固体/モデル/MS16-RocketPy/data/rockets/camoes/drag_coefficient_power_off.csv
+!固体/モデル/MS16-RocketPy/data/rockets/camoes/drag_coefficient_power_on.csv
+!固体/モデル/MS16-RocketPy/data/rockets/camoes/flight_data.csv
+!固体/モデル/MS16-RocketPy/data/rockets/camoes/gnss_flight.csv
+!固体/モデル/MS16-RocketPy/data/rockets/camoes/thrust_source.csv
+!固体/モデル/MS16-RocketPy/data/weather/bella_lui_weather_data_ERA5.nc
+!固体/モデル/MS16-RocketPy/data/weather/euroc_2023_all_windows.nc
+!固体/モデル/MS16-RocketPy/data/weather/ndrt_2020_weather_data_ERA5.nc
+!固体/モデル/MS16-RocketPy/docs/examples/bella_lui_flight_sim.ipynb
+!固体/モデル/MS16-RocketPy/docs/examples/camoes_flight_sim.ipynb
+!固体/モデル/MS16-RocketPy/docs/examples/ndrt_2020_flight_sim.ipynb
+!固体/モデル/MS16-RocketPy/docs/user/motors/solidmotor.rst
+!固体/モデル/MS16-RocketPy/pyproject.toml
+!固体/モデル/MS26-OpenRocketQD/LICENSE
+!固体/モデル/MS26-OpenRocketQD/README.md
+!固体/モデル/MS26-OpenRocketQD/evolve_rockets.py
+!固体/モデル/MS26-OpenRocketQD/examples/base_15.03.ork
+!固体/モデル/MS26-OpenRocketQD/examples/base_23.09.ork
+!固体/モデル/MS26-OpenRocketQD/examples/custom.py
+!固体/モデル/MS26-OpenRocketQD/examples/lazy.py
+!固体/モデル/MS26-OpenRocketQD/examples/modified.ork
+!固体/モデル/MS26-OpenRocketQD/examples/monte_carlo.py
+!固体/モデル/MS26-OpenRocketQD/examples/simple.ork
+!固体/モデル/MS26-OpenRocketQD/examples/simple_plot.py
+!固体/モデル/MS26-OpenRocketQD/orhelper/__init__.py
+!固体/モデル/MS26-OpenRocketQD/orhelper/_enums.py
+!固体/モデル/MS26-OpenRocketQD/orhelper/_orhelper.py
+!固体/モデル/MS26-OpenRocketQD/plotdata.py
+!固体/モデル/MS26-OpenRocketQD/process_saved_archives.py
+!固体/モデル/MS26-OpenRocketQD/requirements.txt
+!固体/モデル/MS26-OpenRocketQD/rocket_design.py
+!固体/モデル/MS26-OpenRocketQD/rocket_evaluate.py
+!固体/モデル/MS26-OpenRocketQD/rocket_fins.py
+!固体/モデル/MS26-OpenRocketQD/rocket_spread.py
+!液体/モデル/ML01-RocketPy/LICENSE
+!液体/モデル/ML01-RocketPy/README.md
+!液体/モデル/ML01-RocketPy/data/rockets/berkeley/drag.csv
+!液体/モデル/ML01-RocketPy/data/rockets/berkeley/pressurantMassFiltered.csv
+!液体/モデル/ML01-RocketPy/data/rockets/berkeley/test124_Lox_Volume.csv
+!液体/モデル/ML01-RocketPy/data/rockets/berkeley/test124_Propane_Volume.csv
+!液体/モデル/ML01-RocketPy/data/rockets/berkeley/test124_Thrust_Curve.csv
+!液体/モデル/ML01-RocketPy/data/rockets/hedy/hedy_power_off_drag.csv
+!液体/モデル/ML01-RocketPy/data/rockets/hedy/hedy_power_on_drag.csv
+!液体/モデル/ML01-RocketPy/data/rockets/hedy/hedy_thrust_euroc_launch.csv
+!液体/モデル/ML01-RocketPy/data/rockets/tust/hedy_power_off_drag.csv
+!液体/モデル/ML01-RocketPy/data/rockets/tust/hedy_power_on_drag.csv
+!液体/モデル/ML01-RocketPy/data/rockets/tust/hedy_thrust_euroc_launch.csv
+!液体/モデル/ML01-RocketPy/data/weather/hedy_euroc_2025_weather_data.nc
+!液体/モデル/ML01-RocketPy/docs/examples/SEB_liquid_motor.ipynb
+!液体/モデル/ML01-RocketPy/docs/examples/hedy_flight_sim.ipynb
+!液体/モデル/ML01-RocketPy/docs/user/motors/liquidmotor.rst
+!液体/モデル/ML01-RocketPy/docs/user/motors/tanks.rst
+!液体/モデル/ML01-RocketPy/pyproject.toml
+!液体/モデル/ML13-NASA-SaturnV/3D Models/Saturn V/Saturn V.glb
+!液体/モデル/ML13-NASA-SaturnV/3D Models/Saturn V/Saturn V.png
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/S-IC bottom.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/S-IC joining cube.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/S-IC top.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/S-II.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/S-IV b.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/Saturn V Rocket.png
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/command moduel.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/escape tower.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/fin (print 4).stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/lem shroud.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/service module.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/stage 1-2 coupler v2.stl
+!液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/stage 1-2 coupler.stl
+!液体/モデル/ML13-NASA-SaturnV/README.md
