@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 from rocketwright.adaptive import digest
@@ -66,6 +67,46 @@ def audit(root, *, checkpoint=False):
         spec = DesignSpec.model_validate(observation["spec"])
         specs[policy.identity(spec)] = spec
     eligible = [r for r in dataset if r["fit_eligible"] and experience.verified(r["outcome"])]
+    raw_count, unique, seen = len(eligible), [], {}
+    for row in eligible:
+        outcome = row["outcome"]
+        before = specs.get(outcome["from_spec_hash"])
+        change = row["input"]["choices"].get(row["selected"], {}).get("target")
+        if (
+            before is not None
+            and isinstance(change, dict)
+            and "dry_mass_g" in outcome.get("before", {})
+        ):
+            transition = experience.transition_id(before, change, outcome["before"])
+            key = (
+                groups.get(row["seed"], row["seed"]),
+                outcome["code"],
+                outcome["precision_hash"],
+                transition,
+            )
+            if key in seen:
+                if not math.isclose(
+                    seen[key], outcome["delta"]["apogee_m"], rel_tol=1e-8, abs_tol=1e-8
+                ):
+                    raise ValueError(
+                        "Conflicting results for a duplicated deterministic transition"
+                    )
+                continue
+            seen[key] = outcome["delta"]["apogee_m"]
+            # Reconstruct complete covariates for legacy records from their saved input.
+            section, field = change["section"], change["field"]
+            outcome = dict(
+                outcome,
+                transition_id=transition,
+                features=experience.features(before),
+                change_from=getattr(getattr(before, section), field)
+                if section
+                else getattr(before, field),
+                change_to=change["value"],
+            )
+            row = dict(row, outcome=outcome)
+        unique.append(row)
+    eligible = unique
     rows, skipped = [], []
     for row in eligible:
         outcome = row["outcome"]
@@ -80,9 +121,10 @@ def audit(root, *, checkpoint=False):
         training = [r for r in eligible if groups.get(r["seed"], r["seed"]) != family]
         train_outcomes = []
         for sample in training:
-            predicted = (
+            forecast = (
                 sample["input"]["choices"].get(sample["selected"], {}).get("prediction") or {}
-            ).get("delta_height_m")
+            )
+            predicted = forecast.get("raw_delta_height_m", forecast.get("delta_height_m"))
             train_outcomes.append(
                 dict(
                     sample["outcome"],
@@ -101,7 +143,8 @@ def audit(root, *, checkpoint=False):
             precision=row["input"]["context"]["precision"],
         )
         estimate = experience.estimate(matches, before.requirement.target_altitude_m)
-        base, actual = prediction["delta_height_m"], outcome["delta"]["apogee_m"]
+        base = prediction.get("raw_delta_height_m", prediction["delta_height_m"])
+        actual = outcome["delta"]["apogee_m"]
         n = estimate["samples"]
         weight = n / (n + 3)
         adjusted = (1 - weight) * base + weight * (estimate["mean_delta_height_m"] or 0)
@@ -116,7 +159,9 @@ def audit(root, *, checkpoint=False):
             if residuals
             else 0
         )
-        corrected = base + correction
+        p = row["input"]["context"]["precision"]
+        bound = p["altitude_error_m"] * p["aero_allocation"]
+        corrected = base + max(-bound, min(bound, correction))
         rows.append(
             dict(
                 seed=row["seed"],
@@ -139,11 +184,14 @@ def audit(root, *, checkpoint=False):
 
     return dict(
         source_hash=report["source_hash"],
+        audit_version="deduplicated-physical-transitions-v2",
         checkpoint_only=checkpoint,
         evidence=evidence,
         split="leave one equivalent-ascent family out; offline predictive audit, not online timing",
         equivalent_ascent_groups=groups,
         eligible_outcomes=len(eligible),
+        eligible_records_before_deduplication=raw_count,
+        duplicate_transitions_excluded=raw_count - len(eligible),
         held_out_predictions=len(rows),
         predictions_with_cross_seed_history=len(matched),
         axial_mae_m=mean("axial_absolute_error_m"),

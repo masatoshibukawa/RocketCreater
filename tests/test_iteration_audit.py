@@ -1,3 +1,5 @@
+import copy
+import json
 from pathlib import Path
 
 import pytest
@@ -93,3 +95,30 @@ def test_different_sources_and_recovery_do_not_leak_identical_ascent_into_traini
     assert result["equivalent_ascent_groups"]["A"] == result["equivalent_ascent_groups"]["B"]
     assert result["predictions_with_cross_seed_history"] == 0
     assert result["history_adjusted_mae_m"] is None
+
+
+def test_physical_transition_duplicates_do_not_add_fit_or_evaluation_weight(tmp_path):
+    dataset(tmp_path)
+    rows = json.loads((tmp_path / "learning.json").read_text(encoding="utf-8"))
+    a = rows[0]
+    a["outcome"]["before"] = dict(dry_mass_g=200, apogee_m=10)
+    b = copy.deepcopy(a)
+    b.update(seed="B", project_id="B")
+    write_json(tmp_path / "learning.json", [a, b])
+    write_json(
+        tmp_path / "report.json",
+        dict(
+            source_hash="solver",
+            observations=[
+                dict(start=label, version=1, spec=spec().model_dump(), metrics=dict(dry_mass_g=200))
+                for label in ("A", "B")
+            ],
+        ),
+    )
+    result = audit(tmp_path)
+    assert result["eligible_records_before_deduplication"] == 2
+    assert result["eligible_outcomes"] == 1 and result["duplicate_transitions_excluded"] == 1
+    b["outcome"]["delta"]["apogee_m"] += 1
+    write_json(tmp_path / "learning.json", [a, b])
+    with pytest.raises(ValueError, match="Conflicting results"):
+        audit(tmp_path)
