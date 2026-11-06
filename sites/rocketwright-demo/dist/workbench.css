@@ -14,6 +14,8 @@ dialog{width:min(1140px,95vw);max-height:90dvh;background:#252525;border:1px sol
 
 /* Demo controls retain the existing workbench layout and palette. */
 :root{--demo-height:42px}
+.workbench{grid-template-rows:minmax(0,1fr)}
+.left-panel{min-height:0;overflow-y:auto}
 .demo-banner{min-height:var(--demo-height);flex-shrink:0;display:flex;align-items:center;gap:12px;padding:7px 12px;background:#18283a;border-bottom:1px solid #435779;font-size:11px;line-height:1.5}
 .demo-banner strong{font-weight:600;color:#e0eaff;white-space:nowrap}
 .demo-banner>span{flex:1;color:#c0cce0}
