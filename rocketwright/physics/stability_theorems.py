@@ -155,6 +155,7 @@ def flight_screen(assembly, trajectory, table, mass, cfg):
         frozen_asymptotic_count=sum(r["status"].startswith("globally_asymptotic") for r in rows),
         analyzed_points=len(rows),
         rate_scale_rad_s=omega_scale,
+        scheduled_model=dict(times=times, matrices=matrices, metric=best["metric"]),
         barbalat=barbalat_eligibility(
             infinite_horizon=False,
             bounded_below_V=None,
@@ -172,3 +173,56 @@ def flight_screen(assembly, trajectory, table, mass, cfg):
             "CFD/model uncertainty",
         ],
     )
+
+
+def campaign(folder, problem):
+    """Use the same host selection gates as other analysis methods."""
+    import hashlib
+    from pathlib import Path
+
+    from rocketwright.adaptive import Campaign
+
+    def gate(params, output, host):
+        p = host.inputs["stability_problem"]
+        kind = p.get("kind")
+        barbalat = barbalat_eligibility(
+            **p.get(
+                "barbalat",
+                dict(
+                    infinite_horizon=False,
+                    bounded_below_V=None,
+                    nonpositive_Vdot=None,
+                    uniformly_continuous_W=None,
+                    detects_state_origin=None,
+                ),
+            )
+        )
+        return dict(
+            recognized_model=kind,
+            barbalat_review=barbalat,
+            metrics=dict(
+                lasalle_eligible=kind == "frozen_pitch" and p.get("unforced") is True,
+                gronwall_eligible=kind == "piecewise_affine_pitch",
+                barbalat_eligible=barbalat["W_to_zero_proved"],
+            ),
+        )
+
+    runners = {
+        "theorem_gate": gate,
+        "lasalle": lambda p, o, h: lasalle_pitch(**h.inputs["stability_problem"]["parameters"]),
+        "gronwall": lambda p, o, h: gronwall_bound(**h.inputs["stability_problem"]["parameters"]),
+        "barbalat": lambda p, o, h: barbalat_eligibility(
+            **h.inputs["stability_problem"]["barbalat"]
+        ),
+    }
+    result = Campaign(
+        folder,
+        inputs={
+            "stability_problem": problem,
+            "theorem_code": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        },
+        runners=runners,
+        budget_s=30,
+    )
+    result.run()
+    return result

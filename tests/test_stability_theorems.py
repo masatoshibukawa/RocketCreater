@@ -63,3 +63,30 @@ def test_pitch_screen_uses_air_incidence_opposite_to_attitude_error():
     assert value["frozen_asymptotic_count"] == 3
     assert value["frozen_checks"][0]["stiffness_nm_rad"] == pytest.approx(2)
     assert not value["full_flight_stability_proved"]
+
+
+def test_host_selects_theorem_by_equation_class_and_rejects_barbalat(tmp_path):
+    from rocketwright.physics.stability_theorems import campaign
+
+    frozen = campaign(
+        tmp_path / "frozen",
+        dict(
+            kind="frozen_pitch", unforced=True, parameters=dict(inertia=1, stiffness=2, damping=3)
+        ),
+    )
+    assert "frozen-origin" in frozen.results
+    assert "finite-error-bound" not in frozen.results
+    assert "asymptotic-prerequisites" not in frozen.results
+    scheduled = campaign(
+        tmp_path / "scheduled",
+        dict(
+            kind="piecewise_affine_pitch",
+            parameters=dict(
+                times=[0, 1],
+                matrices=[(-np.eye(2)).tolist()] * 2,
+            ),
+        ),
+    )
+    assert "finite-error-bound" in scheduled.results
+    assert "frozen-origin" not in scheduled.results
+    assert "asymptotic-prerequisites" not in scheduled.results
