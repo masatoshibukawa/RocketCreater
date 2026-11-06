@@ -3,3 +3,9 @@
 .sites-checkout/
 .sites-runtime/
 *.tar.gz
+dist/functional/
+integrated-src/node_modules/
+integrated-src/.next/
+integrated-src/out/
+integrated-src/next-env.d.ts
+integrated-src/*.tsbuildinfo

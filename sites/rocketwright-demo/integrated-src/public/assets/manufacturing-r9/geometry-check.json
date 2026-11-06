@@ -1,0 +1,101 @@
+{
+  "fin": {
+    "vertices": 435,
+    "triangles": 874,
+    "connected_components": 1,
+    "non_manifold_edges": 0,
+    "boundary_edges": 0,
+    "zero_area_triangles": 0,
+    "nonadjacent_intersection_pairs": 0,
+    "volume_mm3": 20666.702627769475,
+    "solid_mass_g_at_assumed_density": 25.62671125843415,
+    "centroid_mm": [
+      55.83588790893555,
+      10.396479606628418,
+      28.368696212768555
+    ],
+    "bounds_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        142.91500854492188,
+        20.792951583862305,
+        70.0
+      ]
+    ],
+    "dimensions_mm": [
+      142.91500854492188,
+      20.792951583862305,
+      70.0
+    ]
+  },
+  "nose": {
+    "vertices": 8800,
+    "triangles": 17600,
+    "connected_components": 1,
+    "non_manifold_edges": 0,
+    "boundary_edges": 0,
+    "zero_area_triangles": 0,
+    "nonadjacent_intersection_pairs": 0,
+    "volume_mm3": 35500.352018763595,
+    "solid_mass_g_at_assumed_density": 44.02043650326686,
+    "centroid_mm": [
+      7.049060855024436e-07,
+      -4.303688001527917e-06,
+      41.15298080444336
+    ],
+    "bounds_mm": [
+      [
+        -47.0,
+        -47.0,
+        0.0
+      ],
+      [
+        47.0,
+        47.0,
+        100.0
+      ]
+    ],
+    "dimensions_mm": [
+      94.0,
+      94.0,
+      100.0
+    ]
+  },
+  "fit-ring": {
+    "vertices": 640,
+    "triangles": 1280,
+    "connected_components": 1,
+    "non_manifold_edges": 0,
+    "boundary_edges": 0,
+    "zero_area_triangles": 0,
+    "nonadjacent_intersection_pairs": 0,
+    "volume_mm3": 8358.005230785368,
+    "solid_mass_g_at_assumed_density": 10.363926486173856,
+    "centroid_mm": [
+      9.931534805218689e-06,
+      -7.8375142038567e-06,
+      8.999905586242676
+    ],
+    "bounds_mm": [
+      [
+        -47.0,
+        -47.0,
+        0.0
+      ],
+      [
+        47.0,
+        47.0,
+        18.0
+      ]
+    ],
+    "dimensions_mm": [
+      94.0,
+      94.0,
+      18.0
+    ]
+  }
+}

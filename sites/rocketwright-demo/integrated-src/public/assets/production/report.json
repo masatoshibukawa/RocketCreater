@@ -1,0 +1,209 @@
+{
+  "tier": "bottle",
+  "tier_label_ja": "ペットボトル",
+  "concept_level": false,
+  "requirement": {
+    "goal_kind": "altitude",
+    "target_altitude_m": 20.0,
+    "target_apogee_m": null,
+    "payload_mass_kg": 0.06,
+    "budget_jpy": 3000.0,
+    "recovery_required": true,
+    "tier_override": null,
+    "text": ""
+  },
+  "design": {
+    "tier": "bottle",
+    "bottle_volume_m3": 0.0015,
+    "water_fill_frac": 0.25,
+    "initial_gauge_pressure_pa": 325000.0,
+    "nozzle_diameter_m": 0.009,
+    "dry_mass_kg": 0.1527873,
+    "payload_mass_kg": 0.06,
+    "has_fins": true,
+    "axial_drag_coefficient": 0.8277283278631213,
+    "has_parachute": true,
+    "parachute_diameter_m": 0.5950714871308219
+  },
+  "design_display": [
+    {
+      "key": "bottle_volume_m3",
+      "value": 0.0015,
+      "display": "1.50 L"
+    },
+    {
+      "key": "water_fill_frac",
+      "value": 0.25,
+      "display": "25 %"
+    },
+    {
+      "key": "initial_gauge_pressure_pa",
+      "value": 325000.0,
+      "display": "325 kPa"
+    },
+    {
+      "key": "nozzle_diameter_m",
+      "value": 0.009,
+      "display": "9 mm"
+    },
+    {
+      "key": "dry_mass_kg",
+      "value": 0.1527873,
+      "display": "153 g"
+    },
+    {
+      "key": "payload_mass_kg",
+      "value": 0.06,
+      "display": "60 g"
+    },
+    {
+      "key": "has_fins",
+      "value": true,
+      "display": "yes"
+    },
+    {
+      "key": "axial_drag_coefficient",
+      "value": 0.8277283278631213,
+      "display": "0.828"
+    },
+    {
+      "key": "has_parachute",
+      "value": true,
+      "display": "yes"
+    },
+    {
+      "key": "parachute_diameter_m",
+      "value": 0.5950714871308219,
+      "display": "595 mm"
+    }
+  ],
+  "metrics": [
+    {
+      "key": "apogee_m",
+      "value": 19.4596976335308,
+      "display": "19.46 m",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "apogee_time_s",
+      "value": 2.0532095816215215,
+      "display": "2.1 s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "max_speed_mps",
+      "value": 20.688107450219437,
+      "display": "20.7 m/s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "max_accel_mps2",
+      "value": 104.33255941844295,
+      "display": "104.33 m/s2",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "peak_thrust_n",
+      "value": 41.35121330287565,
+      "display": "41 N",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "thrust_phase_duration_s",
+      "value": 0.26829789815502514,
+      "display": "0.3 s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "water_exhausted_speed_mps",
+      "value": 18.952292042718376,
+      "display": "19.0 m/s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "water_impulse_ns",
+      "value": 8.540673932728712,
+      "display": "9 N·s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "air_impulse_ns",
+      "value": 0.44532781902935503,
+      "display": "0 N·s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "rail_exit_speed_mps",
+      "value": 14.520647270497207,
+      "display": "14.5 m/s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "descent_speed_mps",
+      "value": 2.8618084152518937,
+      "display": "2.9 m/s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "landing_east_m",
+      "value": 12.688334728899441,
+      "display": "12.69 m",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "landing_north_m",
+      "value": 2.330809276838535e-15,
+      "display": "0 mm",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "landing_distance_m",
+      "value": 12.688334728899441,
+      "display": "12.69 m",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "flight_time_s",
+      "value": 8.85300006718342,
+      "display": "8.9 s",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "liftoff_mass_kg",
+      "value": 0.5877873,
+      "display": "588 g",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "water_mass_kg",
+      "value": 0.375,
+      "display": "375 g",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    },
+    {
+      "key": "cost_jpy",
+      "value": 2300.0,
+      "display": "2,300 円",
+      "source_id": "confirm/D02/9/325/25/carton_wide"
+    }
+  ],
+  "passed": true,
+  "failure_reasons": [],
+  "warnings": [
+    "stability: Barrowman estimate on representative fins; CG is estimated, not measured",
+    "stability: margin -0.30 cal with water loaded: the vehicle does not restore itself at liftoff"
+  ],
+  "sim_source_id": "confirm/D02/9/325/25/carton_wide",
+  "dispersion": null,
+  "checklist": [
+    "Launch site: permission of the land owner / site operator and a safety area sized from the landing dispersion in this report",
+    "Weather limits (wind, visibility) and a go/no-go rule agreed before launch day",
+    "Range safety: spectator distance, recovery crew, first-aid, fire precautions",
+    "Insurance or club coverage applicable to the activity",
+    "Pressure limit of the bottle and the launcher release mechanism (never exceed the rated pressure; use water only, no gas other than air)",
+    "Eye protection for the launch crew; nobody downrange during pressurisation"
+  ],
+  "notes": [
+    "Physics and cost models are deliberately simplified; every `SIMPLIFICATION` is listed in the repository README together with the provisional values awaiting human confirmation."
+  ]
+}

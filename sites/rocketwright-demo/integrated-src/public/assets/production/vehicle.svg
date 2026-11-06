@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -205 632 460">
+ <title>組立配置図　先端を0 mmとして後方が正</title>
+ <g font-family="sans-serif" font-size="12"><path d="M 0 0 L 100 -45.0
+ H 572 V 45.0 H 100 Z" fill="#eef2ed" stroke="#38484a"/>
+ <path d="M 182 -45.0 v 90.0 M 262 -45.0 v 90.0"
+ stroke="#38484a"/><polygon points="497,-45.0 532,-185.0 567,-185.0 567,-45.0" fill="#d6e7ea" stroke="#38484a"/><polygon points="497,45.0 532,185.0 567,185.0 567,45.0" fill="#d6e7ea" stroke="#38484a"/><path d="M 289.51 0 V 182" stroke="#154974" stroke-dasharray="3 4"/><text x="286.51" y="190" text-anchor="end" fill="#154974">乾燥時重心（搭載込み） 289.5 mm</text><path d="M 428.26 0 V 205" stroke="#9f5100" stroke-dasharray="3 4"/><text x="425.26" y="213" text-anchor="end" fill="#9f5100">注水時重心 428.3 mm</text><path d="M 462.55 0 V 228" stroke="#16603a" stroke-dasharray="3 4"/><text x="459.55" y="236" text-anchor="end" fill="#16603a">推定圧力中心 462.5 mm</text><text x="103" y="-6">搭載室</text>
+ <text x="189" y="-6">傘室</text><text x="270" y="-6">ボトル</text>
+ <text x="0" y="-175">配置寸法 mm（ボトル輪郭は模式図）</text></g></svg>

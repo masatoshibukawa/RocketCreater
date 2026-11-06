@@ -1,0 +1,6 @@
+item_id,name,qty,mass_kg,price_jpy,source_or_provisional
+pet_bottle_1p5l,1.5 L carbonated-drink PET bottle (PCO 1881 neck),1,0.0380,150,https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf
+bottle_nozzle_full_bore_22mm,Full-bore nozzle: open PET neck (~22 mm) with launcher seal,1,0.0050,800,https://en.wikipedia.org/wiki/Water_rocket
+bottle_fin_set_cardboard_3,"3 corrugated-cardboard fins, taped to the bottle",1,0.0250,100,provisional
+bottle_parachute_30cm_plastic,30 cm plastic-sheet parachute with string (homemade or Estes 12 in equivalent),1,0.0030,100,provisional
+payload,Payload (placeholder),1,0.0600,,design
