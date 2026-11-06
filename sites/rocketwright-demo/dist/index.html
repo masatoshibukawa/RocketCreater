@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="RocketWright の操作確認デモ。保存済みのサンプル2案で機体・寸法図・飛行結果・出力を確認できます。">
+  <meta name="robots" content="noindex,nofollow">
+  <title>RocketWright | 操作確認デモ</title>
+  <link rel="stylesheet" href="workbench.css">
+  <script src="demo-data.js" defer></script>
+  <script src="workbench.js" defer></script>
+</head>
+<body>
+  <div class="demo-banner" role="note"><strong>操作確認デモ</strong><span>保存済みのサンプル2案を使用 · 新しい設計計算は行いません</span><button id="demo-guide" class="quiet-button">操作ガイド</button><button id="demo-reset" class="quiet-button">最初から</button></div>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 3 9 5v8l-9 5-9-5V8Zm0 10 9-5M12 13 3 8m9 5v8"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M5 4h14v12H9l-4 4Zm3 4h8m-8 4h5"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M5 3h9l5 5v13H5Zm9 0v6h5M8 13h8m-8 4h6"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M5 16l5-7 5 3 6-8"/></symbol>
+    <symbol id="i-tree" viewBox="0 0 24 24"><path d="M5 3v15h6M5 7h6m5-3h5v6h-5Zm0 11h5v6h-5Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 20V4m-7 7 7-7 7 7"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6M8 8h8v8H8Z"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 15v6h16v-6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  </defs></svg>
+  <header class="topbar">
+    <button class="icon-button mobile-toggle" data-toggle="left" aria-label="機体構成を表示" aria-expanded="false"><svg><use href="#i-tree"/></svg></button>
+    <span class="wordmark" aria-label="RocketWright">RW</span>
+    <span class="project-path">recovery-rocket <span>/</span> <strong id="project-candidate">案 A</strong><span class="chevron">⌄</span></span>
+    <span class="top-divider"></span>
+    <button class="icon-button" id="reset-camera" aria-label="表示を元に戻す">↻</button>
+    <span class="top-spacer"></span>
+    <span class="preview-label">サンプルデータ</span>
+    <button class="quiet-button" id="reference-button">参照画面 <span>↗</span></button>
+    <button class="quiet-button" data-download="md"><svg><use href="#i-save"/></svg> サンプル出力</button>
+    <button class="icon-button mobile-toggle" data-toggle="right" aria-label="設計の相談を表示" aria-expanded="false"><svg><use href="#i-chat"/></svg></button>
+  </header>
+  <main class="workbench">
+    <nav class="rail left-rail" aria-label="表示切替">
+      <button class="rail-button is-active" data-view="model" aria-label="機体の概形" aria-pressed="true"><svg><use href="#i-cube"/></svg></button>
+      <button class="rail-button" data-view="drawing" aria-label="寸法図" aria-pressed="false"><svg><use href="#i-file"/></svg></button>
+      <button class="rail-button" data-view="flight" aria-label="飛行結果" aria-pressed="false"><svg><use href="#i-chart"/></svg></button>
+      <span class="rail-rule"></span>
+      <button class="rail-button" data-view="report" aria-label="結果と出力" aria-pressed="false"><svg><use href="#i-save"/></svg></button>
+    </nav>
+    <aside class="left-panel" id="left-panel" aria-label="設計案と条件">
+      <section class="tree-section">
+        <div class="panel-heading"><svg><use href="#i-tree"/></svg><h1>機体構成</h1><span class="heading-spacer"></span><span>···</span></div>
+        <div class="tree-scroll">
+          <div class="tree-label">設計案</div>
+          <div id="candidate-list" class="candidate-list" aria-label="設計案を選択"></div>
+          <div class="section-rule"></div>
+          <div class="tree-label">アマチュア / 機体</div>
+          <div class="component-list" id="component-list">
+            <button data-part="nose"><span class="tree-indent">⌁</span><svg><use href="#i-cube"/></svg>ノーズ<svg class="tree-eye"><use href="#i-eye"/></svg></button>
+            <button data-part="body"><span class="tree-indent">⌁</span><svg><use href="#i-cube"/></svg>胴体<svg class="tree-eye"><use href="#i-eye"/></svg></button>
+            <button data-part="fins"><span class="tree-indent">⌁</span><svg><use href="#i-cube"/></svg>フィン<svg class="tree-eye"><use href="#i-eye"/></svg></button>
+            <button data-part="motor"><span class="tree-indent">⌁</span><svg><use href="#i-cube"/></svg>モーター<svg class="tree-eye"><use href="#i-eye"/></svg></button>
+            <button data-part="recovery"><span class="tree-indent">⌁</span><svg><use href="#i-cube"/></svg>回収装置</button>
+            <button data-part="payload"><span class="tree-indent">⌁</span><svg><use href="#i-cube"/></svg>積載物</button>
+          </div>
+          <div class="section-rule"></div>
+          <div class="tree-label" id="part-label">設計変数</div>
+          <dl class="properties" id="design-properties"></dl>
+        </div>
+      </section>
+      <section class="conditions-section">
+        <div class="panel-heading"><svg><use href="#i-file"/></svg><h2>設計条件</h2></div>
+        <dl class="properties conditions"><dt>目標高度</dt><dd>2,000 <span>m</span></dd><dt>積載質量</dt><dd>1.0 <span>kg</span></dd><dt>予算</dt><dd>50,000 <span>円</span></dd><dt>回収</dt><dd>あり</dd><dt>風速 / 標高</dt><dd>3 m/s / 300 m</dd></dl>
+      </section>
+      <section class="files-section">
+        <div class="panel-heading"><svg><use href="#i-file"/></svg><h2>出力ファイル</h2></div>
+        <button class="file-row" data-download="svg"><svg><use href="#i-file"/></svg>機体図.svg</button>
+        <button class="file-row" data-download="csv"><svg><use href="#i-file"/></svg>部品表.csv</button>
+        <button class="file-row" data-download="md"><svg><use href="#i-file"/></svg>設計レポート.md</button>
+      </section>
+    </aside>
+    <section class="viewport" aria-label="機体と解析結果">
+      <nav class="viewport-toolbar" aria-label="中央画面">
+        <button data-view="model" class="is-active" aria-pressed="true"><svg><use href="#i-cube"/></svg>機体</button>
+        <button data-view="drawing" aria-pressed="false"><svg><use href="#i-file"/></svg>寸法図</button>
+        <button data-view="flight" aria-pressed="false"><svg><use href="#i-chart"/></svg>飛行結果</button>
+        <span class="tool-separator"></span>
+        <button id="fit-camera" class="icon-button" aria-label="全体表示"><svg><use href="#i-fit"/></svg></button>
+      </nav>
+      <div class="view-pane" data-pane="model">
+        <canvas id="model-canvas" aria-label="選択した機体の概形。ドラッグまたは方向キーで回転、プラス・マイナスで拡大縮小できます。" tabindex="0"></canvas>
+        <div class="canvas-caption"><span id="model-name">案 A</span><span>概形表示 / 部品の詳細形状は省略</span></div>
+        <div class="canvas-controls"><button id="zoom-out" aria-label="縮小">−</button><output id="zoom-level">100%</output><button id="zoom-in" aria-label="拡大">＋</button></div>
+        <div class="axis" aria-label="座標軸"><span class="axis-y">Y</span><span class="axis-z">Z</span><span class="axis-x">X</span><span class="axis-origin"></span></div>
+      </div>
+      <div class="view-pane drawing-pane" data-pane="drawing" hidden><img id="drawing-image" alt="既存の作図機能で生成した、選択設計案の寸法図"></div>
+      <div class="view-pane analysis-pane" data-pane="flight" hidden><h2>飛行結果 <span id="flight-candidate"></span></h2><div id="flight-metrics" class="analysis-metrics"></div><svg id="flight-chart" role="img" aria-label="飛行時間と高度の推移"></svg><p class="data-caption">固定シナリオ / seed 42 / 既存の物理モデルによる公称飛行</p></div>
+      <div class="view-pane report-pane" data-pane="report" hidden><h2>結果と出力</h2><div id="result-summary" aria-live="polite"></div><div class="download-row"><button class="quiet-button" data-download="svg">機体図 SVG ↓</button><button class="quiet-button" data-download="csv">部品表 CSV ↓</button><button class="quiet-button" data-download="md">レポート MD ↓</button><button class="quiet-button" data-download="json">結果 JSON ↓</button></div><pre id="report-preview"></pre></div>
+    </section>
+    <aside class="chat-panel" id="right-panel" aria-label="設計の相談">
+      <div class="panel-heading"><svg><use href="#i-chat"/></svg><h2>設計の相談</h2><span class="heading-spacer"></span><span>···</span></div>
+      <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
+        <div class="message user-message"><div class="message-role">あなた</div><p>1 kg の荷物を高さ 2 km まで飛ばして、回収したい。予算は 5 万円。</p></div>
+        <div class="message"><div class="message-role">RocketWright</div><p>条件の同じ2案を比較できます。機体を選ぶと、寸法と飛行結果が切り替わります。</p><div id="chat-candidate-summary"></div></div>
+      </div>
+      <div class="demo-questions" aria-label="比較の質問例"><button type="button" data-question="高度が高いのは？">高度を比較</button><button type="button" data-question="費用が低いのは？">費用を比較</button><button type="button" data-question="降下速度が低いのは？">回収を比較</button></div>
+      <form class="chat-composer" id="chat-form"><label class="sr-only" for="chat-input">設計案について質問</label><textarea id="chat-input" rows="3" placeholder="高度、費用、回収について比較する…" maxlength="1000" required></textarea><div class="composer-actions"><span>固定デモの比較</span><button class="send-button" type="submit" aria-label="比較する"><svg><use href="#i-arrow"/></svg></button></div></form>
+      <p class="chat-note">保存済みの計算結果を使った画面試作です。ここでの入力による新しい設計計算は行いません。</p>
+    </aside>
+    <nav class="rail right-rail" aria-label="相談画面"><button class="rail-button is-active" data-toggle="right" aria-label="相談パネルを切替" aria-expanded="true"><svg><use href="#i-chat"/></svg></button></nav>
+  </main>
+  <footer class="statusbar"><span class="connection-dot"></span><span>RocketWright</span><span class="status-divider"></span><span>アマチュア</span><span class="status-divider"></span><span>固定デモ / seed 42</span><span class="top-spacer"></span><span id="selection-status" aria-live="polite">案 A</span><span class="status-divider"></span><span>m / kg</span></footer>
+  <dialog id="demo-guide-dialog" aria-labelledby="demo-guide-title"><div class="dialog-heading"><h2 id="demo-guide-title">操作確認ガイド</h2><button id="close-demo-guide" class="quiet-button">閉じる ×</button></div><ol class="demo-steps"><li><b>案を選ぶ</b><p>左の「案 A」「案 B」を押すと、機体・寸法・結果が同じ案に切り替わります。</p></li><li><b>機体を動かす</b><p>ドラッグで回転、＋ / − で拡大縮小。方向キー、＋ / −、0 キーでも操作できます。</p></li><li><b>結果を見る</b><p>上の「寸法図」「飛行結果」、左の出力アイコンから結果とレポートを確認できます。</p></li><li><b>比較してみる</b><p>右の質問例を押すか、「費用が低いのは？」などと入力してください。狭い画面では右上の相談ボタンを使います。</p></li><li><b>出力を試す</b><p>選択案の SVG / CSV / Markdown / JSON を保存できます。すべて画面確認用のサンプルです。</p></li></ol><p class="demo-limit">保存済みの計算結果を表示しています。入力による新しい設計・シミュレーション・Claude API 呼び出しは行いません。リロードまたは「最初から」で初期状態に戻ります。</p></dialog>
+  <dialog id="reference-dialog" aria-labelledby="reference-title"><div class="dialog-heading"><h2 id="reference-title">再現の基準</h2><button id="close-reference" class="quiet-button">閉じる ×</button></div><p>Zoo Design Studio の公式公開画面。中央キャンバス、左右のドック、ツールバー、配色と余白を基準にしています。</p><img src="https://zoo.dev/images/download/start-building-today.webp" alt="Zoo Design Studioの公式公開画面。左が構成とコード、中央がモデル、右が対話。" loading="lazy"><p><a href="https://zoo.dev/design-studio" target="_blank" rel="noopener noreferrer">Zoo Design Studio</a> · <a href="https://github.com/KittyCAD/modeling-app" target="_blank" rel="noopener noreferrer">公開ソース</a> · 画面出典：Zoo</p><p>元製品のコードやロゴは組み込んでいません。機体と表示内容は RocketWright の既存デモに置き換えています。</p></dialog>
+</body>
+</html>
