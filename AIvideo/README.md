@@ -7,6 +7,7 @@ Reusable production skills, research notes, source references, and templates for
 写実的なAI映像、SF映画のVFX、音声・効果音・音楽、ローカル生成について、制作スキルと調査資料を整理しています。
 
 - [動画制作スキルの索引](skills/video-production/SKILL.md) — 入口のスキルと、その下の7カテゴリのスキル
+- [アプリ全体のデモ動画計画](product-demo/README.md) — Built with Claude: Japan 2026向けの実動作デモ。台本・絵コンテ・字幕・収録計画
 - [フェアリング映像の再現プロジェクト](Test%20project/README.md) — Blenderの3D、カメラ、HUD、音を組み合わせる制作例
 - [ローカルAI動画生成](local-runtime/README.md) — ComfyUI＋Wan2.2の分離導入、ロケット画像からの短い動画生成と実測記録
 - [2L PET試作v2の設計・上昇予測動画](pet-rocket/README.md) — 原寸STL、連続した水・空気噴射モデル、映像と数値の同期検証
