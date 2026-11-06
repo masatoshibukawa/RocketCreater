@@ -58,6 +58,10 @@ flowchart TD
 
 別に、定推力と真空弾道、有限根元支持を持つ一様梁、断熱膨張のpV^γ、熱平衡の厳密解を照合する。実装の数値検証と実験との一致は別の結果として保存する。文献機体と異なる現在の機体のCFD・材料強度まで検証済みとはしない。[NASAのV&V資料](https://www.grc.nasa.gov/www/wind/valid/tutorial/valassess.html)に沿って適用範囲を明示する。
 
+[実行結果](../scenarios/adaptive_design/reference-validation.json)では厳密解4項目は通過したが、文献の測定誤差内に入った飛行は5件中2件。追加照合の飛行3は14.1 mに対し12.405 mで、約1.69 mの過小予測だった。全5件の相対誤差RMSは6.74%だが、既存調整に使った条件と発射不調の条件を含み、新しい機体の予測精度を示す数値ではない。
+
+![球の格子比較と文献飛行の比較](../scenarios/adaptive_design/reference-checks.png)
+
 ```powershell
 python -m scripts.run_design_search scenarios/adaptive_design/spec.json output/new-search --limits scenarios/adaptive_design/search-limits.json --runtime <host-runtime.json>
 ```

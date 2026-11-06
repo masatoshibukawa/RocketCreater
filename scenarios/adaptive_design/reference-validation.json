@@ -1,0 +1,120 @@
+{
+  "verification": {
+    "axial_relative_error": 1.9148851561795356e-05,
+    "beam_relative_error": 9.078249461522566e-11,
+    "gas_pv_relative_error": 2.624991335409277e-10,
+    "thermal_equilibrium_error_c": 0.0
+  },
+  "verification_checks": {
+    "axial": true,
+    "beam": true,
+    "gas": true,
+    "thermal": true
+  },
+  "reference_flights": [
+    {
+      "launch": 1,
+      "split": "legacy calibration overlap",
+      "observed_m": 17.5,
+      "measurement_error_m": 0.5,
+      "predicted_m": 17.354588908797027,
+      "error_m": -0.14541109120297335,
+      "relative_error": -0.008309205211598477,
+      "within_measurement": true,
+      "cd_scenario_height_m": [
+        16.5005346314357,
+        18.34944702946518
+      ],
+      "completed": true,
+      "mass_balance_relative": 1.3585385662226729e-09,
+      "energy_balance_relative": 6.9251495868674265e-12
+    },
+    {
+      "launch": 2,
+      "split": "legacy calibration overlap",
+      "observed_m": 17.1,
+      "measurement_error_m": 0.5,
+      "predicted_m": 17.36854364560117,
+      "error_m": 0.26854364560117006,
+      "relative_error": 0.01570430676030234,
+      "within_measurement": true,
+      "cd_scenario_height_m": [
+        16.49597082576818,
+        18.385005615999116
+      ],
+      "completed": true,
+      "mass_balance_relative": 1.851907784364388e-09,
+      "energy_balance_relative": 6.968372146211753e-12
+    },
+    {
+      "launch": 3,
+      "split": "additional fixed audit",
+      "observed_m": 14.1,
+      "measurement_error_m": 0.5,
+      "predicted_m": 12.405068026721871,
+      "error_m": -1.6949319732781287,
+      "relative_error": -0.12020794136724318,
+      "within_measurement": false,
+      "cd_scenario_height_m": [
+        11.9285947599725,
+        12.939260702608316
+      ],
+      "completed": true,
+      "mass_balance_relative": 2.4974142730615002e-09,
+      "energy_balance_relative": 7.744175199195128e-12
+    },
+    {
+      "launch": 4,
+      "split": "legacy calibration overlap",
+      "observed_m": 17.4,
+      "measurement_error_m": 0.5,
+      "predicted_m": 16.53757435763064,
+      "error_m": -0.8624256423693595,
+      "relative_error": -0.049564692090193076,
+      "within_measurement": false,
+      "cd_scenario_height_m": [
+        15.704242310382295,
+        17.50612916859732
+      ],
+      "completed": true,
+      "mass_balance_relative": 1.9009461491760567e-09,
+      "energy_balance_relative": 6.818203783604082e-12
+    },
+    {
+      "launch": 6,
+      "split": "off-nominal launch stress case",
+      "observed_m": 7.6,
+      "measurement_error_m": 0.5,
+      "predicted_m": 8.164494803143311,
+      "error_m": 0.5644948031433117,
+      "relative_error": 0.07427563199254102,
+      "within_measurement": false,
+      "cd_scenario_height_m": [
+        7.959606702201475,
+        8.385449209616812
+      ],
+      "completed": true,
+      "mass_balance_relative": 4.221472044748206e-10,
+      "energy_balance_relative": 8.456162792214171e-12
+    }
+  ],
+  "source": "https://arxiv.org/html/2001.08828",
+  "source_location": "Section 9, Table 2",
+  "fit_performed": false,
+  "coefficients_changed": false,
+  "reference_rms_relative_error": 0.06743759414407922,
+  "scope": "Production discharge plus vertical axial model; not the complete 6DOF/CFD airframe",
+  "limitations": [
+    "0.9 discharge and heat exchange coefficients remain assumptions",
+    "launch 6 includes reported launch friction/leakage and is kept separate",
+    "no CFD surface-geometry or printed-strength experimental validation",
+    "small-grid differences are not bounds on physical model error"
+  ],
+  "physical_qualification": false,
+  "aircraft_validation": false,
+  "metrics": {
+    "exact_benchmarks_pass": true
+  },
+  "evidence_sha256": "c409a696a9f4d23a5b3db006f45826bd581af06dcc83038469de716b4c12cad7",
+  "manifest_sha256": "1fa5549c8b339e2249df459cc22c561635b5a2cde94f2bdb8fbbcdf48cfb6942"
+}
