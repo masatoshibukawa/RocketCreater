@@ -65,7 +65,9 @@ export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps
           <td>{row.static_margin_cal === null ? "—" : fmt(row.static_margin_cal, 2)}</td>{hasPressure ? <td>{fmt(row.pressure_kpa ?? Number.NaN, 0)}</td> : null}<td>{fmt(row.apogee_m, 2)}</td><td>{fmt(row.descent_speed_mps, 2)}</td>
         </tr>)}</tbody>
       </table></div>
-      <p className="wb-note">機体の形は容量から決めた代表形状で、部品のフィンの寸法は入っていません。この表の安定余裕は、右の欄の値と一致しないことがあります。</p>
+      <p className="wb-note">{request?.design.tier === "bottle" && request.design.geometry
+        ? "保存した設計の胴径・ノーズ・フィン寸法から解析包絡を作ります。穴・丸み・取付部は省略し、静安定余裕と実機の安定性は別に確認します。"
+        : "機体の形は容量から決めた代表形状で、部品のフィンの寸法は入っていません。この表の安定余裕は、右の欄の値と一致しないことがあります。"}</p>
       {loop.dispersion ? <p className="wb-note">更新後の案の条件別試行: {loop.dispersion.passes} / {loop.dispersion.n}（{fmt(loop.dispersion.success_rate * 100, 1)}%）。</p> : null}
       <p className="wb-note">元の案の{loop.baseline.pressure_kpa === null ? "" : `圧力は${fmt(loop.baseline.pressure_kpa, 0)} kPa、`}抗力係数は{loop.baseline.cd === null ? "既定値" : fmt(loop.baseline.cd, 3)}です。</p>
       {loop.notes.length > 0 ? <ul className="wb-limitations">{loop.notes.map(text => <li key={text}>{text}</li>)}</ul> : null}

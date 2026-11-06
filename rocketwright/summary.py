@@ -86,6 +86,11 @@ def _mass_multistage(design: MultistageDesign) -> dict[str, float]:
 
 
 def _dims_bottle(design: BottleDesign) -> dict[str, float]:
+    if design.geometry:
+        return {
+            "length_m": design.geometry.overall_mm / 1000,
+            "diameter_m": design.geometry.body_diameter_mm / 1000,
+        }
     from rocketwright.physics.water import bottle_diameter_m
 
     d = bottle_diameter_m(design.bottle_volume_m3)

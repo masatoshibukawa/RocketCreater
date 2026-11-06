@@ -94,7 +94,7 @@ button:disabled { cursor:default; opacity:.45; }
 .hero-view .model-overlay-bottom { top:122px; bottom:auto; left:20px; right:auto; max-width:42%; flex-direction:column; align-items:flex-start; font-size:14px; }
 .hero-view .model-caption { font-size:14px; color:#b7c4d6; background:#222a34; border-radius:3px; }
 .hero-view .model-dims { background:#232a33; color:#e4eaf2; font-size:14px; padding:3px 8px; }
-.hero-view .model-notes { top:94px; left:20px; right:20px; font-size:14px; }
+.hero-view .model-notes { top:auto; bottom:calc(17cqw + 8px); left:20px; right:auto; max-width:42%; font-size:14px; }
 .scene-image-label { position:absolute; left:22px; bottom:20px; font-size:14px; color:#a3adba; padding:3px 6px; background:#191b1eaa; }
 .workshop-app .chip { background:#29313d; border-color:#4b5f7b; color:#d2e3fb; font-size:14px; border-radius:4px; }
 .workshop-app .tier-badge { color:#c9dbf4; background:#263142; border:1px solid #526680; border-radius:4px; font-size:14px; padding:2px 8px; }
@@ -128,6 +128,9 @@ button:disabled { cursor:default; opacity:.45; }
 .drawing-workspace { background:#191d23; }
 .drawing-workspace .drawing-svg { background:#f5f6f7; border-radius:3px; margin-top:18px; }
 .production-workspace { padding:26px 32px; }
+/* The quick files and the saved-design flow share one scroll, above the crew. */
+.production-stack { height:100%; overflow:auto; padding-bottom:19cqw; }
+.production-stack .production-workspace { height:auto; overflow:visible; }
 .production-workspace h2 { font-size:20px; }
 .workshop-app .wb-file-list a { background:#282e37; border-color:#4f5e70; border-radius:4px; color:#cfe3ff; }
 .workshop-app .wb-file-list small { color:#a9bdd7; }

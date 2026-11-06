@@ -473,10 +473,25 @@ export function certificationNotes(warnings: string[]): string[] {
   const out: string[] = [];
   for (const w of warnings) {
     if (!fragments.some((f) => w.includes(f))) continue;
-    const text = w.startsWith("build: ") ? w.slice("build: ".length) : w;
+    const text = noteInJapanese(w.startsWith("build: ") ? w.slice("build: ".length) : w);
     if (!out.includes(text)) out.push(text);
   }
   return out;
+}
+
+/** The two build.check_buildability messages the note shows, for the person reading the screen. */
+function noteInJapanese(text: string): string {
+  const motor = text.match(/^motor (\S+) \((\d+) Ns, (\w+)\) is a high-power motor.*NAR\/Tripoli (.+?) certification/);
+  if (motor) {
+    const [, id, impulse, letter, level] = motor;
+    return `モーター ${id}（${impulse} Ns、${letter} クラス）は大型モーターです。購入と打ち上げには NAR / Tripoli の ${level} 認定と、大型モーターの打ち上げ場が必要です。`;
+  }
+  const tubes = text.match(/(\S+): (\d+) tubes joined with (\d+) x (\S+)/);
+  if (tubes) {
+    const [, id, count, joints, coupler] = tubes;
+    return `胴体は ${id} を ${count} 本、${coupler} ${joints} 個でつなぎます（部品表に入っています）。`;
+  }
+  return text;
 }
 
 /**
@@ -851,9 +866,13 @@ function applyFinal(state: DesignState, ev: AgentEvent): DesignState {
       const sourceValues = Object.values(fd.sources);
       const sourceId = fd.sources.cost_jpy ?? sourceValues[0] ?? `final-${i}`;
       const attempt = state.attempts.find((a) => a.id === sourceId);
+      // The design that was flown, not Claude's restatement of it, which can be abridged.
+      const flown = [sourceId, ...sourceValues]
+        .map((id) => state.attempts.find((a) => a.id === id))
+        .find((a) => a?.design);
       candidates = upsertCandidate(candidates, {
         source_id: sourceId,
-        design: fd.design,
+        design: flown?.design ?? fd.design,
         metrics: fd.metrics,
         cost_jpy: fd.cost_jpy,
         passed: fd.passed,

@@ -22,3 +22,23 @@
 @keyframes ws-lamp { from { opacity: .55; } 45% { opacity: 1; } 60% { opacity: .75; } to { opacity: .95; } }
 @keyframes ws-scan { from { top: 16%; } to { top: 31%; } }
 @media (prefers-reduced-motion: reduce) { .ws-part, .ws-lamp, .ws-scan { animation: none; } }
+.workshop-scene[data-phase="waiting"] .ws-measure,
+.workshop-scene[data-phase="waiting"] .ws-write,
+.workshop-scene[data-phase="waiting"] .ws-point { animation: ws-rest 5s ease-in-out infinite alternate; }
+.workshop-scene[data-phase="waiting"] .ws-nod { animation: ws-look 6s ease-in-out infinite alternate; }
+.workshop-scene[data-phase="tidying"] .ws-measure,
+.workshop-scene[data-phase="tidying"] .ws-point,
+.workshop-scene[data-phase="tidying"] .ws-write { animation: ws-put-away 6s ease-in-out both; }
+.workshop-scene[data-phase="tidying"] .ws-nod { animation: ws-cleanup-look 6s ease-in-out both; }
+.ws-tool-tray { position: absolute; right: 9%; bottom: 2%; width: 9%; height: 7%; border: 2px solid #647781; border-top: 0; border-radius: 0 0 5px 5px; opacity: .5; }
+.ws-returned-tool { display: none; position: absolute; width: 4%; height: 3%; background: #91adb9; border-radius: 3px; }
+.workshop-scene[data-phase="tidying"] .ws-returned-tool { display: block; animation: ws-return-tool 6s ease-in-out both; }
+@keyframes ws-rest { from { transform: rotate(7deg) translateY(5%); } to { transform: rotate(7.5deg) translateY(5%); } }
+@keyframes ws-look { 0%, 60% { transform: rotate(-1deg); } 80%, 100% { transform: rotate(2deg); } }
+@keyframes ws-put-away { 0% { transform: rotate(0); } 45% { transform: rotate(18deg) translate(5%, 14%); } 80%, 100% { transform: rotate(8deg) translateY(6%); } }
+@keyframes ws-cleanup-look { 0% { transform: rotate(0); } 50% { transform: rotate(8deg); } 100% { transform: rotate(0); } }
+@keyframes ws-return-tool { 0%, 15% { left: 27%; top: 42%; opacity: 0; transform: rotate(-25deg); } 25% { opacity: 1; } 75%, 100% { left: 84%; top: 89%; opacity: 1; transform: rotate(0); } }
+.workshop-scene[data-tempo="still"] .ws-part,
+.workshop-scene[data-tempo="still"] .ws-returned-tool { animation: none; }
+.workshop-scene[data-tempo="still"] .ws-returned-tool { display: none; }
+@media (prefers-reduced-motion: reduce) { .workshop-scene .ws-part, .ws-returned-tool { animation: none !important; } .ws-returned-tool { display: none !important; } }

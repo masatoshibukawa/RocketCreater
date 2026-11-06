@@ -451,6 +451,28 @@ def airframe(
         raise ValueError("an assembled shape applies to bottle designs only")
     if shape is not None:
         shells, params = _assembled(design, shape, segments)
+    elif isinstance(design, BottleDesign) and design.geometry is not None:
+        g = design.geometry
+        shells, params = _finned_cylinder(
+            "conical",
+            g.nose_length_mm / 1000,
+            g.overall_mm / 1000,
+            g.body_diameter_mm / 1000,
+            FinSet(
+                count=g.fin_count,
+                root_chord_m=g.fin_root_mm / 1000,
+                tip_chord_m=g.fin_tip_mm / 1000,
+                span_m=g.fin_span_mm / 1000,
+                sweep_m=g.fin_sweep_mm / 1000,
+                thickness_m=g.fin_thickness_mm / 1000,
+            ),
+            g.fin_tail_inset_mm / 1000,
+            segments,
+        )
+        if not design.has_fins:
+            shells = shells[:1]
+            params["fin_count"] = 0
+        params.update(_bottle_cg(design, params))
     elif isinstance(design, BottleDesign):
         shells, params = _bottle(design, segments)
     elif isinstance(design, AmateurDesign):

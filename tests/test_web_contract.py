@@ -307,3 +307,7 @@ def test_workshop_art_ships_with_the_web_app_and_stays_decoration():
     # Errors stop the crew, and the shared motion control stops them too.
     assert "motionEnabled" in _ts("components/WorkshopScene.tsx")
     assert '"attention"' in _ts("components/WorkshopScene.tsx")
+
+
+def test_a_final_candidate_keeps_the_design_that_was_flown():
+    assert "flown?.design ?? fd.design" in _ts("lib/designState.ts")

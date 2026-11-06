@@ -164,7 +164,12 @@ def _schema_of(model: type[BaseModel]) -> dict[str, Any]:
 
 def _design_schema() -> dict[str, Any]:
     raw = DesignAdapter.json_schema()
-    return _strictify(raw, raw.get("$defs", {}))
+    # Production sets the measured geometry; Claude never does, and every turn pays for the schema.
+    defs = {name: schema for name, schema in raw["$defs"].items() if name != "BottleGeometry"}
+    bottle = defs["BottleDesign"]
+    properties = {k: v for k, v in bottle["properties"].items() if k != "geometry"}
+    defs = {**defs, "BottleDesign": {**bottle, "properties": properties}}
+    return _strictify({**raw, "$defs": defs}, defs)
 
 
 def _build_schema() -> dict[str, Any]:

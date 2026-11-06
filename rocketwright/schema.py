@@ -130,6 +130,39 @@ class Env(_Frozen):
 # --------------------------------------------------------------------------- designs
 
 
+class BottleGeometry(_Frozen):
+    """Shared non-pressure part dimensions. Millimetres, nozzle at z=0, nose upward."""
+
+    body_diameter_mm: float = Field(ge=30, le=200)
+    body_height_mm: float = Field(ge=50, le=500)
+    nose_length_mm: float = Field(ge=30, le=280)
+    fin_root_mm: float = Field(ge=35, le=200)
+    fin_tip_mm: float = Field(ge=10, le=180)
+    fin_span_mm: float = Field(ge=15, le=150)
+    fin_sweep_mm: float = Field(ge=0)
+    fin_count: int = Field(default=4, ge=3, le=6)
+    fin_thickness_mm: float = Field(default=2.4, ge=1.2, le=6)
+    nose_wall_mm: float = Field(default=1.6, ge=1, le=3)
+    fin_tail_inset_mm: float = Field(default=0, ge=0)
+    dimensions_measured: bool = False
+
+    @model_validator(mode="after")
+    def contained_tip(self):
+        if self.fin_tip_mm + self.fin_sweep_mm > self.fin_root_mm:
+            raise ValueError("Fin tip and sweep must fit inside the root chord")
+        if self.fin_root_mm + self.fin_tail_inset_mm > self.nose_base_mm:
+            raise ValueError("Fin root must fit below the nose mounting station")
+        return self
+
+    @property
+    def nose_base_mm(self):
+        return 0.9 * self.body_height_mm - min(18, self.nose_length_mm / 4)
+
+    @property
+    def overall_mm(self):
+        return self.nose_base_mm + self.nose_length_mm
+
+
 class BottleDesign(_Frozen):
     tier: Literal["bottle"] = "bottle"
     bottle_volume_m3: float = Field(gt=0)  # a 1.5 L bottle is 0.0015
@@ -142,6 +175,7 @@ class BottleDesign(_Frozen):
     axial_drag_coefficient: float | None = Field(default=None, gt=0, allow_inf_nan=False)
     has_parachute: bool = False
     parachute_diameter_m: float | None = Field(default=None, gt=0)
+    geometry: BottleGeometry | None = None
 
     @model_validator(mode="after")
     def _parachute_consistency(self) -> BottleDesign:
