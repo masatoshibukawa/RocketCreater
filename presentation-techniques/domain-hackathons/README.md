@@ -7,6 +7,8 @@ Anthropic主催の大会と、ソフトウェア以外の専門知識を持つ�
 ## 今回の大会から読む
 
 - [Built with Claude: Japan 2026と指定チャットの分析](01-japan-and-chat.md)
+- [大会の目的・審査と専門知識の役割](02-events-and-domain-expertise.md)
+- [25作品の比較と、単純な勝ち筋では説明できない事例](03-winners-and-counterexamples.md)
 - [出典と確認範囲](sources.md)
 
 今回の日本大会は、深く知る世界の課題と、専門能力へのアクセスをテーマにしている。提供された参加者ガイドの配点は、インパクト30％、デモ25％、Claude活用25％、深さと実行20％。実際の動作を中心にした日本語3分以内の動画が必要になる。[D01・U01・U02](sources.md)
