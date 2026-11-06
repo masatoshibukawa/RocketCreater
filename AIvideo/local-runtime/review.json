@@ -1,0 +1,17 @@
+{
+  "reviewed_on": "2026-11-04",
+  "output": "outputs/rocketwright_wan22_test.mp4",
+  "inspected": ["six-frame timed contact sheet", "full-resolution last frame", "original input render"],
+  "observations": [
+    "The two fairing halves and central upper-stage assembly remain recognizable.",
+    "Motion is subtle, with a small perspective change rather than a dramatic camera move.",
+    "The rendered CG appearance remains, and fine truss and background details soften.",
+    "No visible service watermark or unwanted text was found in the reviewed frames."
+  ],
+  "full_real_time_playback_review": false,
+  "exact_geometry_preservation_verified": false,
+  "photorealism_improvement_verified": false,
+  "audio": "silent",
+  "peak_gpu_memory_measured": false,
+  "limitations": "Contact-sheet inspection is not a full playback or a pixel-identical reference comparison."
+}

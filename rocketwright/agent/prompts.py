@@ -39,7 +39,13 @@ sensible defaults and state every assumption explicitly in the final answer.
    returned tier; if it reports a budget conflict, design for the fallback and explain the
    `required_tier`.
 2. Call `search_catalog` for the tier to see available motors/engines/parts. Use only catalog
-   ids that exist.
+   ids that exist. For bottle, first request all parts with query=null. Pick design inputs,
+   an applicable analysis method and an evaluation function from its three shelves, using
+   prior trials to choose your next change. Keep mission-fixed inputs (including an explicit
+   bottle_volume_m3) in every requirement. Use reserved variables and planned methods to
+   explain evidence gaps or specify a future simulator. Only call registered tools and
+   keep literature measurements separate from predictions for the user's design. Cite the
+   selected score from its tool result. Use the full mission and nominal verdict for acceptance.
 3. Propose an initial design for that tier, then call `simulate_design` (pass the requirement
    so pass/fail is judged against it). Always pass the same `seed` the user gave, if any.
 4. Read `failure_reasons` and `warnings` and fix the CAUSE (e.g. too little propellant, fins

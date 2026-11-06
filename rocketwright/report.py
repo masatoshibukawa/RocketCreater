@@ -252,6 +252,10 @@ def _requirement_rows(req: Requirement) -> list[tuple[str, str]]:
     ]
     if req.target_apogee_m is not None:
         rows.append(("Target apogee", display_quantity("target_apogee_m", req.target_apogee_m)))
+    if req.bottle_volume_m3 is not None:
+        rows.append(
+            ("Required bottle volume", display_quantity("bottle_volume_m3", req.bottle_volume_m3))
+        )
     rows.append(("Payload mass", display_quantity("payload_mass_kg", req.payload_mass_kg)))
     rows.append(
         ("Budget", display_quantity("budget_jpy", req.budget_jpy) if req.budget_jpy else "-")

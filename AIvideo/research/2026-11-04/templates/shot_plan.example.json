@@ -1,0 +1,21 @@
+{
+  "kind": "planning_template_not_a_comfyui_workflow",
+  "project": "Observation Gate",
+  "status": "proposed_not_generated",
+  "target_duration_seconds": 30,
+  "visual_reference": {
+    "character": "Original field engineer, dark rain jacket with a pale shoulder patch",
+    "lighting": "Overcast dusk with pale blue light from the distant aperture",
+    "reference_image_path": null
+  },
+  "shots": [
+    {"id": "SH010", "timeline_start_s": 0, "timeline_end_s": 5, "purpose": "Establish the abandoned observatory", "method": "I2V or 3D", "camera": "slow forward movement", "prompt_en": "Low clouds drift over an abandoned observatory. The camera slowly moves forward.", "dialogue_ja": null, "audio": "wind and distant machinery"},
+    {"id": "SH020", "timeline_start_s": 5, "timeline_end_s": 10, "purpose": "Introduce the engineer", "method": "I2V", "camera": "gentle dolly in", "prompt_en": "The engineer slowly raises her eyes toward a distant light. Rain beads slide down her jacket.", "dialogue_ja": "信号が、戻った。", "audio": "voice and rain"},
+    {"id": "SH030", "timeline_start_s": 10, "timeline_end_s": 15, "purpose": "Activate the device", "method": "live action or 3D plus compositing", "camera": "locked close-up", "prompt_en": "A gloved hand touches the device. A small pale light turns on.", "dialogue_ja": null, "audio": "short mechanical activation"},
+    {"id": "SH040", "timeline_start_s": 15, "timeline_end_s": 20, "purpose": "Reveal the aperture", "method": "generated background plus FX", "camera": "restrained wide shot", "prompt_en": "A vast circular aperture slowly opens above the horizon. Pale blue light spreads over the wet structures.", "dialogue_ja": null, "audio": "rising tone, impact, then resonance"},
+    {"id": "SH050", "timeline_start_s": 20, "timeline_end_s": 25, "purpose": "Show the decision", "method": "I2V", "camera": "rear view", "prompt_en": "The engineer takes a slow step toward the distant light. Her rain jacket moves gently in the wind.", "dialogue_ja": "今度は、私たちが迎えに行く。", "audio": "voice and restrained music"},
+    {"id": "SH060", "timeline_start_s": 25, "timeline_end_s": 30, "purpose": "End on the title", "method": "editing", "camera": "hold the final composition", "prompt_en": null, "dialogue_ja": null, "audio": "musical resolution and tail"}
+  ],
+  "generation_parameters": null,
+  "notes": "Timeline lengths are editorial targets. Generate and trim clips as needed; keep model-specific resolution/frame constraints in the actual workflow."
+}

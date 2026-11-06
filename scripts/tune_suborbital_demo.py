@@ -104,10 +104,10 @@ CANDIDATES: dict[str, list[tuple[str, dict[str, Any], str, list[float]]]] = {
             [250e3, 300e3, 350e3, 400e3, 450e3],
         ),
         (
-            "2 L bottle",
-            _bottle(bottle_volume_m3=0.002, dry_mass_kg=0.14),
-            "initial_gauge_pressure_pa",
-            [250e3, 300e3, 350e3, 400e3],
+            "1.5 L bottle, fill scan",
+            _bottle(initial_gauge_pressure_pa=300e3),
+            "water_fill_frac",
+            [0.30, 0.35, 0.40, 0.45],
         ),
     ],
 }

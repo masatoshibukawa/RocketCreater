@@ -1,0 +1,22 @@
+{
+  "design_baseline": "Existing 2L PET prototype v2; unmeasured values explicitly labeled",
+  "visual_review": {
+    "scope": "Both eight-frame timed contact sheets, posters and selected full-resolution rendered frames",
+    "checks": [
+      "Original three-fin CAD geometry and exploded translations are recognizable",
+      "Design title, numerical panels and assumptions are readable in selected frames",
+      "Extended terrain and camera clipping remove the earlier finite-ground band",
+      "No flame or smoke is used for water/air propulsion",
+      "Liquid visibility and displayed state are checked against the numerical timeline"
+    ],
+    "limitations": [
+      "Approximate bottle, launcher, trees and ground remain visibly CG",
+      "Ballistic water parcels do not resolve real breakup, splash or air drag",
+      "Empty PET can retain a blue tint from refraction; it does not indicate remaining water",
+      "Real-time full playback and actual audio listening were not performed"
+    ]
+  },
+  "audio_review": "Stereo WAV signal level and duration checks; original synthetic cues and flow-driven noise, not measured acoustics",
+  "physics_scope": "Conditional still-air vertical ascent to apogee; no attitude, retention, structure or recovery qualification",
+  "production_method": "AI-assisted scene scripting, exact frozen STL, numerical integration and local physically based rendering; no service watermark"
+}

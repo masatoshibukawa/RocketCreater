@@ -178,7 +178,11 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "List catalog items: engines and strap-on boosters (commercial/heavy, "
                 "catalog/engines.yaml), parts (bottle/amateur) and solid motors (amateur, RASP "
                 ".eng files). Filter by tier and/or free-text query. Use the returned `id` "
-                "values verbatim as engine_id / booster_id / motor_id in designs."
+                "values verbatim as engine_id / booster_id / motor_id in designs. For bottle "
+                "designs, kind=parts with query=null returns the complete variable_definitions, "
+                "analysis_methods and evaluation_functions shelves. Part searches filter these "
+                "to the matching components. Only design_inputs go into the simulation. "
+                "The planned shelf describes future simulator contracts and validation sources."
             ),
             "strict": True,
             "input_schema": _obj(
@@ -304,6 +308,10 @@ def _judge(design: Design, req: Requirement | None) -> list[str]:
             f"design carries {design.payload_mass_kg:g} kg but the requirement needs "
             f"{req.payload_mass_kg:g} kg of payload"
         )
+    if req.bottle_volume_m3 is not None and (
+        not isinstance(design, BottleDesign) or design.bottle_volume_m3 != req.bottle_volume_m3
+    ):
+        reasons.append(f"mission requires a bottle volume of {req.bottle_volume_m3:g} m3")
     if req.recovery_required and isinstance(design, BottleDesign) and not design.has_parachute:
         reasons.append("recovery is required but the design has no parachute")
     return reasons
@@ -317,8 +325,16 @@ def _finalize(result: SimResult, design: Design, req: Requirement | None) -> Sim
     reasons = list(result.failure_reasons) + _judge(design, req)
     if req is not None and req.budget_jpy is not None and cost_jpy > req.budget_jpy:
         reasons.append(f"cost {cost_jpy:,.0f} JPY exceeds budget {req.budget_jpy:,.0f} JPY")
+    metrics = result.metrics
+    if isinstance(design, BottleDesign) and req is not None and req.budget_jpy is not None:
+        metrics = {**metrics, "budget_excess_jpy": max(0.0, cost_jpy - req.budget_jpy)}
     return result.model_copy(
-        update={"cost_jpy": cost_jpy, "failure_reasons": reasons, "success": not reasons}
+        update={
+            "cost_jpy": cost_jpy,
+            "failure_reasons": reasons,
+            "success": not reasons,
+            "metrics": metrics,
+        }
     )
 
 
@@ -465,6 +481,65 @@ def _item_matches(
     return True
 
 
+def _bottle_shelves(matched_kinds: set[str] | None) -> dict[str, Any]:
+    """A broad search includes operating and mass inputs, which have no catalog part row."""
+    with (_CATALOG_DIR / "bottle_variables.yaml").open(encoding="utf-8") as f:
+        pool = yaml.safe_load(f)
+    groups = {
+        g["kind"]: g
+        for g in pool["components"]
+        if matched_kinds is None or g["kind"] in matched_kinds
+    }
+    if not groups:
+        return {}
+    fields = {field for group in groups.values() for field in group["design_inputs"]}
+    methods = {
+        name: spec
+        for name, spec in pool["analysis_methods"].items()
+        if fields.intersection(spec["sensitive_to"])
+    }
+    scores = {
+        name: spec
+        for name, spec in pool["evaluation_functions"].items()
+        if methods.keys() & spec["sources"].keys()
+        and ("sensitive_to" not in spec or fields.intersection(spec["sensitive_to"]))
+    }
+    with (_CATALOG_DIR / "bottle_literature.yaml").open(encoding="utf-8") as f:
+        literature = yaml.safe_load(f)
+    research_fields = fields | {
+        key
+        for group in groups.values()
+        for section in ("reserved", "environment_inputs")
+        for key in group.get(section, {})
+    }
+    proposed_methods = {
+        name: method
+        for name, method in literature["analysis_methods"].items()
+        if research_fields.intersection(method["variables"])
+    }
+    proposed_scores = {
+        name: score
+        for name, score in literature["evaluation_functions"].items()
+        if score["method"] in proposed_methods
+    }
+    cited = {
+        ref
+        for entry in (*groups.values(), *scores.values(), *proposed_methods.values())
+        for ref in entry.get("references", [])
+    }
+    return {
+        "pool_version": pool["version"],
+        "variable_definitions": groups,
+        "analysis_methods": methods,
+        "evaluation_functions": scores,
+        "planned": {
+            "analysis_methods": proposed_methods,
+            "evaluation_functions": proposed_scores,
+        },
+        "references": {ref: literature["references"][ref] for ref in sorted(cited)},
+    }
+
+
 def _tool_search_catalog(inp: dict[str, Any]) -> dict[str, Any]:
     tier = inp.get("tier")
     if tier is not None:
@@ -489,9 +564,16 @@ def _tool_search_catalog(inp: dict[str, Any]) -> dict[str, Any]:
     if kind in ("motors", "all"):
         out["motors"] = [m for m in _load_motors() if _item_matches(m, tier, query, {"amateur"})]
     out["count"] = sum(len(v) for v in out.values() if isinstance(v, list))
+    if tier == "bottle" and kind in ("parts", "all"):
+        out.update(_bottle_shelves({p["kind"] for p in out["parts"]} if query else None))
     if out["count"] == 0:
         out["note"] = (
             "catalog is empty or nothing matched; propose representative values and say so"
+        )
+    elif tier == "bottle" and out["parts"]:
+        out["note"] = (
+            "Keep the chosen part id in the search plan and copy its dimensions into the "
+            "design inputs. Use query=null to see all three bottle shelves."
         )
     else:
         out["note"] = (

@@ -1,0 +1,27 @@
+{
+  "bottle_is_unmeasured_envelope": true,
+  "axis": "nozzle at z=0, nose toward +z",
+  "nose_base_z_mm": 262.0,
+  "fins": [
+    {
+      "index": 1,
+      "azimuth_deg": 0.0,
+      "tail_z_mm": 100.0
+    },
+    {
+      "index": 2,
+      "azimuth_deg": 119.99999999999999,
+      "tail_z_mm": 100.0
+    },
+    {
+      "index": 3,
+      "azimuth_deg": 239.99999999999997,
+      "tail_z_mm": 100.0
+    }
+  ],
+  "launcher_envelope_known": false,
+  "retention_verified": false,
+  "recovery_system_designed": false,
+  "soft_cap_supplied": false,
+  "flight_released": false
+}

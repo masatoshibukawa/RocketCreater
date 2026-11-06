@@ -1,0 +1,3 @@
+# Keep upstream files byte-identical to the catalog checksums.
+CAD/D09-RocketFins/** -text -whitespace
+CAD/D21-ESP-Controlled-Rocket/** -text -whitespace

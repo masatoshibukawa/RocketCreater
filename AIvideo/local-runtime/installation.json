@@ -1,0 +1,30 @@
+{
+  "comfy": {
+    "tag": "v0.44.0",
+    "commit": "2c75dc1b379a59e0880619d029607af5169a62ef",
+    "zip_sha256": "496d579a62c1d7ee6fec1ea061f4faa406a7b26f5d5e8525aa3477b4c8e2f371"
+  },
+  "python": "3.11.6",
+  "model_repository": "Comfy-Org/Wan_2.2_ComfyUI_Repackaged",
+  "model_revision": "ee6f4a40737a995bf5818954cfce6d59443b0f04",
+  "models": [
+    {
+      "file": "wan2.2_ti2v_5B_fp16.safetensors",
+      "category": "diffusion_models",
+      "bytes": 9999658848,
+      "sha256": "456f901338bd9eadbded3828b819109a9b68e8a525ca5cf8d0049a69fcfeca1e"
+    },
+    {
+      "file": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "category": "text_encoders",
+      "bytes": 6735906897,
+      "sha256": "c3355d30191f1f066b26d93fba017ae9809dce6c627dda5f6a66eaa651204f68"
+    },
+    {
+      "file": "wan2.2_vae.safetensors",
+      "category": "vae",
+      "bytes": 1409400960,
+      "sha256": "e40321bd36b9709991dae2530eb4ac303dd168276980d3e9bc4b6e2b75fed156"
+    }
+  ]
+}

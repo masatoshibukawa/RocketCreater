@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0-draft",
+  "package_id": "rocketwright-water-rocket-content-example",
+  "design_revision": "r00",
+  "content_status": "draft_example",
+  "profile_id": "equipment-unselected",
+  "profile_revision": "r00",
+  "printer": {
+    "selection_status": "not_selected",
+    "model": null,
+    "build_volume": {
+      "value": null,
+      "unit": "mm"
+    },
+    "material": null
+  },
+  "tools": {
+    "selection_status": "not_selected",
+    "items": []
+  },
+  "launcher": {
+    "selection_status": "not_selected",
+    "model": null
+  },
+  "operator_profiles": [
+    {
+      "id": "adult",
+      "age_range": null,
+      "hand_data_source": null,
+      "gloves": null,
+      "status": "needs_input"
+    },
+    {
+      "id": "child_with_adult",
+      "age_range": null,
+      "hand_data_source": null,
+      "gloves": null,
+      "role_assignment": null,
+      "status": "needs_input"
+    }
+  ],
+  "source_ids": [
+    "user-equipment",
+    "user-assembly"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "PET 2L v2 conditional vertical ascent",
+  "volume_m3": 0.002,
+  "fill_fraction": 0.33,
+  "gauge_pressure_pa": 300000,
+  "ambient_pressure_pa": 101325,
+  "temperature_k": 293.15,
+  "air_density_kg_m3": 1.204,
+  "nozzle_diameter_m": 0.009,
+  "discharge_coefficient": 0.9,
+  "drag_coefficient": 0.5,
+  "bottle_mass_kg": 0.055,
+  "nozzle_mass_kg": 0.01,
+  "retention_mass_kg": 0.006,
+  "wind_m_s": 0,
+  "launch_tilt_deg": 0,
+  "guide_length_m": 1.0,
+  "input_status": {
+    "geometry": "Existing v2 STL and assembly positions; bottle envelope is unmeasured.",
+    "printed_part_mass": "CAD material volume times assumed 1.24 g/cm3, not print weight.",
+    "bottle_mass_kg": "Provisional pet_bottle_2l catalog value, not measured.",
+    "nozzle_diameter_m": "Provisional bottle_nozzle_9mm catalog value; fit is not verified.",
+    "nozzle_mass_kg": "Provisional bottle_nozzle_9mm catalog value.",
+    "retention_mass_kg": "Illustrative allowance; retention is not designed or verified.",
+    "fill_fraction": "Illustrative scenario assumption, not a measured loading.",
+    "gauge_pressure_pa": "Illustrative simulation initial condition, not an approved operating pressure.",
+    "discharge_coefficient": "Assumed effective nozzle area factor.",
+    "drag_coefficient": "Assumed constant axial drag; no CFD or flight calibration.",
+    "environment_and_guide": "Idealized still air, sea-level pressure, vertical axis and provisional 1 m guide."
+  },
+  "scope": "Ascent to apogee only. No recovery, structural, retention, or flight-stability qualification."
+}

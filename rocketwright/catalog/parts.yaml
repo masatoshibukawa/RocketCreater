@@ -10,34 +10,36 @@ items:
     tier: bottle
     kind: bottle
     name: "1.5 L carbonated-drink PET bottle (pressure rated by use, ~90 mm dia.)"
+    bottle_volume_m3: 0.0015
     mass_kg: 0.045
     price_jpy: 150
     provisional: true
-    notes: "bottle_volume_m3 = 0.0015; carbonated-drink bottles only (still-water bottles are thinner)"
+    notes: "carbonated-drink bottles only (still-water bottles are thinner)"
   - id: pet_bottle_2l
     tier: bottle
     kind: bottle
     name: "2 L carbonated-drink PET bottle (~100 mm dia.)"
+    bottle_volume_m3: 0.002
     mass_kg: 0.055
     price_jpy: 180
     provisional: true
-    notes: "bottle_volume_m3 = 0.002"
   - id: bottle_nozzle_22mm
     tier: bottle
     kind: nozzle
     name: "Bottle-neck launcher nozzle / release, 22 mm bore (standard PET neck)"
+    nozzle_diameter_m: 0.022
     mass_kg: 0.0
     price_jpy: 800
     provisional: true
-    notes: "nozzle_diameter_m = 0.022; the neck itself is the nozzle, this is the launcher seal"
+    notes: "the neck itself is the nozzle, this is the launcher seal"
   - id: bottle_nozzle_9mm
     tier: bottle
     kind: nozzle
     name: "Reducing nozzle insert, 9 mm bore (longer, gentler burn)"
+    nozzle_diameter_m: 0.009
     mass_kg: 0.01
     price_jpy: 400
     provisional: true
-    notes: "nozzle_diameter_m = 0.009"
   - id: bottle_fin_set_cardboard
     tier: bottle
     kind: fins
@@ -56,10 +58,11 @@ items:
     tier: bottle
     kind: parachute
     name: "0.5 m plastic-sheet parachute with string"
+    parachute_diameter_m: 0.5
     mass_kg: 0.02
     price_jpy: 300
     provisional: true
-    notes: "parachute_diameter_m = 0.5, Cd ~1.5 assumed in physics/recovery.py"
+    notes: "Cd ~1.5 assumed in physics/recovery.py"
   # --- amateur tier ------------------------------------------------------------------------
   - id: body_tube_54mm_90cm
     tier: amateur

@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0-draft",
+  "package_id": "rocketwright-water-rocket-content-example",
+  "design_revision": "r00",
+  "content_status": "draft_example",
+  "sources": [
+    {
+      "source_id": "user-water-rocket",
+      "kind": "user_requirement",
+      "statement": "最初の対象は実際に打ち上げるペットボトル水ロケット。"
+    },
+    {
+      "source_id": "user-equipment",
+      "kind": "user_requirement",
+      "statement": "使用できるプリンターや機材を選択する。実際の型番は未選定。"
+    },
+    {
+      "source_id": "user-assembly",
+      "kind": "user_requirement",
+      "statement": "詳細手順と手・指・工具の作業余裕を扱い、成人と子ども＋成人に対応する。"
+    },
+    {
+      "source_id": "user-output",
+      "kind": "user_requirement",
+      "statement": "組立手順のPDFと、テキスト・スクリプトの内容を設計する。"
+    }
+  ]
+}

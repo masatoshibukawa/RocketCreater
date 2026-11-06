@@ -235,6 +235,7 @@ async def run_design_loop(
     ]
     tools = get_tool_definitions()
     tool_results_log: list[dict[str, Any]] = []
+    fixed_bottle_volume: float | None = None
     budget_exhausted_told = False
     review_rounds: dict[str, int] = {}  # source_id -> times reviewed (never above the cap)
     review_blocked: dict[str, list[str]] = {}  # source_id -> blocker findings
@@ -346,9 +347,23 @@ async def run_design_loop(
         feedback_texts: list[str] = []
         for tu in tool_uses:
             tool_input = tu.input if isinstance(tu.input, dict) else {}
-            if tu.name == ATTEMPT_TOOL:
+            request = tool_input.get("requirement")
+            if (
+                fixed_bottle_volume is not None
+                and tu.name in (ATTEMPT_TOOL, "run_dispersion", "export_report")
+                and (
+                    not isinstance(request, dict)
+                    or request.get("bottle_volume_m3") != fixed_bottle_volume
+                )
+            ):
+                result: dict[str, Any] = {
+                    "error": "Reuse the classified requirement with "
+                    f"bottle_volume_m3={fixed_bottle_volume:g}",
+                    "source_id": tu.id,
+                }
+            elif tu.name == ATTEMPT_TOOL:
                 if attempts >= cfg.max_attempts:
-                    result: dict[str, Any] = {
+                    result = {
                         "error": f"attempt budget exhausted ({cfg.max_attempts} simulate_design "
                         "calls); produce the final answer now",
                         "source_id": tu.id,
@@ -361,6 +376,10 @@ async def run_design_loop(
             is_error = "error" in result
             if not is_error:
                 tool_results_log.append(result)
+                if tu.name == "classify_requirement" and fixed_bottle_volume is None:
+                    capacity = request.get("bottle_volume_m3")
+                    if capacity is not None:
+                        fixed_bottle_volume = float(capacity)
             yield ev(
                 "tool_result",
                 {"id": tu.id, "name": tu.name, "is_error": is_error, "result": result},

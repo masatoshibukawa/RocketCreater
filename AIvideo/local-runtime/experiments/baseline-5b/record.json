@@ -1,0 +1,45 @@
+{
+  "id": "baseline-5b",
+  "fingerprint": "e239acc6640fe57aa875658b95132714c7a0874665352c97cea3ebfc20165154",
+  "config": {
+    "width": 832,
+    "height": 480,
+    "frames": 49,
+    "fps": 24,
+    "steps": 20,
+    "seed": 20261104,
+    "positive": "A slow smooth camera dolly to the right, revealing subtle natural parallax. The spacecraft assembly remains stationary and rigid on its support fixture. Soft practical ceiling lights create natural reflections on the metal. A continuous documentary inspection shot.",
+    "negative": "text, subtitles, logos, watermark, animation, cartoon, plastic, oversaturated, oversharpened, blurry, morphing, bending metal, moving machinery, duplicate engines, flicker, jitter, abrupt cut, flames, smoke, people",
+    "id": "baseline-5b",
+    "backend": "import",
+    "source": "outputs/rocketwright_wan22_test.mp4",
+    "hypothesis": "Previous test: original Blender image and verbose prompt. Historical comparison; no regeneration."
+  },
+  "input_sha256": "67ec24b34cedaf0e8c7041bb43e7fdcf1af113eb4dce314c6380d7b9bea0d32b",
+  "models": [],
+  "created_utc": "2026-11-04T08:50:14.023348+00:00",
+  "status": "completed",
+  "output": "outputs/experiments/baseline-5b/video.mp4",
+  "output_sha256": "a87e8c35822349df3401967d434626ba98e37a8d64f47ba3f50571013877f75b",
+  "metrics": {
+    "width": 832,
+    "height": 480,
+    "frames": 49,
+    "fps": 24.0,
+    "seconds": 2.0416666666666665,
+    "full_decode": true,
+    "mean_frame_change": 0.5371,
+    "metadata": {
+      "major_brand": "isom",
+      "minor_version": "512",
+      "compatible_brands": "isomiso2avc1mp41",
+      "title": "RocketWright Local Video Experiment",
+      "encoder": "Lavf63.1.102",
+      "comment": "AI-generated concept visualization; no engineering validation"
+    },
+    "note": "Frame change is a motion/consistency diagnostic, not a realism score."
+  },
+  "polling_session_seconds": 0.88,
+  "sampled_device_memory_peak_mib": null,
+  "memory_note": "Whole-device usage sampled every few seconds; includes other applications, may miss peaks."
+}

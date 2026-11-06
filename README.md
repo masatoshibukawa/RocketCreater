@@ -54,6 +54,15 @@ scripts/             run_scenario.py（デモ実行）と調整用スクリプ�
 tests/               pytest
 ```
 
+### ペットボトルの設計探索
+
+`search_catalog(tier="bottle", kind="parts", query=null)` は、部品と一緒に探索変数・解析手法・評価関数を返します。
+たとえば高さが足りないときは、指定されたボトル容量を固定したまま充填率を変え、公称飛行で高度の許容範囲からの逸脱を比較できます。
+合格案同士の回収性能を比べるときは、同じ風条件・試行数・シードで成功率と着地距離の95パーセンタイルを比較します。
+各変数の単位、固定条件、解析で取得できる評価値は[ペトロケの候補プール](rocketwright/catalog/bottle_variables.yaml)にまとめています。
+自作シミュレータ向けには、[文献に基づく解析・評価候補](rocketwright/catalog/bottle_literature.yaml)を用意しています。
+カタログ検索の `planned` から、必要な入力、出力する指標、照合する図表や実測条件を確認できます。
+
 ## セットアップ
 
 バックエンド（Python 3.11 以上、[uv](https://docs.astral.sh/uv/) で管理）：
