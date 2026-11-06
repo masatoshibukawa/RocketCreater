@@ -1,5 +1,9 @@
 # ペットボトル水ロケットのCAD・3Dモデル
 
+**追加収集：** [2026年11月7日のCAD・モデル・文献追加](../追加収集-20261107.md)。以下の既存集計は追加前の保存時点の記録。
+
+**原本の公開範囲：** [再配布条件を確認したファイルと除外理由](../再配布について.md)を参照。許諾を確認した原本はGitにも収録し、未確認・容量超過のものはこのPCに保存している。
+
 4つの設計資料から形状ファイル107点（OpenSCAD 9、STL 58、FreeCAD 2、Alibre部品35・組立3）と、寸法を変更するためのマクロ2点を保存した。以下のリンクはこのPCのファイルを開く。109点それぞれの取得URLとSHA-256は[ファイル目録](ファイル目録.json)にある。[文献総合索引](../README.md)
 
 | 部位・目的 | 開くファイル |
@@ -24,10 +28,12 @@ Adrian Schlatter のねじ込み式尾翼。OpenSCAD原図9点、作者の説明
 
 Original project by Julius Grimm. 版 `c047014` のFCStd 2点には、それぞれ単一のメッシュが保存されている。寸法を変えたいときは、[ノーズ用マクロ](D22-FreeCAD/physics-water-rocket-nose-macroFCMacro.FCMacro)または[尾部リング用マクロ](D22-FreeCAD/physics-water-rocket-tail-ring-macro.FCMacro)の先頭のパラメータを参照する。作者は寸法をcmで入力し、内部でmmに換算している。尾部の首長には仮置きと明記された値もある。[測定写真1](D22-FreeCAD/bottle-measurements-1.jpeg) · [測定写真2](D22-FreeCAD/bottle-measurements-2.jpeg)
 
-作者の Educational License は教育・個人利用を対象とし、商用利用には書面での許可を求めている。図面、マクロ、測定写真、ライセンスをローカルに保存した。[配布元](https://github.com/JustThatRandomCoder/physics-water-rocket-project/tree/c047014fdfa9b1004959c10a114613ec0f1979e8) · [利用条件](D22-FreeCAD/LICENSE)
+作者の Educational License は教育・個人利用を対象とし、商用利用には書面での許可を求めている。図面、マクロ、測定写真、ライセンスを保存し、教育・個人用途の条件を保持してGitにも収録した。[配布元](https://github.com/JustThatRandomCoder/physics-water-rocket-project/tree/c047014fdfa9b1004959c10a114613ec0f1979e8) · [利用条件](D22-FreeCAD/LICENSE)
 
 ## D23　Water Bottle Rocket Launcher
 
 The Shoulders of Giants, Inc. が2019年の教育番組で設計した発射台。2020年3月の版を丸ごと参照できるよう、Alibreの組立3点と、その参照先となる部品35点を元のディレクトリ構成で保存した。印刷用のSTL 20点、部品表、作者の説明、CC BY-SA 4.0の利用条件も収録。部品形状を変更する場合は AD_PRT、配置を調べる場合は AD_ASM を開く。[全体組立](D23-TSoGiants/CAD/__Assemblies/Full_Assembly.AD_ASM) · [ノズル組立](D23-TSoGiants/CAD/__Assemblies/Nozzle_Assembly.AD_ASM) · [トリガー組立](D23-TSoGiants/CAD/__Assemblies/Trigger_Assembly.AD_ASM) · [部品表](D23-TSoGiants/BOM.csv) · [作者の固定版・利用条件](https://github.com/TSoGiants/Water-Bottle-Rocket-Launcher/tree/b73d27ca0ef081e64c4c870241b8b8f07fae703c)
 
-この一式はローカル保存。GitHub側から各ファイルを取得する場合は、ファイル目録の D23 にある固定URLを使える。全58点を配布元Git blobと照合し、Alibreファイルのコンテナ形式とSTLの三角形数・データ長を確認した。
+この一式はCC BY-SA 4.0の表示を保持してGitにも収録。GitHub側から各ファイルを取得する場合は、ファイル目録の D23 にある固定URLを使える。全58点を配布元Git blobと照合し、Alibreファイルのコンテナ形式とSTLの三角形数・データ長を確認した。
+
+依存ファイル `skin.scad` と `thread_profile.scad` は再配布条件未確認のため、このPCだけに保存。Gitから取得した環境では上記配布元から別途取得する必要がある。
