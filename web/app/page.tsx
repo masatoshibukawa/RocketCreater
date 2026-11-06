@@ -17,7 +17,8 @@ import StatusStrip from "./components/StatusStrip";
 import WorkshopCrew from "./components/WorkshopCrew";
 import WorkshopIcon from "./components/WorkshopIcon";
 import DesignComparison from "./components/DesignComparison";
-import VideoOutputs from "./components/VideoOutputs";
+import DesignProduction from "./components/DesignProduction";
+import { projectFileLabel, type DesignProject } from "./lib/designProjects";
 import { WorkshopProvider, useCrewTask, useWorkshop } from "./lib/WorkshopContext";
 import { WORKSHOP_STAGES, stageLabel, type WorkshopStage, type AnalysisView, type OutputView } from "./lib/workshopNavigation";
 import { designCrewTask } from "./lib/workshopActivity";
@@ -54,6 +55,8 @@ function DesignScreen() {
   const [generated, setGenerated] = useState<{ key: string; package: DesignPackage } | null>(null);
   const [printed, setPrinted] = useState<{ key: string; files: { name: string; url: string }[] } | null>(null);
   const stream = useDesignStream();
+  const [productionProject, setProductionProject] = useState<DesignProject | null>(null);
+  const activeRequirement = productionProject ? productionProject.spec.requirement : stream.requirement;
   useCrewTask("design", designCrewTask(stream));
   const { start, answer, stop, reset } = stream;
   // Manual pick from 詳細 (attempt log / cards / reviews); null = follow the display rule.
@@ -63,6 +66,7 @@ function DesignScreen() {
   // else the latest attempt, else the reference seed (designState.selectDisplayedDesign).
   // Part-space attempts (auto_design / design_from_parts) carry the resolved design.
   const displayed = useMemo<DisplayedDesign | null>(() => {
+    if (productionProject) return { design: productionProject.analysis?.design ?? { ...productionProject.spec.design, geometry: productionProject.spec.geometry }, sourceId: `${productionProject.id}:v${productionProject.version}`, origin: "attempt" };
     if (selectedId !== null) {
       const c = stream.candidates.find((x) => x.source_id === selectedId);
       if (c) return { design: c.design, sourceId: c.source_id, origin: "candidate" };
@@ -72,11 +76,11 @@ function DesignScreen() {
       }
     }
     return selectDisplayedDesign(stream);
-  }, [selectedId, stream]);
+  }, [selectedId, stream, productionProject]);
 
   const displayedId = displayed?.sourceId ?? null;
   const labels = useMemo(() => caseLabels(stream.candidates, stream.attempts), [stream.candidates, stream.attempts]);
-  const displayedLabel = displayedId ? labels.get(displayedId) ?? "検討中の案" : null;
+  const displayedLabel = productionProject ? `${productionProject.name} / v${productionProject.version}` : displayedId ? labels.get(displayedId) ?? "検討中の案" : null;
   const displayedAttempt = useMemo(
     () => (displayedId ? stream.attempts.find((a) => a.id === displayedId) : undefined),
     [displayedId, stream.attempts],
@@ -84,12 +88,13 @@ function DesignScreen() {
   // auto_design and reference seeds leave the time series out of their event, so a design shown
   // from one of them flies on the trace of an attempt that simulated the very same design.
   const flight = useMemo(() => {
+    if (productionProject) return productionProject.analysis?.result;
     if (displayedAttempt?.result?.trace.length || !displayed) return displayedAttempt?.result;
     const key = designKey(displayed.design);
     return stream.attempts.find(
       (a) => a.design !== null && a.result?.trace.length && designKey(a.design) === key,
     )?.result;
-  }, [displayed, displayedAttempt, stream.attempts]);
+  }, [displayed, displayedAttempt, stream.attempts, productionProject]);
   const trace: TracePoint[] = flight?.trace ?? NO_TRACE;
   // Certification / coupler warnings of the displayed build (amber note under the 3D view).
   const notes: string[] = useMemo(
@@ -99,30 +104,32 @@ function DesignScreen() {
   const fallbackCost = displayedAttempt?.result?.cost_jpy ?? null;
 
   const landing: LandingPoint | null = useMemo(() => {
-    const m = displayedAttempt?.result?.metrics;
+    const m = productionProject?.analysis?.result.metrics ?? displayedAttempt?.result?.metrics;
     if (!m) return null;
     const east = m.landing_east_m;
     const north = m.landing_north_m;
     return typeof east === "number" && typeof north === "number" ? { east_m: east, north_m: north } : null;
-  }, [displayedAttempt]);
+  }, [displayedAttempt, productionProject]);
 
-  // run_dispersion result of the displayed design. Another design's result is never shown for it.
+  // run_dispersion result of this design only; never show a different case.
   const dispersion: DispersionResult | null = useMemo(() => {
-    if (!displayed) return null;
+    if (productionProject || !displayed) return null;
     const key = designKey(displayed.design);
     const own = displayedId ? stream.dispersions[displayedId] : undefined;
-    const same = Object.values(stream.dispersions).filter((d) => d.design && designKey(d.design) === key);
+    const same = Object.values(stream.dispersions).filter(d => d.design && designKey(d.design) === key);
     return own ?? same.at(-1) ?? null;
-  }, [displayed, displayedId, stream.dispersions]);
+  }, [displayed, displayedId, stream.dispersions, productionProject]);
 
-  // Download maps from export_report / render_drawing results; the BOM CSV of the displayed
+  // Download maps from export_report / render_drawing results; the BOM CSV for the displayed
   // design when the agent exported it, else none.
   const exportInfos = useMemo(() => exportInfoFromEvents(stream.events), [stream.events]);
   const csvUrl: string | null = useMemo(() => {
+    if (productionProject) return productionProject.files.find(f => f.key === "production/bom.csv")?.url ?? null;
     if (!displayed) return null;
     const own = exportsForDesign(exportInfos, displayed.design).find((e) => typeof e.download.bom === "string");
-    return own ? own.download.bom : null;
-  }, [displayed, exportInfos]);
+    if (own) return own.download.bom;
+    return null;
+  }, [displayed, exportInfos, productionProject]);
 
   // Every attempt that flew this very design, the one on screen first: a trace-only re-run has
   // neither the build nor the margins of the parts attempt, and an estimate_cost candidate no env.
@@ -132,53 +139,60 @@ function DesignScreen() {
     const same = stream.attempts.filter((a) => a.design !== null && designKey(a.design) === key);
     return [...same.filter((a) => a === displayedAttempt), ...same.filter((a) => a !== displayedAttempt)];
   }, [displayed, displayedAttempt, stream.attempts]);
-  // The attempt on screen first: Claude's final answer can restate a design in other digits, and
-  // its parts are still the ones this attempt built.
-  const build = displayedAttempt?.build ?? sameDesign.find((a) => a.build !== null)?.build ?? null;
+  const build = productionProject ? null : displayedAttempt?.build ?? sameDesign.find((a) => a.build !== null)?.build ?? null;
 
   // /artifacts/summary for the displayed design (debounced, cached by design JSON).
-  const summaryState = useDesignSummary(displayed?.design ?? null, stream.requirement, build);
+  const summaryState = useDesignSummary(displayed?.design ?? null, activeRequirement, build);
   const summary = summaryState.summary;
 
-  const tier = stream.tier ?? displayed?.design.tier ?? null;
+  const projectBom = productionProject ? [
+    { item_id: "fin", name: `${productionProject.spec.material} フィン`, qty: productionProject.spec.design.has_fins ? productionProject.spec.geometry.fin_count : 0, mass_kg: null, price_jpy: null, source_or_provisional: "provisional 採用寸法のCAD / 実測・価格未確認" },
+    { item_id: "nose", name: `${productionProject.spec.material} ノーズ`, qty: 1, mass_kg: null, price_jpy: null, source_or_provisional: "provisional 採用寸法のCAD / 実測・価格未確認" },
+    { item_id: "other", name: "ボトル・回収等の入力した他の部材", qty: 1, mass_kg: productionProject.spec.other_dry_mass_g / 1000, price_jpy: null, source_or_provisional: "provisional 入力質量 / 詳細部材と価格は要確認" },
+  ] : null;
+
+  const tier = productionProject ? "bottle" : stream.tier ?? displayed?.design.tier ?? null;
 
   // Everything the tools reported for this very design; the attempt on screen has the last word.
   const resultMetrics = useMemo(() => {
+    if (productionProject) return productionProject.analysis?.result.metrics ?? NO_METRICS;
     if (!displayed) return NO_METRICS;
     const candidate = stream.candidates.find((c) => c.source_id === displayed.sourceId);
     const flown = [...sameDesign].reverse().map((a) => a.result?.metrics);
     return Object.assign({}, candidate?.metrics, ...flown) as Record<string, number>;
-  }, [displayed, sameDesign, stream.candidates]);
+  }, [displayed, sameDesign, stream.candidates, productionProject]);
 
   // A failing attempt or a reference seed gets no production data (CLAUDE.md section 1). A seed
   // flew in the reference's own conditions, which the tool inputs do not hold.
   const passed: boolean = useMemo(() => {
+    if (productionProject) return productionProject.adopted && !!productionProject.analysis?.result.success;
     const candidate = stream.candidates.find((c) => c.source_id === displayedId);
     if (candidate?.seededFrom || displayed?.origin === "seed") return false;
     return candidate?.passed ?? displayedAttempt?.result?.success ?? false;
-  }, [displayed, displayedId, displayedAttempt, stream.candidates]);
+  }, [displayed, displayedId, displayedAttempt, stream.candidates, productionProject]);
 
   // Conditions of the run on screen, so that the API repeats what the agent simulated.
   const callEnv = [displayedId, ...sameDesign.map((a) => a.id)]
     .map((id) => (id ? stream.toolInputs[id]?.env : undefined))
     .find((value) => typeof value === "object" && value !== null);
-  const env = (callEnv ?? null) as Record<string, unknown> | null;
+  const env = (productionProject ? productionProject.spec.env : callEnv ?? null) as Record<string, unknown> | null;
   const rerun = useMemo(
-    () => ({ requirement: stream.requirement, env, seed: dispersion?.seed ?? null, n: dispersion?.n ?? null }),
-    [stream.requirement, env, dispersion],
+    () => ({ requirement: activeRequirement, env, seed: dispersion?.seed ?? null, n: dispersion?.n ?? null }),
+    [activeRequirement, env, dispersion],
   );
   const packageRequest: DesignPackageRequest | null = useMemo(
     () => (displayed ? { design: displayed.design, build, ...rerun } : null),
     [displayed, build, rerun],
   );
   const aeroRequest: AeroRequest | null = useMemo(() => {
-    const target = stream.requirement?.target_altitude_m;
+    const target = activeRequirement?.target_altitude_m;
     if (!displayed || typeof target !== "number" || target <= 0) return null;
     return { design: displayed.design, target_altitude_m: target, ...rerun };
-  }, [displayed, stream.requirement, rerun]);
+  }, [displayed, activeRequirement, rerun]);
 
   const handleStart = useCallback(
     (text: string, seed: number | null) => {
+      setProductionProject(null);
       setSelectedId(null);
       setStage("design");
       void start(text, seed);
@@ -203,7 +217,7 @@ function DesignScreen() {
   const printKey = displayed ? designKey(displayed.design) : "";
   const printFiles = printed?.key === printKey ? printed.files : [];
   const handlePrintGenerated = useCallback((files: { name: string; url: string }[]) => setPrinted({ key: printKey, files }), [printKey]);
-  const viewingReferenceFilm = stage === "exports" && outputView === "video";
+  const viewingReferenceFilm = stage === "exports" && outputView === "video" && !productionProject;
   function closeTargets() { setLeftOpen(false); document.getElementById("target-toggle")?.focus(); }
   function toggleTargets() {
     if (leftOpen) { closeTargets(); return; }
@@ -215,16 +229,16 @@ function DesignScreen() {
     setRightTab(next === "brief" ? "consult" : "explain");
   };
   const hasModel = stage === "brief" || stage === "design" || stage === "assembly";
-  const showCrew = (hasModel && modelView === "model" && displayed !== null) || stage === "analysis";
+  const showCrew = (hasModel && modelView === "model" && displayed !== null) || stage === "analysis" || stage === "exports";
   const requirementRows = [
-    ["目標の高度", typeof stream.requirement?.target_altitude_m === "number" ? `${fmt(stream.requirement.target_altitude_m, 0)} m` : "未入力"],
-    ["積載物の質量", typeof stream.requirement?.payload_mass_kg === "number" ? `${fmt(stream.requirement.payload_mass_kg * 1000, 0)} g` : "未入力"],
-    ["予算", typeof stream.requirement?.budget_jpy === "number" ? `${fmt(stream.requirement.budget_jpy, 0)} 円` : "未入力"],
+    ["目標の高度", typeof activeRequirement?.target_altitude_m === "number" ? `${fmt(activeRequirement.target_altitude_m, 0)} m` : productionProject ? "未指定" : "未入力"],
+    ["積載物の質量", productionProject ? `${fmt(productionProject.spec.design.payload_mass_kg * 1000, 0)} g` : typeof activeRequirement?.payload_mass_kg === "number" ? `${fmt(activeRequirement.payload_mass_kg * 1000, 0)} g` : "未入力"],
+    ["予算", typeof activeRequirement?.budget_jpy === "number" ? `${fmt(activeRequirement.budget_jpy, 0)} 円` : "未入力"],
     ["規模", tier ? TIER_LABEL[tier] : "要求から判定"],
   ];
   function saveDesign() {
     if (!displayed) return;
-    const blob = new Blob([JSON.stringify({ design: displayed.design, requirement: stream.requirement, source_id: displayed.sourceId, metrics: resultMetrics }, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(productionProject ? { schema_version: 1, spec: productionProject.spec } : { design: displayed.design, requirement: activeRequirement, source_id: displayed.sourceId, metrics: resultMetrics }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob), link = document.createElement("a");
     link.href = url; link.download = "rocketwright-design.json"; link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -235,7 +249,7 @@ function DesignScreen() {
       <a className="workshop-brand" href="/" aria-label="RocketWright ホーム" onClick={e => { e.preventDefault(); chooseStage("brief"); }}><span className="rw-mark">RW</span><strong>RocketWright</strong></a>
       <span className="identity-divider"/>
       <span className="project-path">{tier ? TIER_LABEL[tier] : "新しいロケット"}<span>/</span><b>{displayedLabel ?? "条件の確認"}</b></span>
-      <span className="session-state">セッション内の下書き</span>
+      <span className="session-state">{productionProject ? `保存済み / v${productionProject.version}` : "セッション内の下書き"}</span>
       <div className="identity-actions"><button className="btn" type="button" disabled={!displayed} onClick={saveDesign}><WorkshopIcon name="download" size={16}/><span>設計を保存</span></button>
         <button className="icon-button" type="button" aria-label="表示と出力先の設定" onClick={() => settings.current?.showModal()}><WorkshopIcon name="settings"/></button></div>
     </header>
@@ -252,13 +266,13 @@ function DesignScreen() {
       <aside id="workshop-targets" tabIndex={-1} className={`workshop-left${leftOpen ? " is-open" : ""}`} aria-label="工程の対象" onKeyDown={e => { if (e.key === "Escape") { e.stopPropagation(); closeTargets(); } }}>
         <div className="dock-heading"><h1>{WORKSHOP_STAGES.find(s => s.id === stage)?.title ?? "設計例と資料"}</h1><button className="mobile-close icon-button" type="button" aria-label="対象一覧を閉じる" onClick={closeTargets}><WorkshopIcon name="close" size={18}/></button></div>
         <div className="left-dock-scroll">
-          <label className="case-selector">表示する案<select value={selectedId ?? ""} onChange={e => setSelectedId(e.target.value || null)}><option value="">最新の結果に追従</option>{stream.candidates.map(c => <option key={c.source_id} value={c.source_id}>{labels.get(c.source_id)}</option>)}</select></label>
+          <label className="case-selector">表示する案<select value={productionProject?.id ?? selectedId ?? ""} onChange={e => { if (e.target.value !== productionProject?.id) { setProductionProject(null); setSelectedId(e.target.value || null); } }}><option value="">最新の結果に追従</option>{productionProject ? <option value={productionProject.id}>{productionProject.name} / v{productionProject.version}</option> : null}{stream.candidates.map(c => <option key={c.source_id} value={c.source_id}>{labels.get(c.source_id)}</option>)}</select></label>
           {stage === "analysis" ? <div className="dock-list" role="group" aria-label="解析の表示">{([['aero','流体解析'],['flight','飛行と回収'],['chart','高度の推移']] as const).map(([id,label]) => <button key={id} type="button" className={analysisView === id ? "dock-row is-active" : "dock-row"} aria-pressed={analysisView === id} onClick={() => { setAnalysisView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "aero" ? "analysis" : "play"} size={18}/>{label}</button>)}</div> : null}
-          {stage === "exports" ? <div className="dock-list" role="group" aria-label="成果物の表示">{([['production','製作票・印刷データ'],['drawing','設計図 SVG'],['video','設計解説・打ち上げ CG']] as const).map(([id,label]) => <button key={id} type="button" className={outputView === id ? "dock-row is-active" : "dock-row"} aria-pressed={outputView === id} onClick={() => { setOutputView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "video" ? "play" : "exports"} size={18}/><span>{label}<small>{id === "video" ? "保存済みの設計例" : id === "drawing" ? summary?.drawing ? "保存可能" : "未生成" : currentPackage || printFiles.length ? "保存可能" : "未生成"}</small></span></button>)}</div> : null}
+          {stage === "exports" ? <div className="dock-list" role="group" aria-label="成果物の表示">{([['production','製作票・印刷データ'],['drawing','設計図 SVG'],['video','設計解説・打ち上げ CG']] as const).map(([id,label]) => <button key={id} type="button" className={outputView === id ? "dock-row is-active" : "dock-row"} aria-pressed={outputView === id} onClick={() => { setOutputView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "video" ? "play" : "exports"} size={18}/><span>{label}<small>{id === "video" ? productionProject ? productionProject.files.some(f => f.name.endsWith(".mp4")) ? "保存可能" : "この採用版から制作" : "保存案件を選んで制作" : id === "drawing" ? summary?.drawing ? "保存可能" : "未生成" : currentPackage || printFiles.length || productionProject?.files.some(f => ["manual", "print", "package"].includes(f.kind)) ? "保存可能" : "未生成"}</small></span></button>)}</div> : null}
           <section className="dock-section"><h2>条件の概要</h2><dl className="dock-properties">{requirementRows.map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
             <button type="button" className="text-button" onClick={() => { chooseStage("brief"); setRightOpen(true); }}>条件について相談する <span>↗</span></button></section>
-          {stage === "compare" ? <section className="dock-section"><h2>計算された候補</h2><div className="dock-list">{stream.candidates.filter(c => !c.seededFrom).map((c,i) => <button key={c.source_id} type="button" className={displayedId === c.source_id ? "dock-row is-active" : "dock-row"} onClick={() => setSelectedId(c.source_id)}><WorkshopIcon name="design" size={18}/><span>案 {i+1}<small>{c.passed ? "計算上の条件を満たす" : "要見直し"}</small></span></button>)}{stream.candidates.length === 0 ? <p className="dock-empty">候補はまだありません</p> : null}</div></section>
-            : <section className="dock-section"><h2>{stage === "exports" ? "保存できるファイル" : "機体の構成"}</h2>{stage === "exports" && (currentPackage || printFiles.length > 0) ? <div className="dock-list">{currentPackage?.files.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="exports" size={18}/>{f.label}</a>)}{printFiles.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="design" size={18}/>{f.name}</a>)}</div>
+          {stage === "compare" ? <section className="dock-section"><h2>計算された候補</h2><div className="dock-list">{stream.candidates.filter(c => !c.seededFrom).map((c,i) => <button key={c.source_id} type="button" className={displayedId === c.source_id ? "dock-row is-active" : "dock-row"} onClick={() => { setProductionProject(null); setSelectedId(c.source_id); }}><WorkshopIcon name="design" size={18}/><span>案 {i+1}<small>{c.passed ? "計算上の条件を満たす" : "要見直し"}</small></span></button>)}{stream.candidates.length === 0 ? <p className="dock-empty">候補はまだありません</p> : null}</div></section>
+            : <section className="dock-section"><h2>{stage === "exports" ? "保存できるファイル" : "機体の構成"}</h2>{stage === "exports" && (currentPackage || printFiles.length > 0 || !!productionProject?.files.some(f => ["manual", "print", "package"].includes(f.kind))) ? <div className="dock-list">{productionProject?.files.filter(f => f.kind === "manual" || f.kind === "package" || f.name === "print-package.zip" || f.key === "production/design.json").map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="exports" size={18}/>{projectFileLabel(f.name)}</a>)}{currentPackage?.files.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="exports" size={18}/>{f.label}</a>)}{printFiles.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="design" size={18}/>{f.name}</a>)}</div>
               : stage === "exports" ? <p className="dock-empty">ファイルを生成すると、ここから保存できます。</p>
               : summary?.bom.length ? <ul className="component-tree">{summary.bom.map((part,i) => <li key={`${part.item_id}-${i}`}><WorkshopIcon name="design" size={16}/><span>{part.name}<small>{part.qty} 点</small></span></li>)}</ul> : <p className="dock-empty">設計案が届くと表示します</p>}</section>}
           <div className="dock-context"><WorkshopIcon name="info" size={16}/><p>{displayed ? `${displayed.origin === "seed" ? "参照の初期案" : passed ? "計算結果のある案" : "検討中の案"}を表示しています。` : "目的を一文で伝えるところから始められます。"}</p></div>
@@ -288,14 +302,14 @@ function DesignScreen() {
             {analysisView === "flight" ? <div className="flight-workspace"><FlightPlayer key={displayedId ?? "none"} trace={trace} metrics={flight?.metrics ?? NO_METRICS} warnings={flight?.warnings ?? []} parachute={carriesParachute(displayed?.design)} emptyMessage="計算した飛行の時系列が届くと再生できます"/></div> : null}
             <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedLabel}/></div>
           </div>
-          {stage === "compare" ? <DesignComparison candidates={stream.candidates} selectedId={displayedId} onSelect={setSelectedId}/> : null}
-          <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
+          {stage === "compare" ? <DesignComparison candidates={stream.candidates} selectedId={displayedId} onSelect={id => { setProductionProject(null); setSelectedId(id); }}/> : null}
+          <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || tier !== "amateur"}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
           {stage === "exports" && outputView === "production" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
-          {stage === "exports" && outputView === "video" ? <VideoOutputs/> : null}
+          <div className="production-workspace" hidden={!(stage === "assembly" || stage === "compare" || stage === "exports") || isOrbital(tier)}><DesignProduction source={packageRequest} mode={stage === "assembly" ? "assembly" : stage === "compare" ? "edit" : outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} active={stage === "assembly" || stage === "compare" || stage === "exports"}/></div>
           {stage === "library" ? <div className="reference-workspace"><ReferenceLibrary/></div> : null}
           <WorkshopCrew embedded hideScene={!showCrew}/>
         </div>
-        <div className="workspace-caption"><span>{displayedLabel ? `表示対象: ${displayedLabel}` : "まだ設計案がありません"}</span>{selectedId ? <button type="button" className="text-button" onClick={() => setSelectedId(null)}>最新へ戻る ↻</button> : <span>最新の結果に追従</span>}</div>
+        <div className="workspace-caption"><span>{displayedLabel ? `表示対象: ${displayedLabel}` : "まだ設計案がありません"}</span>{selectedId ? <button type="button" className="text-button" onClick={() => { setProductionProject(null); setSelectedId(null); }}>最新へ戻る ↻</button> : <span>最新の結果に追従</span>}</div>
       </section>
       <aside ref={inspector} className={`workshop-right${rightOpen ? " is-open" : ""}`} aria-label="解説と設計の相談">
         <div className="inspector-tabs" role="group" aria-label="右パネルの表示">{([['explain','解説'],['history','履歴'],['consult','相談']] as const).map(([id,label]) => <button key={id} type="button" aria-pressed={rightTab === id} onClick={() => setRightTab(id)}>{label}</button>)}<button className="mobile-close icon-button" type="button" aria-label="解説と相談を閉じる" onClick={() => setRightOpen(false)}><WorkshopIcon name="close" size={18}/></button></div>
@@ -303,17 +317,17 @@ function DesignScreen() {
           <div className="explanation-title"><span/>{viewingReferenceFilm ? "設計例の映像を確認する" : stage === "analysis" ? analysisView === "aero" ? "機体まわりの流れを確かめる" : "飛行と回収の結果を確かめる" : stage === "exports" ? "同じ設計から、成果物を作る" : stage === "assembly" ? "組立に必要な条件を確認する" : "機体の形と飛び方を、一緒に検討する"}</div>
           <section className="meaning-block"><h2><WorkshopIcon name="info"/>何を確かめる？</h2><p>{viewingReferenceFilm ? "保存済みの設計例で、部品構成と上昇予測の映像を確認できます。" : stage === "analysis" ? "空気の流れや飛行の変化を、計算結果の図から確認します。" : stage === "exports" ? "対象の案と条件をそろえ、図面・部品表・印刷用ファイルを作ります。" : stage === "assembly" ? "部品の向き、材料、必要な工具を整理します。" : "目的に合う構成と、無理なく回収できる条件を探します。"}</p></section>
           <section className="meaning-block"><h2><WorkshopIcon name="analysis"/>今わかること</h2><p>{viewingReferenceFilm ? "映像の対象は、中央に記載された設計例です。保存できるファイルには再生と保存の操作が表示されます。" : task.status === "working" || task.status === "waiting" || task.status === "attention" ? task.label : displayed ? "表示中の案の形状と、届いた計算結果を確認できます。" : "まずは目標、積載物、回収方法を教えてください。"}</p>{displayed && !viewingReferenceFilm ? <ResultPanel tier={tier} metrics={resultMetrics}/> : null}</section>
-          <section className="meaning-block"><h2><WorkshopIcon name="history"/>まだ決められないこと</h2><p>{!displayed ? "設計案と計算結果はまだありません。" : stage === "assembly" ? "手・工具のアクセス、締結の条件、実機での組立確認は未評価です。" : stage === "exports" ? "スライス検査と、実際に印刷できたことは別に確認します。現在の設計の動画は未生成です。" : "計算の対象外の条件と、実物の強度・組立性は未確認です。"}</p></section>
+          <section className="meaning-block"><h2><WorkshopIcon name="history"/>まだ決められないこと</h2><p>{!displayed ? "設計案と計算結果はまだありません。" : stage === "assembly" ? "手・工具のアクセス、締結の条件、実機での組立確認は未評価です。" : stage === "exports" ? "スライス検査と、実際に印刷できたことは別に確認します。採用版の動画と実機の記録は区別して確認します。" : "計算の対象外の条件と、実物の強度・組立性は未確認です。"}</p></section>
           {stream.status === "error" ? <div className="inspector-error" role="alert">{stream.messages.filter(m => m.role === "error").at(-1)?.text ?? "処理に失敗しました。相談の記録を確認してください。"}</div> : null}
-          {stage === "design" || stage === "brief" ? <><CostPanel summary={summary} fallbackCostJpy={fallbackCost} loading={summaryState.loading} error={summaryState.error}/><button className="btn inspector-primary" type="button" onClick={() => { chooseStage(displayed ? "analysis" : "brief"); if (!displayed) setRightTab("consult"); }}>{displayed ? "解析の画面へ" : "目的を相談する"}<WorkshopIcon name="arrow" size={18}/></button></> : null}
-          {stage === "assembly" ? <BomPanel bom={summary?.bom ?? []} csvUrl={csvUrl} loading={summaryState.loading}/> : null}
+          {stage === "design" || stage === "brief" ? <>{productionProject ? <p className="scope-note">採用版の部品価格と固定材の費用は未見積りです。</p> : <CostPanel summary={summary} fallbackCostJpy={fallbackCost} loading={summaryState.loading} error={summaryState.error}/>}<button className="btn inspector-primary" type="button" onClick={() => { chooseStage(displayed ? "analysis" : "brief"); if (!displayed) setRightTab("consult"); }}>{displayed ? "解析の画面へ" : "目的を相談する"}<WorkshopIcon name="arrow" size={18}/></button></> : null}
+          {stage === "assembly" ? <BomPanel bom={projectBom ?? summary?.bom ?? []} csvUrl={csvUrl} loading={summaryState.loading}/> : null}
           {stage === "exports" ? <p className="scope-note"><WorkshopIcon name="info" size={16}/>現在の案に対応するファイルだけを保存できます。</p> : null}
         </div>
-        <div className="inspector-scroll" hidden={rightTab !== "history"}><DetailsPanel tier={tier} classify={stream.classify} derived={stream.derived} attempts={stream.attempts} candidates={stream.candidates} chain={stream.chain} events={stream.events} dispersion={dispersion} landing={landing} exports={exportInfos} selectedId={displayedId} onSelect={setSelectedId}/></div>
+        <div className="inspector-scroll" hidden={rightTab !== "history"}>{productionProject ? <section className="meaning-block"><h2>保存した案件の履歴</h2><ol>{productionProject.history.map((event, index) => <li key={index}>v{event.version} · {({edit:"入力を保存", analyse:"CADと飛行を再解析", adopt:"版を採用", assembly_pdf:"PDFを生成", slicing:"印刷データを生成", video_direction:"演出案を作成", render_design_and_launch:"動画を制作", archive:"ZIPを作成"} as Record<string,string>)[event.operation] ?? "工程を実行"}</li>)}</ol></section> : <DetailsPanel tier={tier} classify={stream.classify} derived={stream.derived} attempts={stream.attempts} candidates={stream.candidates} chain={stream.chain} events={stream.events} dispersion={dispersion} landing={landing} exports={exportInfos} selectedId={displayedId} onSelect={id => { setProductionProject(null); setSelectedId(id); }}/>}</div>
         <div className="consultation" hidden={rightTab !== "consult"}><div className="consultation-title"><WorkshopIcon name="chat" size={18}/><h2>設計の相談</h2></div><ChatPanel messages={stream.messages} status={stream.status} pendingQuestion={stream.pendingQuestion} onStart={handleStart} onAnswer={handleAnswer} onStop={stop} onReset={handleReset}/></div>
       </aside>
     </div>
-    <footer className="workshop-footer"><StatusStrip status={stream.status} attemptCount={stream.attemptCount}/><span className="footer-divider"/><span className="footer-task">{task.label}</span><span className="toolbar-spacer"/><span className="footer-units">単位: m, g, 円</span><button className="btn" type="button" aria-pressed={paused} disabled={reduced} onClick={() => setPaused(!paused)}><WorkshopIcon name={paused ? "play" : "pause"} size={16}/>{reduced ? "動きを減らす設定" : paused ? "動きを再開" : "動きを止める"}</button>{stream.status === "streaming" ? <button type="button" className="btn stop-design" onClick={stop}>設計を中断</button> : null}</footer>
+    <footer className="workshop-footer">{productionProject ? <span role="status">{productionProject.active ? "処理中" : productionProject.adopted ? "採用版を保存済み" : "設計版を確認中"}</span> : <StatusStrip status={stream.status} attemptCount={stream.attemptCount}/>}<span className="footer-divider"/><span className="footer-task">{task.label}</span><span className="toolbar-spacer"/><span className="footer-units">単位: m, g, 円</span><button className="btn" type="button" aria-pressed={paused} disabled={reduced} onClick={() => setPaused(!paused)}><WorkshopIcon name={paused ? "play" : "pause"} size={16}/>{reduced ? "動きを減らす設定" : paused ? "動きを再開" : "動きを止める"}</button>{stream.status === "streaming" ? <button type="button" className="btn stop-design" onClick={stop}>設計を中断</button> : null}</footer>
     <dialog ref={settings} className="workshop-settings" aria-labelledby="settings-title"><div className="dock-heading"><h2 id="settings-title">表示と出力先</h2><button className="icon-button" type="button" aria-label="設定を閉じる" onClick={() => settings.current?.close()}><WorkshopIcon name="close"/></button></div><div className="settings-content"><h3>工房の表示</h3><label><input type="checkbox" checked={visible} onChange={e => setVisible(e.target.checked)}/>整備員を表示</label><label><input type="checkbox" checked={paused} disabled={reduced} onChange={e => setPaused(e.target.checked)}/>演出とカメラの動きを止める</label><p>{reduced ? "端末の設定に合わせ、動きを減らしています。" : "表示設定はこのブラウザーに保存します。"}</p><h3>3Dプリントの出力先</h3><p>UltiMaker S5 · Tough PLA Gray · AA 0.4</p><small>製作データで選択中の案を生成し、ファイルを保存できます。</small></div><form method="dialog"><button className="btn" type="submit">閉じる</button></form></dialog>
   </main>;
 }

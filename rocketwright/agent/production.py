@@ -179,6 +179,12 @@ def render_video(bench, project_id, revision, style="engineering", *, started=No
                 bench.file(project_id, "production/trace.json").read_text(encoding="utf-8")
             ),
         }
+        if report["design"].get("geometry"):
+            # Registered, hash-checked CAD paths only. Never a path chosen by the model.
+            job["cad_files"] = {
+                "nose": str(bench.file(project_id, "cad/nose-mm.stl").resolve()),
+                "fin": str(bench.file(project_id, "cad/fin-assembly-mm.stl").resolve()),
+            }
         if style == "photographic":
             freeze_assets(directory)
         job_path = directory / "job.json"

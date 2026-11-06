@@ -1,0 +1,48 @@
+{
+  "backend": "native local API, cloud design disabled",
+  "cases": [
+    {
+      "name": "1.5 L",
+      "versions": [
+        1,
+        2,
+        3
+      ],
+      "changed_fin_span_mm": [
+        55,
+        60
+      ],
+      "target_rejection_m": 1000,
+      "accepted_target_m": 20,
+      "adopted_version": 3,
+      "reload_resume": true,
+      "manual_and_s5_slice": true,
+      "archive": true
+    },
+    {
+      "name": "2 L",
+      "version": 1,
+      "photographic_playback_seconds": [
+        16,
+        12
+      ],
+      "both_videos_reached_end": true,
+      "switch_to_case_without_video_hides_old_video": true
+    },
+    {
+      "name": "JSON import",
+      "input_only_new_project": true,
+      "analysis_reset": true,
+      "adoption_reset": true
+    }
+  ],
+  "viewport_390px_no_horizontal_overflow": true,
+  "new_preview_console_errors": 0,
+  "physical_validation": "not_performed",
+  "crew": {
+    "inspection": "ws-measure / busy",
+    "cleanup": "ws-put-away and ws-return-tool / 6 s",
+    "waiting": "ws-rest",
+    "paused": "animation none, returned tool hidden"
+  }
+}

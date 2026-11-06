@@ -149,7 +149,12 @@ class _Dynamics:
     ) -> None:
         self.p_atm = atm.state_scalar(env.launch_altitude_m, env.temperature_offset_k)[1]
         self.nozzle_area_m2 = math.pi * (design.nozzle_diameter_m / 2.0) ** 2
-        self.area_m2 = math.pi * (bottle_diameter_m(design.bottle_volume_m3) / 2.0) ** 2
+        diameter = (
+            design.geometry.body_diameter_mm / 1000
+            if design.geometry
+            else bottle_diameter_m(design.bottle_volume_m3)
+        )
+        self.area_m2 = math.pi * (diameter / 2.0) ** 2
         self.cd = cd * (1.0 if design.has_fins else TUMBLING_DRAG_FACTOR)
         self.air_impulse_efficiency = air_impulse_efficiency
         self.volume_m3 = design.bottle_volume_m3

@@ -11,6 +11,7 @@ from fastapi.responses import Response, StreamingResponse
 from pydantic import BaseModel, Field
 
 from api.aero import router as aero_router
+from api.design_projects import router as design_projects_router
 from api.manufacturing import router as manufacturing_router
 from api.workbench import router as workbench_router
 from rocketwright import __version__
@@ -28,6 +29,7 @@ app = FastAPI(title="RocketWright", version=__version__)
 app.include_router(workbench_router)
 app.include_router(manufacturing_router)
 app.include_router(aero_router)
+app.include_router(design_projects_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
