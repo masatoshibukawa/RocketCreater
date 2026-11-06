@@ -319,6 +319,38 @@ class Workbench:
 
         return self._run(project_id, revision, "export_production", worker)
 
+    def print_package(self, project_id: str, revision: int):
+        def worker(state):
+            from rocketwright.manufacturing import PrintGeometry, PrintRequest, prepare
+            from rocketwright.schema import BottleDesign
+
+            if any(f["kind"] == "manufacturing" for f in state["files"]):
+                raise Conflict("A print package already exists for this frozen design")
+            try:
+                report = json.loads(
+                    self.file(project_id, "production/report.json").read_text(encoding="utf-8")
+                )
+                assembly = json.loads(
+                    self.file(project_id, "production/assembly.json").read_text(encoding="utf-8")
+                )
+            except KeyError as exc:
+                raise Conflict("Export the confirmed production design before slicing") from exc
+            request = PrintRequest(
+                design=BottleDesign.model_validate(report["design"]),
+                geometry=PrintGeometry.from_plan(assembly["dimensions_mm"]),
+            )
+            directory = self.directory(project_id) / f"manufacturing-r{revision}"
+            manifest = prepare(request, directory)
+            self.register_files(state, directory, "manufacturing")
+            state["files"] = [
+                f
+                for f in state["files"]
+                if not (f["kind"] == "manufacturing" and f["name"].endswith(".log"))
+            ]
+            state["print_package"] = manifest
+
+        return self._run(project_id, revision, "prepare_print_package", worker)
+
     def aero_loop(self, project_id: str, revision: int):
         """Flight/CFD loop on the confirmed design, stored beside it in `aero_loop`: a CFD-based
         alternative to read. History, the frozen design and production files stay as they are."""

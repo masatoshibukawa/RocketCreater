@@ -215,15 +215,17 @@ def validate_parameters(c):
         raise ValueError("Resolution must be an integer from 32 to 512")
     if f["saddle_width"] >= b["body_diameter"]:
         raise ValueError("Saddle arc exceeds the supported geometry")
-    if not 0 < f["tip_trailing_offset"] < f["root_chord"] - f["tip_chord"]:
+    if not 0 <= f["tip_trailing_offset"] <= f["root_chord"] - f["tip_chord"]:
         raise ValueError("Fin tip must remain inside the axial chord")
     if any(not math.isfinite(z) or z - f["slot_height"] / 2 <= 3 or
            z + f["slot_height"] / 2 >= f["root_chord"] - 3 for z in f["slot_centers"]):
         raise ValueError("Slots must leave material at both axial ends")
     for z in f["slot_centers"]:
         radial_end = f.get("slot_root_offset", 1.8) + f["slot_width"]
-        lower = (z - f["slot_height"] / 2) * f["span"] / f["tip_trailing_offset"]
-        upper = (f["root_chord"] - z - f["slot_height"] / 2) * f["span"] / (f["root_chord"] - f["tip_trailing_offset"] - f["tip_chord"])
+        offset = f["tip_trailing_offset"]
+        upper_run = f["root_chord"] - offset - f["tip_chord"]
+        lower = (z - f["slot_height"] / 2) * f["span"] / offset if offset else math.inf
+        upper = (f["root_chord"] - z - f["slot_height"] / 2) * f["span"] / upper_run if upper_run else math.inf
         if radial_end >= min(f["span"], lower, upper):
             raise ValueError("Slot would break out of the blade outline")
     normal = n["wall"] / math.sqrt(1 + n["slope"] ** 2) if n["wall_mode"] == "radial" else n["wall"]

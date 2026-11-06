@@ -8,6 +8,7 @@ import DetailsPanel from "./components/DetailsPanel";
 import DrawingPanel from "./components/DrawingPanel";
 import FlightChart from "./components/FlightChart";
 import ModelViewer from "./components/ModelViewer";
+import PrintExports from "./components/PrintExports";
 import StatusStrip from "./components/StatusStrip";
 import WorkbenchPanel from "./components/WorkbenchPanel";
 import { exportInfoFromEvents, exportsForDesign } from "./lib/api";
@@ -129,6 +130,7 @@ export default function Home() {
               dimensions={summary?.dimensions ?? null}
               notes={notes}
             />
+            <PrintExports design={displayed?.design}/>
             <CostPanel
               summary={summary}
               fallbackCostJpy={fallbackCost}
