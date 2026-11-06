@@ -6,7 +6,7 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 合格した設計案だけを図面・部品表・飛行解析・成功率つきで返します。
 
 **Built with Claude: Japan 2026** 向けに開発。すべてシミュレーション上で完結し、実機は打ち上げません。
-ライセンスは MIT です。
+このリポジトリのコードは MIT ライセンスです。同梱している第三者の資料には、別のライセンスのものがあります（[第三者の資料とライセンス](THIRD_PARTY.md)）。
 
 ペットボトルロケットの設計変数・解析手法・評価指標は、[ブラウザで読める設計ガイド](UI/bottle-pool/README.md)にまとめています。
 
@@ -20,13 +20,13 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 - 解析：流体解析（飛行計算と流体計算を交互に回す。ボトルとアマチュア）、飛行の再生、高度の推移
 - 出力：製作票PDF・設計レポート・部品表・側面図、保存した案の製作データと動画（ボトルとアマチュア）
 
-右の欄に飛行の結果があります。ボトルの静安定余裕は、部品のフィンを選んだ案で注水時と空のときの2つを出します。企業級・重工級は構想設計に留めるので、流体解析と製作データのタブは出ません。
+右の欄に飛行の結果があります。ボトルの静安定余裕は、部品のフィンを選んだ案で注水時と空のときの2つを出します。企業級・重工級は構想設計に留めるので、流体解析と製作データは出しません。
 
 Claudeの案は機体の構成を定めないため、1.5 Lの製作例にある組立手順の文章・原寸型紙・購入計画はこの画面からは出ません。出せないものは「製作データ」に理由と一緒に示します。
 
 1工程ずつ確かめるペットボトルの製作例と動画制作は、画面をなくし、API（`/workbench/*`）とスクリプトとして残しました。[ローカル試験の起動と操作](docs/workbench.md)を参照してください。
 
-**課金APIの設計実行は既定で無効です。** `ROCKETWRIGHT_ENABLE_CLOUD_DESIGN=0` のままだと、画面では設計を始められず「設計例と資料」だけを使えます。キーを設定するだけでは `/design` は実行されません。クラウド接続は最後の確認段階まで保留します。
+**課金APIの設計実行は既定で無効です。** `ROCKETWRIGHT_ENABLE_CLOUD_DESIGN=1` と `ANTHROPIC_API_KEY` を、API を起動するシェルの環境変数に入れると、画面から Claude の設計を実行できます。フラグがなければ `/design` は 423 を返し、画面では設計を始められません。`.env` は自動では読まれません。
 
 - [統合した資料・決定事項と担当範囲](docs/integration.md)
 - [ローカル試験の起動と操作](docs/workbench.md)
@@ -57,7 +57,7 @@ Claudeの案は機体の構成を定めないため、1.5 Lの製作例にある
 | --- | --- | --- | --- |
 | `bottle` ペットボトル | 数十 m、卵を割らずに着地 | 水＋圧縮空気 | `water` |
 | `amateur` アマチュア | 数百 m〜数 km、積載 1 kg 前後 | 認定済み市販固体モーター（カタログ） | `solid` |
-| `commercial` 企業級 | 高度 100 km、小型衛星を低軌道へ | 多段式（エンジンはカタログから） | `multistage` |
+| `commercial` 企業級 | 小型衛星を低軌道へ（高度だけを目標にする要求は未対応） | 多段式（エンジンはカタログから） | `multistage` |
 | `heavy` 重工級 | 数 t 級の積載を低軌道／静止トランスファ軌道へ | 多段式＋補助ブースタ | `multistage` |
 
 ## 原則
@@ -106,16 +106,26 @@ tests/               pytest
 uv python install 3.12
 uv sync --group dev
 uv run pytest
-uv run ruff check .
+uv run ruff check rocketwright tests api scripts
 uv run uvicorn api.main:app --reload   # GET /health
 ```
 
-エージェントの呼び出しには `ANTHROPIC_API_KEY` が必要です。`.env.example` を `.env` にコピーして設定してください。
-
-フロントエンド（Node 18.18 以上。雛形は手書きで、この開発環境ではまだビルドしていません）：
+Claude の設計を実行するには、API を起動するシェルで次を実行します。課金が発生します。`.env` は自動では読まれないので、`.env` に書いた場合は `set -a; . ./.env; set +a` で読み込みます。
 
 ```bash
-cd web && npm install && npm run dev   # http://localhost:3000
+export ANTHROPIC_API_KEY=...                 # 自分のキー
+export ROCKETWRIGHT_ENABLE_CLOUD_DESIGN=1    # これがないと /design は 423 を返す
+uv run uvicorn api.main:app --host 127.0.0.1 --port 8000
+```
+
+既定のモデルと上限は `config/models.yaml` にあります（Opus、試行 40 回まで）。費用を抑えるには、モデルを Haiku にし、`max_attempts` と `max_turns` を下げます。
+
+キーなしで流れを見るには、台本どおりに応答する偽のクライアントを使います（下の「デモの実行」）。
+
+フロントエンド（Node 18.18 以上）。`--hostname 127.0.0.1` を付けると、自分の PC の中だけで待ち受けます。付けないと、同じネットワークから画面と API に届きます：
+
+```bash
+cd web && npm install && npm run dev -- --hostname 127.0.0.1   # http://localhost:3000
 ```
 
 画面の設計はClaudeを使います。Claude接続は既定で無効で、そのときチャットに「Claude の設計は今オフです」と表示します。使い方の詳細は `web/README.md` を参照してください。
@@ -152,7 +162,7 @@ uv run python scripts/run_scenario.py scenarios/demo_commercial.yaml
 
 | 台本（要求） | 基準案（auto_design） | 選び直し（design_stage、上流から） | 最終（design_from_parts） | 成功率（n=100） |
 | --- | --- | --- | --- | --- |
-| demo_bottle（卵、30 m、3,000 円、1.5 L） | 1.0 L ボトル・15 mm ノズル・水 25 %・500 kPa（上限）：29.9 m、730 円、合格 | ① `bottle`：ユーザーの 1.5 L（合格 29.9 m、364 kPa）② `pressure`：合格する最低圧 350 kPa（29.1 m、上限まで余裕） | 1.5 L・22 mm ノズル・350 kPa・30 cm 傘：29.1 m、1,150 円、合格 | 0.98 |
+| demo_bottle（卵、30 m、3,000 円、1.5 L） | 1.0 L ボトル・15 mm ノズル・水 25 %・500 kPa（上限）：29.9 m、730 円、合格 | ① `bottle`：ユーザーの 1.5 L（合格 29.9 m、364 kPa）② `pressure`：合格する最低圧 350 kPa（29.1 m、上限まで余裕） | 1.5 L・22 mm ノズル・350 kPa・30 cm 傘：29.1 m、1,150 円、合格 | 0.91 |
 | demo_amateur（1 kg、2 km、5 万円） | J435WS（24 本列挙、13 本検証、1 本合格）・LOC 54 mm・胴 1,363 mm＝2 本＋カプラ・5.5 cal（過安定警告）・Level 2 警告：1,871 m、33,930 円、合格 | ① `mount`：カプラを避ける 98 mm 一本胴（motor_mount_38mm_98）は 948 m で不合格 → 上位候補（54 mm）を維持 ② `fins`：合格する翼のうち余裕が最小の後退翼 5.3 cal（胴が長く 2〜3 cal には届かない） | 同構成・後退翼：1,871 m、33,930 円、合格（Level 2・カプラ・過安定を明示） | 0.71 |
 | demo_model_rocket（200 g、500 m、2 万円、資格なし） | F32T（57 Ns、低出力・資格不要）・Estes BT-60・2 本＋カプラ：502 m、9,340 円、合格 | 資格：高出力警告なし → 選び直し不要 ① `body_tube`：一本胴の BT-80 は 301 m で不合格、BT-55 は F 級に非対応 → BT-60 を維持 | 基準案を確認：502 m、9,340 円、合格 | 0.87 |
 | demo_commercial（150 kg、400 km、20 億円） | （実機の種）Electron を縮尺、ピッチ再調整：合格 399.5 km | 試行 2：1 段目を 4,000 kg に削減 → 近地点 -1.9 km で不合格／試行 3：2 段目を 900 kg に削減 | 400×498 km、5.0 億円、合格 | 0.94（試行 1） |
@@ -463,13 +473,33 @@ commitments. Prioritize a reproducible existing end-to-end demo over adding unve
 
 Unchecked items are verification tasks, not claims that the implementation is missing or broken.
 
-- [ ] Run `uv run pytest`, `uv run ruff check .`, and `uv run python scripts/check_scenarios.py`; record results and any skipped tests.
+- [ ] Run `uv run pytest`, `uv run ruff check rocketwright tests api scripts`, and `uv run python scripts/check_scenarios.py`; record results and any skipped tests.
 - [ ] Run `npm run build` in `web/`; verify the browser flow against the same backend commit.
 - [ ] Check live Claude behavior on supported demo inputs, including rejected/out-of-scope requests, unsuccessful candidates, and retry/error handling.
 - [ ] Review candidate geometry, labels, units, and download contents; agree on whether 3D visualization/export is in submission scope before describing it as available.
 - [ ] Ensure the video and summary distinguish simulated results, provisional values, and unverified capabilities.
 - [ ] Check the public repository, video, and summary links; exclude credentials and private development data.
 - [ ] Submit by the organizer's deadline and retain confirmation.
+
+## 衛星からの連携
+
+[SatelliteCreator](https://github.com/masatoshibukawa/SatelliteCreator) が保存する `launch_request.json` から、ロケットの要求と規模を出せます。画面の連携はまだなく、コマンドで実行します。
+
+```bash
+uv run python scripts/from_satellite.py scenarios/opt_cube/launch_request.json
+```
+
+使うのは質量と近地点・遠地点だけです。軌道傾斜角と外形は警告を出すだけで、計算には入りません。
+
+## 既知の制限
+
+- 5 km を超える高度だけを目標にする要求（例：高度 100 km 到達）は、合格できません。多段式の合否は軌道の投入で判定します。
+- 軌道の合否は、近地点が目標の 90 % 以上で合格です。円軌道の要求でも、遠地点は指定があるときだけ判定します。
+- 軌道傾斜角を計算に使いません。常に真東へ打ち上げ、地球の自転を足します。極軌道に近い要求では楽観的です。
+- 衛星からの連携が返す規模は、多数回試行の成功率が最も高い点です。誘導のない上昇なので、成功率は規模に比例しません。
+- ボトルの圧力の上限（500 kPa）と静安定の判定は、部品から組んだ案にだけ効きます。設計値を直接飛ばす経路（`simulate_design`）では効きません。
+- 説明文の数値の検査は、最終結果の要約と案の説明文だけが対象です。日本語の文字に接した数値は見逃すことがあり、符号の書き方が違う値を誤って指摘することがあります。
+- 流体解析は粗い格子で、収束も実測との照合も確かめていません。
 
 ## 簡易化した箇所
 
