@@ -120,6 +120,7 @@ def parameters(request: PrintRequest) -> dict:
     c["include_fins"] = request.design.has_fins
     c["bottle"]["description"] = "Design-derived envelope; dimensions are not physically measured"
     c["bottle"].update(
+        radial_clearance=g.radial_clearance_mm,
         body_diameter=g.body_diameter_mm,
         height=g.body_height_mm,
         cylinder_start_z=0.25 * g.body_height_mm,
@@ -142,6 +143,7 @@ def parameters(request: PrintRequest) -> dict:
             high = slope
     n["slope"] = (low + high) / 2
     c["fin"].update(
+        slot_width=g.fin_slot_width_mm,
         count=g.fin_count,
         thickness=g.fin_thickness_mm,
         mount_tail_z=g.fin_tail_inset_mm,

@@ -6,6 +6,7 @@ import { newSpec, projectRequest, projectFileLabel, type DesignProject, type Pro
 import { useCrewTask } from "../lib/WorkshopContext";
 import ModelViewer from "./ModelViewer";
 import VideoOutputs from "./VideoOutputs";
+import ProjectEquipmentEditor from "./ProjectEquipmentEditor";
 
 const STORAGE = "rocketwright-production-project-v1";
 const DIMENSIONS: [keyof Omit<ProductionGeometry, "dimensions_measured">, string][] = [
@@ -15,6 +16,7 @@ const DIMENSIONS: [keyof Omit<ProductionGeometry, "dimensions_measured">, string
   ["fin_span_mm", "フィン張出し mm"], ["fin_sweep_mm", "フィン後退 mm"],
   ["fin_thickness_mm", "フィン厚さ mm"], ["fin_count", "フィン枚数"],
   ["fin_tail_inset_mm", "フィン後端の高さ mm"],
+  ["radial_clearance_mm", "径方向の嵌合余裕 mm"], ["fin_slot_width_mm", "固定材スロット幅 mm"],
 ];
 const OPERATION: Record<string, string> = { analyse: "CADと飛行を再解析中", slicing: "S5用データを検査中", render_design_and_launch: "同じ採用版の動画を制作中" };
 
@@ -111,7 +113,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
     {draft ? <form onSubmit={e => { e.preventDefault(); void save(); }}>
       <p className="wb-case-tag">保存すると新しい版になり、解析・採用・出力をやり直します。初期の寸法は容量からの仮定です。</p>
       <div className="project-fields"><label>案件名<input required maxLength={100} value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })}/></label>
-        {DIMENSIONS.map(([key, label]) => <span key={key}>{num(label, draft.geometry[key], value => setDraft({ ...draft, geometry: { ...draft.geometry, [key]: value } }))}</span>)}
+        {DIMENSIONS.map(([key, label]) => <span key={key}>{num(label, draft.geometry[key] ?? (key === "radial_clearance_mm" ? .4 : 3.6), value => setDraft({ ...draft, geometry: { ...draft.geometry, [key]: value } }))}</span>)}
         {num("印刷部品以外の乾燥質量 g（要確認）", draft.other_dry_mass_g, value => setDraft({ ...draft, other_dry_mass_g: value }))}
         <label>機体に使う印刷部品の実測合計 g（任意）<input type="number" min="0.01" step="any" value={draft.measured_printed_mass_g ?? ""} onChange={e => setDraft({ ...draft, measured_printed_mass_g: e.target.value ? Number(e.target.value) : null })}/></label>
         {num("ボトル容量 L", draft.design.bottle_volume_m3*1000, value => setDraft({ ...draft, design: { ...draft.design, bottle_volume_m3: value/1000 } }))}
@@ -122,6 +124,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
         {num("搭載質量 g", draft.design.payload_mass_kg*1000, value => setDraft({ ...draft, design: { ...draft.design, payload_mass_kg: value/1000 }, requirement: draft.requirement ? { ...draft.requirement, payload_mass_kg: value/1000 } : null }))}
         <label>目標高度 m（任意）<input type="number" min="1" step="any" value={Number(draft.requirement?.target_altitude_m) || ""} onChange={e => setDraft({ ...draft, requirement: e.target.value ? { goal_kind: "altitude", payload_mass_kg: draft.design.payload_mass_kg, budget_jpy: 3000, recovery_required: true, ...draft.requirement, target_altitude_m: Number(e.target.value) } : null })}/></label>
       </div>
+      <ProjectEquipmentEditor spec={draft} onChange={setDraft}/>
       <p className="wb-note">材料：{draft.material}。実測質量がないときは、同じCADの一様固体の質量で計算します。充填率による実際の部品質量や取付強度は未確認です。</p>
       {project ? <p className="wb-note">変更する寸法：{DIMENSIONS.filter(([key]) => draft.geometry[key] !== project.spec.geometry[key]).map(([, label]) => label).join("、") || "なし"}。質量・計算条件も保存した入力で再解析します。変更後はCAD・印刷・手順書・動画を新しい版から生成します。</p> : null}
       <label><input type="checkbox" checked={draft.geometry.dimensions_measured} onChange={e => setDraft({ ...draft, geometry: { ...draft.geometry, dimensions_measured: e.target.checked } })}/>ボトルと部品の寸法を実測して入力した</label>

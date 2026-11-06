@@ -6,11 +6,28 @@ export interface ProductionGeometry {
   fin_root_mm: number; fin_tip_mm: number; fin_span_mm: number; fin_sweep_mm: number;
   fin_count: number; fin_thickness_mm: number; nose_wall_mm: number;
   fin_tail_inset_mm: number; dimensions_measured: boolean;
+  radial_clearance_mm?: number; fin_slot_width_mm?: number;
 }
+export interface ProjectEquipment {
+  printer_profile: "s5-gray-aa04"; printer_label: string; print_core: "AA 0.4"; build_plate: "glass";
+  material_lot: string; print_orientation: "host_validated_profile"; operator: string; glove: string;
+  hand_width_mm: number | null; glove_allowance_mm: number | null; strap_width_mm: number | null;
+  strap_thickness_mm: number | null; tool_radius_mm: number | null; required_force_n: number | null;
+  allowable_force_n: number | null; tools: string[]; workbench_clear_width_mm: number | null;
+  procurement: { part: string; quantity: number; unit_price_jpy: number | null;
+    basis: "unknown" | "estimate" | "quote" | "paid"; source: string; checked_on: string }[];
+}
+export function defaultEquipment(): ProjectEquipment { return {
+  printer_profile:"s5-gray-aa04", printer_label:"実験室1 / UltiMaker-006707", print_core:"AA 0.4", build_plate:"glass",
+  material_lot:"", print_orientation:"host_validated_profile", operator:"未指定", glove:"未指定",
+  hand_width_mm:null, glove_allowance_mm:null, strap_width_mm:null, strap_thickness_mm:null,
+  tool_radius_mm:null, required_force_n:null, allowable_force_n:null, tools:["ノギス","はかり","適合する固定材"],
+  workbench_clear_width_mm:null, procurement:[] }; }
 export interface ProductionSpec {
   name: string; design: BottleDesign; geometry: ProductionGeometry;
   requirement: Record<string, unknown> | null; env: Record<string, unknown>;
   other_dry_mass_g: number; measured_printed_mass_g: number | null; material: string;
+  equipment?: ProjectEquipment;
 }
 export interface ProjectFile { name: string; key: string; kind: string; url: string; version: number; sha256: string }
 export function projectFileLabel(name: string): string {
@@ -58,5 +75,5 @@ export function newSpec(source: DesignPackageRequest | null): ProductionSpec {
     dimensions_measured: false,
   }, requirement: source?.requirement ?? null, env: source?.env ?? {},
   other_dry_mass_g: design.dry_mass_kg*1000, measured_printed_mass_g: null,
-  material: "UltiMaker Tough PLA Gray" };
+  material: "UltiMaker Tough PLA Gray", equipment: defaultEquipment() };
 }

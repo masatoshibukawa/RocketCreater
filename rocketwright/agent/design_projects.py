@@ -17,6 +17,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from rocketwright.agent.local_runtime import LocalRuntimeError
+from rocketwright.agent.project_equipment import Equipment, procurement_summary
 from rocketwright.agent.project_requirements import assess_requirements, validate_requirements
 from rocketwright.agent.workbench import Conflict
 from rocketwright.analysis.schema import MOUNTS, STOCKS, Assumptions
@@ -54,6 +55,7 @@ def implementation_fingerprint():
         "rocketwright/physics/water.py",
         "rocketwright/geometry.py",
         "rocketwright/agent/project_requirements.py",
+        "rocketwright/agent/project_equipment.py",
         "rocketwright/analysis/schema.py",
         "scripts/build_print_parts.py",
         "3d model/prototypes/pet-rocket-coke-2l/build.py",
@@ -75,6 +77,7 @@ class DesignSpec(BaseModel):
         default="UltiMaker Tough PLA Gray", pattern="^(UltiMaker Tough PLA Gray|Prusament PETG)$"
     )
     assumptions: Assumptions = Field(default_factory=Assumptions)
+    equipment: Equipment = Field(default_factory=Equipment)
 
     @model_validator(mode="after")
     def physical_envelope(self):
@@ -206,6 +209,7 @@ class DesignProjects:
 
     def edit(self, project_id, revision, spec: DesignSpec):
         spec = DesignSpec.model_validate(spec.model_dump())
+
         def worker(state):
             state["versions"].append(
                 dict(
@@ -427,6 +431,11 @@ class DesignProjects:
                 encoding="utf-8",
             )
             write_json(directory / "design.json", dict(schema_version=1, spec=state["spec"]))
+            write_json(directory / "equipment.json", state["spec"]["equipment"])
+            write_json(
+                directory / "procurement.json",
+                procurement_summary(DesignSpec.model_validate(state["spec"])),
+            )
             with (directory / "bom.csv").open("w", encoding="utf-8", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(["part", "quantity", "material", "dimension_basis"])
@@ -478,7 +487,12 @@ class DesignProjects:
                 self.file(project_id, row["key"])
             output = self.directory(project_id) / ("print-" + uuid.uuid4().hex[:8])
             manifest = prepare(
-                PrintRequest(design=BottleDesign.model_validate(state["analysis"]["design"])),
+                PrintRequest(
+                    design=BottleDesign.model_validate(state["analysis"]["design"]),
+                    printer=state["spec"]
+                    .get("equipment", {})
+                    .get("printer_profile", "s5-gray-aa04"),
+                ),
                 output,
             )
             # Regeneration must reproduce the exact CAD volumes that supplied the mass model.

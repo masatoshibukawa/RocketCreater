@@ -2,6 +2,8 @@
 
 import math
 
+from rocketwright.agent.project_equipment import procurement_summary
+
 
 def validate_requirements(spec):
     req = spec.requirement
@@ -45,15 +47,25 @@ def assess_requirements(spec, result):
             reason="装置の入力と降下計算を確認。実際の開傘・保持は別の検証",
         )
     )
+    cost = procurement_summary(spec)
+    budget_status = "not_required"
+    if req and req.budget_jpy:
+        budget_status = (
+            "not_evaluated"
+            if cost["total_jpy"] is None
+            else ("pass" if cost["total_jpy"] <= req.budget_jpy else "fail")
+        )
     rows.append(
         dict(
             id="budget",
             label="予算",
-            status="not_evaluated" if req and req.budget_jpy else "not_required",
+            status=budget_status,
             required=req.budget_jpy if req else None,
-            observed=None,
+            observed=cost["total_jpy"],
             unit="JPY",
-            reason="全部材・固定材の調達費用はまだ確定していません",
+            reason=("数量・価格根拠・確認日が不足: " + ", ".join(cost["missing_or_unconfirmed"]))
+            if cost["missing_or_unconfirmed"]
+            else "全部材・固定材・その他費用の入力済み調達記録で比較",
         )
     )
     if req is None or req.target_altitude_m is None:
