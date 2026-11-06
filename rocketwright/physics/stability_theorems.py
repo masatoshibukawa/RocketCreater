@@ -117,7 +117,7 @@ def flight_screen(assembly, trajectory, table, mass, cfg):
         if speed < table.speeds[0] or speed > table.speeds[-1]:
             continue
         _, cg, inertia = mass.properties(t)
-        q = 0.5 * 1.204 * speed**2
+        q = 0.5 * getattr(cfg, "air_density_kg_m3", 1.204) * speed**2
         eps = np.deg2rad(0.1)
         direction = speed * np.array([np.sin(eps), 0, np.cos(eps)])
         # evaluate's transverse moment is restoring for an air direction inclined +eps.

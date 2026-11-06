@@ -60,7 +60,7 @@ def run(
     axis = rotation(quaternion)[:, 2]
     last_mass = tr["mass_kg"][-1]
     cd = (design.axial_drag_coefficient or 0.55) * cd_scale
-    rho = 1.204  # fixed reference atmosphere, documented in scope
+    rho = cfg.air_density_kg_m3  # constant launch-site density, not a vertical profile
 
     def mass_properties(t):
         if mass_model is not None:
@@ -88,6 +88,11 @@ def run(
                 cfg.gust_mps * 0.4 * np.sin(2 * np.pi * 1.1 * t),
                 0,
             ]
+        )
+        azimuth = np.deg2rad(cfg.wind_to_azimuth_deg)
+        wind[:2] = (
+            np.array([[np.cos(azimuth), -np.sin(azimuth)], [np.sin(azimuth), np.cos(azimuth)]])
+            @ wind[:2]
         )
         air = y[3:6] - wind
         vb = r.T @ air
@@ -155,8 +160,16 @@ def run(
         angular = (torque - np.cross(omega, inertia_now * omega) + transport) / inertia_now
         return angular, transport
 
+    evaluations = 0
+
     def rhs(rail, deployment):
         def derivative(t, y):
+            nonlocal evaluations
+            evaluations += 1
+            if evaluations > cfg.maximum_rhs_evaluations:
+                raise RuntimeError(
+                    "6DOF integration evaluation limit; possible stiff/invalid scenario"
+                )
             f, torque, (m, cg, inertia_now, *_), _ = forces(t, y, deployment)
             acceleration = f / m - np.array([0, 0, G])
             if rail:
@@ -257,7 +270,8 @@ def run(
     result = {
         "completed": bool(len(descent.t_events[0])),
         "qualified": False,
-        "scope": "6DOF, rigid axisymmetric surrogate inertia, dry gas, fixed density 1.204 kg/m3",
+        "scope": "6DOF, rigid surrogate inertia, dry gas, constant launch-site density",
+        "air_density_kg_m3": rho,
         "limitations": [
             "unvalidated aero and inertia",
             "no liquid slosh",

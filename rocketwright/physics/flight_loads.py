@@ -216,7 +216,7 @@ def section_resultants(stations, forces, couples, cuts):
     return result
 
 
-def recover(flight, aero, mass_model, propulsion, *, cuts=65, pressure=True):
+def recover(flight, aero, mass_model, propulsion, *, cuts=65, pressure=True, ambient_pa=101085):
     """Recover balanced loads, retaining rail, canopy, pressure and transport terms."""
     # Resolve both sides of fixed point loads/couples instead of skipping jumps
     # between regularly spaced section samples. Water slices remain distributed.
@@ -238,7 +238,8 @@ def recover(flight, aero, mass_model, propulsion, *, cuts=65, pressure=True):
     traces, residuals = [], []
     for sample in flight["load_samples"]:
         t, cg = sample["time_s"], sample["cg_m"]
-        q = 0.5 * 1.204 * np.linalg.norm(sample["air_velocity_body_mps"]) ** 2
+        q = 0.5 * flight.get("air_density_kg_m3", 1.204)
+        q *= np.linalg.norm(sample["air_velocity_body_mps"]) ** 2
         air = aero.evaluate(sample["air_velocity_body_mps"], q, cg)
         station = list(air["station_m"])
         force = list(air["line_force_n"])
@@ -264,7 +265,7 @@ def recover(flight, aero, mass_model, propulsion, *, cuts=65, pressure=True):
         )
         if pressure:
             tr = propulsion["trace"]
-            gauge = max(0.0, np.interp(t, tr["time_s"], tr["pressure_pa"]) - 101085)
+            gauge = max(0.0, np.interp(t, tr["time_s"], tr["pressure_pa"]) - ambient_pa)
             pressure_force = gauge * mass_model.area
             point(mass_model.top, [0, 0, pressure_force])
             point(mass_model.bottom, [0, 0, -pressure_force])

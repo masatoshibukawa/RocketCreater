@@ -31,7 +31,6 @@ class Assumptions(Strict):
     pitch_damping: float = Field(default=10, ge=0, le=30)
     initial_tilt_deg: float = Field(default=1, ge=0, le=10)
     gust_mps: float = Field(default=1, ge=0, le=20)
-    rail_m: float = Field(default=1.5, gt=0, le=10)
     opening_s: float = Field(default=0.15, gt=0, le=5)
     evidence: dict[str, str] = Field(default_factory=dict)
 
