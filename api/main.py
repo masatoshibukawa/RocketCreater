@@ -73,7 +73,8 @@ async def design(request: DesignRequest) -> StreamingResponse:
     return StreamingResponse(
         _sse(request),
         media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        # Proxy compression can hold small SSE frames until completion, hiding live progress.
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
     )
 
 
