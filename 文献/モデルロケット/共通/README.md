@@ -24,7 +24,9 @@ João Lemes Gribel Soares, Mateus Stano Junqueira, Oscar Mauricio Prada Ramirez,
 
 [配布元・出典](https://proceedings.scipy.org/articles/majora-212e5952-020.pdf) · [原本取得先](https://proceedings.scipy.org/articles/majora-212e5952-020.pdf) · [保存ファイル](原本/MC02.pdf)（9ページ）
 
-利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+利用条件：Creative Commons Attribution（PDFに版番号なし）。PDF第1ページが著作者・出典表示を条件とする使用・配布・複製を明示。版番号を推定せず、著作者表示を保持して原本を共有。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="mc03"></a>
 
@@ -108,7 +110,9 @@ James S. Barrowman / Catholic University of America · 1967（NASA再刊番号20
 
 [配布元・出典](https://ntrs.nasa.gov/citations/20010047838) · [原本取得先](https://ntrs.nasa.gov/api/citations/20010047838/downloads/20010047838.pdf) · [保存ファイル](<原本/MC09.pdf>)（103ページ）
 
-利用条件：NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。
+利用条件：NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="mc10"></a>
 

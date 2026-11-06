@@ -84,7 +84,9 @@ M. Kobald, C. Schmierer, U. Fischer, K. Tomilin, A. Petrarolo, M. Rehberger · 2
 
 [配布元・出典](https://elib.dlr.de/132743/1/Kobald%20eucass2019_025.pdf) · [原本取得先](https://elib.dlr.de/132743/1/Kobald%20eucass2019_025.pdf) · [保存ファイル](原本/MH07.pdf)（40ページ）
 
-利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+利用条件：CC BY 4.0。PDF第1ページに著者・EDP SciencesとCC BY 4.0を明記。原本を無改変で共有。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="mh08"></a>
 
@@ -144,7 +146,9 @@ Joel Jean-Philyppe / McGill Rocket Team · 2023 · en · プレプリント
 
 [配布元・出典](https://arxiv.org/abs/2302.06725) · [原本取得先](https://arxiv.org/pdf/2302.06725) · [保存ファイル](原本/MH12.pdf)（95ページ）
 
-利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+利用条件：CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="mh13"></a>
 
@@ -228,7 +232,9 @@ Gordon E. Jensen; Allen L. Holzman; Steven O. Leisch; Joseph Keilbach; Randy Par
 
 [配布元・出典](https://ntrs.nasa.gov/citations/19900012478) · [原本取得先](https://ntrs.nasa.gov/api/citations/19900012478/downloads/19900012478.pdf) · [保存ファイル](<原本/MH19.pdf>)（118ページ）
 
-利用条件：NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。
+利用条件：NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="mh20"></a>
 
@@ -240,7 +246,9 @@ W. S. Y. Hung; C. S. Chen; J. K. Haviland / University of Virginia · 1972年10�
 
 [配布元・出典](https://ntrs.nasa.gov/citations/19730003241) · [原本取得先](https://ntrs.nasa.gov/api/citations/19730003241/downloads/19730003241.pdf) · [保存ファイル](<原本/MH20.pdf>)（49ページ）
 
-利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+利用条件：NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="mh21"></a>
 

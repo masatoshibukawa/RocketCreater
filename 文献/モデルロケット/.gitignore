@@ -25,6 +25,12 @@
 !ハイブリッド/モデル/MH13-OpenRocket/README.md
 !ハイブリッド/モデル/MH13-OpenRocket/core/src/main/resources/datafiles/examples/Simulation extensions.ork
 !ハイブリッド/モデル/MH13-OpenRocket/core/src/main/resources/datafiles/examples/Simulation scripting.ork
+!ハイブリッド/原本/MH07.pdf
+!ハイブリッド/原本/MH12.pdf
+!ハイブリッド/原本/MH19.pdf
+!ハイブリッド/原本/MH20.pdf
+!共通/原本/MC02.pdf
+!共通/原本/MC09.pdf
 !固体/モデル/MS14-OpenRocket/LICENSE.TXT
 !固体/モデル/MS14-OpenRocket/README.md
 !固体/モデル/MS14-OpenRocket/core/src/main/resources/datafiles/examples/3D printable nose cone and fins.ork
@@ -179,6 +185,8 @@
 !固体/モデル/MS26-OpenRocketQD/rocket_evaluate.py
 !固体/モデル/MS26-OpenRocketQD/rocket_fins.py
 !固体/モデル/MS26-OpenRocketQD/rocket_spread.py
+!固体/原本/MS17.pdf
+!固体/原本/MS19.pdf
 !液体/モデル/ML01-RocketPy/LICENSE
 !液体/モデル/ML01-RocketPy/README.md
 !液体/モデル/ML01-RocketPy/data/rockets/berkeley/drag.csv
@@ -214,3 +222,8 @@
 !液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/stage 1-2 coupler v2.stl
 !液体/モデル/ML13-NASA-SaturnV/3D Printing/Saturn V Rocket/stage 1-2 coupler.stl
 !液体/モデル/ML13-NASA-SaturnV/README.md
+!液体/原本/ML03.pdf
+!液体/原本/ML08.pdf
+!液体/原本/ML09.pdf
+!液体/原本/ML14.pdf
+!液体/原本/ML17.pdf

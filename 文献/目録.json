@@ -101,6 +101,12 @@
         "path": "原本/D06-nasa-rockets-guide.pdf",
         "pages": 134,
         "sha256": "e973d4bdf4a48eefbd159b130e1d401fab5f4fe0e617d1c9167f73dfad455438"
+      },
+      "license": "Public domain（PDF内の明示）。NASA。PDF冒頭で著作権保護の対象外・複製許諾不要と明示。原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "文献/原本/D06-nasa-rockets-guide.pdf"
       }
     },
     {
@@ -118,6 +124,12 @@
         "path": "原本/D07-npl-water-rockets.pdf",
         "pages": 50,
         "sha256": "bc520e0ccc3acb6c3045f0ea0206a53263c7fa0f7130afe539725b127da0f517"
+      },
+      "license": "NPL educational reproduction permission。Michael de Podesta / NPL。非営利の教育活動での全部・一部の複製を許可。作者・著作権者を表示し、教育用の無改変参考資料として共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "文献/原本/D07-npl-water-rockets.pdf"
       }
     },
     {
@@ -879,6 +891,13 @@
         "path": "原本/R17-caicedo-video.pdf",
         "pages": 9,
         "sha256": "87365ac0e755307fab966fc8528461354d543d3bad78ff40c6d37a381276172f"
+      },
+      "license": "CC BY-NC 4.0。著作者・出典・ライセンスを表示し、非営利の参考資料として原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://www.scielo.org.mx/scielo.php?pid=S1870-35422018000200232&script=sci_arttext",
+        "license_url": "https://creativecommons.org/licenses/by-nc/4.0/"
       }
     },
     {
@@ -896,6 +915,13 @@
         "path": "原本/R18-roca-newton.pdf",
         "pages": 28,
         "sha256": "cddf162d78865044cb4db64e919e2f3dfea83a61f6414b9b9cd6c4f4306674f4"
+      },
+      "license": "CC BY-NC 4.0。著作者・出典・ライセンスを表示し、非営利の参考資料として原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://doi.org/10.4995/msel.2017.6580",
+        "license_url": "https://creativecommons.org/licenses/by-nc/4.0/"
       }
     },
     {
@@ -913,6 +939,13 @@
         "path": "原本/R19-barrio-project.pdf",
         "pages": 12,
         "sha256": "7b082307934fd9896178fb0fb9263b2d081abf3bcebee0b525116fe3cc64a19a"
+      },
+      "license": "CC BY 4.0リンク＋非商用の本文条件。配布ページはCC BY 4.0へリンクする一方、本文で商用利用を除外。両方を記録し、非営利・無改変の条件で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://revistas.um.es/red/article/view/244251",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
       }
     },
     {
@@ -930,6 +963,13 @@
         "path": "原本/R20-chang-drag.pdf",
         "pages": 14,
         "sha256": "70a4d3b5db7ba1c52d33c2ab34fb242c3ddfae6f595cee5c78e5f78df5f37b17"
+      },
+      "license": "CC BY-NC-ND 2.5 BR（記事欄）。記事のライセンス欄は2.5 BR、サイトフッターは4.0を表示。記事欄の条件を保持し、非営利・無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://doi.org/10.5007/2175-7941.2019v36n2p529",
+        "license_url": "https://creativecommons.org/licenses/by-nc-nd/2.5/br/"
       }
     },
     {
@@ -1024,7 +1064,14 @@
         "pages": 5,
         "sha256": "2ffe5148a430434822d869073135397c14ce230f05328d69cf6ceab7e50a39ac"
       },
-      "category": "論文・研究資料"
+      "category": "論文・研究資料",
+      "license": "CC BY 4.0。著作者・原掲載誌・出典・ライセンスを表示。PDFは無改変。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://revistes.uab.cat/ciencies/article/view/n26-torres-martinez",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "R27",
@@ -1109,7 +1156,14 @@
         "pages": 16,
         "sha256": "ae2f4b0e59f167de275ff8ce9701986a2df5c1d4b70041dfc4111297d203b8f2"
       },
-      "category": "論文・研究資料"
+      "category": "論文・研究資料",
+      "license": "CC BY-NC-ND 4.0。著作者・出典を表示し、非営利・無改変でのみ共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://so06.tci-thaijo.org/index.php/jeil/article/view/260354",
+        "license_url": "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+      }
     },
     {
       "id": "R32",
@@ -1434,7 +1488,13 @@
         "pages": 4,
         "sha256": "bde5e40acd2519657d8816d934bb85a60720597bde0a9d2d2f54b3c98491cb38"
       },
-      "category": "歴史・所蔵資料"
+      "category": "歴史・所蔵資料",
+      "license": "US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://www.uspto.gov/terms-use-uspto-websites"
+      }
     },
     {
       "id": "H02",
@@ -1451,7 +1511,13 @@
         "pages": 8,
         "sha256": "38817ac7c4e5451d332aedd7f085d166f838c47b03698d01e9f3f7f1ee15362e"
       },
-      "category": "歴史・所蔵資料"
+      "category": "歴史・所蔵資料",
+      "license": "US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://www.uspto.gov/terms-use-uspto-websites"
+      }
     },
     {
       "id": "H03",
@@ -1468,7 +1534,13 @@
         "pages": 7,
         "sha256": "be901d37478132580096072cdaf33149099a2e8a8537aa07545dff94c10e69bb"
       },
-      "category": "歴史・所蔵資料"
+      "category": "歴史・所蔵資料",
+      "license": "US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://www.uspto.gov/terms-use-uspto-websites"
+      }
     },
     {
       "id": "H04",
@@ -1485,7 +1557,13 @@
         "pages": 10,
         "sha256": "8e7c68c380288535bfee9c9cff9c1ce7685fb36c0a9aa6bd133949ae93923b40"
       },
-      "category": "歴史・所蔵資料"
+      "category": "歴史・所蔵資料",
+      "license": "US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://www.uspto.gov/terms-use-uspto-websites"
+      }
     },
     {
       "id": "H05",
@@ -1519,7 +1597,13 @@
         "pages": 10,
         "sha256": "cd5aacce9ec802e0c7a880b2868a79876f5eb0c5a0665f9ef77fa141d44f5d22"
       },
-      "category": "歴史・所蔵資料"
+      "category": "歴史・所蔵資料",
+      "license": "US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://www.uspto.gov/terms-use-uspto-websites"
+      }
     },
     {
       "id": "H07",

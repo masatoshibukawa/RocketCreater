@@ -356,13 +356,18 @@
       "note": "ケロシン・酸素の二段燃焼エンジン設計の初期検討。大規模エンジンの研究用設計で、模型用の既製品ではない。",
       "source": "https://oa.upm.es/1492/",
       "download": "https://oa.upm.es/1492/1/PFC_CARLOS_REDONDO_CALLE.pdf",
-      "license": "CC BY-NC-ND（所蔵ページ表示）。",
+      "license": "CC BY-NC-ND（UPM書誌表示、版番号未確認）。UPM書誌のReconocimiento - Sin obra derivada - No comercialを確認。非営利・無改変で共有し、版番号は推定しない。",
       "local": {
         "path": "液体/原本/ML03.pdf",
         "pages": 155,
         "sha256": "521e408257be8b684c972f97b507045ac38c9631305e81475b7bf8d680bf5853"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://oa.upm.es/1492/"
+      }
     },
     {
       "id": "ML04",
@@ -450,7 +455,14 @@
         "pages": 8,
         "sha256": "041ff99194d206e7a130431483e5297f3f80c054914f2f3d13bcbd9c7d377513"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://arxiv.org/abs/2401.07444",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "ML09",
@@ -471,7 +483,14 @@
         "pages": 9,
         "sha256": "3d6a598b71ece9ce8c019cadc501bafce2bd4ac7024cedfeb024a189d1172215"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://arxiv.org/abs/2102.07109",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "ML10",
@@ -675,7 +694,14 @@
         "pages": 40,
         "sha256": "4b9a0385dd88ccae791207b45611e05cc789d16d373455bd5c8fae698fc8c315"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "CC BY 4.0。PDF第1ページに著者・EDP SciencesとCC BY 4.0を明記。原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "文献/モデルロケット/ハイブリッド/原本/MH07.pdf",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "MH08",
@@ -762,7 +788,14 @@
         "pages": 95,
         "sha256": "3f44a737f9d087d211e776c40bc56d885ca5cc560e864bfa1d34071185410d1f"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://arxiv.org/abs/2302.06725",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "MH13",
@@ -866,7 +899,13 @@
         "pages": 9,
         "sha256": "86425f68c71c1288a920ec4eb4349d4a00a61ca95eb4f28a96699d5b0e3eba1c"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "Creative Commons Attribution（PDFに版番号なし）。PDF第1ページが著作者・出典表示を条件とする使用・配布・複製を明示。版番号を推定せず、著作者表示を保持して原本を共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "文献/モデルロケット/共通/原本/MC02.pdf"
+      }
     },
     {
       "id": "MC03",
@@ -962,7 +1001,13 @@
         "format": "pdf",
         "pages": 4
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://www.uspto.gov/terms-use-uspto-websites"
+      }
     },
     {
       "id": "MS18",
@@ -1003,7 +1048,7 @@
       "note": "OpenRocketによる多様な機体形状の探索と実機飛行の比較。機体形状の設計空間と、計算と実験の差を扱う。作者の公開リポジトリも本文に記載。",
       "source": "https://arxiv.org/abs/2504.02177",
       "download": "https://arxiv.org/pdf/2504.02177",
-      "license": "arXiv掲載のCC BY 4.0。原本の著作者表示を保持。",
+      "license": "CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。",
       "publication_year": 2025,
       "local": {
         "path": "固体/原本/MS19.pdf",
@@ -1012,7 +1057,13 @@
         "format": "pdf",
         "pages": 9
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://arxiv.org/abs/2504.02177",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "MS20",
@@ -1076,7 +1127,7 @@
       "note": "インドネシア語本文の試験報告。設計目標と測定された性能を分けて報告している。模型キットではなく、液体方式の研究資料。",
       "source": "https://ejournal.brin.go.id/ijoa/article/view/12423",
       "download": "https://karya.brin.go.id/id/eprint/11110/1/Jurnal%20TD_Arif_Pustekroket_2015.pdf",
-      "license": "掲載誌サイトはCC BY-SAを表示。原本の表示と配布元の条件を参照。",
+      "license": "CC BY-SA 4.0。BRINの記事単位のライセンスを確認。著作者・出典を表示し、無改変のPDFを共有。改変物の共有には同一条件が必要。",
       "publication_year": 2015,
       "local": {
         "path": "液体/原本/ML14.pdf",
@@ -1085,7 +1136,13 @@
         "format": "pdf",
         "pages": 16
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ejournal.brin.go.id/ijoa/article/view/12423",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
     },
     {
       "id": "ML15",
@@ -1235,7 +1292,7 @@
       "note": "NASA-CR-183954。1980年代の概念設計・解析の一次資料。飛行実績や模型用モーターの製品説明書とは区別する。",
       "source": "https://ntrs.nasa.gov/citations/19900012478",
       "download": "https://ntrs.nasa.gov/api/citations/19900012478/downloads/19900012478.pdf",
-      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
       "publication_year": 1989,
       "local": {
         "path": "ハイブリッド/原本/MH19.pdf",
@@ -1244,7 +1301,12 @@
         "format": "pdf",
         "pages": 118
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ntrs.nasa.gov/citations/19900012478"
+      }
     },
     {
       "id": "MH20",
@@ -1268,7 +1330,13 @@
         "format": "pdf",
         "pages": 49
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ntrs.nasa.gov/citations/19730003241"
+      }
     },
     {
       "id": "MH21",
@@ -1366,7 +1434,7 @@
       "note": "原学位論文は1967年3月。NASA/TM-2001-209983として公開された版を保存。亜音速・超音速の解析であり、遷音速領域を対象外とする原著の範囲を保持。",
       "source": "https://ntrs.nasa.gov/citations/20010047838",
       "download": "https://ntrs.nasa.gov/api/citations/20010047838/downloads/20010047838.pdf",
-      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
       "publication_year": 1967,
       "local": {
         "path": "共通/原本/MC09.pdf",
@@ -1375,7 +1443,12 @@
         "format": "pdf",
         "pages": 103
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ntrs.nasa.gov/citations/20010047838"
+      }
     },
     {
       "id": "MC10",
@@ -1606,7 +1679,7 @@
       "note": "469ページのNASA公開スキャン。NTRSの版名はSecond Editionだが、保存PDFの扉と書誌の刊行日は1967年のため、年は1967と記録。模型用キットの説明書ではない。",
       "source": "https://ntrs.nasa.gov/citations/19710019929",
       "download": "https://ntrs.nasa.gov/api/citations/19710019929/downloads/19710019929.pdf",
-      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
       "publication_year": 1967,
       "local": {
         "path": "液体/原本/ML17.pdf",
@@ -1615,7 +1688,12 @@
         "format": "pdf",
         "pages": 469
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ntrs.nasa.gov/citations/19710019929"
+      }
     },
     {
       "id": "ML18",

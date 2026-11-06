@@ -36,7 +36,9 @@ Carlos Redondo Calle · 2009 · es · 学位プロジェクト
 
 [配布元・出典](https://oa.upm.es/1492/) · [原本取得先](https://oa.upm.es/1492/1/PFC_CARLOS_REDONDO_CALLE.pdf) · [保存ファイル](原本/ML03.pdf)（155ページ）
 
-利用条件：CC BY-NC-ND（所蔵ページ表示）。
+利用条件：CC BY-NC-ND（UPM書誌表示、版番号未確認）。UPM書誌のReconocimiento - Sin obra derivada - No comercialを確認。非営利・無改変で共有し、版番号は推定しない。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ml04"></a>
 
@@ -96,7 +98,9 @@ Vint Lee, Sohom Roy · 2024 · en · プレプリント
 
 [配布元・出典](https://arxiv.org/abs/2401.07444) · [原本取得先](https://arxiv.org/pdf/2401.07444) · [保存ファイル](原本/ML08.pdf)（8ページ）
 
-利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+利用条件：CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ml09"></a>
 
@@ -108,7 +112,9 @@ Günther Waxenegger-Wilfing, Kai Dresia, Jan Deeken, Michael Oschwald · 2021 ·
 
 [配布元・出典](https://arxiv.org/abs/2102.07109) · [原本取得先](https://arxiv.org/pdf/2102.07109) · [保存ファイル](原本/ML09.pdf)（9ページ）
 
-利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+利用条件：CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ml10"></a>
 
@@ -168,7 +174,9 @@ Arif Nur Hakim / LAPAN · 2015 · id · 研究機関の技術論文
 
 [配布元・出典](https://ejournal.brin.go.id/ijoa/article/view/12423) · [原本取得先](https://karya.brin.go.id/id/eprint/11110/1/Jurnal%20TD_Arif_Pustekroket_2015.pdf) · [保存ファイル](<原本/ML14.pdf>)（16ページ）
 
-利用条件：掲載誌サイトはCC BY-SAを表示。原本の表示と配布元の条件を参照。
+利用条件：CC BY-SA 4.0。BRINの記事単位のライセンスを確認。著作者・出典を表示し、無改変のPDFを共有。改変物の共有には同一条件が必要。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ml15"></a>
 
@@ -204,7 +212,9 @@ Dieter K. Huzel; David H. Huang / Rocketdyne · 1967（NTRS文書IDは1971で始
 
 [配布元・出典](https://ntrs.nasa.gov/citations/19710019929) · [原本取得先](https://ntrs.nasa.gov/api/citations/19710019929/downloads/19710019929.pdf) · [保存ファイル](<原本/ML17.pdf>)（469ページ）
 
-利用条件：NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。
+利用条件：NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ml18"></a>
 

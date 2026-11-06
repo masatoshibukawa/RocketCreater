@@ -1,7 +1,20 @@
 # Only explicitly reviewed third-party files are tracked.
 原本/**
 !原本/**/
+!原本/D06-nasa-rockets-guide.pdf
+!原本/D07-npl-water-rockets.pdf
 !原本/D09-rocketfins-cad.zip
+!原本/H01-krautkramer-1956.pdf
+!原本/H02-kaye-1960.pdf
+!原本/H03-joffe-1962.pdf
+!原本/H04-pippin-1976.pdf
+!原本/H06-johnson-1995.pdf
+!原本/R17-caicedo-video.pdf
+!原本/R18-roca-newton.pdf
+!原本/R19-barrio-project.pdf
+!原本/R20-chang-drag.pdf
+!原本/R26-torres-martinez.pdf
+!原本/R31-ruengrung-stem.pdf
 CAD/D09-RocketFins/releases/**
 !CAD/D09-RocketFins/releases/**/
 !CAD/D09-RocketFins/releases/1A.stl

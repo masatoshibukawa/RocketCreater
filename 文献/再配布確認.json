@@ -1496,10 +1496,15 @@
       "path": "モデルロケット/ハイブリッド/原本/MH07.pdf",
       "bytes": 3442853,
       "sha256": "4b9a0385dd88ccae791207b45611e05cc789d16d373455bd5c8fae698fc8c315",
-      "status": "local_only",
+      "status": "published",
       "source_id": "MH07",
       "source": "https://elib.dlr.de/132743/1/Kobald%20eucass2019_025.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "PDF第1ページに著者・EDP SciencesとCC BY 4.0を明記。原本を無改変で共有。",
+      "license": "CC BY 4.0",
+      "rights_key": "MH07",
+      "evidence": "文献/モデルロケット/ハイブリッド/原本/MH07.pdf",
+      "author": "M. Kobald, C. Schmierer, U. Fischer, K. Tomilin, A. Petrarolo, M. Rehberger",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
     },
     {
       "path": "モデルロケット/ハイブリッド/原本/MH11.pdf",
@@ -1514,10 +1519,15 @@
       "path": "モデルロケット/ハイブリッド/原本/MH12.pdf",
       "bytes": 12040020,
       "sha256": "3f44a737f9d087d211e776c40bc56d885ca5cc560e864bfa1d34071185410d1f",
-      "status": "local_only",
+      "status": "published",
       "source_id": "MH12",
       "source": "https://arxiv.org/abs/2302.06725",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。",
+      "license": "CC BY 4.0",
+      "rights_key": "MH12",
+      "evidence": "https://arxiv.org/abs/2302.06725",
+      "author": "Joel Jean-Philyppe / McGill Rocket Team",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
     },
     {
       "path": "モデルロケット/ハイブリッド/原本/MH14.pdf",
@@ -1559,19 +1569,27 @@
       "path": "モデルロケット/ハイブリッド/原本/MH19.pdf",
       "bytes": 4041916,
       "sha256": "6ae7f75d13c0f41dc792675dbd568b214bb1049d8ddf58f95a6241666afbaf0a",
-      "status": "local_only",
+      "status": "published",
       "source_id": "MH19",
       "source": "https://ntrs.nasa.gov/citations/19900012478",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted",
+      "rights_key": "MH19",
+      "evidence": "https://ntrs.nasa.gov/citations/19900012478",
+      "author": "Gordon E. Jensen; Allen L. Holzman; Steven O. Leisch; Joseph Keilbach; Randy Parsley; John Humphrey"
     },
     {
       "path": "モデルロケット/ハイブリッド/原本/MH20.pdf",
       "bytes": 1296582,
       "sha256": "15998145b5db782a9f2faaa49a9f8cf52204573267bf2a8c7affe3936e846801",
-      "status": "local_only",
+      "status": "published",
       "source_id": "MH20",
       "source": "https://ntrs.nasa.gov/citations/19730003241",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted",
+      "rights_key": "MH20",
+      "evidence": "https://ntrs.nasa.gov/citations/19730003241",
+      "author": "W. S. Y. Hung; C. S. Chen; J. K. Haviland / University of Virginia"
     },
     {
       "path": "モデルロケット/ハイブリッド/原本/MH22.html",
@@ -1598,16 +1616,21 @@
       "status": "local_only",
       "source_id": "MC01",
       "source": "https://openrocket.sourceforge.net/thesis.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "本文のGPL説明はソフトウェアについてであり、学位論文そのものの許諾は未確認。",
+      "evidence": "https://openrocket.sourceforge.net/thesis.pdf"
     },
     {
       "path": "モデルロケット/共通/原本/MC02.pdf",
       "bytes": 975978,
       "sha256": "86425f68c71c1288a920ec4eb4349d4a00a61ca95eb4f28a96699d5b0e3eba1c",
-      "status": "local_only",
+      "status": "published",
       "source_id": "MC02",
       "source": "https://proceedings.scipy.org/articles/majora-212e5952-020.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "PDF第1ページが著作者・出典表示を条件とする使用・配布・複製を明示。版番号を推定せず、著作者表示を保持して原本を共有。",
+      "license": "Creative Commons Attribution（PDFに版番号なし）",
+      "rights_key": "MC02",
+      "evidence": "文献/モデルロケット/共通/原本/MC02.pdf",
+      "author": "João Lemes Gribel Soares, Mateus Stano Junqueira, Oscar Mauricio Prada Ramirez, Patrick Sampaio dos Santos Brandão, Adriano Augusto Antongiovanni, Guilherme Fernandes Alves, Giovani Hidalgo Ceotto"
     },
     {
       "path": "モデルロケット/共通/原本/MC03.pdf",
@@ -1640,10 +1663,14 @@
       "path": "モデルロケット/共通/原本/MC09.pdf",
       "bytes": 1996930,
       "sha256": "09d62b014a706c700e1b596c8cc58c60e87d613da4ce963db3f72361ef0187eb",
-      "status": "local_only",
+      "status": "published",
       "source_id": "MC09",
       "source": "https://ntrs.nasa.gov/citations/20010047838",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted",
+      "rights_key": "MC09",
+      "evidence": "https://ntrs.nasa.gov/citations/20010047838",
+      "author": "James S. Barrowman / Catholic University of America"
     },
     {
       "path": "モデルロケット/共通/原本/MC10.html",
@@ -3762,16 +3789,21 @@
       "status": "local_only",
       "source_id": "MS11",
       "source": "https://arxiv.org/abs/1708.01970",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "arXivへの非独占配布許諾であり、第三者への再配布許諾ではない。",
+      "evidence": "https://arxiv.org/abs/1708.01970"
     },
     {
       "path": "モデルロケット/固体/原本/MS17.pdf",
       "bytes": 537403,
       "sha256": "db36412454d51cfd5aa7aff0877007b5e9e2362e4df044bd09bf424c865489a4",
-      "status": "local_only",
+      "status": "published",
       "source_id": "MS17",
       "source": "https://patents.google.com/patent/US2841084A/en",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license": "US patent document facsimile",
+      "rights_key": "MS17",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "author": "Orville H. Carlisle"
     },
     {
       "path": "モデルロケット/固体/原本/MS18.pdf",
@@ -3786,10 +3818,15 @@
       "path": "モデルロケット/固体/原本/MS19.pdf",
       "bytes": 22307382,
       "sha256": "f859c8a5495646078bc01913aba1824dbd8a83d415ca1c4230b371cf056495cd",
-      "status": "local_only",
+      "status": "published",
       "source_id": "MS19",
       "source": "https://arxiv.org/abs/2504.02177",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。",
+      "license": "CC BY 4.0",
+      "rights_key": "MS19",
+      "evidence": "https://arxiv.org/abs/2504.02177",
+      "author": "Jacob Schrum; Cody Crosby / Southwestern University",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
     },
     {
       "path": "モデルロケット/固体/原本/MS20.pdf",
@@ -4304,10 +4341,14 @@
       "path": "モデルロケット/液体/原本/ML03.pdf",
       "bytes": 7196807,
       "sha256": "521e408257be8b684c972f97b507045ac38c9631305e81475b7bf8d680bf5853",
-      "status": "local_only",
+      "status": "published",
       "source_id": "ML03",
       "source": "https://oa.upm.es/1492/",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "UPM書誌のReconocimiento - Sin obra derivada - No comercialを確認。非営利・無改変で共有し、版番号は推定しない。",
+      "license": "CC BY-NC-ND（UPM書誌表示、版番号未確認）",
+      "rights_key": "ML03",
+      "evidence": "https://oa.upm.es/1492/",
+      "author": "Carlos Redondo Calle"
     },
     {
       "path": "モデルロケット/液体/原本/ML04.pdf",
@@ -4322,19 +4363,29 @@
       "path": "モデルロケット/液体/原本/ML08.pdf",
       "bytes": 1818034,
       "sha256": "041ff99194d206e7a130431483e5297f3f80c054914f2f3d13bcbd9c7d377513",
-      "status": "local_only",
+      "status": "published",
       "source_id": "ML08",
       "source": "https://arxiv.org/abs/2401.07444",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。",
+      "license": "CC BY 4.0",
+      "rights_key": "ML08",
+      "evidence": "https://arxiv.org/abs/2401.07444",
+      "author": "Vint Lee, Sohom Roy",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
     },
     {
       "path": "モデルロケット/液体/原本/ML09.pdf",
       "bytes": 957281,
       "sha256": "3d6a598b71ece9ce8c019cadc501bafce2bd4ac7024cedfeb024a189d1172215",
-      "status": "local_only",
+      "status": "published",
       "source_id": "ML09",
       "source": "https://arxiv.org/abs/2102.07109",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。",
+      "license": "CC BY 4.0",
+      "rights_key": "ML09",
+      "evidence": "https://arxiv.org/abs/2102.07109",
+      "author": "Günther Waxenegger-Wilfing, Kai Dresia, Jan Deeken, Michael Oschwald",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
     },
     {
       "path": "モデルロケット/液体/原本/ML11.pdf",
@@ -4358,10 +4409,15 @@
       "path": "モデルロケット/液体/原本/ML14.pdf",
       "bytes": 1002617,
       "sha256": "d764c8fe89d726bb1308bae4823dce1cf6992a0f3785cf652c2a2b76d0c48f38",
-      "status": "local_only",
+      "status": "published",
       "source_id": "ML14",
       "source": "https://ejournal.brin.go.id/ijoa/article/view/12423",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "BRINの記事単位のライセンスを確認。著作者・出典を表示し、無改変のPDFを共有。改変物の共有には同一条件が必要。",
+      "license": "CC BY-SA 4.0",
+      "rights_key": "ML14",
+      "evidence": "https://ejournal.brin.go.id/ijoa/article/view/12423",
+      "author": "Arif Nur Hakim / LAPAN",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
     },
     {
       "path": "モデルロケット/液体/原本/ML15.pdf",
@@ -4370,7 +4426,8 @@
       "status": "local_only",
       "source_id": "ML15",
       "source": "https://www.prlib.ru/item/375985",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "原著・編者・復刻スキャンを含む1947年論集全体の再配布許諾が未確認。",
+      "evidence": "https://www.prlib.ru/item/375985"
     },
     {
       "path": "モデルロケット/液体/原本/ML16.html",
@@ -4394,10 +4451,14 @@
       "path": "モデルロケット/液体/原本/ML17.pdf",
       "bytes": 47789998,
       "sha256": "471e590a0c8e99c36a98132104a3ddcc7097b0b7c561fb2638ce9d3c80e26c87",
-      "status": "local_only",
+      "status": "published",
       "source_id": "ML17",
       "source": "https://ntrs.nasa.gov/citations/19710019929",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted",
+      "rights_key": "ML17",
+      "evidence": "https://ntrs.nasa.gov/citations/19710019929",
+      "author": "Dieter K. Huzel; David H. Huang / Rocketdyne"
     },
     {
       "path": "モデルロケット/液体/原本/ML18.html",
@@ -4415,7 +4476,8 @@
       "status": "local_only",
       "source_id": "D01",
       "source": "https://www.yac-j.com/wp-content/uploads/2024/11/1-1.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "PDF末尾に無断転載禁止を明記。",
+      "evidence": "https://www.jaxa.jp/policy_j.html"
     },
     {
       "path": "原本/D02-yac-parachute.pdf",
@@ -4424,7 +4486,8 @@
       "status": "local_only",
       "source_id": "D02",
       "source": "https://www.yac-j.com/wp-content/uploads/2024/11/1-2.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "PDF末尾に無断転載禁止を明記。",
+      "evidence": "https://www.jaxa.jp/policy_j.html"
     },
     {
       "path": "原本/D03-yac-camera-payload.pdf",
@@ -4433,7 +4496,8 @@
       "status": "local_only",
       "source_id": "D03",
       "source": "https://www.yac-j.com/wp-content/uploads/2024/12/1-7.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "PDF末尾に無断転載禁止を明記。",
+      "evidence": "https://www.jaxa.jp/policy_j.html"
     },
     {
       "path": "原本/D04-yac-flight-photography.pdf",
@@ -4442,7 +4506,8 @@
       "status": "local_only",
       "source_id": "D04",
       "source": "https://www.yac-j.com/wp-content/uploads/2024/12/1-8.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "PDF末尾に無断転載禁止を明記。",
+      "evidence": "https://www.jaxa.jp/policy_j.html"
     },
     {
       "path": "原本/D05-jaxa-tnsc-airframe.pdf",
@@ -4451,25 +4516,34 @@
       "status": "local_only",
       "source_id": "D05",
       "source": "https://fanfun.jaxa.jp/event/files/event_20160424_tnsc_wrocket.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "JAXAの一般利用規程が第三者の公衆送信・配布に事前許可を求める。個別の再配布許諾は未確認。",
+      "evidence": "https://www.jaxa.jp/policy_j.html"
     },
     {
       "path": "原本/D06-nasa-rockets-guide.pdf",
       "bytes": 14959087,
       "sha256": "e973d4bdf4a48eefbd159b130e1d401fab5f4fe0e617d1c9167f73dfad455438",
-      "status": "local_only",
+      "status": "published",
       "source_id": "D06",
       "source": "https://www.nasa.gov/wp-content/uploads/2012/07/rockets-educator-guide-20.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "NASA。PDF冒頭で著作権保護の対象外・複製許諾不要と明示。原本を無改変で共有。",
+      "license": "Public domain（PDF内の明示）",
+      "rights_key": "D06",
+      "evidence": "文献/原本/D06-nasa-rockets-guide.pdf",
+      "author": "NASA"
     },
     {
       "path": "原本/D07-npl-water-rockets.pdf",
       "bytes": 1889635,
       "sha256": "bc520e0ccc3acb6c3045f0ea0206a53263c7fa0f7130afe539725b127da0f517",
-      "status": "local_only",
+      "status": "published",
       "source_id": "D07",
       "source": "https://www.npl.co.uk/getmedia/9562a6ed-13e3-45e6-8234-205f6a2538d6/wr_booklet_print.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "Michael de Podesta / NPL。非営利の教育活動での全部・一部の複製を許可。作者・著作権者を表示し、教育用の無改変参考資料として共有。",
+      "license": "NPL educational reproduction permission",
+      "rights_key": "D07",
+      "evidence": "文献/原本/D07-npl-water-rockets.pdf",
+      "author": "Michael de Podesta／National Physical Laboratory (NPL)"
     },
     {
       "path": "原本/D08-scouts-fin-template.pdf",
@@ -4478,7 +4552,8 @@
       "status": "local_only",
       "source_id": "D08",
       "source": "https://www.scouts.org.uk/activities/water-rocket-flight-lab/",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "Scouts規程の個人利用・英国のScout活動以外の公開再配布許諾を確認できない。",
+      "evidence": "https://scouts.org.uk/about-us/policy/terms-conditions"
     },
     {
       "path": "原本/D09-rocketfins-cad.zip",
@@ -4509,7 +4584,8 @@
       "status": "local_only",
       "source_id": "D14",
       "source": "https://www.dlr.de/de/schoollab/medien/publikationen/sonstiges/lampoldshausen-stuttgart/bauanleitung_wasserrakete_dlr_school_lab_16.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "DLRは明示された資料のみCC対象。配布ページ・PDFに適用CC表示が見つからない。",
+      "evidence": "https://www.dlr.de/en/schoollab/imprint"
     },
     {
       "path": "原本/D15-raketfued-launcher.pdf",
@@ -4518,7 +4594,8 @@
       "status": "local_only",
       "source_id": "D15",
       "source": "https://www.raketfuedrockets.com/downloads/AnleitungStartrampe.pdf",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "配布元の規程が複製・配布に作者の書面同意を求める。",
+      "evidence": "https://www.raketfuedrockets.com/impressum.htm"
     },
     {
       "path": "原本/D16-jaxa-manual-es.pdf",
@@ -4632,37 +4709,53 @@
       "path": "原本/H01-krautkramer-1956.pdf",
       "bytes": 423277,
       "sha256": "bde5e40acd2519657d8816d934bb85a60720597bde0a9d2d2f54b3c98491cb38",
-      "status": "local_only",
+      "status": "published",
       "source_id": "H01",
       "source": "https://patents.google.com/patent/US2732657A/en",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license": "US patent document facsimile",
+      "rights_key": "H01",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "author": "Adam Krautkrämer／米国特許庁"
     },
     {
       "path": "原本/H02-kaye-1960.pdf",
       "bytes": 1247222,
       "sha256": "38817ac7c4e5451d332aedd7f085d166f838c47b03698d01e9f3f7f1ee15362e",
-      "status": "local_only",
+      "status": "published",
       "source_id": "H02",
       "source": "https://patents.google.com/patent/US2927398A/en",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license": "US patent document facsimile",
+      "rights_key": "H02",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "author": "Joseph Kaye, Edward F. Kurtz Jr., George F. Harper／米国特許庁"
     },
     {
       "path": "原本/H03-joffe-1962.pdf",
       "bytes": 1021854,
       "sha256": "be901d37478132580096072cdaf33149099a2e8a8537aa07545dff94c10e69bb",
-      "status": "local_only",
+      "status": "published",
       "source_id": "H03",
       "source": "https://patents.google.com/patent/US3049832A/en",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license": "US patent document facsimile",
+      "rights_key": "H03",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "author": "Edward J. Joffe／Park Plastics Co., Inc.／米国特許庁"
     },
     {
       "path": "原本/H04-pippin-1976.pdf",
       "bytes": 1166853,
       "sha256": "8e7c68c380288535bfee9c9cff9c1ce7685fb36c0a9aa6bd133949ae93923b40",
-      "status": "local_only",
+      "status": "published",
       "source_id": "H04",
       "source": "https://patents.google.com/patent/US3962818A/en",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license": "US patent document facsimile",
+      "rights_key": "H04",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "author": "Reginald F. Pippin Jr.／米国特許商標庁"
     },
     {
       "path": "原本/H05-jackson-1985.pdf",
@@ -4671,16 +4764,21 @@
       "status": "local_only",
       "source_id": "H05",
       "source": "https://patents.google.com/patent/GB2145001A/en",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "英国特許GB2145001A。米国USPTOの転載方針は適用せず、英国公報の第三者による再配布条件を確認できないため保留。",
+      "evidence": "https://patents.google.com/patent/GB2145001A/en"
     },
     {
       "path": "原本/H06-johnson-1995.pdf",
       "bytes": 954638,
       "sha256": "cd5aacce9ec802e0c7a880b2868a79876f5eb0c5a0665f9ef77fa141d44f5d22",
-      "status": "local_only",
+      "status": "published",
       "source_id": "H06",
       "source": "https://patents.google.com/patent/US5415153A/en",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license": "US patent document facsimile",
+      "rights_key": "H06",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "author": "Lonnie G. Johnson, Bruce M. D’Andrade／米国特許商標庁"
     },
     {
       "path": "原本/P01-takagi-a400.pdf",
@@ -4878,7 +4976,8 @@
       "status": "local_only",
       "source_id": "R13",
       "source": "https://arxiv.org/abs/1211.1923",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "arXivへの非独占配布許諾であり、第三者への再配布許諾ではない。",
+      "evidence": "https://arxiv.org/abs/1211.1923"
     },
     {
       "path": "原本/R14-fischer-drag.pdf",
@@ -4887,43 +4986,64 @@
       "status": "local_only",
       "source_id": "R14",
       "source": "https://arxiv.org/abs/2001.08828",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "arXivへの非独占配布許諾であり、第三者への再配布許諾ではない。",
+      "evidence": "https://arxiv.org/abs/2001.08828"
     },
     {
       "path": "原本/R17-caicedo-video.pdf",
       "bytes": 1843611,
       "sha256": "87365ac0e755307fab966fc8528461354d543d3bad78ff40c6d37a381276172f",
-      "status": "local_only",
+      "status": "published",
       "source_id": "R17",
       "source": "https://www.scielo.org.mx/scielo.php?pid=S1870-35422018000200232&script=sci_arttext",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "著作者・出典・ライセンスを表示し、非営利の参考資料として原本を無改変で共有。",
+      "license": "CC BY-NC 4.0",
+      "rights_key": "R17",
+      "evidence": "https://www.scielo.org.mx/scielo.php?pid=S1870-35422018000200232&script=sci_arttext",
+      "author": "H. E. Caicedo-Ortiz ほか／Revista Mexicana de Física E",
+      "license_url": "https://creativecommons.org/licenses/by-nc/4.0/"
     },
     {
       "path": "原本/R18-roca-newton.pdf",
       "bytes": 4731225,
       "sha256": "cddf162d78865044cb4db64e919e2f3dfea83a61f6414b9b9cd6c4f4306674f4",
-      "status": "local_only",
+      "status": "published",
       "source_id": "R18",
       "source": "https://doi.org/10.4995/msel.2017.6580",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "著作者・出典・ライセンスを表示し、非営利の参考資料として原本を無改変で共有。",
+      "license": "CC BY-NC 4.0",
+      "rights_key": "R18",
+      "evidence": "https://doi.org/10.4995/msel.2017.6580",
+      "author": "M. Roca Vicent, M. Á. Gumbau Gil, I. Sanchis Campreciós／Modelling in Science Education and Learning",
+      "license_url": "https://creativecommons.org/licenses/by-nc/4.0/"
     },
     {
       "path": "原本/R19-barrio-project.pdf",
       "bytes": 913737,
       "sha256": "7b082307934fd9896178fb0fb9263b2d081abf3bcebee0b525116fe3cc64a19a",
-      "status": "local_only",
+      "status": "published",
       "source_id": "R19",
       "source": "https://revistas.um.es/red/article/view/244251",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "配布ページはCC BY 4.0へリンクする一方、本文で商用利用を除外。両方を記録し、非営利・無改変の条件で共有。",
+      "license": "CC BY 4.0リンク＋非商用の本文条件",
+      "rights_key": "R19",
+      "evidence": "https://revistas.um.es/red/article/view/244251",
+      "author": "R. Barrio Perotti ほか／Revista de Educación a Distancia, núm. 2DU",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
     },
     {
       "path": "原本/R20-chang-drag.pdf",
       "bytes": 3699032,
       "sha256": "70a4d3b5db7ba1c52d33c2ab34fb242c3ddfae6f595cee5c78e5f78df5f37b17",
-      "status": "local_only",
+      "status": "published",
       "source_id": "R20",
       "source": "https://doi.org/10.5007/2175-7941.2019v36n2p529",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "記事のライセンス欄は2.5 BR、サイトフッターは4.0を表示。記事欄の条件を保持し、非営利・無改変で共有。",
+      "license": "CC BY-NC-ND 2.5 BR（記事欄）",
+      "rights_key": "R20",
+      "evidence": "https://doi.org/10.5007/2175-7941.2019v36n2p529",
+      "author": "Jessica de Oliveira Chang ほか／Caderno Brasileiro de Ensino de Física",
+      "license_url": "https://creativecommons.org/licenses/by-nc-nd/2.5/br/"
     },
     {
       "path": "原本/R21-franzini-flight.pdf",
@@ -4932,7 +5052,8 @@
       "status": "local_only",
       "source_id": "R21",
       "source": "https://periodicos.unifev.edu.br/index.php/revistaunifev/article/view/279",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "掲載者への出版許諾のみを確認。第三者の再配布を認める許諾は未確認。",
+      "evidence": "https://periodicos.unifev.edu.br/index.php/revistaunifev/article/view/279"
     },
     {
       "path": "原本/R23-taiwan-water-rocket.pdf",
@@ -4956,10 +5077,15 @@
       "path": "原本/R26-torres-martinez.pdf",
       "bytes": 449977,
       "sha256": "2ffe5148a430434822d869073135397c14ce230f05328d69cf6ceab7e50a39ac",
-      "status": "local_only",
+      "status": "published",
       "source_id": "R26",
       "source": "https://revistes.uab.cat/ciencies/article/view/n26-torres-martinez",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "著作者・原掲載誌・出典・ライセンスを表示。PDFは無改変。",
+      "license": "CC BY 4.0",
+      "rights_key": "R26",
+      "evidence": "https://revistes.uab.cat/ciencies/article/view/n26-torres-martinez",
+      "author": "Àngel Luis Torres Climent, Tomás José Martínez Sempere／Ciències 第26号",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
     },
     {
       "path": "原本/R27-taller-ginebro.pdf",
@@ -5001,10 +5127,15 @@
       "path": "原本/R31-ruengrung-stem.pdf",
       "bytes": 210177,
       "sha256": "ae2f4b0e59f167de275ff8ce9701986a2df5c1d4b70041dfc4111297d203b8f2",
-      "status": "local_only",
+      "status": "published",
       "source_id": "R31",
       "source": "https://so06.tci-thaijo.org/index.php/jeil/article/view/260354",
-      "reason": "再配布許諾を確認できていないためローカル保存。"
+      "reason": "著作者・出典を表示し、非営利・無改変でのみ共有。",
+      "license": "CC BY-NC-ND 4.0",
+      "rights_key": "R31",
+      "evidence": "https://so06.tci-thaijo.org/index.php/jeil/article/view/260354",
+      "author": "สถาพร เรืองรุ่ง (Sathaphorn Ruengrung)／Journal of Education and Innovative Learning",
+      "license_url": "https://creativecommons.org/licenses/by-nc-nd/4.0/"
     },
     {
       "path": "原本/R33-senac-applied-physics.pdf",
@@ -5156,6 +5287,266 @@
       "evidence": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
       "note": "READMEはモデル等をfree and without copyrightと表示。NASAを出典として教育・情報目的で共有。NASAによる推奨を意味せず、商標等の権利は別。",
       "license_file": "文献/モデルロケット/液体/モデル/ML13-NASA-SaturnV/README.md"
+    },
+    {
+      "key": "D06",
+      "prefix": "文献/原本/D06-nasa-rockets-guide.pdf",
+      "license": "Public domain（PDF内の明示）",
+      "author": "NASA",
+      "source": "https://www.nasa.gov/wp-content/uploads/2012/07/rockets-educator-guide-20.pdf",
+      "evidence": "文献/原本/D06-nasa-rockets-guide.pdf",
+      "note": "NASA。PDF冒頭で著作権保護の対象外・複製許諾不要と明示。原本を無改変で共有。",
+      "license_url": null
+    },
+    {
+      "key": "D07",
+      "prefix": "文献/原本/D07-npl-water-rockets.pdf",
+      "license": "NPL educational reproduction permission",
+      "author": "Michael de Podesta／National Physical Laboratory (NPL)",
+      "source": "https://www.npl.co.uk/getmedia/9562a6ed-13e3-45e6-8234-205f6a2538d6/wr_booklet_print.pdf",
+      "evidence": "文献/原本/D07-npl-water-rockets.pdf",
+      "note": "Michael de Podesta / NPL。非営利の教育活動での全部・一部の複製を許可。作者・著作権者を表示し、教育用の無改変参考資料として共有。",
+      "license_url": null
+    },
+    {
+      "key": "R17",
+      "prefix": "文献/原本/R17-caicedo-video.pdf",
+      "license": "CC BY-NC 4.0",
+      "author": "H. E. Caicedo-Ortiz ほか／Revista Mexicana de Física E",
+      "source": "https://www.scielo.org.mx/scielo.php?pid=S1870-35422018000200232&script=sci_arttext",
+      "evidence": "https://www.scielo.org.mx/scielo.php?pid=S1870-35422018000200232&script=sci_arttext",
+      "note": "著作者・出典・ライセンスを表示し、非営利の参考資料として原本を無改変で共有。",
+      "license_url": "https://creativecommons.org/licenses/by-nc/4.0/"
+    },
+    {
+      "key": "R18",
+      "prefix": "文献/原本/R18-roca-newton.pdf",
+      "license": "CC BY-NC 4.0",
+      "author": "M. Roca Vicent, M. Á. Gumbau Gil, I. Sanchis Campreciós／Modelling in Science Education and Learning",
+      "source": "https://doi.org/10.4995/msel.2017.6580",
+      "evidence": "https://doi.org/10.4995/msel.2017.6580",
+      "note": "著作者・出典・ライセンスを表示し、非営利の参考資料として原本を無改変で共有。",
+      "license_url": "https://creativecommons.org/licenses/by-nc/4.0/"
+    },
+    {
+      "key": "R19",
+      "prefix": "文献/原本/R19-barrio-project.pdf",
+      "license": "CC BY 4.0リンク＋非商用の本文条件",
+      "author": "R. Barrio Perotti ほか／Revista de Educación a Distancia, núm. 2DU",
+      "source": "https://revistas.um.es/red/article/view/244251",
+      "evidence": "https://revistas.um.es/red/article/view/244251",
+      "note": "配布ページはCC BY 4.0へリンクする一方、本文で商用利用を除外。両方を記録し、非営利・無改変の条件で共有。",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "key": "R20",
+      "prefix": "文献/原本/R20-chang-drag.pdf",
+      "license": "CC BY-NC-ND 2.5 BR（記事欄）",
+      "author": "Jessica de Oliveira Chang ほか／Caderno Brasileiro de Ensino de Física",
+      "source": "https://doi.org/10.5007/2175-7941.2019v36n2p529",
+      "evidence": "https://doi.org/10.5007/2175-7941.2019v36n2p529",
+      "note": "記事のライセンス欄は2.5 BR、サイトフッターは4.0を表示。記事欄の条件を保持し、非営利・無改変で共有。",
+      "license_url": "https://creativecommons.org/licenses/by-nc-nd/2.5/br/"
+    },
+    {
+      "key": "R26",
+      "prefix": "文献/原本/R26-torres-martinez.pdf",
+      "license": "CC BY 4.0",
+      "author": "Àngel Luis Torres Climent, Tomás José Martínez Sempere／Ciències 第26号",
+      "source": "https://revistes.uab.cat/ciencies/article/view/n26-torres-martinez",
+      "evidence": "https://revistes.uab.cat/ciencies/article/view/n26-torres-martinez",
+      "note": "著作者・原掲載誌・出典・ライセンスを表示。PDFは無改変。",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "key": "R31",
+      "prefix": "文献/原本/R31-ruengrung-stem.pdf",
+      "license": "CC BY-NC-ND 4.0",
+      "author": "สถาพร เรืองรุ่ง (Sathaphorn Ruengrung)／Journal of Education and Innovative Learning",
+      "source": "https://so06.tci-thaijo.org/index.php/jeil/article/view/260354",
+      "evidence": "https://so06.tci-thaijo.org/index.php/jeil/article/view/260354",
+      "note": "著作者・出典を表示し、非営利・無改変でのみ共有。",
+      "license_url": "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+    },
+    {
+      "key": "ML03",
+      "prefix": "文献/モデルロケット/液体/原本/ML03.pdf",
+      "license": "CC BY-NC-ND（UPM書誌表示、版番号未確認）",
+      "author": "Carlos Redondo Calle",
+      "source": "https://oa.upm.es/1492/",
+      "evidence": "https://oa.upm.es/1492/",
+      "note": "UPM書誌のReconocimiento - Sin obra derivada - No comercialを確認。非営利・無改変で共有し、版番号は推定しない。",
+      "license_url": null
+    },
+    {
+      "key": "ML08",
+      "prefix": "文献/モデルロケット/液体/原本/ML08.pdf",
+      "license": "CC BY 4.0",
+      "author": "Vint Lee, Sohom Roy",
+      "source": "https://arxiv.org/abs/2401.07444",
+      "evidence": "https://arxiv.org/abs/2401.07444",
+      "note": "arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "key": "ML09",
+      "prefix": "文献/モデルロケット/液体/原本/ML09.pdf",
+      "license": "CC BY 4.0",
+      "author": "Günther Waxenegger-Wilfing, Kai Dresia, Jan Deeken, Michael Oschwald",
+      "source": "https://arxiv.org/abs/2102.07109",
+      "evidence": "https://arxiv.org/abs/2102.07109",
+      "note": "arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "key": "MH12",
+      "prefix": "文献/モデルロケット/ハイブリッド/原本/MH12.pdf",
+      "license": "CC BY 4.0",
+      "author": "Joel Jean-Philyppe / McGill Rocket Team",
+      "source": "https://arxiv.org/abs/2302.06725",
+      "evidence": "https://arxiv.org/abs/2302.06725",
+      "note": "arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "key": "MS19",
+      "prefix": "文献/モデルロケット/固体/原本/MS19.pdf",
+      "license": "CC BY 4.0",
+      "author": "Jacob Schrum; Cody Crosby / Southwestern University",
+      "source": "https://arxiv.org/abs/2504.02177",
+      "evidence": "https://arxiv.org/abs/2504.02177",
+      "note": "arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "key": "ML14",
+      "prefix": "文献/モデルロケット/液体/原本/ML14.pdf",
+      "license": "CC BY-SA 4.0",
+      "author": "Arif Nur Hakim / LAPAN",
+      "source": "https://ejournal.brin.go.id/ijoa/article/view/12423",
+      "evidence": "https://ejournal.brin.go.id/ijoa/article/view/12423",
+      "note": "BRINの記事単位のライセンスを確認。著作者・出典を表示し、無改変のPDFを共有。改変物の共有には同一条件が必要。",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "key": "MH07",
+      "prefix": "文献/モデルロケット/ハイブリッド/原本/MH07.pdf",
+      "license": "CC BY 4.0",
+      "author": "M. Kobald, C. Schmierer, U. Fischer, K. Tomilin, A. Petrarolo, M. Rehberger",
+      "source": "https://elib.dlr.de/132743/1/Kobald%20eucass2019_025.pdf",
+      "evidence": "文献/モデルロケット/ハイブリッド/原本/MH07.pdf",
+      "note": "PDF第1ページに著者・EDP SciencesとCC BY 4.0を明記。原本を無改変で共有。",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "key": "MC02",
+      "prefix": "文献/モデルロケット/共通/原本/MC02.pdf",
+      "license": "Creative Commons Attribution（PDFに版番号なし）",
+      "author": "João Lemes Gribel Soares, Mateus Stano Junqueira, Oscar Mauricio Prada Ramirez, Patrick Sampaio dos Santos Brandão, Adriano Augusto Antongiovanni, Guilherme Fernandes Alves, Giovani Hidalgo Ceotto",
+      "source": "https://proceedings.scipy.org/articles/majora-212e5952-020.pdf",
+      "evidence": "文献/モデルロケット/共通/原本/MC02.pdf",
+      "note": "PDF第1ページが著作者・出典表示を条件とする使用・配布・複製を明示。版番号を推定せず、著作者表示を保持して原本を共有。",
+      "license_url": null
+    },
+    {
+      "key": "MH19",
+      "prefix": "文献/モデルロケット/ハイブリッド/原本/MH19.pdf",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted",
+      "author": "Gordon E. Jensen; Allen L. Holzman; Steven O. Leisch; Joseph Keilbach; Randy Parsley; John Humphrey",
+      "source": "https://ntrs.nasa.gov/citations/19900012478",
+      "evidence": "https://ntrs.nasa.gov/citations/19900012478",
+      "note": "NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "license_url": null
+    },
+    {
+      "key": "MH20",
+      "prefix": "文献/モデルロケット/ハイブリッド/原本/MH20.pdf",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted",
+      "author": "W. S. Y. Hung; C. S. Chen; J. K. Haviland / University of Virginia",
+      "source": "https://ntrs.nasa.gov/citations/19730003241",
+      "evidence": "https://ntrs.nasa.gov/citations/19730003241",
+      "note": "NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "license_url": null
+    },
+    {
+      "key": "MC09",
+      "prefix": "文献/モデルロケット/共通/原本/MC09.pdf",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted",
+      "author": "James S. Barrowman / Catholic University of America",
+      "source": "https://ntrs.nasa.gov/citations/20010047838",
+      "evidence": "https://ntrs.nasa.gov/citations/20010047838",
+      "note": "NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "license_url": null
+    },
+    {
+      "key": "ML17",
+      "prefix": "文献/モデルロケット/液体/原本/ML17.pdf",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted",
+      "author": "Dieter K. Huzel; David H. Huang / Rocketdyne",
+      "source": "https://ntrs.nasa.gov/citations/19710019929",
+      "evidence": "https://ntrs.nasa.gov/citations/19710019929",
+      "note": "NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "license_url": null
+    },
+    {
+      "key": "H01",
+      "prefix": "文献/原本/H01-krautkramer-1956.pdf",
+      "license": "US patent document facsimile",
+      "author": "Adam Krautkrämer／米国特許庁",
+      "source": "https://patents.google.com/patent/US2732657A/en",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "note": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license_url": null
+    },
+    {
+      "key": "H02",
+      "prefix": "文献/原本/H02-kaye-1960.pdf",
+      "license": "US patent document facsimile",
+      "author": "Joseph Kaye, Edward F. Kurtz Jr., George F. Harper／米国特許庁",
+      "source": "https://patents.google.com/patent/US2927398A/en",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "note": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license_url": null
+    },
+    {
+      "key": "H03",
+      "prefix": "文献/原本/H03-joffe-1962.pdf",
+      "license": "US patent document facsimile",
+      "author": "Edward J. Joffe／Park Plastics Co., Inc.／米国特許庁",
+      "source": "https://patents.google.com/patent/US3049832A/en",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "note": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license_url": null
+    },
+    {
+      "key": "H04",
+      "prefix": "文献/原本/H04-pippin-1976.pdf",
+      "license": "US patent document facsimile",
+      "author": "Reginald F. Pippin Jr.／米国特許商標庁",
+      "source": "https://patents.google.com/patent/US3962818A/en",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "note": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license_url": null
+    },
+    {
+      "key": "H06",
+      "prefix": "文献/原本/H06-johnson-1995.pdf",
+      "license": "US patent document facsimile",
+      "author": "Lonnie G. Johnson, Bruce M. D’Andrade／米国特許商標庁",
+      "source": "https://patents.google.com/patent/US5415153A/en",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "note": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license_url": null
+    },
+    {
+      "key": "MS17",
+      "prefix": "文献/モデルロケット/固体/原本/MS17.pdf",
+      "license": "US patent document facsimile",
+      "author": "Orville H. Carlisle",
+      "source": "https://patents.google.com/patent/US2841084A/en",
+      "evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+      "note": "米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "license_url": null
     }
   ]
 }

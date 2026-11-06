@@ -204,7 +204,9 @@ Orville H. Carlisle · 1958 登録・公開（1954年8月30日出願） · en ·
 
 [配布元・出典](https://patents.google.com/patent/US2841084A/en) · [原本取得先](https://kirkmcd.princeton.edu/Carlisle/carlisle_us2841084_54_rocket.pdf) · [保存ファイル](<原本/MS17.pdf>)（4ページ）
 
-利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+利用条件：US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ms18"></a>
 
@@ -228,7 +230,9 @@ Jacob Schrum; Cody Crosby / Southwestern University · 2025 · en · 学会論�
 
 [配布元・出典](https://arxiv.org/abs/2504.02177) · [原本取得先](https://arxiv.org/pdf/2504.02177) · [保存ファイル](<原本/MS19.pdf>)（9ページ）
 
-利用条件：arXiv掲載のCC BY 4.0。原本の著作者表示を保持。
+利用条件：CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ms20"></a>
 
