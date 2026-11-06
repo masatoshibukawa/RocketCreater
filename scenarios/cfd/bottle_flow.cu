@@ -8,6 +8,8 @@ __device__ float eq(int i,float dr,float u,float v,float w) {
     float eu=ex[i]*u+ey[i]*v+ez[i]*w;
     return weight(i)*(dr+(1+dr)*(3*eu+4.5f*eu*eu-1.5f*(u*u+v*v+w*w)));
 }
+// The driver inserts interpolated_wall.cuh here when compiling this translation unit.
+// WALL_HELPERS
 
 // Coordinates in body diameters; origin at nose. 0 empty, 1 sphere, 2 flat
 // base, 3 recessed skirt. g = length, nose, root, tip, span, sweep, fin inset,
@@ -46,7 +48,7 @@ __device__ bool fin_link(float x,float y,float z,float vx,float vy,float vz,cons
 }
 
 extern "C" __global__ void setup(unsigned *mask,float *f,int nx,int ny,int nz,
-        int d,int shape,const float *g,float u,float v) {
+        int d,int shape,const float *g,float u,float v,int mode) {
     int n=nx*ny*nz,k=blockIdx.x*blockDim.x+threadIdx.x;
     if(k>=n) return;
     float dx=1.f/d,x=(k%nx+.5f)*dx-g[10],y=(k/nx%ny+.5f-ny*.5f)*dx;
@@ -56,13 +58,16 @@ extern "C" __global__ void setup(unsigned *mask,float *f,int nx,int ny,int nz,
     float xb=g[11]*(x-g[8])-g[12]*y+g[8], yb=g[12]*(x-g[8])+g[11]*y;
     x=xb; y=yb;
     unsigned bits=0;
-    if(solid(shape,x,y,z,dx,g)) bits=1u<<31;
+    if(solid(shape,x,y,z,dx,g) || (mode && shape>=2 && g[13]>0 &&
+        fin_distance(x,y,z,0,0,0,g)==0)) bits=1u<<31;
     else for(int i=1;i<19;++i) {
         float vx=-ex[i]*dx,vy=-ey[i]*dx,vz=-ez[i]*dx;
         float bx=g[11]*vx-g[12]*vy, by=g[12]*vx+g[11]*vy;
         vx=bx; vy=by;
-        if(solid(shape,x+vx,y+vy,z+vz,dx,g) ||
-           (shape>=2 && fin_link(x,y,z,vx,vy,vz,g))) bits |= 1u<<i;
+        bool hit=mode ? exact_distance(shape,x,y,z,vx,vy,vz,g)<=1.f :
+            (solid(shape,x+vx,y+vy,z+vz,dx,g) ||
+             (shape>=2 && fin_link(x,y,z,vx,vy,vz,g)));
+        if(hit) bits |= 1u<<i;
     }
     mask[k]=bits;
     for(int i=0;i<19;++i) f[i*n+k]=eq(i,0,u,v,0);
@@ -72,7 +77,8 @@ extern "C" __global__ void setup(unsigned *mask,float *f,int nx,int ny,int nz,
 // Pressure is at adjacent fluid-cell centres, not an extrapolated wall value.
 // Force is momentum exchange (pressure + viscous), not pressure-only quadrature.
 extern "C" __global__ void surface_probe(const float *src,const unsigned *mask,
-        const int *ids,int count,int nx,int ny,int nz,float *stats) {
+        const int *ids,int count,int nx,int ny,int nz,float *stats,
+        const int *lookup,const float *fractions,int mode) {
     int j=blockIdx.x*blockDim.x+threadIdx.x;
     if(j>=count) return;
     int k=ids[j], n=nx*ny*nz, y=k/nx%ny,z=k/(nx*ny);
@@ -82,8 +88,9 @@ extern "C" __global__ void surface_probe(const float *src,const unsigned *mask,
         int a=ex[i],b=ey[i],c=ez[i]; float h;
         if(bits & (1u<<i)) {
             int opposite=(i%2) ? i+1 : i-1;
-            h=src[opposite*n+k];
-            fx-=2*a*h; fy-=2*b*h; fz-=2*c*h;
+            h=reflected(src,mask,lookup,fractions,k,i,n,nx,ny,mode);
+            float impulse=h+src[opposite*n+k];
+            fx-=a*impulse; fy-=b*impulse; fz-=c*impulse;
         } else {
             int index=k-a-b*nx-c*nx*ny;
             if(y-b<0) index+=ny*nx;
@@ -99,7 +106,8 @@ extern "C" __global__ void surface_probe(const float *src,const unsigned *mask,
 
 extern "C" __global__ void advance(const float *src,float *dst,const unsigned *mask,
         int nx,int ny,int nz,int d,float inlet_u,float inlet_v,float tau,float cs,
-        float cg_from_inlet,int sample,float *forces) {
+        float cg_from_inlet,int sample,float *forces,
+        const int *lookup,const float *fractions,int mode) {
     int k=blockIdx.x*blockDim.x+threadIdx.x,n=nx*ny*nz;
     if(k>=n || mask[k]>>31) return;
     int x=k%nx,y=k/nx%ny,z=k/(nx*ny);
@@ -115,8 +123,11 @@ extern "C" __global__ void advance(const float *src,float *dst,const unsigned *m
         int a=ex[i],b=ey[i],c=ez[i]; float h;
         if(bits & (1u<<i)) {
             int opposite=(i%2) ? i+1 : i-1;
-            h=src[opposite*n+k];
-            if(sample) {fx-=2*a*h; fy-=2*b*h; fz-=2*c*h;}
+            h=reflected(src,mask,lookup,fractions,k,i,n,nx,ny,mode);
+            if(sample) {
+                float impulse=h+src[opposite*n+k];
+                fx-=a*impulse; fy-=b*impulse; fz-=c*impulse;
+            }
         } else {
             int j=k-a-b*nx-c*nx*ny;
             if(y-b<0) j+=ny*nx;
@@ -149,6 +160,40 @@ extern "C" __global__ void advance(const float *src,float *dst,const unsigned *m
         // The half-link offset is parallel to its impulse and has zero moment.
         atomicAdd(forces+3,ry*fz-rz*fy); atomicAdd(forces+4,rz*fx-rx*fz);
         atomicAdd(forces+5,rx*fy-ry*fx);
+    }
+}
+
+// Integrate individual free-fin loads at the analytic intersection (excluding shoes).
+// The output is body-axis force and moment about each fin's root leading edge.
+extern "C" __global__ void fin_probe(const float *src,const unsigned *mask,
+        const int *ids,int count,int nx,int ny,int nz,int d,const float *g,
+        const int *lookup,const float *fractions,float *stats) {
+    int j=blockIdx.x*blockDim.x+threadIdx.x;
+    if(j>=count) return;
+    int k=ids[j],n=nx*ny*nz;
+    float dx=1.f/d,x=(k%nx+.5f)*dx-g[10],y=(k/nx%ny+.5f-ny*.5f)*dx;
+    float z=(k/(nx*ny)+.5f-nz*.5f)*dx;
+    float xb=g[11]*(x-g[8])-g[12]*y+g[8],yb=g[12]*(x-g[8])+g[11]*y;
+    float root=g[0]-g[6]-g[2],r0=.5f+g[14];
+    for(int i=1;i<19;++i) if(mask[k] & (1u<<i)) {
+        float q=fractions[j*19+i],vx=-ex[i]*dx,vy=-ey[i]*dx;
+        float wx=xb+q*(g[11]*vx-g[12]*vy),wy=yb+q*(g[12]*vx+g[11]*vy);
+        float wz=z-q*ez[i]*dx;
+        int blade=fabsf(wy)>fabsf(wz) ? (wy>0 ? 0 : 2) : (wz>0 ? 1 : 3);
+        float r=(blade==0 ? wy : blade==1 ? wz : blade==2 ? -wy : -wz);
+        if(r<r0+1e-5f) continue;
+        float s=(r-r0)/g[4],chord=wx-root-g[5]*s;
+        if(s>1+1e-5f || chord<-1e-5f || chord>g[2]+(g[3]-g[2])*s+1e-5f) continue;
+        int opposite=(i%2) ? i+1 : i-1;
+        float h=reflected(src,mask,lookup,fractions,k,i,n,nx,ny,1);
+        float impulse=h+src[opposite*n+k];
+        float fx=(-g[11]*ex[i]+g[12]*ey[i])*impulse;
+        float fy=(-g[12]*ex[i]-g[11]*ey[i])*impulse,fz=-ez[i]*impulse;
+        float ry=wy-(blade==0 ? r0 : blade==2 ? -r0 : 0);
+        float rz=wz-(blade==1 ? r0 : blade==3 ? -r0 : 0),rx=wx-root;
+        atomicAdd(stats+6*blade,fx); atomicAdd(stats+6*blade+1,fy);
+        atomicAdd(stats+6*blade+2,fz); atomicAdd(stats+6*blade+3,ry*fz-rz*fy);
+        atomicAdd(stats+6*blade+4,rz*fx-rx*fz); atomicAdd(stats+6*blade+5,rx*fy-ry*fx);
     }
 }
 

@@ -1,0 +1,60 @@
+id: D02-G10-120-C1
+scope: one numerical procurement and assembly proposal; no hardware qualification
+base: D02/9/carton_wide
+fin:
+  manufacturer: Iten Industries
+  grade: Resiten G10FR4
+  source: https://www.itenindustries.com/wp-content/uploads/Resiten-G10FR4-data-2019.pdf
+  process: purchase identified laminate; outsource four matched cut plates with two clearance holes each
+  thickness_mm: 1.0
+  thickness_status: requested purchase specification; stock, tolerance and thin-sheet properties unconfirmed
+  density_kg_m3: 1960
+  young_pa: 17236893232.5
+  source_young_psi: 2500000
+  source_specimen_thickness_mm: 3.175
+  flexural_strength_crosswise_typical_pa: 455745457.0673
+  strength_allowable_pa: null
+  poisson_assumption: 0.3
+  warm_stiffness_multiplier_assumption: 0.8
+  orientation: laminate weave axes aligned with fin span and root chord; no invented orthotropic allowables
+  count: 4
+  free_span_mm: 120
+  root_chord_mm: 70
+  tip_chord_mm: 35
+  sweep_mm: 35
+  root_offset_mm: 12
+  captured_tab_mm: 10.5
+  cant_deg: 0
+mount:
+  manufacturer: Prusa Polymers
+  grade: Prusament PETG (standard, not V0)
+  source: https://prusament.com/wp-content/uploads/2022/10/PETG_Prusament_TDS_2021_10_EN.pdf
+  process: eight printed jaw halves; solid section, mating faces flat; assemble around each fin tab
+  printer_requirement: compatible 1.75 mm FFF printer; this is not a profile for the lab 2.85 mm Ultimaker
+  density_kg_m3: 1270
+  young_room_pa: 1500000000
+  young_warm_assumption_pa: 800000000
+  source_strength_typical_pa: 47000000
+  strength_allowable_pa: null
+  shoe_axial_length_mm: 70
+  shoe_radial_height_mm: 12
+  jaw_thickness_mm: 3
+  shoe_total_width_mm: 7
+  base_thickness_mm: 1.5
+  fastener: 8 M2 x 10 stainless screws, 8 nuts, 16 washers; no tightening torque specified
+  bolt_hole_diameter_mm: 2.2
+  bolt_hole_x_mm: [15, 55]
+  bolt_radial_height_mm: 6.75
+  fastener_group_mass_assumed_g: 6
+  straps: 2 external retention straps around the nonpressurized skirt; size after dry fit
+  strap_group_mass_assumed_g: 4
+  attachment_rule: no holes or printed pressure fittings in the pressure bottle
+  unresolved: [skirt load transfer, strap slip, bolt preload, local bearing, print anisotropy, creep]
+evaluation:
+  altitude_target_m: 30
+  fin_deflection_span_limit: 0.05
+  grid_component_limit: 0.05
+  interpolation_component_limit: 0.10
+  force_coefficient_floor: 0.05
+  moment_coefficient_floor: 0.1
+  physical_qualification: false
