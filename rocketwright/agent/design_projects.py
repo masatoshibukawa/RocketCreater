@@ -43,7 +43,16 @@ def write_json(path: Path, value):
     temp.write_text(
         json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8"
     )
-    temp.replace(path)
+    for attempt in range(10):
+        try:
+            temp.replace(path)
+            break
+        except PermissionError:
+            # Windows readers can briefly hold the destination without delete sharing.
+            # Never remove the previous complete JSON to make replacement succeed.
+            if attempt == 9:
+                raise
+            time.sleep(0.02 * (attempt + 1))
 
 
 def sha(path):

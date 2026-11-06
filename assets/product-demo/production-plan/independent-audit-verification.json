@@ -1,0 +1,141 @@
+{
+  "source_commit": "05dba5b",
+  "code_sha256": "81bf0a2f897f5d299bfc9895a57eeb5d1a8eebe695f53e32f08aa615cd40423f",
+  "elapsed_s": 241.2970000000205,
+  "project_id": "4adc26ed06b245f990db4aa3ac837935",
+  "version": 1,
+  "baseline_source_commit": "b2d6af8c7e68a4fef7535c86c3b295e41a132be3",
+  "physical_qualification": false,
+  "supplemental_diagnostic": true,
+  "campaign_budget_expanded": false,
+  "audit": {
+    "condition": {
+      "speed_mps": 18,
+      "angle_deg": 10
+    },
+    "cells": [
+      12,
+      16,
+      20
+    ],
+    "differences": {
+      "wide": 0.01175740372213756,
+      "time": 0.0550654463837164,
+      "duration": 0.05650274013267088,
+      "interpolation": 0.08320533472811892,
+      "third_grid": 0.10299729277443363
+    },
+    "observed_orders": {
+      "Cx": {
+        "values": [
+          0.8898882017402111,
+          0.7658039211132635,
+          0.6869281904425514
+        ],
+        "cells": [
+          12,
+          16,
+          20
+        ],
+        "observed_order": 0.7760768418122598,
+        "fine_gci": 0.7591116245789086,
+        "asymptotic_range_verified": false,
+        "classification": "monotone"
+      },
+      "Cy": {
+        "values": [
+          0.7910929804050554,
+          0.8540802699474896,
+          0.8847439262328715
+        ],
+        "cells": [
+          12,
+          16,
+          20
+        ],
+        "observed_order": 1.8062853935438334,
+        "fine_gci": 0.08727427951213163,
+        "asymptotic_range_verified": false,
+        "classification": "monotone"
+      },
+      "Cm_z": {
+        "values": [
+          0.1849310298731734,
+          0.23280368311746522,
+          0.24316192476900428
+        ],
+        "cells": [
+          12,
+          16,
+          20
+        ],
+        "observed_order": 4.874117390366799,
+        "fine_gci": 0.02706736574964617,
+        "asymptotic_range_verified": false,
+        "classification": "monotone"
+      }
+    },
+    "scope": "One independent ascent condition; finite differences, not a global error bound"
+  },
+  "confirm": {
+    "checks": {
+      "altitude": true,
+      "attitude": true,
+      "static_margin": false,
+      "temporal": true,
+      "fin_deformation": true,
+      "modes": true,
+      "frozen_pitch": false,
+      "aero_domain": true,
+      "thermal_balance": true,
+      "propulsion_balance": true,
+      "payload_mass": true,
+      "recovery": true,
+      "cost_evidence": true,
+      "aero_grid": false,
+      "aero_averaging": false,
+      "aero_trajectory": false,
+      "aero_interpolation": false,
+      "aero_domain_size": true,
+      "aero_lattice": false,
+      "aero_duration": false,
+      "aero_third_grid": false,
+      "fem_mesh": false
+    },
+    "unmet": [
+      "static_margin",
+      "frozen_pitch",
+      "aero_grid",
+      "aero_averaging",
+      "aero_trajectory",
+      "aero_interpolation",
+      "aero_lattice",
+      "aero_duration",
+      "aero_third_grid",
+      "fem_mesh"
+    ],
+    "static_margin_cal": -0.9227596976524184,
+    "metrics": {
+      "criteria_met": false
+    },
+    "scope": "Declared conditional numerical criteria only; strength allowables unresolved"
+  },
+  "fem": {
+    "fem_deflection_ratio": 0.0006393992338681051,
+    "fem_mesh_change": 0.09543012435903993
+  },
+  "refine": {
+    "metrics": {
+      "temporal_pass": true
+    },
+    "altitude_change_m": 7.341960165163641e-05,
+    "scope": "Local finite perturbation and two-level difference, not an error bound"
+  },
+  "result_sha256": {
+    "cfd_audit": "ee005646745ba9b62334e4431fb8d25b243eb8f339ea2e07c8bccd3a92313722",
+    "refine": "3fed1cb85d4791af72e3febf878ccef3b390935086e1610daa169b77a108b936",
+    "fem_coarse": "38df88d1f5324dfe7ca97d6ea34e07ea4538375248870d3c6a16f6d140059046",
+    "fem_fine": "76d3d82b211ef3a3828a714a4494d8b5c1e45b6825b811b86471c70f60790b06",
+    "confirm": "17b63b36d4d4b18fcdf44596cf80965c0055d1d855717c695d4c5ef7eb73f2ca"
+  }
+}
