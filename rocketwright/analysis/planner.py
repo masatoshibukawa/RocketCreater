@@ -98,7 +98,9 @@ def prompt_view(offered, context, max_chars=9000):
     def compact(value):
         if isinstance(value, dict):
             return {
-                k: compact(v) for k, v in value.items() if v is not None and v != {} and v != []
+                k: compact(v)
+                for k, v in value.items()
+                if v is not None and not (isinstance(v, (dict, list)) and len(v) == 0)
             }
         if isinstance(value, list):
             return [compact(v) for v in value]

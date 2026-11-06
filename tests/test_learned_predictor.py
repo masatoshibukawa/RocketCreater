@@ -106,3 +106,16 @@ def test_rich_prediction_pool_preserves_families_within_context_budget(tmp_path)
     }
     assert view["choices"]["redesign/0"]["retrieved_cases"]
     assert not (set(omitted) & set(view["choices"]))
+
+
+def test_native_numpy_metrics_are_valid_in_compact_decision_view():
+    import numpy as np
+
+    from rocketwright.analysis.planner import prompt_view
+
+    view, _ = prompt_view(
+        {"survey": dict(cost_s=np.float64(60))},
+        dict(current_screen_metrics={"dry_mass_g": np.float64(298.50249)}),
+    )
+    assert view["context"]["current_screen_metrics"]["dry_mass_g"] == 298.502
+    assert view["choices"]["survey"]["cost_s"] == 60
