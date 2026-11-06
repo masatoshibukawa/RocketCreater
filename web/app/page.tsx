@@ -6,6 +6,7 @@ import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
 import CostPanel from "./components/CostPanel";
+import CrewBanner from "./components/CrewBanner";
 import DetailsPanel from "./components/DetailsPanel";
 import DrawingPanel from "./components/DrawingPanel";
 import FlightChart from "./components/FlightChart";
@@ -24,7 +25,7 @@ import { carriesParachute } from "./lib/flightPlayback";
 import { useDesignStream } from "./lib/useDesignStream";
 import { useDesignSummary } from "./lib/useDesignSummary";
 import type { AeroRequest } from "./lib/useAeroLoop";
-import type { DispersionResult, DisplayedDesign, LandingPoint, TracePoint } from "./lib/types";
+import { isOrbital, type DispersionResult, type DisplayedDesign, type LandingPoint, type TracePoint } from "./lib/types";
 
 const NO_TRACE: TracePoint[] = [];
 const NO_METRICS: Record<string, number> = {};
@@ -206,6 +207,12 @@ function DesignScreen() {
                 </button>
               ))}
             </div>
+            {stream.status === "streaming" && !isOrbital(tier) ? (
+              <CrewBanner
+                attemptCount={stream.attemptCount}
+                latestApogeeM={stream.attempts.at(-1)?.result?.metrics.apogee_m}
+              />
+            ) : null}
             {view === "model" ? (
               <ModelViewer
                 design={displayed?.design ?? null}

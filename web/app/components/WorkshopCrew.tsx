@@ -75,9 +75,9 @@ function CrewCanvas({ phase, animate }: { phase: CrewPhase; animate: boolean }) 
       light.shadow.bias = -.001;
       scene.add(light);
       const crew = makeWorkshopCrew(); scene.add(crew.root);
-      let frame = 0, elapsed = 0, last = 0, drawn = 0, currentPhase = latest.current.phase;
-      const draw = () => { crew.pose(currentPhase, elapsed); renderer.render(scene, camera); };
-      const canAnimate = () => latest.current.animate && !document.hidden;
+      let frame = 0, elapsed = 0, last = 0, drawn = 0, contextAvailable = true, currentPhase = latest.current.phase;
+      const draw = () => { if (contextAvailable) { crew.pose(currentPhase, elapsed); renderer.render(scene, camera); } };
+      const canAnimate = () => contextAvailable && latest.current.animate && !document.hidden;
       const tick = (time: number) => {
         frame = 0;
         if (!canAnimate()) { last = 0; return; }
@@ -101,7 +101,7 @@ function CrewCanvas({ phase, animate }: { phase: CrewPhase; animate: boolean }) 
         camera.top = halfHeight; camera.bottom = -halfHeight;
         camera.updateProjectionMatrix(); renderer.setSize(width, height, false); draw();
       };
-      const contextLost = (event: Event) => { event.preventDefault(); cancelAnimationFrame(frame); setFallback(true); };
+      const contextLost = (event: Event) => { event.preventDefault(); contextAvailable = false; cancelAnimationFrame(frame); setFallback(true); };
       const observer = new ResizeObserver(resize); observer.observe(container);
       renderer.domElement.addEventListener("webglcontextlost", contextLost);
       document.addEventListener("visibilitychange", update);

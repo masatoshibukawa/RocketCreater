@@ -297,11 +297,12 @@ def test_trace_parsing_keeps_the_thrust_series_the_player_reads():
 
 def test_workshop_art_ships_with_the_web_app_and_stays_decoration():
     public = ROOT / "web" / "public"
-    for name in ("ModelViewer", "AeroLoopPanel"):
+    for name in ("ModelViewer", "CrewBanner", "AeroLoopPanel"):
         paths = re.findall(r'"(/workshop/[\w.-]+)"', _ts(f"components/{name}.tsx"))
         assert paths
         assert all((public / path.lstrip("/")).is_file() for path in paths)
     # A rocket workshop is not the picture for an orbital run.
     assert "isOrbital(tier)" in _ts("components/ModelViewer.tsx")
+    assert "isOrbital(tier)" in PAGE_TSX
     # The crew stand under the real flow picture; the drafted charts never reach the page.
     assert 'src={apiUrl(image.url)}' in _ts("components/AeroLoopPanel.tsx")
