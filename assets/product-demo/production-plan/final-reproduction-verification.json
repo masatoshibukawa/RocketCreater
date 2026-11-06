@@ -1,0 +1,169 @@
+{
+  "source_commit": "3ea84b2c73f5500ec5ae927ac038051582c2151e",
+  "source_project_id": "0bcc8b763a464e42b031011401bb1269",
+  "source_version": 4,
+  "source_archive_sha256": "cf7fa701b2461720b0ff863c763beedee4a9c1e803057819d9b4bb7c169d434d",
+  "source_archive_bytes": 19830057,
+  "verified_archive_files": 257,
+  "downloaded_archive_sha256_matches": true,
+  "regenerated_archive_sha256": "e3cd6e7c99479d500cbdf915455ef9e5546cb248c73978cb2cf7d40e4a3d0ead",
+  "isolated_venv": true,
+  "user_site_packages": false,
+  "result": {
+    "passed": true,
+    "full_reproduction": true,
+    "comparisons": {
+      "fin": true,
+      "nose": true,
+      "fit-ring": true,
+      "apogee_m": true,
+      "apogee_time_s": true,
+      "max_speed_mps": true,
+      "max_accel_mps2": true,
+      "peak_thrust_n": true,
+      "thrust_phase_duration_s": true,
+      "water_exhausted_speed_mps": true,
+      "water_impulse_ns": true,
+      "air_impulse_ns": true,
+      "rail_exit_speed_mps": true,
+      "descent_speed_mps": true,
+      "landing_east_m": true,
+      "landing_north_m": true,
+      "landing_distance_m": true,
+      "flight_time_s": true,
+      "liftoff_mass_kg": true,
+      "water_mass_kg": true
+    },
+    "project_id": "01a46a89fea04e52adcb3d20dbe75ac8",
+    "source_project_id": "0bcc8b763a464e42b031011401bb1269",
+    "source_project_version": 4,
+    "environment": {
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "pydantic": "2.14.2",
+      "PyYAML": "6.0.3",
+      "fastapi": "0.162.0",
+      "uvicorn": "0.54.0",
+      "anthropic": "1.17.0",
+      "reportlab": "4.5.1",
+      "Pillow": "13.0.0",
+      "imageio-ffmpeg": "0.8.1"
+    },
+    "scope": "new environment/work directory on this host; another PC requires a separate run",
+    "physical_qualification": false
+  },
+  "part_count": 3,
+  "flight_metric_count": 17,
+  "source_video": {
+    "passed": true,
+    "files": [
+      {
+        "file": "design-explanation.mp4",
+        "fps": 24.0,
+        "size": [
+          960,
+          540
+        ],
+        "duration": 4.0,
+        "changing_frames": true,
+        "full_decode": true,
+        "decoded_frames": 96,
+        "audio": "none"
+      },
+      {
+        "file": "launch-cg.mp4",
+        "fps": 24.0,
+        "size": [
+          960,
+          540
+        ],
+        "duration": 4.0,
+        "changing_frames": true,
+        "full_decode": true,
+        "decoded_frames": 96,
+        "audio": "none"
+      }
+    ],
+    "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+    "style": "engineering",
+    "rendered_trajectory": {
+      "passed": true,
+      "frames": 96,
+      "max_position_error_m": 8.903192743048294e-07,
+      "attitude": "illustrative, not integrated attitude dynamics",
+      "position_basis": "object_transform_readback",
+      "scope": "Position records against solver interpolation; not independent image tracking"
+    },
+    "visual_review": "pending",
+    "physical_validation": "not_performed"
+  },
+  "regenerated_video": {
+    "passed": true,
+    "files": [
+      {
+        "file": "design-explanation.mp4",
+        "fps": 24.0,
+        "size": [
+          960,
+          540
+        ],
+        "duration": 4.0,
+        "changing_frames": true,
+        "full_decode": true,
+        "decoded_frames": 96,
+        "audio": "none"
+      },
+      {
+        "file": "launch-cg.mp4",
+        "fps": 24.0,
+        "size": [
+          960,
+          540
+        ],
+        "duration": 4.0,
+        "changing_frames": true,
+        "full_decode": true,
+        "decoded_frames": 96,
+        "audio": "none"
+      }
+    ],
+    "source_id": "01a46a89fea04e52adcb3d20dbe75ac8:v1",
+    "style": "engineering",
+    "rendered_trajectory": {
+      "passed": true,
+      "frames": 96,
+      "max_position_error_m": 8.903192743048294e-07,
+      "attitude": "illustrative, not integrated attitude dynamics",
+      "position_basis": "object_transform_readback",
+      "scope": "Position records against solver interpolation; not independent image tracking"
+    },
+    "visual_review": "pending",
+    "physical_validation": "not_performed"
+  },
+  "pdf": {
+    "assembly_pages": 10,
+    "all_pages_rendered_and_reviewed": true,
+    "sha256": "8fddb464047b4c8cca515fe3d9f301386f7d0dac15095fabf8e9351306b1cc44"
+  },
+  "browser": {
+    "design_video_ended": true,
+    "ready_state": 4,
+    "video_size": [
+      960,
+      540
+    ],
+    "duration_s": 4,
+    "recent_console_errors": [],
+    "downloaded_zip_verified": true,
+    "screenshot": "workshop-v4.png",
+    "screenshot_sha256": "8cffe4e7b2e2924b41026c1e172e81f837dcd901c681b1ce1c7a3a845d09515b"
+  },
+  "physical_qualification": false,
+  "another_pc_verified": false,
+  "limits": [
+    "Numerical P12 criteria remain unmet on the separately recorded fixed 2 L candidate",
+    "This 1.5 L case is nominal prototype screening; procurement budget is not evaluated",
+    "Engineering videos generated for this case; photographic video is not claimed here",
+    "Visual browser review is recorded separately from automatic video metadata"
+  ]
+}

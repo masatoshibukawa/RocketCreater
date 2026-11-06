@@ -68,6 +68,8 @@ flowchart LR
 
 ## 試作例
 
+実機での接地不足・速すぎる造形・終盤転倒を受けた[再調査と対処手順](09_実機トラブルと機種別対策/fdm-reliability.md)を追加した。[接地と転倒対策](3d-model-skills/categories/3d-print-bed-stability/SKILL.md)と[速度・流量校正](3d-model-skills/categories/3d-print-speed-calibration/SKILL.md)は、既存の印刷・トラブル対処スキルからも参照できる。
+
 [コカ・コーラ2Lを想定したペットボトルロケットのコーンとフィン](prototypes/pet-rocket-coke-2l/README.md)に、調整用パラメーター、生成スクリプト、STL、編集用Blenderファイル、形状検査を保存した。独立レビューで印刷姿勢・補強・先端・嵌合確認を改善している。ボトルの実寸とプリンター機種は未確認で、実印刷・飛行は行っていない。試作例の検証範囲は各記録を参照する。
 
 カテゴリー別の調査資料には印刷済み作品は含まない。まず使う機種と材料を決め、対応する公式プロファイルで小試作するための資料として使う。

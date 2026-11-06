@@ -13,10 +13,14 @@ import time
 import uuid
 import zipfile
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from rocketwright.agent.local_runtime import LocalRuntimeError
+from rocketwright.agent.project_assembly import STEP_IDS, Observation, assembly_assessment
+from rocketwright.agent.project_equipment import Equipment, procurement_summary
+from rocketwright.agent.project_jobs import cancel_path, file_lock, locked, progress, resource_lease
+from rocketwright.agent.project_requirements import assess_requirements, validate_requirements
 from rocketwright.agent.workbench import Conflict
 from rocketwright.analysis.schema import MOUNTS, STOCKS, Assumptions
 from rocketwright.geometry import airframe
@@ -39,7 +43,16 @@ def write_json(path: Path, value):
     temp.write_text(
         json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8"
     )
-    temp.replace(path)
+    for attempt in range(10):
+        try:
+            temp.replace(path)
+            break
+        except PermissionError:
+            # Windows readers can briefly hold the destination without delete sharing.
+            # Never remove the previous complete JSON to make replacement succeed.
+            if attempt == 9:
+                raise
+            time.sleep(0.02 * (attempt + 1))
 
 
 def sha(path):
@@ -49,9 +62,14 @@ def sha(path):
 def implementation_fingerprint():
     files = [
         "rocketwright/schema.py",
+        "rocketwright/agent/design_projects.py",
+        "rocketwright/agent/project_revisions.py",
         "rocketwright/manufacturing.py",
         "rocketwright/physics/water.py",
         "rocketwright/geometry.py",
+        "rocketwright/agent/project_requirements.py",
+        "rocketwright/agent/project_equipment.py",
+        "rocketwright/agent/project_assembly.py",
         "rocketwright/analysis/schema.py",
         "scripts/build_print_parts.py",
         "3d model/prototypes/pet-rocket-coke-2l/build.py",
@@ -73,6 +91,22 @@ class DesignSpec(BaseModel):
         default="UltiMaker Tough PLA Gray", pattern="^(UltiMaker Tough PLA Gray|Prusament PETG)$"
     )
     assumptions: Assumptions = Field(default_factory=Assumptions)
+    equipment: Equipment = Field(default_factory=Equipment)
+    altitude_rule: Literal["band_10pct", "minimum"] = "band_10pct"
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_legacy_rail(cls, value):
+        if not isinstance(value, dict) or "rail_m" not in (value.get("assumptions") or {}):
+            return value
+        value = dict(value)
+        assumptions = dict(value["assumptions"])
+        rail = assumptions.pop("rail_m")
+        env = dict(value.get("env") or {})
+        if "rail_length_m" in env and env["rail_length_m"] != rail:
+            raise ValueError("旧形式と環境入力のガイド長が異なります。同じ値へ修正してください。")
+        env["rail_length_m"] = rail
+        return {**value, "assumptions": assumptions, "env": env}
 
     @model_validator(mode="after")
     def physical_envelope(self):
@@ -84,6 +118,7 @@ class DesignSpec(BaseModel):
             raise ValueError("ノズル径がボトル胴径を超えています。")
         if self.requirement and self.requirement.goal_kind.value != "altitude":
             raise ValueError("この製作フローは高度を指定するペトロケ用です。")
+        validate_requirements(self)
         return self
 
 
@@ -118,6 +153,19 @@ class DesignProjects:
 
     def get(self, project_id):
         state = self.load(project_id)
+        analysis = state.get("analysis")
+        state["analysis_stale"] = bool(
+            analysis
+            and (
+                analysis.get("input_sha256") != fingerprint(state["spec"])
+                or analysis.get("implementation_sha256") != implementation_fingerprint()
+            )
+        )
+        state["input_migration"] = (
+            ["旧形式のガイド長を環境条件へ引き継ぎます。旧版の入力と成果物は保持します。"]
+            if "rail_m" in state["spec"].get("assumptions", {})
+            else []
+        )
         if state["analysis"] and "cad_sha256" not in state["analysis"]:
             # Earlier saved records already carry the original CAD hashes in their registry.
             state["analysis"]["cad_sha256"] = {
@@ -129,11 +177,20 @@ class DesignProjects:
                 for f in state["files"]
                 if f["name"].endswith((".png", ".json")) or f["name"] == "analysis-envelope-m.stl"
             ]
-        if state["active"] and state["active"].get("owner") != self.session:
+        active = state["active"]
+        abandoned = (
+            active
+            and active.get("owner") != self.session
+            and not locked(self.base(project_id) / "operation.lock")
+            and not (active.get("phase") == "queued" and time.time() - active["started_at"] < 30)
+        )
+        if abandoned:
             state["active"] = None
             state["error"] = "前回の処理は中断されました。保存済みの入力から再試行できます。"
             state["revision"] += 1
             self._write(state)
+        elif active:
+            state["active"]["progress"] = progress(self, project_id, active)
         return state
 
     def list(self):
@@ -149,6 +206,7 @@ class DesignProjects:
         return sorted(rows, key=lambda x: x["updated_at"], reverse=True)[:100]
 
     def create(self, spec: DesignSpec):
+        spec = DesignSpec.model_validate(spec.model_dump())
         state = dict(
             id=uuid.uuid4().hex,
             name=spec.name,
@@ -165,6 +223,7 @@ class DesignProjects:
             video_plan=None,
             photographic_video_plan=None,
             adaptive=None,
+            observations=[],
             created_at=time.time(),
         )
         self._write(state)
@@ -175,11 +234,29 @@ class DesignProjects:
             lock = self.locks.setdefault(project_id, threading.Lock())
         if not lock.acquire(blocking=False):
             raise Conflict("別の処理を実行中です。完了後に再試行してください。")
+        process_lock = None
+        process_locked = False
         try:
+            process_lock = file_lock(self.base(project_id) / "operation.lock")
+            process_lock.__enter__()
+            process_locked = True
             state = self.get(project_id)
-            if state["revision"] != revision or state["active"]:
+            reservation = state.get("active") or {}
+            own_job = reservation.get("id") == os.getenv("ROCKETWRIGHT_JOB_ID") and reservation.get(
+                "id"
+            )
+            if state["revision"] != revision or (state["active"] and not own_job):
                 raise Conflict("設計版が更新されました。最新の状態を読み直してください。")
-            state["active"] = dict(name=operation, started_at=time.time(), owner=self.session)
+            state["active"] = {
+                **reservation,
+                **dict(
+                    id=reservation.get("id") or uuid.uuid4().hex,
+                    name=operation,
+                    phase="running",
+                    started_at=reservation.get("started_at", time.time()),
+                    owner=self.session,
+                ),
+            }
             state["error"] = None
             self._write(state)
             if started_event:
@@ -193,14 +270,30 @@ class DesignProjects:
                 state["error"] = str(exc)
                 raise
             finally:
+                state.setdefault("jobs", []).append(
+                    {**state["active"], "finished_at": time.time(), "error": state["error"]}
+                )
+                state["jobs"] = state["jobs"][-50:]
                 state["active"] = None
                 state["revision"] += 1
                 self._write(state)
             return state
         finally:
+            if process_locked:
+                process_lock.__exit__(None, None, None)
             lock.release()
 
+    def cancel(self, project_id, revision):
+        state = self.get(project_id)
+        if state["revision"] != revision or not state["active"]:
+            raise Conflict("現在の処理がありません。")
+        cancel_path(self, project_id, state["active"]["id"]).parent.mkdir(exist_ok=True)
+        cancel_path(self, project_id, state["active"]["id"]).touch()
+        return self.get(project_id)
+
     def edit(self, project_id, revision, spec: DesignSpec):
+        spec = DesignSpec.model_validate(spec.model_dump())
+
         def worker(state):
             self.new_version(state, spec)
 
@@ -208,6 +301,10 @@ class DesignProjects:
 
     def new_version(self, state, spec: DesignSpec):
         """Called under the project operation lock by human edits and host redesigns."""
+        spec = DesignSpec.model_validate(spec.model_dump())
+        from rocketwright.agent.project_revisions import reuse_previous_cad
+
+        old = {k: state[k] for k in ("version", "spec", "analysis")}
         self._write(state)
         state["versions"].append(
             dict(
@@ -222,13 +319,23 @@ class DesignProjects:
             name=spec.name,
             spec=spec.model_dump(mode="json"),
             analysis=None,
+            analysis_stale=False,
+            input_migration=[],
             adopted=False,
             files=[],
             video_plan=None,
             photographic_video_plan=None,
+            observations=[],
+            cad_reuse=None,
         )
+        reuse_previous_cad(self, state, old, state["spec"])
         if state.get("adaptive"):
-            state["adaptive"].update(status="running", accepted_spec_hash=None, quality_pending=[])
+            state["adaptive"].update(
+                status="running",
+                accepted_spec_hash=None,
+                quality_pending=[],
+                confirmation_pending=[],
+            )
 
     def adaptive_step(self, project_id, revision, *, started_event=None):
         from rocketwright.analysis.service import Harness
@@ -246,6 +353,24 @@ class DesignProjects:
         if old is None:
             raise KeyError("保存された版がありません")
         return self.edit(project_id, revision, DesignSpec.model_validate(old["spec"]))
+
+    def compare(self, project_id, version):
+        from rocketwright.agent.project_revisions import difference
+
+        state = self.get(project_id)
+        if not 1 <= version < state["version"]:
+            raise ValueError("比較する旧版がありません。")
+        old = json.loads(
+            (self.base(project_id) / f"v{version}/snapshot.json").read_text(encoding="utf-8")
+        )
+        result = difference(old["spec"], state["spec"])
+        a, b = old.get("analysis"), state.get("analysis")
+        delta = {}
+        if a and b:
+            for key in ("apogee_m", "descent_speed_mps", "max_speed_mps"):
+                if key in a["result"]["metrics"] and key in b["result"]["metrics"]:
+                    delta[key] = b["result"]["metrics"][key] - a["result"]["metrics"][key]
+        return dict(from_version=version, to_version=state["version"], **result, result_delta=delta)
 
     def register_files(self, state, directory, kind):
         base = self.base(state["id"]) / f"v{state['version']}"
@@ -312,15 +437,34 @@ class DesignProjects:
         def worker(state):
             if state["adopted"]:
                 raise Conflict("採用版は保持します。編集して新しい版で再解析してください。")
-            state.update(analysis=None, files=[], video_plan=None, photographic_video_plan=None)
+            state.update(
+                analysis=None,
+                analysis_stale=False,
+                files=[],
+                video_plan=None,
+                photographic_video_plan=None,
+            )
             spec = DesignSpec.model_validate(state["spec"])
             directory = self.directory(project_id)
             cad_dir = directory / "cad"
+            reuse = state.get("cad_reuse")
+            valid_reuse = bool(
+                reuse
+                and reuse["geometry_sha256"] == fingerprint(spec.geometry.model_dump())
+                and all(
+                    (cad_dir / name).is_file() and sha(cad_dir / name) == expected
+                    for name, expected in reuse["cad_sha256"].items()
+                )
+            )
             # Failed/interrupted runs may leave partial CAD; keep it for inspection.
-            if cad_dir.exists():
+            if cad_dir.exists() and not valid_reuse:
                 cad_dir.rename(directory / ("cad-incomplete-" + uuid.uuid4().hex[:8]))
             design = spec.design.model_copy(update={"geometry": spec.geometry})
-            _, geometry = prepare_geometry(PrintRequest(design=design), cad_dir)
+            if valid_reuse:
+                geometry = json.loads((cad_dir / "geometry-check.json").read_text(encoding="utf-8"))
+            else:
+                with resource_lease(self, state, "renderer"):
+                    _, geometry = prepare_geometry(PrintRequest(design=design), cad_dir)
             printed = sum(
                 r["volume_mm3"]
                 * STOCKS[spec.material]["density"]
@@ -340,8 +484,26 @@ class DesignProjects:
                     / 1000
                 }
             )
-            target = spec.requirement.target_altitude_m if spec.requirement else None
+            target = (
+                spec.requirement.target_altitude_m
+                if spec.requirement and spec.altitude_rule == "band_10pct"
+                else None
+            )
             result = water.simulate(design, spec.env, target_apogee_m=target)
+            if (
+                spec.requirement
+                and spec.altitude_rule == "minimum"
+                and result.metrics["apogee_m"] < spec.requirement.target_altitude_m
+            ):
+                result = result.model_copy(
+                    update={
+                        "success": False,
+                        "failure_reasons": [
+                            *result.failure_reasons,
+                            "要求した最低高度に達していません。",
+                        ],
+                    }
+                )
             frame = airframe(design)
             (cad_dir / "analysis-envelope-m.stl").write_bytes(frame.stl_bytes())
             state["analysis"] = dict(
@@ -350,6 +512,7 @@ class DesignProjects:
                 geometry_sha256=fingerprint(spec.geometry.model_dump()),
                 design=design.model_dump(mode="json"),
                 result=result.model_dump(mode="json"),
+                requirements=assess_requirements(spec, result),
                 printed_solid_mass_g=printed,
                 printed_mass_used_g=mass,
                 mass_basis="measured" if spec.measured_printed_mass_g else "solid_CAD_estimate",
@@ -450,6 +613,10 @@ class DesignProjects:
             )
             write_json(directory / "trace.json", a["result"]["trace"])
             steps = assembly_steps(state)
+            write_json(
+                directory / "assembly-access.json",
+                assembly_assessment(DesignSpec.model_validate(state["spec"])),
+            )
             write_json(directory / "steps.json", steps)
             (directory / "instructions.md").write_text(
                 "\n\n".join(
@@ -458,6 +625,11 @@ class DesignProjects:
                 encoding="utf-8",
             )
             write_json(directory / "design.json", dict(schema_version=1, spec=state["spec"]))
+            write_json(directory / "equipment.json", state["spec"]["equipment"])
+            write_json(
+                directory / "procurement.json",
+                procurement_summary(DesignSpec.model_validate(state["spec"])),
+            )
             with (directory / "bom.csv").open("w", encoding="utf-8", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(["part", "quantity", "material", "dimension_basis"])
@@ -479,10 +651,31 @@ class DesignProjects:
                     ]
                 )
             state["adopted"] = True
+            state["adoption_scope"] = "prototype_screening"
             self.register_files(state, self.directory(project_id) / "cad", "cad")
             self.register_files(state, directory, "production")
 
         return self._run(project_id, revision, "adopt", worker)
+
+    def observe(self, project_id, revision, observation: Observation):
+        observation = Observation.model_validate(observation.model_dump())
+
+        def worker(state):
+            self.require_adopted(state)
+            state.setdefault("observations", []).append(
+                dict(
+                    **observation.model_dump(),
+                    version=state["version"],
+                    at=time.time(),
+                    input_sha256=state["analysis"]["input_sha256"],
+                )
+            )
+            directory = self.directory(project_id) / "observations"
+            write_json(directory / "observations.json", state["observations"])
+            state["files"] = [r for r in state["files"] if r["kind"] not in {"manual", "package"}]
+            self.register_files(state, directory, "observations")
+
+        return self._run(project_id, revision, "observe", worker)
 
     def manual(self, project_id, revision):
         def worker(state):
@@ -507,10 +700,16 @@ class DesignProjects:
             for row in state["files"]:
                 self.file(project_id, row["key"])
             output = self.directory(project_id) / ("print-" + uuid.uuid4().hex[:8])
-            manifest = prepare(
-                PrintRequest(design=BottleDesign.model_validate(state["analysis"]["design"])),
-                output,
-            )
+            with resource_lease(self, state, "renderer"), resource_lease(self, state, "slicer"):
+                manifest = prepare(
+                    PrintRequest(
+                        design=BottleDesign.model_validate(state["analysis"]["design"]),
+                        printer=state["spec"]
+                        .get("equipment", {})
+                        .get("printer_profile", "s5-gray-aa04"),
+                    ),
+                    output,
+                )
             # Regeneration must reproduce the exact CAD volumes that supplied the mass model.
             original = json.loads(self.file(project_id, "cad/geometry-check.json").read_text())
             actual = json.loads((output / "geometry-check.json").read_text())
@@ -559,6 +758,17 @@ class DesignProjects:
                 "analysis-envelope-m.stlはm単位の解析包絡で、印刷用ではありません。\n"
                 "試着リングは寸法確認用で、機体の印刷部品質量には含めません。\n"
             )
+            readme += (
+                "\n## 再生成\n\nPython 3.11以上と、環境票のBlender/Curaを用意してください。\n"
+                "新しい仮想環境へ `pip install -r reproduction/requirements.txt` で導入します。\n"
+                "`python scripts/reproduce_package.py . --check` で環境と全ファイルを確認し、\n"
+                "`python scripts/reproduce_package.py . ../regenerated` で別フォルダーへ再生成。\n"
+                "--skip-video は部分検証です。プリンター送信・課金API・LLM呼出しは行いません。\n"
+                "外部実行ファイルは同梱しません。ROCKETWRIGHT_BLENDER / ROCKETWRIGHT_CURA_ENGINE / "
+                "ROCKETWRIGHT_CURA_RESOURCESで既存ツールを指定できます。\n"
+                "入力・判断履歴・出典・ライセンスと実行環境はreproduction/とsource/にあります。\n"
+                "別PCの確認結果は、そのPCでの実行を別に記録してください。\n"
+            )
             manifest = dict(
                 schema_version=1,
                 project_id=state["id"],
@@ -570,6 +780,9 @@ class DesignProjects:
             with zipfile.ZipFile(output / "design-package.zip", "w", zipfile.ZIP_DEFLATED) as z:
                 for row in rows:
                     z.write(self.file(project_id, row["key"]), row["key"])
+                from rocketwright.agent.project_package import add_reproduction
+
+                rows.extend(add_reproduction(z, self, state, ROOT))
                 z.writestr("README.md", readme)
                 z.writestr("manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
                 z.write(ROOT / "scripts/verify_design_package.py", "scripts/verify_package.py")
@@ -581,7 +794,7 @@ class DesignProjects:
 def assembly_steps(state):
     spec = DesignSpec.model_validate(state["spec"])
     g = spec.geometry
-    return [
+    steps = [
         dict(
             title="部品と版を照合",
             instruction=f"v{state['version']}の部品表とCADを照合。"
@@ -634,28 +847,23 @@ def assembly_steps(state):
             "打上げ許可を示しません。",
         ),
     ]
+    for key, step in zip(STEP_IDS, steps, strict=True):
+        step.update(
+            id=key,
+            tools=spec.equipment.tools,
+            operator=spec.equipment.operator,
+            observation="unconfirmed",
+            reverse="仮固定を逆順に外し、傷・亀裂・変形があれば交換して再検討する。",
+        )
+    return steps
 
 
 def queue_operation(store, project_id, revision, method):
     if method not in {"analyse", "print_package", "adaptive_step", "adaptive_run"}:
         raise ValueError("Unknown production operation")
-    ready = threading.Event()
-    errors = []
+    from rocketwright.agent.project_jobs import queue
 
-    def work():
-        try:
-            getattr(store, method)(project_id, revision, started_event=ready)
-        except Exception as exc:
-            errors.append(exc)
-        finally:
-            ready.set()
-
-    threading.Thread(target=work, daemon=True, name="design-production").start()
-    if not ready.wait(5):
-        raise LocalRuntimeError("処理の開始状態を確認できません。案件を読み直してください。")
-    if errors:
-        raise errors[0]
-    return store.get(project_id)
+    return queue(store, project_id, revision, method)
 
 
 DEFAULT_PROJECTS = DesignProjects()

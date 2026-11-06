@@ -143,6 +143,8 @@ class BottleGeometry(_Frozen):
     fin_count: int = Field(default=4, ge=3, le=6)
     fin_thickness_mm: float = Field(default=2.4, ge=1.2, le=6)
     nose_wall_mm: float = Field(default=1.6, ge=1, le=3)
+    radial_clearance_mm: float = Field(default=0.4, ge=0.1, le=2)
+    fin_slot_width_mm: float = Field(default=3.6, ge=1, le=10)
     fin_tail_inset_mm: float = Field(default=0, ge=0)
     dimensions_measured: bool = False
 

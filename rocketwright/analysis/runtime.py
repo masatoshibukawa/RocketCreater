@@ -1,5 +1,6 @@
 """Host runtime configuration and process-tree timeout enforcement."""
 
+import importlib.util
 import os
 import signal
 import subprocess
@@ -13,9 +14,14 @@ from rocketwright.analysis.schema import Strict
 class Runtime(Strict):
     calculix: str | None = None
     cfd_enabled: bool = False
+    cfd_python: str | None = None
     cfd_cells_coarse: int = Field(default=12, ge=6, le=40)
     cfd_cells_fine: int = Field(default=16, ge=8, le=48)
     cfd_times: float = Field(default=40, ge=2, le=100)
+    cfd_width: float = Field(default=10, ge=10, le=14)
+    cfd_lattice_speed: float = Field(default=0.075, ge=0.025, le=0.075)
+    cfd_speeds: tuple[int, ...] = (1, 35)
+    cfd_angles: tuple[int, ...] = (0, 5, 15, 45, 90, 135, 180)
     fem_level: int = Field(default=2, ge=2, le=4)
     flight_step_s: float = Field(default=0.02, ge=0.0025, le=0.02)
 
@@ -23,6 +29,21 @@ class Runtime(Strict):
     def increasing(self):
         if self.cfd_cells_fine <= self.cfd_cells_coarse:
             raise ValueError("Fine CFD resolution must exceed coarse resolution")
+        if (
+            not 2 <= len(self.cfd_speeds) <= 5
+            or self.cfd_speeds[0] != 1
+            or self.cfd_speeds[-1] != 35
+            or not 7 <= len(self.cfd_angles) <= 13
+            or self.cfd_angles[0] != 0
+            or self.cfd_angles[-1] != 180
+            or not {0, 5, 15, 45, 90, 135, 180}.issubset(self.cfd_angles)
+            or any(
+                b <= a
+                for axis in (self.cfd_speeds, self.cfd_angles)
+                for a, b in zip(axis[:-1], axis[1:], strict=True)
+            )
+        ):
+            raise ValueError("Ordered integer CFD axes spanning the registered domain required")
         return self
 
     @classmethod
@@ -30,11 +51,19 @@ class Runtime(Strict):
         return cls(
             calculix=os.getenv("ROCKETWRIGHT_CALCULIX"),
             cfd_enabled=os.getenv("ROCKETWRIGHT_CFD_ENABLED") == "1",
+            cfd_python=os.getenv("ROCKETWRIGHT_CFD_PYTHON"),
         )
 
     def capabilities(self):
         return (["fem"] if self.calculix and Path(self.calculix).is_file() else []) + (
-            ["cfd"] if self.cfd_enabled else []
+            ["cfd"]
+            if self.cfd_enabled
+            and (
+                Path(self.cfd_python).is_file()
+                if self.cfd_python
+                else importlib.util.find_spec("cupy") is not None
+            )
+            else []
         )
 
 

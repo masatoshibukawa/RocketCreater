@@ -22,7 +22,10 @@ def compile_record(spec, cad_metrics):
     length, diameter = g.overall_mm / 1000, g.body_diameter_mm / 1000
     area = math.pi * diameter**2 / 4
     if spec.design.bottle_volume_m3 / area >= length - g.nose_length_mm / 1000 - 0.01:
-        raise ValueError("The declared liquid reservoir does not fit the analysis envelope")
+        raise ValueError(
+            "Capacity exceeds this adapter's cylindrical reservoir envelope; "
+            "provide a supported measured geometry"
+        )
     if (
         not spec.design.has_fins
         or not spec.design.has_parachute
@@ -181,6 +184,7 @@ def scopes(spec, *, precision, code_hash):
             requirements=dict(
                 requirement=spec.requirement.model_dump() if spec.requirement else None,
                 precision=precision.model_dump(),
+                altitude_rule=spec.altitude_rule,
             ),
             code=code_hash,
         ).items()

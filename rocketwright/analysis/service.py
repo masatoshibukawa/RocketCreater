@@ -1,6 +1,7 @@
 """Persistent, version-aware analysis/LLM/redesign controller for saved design projects."""
 
 import copy
+import math
 import sys
 import time
 import uuid
@@ -8,8 +9,10 @@ from pathlib import Path
 
 from rocketwright.adaptive import Campaign, Requirements, digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
+from rocketwright.agent.project_jobs import cancelled, resource_lease
 from rocketwright.agent.workbench import Conflict
 from rocketwright.analysis import catalog, planner, policy
+from rocketwright.analysis.aero_accuracy import holdout
 from rocketwright.analysis.record import scopes
 from rocketwright.analysis.runtime import Runtime, run
 from rocketwright.analysis.schema import Precision, SearchLimits
@@ -99,6 +102,14 @@ class Harness:
         runtime = Runtime.model_validate(a["runtime"])
         inputs = scopes(spec, precision=precision, code_hash=code_hash())
         inputs["fin_count"] = spec.geometry.fin_count
+        inputs["payload_positive"] = int(spec.design.payload_mass_kg > 0)
+        inputs["recovery_fitted"] = int(spec.design.has_parachute)
+        inputs["fins_fitted"] = int(spec.design.has_fins)
+        inputs["reservoir_envelope_ratio"] = spec.design.bottle_volume_m3 / (
+            math.pi
+            * (spec.geometry.body_diameter_mm / 2000) ** 2
+            * max(1e-9, spec.geometry.nose_base_mm / 1000 - 0.01)
+        )
         inputs["body_length_diameters"] = spec.geometry.overall_mm / spec.geometry.body_diameter_mm
         inputs["fin_radius_diameters"] = (
             0.5 + spec.geometry.fin_span_mm / spec.geometry.body_diameter_mm
@@ -112,10 +123,19 @@ class Harness:
             )
         )
         inputs["cfd_numerics"] = digest(
-            runtime.model_dump(include={"cfd_cells_coarse", "cfd_cells_fine", "cfd_times"})
+            {k: v for k, v in runtime.model_dump().items() if k.startswith("cfd_")}
         )
         inputs["flight_numerics"] = digest(runtime.flight_step_s)
         p = catalog.pool(precision)
+        p.actions["geometry"].bounds.update(
+            payload_positive=(1, 1),
+            recovery_fitted=(1, 1),
+            fins_fitted=(1, 1),
+            reservoir_envelope_ratio=(0, 1),
+        )
+        p.actions["geometry"].uses.extend(
+            ["payload_positive", "recovery_fitted", "fins_fitted", "reservoir_envelope_ratio"]
+        )
         for key, action in p.actions.items():
             if key != "geometry":
                 action.uses.append("requirements")
@@ -125,10 +145,22 @@ class Harness:
                 action.uses.append("flight_numerics")
             if key.startswith("cfd_"):
                 action.uses.append("cfd_numerics")
-                cells = runtime.cfd_cells_fine if key.endswith("fine") else runtime.cfd_cells_coarse
+                cells = runtime.cfd_cells_coarse if key == "cfd_coarse" else runtime.cfd_cells_fine
+                if key == "cfd_audit":
+                    cells += 4
                 # Conservative arrays/workspace estimate, recomputed for size and numerical level.
-                action.memory_gib = cells**3 * 100 * 18 * 512 / 1024**3
-                action.cost_s *= (cells / 12) ** 3 * runtime.cfd_times / 40
+                width = runtime.cfd_width + (2 if key == "cfd_audit" else 0)
+                action.memory_gib = cells**3 * width**2 * 18 * 512 / 1024**3
+                action.cost_s *= (
+                    (cells / 12) ** 4
+                    * runtime.cfd_times
+                    / 40
+                    * (width / 10) ** 2
+                    * 0.075
+                    / runtime.cfd_lattice_speed
+                )
+                if key != "cfd_audit":
+                    action.cost_s *= len(runtime.cfd_speeds) * len(runtime.cfd_angles) / 14
                 action.bounds["air_speed_mps"] = (0, 35)
                 action.uses.append("air_speed_mps")
                 action.bounds.update(body_length_diameters=(0, 12), fin_radius_diameters=(0, 4.25))
@@ -183,19 +215,38 @@ class Harness:
             )
             write_json(folder / "input.json", context)
             try:
-                run(
-                    [
-                        sys.executable,
-                        "-m",
-                        "rocketwright.analysis.worker",
-                        str(folder / "input.json"),
-                        str(folder / "data.json"),
-                        kind,
-                    ],
-                    cwd=ROOT,
-                    log=folder / "worker.log",
-                    timeout=timeout,
-                )
+
+                def invoke():
+                    self.state["active"].update(
+                        analysis_name=kind,
+                        analysis_folder=folder.resolve()
+                        .relative_to(self.store.base(self.state["id"]).resolve())
+                        .as_posix(),
+                        analysis_started_at=time.time(),
+                    )
+                    self.store._write(self.state)
+                    run(
+                        [
+                            sys.executable,
+                            "-m",
+                            "rocketwright.analysis.worker",
+                            str(folder / "input.json"),
+                            str(folder / "data.json"),
+                            kind,
+                        ],
+                        cwd=ROOT,
+                        log=folder / "worker.log",
+                        timeout=timeout,
+                    )
+
+                if kind.startswith("cfd") or kind == "geometry":
+                    with resource_lease(self.store, self.state, "renderer"):
+                        invoke()
+                elif kind.startswith("fem"):
+                    with resource_lease(self.store, self.state, "fem"):
+                        invoke()
+                else:
+                    invoke()
                 data = read(folder / "data.json")
             except (OSError, ValueError) as exc:
                 raise RuntimeError(str(exc)) from exc
@@ -216,17 +267,52 @@ class Harness:
 
     def _choices(self, c, spec, precision, limits):
         choices = c.options()
+        for key, row in choices["offered"].items():
+            action = c.pool.actions[key]
+            row.update(
+                target_label=c.pool.targets[action.target].label,
+                method_label=c.pool.methods[action.method].label,
+                evaluation_label=c.pool.evaluations[action.evaluation].label,
+            )
         a = self.state["adaptive"]
         unmet = []
         confirmation = self.data(c, "confirm")
         if confirmation:
             unmet = confirmation["unmet"]
+            a["confirmation_pending"] = list(unmet)
+            if (
+                "altitude" in unmet
+                and confirmation.get("flight", {}).get(
+                    "apogee_m", spec.requirement.target_altitude_m
+                )
+                > spec.requirement.target_altitude_m
+            ):
+                unmet = [*unmet, "altitude_high"]
         else:
             screen = self.data(c, "screen")
-            if screen and screen["apogee_m"] < spec.requirement.target_altitude_m:
+            if screen and (
+                screen["apogee_m"]
+                < spec.requirement.target_altitude_m
+                * (1 if spec.altitude_rule == "minimum" else 0.9)
+                or spec.altitude_rule == "band_10pct"
+                and screen["apogee_m"] > 1.1 * spec.requirement.target_altitude_m
+            ):
                 unmet = ["altitude"]
+                if screen["apogee_m"] > spec.requirement.target_altitude_m:
+                    unmet.append("altitude_high")
         # Numerical uncertainty must be reduced before optimizing against an unreliable prediction.
-        numerical = set(unmet) & {"aero_grid", "aero_averaging", "fem_mesh", "temporal"}
+        numerical = set(unmet) & {
+            "aero_grid",
+            "aero_averaging",
+            "fem_mesh",
+            "temporal",
+            "aero_interpolation",
+            "aero_domain_size",
+            "aero_lattice",
+            "aero_duration",
+            "aero_third_grid",
+            "aero_trajectory",
+        }
         if confirmation:
             a["quality_pending"] = sorted(numerical)
         else:
@@ -249,7 +335,11 @@ class Harness:
                 scope=proposal["reason"],
             )
         runtime = Runtime.model_validate(a["runtime"])
-        if confirmation and "aero_grid" in numerical and runtime.cfd_cells_fine < 32:
+        if (
+            confirmation
+            and numerical & {"aero_grid", "aero_third_grid", "aero_trajectory"}
+            and runtime.cfd_cells_fine < 32
+        ):
             choices["offered"]["refine/cfd"] = dict(
                 target="airframe flow",
                 method="increase_grid",
@@ -271,7 +361,11 @@ class Harness:
                 addresses=["fem_mesh"],
                 scope="Increase FEM resolutions within the host maximum",
             )
-        if confirmation and "aero_averaging" in numerical and runtime.cfd_times < 100:
+        if (
+            confirmation
+            and numerical & {"aero_averaging", "aero_duration"}
+            and runtime.cfd_times < 100
+        ):
             choices["offered"]["refine/averaging"] = dict(
                 target="unsteady flow",
                 method="longer_averaging",
@@ -293,6 +387,32 @@ class Harness:
                 addresses=["temporal"],
                 scope="Decrease flight step within the host minimum",
             )
+        for suffix, failure, possible, method in (
+            (
+                "table",
+                "aero_interpolation",
+                len(runtime.cfd_speeds) < 5 and len(runtime.cfd_angles) < 13,
+                "add independent lookup nodes",
+            ),
+            ("domain", "aero_domain_size", runtime.cfd_width < 14, "widen transverse domain"),
+            (
+                "lattice",
+                "aero_lattice",
+                runtime.cfd_lattice_speed > 0.025,
+                "decrease lattice speed and time step",
+            ),
+        ):
+            if confirmation and failure in numerical and possible:
+                choices["offered"]["refine/" + suffix] = dict(
+                    target="CFD accuracy",
+                    method=method,
+                    evaluation=failure,
+                    layer="low",
+                    score=102,
+                    cost_s=1,
+                    addresses=[failure],
+                    scope="Bounded host numerical refinement",
+                )
         if len(a["decisions"]) >= limits.max_actions or a["remaining_s"] <= 0:
             for key in choices["offered"]:
                 choices["rejected"][key] = ["campaign_budget"]
@@ -300,7 +420,9 @@ class Harness:
         choices["offered"] = dict(
             sorted(choices["offered"].items(), key=lambda kv: (-kv[1]["score"], kv[0]))
         )
-        choices["unmet"] = unmet
+        choices["unmet"] = sorted(
+            set(unmet) | numerical | set(a.get("confirmation_pending", []))
+        )
         return choices, proposals, confirmation
 
     def _persist(self, c):
@@ -328,6 +450,8 @@ class Harness:
         state["adaptive"] = a
 
     def _one(self, state):
+        if cancelled(self.store, state):
+            raise Conflict("解析を区切りで中断しました。保存済みの結果から再開できます。")
         if state["adopted"]:
             raise Conflict("Edit the adopted design into a new version before further analysis")
         c, spec, precision, limits = self._campaign(state)
@@ -414,6 +538,14 @@ class Harness:
                 r["cfd_times"] = min(100, r["cfd_times"] * 1.5)
             elif key == "refine/time":
                 r["flight_step_s"] /= 2
+            elif key == "refine/table":
+                speed, angle = holdout(r["cfd_speeds"], r["cfd_angles"])
+                r["cfd_speeds"] = sorted(set(r["cfd_speeds"]) | {speed})
+                r["cfd_angles"] = sorted(set(r["cfd_angles"]) | {angle})
+            elif key == "refine/domain":
+                r["cfd_width"] = min(14, r["cfd_width"] + 2)
+            elif key == "refine/lattice":
+                r["cfd_lattice_speed"] = max(0.025, r["cfd_lattice_speed"] / 2)
             c.remaining_s -= 1
             self._persist(c)
         else:
@@ -454,3 +586,42 @@ class Harness:
         state = copy.deepcopy(self.store.get(project_id))
         c, spec, precision, limits = self._campaign(state)
         return self._choices(c, spec, precision, limits)[0]
+
+    def view(self, project_id):
+        from rocketwright.agent.project_revisions import difference
+
+        state = copy.deepcopy(self.store.get(project_id))
+        c, spec, precision, limits = self._campaign(state)
+        choices, proposals, confirmation = self._choices(c, spec, precision, limits)
+        return dict(
+            status=state["adaptive"]["status"],
+            version=state["version"],
+            remaining_s=state["adaptive"]["remaining_s"],
+            precision=precision.model_dump(),
+            choices=choices,
+            metrics=c.metrics,
+            checks=confirmation.get("checks", {}) if confirmation else {},
+            decisions=state["adaptive"]["decisions"][-30:],
+            proposals={
+                key: dict(
+                    reason=row["reason"],
+                    change=row["change"],
+                    diff=difference(state["spec"], row["spec"]),
+                )
+                for key, row in proposals.items()
+            },
+            physical_qualification=False,
+        )
+
+    def revise(self, project_id, revision, action_id, reason):
+        def work(state):
+            c, spec, precision, limits = self._campaign(state)
+            choices, proposals, _ = self._choices(c, spec, precision, limits)
+            if action_id not in proposals or action_id not in choices["offered"]:
+                raise Conflict("この版で選択できる変更案ではありません。")
+            decision = dict(action=action_id, reason=reason, planner="human", elapsed_s=0)
+            state["adaptive"]["decisions"].append(decision)
+            c.remaining_s -= 1
+            self._fork(proposals[action_id], decision, c)
+
+        return self.store._run(project_id, revision, "adaptive_revise", work)

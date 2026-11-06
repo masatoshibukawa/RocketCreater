@@ -72,6 +72,7 @@ class FixtureHarness(Harness):
             if kind == "confirm":
                 value.update(
                     unmet=[] if self.confirmation else ["altitude"],
+                    flight={"apogee_m": 10},
                     metrics={"criteria_met": self.confirmation},
                 )
             path = folder / "data.json"
@@ -256,5 +257,39 @@ def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
     c, specification, precision, limits = h._campaign(state)
     choices, proposals, _ = h._choices(c, specification, precision, limits)
     assert not proposals  # altitude shortfall cannot bypass unfinished precision work
+    assert "fem_mesh" in choices["unmet"]
     assert not any(k.startswith("refine/") for k in choices["offered"])
     assert not any(k.startswith("redesign/") for k in choices["offered"])
+
+
+def test_user_reviews_diff_and_creates_revision_only_from_offered_proposal(tmp_path):
+    store, h, s = started(tmp_path)
+    for _ in range(4):
+        s = h.step(s["id"], s["revision"])
+    view = h.view(s["id"])
+    assert view["proposals"]
+    action = next(iter(view["proposals"]))
+    assert view["proposals"][action]["diff"]["changes"]
+    old_version = s["version"]
+    result = h.revise(s["id"], s["revision"], action, "reviewed input diff")
+    assert result["version"] == old_version + 1 and not result["adopted"]
+    assert result["adaptive"]["revisions"][-1]["from_version"] == old_version
+    with pytest.raises(Conflict):
+        h.revise(s["id"], result["revision"], "shell", "not offered")
+
+
+def test_independent_aero_failures_offer_numerical_work_and_block_redesign(tmp_path):
+    _, h, s = started(tmp_path)
+    c, specification, precision, limits = h._campaign(s)
+    original = h.data
+    h.data = lambda campaign, key: (
+        {
+            "unmet": ["altitude", "aero_interpolation", "aero_domain_size", "aero_lattice"],
+            "metrics": {},
+        }
+        if key == "confirm"
+        else original(campaign, key)
+    )
+    choices, proposals, _ = h._choices(c, specification, precision, limits)
+    assert {"refine/table", "refine/domain", "refine/lattice"} <= choices["offered"].keys()
+    assert not proposals

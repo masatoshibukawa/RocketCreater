@@ -11,6 +11,8 @@ from pathlib import Path
 import numpy as np
 
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
+from rocketwright.agent.project_equipment import procurement_summary
+from rocketwright.analysis import aero_accuracy
 from rocketwright.analysis.record import compile_record
 from rocketwright.analysis.schema import Precision
 from rocketwright.manufacturing import PrintRequest, prepare_geometry
@@ -32,6 +34,19 @@ def integrated_coefficients(values, stations, diameter, cg):
     forces = values[..., :3]
     moments = values[..., 3:] + np.cross(arms, forces)
     return np.concatenate([forces.sum(axis=-2), moments.sum(axis=-2)], axis=-1)
+
+
+def free_ascent_margin(trajectory, cp_m, diameter_m):
+    trace = trajectory["trace"]
+    times = np.asarray(trace["time_s"])
+    active = (
+        (times > trajectory["rail_exit_s"])
+        & (times <= trajectory["apogee_s"])
+        & (np.asarray(trace["q_pa"]) > 10)
+    )
+    if not active.any():
+        return None
+    return float(np.min((cp_m - np.asarray(trace["cg_m"])[active]) / diameter_m))
 
 
 def read(path):
@@ -137,14 +152,14 @@ class Worker:
             return TunnelDatabase(self.data["cfd_fine"]["table_folder"], scale=scale)
         return AnalyticAero(self.record, scale=scale)
 
-    def trajectory(self, *, dt=None, scale=1, tilt=None, use_cfd=True):
+    def trajectory(self, *, dt=None, scale=1, tilt=None, use_cfd=True, aero_model=None):
         dt = dt or self.ctx["runtime"].get("flight_step_s", 0.02)
         cfg = self.cfg.flight.model_copy()
         if tilt is not None:
             cfg.initial_tilt_deg = tilt
         propulsion = self.data["propulsion"]
         mass = MassDistribution(self.design, self.assembly, propulsion)
-        aero = self.aero(scale) if use_cfd else AnalyticAero(self.record, scale)
+        aero = aero_model or (self.aero(scale) if use_cfd else AnalyticAero(self.record, scale))
         result = flight.run(
             self.design,
             self.assembly,
@@ -200,11 +215,121 @@ class Worker:
     def flight(self):
         return self.trajectory()
 
+    def run_case(self, assembly, out, speed, angle, cells, **changes):
+        r = dict(self.ctx["runtime"], **changes)
+        command = [
+            r.get("cfd_python") or sys.executable,
+            str(ROOT / "scenarios/cfd/run_flow.py"),
+            str(assembly),
+            str(out),
+            "--shape",
+            "flat",
+            "--wall",
+            "interpolated",
+            "--fin-thickness-mm",
+            str(self.spec.geometry.fin_thickness_mm),
+            "--cells",
+            str(cells),
+            "--width",
+            str(r.get("cfd_width", 10)),
+            "--upstream",
+            "3",
+            "--times",
+            str(r["cfd_times"]),
+            "--speed",
+            str(speed),
+            "--angle",
+            str(angle),
+            "--lattice-speed",
+            str(r.get("cfd_lattice_speed", 0.075)),
+            "--rotate-geometry",
+            "--surface-loads",
+            "--paired-samples",
+            "--volume",
+            "--no-preview",
+        ]
+        with out.with_suffix(".log").open("w", encoding="utf-8") as log:
+            p = subprocess.run(
+                command,
+                cwd=ROOT,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                timeout=max(0.1, self.deadline - time.monotonic()),
+            )
+        if p.returncode:
+            raise RuntimeError(f"CFD case {out.name} failed; inspect its log")
+        return read(out / "case.json")
+
+    def cfd_audit(self):
+        r = self.ctx["runtime"]
+        table = self.aero()
+        speed, angle = aero_accuracy.holdout(table.speeds, table.angles)
+        assembly = self.folder / "assembly.json"
+        write_json(assembly, self.assembly)
+        levels = [r["cfd_cells_coarse"], r["cfd_cells_fine"], r["cfd_cells_fine"] + 4]
+        cases = {
+            str(n): self.run_case(assembly, self.folder / f"grid-{n}", speed, angle, n)
+            for n in levels
+        }
+        cases["wide"] = self.run_case(
+            assembly,
+            self.folder / "wide",
+            speed,
+            angle,
+            levels[1],
+            cfd_width=r.get("cfd_width", 10) + 2,
+        )
+        cases["time"] = self.run_case(
+            assembly,
+            self.folder / "time",
+            speed,
+            angle,
+            levels[1],
+            cfd_lattice_speed=r.get("cfd_lattice_speed", 0.075) / 2,
+        )
+        cases["duration"] = self.run_case(
+            assembly,
+            self.folder / "duration",
+            speed,
+            angle,
+            levels[1],
+            cfd_times=r["cfd_times"] * 2,
+        )
+        names = ["Cx", "Cy", "Cm_z"]
+        vectors = {k: [v["mean"][n] for n in names] for k, v in cases.items()}
+        reference = vectors[str(levels[1])]
+        coeff = integrated_coefficients(
+            table.coefficients(speed, angle),
+            table.stations,
+            table.diameter,
+            self.assembly["loaded_cg_mm"] / 1000,
+        )[[0, 1, 5]]
+        differences = {
+            k: aero_accuracy.relative_change(reference, vectors[k])
+            for k in ("wide", "time", "duration")
+        }
+        differences["interpolation"] = aero_accuracy.relative_change(coeff, reference)
+        differences["third_grid"] = aero_accuracy.relative_change(
+            reference, vectors[str(levels[2])]
+        )
+        return dict(
+            condition=dict(speed_mps=speed, angle_deg=angle),
+            cells=levels,
+            differences=differences,
+            observed_orders={
+                n: aero_accuracy.grid_order(levels, [vectors[str(level)][i] for level in levels])
+                for i, n in enumerate(names)
+            },
+            cases=cases,
+            metrics={"aero_" + k: v for k, v in differences.items()},
+            scope="One independent ascent condition; finite differences, not a global error bound",
+        )
+
     def cfd(self, fine):
         runtime = self.ctx["runtime"]
         cells = runtime["cfd_cells_fine" if fine else "cfd_cells_coarse"]
-        speeds = [1.0, 35.0]
-        angles = [0, 5, 15, 45, 90, 135, 180]
+        speeds = runtime.get("cfd_speeds", [1, 35])
+        angles = runtime.get("cfd_angles", [0, 5, 15, 45, 90, 135, 180])
         folder = self.folder / "tunnel"
         folder.mkdir()
         write_json(folder / "table-config.json", dict(speeds_mps=speeds, angles_deg=angles))
@@ -213,43 +338,7 @@ class Worker:
         for speed in speeds:
             for angle in angles:
                 out = folder / f"v{speed:02.0f}-a{angle:03.0f}"
-                command = [
-                    sys.executable,
-                    str(ROOT / "scenarios/cfd/run_flow.py"),
-                    str(assembly_file),
-                    str(out),
-                    "--shape",
-                    "flat",
-                    "--wall",
-                    "interpolated",
-                    "--fin-thickness-mm",
-                    str(self.spec.geometry.fin_thickness_mm),
-                    "--cells",
-                    str(cells),
-                    "--width",
-                    "10",
-                    "--upstream",
-                    "3",
-                    "--times",
-                    str(runtime["cfd_times"]),
-                    "--speed",
-                    str(speed),
-                    "--angle",
-                    str(angle),
-                    "--rotate-geometry",
-                    "--surface-loads",
-                    "--no-preview",
-                ]
-                with (folder / f"{out.name}.log").open("w", encoding="utf-8") as log:
-                    p = subprocess.run(
-                        command,
-                        cwd=ROOT,
-                        stdout=log,
-                        stderr=subprocess.STDOUT,
-                        timeout=max(0.1, self.deadline - time.monotonic()),
-                    )
-                if p.returncode:
-                    raise RuntimeError(f"CFD case {out.name} failed; inspect its log")
+                self.run_case(assembly_file, out, speed, angle, cells)
         table = TunnelDatabase(folder)
         cases = [read(p) for p in folder.glob("*/case.json")]
         averaging = max(
@@ -299,8 +388,23 @@ class Worker:
             if slope > 1e-9
             else None
         )
+        propagation = None
+        if "cfd_coarse" in self.data:
+            coarse = self.trajectory(
+                dt=step, aero_model=TunnelDatabase(self.data["cfd_coarse"]["table_folder"])
+            )
+            propagation = dict(
+                coarse_flight=coarse,
+                altitude_difference_m=abs(coarse["apogee_m"] - fine["apogee_m"]),
+                incidence_difference_deg=abs(
+                    coarse["ascent_incidence_deg"] - fine["ascent_incidence_deg"]
+                ),
+                max_q_difference_pa=abs(coarse["max_q_pa"] - fine["max_q_pa"]),
+                scope="Same integration step, different CFD grids; not a bound on model error",
+            )
         return dict(
             fine=fine,
+            grid_propagation=propagation,
             sensitivity_flight=sensitivity,
             altitude_change_m=change,
             aero_sensitivity_m_per_relative_coefficient=slope,
@@ -316,7 +420,11 @@ class Worker:
 
     def fin_force(self):
         f = self.base_flight()
-        # A screening distribution; CFD total forces do not identify per-fin tractions.
+        if "cfd_fine" in self.data:
+            return max(
+                abs(row["local_resultant"][2]) for row in aero_accuracy.fin_envelope(self.aero(), f)
+            )
+        # A screening distribution when individual CFD resultants are unavailable.
         q = f["max_q_pa"]
         alpha = math.radians(min(90, f["ascent_incidence_deg"]))
         area = math.pi * (self.spec.geometry.body_diameter_mm / 2000) ** 2
@@ -340,7 +448,9 @@ class Worker:
             tab=self.spec.assumptions.root_capture_mm / 1000,
         )
         result["load_scope"] = (
-            "max-q times max-incidence envelope; two loaded fins, assumed distribution"
+            "CFD concurrent fin force envelope; beam load shape remains assumed"
+            if "cfd_fine" in self.data
+            else "max-q times max-incidence envelope; two loaded fins, assumed distribution"
         )
         result["temperature_c"] = temp
         result["metrics"] = dict(
@@ -363,23 +473,54 @@ class Worker:
             / 1000
         )
         temp = self.data["thermal"]["final_c"]["fin"]
-        deck, _, _, mapping = fin_load_map.deck(
-            self.assembly,
-            self.cfg,
-            self.fin_force(),
-            center,
-            resolution=self.ctx["runtime"].get("fem_level", 2) - (0 if fine else 1),
-            temperature_c=temp,
+        level = self.ctx["runtime"].get("fem_level", 2) - (0 if fine else 1)
+        cases = (
+            aero_accuracy.fin_envelope(self.aero(), self.base_flight())
+            if "cfd_fine" in self.data
+            else [dict(analytic_envelope=True)]
         )
-        result = fem.run_deck(
-            self.ctx["runtime"]["calculix"],
-            self.folder,
-            "fin",
-            deck,
-            timeout_s=max(0.1, self.deadline - time.monotonic()),
+        outputs = []
+        for i, condition in enumerate(cases):
+            if "local_resultant" in condition:
+                deck, _, _, mapping = fin_load_map.resultant_deck(
+                    self.assembly,
+                    self.cfg,
+                    condition["local_resultant"],
+                    resolution=level,
+                    temperature_c=temp,
+                )
+            else:
+                deck, _, _, mapping = fin_load_map.deck(
+                    self.assembly,
+                    self.cfg,
+                    self.fin_force(),
+                    center,
+                    resolution=level,
+                    temperature_c=temp,
+                )
+            result = fem.run_deck(
+                self.ctx["runtime"]["calculix"],
+                self.folder,
+                f"fin-{i}",
+                deck,
+                timeout_s=max(0.1, self.deadline - time.monotonic()),
+            )
+            result.update(mapping=mapping, condition=condition)
+            outputs.append(result)
+        result = dict(
+            cases=outputs,
+            load_scope=(
+                (
+                    "CFD Fn and both root moments at concurrent extrema; "
+                    "reconstructed pressure, not local traction; tangential load omitted"
+                )
+                if "cfd_fine" in self.data
+                else "analytic flight envelope"
+            ),
         )
-        result["mapping"] = mapping
-        result["load_scope"] = "analytic fin load envelope from flight; not CFD surface traction"
+        for key in ("max_displacement_m", "p95_integration_vm_pa", "max_integration_vm_pa"):
+            if key in outputs[0]:
+                result[key] = max(r[key] for r in outputs)
         result["metrics"] = dict(
             fem_deflection_ratio=result["max_displacement_m"] / (g.fin_span_mm / 1000)
         )
@@ -388,6 +529,16 @@ class Worker:
             change = max(
                 abs(result[k] - old[k]) / max(abs(result[k]), 1e-12)
                 for k in ["max_displacement_m", "p95_integration_vm_pa"]
+            )
+            if len(old["cases"]) != len(outputs):
+                raise ValueError("FEM grids used different load cases")
+            change = max(
+                change,
+                max(
+                    abs(after[k] - before[k]) / max(abs(after[k]), 1e-12)
+                    for before, after in zip(old["cases"], outputs, strict=True)
+                    for k in ("max_displacement_m", "p95_integration_vm_pa")
+                ),
             )
             result["metrics"]["fem_mesh_change"] = change
         return result
@@ -417,17 +568,31 @@ class Worker:
         )
         precision, base = self.precision, self.base_flight()
         target = self.spec.requirement.target_altitude_m if self.spec.requirement else None
-        static = self.assembly["cp_mm"] - self.assembly["wet_cg_mm"]
-        static /= self.spec.geometry.body_diameter_mm
+        liftoff_static = (
+            self.assembly["cp_mm"] - self.assembly["wet_cg_mm"]
+        ) / self.spec.geometry.body_diameter_mm
+        margins = [
+            free_ascent_margin(
+                t, self.assembly["cp_mm"] / 1000, self.spec.geometry.body_diameter_mm / 1000
+            )
+            for t in (base, result)
+        ]
+        static = min(margins) if all(m is not None for m in margins) else None
         checks = dict(
-            altitude=target is not None and min(base["apogee_m"], result["apogee_m"]) >= target,
+            altitude=target is not None
+            and (
+                min(base["apogee_m"], result["apogee_m"]) >= target
+                if self.spec.altitude_rule == "minimum"
+                else max(abs(base["apogee_m"] - target), abs(result["apogee_m"] - target))
+                <= 0.1 * target
+            ),
             attitude=max(
                 base["ascent_incidence_deg"],
                 result["ascent_incidence_deg"],
                 self.data["stability"]["metrics"]["perturbation_incidence_deg"],
             )
             <= precision.maximum_incidence_deg,
-            static_margin=static >= precision.minimum_static_margin_cal,
+            static_margin=static is not None and static >= precision.minimum_static_margin_cal,
             temporal=self.data["refine"]["metrics"]["temporal_pass"],
             fin_deformation=self.data["modes"]["metrics"]["fin_deflection_ratio"]
             <= precision.deflection_span_limit,
@@ -441,7 +606,14 @@ class Worker:
                 not self.spec.requirement.recovery_required
                 or (self.design.has_parachute and result["impact_speed_mps"] <= 5)
             ),
-            cost_evidence=self.spec.requirement.budget_jpy is None,
+            cost_evidence=(
+                self.spec.requirement.budget_jpy is None
+                or (
+                    procurement_summary(self.spec)["total_jpy"] is not None
+                    and procurement_summary(self.spec)["total_jpy"]
+                    <= self.spec.requirement.budget_jpy
+                )
+            ),
         )
         if precision.require_cfd:
             allowed = self.data["refine"]["allowed_aero_relative_change"]
@@ -452,6 +624,21 @@ class Worker:
                 self.data["cfd_fine"]["averaging_relative_change"]
                 <= precision.temporal_relative_limit
             )
+            propagation = self.data["refine"]["grid_propagation"]
+            checks["aero_trajectory"] = (
+                propagation["altitude_difference_m"]
+                <= precision.altitude_error_m * precision.aero_allocation
+                and propagation["incidence_difference_deg"] <= precision.attitude_error_deg
+            )
+            if precision.require_aero_audit:
+                audit = self.data["cfd_audit"]["differences"]
+                checks.update(
+                    aero_interpolation=audit["interpolation"] <= precision.grid_relative_limit,
+                    aero_domain_size=audit["wide"] <= precision.grid_relative_limit,
+                    aero_lattice=audit["time"] <= precision.temporal_relative_limit,
+                    aero_duration=audit["duration"] <= precision.temporal_relative_limit,
+                    aero_third_grid=allowed is not None and audit["third_grid"] <= allowed,
+                )
         if precision.require_fem:
             fm = self.data["fem_fine"]["metrics"]
             checks["fem_mesh"] = fm["fem_mesh_change"] <= precision.structure_relative_limit
@@ -463,6 +650,9 @@ class Worker:
             checks=checks,
             unmet=[k for k, v in checks.items() if not v],
             static_margin_cal=static,
+            liftoff_static_margin_cal=liftoff_static,
+            static_margin_scope=("fixed analytic CP; free ascent after rail exit at q>10 Pa; "
+                                 "liftoff recorded separately"),
             metrics=dict(criteria_met=all(checks.values())),
             physical_qualification=False,
             full_flight_stability_proved=False,
@@ -478,6 +668,7 @@ class Worker:
             return self.structure(kind.endswith("fine"))
         allowed = {
             "geometry",
+            "cfd_audit",
             "thermal",
             "propulsion",
             "screen",

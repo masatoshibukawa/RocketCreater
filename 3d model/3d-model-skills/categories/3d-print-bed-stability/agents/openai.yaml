@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dプリントの接地と転倒対策"
+  short_description: "小さい接地や途中転倒を、向き・接続・反り・揺れから切り分けて改善する"
+  default_prompt: "$3d-print-bed-stability を使い、この部品の接地と造形中の転倒リスクを調べ、原寸の比較試行を準備してください。"

@@ -43,6 +43,9 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
     writer.send(None)
     frame_count = plan.get(mode + "_frames", plan["frames_per_clip"])
     for i in range(frame_count):
+        if job.get("cancel_file") and Path(job["cancel_file"]).exists():
+            writer.close()
+            raise RuntimeError("Composition cancelled; source frames retained")
         with Image.open(directory / f"{mode}-frames/{i:04d}.png") as source:
             image = source.convert("RGB")
         draw = ImageDraw.Draw(image)
