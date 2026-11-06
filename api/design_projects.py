@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from api.workbench import PlanRequest, RenderRequest, Revision, call
 from rocketwright.agent.design_projects import DEFAULT_PROJECTS, DesignSpec, queue_operation
 from rocketwright.agent.production import plan_video, queue_video
+from rocketwright.agent.project_assembly import Observation
 
 router = APIRouter(prefix="/design-projects", tags=["design-production"])
 
@@ -22,6 +23,10 @@ class RestoreRequest(Revision):
 class CreateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     spec: DesignSpec
+
+
+class ObservationRequest(Revision):
+    observation: Observation
 
 
 @router.get("")
@@ -69,6 +74,11 @@ def adopt(project_id: str, request: Revision):
 @router.post("/{project_id}/manual")
 def manual(project_id: str, request: Revision):
     return call(DEFAULT_PROJECTS.manual, project_id, request.revision)
+
+
+@router.post("/{project_id}/observe")
+def observe(project_id: str, request: ObservationRequest):
+    return call(DEFAULT_PROJECTS.observe, project_id, request.revision, request.observation)
 
 
 @router.post("/{project_id}/print", status_code=202)

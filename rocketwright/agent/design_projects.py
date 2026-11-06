@@ -17,6 +17,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from rocketwright.agent.local_runtime import LocalRuntimeError
+from rocketwright.agent.project_assembly import STEP_IDS, Observation, assembly_assessment
 from rocketwright.agent.project_equipment import Equipment, procurement_summary
 from rocketwright.agent.project_requirements import assess_requirements, validate_requirements
 from rocketwright.agent.workbench import Conflict
@@ -56,6 +57,7 @@ def implementation_fingerprint():
         "rocketwright/geometry.py",
         "rocketwright/agent/project_requirements.py",
         "rocketwright/agent/project_equipment.py",
+        "rocketwright/agent/project_assembly.py",
         "rocketwright/analysis/schema.py",
         "scripts/build_print_parts.py",
         "3d model/prototypes/pet-rocket-coke-2l/build.py",
@@ -172,6 +174,7 @@ class DesignProjects:
             video_plan=None,
             photographic_video_plan=None,
             adaptive=None,
+            observations=[],
             created_at=time.time(),
         )
         self._write(state)
@@ -228,6 +231,7 @@ class DesignProjects:
                 files=[],
                 video_plan=None,
                 photographic_video_plan=None,
+                observations=[],
             )
 
         return self._run(project_id, revision, "edit", worker)
@@ -423,6 +427,10 @@ class DesignProjects:
             )
             write_json(directory / "trace.json", a["result"]["trace"])
             steps = assembly_steps(state)
+            write_json(
+                directory / "assembly-access.json",
+                assembly_assessment(DesignSpec.model_validate(state["spec"])),
+            )
             write_json(directory / "steps.json", steps)
             (directory / "instructions.md").write_text(
                 "\n\n".join(
@@ -462,6 +470,26 @@ class DesignProjects:
             self.register_files(state, directory, "production")
 
         return self._run(project_id, revision, "adopt", worker)
+
+    def observe(self, project_id, revision, observation: Observation):
+        observation = Observation.model_validate(observation.model_dump())
+
+        def worker(state):
+            self.require_adopted(state)
+            state.setdefault("observations", []).append(
+                dict(
+                    **observation.model_dump(),
+                    version=state["version"],
+                    at=time.time(),
+                    input_sha256=state["analysis"]["input_sha256"],
+                )
+            )
+            directory = self.directory(project_id) / "observations"
+            write_json(directory / "observations.json", state["observations"])
+            state["files"] = [r for r in state["files"] if r["kind"] not in {"manual", "package"}]
+            self.register_files(state, directory, "observations")
+
+        return self._run(project_id, revision, "observe", worker)
 
     def manual(self, project_id, revision):
         def worker(state):
@@ -565,7 +593,7 @@ class DesignProjects:
 def assembly_steps(state):
     spec = DesignSpec.model_validate(state["spec"])
     g = spec.geometry
-    return [
+    steps = [
         dict(
             title="部品と版を照合",
             instruction=f"v{state['version']}の部品表とCADを照合。"
@@ -618,6 +646,15 @@ def assembly_steps(state):
             "打上げ許可を示しません。",
         ),
     ]
+    for key, step in zip(STEP_IDS, steps, strict=True):
+        step.update(
+            id=key,
+            tools=spec.equipment.tools,
+            operator=spec.equipment.operator,
+            observation="unconfirmed",
+            reverse="仮固定を逆順に外し、傷・亀裂・変形があれば交換して再検討する。",
+        )
+    return steps
 
 
 def queue_operation(store, project_id, revision, method):

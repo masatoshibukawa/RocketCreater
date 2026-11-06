@@ -199,3 +199,22 @@ def test_unpriced_budget_is_not_a_pass_even_after_prototype_adoption(store):
     assert next(r for r in checks["checks"] if r["id"] == "budget")["status"] == "not_evaluated"
     s = store.adopt(s["id"], s["revision"])
     assert s["adoption_scope"] == "prototype_screening"
+
+
+def test_observations_keep_version_history_and_invalidate_documents(store):
+    from rocketwright.agent.project_assembly import Observation
+    s = adopted(store)
+    s = store.manual(s["id"], s["revision"])
+    s = store.observe(s["id"], s["revision"], Observation(
+        step="nose_fit", status="observed", operator="test operator",
+        observed_on="2026-11-06", note="fit trial only; no flight claim",
+        measured_values={"clearance_mm": .4},
+    ))
+    assert s["observations"][0]["version"] == 1
+    assert not any(row["kind"] in {"manual", "package"} for row in s["files"])
+    assert s["adopted"]
+    s = store.edit(s["id"], s["revision"], spec())
+    assert not s["observations"]
+    import json
+    old = json.loads((store.base(s["id"]) / "v1/observations/observations.json").read_text())
+    assert old[0]["note"].startswith("fit trial")

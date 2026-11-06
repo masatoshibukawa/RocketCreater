@@ -48,6 +48,8 @@ export interface DesignProject {
   history: { operation: string; version: number; at: number }[];
   video_plan: { status: string; reason: string } | null;
   photographic_video_plan: { status: string; reason: string } | null;
+  observations?: {step:string; status:string; operator:string; observed_on:string; note:string;
+    measured_values:Record<string,number>; version:number}[];
 }
 export async function projectRequest<T>(path = "", body?: unknown, signal?: AbortSignal): Promise<T> {
   const response = await fetch(apiUrl(`/design-projects${path}`), {
