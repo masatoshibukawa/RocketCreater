@@ -59,6 +59,7 @@ class Precision(Strict):
     require_cfd: bool = True
     require_aero_audit: bool = True
     require_fem: bool = True
+    require_benchmarks: bool = True
 
 
 class SearchLimits(Strict):

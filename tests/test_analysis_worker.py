@@ -13,7 +13,16 @@ def test_real_cpu_analysis_chain_transfers_state_and_rejects_unmet_goal(tmp_path
     geo = tmp_path / "geometry.json"
     write_json(geo, {"cad_metrics": VOLUMES})
     artifacts["geometry"] = str(geo)
-    for kind in ("thermal", "propulsion", "screen", "refine", "modes", "stability", "confirm"):
+    for kind in (
+        "benchmarks",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine",
+        "modes",
+        "stability",
+        "confirm",
+    ):
         folder = tmp_path / kind
         folder.mkdir()
         context = dict(

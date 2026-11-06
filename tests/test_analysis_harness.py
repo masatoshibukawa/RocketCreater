@@ -69,6 +69,8 @@ class FixtureHarness(Harness):
             value = {"metrics": {}}
             if kind == "geometry":
                 value["cad_metrics"] = VOLUMES
+            if kind == "benchmarks":
+                value["metrics"] = {"exact_benchmarks_pass": True}
             if kind == "screen":
                 value.update(apogee_m=10, metrics={"apogee_m": 10})
             if kind == "confirm":
@@ -121,8 +123,9 @@ def test_failed_solver_is_bounded_and_never_counts_as_confirmation(tmp_path):
     h.fail = "geometry"
     s = h.run(s["id"], s["revision"])
     assert s["adaptive"]["status"] == "unresolved"
-    assert len(s["adaptive"]["history"]) == 2
-    assert all(r["execution_status"] == "failed" for r in s["adaptive"]["history"])
+    geometry = [r for r in s["adaptive"]["history"] if r["action"] == "geometry"]
+    assert len(geometry) == 2
+    assert all(r["execution_status"] == "failed" for r in geometry)
 
 
 def test_restart_edit_and_tampered_artifact_cannot_reuse_success(tmp_path):
@@ -188,7 +191,8 @@ def test_interrupted_attempt_keeps_time_and_retry_accounting(tmp_path):
     s = h.step(s["id"], s["revision"])
     history = s["adaptive"]["history"]
     assert [r["execution_status"] for r in history] == ["interrupted", "completed"]
-    assert s["adaptive"]["remaining_s"] <= s["adaptive"]["limits"]["budget_s"] - 40
+    executed_cost = c.pool.actions[history[-1]["action"]].cost_s
+    assert s["adaptive"]["remaining_s"] <= s["adaptive"]["limits"]["budget_s"] - 20 - executed_cost
 
 
 def test_api_rejects_runtime_paths_and_stale_revision(tmp_path, monkeypatch):
@@ -211,7 +215,7 @@ def test_api_rejects_runtime_paths_and_stale_revision(tmp_path, monkeypatch):
         },
     )
     assert response.status_code == 200
-    assert list(client.get(url + "/options").json()["offered"]) == ["geometry"]
+    assert set(client.get(url + "/options").json()["offered"]) == {"geometry", "benchmarks"}
     assert client.post(url + "/step", json={"revision": 0}).status_code == 409
     assert (
         client.post(
@@ -251,7 +255,7 @@ def test_existing_search_starts_import_without_old_mass_or_pass_claims():
 
 def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
     _, h, state = started(tmp_path, max_versions=3, exploratory_redesign=False)
-    for _ in range(4):
+    for _ in range(5):
         state = h.step(state["id"], state["revision"])
     assert state["adaptive"]["results"]["screen"]["execution_status"] == "completed"
     state["adaptive"]["quality_pending"] = ["fem_mesh"]

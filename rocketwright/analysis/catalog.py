@@ -13,6 +13,10 @@ def pool(precision):
         ("survey", "high", "counterfactual axial/mass sensitivity survey", ["screen"], 60, 0, []),
     ]
     flight = "screen"
+    if precision.require_benchmarks:
+        rows.append(
+            ("benchmarks", "low", "exact and published reference comparisons", [], 15, 0, [])
+        )
     if precision.require_cfd:
         rows += [
             ("cfd_coarse", "low", "3D interpolated-wall LBM", ["screen"], 120, 3, ["cfd"]),
@@ -42,6 +46,8 @@ def pool(precision):
         ("stability", "high", "frozen LaSalle and finite-flight perturbation", [flight], 20, 0, []),
     ]
     deps = ["refine", "modes", "stability"]
+    if precision.require_benchmarks:
+        deps.append("benchmarks")
     if precision.require_fem:
         rows += [
             ("fem_coarse", "middle", "warm solid fin FEM", [flight, "thermal"], 30, 1, ["fem"]),
@@ -89,6 +95,8 @@ def pool(precision):
             actions[key].bounds = {"fin_count": (4, 4)}
         if key == "confirm":
             actions[key].uses += ["requirements"]
+        if key == "benchmarks":
+            actions[key].uses = ["code"]
     return Pool(
         version=1,
         sources={"implementation": "rocketwright/analysis/worker.py"},

@@ -93,3 +93,31 @@ def test_axial_solver_matches_constant_thrust_vacuum_solution():
     a = 10 - 9.80665
     expected = a / 2 + a * a / (2 * 9.80665)
     assert result["apogee_m"] == pytest.approx(expected, rel=1e-4)
+
+
+def test_published_comparison_reports_disagreements_without_fitting():
+    from rocketwright.analysis.benchmarks import run
+
+    report = run()
+    assert all(report["verification_checks"].values())
+    assert len(report["reference_flights"]) == 5
+    assert not all(row["within_measurement"] for row in report["reference_flights"])
+    assert not report["fit_performed"] and not report["aircraft_validation"]
+    assert {row["split"] for row in report["reference_flights"]} == {
+        "legacy calibration overlap",
+        "additional fixed audit",
+        "off-nominal launch stress case",
+    }
+
+
+def test_multi_start_inputs_preserve_mission_and_have_independent_geometry():
+    from rocketwright.analysis.portfolio import starts
+
+    template = spec()
+    options = starts(template)
+    assert len(options) == 5
+    assert len({digest(s.geometry.model_dump()) for s in options.values()}) >= 2
+    assert all(s.requirement == template.requirement for s in options.values())
+    assert all(
+        s.design.payload_mass_kg == template.design.payload_mass_kg for s in options.values()
+    )

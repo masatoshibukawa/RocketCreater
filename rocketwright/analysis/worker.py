@@ -209,6 +209,11 @@ class Worker:
             deadline=self.deadline,
         )
 
+    def benchmarks(self):
+        from rocketwright.analysis.benchmarks import run
+
+        return run()
+
     def flight(self):
         return self.trajectory()
 
@@ -620,6 +625,10 @@ class Worker:
             checks["fin_deformation"] &= (
                 fm["fem_deflection_ratio"] <= precision.deflection_span_limit
             )
+        if precision.require_benchmarks:
+            checks["solver_benchmarks"] = self.data["benchmarks"]["metrics"][
+                "exact_benchmarks_pass"
+            ]
         return dict(
             flight=result,
             checks=checks,
@@ -628,11 +637,13 @@ class Worker:
             metrics=dict(criteria_met=all(checks.values())),
             physical_qualification=False,
             full_flight_stability_proved=False,
+            reference_validation=self.data.get("benchmarks", {}).get("reference_flights", []),
+            model_validation_complete=False,
             scope="Declared conditional numerical criteria only; strength allowables unresolved",
         )
 
     def run(self, kind):
-        if kind != "geometry":
+        if kind not in {"geometry", "benchmarks"}:
             self.setup()
         if kind in {"cfd_coarse", "cfd_fine"}:
             return self.cfd(kind.endswith("fine"))
@@ -645,6 +656,7 @@ class Worker:
             "propulsion",
             "screen",
             "survey",
+            "benchmarks",
             "flight",
             "refine",
             "modes",

@@ -66,8 +66,21 @@ class Harness:
                 pending=None,
                 quality_pending=[],
                 observations=[],
+                refinement_observations=[],
+                design_observations=[],
                 prior_experience=self.prior_experience,
                 confirmation_reserve_s=limits.budget_s * limits.reserve_confirmation_fraction,
+                budget_plan=dict(
+                    initial_analysis_actions=len(catalog.pool(precision).actions),
+                    minimum_actions_for_redesign=2 * len(catalog.pool(precision).actions) + 1,
+                    fixed_candidate=limits.max_versions == 1,
+                    warning=(
+                        "Action budget may end before a complete redesign and confirmation"
+                        if limits.max_versions > 1
+                        and limits.max_actions < 2 * len(catalog.pool(precision).actions) + 1
+                        else None
+                    ),
+                ),
                 physical_qualification=False,
                 accepted_spec_hash=None,
             )
@@ -267,6 +280,7 @@ class Harness:
             # obligation until a new confirmation exists; do not optimize against stale accuracy.
             numerical |= set(a.get("quality_pending", []))
         self._feedback(c, spec, precision)
+        self._refinement_feedback(c, spec, precision, confirmation)
         survey = self.data(c, "survey")
         exploration = limits.exploratory_redesign
         # Unknown numerical accuracy blocks acceptance, not provisional exploration.
@@ -407,6 +421,41 @@ class Harness:
                     addresses=[failure],
                     scope="Bounded host numerical refinement",
                 )
+        for key, row in choices["offered"].items():
+            if not key.startswith("refine/"):
+                continue
+            history = [
+                r
+                for r in a.get("refinement_observations", [])
+                if r.get("action") == key
+                and r.get("code") == code_hash()
+                and r.get("spec_hash") == policy.identity(spec)
+                and r.get("precision_hash") == digest(precision.model_dump())
+                and experience.verified(r)
+            ]
+            if history:
+                benefit = sum(r["relative_residual_reduction"] for r in history) / len(history)
+                row["score"] += 20 * math.tanh(benefit)
+                row["empirical_refinement"] = dict(
+                    samples=len(history),
+                    mean_residual_reduction=benefit,
+                    mean_cost_s=sum(r["cost_s"] for r in history) / len(history),
+                )
+            if proposals and key in {
+                "refine/cfd",
+                "refine/averaging",
+                "refine/lattice",
+                "refine/table",
+            }:
+                screen = self.data(c, "screen") or {}
+                gap = spec.requirement.target_altitude_m - screen.get(
+                    "apogee_m", spec.requirement.target_altitude_m
+                )
+                if gap > 2 * precision.altitude_error_m:
+                    row["score"] -= 50
+                    row["scope"] += (
+                        "; large provisional performance gap: explore before certification"
+                    )
         if len(a["decisions"]) >= limits.max_actions or a["remaining_s"] <= 0:
             for key in choices["offered"]:
                 choices["rejected"][key] = ["campaign_budget"]
@@ -418,6 +467,54 @@ class Harness:
         choices["precision_pending"] = sorted(numerical)
         choices["confirmation_reserve_s"] = a.get("confirmation_reserve_s", 0)
         return choices, proposals, confirmation
+
+    def _precision_residuals(self, c, precision):
+        values = {}
+        cf = self.data(c, "cfd_fine") or {}
+        for name, key, limit in (
+            ("grid", "grid_relative_change", precision.grid_relative_limit),
+            ("averaging", "averaging_relative_change", precision.temporal_relative_limit),
+        ):
+            if key in cf:
+                values[name] = cf[key] / limit
+        audit = (self.data(c, "cfd_audit") or {}).get("differences", {})
+        for key, value in audit.items():
+            limit = (
+                precision.temporal_relative_limit
+                if key in {"time", "duration"}
+                else precision.grid_relative_limit
+            )
+            values[key] = value / limit
+        fem = (self.data(c, "fem_fine") or {}).get("metrics", {})
+        if "fem_mesh_change" in fem:
+            values["fem_mesh"] = fem["fem_mesh_change"] / precision.structure_relative_limit
+        return values
+
+    def _refinement_feedback(self, c, spec, precision, confirmation):
+        a, pending = self.state["adaptive"], self.state["adaptive"].get("refinement_pending")
+        if not pending or not confirmation or not c.current("confirm"):
+            return
+        if pending["spec_hash"] != policy.identity(spec) or pending["code"] != code_hash():
+            a["refinement_pending"] = None
+            return
+        evidence = c.results["confirm"]["value"]
+        if evidence["sha256"] == pending["before_evidence"]:
+            return
+        after = self._precision_residuals(c, precision)
+        keys = pending["before"].keys() & after.keys()
+        before_sum = sum(pending["before"][k] for k in keys)
+        reduction = (before_sum - sum(after[k] for k in keys)) / max(before_sum, 1e-9)
+        a.setdefault("refinement_observations", []).append(
+            dict(
+                pending,
+                after=after,
+                relative_residual_reduction=reduction,
+                charged_s=max(0, pending["remaining_s"] - c.remaining_s),
+                cost_s=sum(r.get("elapsed_s", 0) for r in c.history[pending["history_index"] :]),
+                evidence=evidence,
+            )
+        )
+        a["refinement_pending"] = None
 
     def _snapshot(self, c):
         screen, geometry = self.data(c, "screen"), self.data(c, "geometry")
@@ -440,6 +537,21 @@ class Harness:
         a = self.state["adaptive"]
         pending = a.get("outcome_pending")
         snapshot = self._snapshot(c)
+        if snapshot:
+            observation = dict(
+                version=self.state["version"],
+                spec=spec.model_dump(mode="json"),
+                metrics=snapshot,
+                code=code_hash(),
+                precision_hash=digest(precision.model_dump()),
+                evidence=c.results["screen"]["value"],
+            )
+            history = a.setdefault("design_observations", [])
+            if not any(
+                r["version"] == observation["version"] and r["code"] == observation["code"]
+                for r in history
+            ):
+                history.append(observation)
         if not pending or not snapshot:
             return
         if (
@@ -455,7 +567,13 @@ class Harness:
             pending,
             after=snapshot,
             delta={k: snapshot[k] - pending["before"][k] for k in snapshot},
-            cost_s=max(0, pending["remaining_s"] - c.remaining_s),
+            charged_s=max(0, pending["remaining_s"] - c.remaining_s),
+            cost_s=(
+                sum(r.get("elapsed_s", 0) for r in c.history[pending["history_index"] :])
+                + sum(
+                    r.get("elapsed_s", 0) for r in a["decisions"][pending["decision_index"] + 1 :]
+                )
+            ),
             status="measured",
             code=code_hash(),
             precision_hash=digest(precision.model_dump()),
@@ -486,6 +604,7 @@ class Harness:
                 features=experience.features(old_spec),
                 signature=experience.signature(proposal["change"], old_spec),
                 remaining_s=c.remaining_s,
+                history_index=len(c.history),
                 decision_index=len(a["decisions"]) - 1,
                 from_spec_hash=policy.identity(old_spec),
                 to_spec_hash=policy.identity(DesignSpec.model_validate(proposal["spec"])),
@@ -560,6 +679,8 @@ class Harness:
             precision_pending=choices["precision_pending"],
             confirmation_reserve_s=choices["confirmation_reserve_s"],
             observations=a.get("observations", [])[-12:] if limits.use_experience else [],
+            benchmark_scope=(self.data(c, "benchmarks") or {}).get("scope"),
+            benchmark_comparison=(self.data(c, "benchmarks") or {}).get("reference_flights", []),
         )
         decision = planner.choose(
             choices,
@@ -589,6 +710,17 @@ class Harness:
             c.remaining_s -= 1
             self._fork(proposals[key], decision, c)
         elif key.startswith("refine/"):
+            if confirmation and c.current("confirm"):
+                a["refinement_pending"] = dict(
+                    action=key,
+                    spec_hash=policy.identity(spec),
+                    code=code_hash(),
+                    precision_hash=digest(precision.model_dump()),
+                    before=self._precision_residuals(c, precision),
+                    before_evidence=c.results["confirm"]["value"]["sha256"],
+                    remaining_s=c.remaining_s,
+                    history_index=len(c.history),
+                )
             r = a["runtime"]
             if key == "refine/cfd":
                 r["cfd_cells_coarse"], r["cfd_cells_fine"] = (
