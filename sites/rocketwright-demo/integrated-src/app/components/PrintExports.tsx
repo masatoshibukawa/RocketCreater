@@ -1,0 +1,5 @@
+"use client";
+import type {WorkbenchProject} from "../lib/workbench";
+export default function PrintExports({files=[],manifest,onGenerate,disabled=false}:{files?:WorkbenchProject["files"];manifest?:WorkbenchProject["print_package"];onGenerate?:()=>void;disabled?:boolean}) {
+  return <section className="wb-print-exports" aria-label="設計ごとの3Dプリント出力"><h3>3Dプリンター用データ</h3><p>UltiMaker S5 · Tough PLA Gray · AA 0.4</p><p className="wb-note">統合版で生成・検査・スライスした、この設計の保存済み成果物です。除去用ブリム20 mm以上・隙間0 mm。新しい形状の生成やプリンターへの送信は行いません。</p><button className="wb-primary" disabled={disabled||Boolean(manifest)} onClick={onGenerate}>保存済みの印刷データを開く</button>{manifest?<><p role="status">保存記録: スライス検査済み · 実機での再試作は未確認</p><ul>{manifest.parts.map(p=><li key={p.part}>{p.part} · {p.model_layers}層 · 約{Math.ceil(p.estimated_time_seconds/60)}分 · {p.estimated_mass_g.toFixed(1)} g · 土台を含めベッド内</li>)}</ul><p className="wb-note">特定の機種・材料・設計のサンプルです。PLA部品へ変更した後は、現物を測定し飛行解析を更新する必要があります。耐圧部品は含みません。</p></>:null}<div className="wb-file-list">{files.filter(f=>f.kind==="manufacturing").map(f=><a key={f.key} href={f.url} download>{f.name} ↗</a>)}</div></section>;
+}

@@ -1,0 +1,28 @@
+{
+  "name": "rocketwright-web",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "recharts": "^2.15.0",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.170.0",
+    "typescript": "^5"
+  }
+}

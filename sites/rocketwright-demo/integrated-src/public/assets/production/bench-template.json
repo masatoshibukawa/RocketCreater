@@ -1,0 +1,22 @@
+{
+  "unavailable": [],
+  "nozzle_options_mm": [
+    9
+  ],
+  "pressure_ceiling_kpa": 500.0,
+  "fill_options_pct": [
+    25
+  ],
+  "guide_travel_m": 1.5,
+  "insert_bore_mm": 9.0,
+  "measurement_set": "starter",
+  "articles": {
+    "D02/9/carton_wide": {
+      "article_id": "",
+      "record": "",
+      "dry_mass_g": null,
+      "dry_cg_from_tip_mm": null,
+      "modal_zeta_lower": null
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "files": [
+    {
+      "file": "design-explanation.mp4",
+      "fps": 24.0,
+      "size": [
+        960,
+        540
+      ],
+      "duration": 4.0,
+      "changing_frames": true,
+      "full_decode": true,
+      "decoded_frames": 96,
+      "audio": "none"
+    },
+    {
+      "file": "launch-cg.mp4",
+      "fps": 24.0,
+      "size": [
+        960,
+        540
+      ],
+      "duration": 4.0,
+      "changing_frames": true,
+      "full_decode": true,
+      "decoded_frames": 96,
+      "audio": "none"
+    }
+  ],
+  "source_id": "confirm/D02/9/325/25/carton_wide",
+  "visual_review": "pending",
+  "physical_validation": "not_performed"
+}

@@ -1,0 +1,185 @@
+{
+  "key": "D02/9/carton_wide",
+  "variant": "carton_wide",
+  "bill": [
+    {
+      "id": "coke_jp_1500",
+      "name": "日本コカ・コーラ コカ・コーラ 1.5 L PET",
+      "quantity": "1本（無加工の本体）",
+      "mass_g": 45,
+      "allowance_jpy": 220,
+      "station_mm": 404,
+      "basis": "https://www.coca-cola.com/jp/ja/media-center/news-20230301-11"
+    },
+    {
+      "id": "sleeve",
+      "name": "回収傘室・スカート・搭載筒用の非加圧の予備PET容器",
+      "quantity": "予備2本から3部位",
+      "mass_g": 23,
+      "allowance_jpy": 440,
+      "station_mm": 257,
+      "basis": "D01/D02を搭載条件に合わせて変更"
+    },
+    {
+      "id": "nose_paper",
+      "name": "ノーズコーン用の色画用紙",
+      "quantity": "扇形1枚",
+      "mass_g": 4,
+      "allowance_jpy": 80,
+      "station_mm": 67,
+      "basis": "https://www.yac-j.com/wp-content/uploads/2024/11/1-1.pdf"
+    },
+    {
+      "id": "cords",
+      "name": "たこ糸・弾性テザー",
+      "quantity": "傘糸8本各800 mm・連結糸300 mm・ゴムひも300 mm",
+      "mass_g": 5,
+      "allowance_jpy": 180,
+      "station_mm": 220,
+      "basis": "D02"
+    },
+    {
+      "id": "attachment",
+      "name": "両面・ビニールテープ、傘の補強シール",
+      "quantity": "固定・傘の8点補強一式",
+      "mass_g": 9,
+      "allowance_jpy": 260,
+      "station_mm": 370,
+      "basis": "D02"
+    },
+    {
+      "id": "guide_eyes",
+      "name": "外部ガイド用の軽量アイレットと固定テープ",
+      "quantity": "同軸の2か所",
+      "mass_g": 2,
+      "allowance_jpy": 50,
+      "station_mm": 380,
+      "basis": "設計案・台と干渉しないことを要確認"
+    },
+    {
+      "id": "carton_fin",
+      "name": "尾翼用の牛乳パック板紙",
+      "quantity": "4枚（各2面と取付タブ）",
+      "mass_g": 24.0,
+      "allowance_jpy": 100,
+      "station_mm": 540,
+      "basis": "https://www.yac-j.com/wp-content/uploads/2024/11/1-1.pdf"
+    },
+    {
+      "id": "pad_damped",
+      "name": "粘弾性材付きホルダー",
+      "quantity": "1式",
+      "mass_g": 23,
+      "allowance_jpy": 290,
+      "station_mm": 141,
+      "basis": "試作案・減衰を要測定"
+    },
+    {
+      "id": "insert",
+      "name": "市販の着脱式噴射口・対になる純正発射台",
+      "quantity": "噴射口1個",
+      "mass_g": 10,
+      "allowance_jpy": 440,
+      "station_mm": 567,
+      "basis": "D02/P01の方式・内径要照合"
+    },
+    {
+      "id": "canopy_film",
+      "name": "回収傘用の薄膜（袋）",
+      "quantity": "正八角形1枚",
+      "mass_g": 7.7873,
+      "allowance_jpy": 100,
+      "station_mm": 221,
+      "basis": "https://www.yac-j.com/wp-content/uploads/2024/11/1-2.pdf"
+    }
+  ],
+  "ground": [
+    "fin_alignment_template",
+    "hand_pump",
+    "shinwa_19518",
+    "tanita_kd320"
+  ],
+  "unavailable": [],
+  "dimensions_mm": {
+    "body_diameter": 90,
+    "nose_length": 100,
+    "egg_bay_length": 82,
+    "canopy_bay_length": 80,
+    "bottle_length": 305,
+    "skirt_length": 110,
+    "skirt_overhang": 5,
+    "fin_root": 70,
+    "fin_tip": 35,
+    "fin_span": 140,
+    "fin_sweep": 35,
+    "fin_tab": 10,
+    "fin_tail_inset": 5,
+    "bay_clear_diameter": 84,
+    "dummy_width": 45,
+    "dummy_length": 60,
+    "padding": 8,
+    "fit_allowance": 2,
+    "overall": 572
+  },
+  "nozzle_interface": "insert",
+  "canopy_side_mm": 240.0,
+  "estimated_dry_mass_g": 152.7873,
+  "dry_mass_g": 152.7873,
+  "estimated_outlay_jpy": 2160,
+  "dry_cg_mm": 347.8233681726165,
+  "loaded_cg_mm": 289.5050282606152,
+  "wet_cg_mm": 428.26374999936206,
+  "cp_mm": 462.54962851081774,
+  "axial_cd": 0.8277283278631213,
+  "mode_hz": [
+    14.19938839832161,
+    63.07040664495547
+  ],
+  "zeta": 0.06,
+  "mount_bound": 0.07306180875988993,
+  "pitch_rate_per_s": 1.0562998368032919,
+  "checks": {
+    "resources_available_to_plan": true,
+    "dry_cg_inside_vehicle": true,
+    "payload_fits": true,
+    "static_restoring_dry_and_wet": true,
+    "pitch_common_certificate": true,
+    "mount_settles": true
+  },
+  "specimen": null,
+  "physical_status": "awaiting_bench_and_field_verification",
+  "pending_evidence": [
+    "現物の容器・ノズル・発射台の型式、説明書、使用条件、無加圧での着脱・スカートとの干渉",
+    "卵と同寸・同質量のダミーで搭載室・ふたの保持、傘の収納・放出、テザーの保持",
+    "組立後の乾燥質量と重心、注水時の重心、フィン位置・取付剛性",
+    "固定状態の自由減衰の時系列、各モードの減衰比、開傘・着地時の荷重",
+    "材料購入額・借用機材・実地で使用可能な条件と場所"
+  ],
+  "holdout": {
+    "n": 64,
+    "seed": 77131,
+    "success_rate": 0.921875,
+    "passes": 59,
+    "failure_counts": {
+      "apogee N m not within +/N% of target N m": 5
+    },
+    "apogee_m": {
+      "p05": 17.819195907386604,
+      "p50": 19.291165741706557,
+      "p95": 21.044524597278354
+    },
+    "descent_speed_mps": {
+      "p05": 2.8616956654649024,
+      "p50": 2.8617968319500715,
+      "p95": 2.861917344759734
+    }
+  },
+  "print_parts": {
+    "collar_inner_mm": 63,
+    "collar_outer_mm": 82,
+    "thickness_mm": 2.4,
+    "pair_solid_pla_g": 12.878770587832141,
+    "jig_inner_mm": 92
+  },
+  "guide_travel_m": 1.5
+}

@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = fileURLToPath(new URL("./dist/", import.meta.url));
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8" };
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".json":"application/json", ".mp4":"video/mp4", ".svg":"image/svg+xml", ".png":"image/png", ".pdf":"application/pdf" };
 const server = createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, "http://127.0.0.1").pathname);
