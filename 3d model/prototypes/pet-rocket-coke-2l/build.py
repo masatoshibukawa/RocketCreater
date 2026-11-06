@@ -312,16 +312,20 @@ def require_valid_solid(result, name):
 
 
 def clean_numeric_seams(obj):
-    """Weld only sub-0.00001 mm Boolean roundoff, then keep strict output gates."""
+    """Remove Boolean roundoff, at most 0.5 micrometres, preserving volume and gates."""
     bm = bmesh.new()
     bm.from_mesh(obj.data)
     before = bm.calc_volume(signed=True)
-    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.00001)
-    bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=0.00001)
-    bmesh.ops.triangulate(bm, faces=list(bm.faces))
-    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+    for tolerance in (0.00001, 0.0001, 0.0005):
+        bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=tolerance)
+        bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=tolerance)
+        bmesh.ops.triangulate(bm, faces=list(bm.faces))
+        bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+        if not any(face.calc_area() < 1e-9 for face in bm.faces):
+            break
     after = bm.calc_volume(signed=True)
     if abs(after - before) > max(0.001, abs(before) * 0.000001):
+        bm.free()
         raise RuntimeError("Numeric-seam cleanup changed a material amount of volume")
     bm.to_mesh(obj.data)
     bm.free()
