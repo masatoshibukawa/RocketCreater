@@ -94,3 +94,23 @@ def test_rejects_incompatible_or_incomplete_slice(tmp_path, old, new):
 def test_rejects_material_content_despite_expected_filename(tmp_path):
     with pytest.raises(ValueError, match="matching Black Tough PLA"):
         inspect(package(tmp_path, material=MATERIAL.replace("2.85", "1.75")))
+
+
+def test_gray_requires_explicit_expected_color_and_matching_profile(tmp_path):
+    path = package(tmp_path)
+    with zipfile.ZipFile(path, "a") as archive:
+        archive.writestr(
+            "/Materials/ultimaker_tough_pla_gray.xml.fdm_material",
+            MATERIAL.replace("Black", "Gray"),
+        )
+    report = inspect(path, material_color="Gray")
+    assert report["material_profile"] == "UltiMaker Gray Tough PLA"
+    assert report["material_diameter_mm"] == 2.85
+
+
+def test_expected_gray_does_not_accept_black_content(tmp_path):
+    path = package(tmp_path)
+    with zipfile.ZipFile(path, "a") as archive:
+        archive.writestr("/Materials/ultimaker_tough_pla_gray.xml.fdm_material", MATERIAL)
+    with pytest.raises(ValueError, match="matching Gray Tough PLA"):
+        inspect(path, material_color="Gray")
