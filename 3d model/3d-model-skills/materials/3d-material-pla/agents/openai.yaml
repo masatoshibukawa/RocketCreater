@@ -1,0 +1,4 @@
+interface:
+  display_name: "PLAの3Dプリント"
+  short_description: "PLAの接地・冷却・薄い先端と、衝撃や熱で変形する条件を確認する"
+  default_prompt: "$3d-material-pla を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

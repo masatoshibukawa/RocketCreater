@@ -1,0 +1,4 @@
+interface:
+  display_name: "PETGの3Dプリント"
+  short_description: "PETGの糸引き・橋・支持と、プレートへの過剰な密着を切り分ける"
+  default_prompt: "$3d-material-petg を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

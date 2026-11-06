@@ -21,6 +21,8 @@
       "diameter_mm": null,
       "density_g_cm3": null,
       "density_source": null,
+      "density_basis_solid_or_effective_printed": null,
+      "density_test_conditions": null,
       "opened_at": null,
       "drying": {
         "equipment": null,

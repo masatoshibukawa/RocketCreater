@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tough PLA・PLA+の3Dプリント"
+  short_description: "Tough PLAやPLA+の製品差を確かめ、靱性・耐熱・機械設定を選ぶ"
+  default_prompt: "$3d-material-tough-pla を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

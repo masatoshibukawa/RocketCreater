@@ -1,0 +1,4 @@
+interface:
+  display_name: "水洗いレジンの3Dプリント"
+  short_description: "水洗いレジンの洗浄・乾燥・内部排液と、洗浄水の回収を整える"
+  default_prompt: "$3d-material-water-wash-resin を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

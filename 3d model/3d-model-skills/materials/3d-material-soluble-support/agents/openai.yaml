@@ -1,0 +1,4 @@
+interface:
+  display_name: "PVA・BVOHの水溶性支持材の3Dプリント"
+  short_description: "水溶性支持材の乾燥・対応コア・界面と、除去できる経路を整える"
+  default_prompt: "$3d-material-soluble-support を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CF・GF等の繊維入り材料の3Dプリント"
+  short_description: "繊維入り材の基材・摩耗・詰まりと、方向別の強度を確認する"
+  default_prompt: "$3d-material-fiber-filled を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

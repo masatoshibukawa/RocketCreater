@@ -1,0 +1,4 @@
+interface:
+  display_name: "標準・模型用レジンの3Dプリント"
+  short_description: "模型用レジンの機種・色・露光と支持、洗浄・硬化を揃える"
+  default_prompt: "$3d-material-standard-resin を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

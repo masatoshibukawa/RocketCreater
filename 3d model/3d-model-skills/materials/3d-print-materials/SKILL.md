@@ -8,6 +8,27 @@ description: "3Dプリントの材料選定、製品別設定、機種との適�
 
 材料名だけで温度・乾燥・露光を確定しない。まず[材料条件の記録](references/material-contract.md)を使い、既存のスプール・ボトル・試行記録から分かる項目を埋める。未確定のまま進められる設計・調査と、実機出力に必要な条件を分ける。
 
+## 材料から選ぶ
+
+| 材料系 | 読むスキル |
+| --- | --- |
+| PLA | [PLA](../3d-material-pla/SKILL.md) |
+| Tough PLA・PLA+ | [Tough PLA・PLA+](../3d-material-tough-pla/SKILL.md) |
+| PETG | [PETG](../3d-material-petg/SKILL.md) |
+| ABS | [ABS](../3d-material-abs/SKILL.md) |
+| ASA | [ASA](../3d-material-asa/SKILL.md) |
+| TPU・TPEの柔軟材 | [TPU・TPEの柔軟材](../3d-material-tpu/SKILL.md) |
+| PA・ナイロン | [PA・ナイロン](../3d-material-nylon/SKILL.md) |
+| PC・PCブレンド | [PC・PCブレンド](../3d-material-pc/SKILL.md) |
+| PP | [PP](../3d-material-pp/SKILL.md) |
+| CF・GF等の繊維入り材料 | [CF・GF等の繊維入り材料](../3d-material-fiber-filled/SKILL.md) |
+| LW-PLA・発泡PLA | [LW-PLA・発泡PLA](../3d-material-foaming-pla/SKILL.md) |
+| PVA・BVOHの水溶性支持材 | [PVA・BVOHの水溶性支持材](../3d-material-soluble-support/SKILL.md) |
+| Breakaway・剥離用支持材 | [Breakaway・剥離用支持材](../3d-material-breakaway-support/SKILL.md) |
+| 標準・模型用レジン | [標準・模型用レジン](../3d-material-standard-resin/SKILL.md) |
+| 工学用・高靱性・柔軟・耐熱レジン | [工学用・高靱性・柔軟・耐熱レジン](../3d-material-engineering-resin/SKILL.md) |
+| 水洗いレジン | [水洗いレジン](../3d-material-water-wash-resin/SKILL.md) |
+
 ## 組み合わせから選ぶ
 
 | 依頼 | 読むスキル |
