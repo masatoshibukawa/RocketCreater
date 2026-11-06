@@ -47,10 +47,13 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
             f"Expected matching {material_color} Tough PLA 2.85 mm and AA 0.4 profiles"
         )
     count = int(re.search(r"^;LAYER_COUNT:(\d+)", text, re.MULTILINE)[1])
-    position = {"X": 0.0, "Y": 0.0, "Z": 0.0, "E": 0.0}
+    position = {"X": 0.0, "Y": 0.0, "Z": 0.0, "E": 0.0, "F": 0.0}
     layer, kind, tool, absolute_e = -1, "", 0, True
     layers, tools, types = Counter(), Counter(), Counter()
     low, high = [math.inf] * 3, [-math.inf] * 3
+    print_low, print_high = [math.inf] * 3, [-math.inf] * 3
+    footprint_low, footprint_high = [math.inf] * 2, [-math.inf] * 2
+    speeds = {}
     for line in text.splitlines():
         if line.startswith(";LAYER:"):
             layer = int(line.split(":")[1])
@@ -65,7 +68,7 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
         elif line == "G91":
             raise ValueError("Relative XYZ motion is not handled by this review")
         elif line.startswith(("G0 ", "G1 ", "G92 ")):
-            values = {k: float(v) for k, v in re.findall(r"([XYZE])(-?[0-9.]+)", line)}
+            values = {k: float(v) for k, v in re.findall(r"([XYZEF])(-?[0-9.]+)", line)}
             if line.startswith("G92 "):
                 position.update(values)
                 continue
@@ -80,6 +83,15 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
             if layer >= 0 and line.startswith("G1 ") and delta_e > 0 and distance > 0.0001:
                 types[kind] += 1
                 tools[tool] += 1
+                speeds[kind] = max(speeds.get(kind, 0), next_position["F"] / 60)
+                for point in (position, next_position):
+                    for index, axis in enumerate("XYZ"):
+                        print_low[index] = min(print_low[index], point[axis])
+                        print_high[index] = max(print_high[index], point[axis])
+                    if layer == 0:
+                        for index, axis in enumerate("XY"):
+                            footprint_low[index] = min(footprint_low[index], point[axis])
+                            footprint_high[index] = max(footprint_high[index], point[axis])
                 if kind in MODEL_TYPES:
                     layers[layer] += 1
                     for point in (position, next_position):
@@ -95,6 +107,10 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
     bounds_ok = all(
         0 <= low[i] <= high[i] <= limit + 0.001 for i, limit in enumerate((330, 240, 300))
     )
+    all_bounds_ok = all(
+        0 <= print_low[i] <= print_high[i] <= limit + 0.001
+        for i, limit in enumerate((330, 240, 300))
+    )
     if (
         missing
         or len(trailing) > 1
@@ -102,6 +118,7 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
         or support
         or set(tools) != {0}
         or not bounds_ok
+        or not all_bounds_ok
     ):
         raise ValueError(
             f"Unexpected slice: missing={missing}, support={support}, "
@@ -133,12 +150,17 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
         "used_tools": sorted(tools),
         "model_path_bounds_mm": [low, high],
         "model_paths_inside_s5": bounds_ok,
+        "all_print_paths_inside_s5": all_bounds_ok,
+        "all_print_path_bounds_mm": [print_low, print_high],
+        "bed_footprint_bounds_mm": [footprint_low, footprint_high],
+        "extrusion_speed_max_mm_s_by_type": speeds,
         "wall_line_count": settings["wall_line_count"],
         "infill_pct": settings["infill_sparse_density"],
         "layer_height_mm": settings["layer_height"],
         "adhesion_type": settings["adhesion_type"],
         "brim_width_mm": settings["brim_width"],
         "brim_location": settings["brim_location"],
+        "brim_gap_mm": settings.get("brim_gap"),
         "physical_configuration_verified": False,
         "print_started": False,
         "limitations": [
