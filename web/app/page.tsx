@@ -5,18 +5,16 @@ import AeroLoopPanel from "./components/AeroLoopPanel";
 import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
+import DockHandle from "./components/DockHandle";
 import CostPanel from "./components/CostPanel";
-import DetailsPanel from "./components/DetailsPanel";
 import DrawingPanel from "./components/DrawingPanel";
 import FlightChart from "./components/FlightChart";
 import ModelViewer from "./components/ModelViewer";
 import ProductionPanel from "./components/ProductionPanel";
-import ReferenceLibrary from "./components/ReferenceLibrary";
 import ResultPanel from "./components/ResultPanel";
 import StatusStrip from "./components/StatusStrip";
 import WorkshopCrew from "./components/WorkshopCrew";
 import WorkshopIcon from "./components/WorkshopIcon";
-import DesignComparison from "./components/DesignComparison";
 import DesignProduction from "./components/DesignProduction";
 import { projectFileLabel, type DesignProject } from "./lib/designProjects";
 import { WorkshopProvider, useCrewTask, useWorkshop } from "./lib/WorkshopContext";
@@ -27,11 +25,14 @@ import { fmt } from "./lib/format";
 import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
 import { carriesParachute } from "./lib/flightPlayback";
 import { caseLabels } from "./lib/caseLabels";
+import { useDockWidths } from "./lib/useDockWidths";
 import { useDesignStream } from "./lib/useDesignStream";
 import { useDesignSummary } from "./lib/useDesignSummary";
 import type { AeroRequest } from "./lib/useAeroLoop";
-import { isOrbital, TIER_LABEL, type DispersionResult, type DisplayedDesign, type LandingPoint, type TracePoint } from "./lib/types";
+import { isOrbital, TIER_LABEL, type DispersionResult, type DisplayedDesign, type TracePoint } from "./lib/types";
 
+const ANALYSIS_VIEWS = [["aero", "流体解析"], ["flight", "飛行と回収"], ["chart", "高度の推移"]] as const;
+const OUTPUT_VIEWS = [["production", "製作票・印刷データ"], ["drawing", "設計図 SVG"], ["video", "設計解説・打ち上げ CG"]] as const;
 const NO_TRACE: TracePoint[] = [];
 const NO_METRICS: Record<string, number> = {};
 
@@ -40,8 +41,7 @@ export default function Home() {
 }
 
 function DesignScreen() {
-  const [stage, setStage] = useState<WorkshopStage>("brief");
-  const [rightTab, setRightTab] = useState<"explain" | "history" | "consult">("consult");
+  const [stage, setStage] = useState<WorkshopStage>("design");
   const [analysisView, setAnalysisView] = useState<AnalysisView>("aero");
   const [outputView, setOutputView] = useState<OutputView>("production");
   const [modelView, setModelView] = useState<"model" | "drawing">("model");
@@ -51,6 +51,7 @@ function DesignScreen() {
   const [expanded, setExpanded] = useState(false);
   const settings = useRef<HTMLDialogElement>(null);
   const inspector = useRef<HTMLElement>(null);
+  const docks = useDockWidths();
   const { task, visible, setVisible, paused, setPaused, reduced } = useWorkshop();
   const [generated, setGenerated] = useState<{ key: string; package: DesignPackage } | null>(null);
   const [printed, setPrinted] = useState<{ key: string; files: { name: string; url: string }[] } | null>(null);
@@ -102,14 +103,6 @@ function DesignScreen() {
     [displayedAttempt],
   );
   const fallbackCost = displayedAttempt?.result?.cost_jpy ?? null;
-
-  const landing: LandingPoint | null = useMemo(() => {
-    const m = productionProject?.analysis?.result.metrics ?? displayedAttempt?.result?.metrics;
-    if (!m) return null;
-    const east = m.landing_east_m;
-    const north = m.landing_north_m;
-    return typeof east === "number" && typeof north === "number" ? { east_m: east, north_m: north } : null;
-  }, [displayedAttempt, productionProject]);
 
   // run_dispersion result of this design only; never show a different case.
   const dispersion: DispersionResult | null = useMemo(() => {
@@ -226,9 +219,8 @@ function DesignScreen() {
   }
   const chooseStage = (next: WorkshopStage) => {
     setStage(next); setLeftOpen(false); setExpanded(false);
-    setRightTab(next === "brief" ? "consult" : "explain");
   };
-  const hasModel = stage === "brief" || stage === "design" || stage === "assembly";
+  const hasModel = stage === "design";
   const showCrew = (hasModel && modelView === "model" && displayed !== null) || stage === "analysis" || stage === "exports";
   const requirementRows = [
     ["目標の高度", typeof activeRequirement?.target_altitude_m === "number" ? `${fmt(activeRequirement.target_altitude_m, 0)} m` : productionProject ? "未指定" : "未入力"],
@@ -246,7 +238,7 @@ function DesignScreen() {
 
   return <main className={`workshop-app${expanded ? " is-expanded" : ""}`}>
     <header className="workshop-identity">
-      <a className="workshop-brand" href="/" aria-label="RocketWright ホーム" onClick={e => { e.preventDefault(); chooseStage("brief"); }}><span className="rw-mark">RW</span><strong>RocketWright</strong></a>
+      <a className="workshop-brand" href="/" aria-label="RocketWright ホーム" onClick={e => { e.preventDefault(); chooseStage("design"); }}><span className="rw-mark">RW</span><strong>RocketWright</strong></a>
       <span className="identity-divider"/>
       <span className="project-path">{tier ? TIER_LABEL[tier] : "新しいロケット"}<span>/</span><b>{displayedLabel ?? "条件の確認"}</b></span>
       <span className="session-state">{productionProject ? `保存済み / v${productionProject.version}` : "セッション内の下書き"}</span>
@@ -255,45 +247,29 @@ function DesignScreen() {
     </header>
     <nav className="workshop-phases" aria-label="設計の工程">{WORKSHOP_STAGES.map((item, i) => <button key={item.id} type="button" aria-current={stage === item.id ? "step" : undefined}
       className={stage === item.id ? "phase-link is-active" : "phase-link"} onClick={() => chooseStage(item.id)}><WorkshopIcon name={item.id}/><span>{item.label}</span>{i < WORKSHOP_STAGES.length - 1 ? <span className="phase-chevron">›</span> : null}</button>)}</nav>
-    <div className="workshop-body">
-      <nav className="workshop-rail" aria-label="ワークスペース全体の移動">
-        <button className="rail-button" type="button" aria-label="ミッションを開く" onClick={() => chooseStage("brief")}><WorkshopIcon name="home"/></button>
-        <button className="rail-button" type="button" aria-label="設計例と資料を開く" aria-pressed={stage === "library"} onClick={() => chooseStage("library")}><WorkshopIcon name="library"/></button>
-        <button className="rail-button" type="button" aria-label="計算の履歴を開く" onClick={() => { setRightTab("history"); setRightOpen(true); }}><WorkshopIcon name="history"/></button>
-        <span className="rail-spacer"/>
-        <button className="rail-button" type="button" aria-label="設定を開く" onClick={() => settings.current?.showModal()}><WorkshopIcon name="settings"/></button>
-      </nav>
-      <aside id="workshop-targets" tabIndex={-1} className={`workshop-left${leftOpen ? " is-open" : ""}`} aria-label="工程の対象" onKeyDown={e => { if (e.key === "Escape") { e.stopPropagation(); closeTargets(); } }}>
-        <div className="dock-heading"><h1>{WORKSHOP_STAGES.find(s => s.id === stage)?.title ?? "設計例と資料"}</h1><button className="mobile-close icon-button" type="button" aria-label="対象一覧を閉じる" onClick={closeTargets}><WorkshopIcon name="close" size={18}/></button></div>
-        <div className="left-dock-scroll">
-          <label className="case-selector">表示する案<select value={productionProject?.id ?? selectedId ?? ""} onChange={e => { if (e.target.value !== productionProject?.id) { setProductionProject(null); setSelectedId(e.target.value || null); } }}><option value="">最新の結果に追従</option>{productionProject ? <option value={productionProject.id}>{productionProject.name} / v{productionProject.version}</option> : null}{stream.candidates.map(c => <option key={c.source_id} value={c.source_id}>{labels.get(c.source_id)}</option>)}</select></label>
-          {stage === "analysis" ? <div className="dock-list" role="group" aria-label="解析の表示">{([['aero','流体解析'],['flight','飛行と回収'],['chart','高度の推移']] as const).map(([id,label]) => <button key={id} type="button" className={analysisView === id ? "dock-row is-active" : "dock-row"} aria-pressed={analysisView === id} onClick={() => { setAnalysisView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "aero" ? "analysis" : "play"} size={18}/>{label}</button>)}</div> : null}
-          {stage === "exports" ? <div className="dock-list" role="group" aria-label="成果物の表示">{([['production','製作票・印刷データ'],['drawing','設計図 SVG'],['video','設計解説・打ち上げ CG']] as const).map(([id,label]) => <button key={id} type="button" className={outputView === id ? "dock-row is-active" : "dock-row"} aria-pressed={outputView === id} onClick={() => { setOutputView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "video" ? "play" : "exports"} size={18}/><span>{label}<small>{id === "video" ? productionProject ? productionProject.files.some(f => f.name.endsWith(".mp4")) ? "保存可能" : "この採用版から制作" : "保存案件を選んで制作" : id === "drawing" ? summary?.drawing ? "保存可能" : "未生成" : currentPackage || printFiles.length || productionProject?.files.some(f => ["manual", "print", "package"].includes(f.kind)) ? "保存可能" : "未生成"}</small></span></button>)}</div> : null}
-          <section className="dock-section"><h2>条件の概要</h2><dl className="dock-properties">{requirementRows.map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-            <button type="button" className="text-button" onClick={() => { chooseStage("brief"); setRightOpen(true); }}>条件について相談する <span>↗</span></button></section>
-          {stage === "compare" ? <section className="dock-section"><h2>計算された候補</h2><div className="dock-list">{stream.candidates.filter(c => !c.seededFrom).map((c,i) => <button key={c.source_id} type="button" className={displayedId === c.source_id ? "dock-row is-active" : "dock-row"} onClick={() => { setProductionProject(null); setSelectedId(c.source_id); }}><WorkshopIcon name="design" size={18}/><span>案 {i+1}<small>{c.passed ? "計算上の条件を満たす" : "要見直し"}</small></span></button>)}{stream.candidates.length === 0 ? <p className="dock-empty">候補はまだありません</p> : null}</div></section>
-            : <section className="dock-section"><h2>{stage === "exports" ? "保存できるファイル" : "機体の構成"}</h2>{stage === "exports" && (currentPackage || printFiles.length > 0 || !!productionProject?.files.some(f => ["manual", "print", "package"].includes(f.kind))) ? <div className="dock-list">{productionProject?.files.filter(f => f.kind === "manual" || f.kind === "package" || f.name === "print-package.zip" || f.key === "production/design.json").map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="exports" size={18}/>{projectFileLabel(f.name)}</a>)}{currentPackage?.files.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="exports" size={18}/>{f.label}</a>)}{printFiles.map(f => <a key={f.url} className="dock-row" href={apiUrl(f.url)} download><WorkshopIcon name="design" size={18}/>{f.name}</a>)}</div>
-              : stage === "exports" ? <p className="dock-empty">ファイルを生成すると、ここから保存できます。</p>
-              : summary?.bom.length ? <ul className="component-tree">{summary.bom.map((part,i) => <li key={`${part.item_id}-${i}`}><WorkshopIcon name="design" size={16}/><span>{part.name}<small>{part.qty} 点</small></span></li>)}</ul> : <p className="dock-empty">設計案が届くと表示します</p>}</section>}
-          <div className="dock-context"><WorkshopIcon name="info" size={16}/><p>{displayed ? `${displayed.origin === "seed" ? "参照の初期案" : passed ? "計算結果のある案" : "検討中の案"}を表示しています。` : "目的を一文で伝えるところから始められます。"}</p></div>
-        </div>
+    <div className={`workshop-body${stage === "design" ? "" : " without-results"}`} style={docks.style}>
+      <aside id="workshop-targets" tabIndex={-1} className={`workshop-left${leftOpen ? " is-open" : ""}`} aria-label="設計の相談" onKeyDown={e => { if (e.key === "Escape") { e.stopPropagation(); closeTargets(); } }}>
+        <div className="dock-heading"><h1>設計の相談</h1><button className="mobile-close icon-button" type="button" aria-label="相談を閉じる" onClick={closeTargets}><WorkshopIcon name="close" size={18}/></button></div>
+        <div className="consultation"><ChatPanel messages={stream.messages} status={stream.status} pendingQuestion={stream.pendingQuestion} onStart={handleStart} onAnswer={handleAnswer} onStop={stop} onReset={handleReset}/></div>
+        <DockHandle side="left" label="相談の幅を変える" width={docks.left} onResize={docks.setLeft}/>
       </aside>
       <section className={`workshop-center${showCrew ? " has-crew" : ""}`} aria-label={`${stageLabel(stage)}の表示`}>
         <div className="workshop-toolbar">
-          <button id="target-toggle" className="btn mobile-target-toggle" type="button" aria-controls="workshop-targets" aria-expanded={leftOpen} onClick={toggleTargets}>対象一覧</button>
-          {hasModel ? <div className="tool-tabs" role="group" aria-label="機体の表示"><button type="button" aria-pressed={modelView === "model"} onClick={() => setModelView("model")}><WorkshopIcon name="design" size={18}/>3D モデル</button><button type="button" aria-pressed={modelView === "drawing"} onClick={() => setModelView("drawing")}><WorkshopIcon name="exports" size={18}/>側面図</button></div> : <span className="toolbar-context"><WorkshopIcon name={stage}/>{stageLabel(stage)}</span>}
+          <button id="target-toggle" className="btn mobile-target-toggle" type="button" aria-controls="workshop-targets" aria-expanded={leftOpen} onClick={toggleTargets}>相談</button>
+          {hasModel ? <div className="tool-tabs" role="group" aria-label="機体の表示"><button type="button" aria-pressed={modelView === "model"} onClick={() => setModelView("model")}><WorkshopIcon name="design" size={18}/>3D モデル</button><button type="button" aria-pressed={modelView === "drawing"} onClick={() => setModelView("drawing")}><WorkshopIcon name="exports" size={18}/>側面図</button></div> : stage === "analysis" ? <div className="tool-tabs" role="group" aria-label="解析の表示">{ANALYSIS_VIEWS.map(([id, label]) => <button key={id} type="button" aria-pressed={analysisView === id} onClick={() => setAnalysisView(id)}><WorkshopIcon name={id === "aero" ? "analysis" : "play"} size={18}/>{label}</button>)}</div>
+            : stage === "exports" ? <div className="tool-tabs" role="group" aria-label="成果物の表示">{OUTPUT_VIEWS.map(([id, label]) => <button key={id} type="button" aria-pressed={outputView === id} onClick={() => setOutputView(id)}><WorkshopIcon name={id === "video" ? "play" : "exports"} size={18}/>{label}</button>)}</div>
+            : <span className="toolbar-context"><WorkshopIcon name={stage}/>{stageLabel(stage)}</span>}
           <span className="toolbar-spacer"/>
           {hasModel && modelView === "model" ? <button className="icon-button" type="button" aria-label="機体全体を表示" disabled={!displayed} onClick={() => setFrameRequest(n => n+1)}><WorkshopIcon name="expand" size={18}/></button> : null}
           <button className="icon-button expand-workspace" type="button" aria-label={expanded ? "ドックを表示" : "中央の表示を拡大"} aria-pressed={expanded} onClick={() => setExpanded(!expanded)}><WorkshopIcon name="expand" size={18}/></button>
           <label className="crew-visibility">整備員を表示<input type="checkbox" checked={visible} onChange={e => setVisible(e.target.checked)}/><span/></label>
-          <button className="btn mobile-inspector-toggle" type="button" onClick={() => { setRightOpen(!rightOpen); inspector.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); }}>解説・相談</button>
+          <button className="btn mobile-inspector-toggle" type="button" onClick={() => { setRightOpen(!rightOpen); inspector.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); }}>結果</button>
         </div>
         <div className="workshop-canvas">
           <div className="hero-view" hidden={!hasModel || modelView !== "model"}>
-            <div className="hero-heading"><span>{stage === "assembly" ? "組立前に、部品の関係を確認する" : displayed ? "機体の形と構成を確かめる" : "条件を確認して、設計を始める"}</span><p>{displayed ? "計算で使った設計値から作る概念モデル" : "何を、どこまで飛ばしたいですか？"}</p></div>
+            <div className="hero-heading"><span>{displayed ? "機体の形と構成を確かめる" : "条件を確認して、設計を始める"}</span><p>{displayed ? "計算で使った設計値から作る概念モデル" : "何を、どこまで飛ばしたいですか？"}</p></div>
             <ModelViewer design={displayed?.design ?? null} tier={tier} origin={displayed?.origin ?? null} statusLabel={displayed?.origin === "seed" ? "参照の初期案" : passed ? "条件を満たす案" : "検討中の案"} reference={stream.reference} dimensions={summary?.dimensions ?? null} notes={notes} frameRequest={frameRequest} active={hasModel && modelView === "model"}/>
             {!displayed ? <span className="scene-image-label">工房のイメージ · 設計データはまだありません</span> : null}
-            {stage === "assembly" ? <div className="assembly-context"><b>組立の準備</b><span>形状の概略を確認できます。手・工具の干渉と実機の組立性は未評価です。</span></div> : null}
           </div>
           <div className="drawing-workspace" hidden={!((hasModel && modelView === "drawing") || (stage === "exports" && outputView === "drawing"))}><DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading}/></div>
           <div className="analysis-workspace" hidden={stage !== "analysis"}>
@@ -302,32 +278,29 @@ function DesignScreen() {
             {analysisView === "flight" ? <div className="flight-workspace"><FlightPlayer key={displayedId ?? "none"} trace={trace} metrics={flight?.metrics ?? NO_METRICS} warnings={flight?.warnings ?? []} parachute={carriesParachute(displayed?.design)} emptyMessage="計算した飛行の時系列が届くと再生できます"/></div> : null}
             <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedLabel}/></div>
           </div>
-          {stage === "compare" ? <DesignComparison candidates={stream.candidates} selectedId={displayedId} onSelect={id => { setProductionProject(null); setSelectedId(id); }}/> : null}
           {stage === "exports" && outputView === "production" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
-          <div className="production-stack" hidden={!(stage === "assembly" || stage === "compare" || stage === "exports") || isOrbital(tier)}>
+          <div className="production-stack" hidden={stage !== "exports" || outputView === "drawing" || isOrbital(tier)}>
           <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
-          <div className="production-workspace" hidden={!(stage === "assembly" || stage === "compare" || stage === "exports") || isOrbital(tier)}><DesignProduction source={packageRequest} mode={stage === "assembly" ? "assembly" : stage === "compare" ? "edit" : outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} active={stage === "assembly" || stage === "compare" || stage === "exports"}/></div>
+          <div className="production-workspace" hidden={stage !== "exports" || isOrbital(tier)}><DesignProduction source={packageRequest} mode={outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} active={stage === "exports"}/></div>
           </div>
-          {stage === "library" ? <div className="reference-workspace"><ReferenceLibrary/></div> : null}
           <WorkshopCrew embedded hideScene={!showCrew}/>
         </div>
         <div className="workspace-caption"><span>{displayedLabel ? `表示対象: ${displayedLabel}` : "まだ設計案がありません"}</span>{selectedId ? <button type="button" className="text-button" onClick={() => { setProductionProject(null); setSelectedId(null); }}>最新へ戻る ↻</button> : <span>最新の結果に追従</span>}</div>
       </section>
-      <aside ref={inspector} className={`workshop-right${rightOpen ? " is-open" : ""}`} aria-label="解説と設計の相談">
-        <div className="inspector-tabs" role="group" aria-label="右パネルの表示">{([['explain','解説'],['history','履歴'],['consult','相談']] as const).map(([id,label]) => <button key={id} type="button" aria-pressed={rightTab === id} onClick={() => setRightTab(id)}>{label}</button>)}<button className="mobile-close icon-button" type="button" aria-label="解説と相談を閉じる" onClick={() => setRightOpen(false)}><WorkshopIcon name="close" size={18}/></button></div>
-        <div className="inspector-scroll" hidden={rightTab !== "explain"}>
-          <div className="explanation-title"><span/>{viewingReferenceFilm ? "設計例の映像を確認する" : stage === "analysis" ? analysisView === "aero" ? "機体まわりの流れを確かめる" : "飛行と回収の結果を確かめる" : stage === "exports" ? "同じ設計から、成果物を作る" : stage === "assembly" ? "組立に必要な条件を確認する" : "機体の形と飛び方を、一緒に検討する"}</div>
-          <section className="meaning-block"><h2><WorkshopIcon name="info"/>何を確かめる？</h2><p>{viewingReferenceFilm ? "保存済みの設計例で、部品構成と上昇予測の映像を確認できます。" : stage === "analysis" ? "空気の流れや飛行の変化を、計算結果の図から確認します。" : stage === "exports" ? "対象の案と条件をそろえ、図面・部品表・印刷用ファイルを作ります。" : stage === "assembly" ? "部品の向き、材料、必要な工具を整理します。" : "目的に合う構成と、無理なく回収できる条件を探します。"}</p></section>
-          <section className="meaning-block"><h2><WorkshopIcon name="analysis"/>今わかること</h2><p>{viewingReferenceFilm ? "映像の対象は、中央に記載された設計例です。保存できるファイルには再生と保存の操作が表示されます。" : task.status === "working" || task.status === "waiting" || task.status === "attention" ? task.label : displayed ? "表示中の案の形状と、届いた計算結果を確認できます。" : "まずは目標、積載物、回収方法を教えてください。"}</p>{displayed && !viewingReferenceFilm ? <ResultPanel tier={tier} metrics={resultMetrics}/> : null}</section>
-          <section className="meaning-block"><h2><WorkshopIcon name="history"/>まだ決められないこと</h2><p>{!displayed ? "設計案と計算結果はまだありません。" : stage === "assembly" ? "手・工具のアクセス、締結の条件、実機での組立確認は未評価です。" : stage === "exports" ? "スライス検査と、実際に印刷できたことは別に確認します。採用版の動画と実機の記録は区別して確認します。" : "計算の対象外の条件と、実物の強度・組立性は未確認です。"}</p></section>
+      {stage === "design" ? <aside ref={inspector} className={`workshop-right${rightOpen ? " is-open" : ""}`} aria-label="結果と履歴">
+        <div className="dock-heading"><h1>結果</h1><button className="mobile-close icon-button" type="button" aria-label="結果を閉じる" onClick={() => setRightOpen(false)}><WorkshopIcon name="close" size={18}/></button></div>
+        <div className="inspector-scroll">
+          <label className="case-selector">表示する案<select value={productionProject?.id ?? selectedId ?? ""} onChange={e => { if (e.target.value !== productionProject?.id) { setProductionProject(null); setSelectedId(e.target.value || null); } }}><option value="">最新の結果に追従</option>{productionProject ? <option value={productionProject.id}>{productionProject.name} / v{productionProject.version}</option> : null}{stream.candidates.map(c => <option key={c.source_id} value={c.source_id}>{labels.get(c.source_id)}</option>)}</select></label>
           {stream.status === "error" ? <div className="inspector-error" role="alert">{stream.messages.filter(m => m.role === "error").at(-1)?.text ?? "処理に失敗しました。相談の記録を確認してください。"}</div> : null}
-          {stage === "design" || stage === "brief" ? <>{productionProject ? <p className="scope-note">採用版の部品価格と固定材の費用は未見積りです。</p> : <CostPanel summary={summary} fallbackCostJpy={fallbackCost} loading={summaryState.loading} error={summaryState.error}/>}<button className="btn inspector-primary" type="button" onClick={() => { chooseStage(displayed ? "analysis" : "brief"); if (!displayed) setRightTab("consult"); }}>{displayed ? "解析の画面へ" : "目的を相談する"}<WorkshopIcon name="arrow" size={18}/></button></> : null}
-          {stage === "assembly" ? <BomPanel bom={projectBom ?? summary?.bom ?? []} csvUrl={csvUrl} loading={summaryState.loading}/> : null}
-          {stage === "exports" ? <p className="scope-note"><WorkshopIcon name="info" size={16}/>現在の案に対応するファイルだけを保存できます。</p> : null}
+          {displayed && !viewingReferenceFilm ? <ResultPanel tier={tier} metrics={resultMetrics}/> : <p className="dock-empty">{viewingReferenceFilm ? "映像の対象は、中央に記載された設計例です。" : "設計案が届くと、ここに結果を表示します。"}</p>}
+          {dispersion ? <p className="scope-note">条件を変えた {dispersion.n} 回の試行で、成功率 {fmt(dispersion.success_rate * 100, 0)} %</p> : null}
+          {productionProject ? <p className="scope-note">採用版の部品価格と固定材の費用は未見積りです。</p> : <CostPanel summary={summary} fallbackCostJpy={fallbackCost} loading={summaryState.loading} error={summaryState.error}/>}
+          <section className="dock-section"><h2>条件の概要</h2><dl className="dock-properties">{requirementRows.map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section>
+          <BomPanel bom={projectBom ?? summary?.bom ?? []} csvUrl={csvUrl} loading={summaryState.loading}/>
+          <section className="meaning-block"><h2><WorkshopIcon name="history"/>まだ確かめていないこと</h2><p>{!displayed ? "設計案と計算結果はまだありません。" : "計算の対象外の条件と、実物の強度・組立性は未確認です。結果はすべてシミュレーションです。"}</p></section>
         </div>
-        <div className="inspector-scroll" hidden={rightTab !== "history"}>{productionProject ? <section className="meaning-block"><h2>保存した案件の履歴</h2><ol>{productionProject.history.map((event, index) => <li key={index}>v{event.version} · {({edit:"入力を保存", analyse:"CADと飛行を再解析", adopt:"版を採用", assembly_pdf:"PDFを生成", slicing:"印刷データを生成", video_direction:"演出案を作成", render_design_and_launch:"動画を制作", archive:"ZIPを作成"} as Record<string,string>)[event.operation] ?? "工程を実行"}</li>)}</ol></section> : <DetailsPanel tier={tier} classify={stream.classify} derived={stream.derived} attempts={stream.attempts} candidates={stream.candidates} chain={stream.chain} events={stream.events} dispersion={dispersion} landing={landing} exports={exportInfos} selectedId={displayedId} onSelect={id => { setProductionProject(null); setSelectedId(id); }}/>}</div>
-        <div className="consultation" hidden={rightTab !== "consult"}><div className="consultation-title"><WorkshopIcon name="chat" size={18}/><h2>設計の相談</h2></div><ChatPanel messages={stream.messages} status={stream.status} pendingQuestion={stream.pendingQuestion} onStart={handleStart} onAnswer={handleAnswer} onStop={stop} onReset={handleReset}/></div>
-      </aside>
+        <DockHandle side="right" label="結果の幅を変える" width={docks.right} onResize={docks.setRight}/>
+      </aside> : null}
     </div>
     <footer className="workshop-footer">{productionProject ? <span role="status">{productionProject.active ? "処理中" : productionProject.adopted ? "採用版を保存済み" : "設計版を確認中"}</span> : <StatusStrip status={stream.status} attemptCount={stream.attemptCount}/>}<span className="footer-divider"/><span className="footer-task">{task.label}</span><span className="toolbar-spacer"/><span className="footer-units">単位: m, g, 円</span><button className="btn" type="button" aria-pressed={paused} disabled={reduced} onClick={() => setPaused(!paused)}><WorkshopIcon name={paused ? "play" : "pause"} size={16}/>{reduced ? "動きを減らす設定" : paused ? "動きを再開" : "動きを止める"}</button>{stream.status === "streaming" ? <button type="button" className="btn stop-design" onClick={stop}>設計を中断</button> : null}</footer>
     <dialog ref={settings} className="workshop-settings" aria-labelledby="settings-title"><div className="dock-heading"><h2 id="settings-title">表示と出力先</h2><button className="icon-button" type="button" aria-label="設定を閉じる" onClick={() => settings.current?.close()}><WorkshopIcon name="close"/></button></div><div className="settings-content"><h3>工房の表示</h3><label><input type="checkbox" checked={visible} onChange={e => setVisible(e.target.checked)}/>整備員を表示</label><label><input type="checkbox" checked={paused} disabled={reduced} onChange={e => setPaused(e.target.checked)}/>演出とカメラの動きを止める</label><p>{reduced ? "端末の設定に合わせ、動きを減らしています。" : "表示設定はこのブラウザーに保存します。"}</p><h3>3Dプリントの出力先</h3><p>UltiMaker S5 · Tough PLA Gray · AA 0.4</p><small>製作データで選択中の案を生成し、ファイルを保存できます。</small></div><form method="dialog"><button className="btn" type="submit">閉じる</button></form></dialog>

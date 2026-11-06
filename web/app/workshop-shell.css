@@ -29,14 +29,18 @@ button:disabled { cursor:default; opacity:.45; }
 .phase-link.is-active:after { content:""; position:absolute; bottom:0; left:16px; right:16px; height:3px; background:#4389ff; }
 .phase-link:hover { background:#2c3036; }
 .phase-chevron { position:absolute; right:0; color:#6d747e; font-size:20px; }
-.workshop-body { display:grid; grid-template-columns:48px 200px minmax(0,1fr) 320px; min-height:0; min-width:0; }
-.workshop-rail { display:flex; flex-direction:column; align-items:stretch; border-right:1px solid #4a4e55; background:#25272a; }
-.rail-button { height:48px; display:grid; place-items:center; border:0; border-left:3px solid transparent; background:none; color:#c4cbd5; }
-.rail-button:hover,.rail-button[aria-pressed="true"] { background:#333b48; color:#9cc4ff; border-left-color:#4389ff; }
-.rail-spacer { flex:1; }
-.workshop-left,.workshop-right { min-width:0; min-height:0; background:linear-gradient(100deg,#232528,#202225); display:flex; flex-direction:column; }
+.workshop-body { display:grid; grid-template-columns:var(--dock-left,320px) minmax(0,1fr) var(--dock-right,340px); min-height:0; min-width:0; }
+
+
+
+.workshop-left,.workshop-right { position:relative; min-width:0; min-height:0; background:linear-gradient(100deg,#232528,#202225); display:flex; flex-direction:column; }
 .workshop-left { border-right:1px solid #51565e; }
 .workshop-right { border-left:1px solid #51565e; }
+/* Drag these to resize the docks; the arrow keys do the same. */
+.dock-handle { position:absolute; top:0; bottom:0; width:10px; z-index:6; cursor:col-resize; touch-action:none; }
+.dock-handle-left { right:-5px; }
+.dock-handle-right { left:-5px; }
+.dock-handle:hover,.dock-handle:focus-visible,.dock-handle[data-dragging] { background:linear-gradient(90deg,transparent 4px,#4389ff 4px,#4389ff 6px,transparent 6px); outline:none; }
 .dock-heading { min-height:52px; padding:12px 18px; border-bottom:1px solid #444b55; display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .dock-heading h1,.dock-heading h2 { margin:0; font-size:16px; font-weight:600; }
 .left-dock-scroll,.inspector-scroll { overflow:auto; min-height:0; }
@@ -233,18 +237,20 @@ button:disabled { cursor:default; opacity:.45; }
 .settings-content p,.settings-content small { font-size:14px; color:#b3c0d2; }
 .workshop-settings form { padding:0 24px 20px; text-align:right; }
 .mobile-target-toggle,.mobile-inspector-toggle,.mobile-close { display:none!important; }
-.workshop-app.is-expanded .workshop-body { grid-template-columns:48px minmax(0,1fr); }
+.workshop-body.without-results { grid-template-columns:var(--dock-left,320px) minmax(0,1fr); }
+.workshop-app.is-expanded .workshop-body { grid-template-columns:minmax(0,1fr); }
 .workshop-app.is-expanded .workshop-left,.workshop-app.is-expanded .workshop-right { display:none; }
 /* Enlarged analysis: the flow picture gets the room the crew and the dock had. */
 .workshop-app.is-expanded .workshop-center:has(.analysis-workspace:not([hidden])) .crew-embedded { display:none; }
 .workshop-app.is-expanded .analysis-workspace { padding-bottom:24px; }
 .workshop-app.is-expanded .wb-flow img { max-height:calc(100vh - 400px); object-fit:contain; }
-@media(min-width:1440px) { .workshop-body { grid-template-columns:48px 224px minmax(0,1fr) 344px; } }
 @media(max-width:1199px) and (min-width:768px) {
-  .workshop-body { grid-template-columns:44px minmax(0,1fr) 300px; }
-  .workshop-left { display:none; position:fixed; left:44px; top:92px; bottom:52px; width:260px; z-index:12; box-shadow:12px 0 30px #0008; }
+  .workshop-body { grid-template-columns:minmax(0,1fr) 300px; }
+  .workshop-body.without-results { grid-template-columns:minmax(0,1fr); }
+  .workshop-left { display:none; position:fixed; left:0; top:92px; bottom:52px; width:340px; z-index:12; box-shadow:12px 0 30px #0008; }
   .workshop-left.is-open { display:flex; }
   .mobile-target-toggle,.workshop-left .mobile-close { display:inline-flex!important; }
+  .dock-handle { display:none; }
   .workshop-toolbar { padding-inline:10px; gap:4px; }
   .crew-visibility { font-size:0; gap:0; }
   .workshop-identity { gap:12px; }
@@ -266,14 +272,13 @@ button:disabled { cursor:default; opacity:.45; }
   .phase-chevron { display:none; }
   .phase-link.is-active:after { left:4px; right:4px; }
   .workshop-body,.workshop-app.is-expanded .workshop-body { display:contents; }
-  .workshop-rail { display:none; }
+  .dock-handle { display:none; }
   .workshop-center { min-height:480px; grid-row:3; }
   .workshop-left { display:none; position:fixed; left:0; top:94px; bottom:0; width:min(290px,88vw); z-index:12; box-shadow:12px 0 40px #0009; }
   .workshop-left.is-open { display:flex; }
   .mobile-target-toggle,.workshop-left .mobile-close { display:inline-flex!important; }
   .workshop-right,.workshop-app.is-expanded .workshop-right { display:flex; grid-row:4; border:0; border-top:1px solid #51565e; min-height:360px; max-height:none; }
   .workshop-right .inspector-scroll { overflow:visible; }
-  .workshop-right .consultation { height:520px; flex:none; }
   .workshop-toolbar { padding:6px 9px; min-height:46px; gap:3px; flex-wrap:wrap; }
   .mobile-inspector-toggle { display:inline-flex!important; font-size:14px!important; min-height:32px!important; padding:4px 7px!important; }
   .tool-tabs button { font-size:14px; padding:4px 7px; gap:4px; }
