@@ -1,6 +1,7 @@
 """Pluggable aerodynamics layer: L0 closed-form coefficients and external CFD backends behind
 one interface (docs/aero.md). Backends register here in order of preference for "auto"."""
 
+from rocketwright.aero import live
 from rocketwright.aero.barrowman import BarrowmanBackend
 from rocketwright.aero.base import (
     AeroBackend,
@@ -33,6 +34,7 @@ from rocketwright.aero.registry import (
 )
 
 __all__ = [
+    "live",
     "BACKEND_NAMES",
     "AeroBackend",
     "AeroCase",

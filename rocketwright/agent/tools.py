@@ -514,6 +514,11 @@ def _build_fin_set(build: Any, catalog: PartsCatalog) -> Any:
     return None if fin_set_id is None else catalog.get(fin_set_id, "bottle_fin_set")
 
 
+def parts_fin_set(build: Any) -> Any:
+    """The catalog fin set a parts build chose, None when it chose none."""
+    return _build_fin_set(build, _parts_catalog())
+
+
 def _with_aero(result: SimResult, summary: dict[str, Any] | None) -> SimResult:
     """Attach the aero numbers (unit-suffixed metrics) and their provenance (warnings)."""
     if summary is None:

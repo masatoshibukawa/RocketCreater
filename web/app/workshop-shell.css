@@ -90,7 +90,7 @@ button:disabled { cursor:default; opacity:.45; }
 .hero-heading p { margin:6px 0 0; color:#b4bdc9; font-size:14px; }
 .workshop-app .model-panel { height:100%; padding:0; border:0; border-radius:0; background:transparent; position:relative; overflow:hidden; }
 .workshop-app .model-caption { font-size:14px; color:#b7c4d6; background:#222a34; border-radius:3px; }
-.hero-view .model-host { position:absolute; inset:80px 0 17cqw; height:auto; }
+.hero-view .model-host { position:absolute; inset:80px 0 min(17cqw,130px); height:auto; }
 .hero-view .model-empty { position:absolute; inset:80px 0 20px; padding:0; background:#191b1e; gap:6px; display:flex; flex-direction:column; justify-content:center; }
 .hero-view .model-empty-workshop .workshop-scene { height:100%; max-width:100%; margin:0 auto; mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent),linear-gradient(transparent,#000 5%,#000 92%,transparent); mask-composite:intersect; }
 .hero-view .model-empty>div:not(.workshop-scene) { display:none; }
@@ -98,21 +98,21 @@ button:disabled { cursor:default; opacity:.45; }
 .hero-view .model-overlay-bottom { top:122px; bottom:auto; left:20px; right:auto; max-width:42%; flex-direction:column; align-items:flex-start; font-size:14px; }
 .hero-view .model-caption { font-size:14px; color:#b7c4d6; background:#222a34; border-radius:3px; }
 .hero-view .model-dims { background:#232a33; color:#e4eaf2; font-size:14px; padding:3px 8px; }
-.hero-view .model-notes { top:auto; bottom:calc(17cqw + 8px); left:20px; right:auto; max-width:42%; font-size:14px; }
+.hero-view .model-notes { top:auto; bottom:calc(min(17cqw,130px) + 8px); left:20px; right:auto; max-width:42%; font-size:14px; }
 .scene-image-label { position:absolute; left:22px; bottom:20px; font-size:14px; color:#a3adba; padding:3px 6px; background:#191b1eaa; }
 .workshop-app .chip { background:#29313d; border-color:#4b5f7b; color:#d2e3fb; font-size:14px; border-radius:4px; }
 .workshop-app .tier-badge { color:#c9dbf4; background:#263142; border:1px solid #526680; border-radius:4px; font-size:14px; padding:2px 8px; }
 .workshop-app .tier-badge small { color:#b3bac5; font-size:14px; }
 .workshop-app .tier-bottle { color:#a2dfc1; border-color:#4e8069; background:#20342d; }
 .workshop-app .crew-embedded { position:absolute; left:0; right:0; bottom:0; z-index:3; border:0; border-radius:0; background:linear-gradient(transparent,#1b1d20 70%); color:#c2cbd6; overflow:visible; pointer-events:none; }
-.crew-embedded .workshop-scene { width:100%; mask-image:linear-gradient(transparent,#000 22%); }
+.crew-embedded .workshop-scene { width:min(100%,720px); margin:0 auto; mask-image:linear-gradient(transparent,#000 22%),linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-composite:intersect; }
 .crew-embedded .crew-description { position:absolute; bottom:5px; left:20px; padding:0; }
 .crew-embedded .crew-description p { font-size:14px; background:#191b1e99; padding:2px 5px; }
 .workspace-caption { min-height:30px; padding:5px 16px; display:flex; justify-content:space-between; gap:12px; border-top:1px solid #3c434d; background:#22262b; color:#b3bac5; font-size:14px; }
 .assembly-context { position:absolute; top:110px; left:24px; max-width:260px; padding:12px 14px; border-left:2px solid #9cc4ff; background:#22262be6; z-index:3; font-size:14px; }
 .assembly-context b,.assembly-context span { display:block; }
 .assembly-context span { margin-top:6px; color:#bdc5d0; }
-.analysis-workspace { height:100%; padding:24px 24px 19cqw; background:radial-gradient(ellipse at top,#3c4147,#191b1e 75%); }
+.analysis-workspace { height:100%; padding:16px 24px min(19cqw,150px); background:radial-gradient(ellipse at top,#3c4147,#191b1e 75%); }
 .analysis-screen { height:100%; overflow:auto; border:5px solid #454d57; border-top-color:#69717b; border-radius:5px; background:#111920; box-shadow:0 12px 30px #0008,0 0 0 2px #13181f; }
 .analysis-screen .wb-detail { padding:16px 18px; background:#111920; }
 .analysis-screen h2 { font-size:16px; margin:0 0 10px; }
@@ -133,7 +133,7 @@ button:disabled { cursor:default; opacity:.45; }
 .drawing-workspace .drawing-svg { background:#f5f6f7; border-radius:3px; margin-top:18px; }
 .production-workspace { padding:26px 32px; }
 /* The quick files and the saved-design flow share one scroll, above the crew. */
-.production-stack { height:100%; overflow:auto; padding-bottom:19cqw; }
+.production-stack { height:100%; overflow:auto; padding-bottom:min(19cqw,150px); }
 .production-stack .production-workspace { height:auto; overflow:visible; }
 .production-workspace h2 { font-size:20px; }
 .workshop-app .wb-file-list a { background:#282e37; border-color:#4f5e70; border-radius:4px; color:#cfe3ff; }
@@ -293,7 +293,7 @@ button:disabled { cursor:default; opacity:.45; }
   .hero-view .model-overlay-top, .hero-view .model-overlay-bottom { left:12px; }
   .hero-view .model-caption { display:none; }
   .scene-image-label { left:12px; font-size:14px; }
-  .analysis-workspace { padding:12px 10px 19cqw; }
+  .analysis-workspace { padding:12px 10px min(19cqw,150px); }
   .analysis-screen .wb-detail { padding:12px; }
   .workshop-app .backscreen-idle { min-height:100px; }
   .workspace-caption { font-size:14px; padding:5px 10px; }

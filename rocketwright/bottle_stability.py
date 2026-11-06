@@ -51,7 +51,8 @@ class BottleStability:
         return [note, *self.failures()]
 
 
-def _shape(design: BottleDesign, fin_set: BottleFinSet) -> AssembledShape:
+def bottle_shape(design: BottleDesign, fin_set: BottleFinSet) -> AssembledShape:
+    """The representative body with the fins of the chosen part."""
     geo = airframe(design).params
     return AssembledShape(
         body_diameter_m=geo["body_diameter_m"],
@@ -80,7 +81,7 @@ def bottle_stability(
     """None without fins: a finless bottle tumbles and physics.water models it that way."""
     if not design.has_fins:
         return None
-    shape = None if fin_set is None else _shape(design, fin_set)
+    shape = None if fin_set is None else bottle_shape(design, fin_set)
     geo = airframe(design, shape=shape).params
 
     def margin(cg_m: float) -> aero.AeroResult:

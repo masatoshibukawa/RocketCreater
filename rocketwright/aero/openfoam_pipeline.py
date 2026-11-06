@@ -33,6 +33,7 @@ from typing import Any
 import numpy as np
 import yaml
 
+from rocketwright.aero import live
 from rocketwright.aero.base import AeroCase, AeroQuery, AeroResult
 from rocketwright.geometry import airframe, write_stl
 from rocketwright.schema import AmateurDesign, BottleDesign, Design
@@ -265,6 +266,7 @@ class OpenFoamPipelineBackend:
         cmd = docker_command(self.image, case_dir, container, cpus)
         out_dir = case_dir / "out" / RUN_NAME
         start = time.monotonic()
+        live.begin(case_dir)
         try:
             res = subprocess.run(cmd, capture_output=True, timeout=timeout_s)
         except subprocess.TimeoutExpired:
@@ -273,6 +275,8 @@ class OpenFoamPipelineBackend:
                 f"OpenFOAM pipeline timed out after {timeout_s:.0f} s (case kept in {case_dir}); "
                 f"last log lines:\n{_tail(out_dir / 'pipeline.log')}"
             ) from None
+        finally:
+            live.end(case_dir)
         wall = time.monotonic() - start
         if res.returncode != 0 or not (out_dir / "results.csv").exists():
             raise RuntimeError(
