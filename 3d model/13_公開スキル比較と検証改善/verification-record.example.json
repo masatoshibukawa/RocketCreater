@@ -1,0 +1,13 @@
+{
+  "record_type": "export-and-toolpath-verification",
+  "status": "template-not-tested",
+  "trial_id": null,
+  "artifact": {"path": null, "sha256": null, "source_revision": null, "input_unit": null, "coordinate_frame": null, "orientation": null},
+  "intent": {"dimensions_xyz_mm": null, "tolerance_mm": null, "expected_parts_and_roles": [], "allowed_change_regions": [], "features_to_preserve": []},
+  "export": {"reread_dimensions_xyz_mm": null, "bounds_xyz_mm": null, "parts_checked": null, "evaluated_modifiers_and_transforms": null, "comparison_views_or_sections": [], "unmeasured": []},
+  "machine_context": {"printer_firmware": null, "nozzle_or_core": null, "material_product_color_condition": null, "plate_and_adhesive": null},
+  "slicing": {"slicer_version": null, "effective_profile_ids_and_versions": [], "plate_id": null, "sliced_artifact_sha256": null, "commands_supported_by_analyzer": [], "unsupported_commands_or_checks": [], "initial_contact_evidence": null, "actual_support_evidence": null, "critical_layers_and_z_mm": [], "commanded_feed_evidence": null},
+  "checks": [{"name": null, "status": "not_run", "measured_fact": null, "acceptance_limit_and_source": null, "evidence_path": null}],
+  "physical_results": {"first_layer": "not_run", "full_height": "not_run", "postprocessing": "not_run", "dimensions_and_fit": "not_run"},
+  "remaining_checks": []
+}

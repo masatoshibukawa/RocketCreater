@@ -1,0 +1,11 @@
+{
+  "record_type": "print-outcome-and-conditional-lesson",
+  "trial_id": null,
+  "artifact_sha256": null,
+  "context": {"printer_firmware": null, "nozzle_or_core": null, "material_product_color_condition": null, "plate_and_adhesive": null, "slicer_and_effective_profiles": [], "scale_orientation_and_contact": null, "support_and_postprocessing": null},
+  "observed": {"stage": null, "time_layer_z_mm": null, "symptom_and_location": null, "photos_and_logs": [], "commanded_or_observed_motion": null},
+  "results": {"first_layer": "not_run", "full_height": "not_run", "postprocessing": "not_run", "dimensions_fit_appearance": "not_run"},
+  "lesson": {"status": "proposed", "cause_hypothesis": null, "applicable_symptom_and_stage": null, "required_context_matches": [], "known_exclusions": [], "proposed_adjustments": [], "supporting_trial_ids": [], "counterexamples": [], "unknowns": []},
+  "next_trial": {"fixed_conditions": [], "changes": [], "acceptance_criteria": [], "stop_conditions": [], "authorization_scope": null},
+  "application_to_current_job": {"status": "not_evaluated", "matching_conditions": [], "different_or_missing_conditions": [], "reason": null}
+}
