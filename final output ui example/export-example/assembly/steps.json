@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0-draft",
+  "package_id": "rocketwright-water-rocket-content-example",
+  "design_revision": "r00",
+  "content_status": "draft_example",
+  "procedure_revision": "p00",
+  "instruction_status": "not_released",
+  "operator_profile_ids": [
+    "adult",
+    "child_with_adult"
+  ],
+  "steps": [
+    {
+      "step_id": "A-010",
+      "title": "部品と条件を照合する",
+      "depends_on": [],
+      "part_ids": [
+        "bottle-001",
+        "fin-001",
+        "recovery-001"
+      ],
+      "operator_assignment": null,
+      "tools": [],
+      "operation": {
+        "status": "planning_only",
+        "text": "採用する部品・版・数量と作業者・工具の条件を確認し、未確定の項目を記録する。"
+      },
+      "orientation": null,
+      "holding": null,
+      "hand_paths": null,
+      "tool_paths": null,
+      "process_parameters": [],
+      "completion_criteria": [],
+      "figures": [],
+      "status": "needs_input",
+      "blockers": [
+        "部品と数量の確定",
+        "作業者の条件",
+        "工具と治具の選定"
+      ]
+    },
+    {
+      "step_id": "A-020",
+      "title": "フィン取付工程を確認する",
+      "depends_on": [
+        "A-010"
+      ],
+      "part_ids": [
+        "bottle-001",
+        "fin-001"
+      ],
+      "operator_assignment": null,
+      "tools": [],
+      "operation": {
+        "status": "not_defined",
+        "text": null
+      },
+      "orientation": null,
+      "holding": null,
+      "hand_paths": {
+        "approach": null,
+        "operation": null,
+        "withdrawal": null
+      },
+      "tool_paths": {
+        "approach": null,
+        "operation": null,
+        "withdrawal": null
+      },
+      "process_parameters": [
+        {
+          "name": "attachment_condition",
+          "value": null,
+          "unit": null,
+          "source_id": null,
+          "status": "needs_input"
+        }
+      ],
+      "completion_criteria": [],
+      "figures": [],
+      "status": "blocked",
+      "blockers": [
+        "取付部の形状と方法",
+        "両手と保持具の割り当て",
+        "手と工具の進入・操作・離脱の評価",
+        "取付条件の根拠",
+        "完了基準と実物試行"
+      ]
+    }
+  ],
+  "physical_work_records": [],
+  "physical_verification": "not_performed",
+  "source_ids": [
+    "user-assembly",
+    "user-output"
+  ]
+}

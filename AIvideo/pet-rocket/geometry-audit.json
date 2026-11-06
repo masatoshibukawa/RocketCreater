@@ -1,0 +1,101 @@
+{
+  "checks": "passed",
+  "scenes": [
+    {
+      "film": "design",
+      "meshes": [
+        {
+          "mesh": "Exact source nose STL",
+          "source": "nose_cone.stl",
+          "maximum_coordinate_difference_m": 3.3974647539736225e-09,
+          "bounds_m": [
+            [
+              -0.05700000002980232,
+              -0.05700000002980232,
+              0.0
+            ],
+            [
+              0.05700000002980232,
+              0.05700000002980232,
+              0.10387489199638367
+            ]
+          ]
+        },
+        {
+          "mesh": "Exact source fin STL 1",
+          "source": "fin_assembly.stl",
+          "maximum_coordinate_difference_m": 3.6954879711892374e-09,
+          "bounds_m": [
+            [
+              0.054489996284246445,
+              -0.010324910283088684,
+              -5.317943134464098e-12
+            ],
+            [
+              0.10719999670982361,
+              0.010324910283088684,
+              0.10000000149011612
+            ]
+          ]
+        }
+      ],
+      "fin_count": 3,
+      "azimuth_deg": [
+        0.0,
+        120.00000333930423,
+        240.00000667860846
+      ],
+      "fin_tail_z_m": 0.1,
+      "nose_base_z_m": 0.262,
+      "render_path": "//design-frames\\frame_"
+    },
+    {
+      "film": "launch",
+      "meshes": [
+        {
+          "mesh": "Exact source nose STL",
+          "source": "nose_cone.stl",
+          "maximum_coordinate_difference_m": 3.3974647539736225e-09,
+          "bounds_m": [
+            [
+              -0.05700000002980232,
+              -0.05700000002980232,
+              0.0
+            ],
+            [
+              0.05700000002980232,
+              0.05700000002980232,
+              0.10387489199638367
+            ]
+          ]
+        },
+        {
+          "mesh": "Exact source fin STL 1",
+          "source": "fin_assembly.stl",
+          "maximum_coordinate_difference_m": 3.6954879711892374e-09,
+          "bounds_m": [
+            [
+              0.054489996284246445,
+              -0.010324910283088684,
+              -5.317943134464098e-12
+            ],
+            [
+              0.10719999670982361,
+              0.010324910283088684,
+              0.10000000149011612
+            ]
+          ]
+        }
+      ],
+      "fin_count": 3,
+      "azimuth_deg": [
+        0.0,
+        120.00000333930423,
+        240.00000667860846
+      ],
+      "fin_tail_z_m": 0.1,
+      "nose_base_z_m": 0.262,
+      "render_path": "//launch-frames-refined\\frame_"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "kind": "generation_record_template",
+  "status": "not_run",
+  "shot_id": "SH020",
+  "take_id": null,
+  "generated_at": null,
+  "model": {"id": null, "revision": null, "weights_sha256": null, "license_url": null},
+  "runtime": {"app": null, "version_or_commit": null, "workflow_path": null, "custom_node_versions": [], "gpu": null, "precision": null, "offload": null},
+  "inputs": {"image_path": null, "image_sha256": null, "audio_path": null, "prompt": null, "negative_prompt": null},
+  "settings": {"seed": null, "width": null, "height": null, "num_frames": null, "fps": null, "steps": null, "cfg": null},
+  "measurements": {"elapsed_seconds": null, "peak_vram_mib": null, "cloud_cost_currency": null, "cloud_cost_amount": null},
+  "review": {"identity_consistency": null, "hands_and_geometry": null, "camera_motion": null, "lighting": null, "audio_sync": null, "artifacts": [], "decision": null, "next_change": null},
+  "output_path": null
+}

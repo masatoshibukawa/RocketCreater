@@ -1,0 +1,101 @@
+# Only explicitly reviewed third-party files are tracked.
+原本/**
+!原本/**/
+!原本/D09-rocketfins-cad.zip
+CAD/D09-RocketFins/releases/**
+!CAD/D09-RocketFins/releases/**/
+!CAD/D09-RocketFins/releases/1A.stl
+!CAD/D09-RocketFins/releases/2B.stl
+!CAD/D09-RocketFins/releases/3B.stl
+CAD/D09-RocketFins/libraries/**
+!CAD/D09-RocketFins/libraries/**/
+!CAD/D09-RocketFins/libraries/scad-utils/LICENSE
+!CAD/D09-RocketFins/libraries/scad-utils/README.md
+!CAD/D09-RocketFins/libraries/scad-utils/hull.scad
+!CAD/D09-RocketFins/libraries/scad-utils/linalg.scad
+!CAD/D09-RocketFins/libraries/scad-utils/lists.scad
+!CAD/D09-RocketFins/libraries/scad-utils/mirror.scad
+!CAD/D09-RocketFins/libraries/scad-utils/morphology.scad
+!CAD/D09-RocketFins/libraries/scad-utils/se3.scad
+!CAD/D09-RocketFins/libraries/scad-utils/shapes.scad
+!CAD/D09-RocketFins/libraries/scad-utils/so3.scad
+!CAD/D09-RocketFins/libraries/scad-utils/spline.scad
+!CAD/D09-RocketFins/libraries/scad-utils/trajectory.scad
+!CAD/D09-RocketFins/libraries/scad-utils/trajectory_path.scad
+!CAD/D09-RocketFins/libraries/scad-utils/transformations.scad
+!CAD/D09-RocketFins/libraries/threadlib/LICENSE
+!CAD/D09-RocketFins/libraries/threadlib/THREAD_TABLE.scad
+!CAD/D09-RocketFins/libraries/threadlib/threadlib.scad
+CAD/D22-FreeCAD/**
+!CAD/D22-FreeCAD/**/
+!CAD/D22-FreeCAD/LICENSE
+!CAD/D22-FreeCAD/README.md
+!CAD/D22-FreeCAD/bottle-measurements-1.jpeg
+!CAD/D22-FreeCAD/bottle-measurements-2.jpeg
+!CAD/D22-FreeCAD/physics-water-rocket-nose-macroFCMacro.FCMacro
+!CAD/D22-FreeCAD/physics-water-rocket-tail-ring-macro.FCMacro
+!CAD/D22-FreeCAD/water-rocket-nose-ring.FCStd
+!CAD/D22-FreeCAD/water-rocket-tail-ring.FCStd
+CAD/D23-TSoGiants/**
+!CAD/D23-TSoGiants/**/
+!CAD/D23-TSoGiants/BOM.csv
+!CAD/D23-TSoGiants/CAD/Accessories/1986K690_TYPE 302 STAINLESS STEEL COMPRESSION SPRING.AD_PRT
+!CAD/D23-TSoGiants/CAD/Accessories/48435K713_EXTENDED-LIFE ASME-CODE POP-SAFETY VALVE.AD_PRT
+!CAD/D23-TSoGiants/CAD/Accessories/90190A110_PHILLIPS ROUNDED HEAD SCREWS FOR SHEET METAL_0,5in.AD_PRT
+!CAD/D23-TSoGiants/CAD/Accessories/90190A113_PHILLIPS ROUNDED HEAD SCREWS FOR SHEET METAL_0,75in.AD_PRT
+!CAD/D23-TSoGiants/CAD/Accessories/9044K371_MUSIC-WIRE-EXTENSION-SPRING.AD_PRT
+!CAD/D23-TSoGiants/CAD/Accessories/91515A100_ROUND WASHER HEAD DRILLING SCREW FOR METAL.AD_PRT
+!CAD/D23-TSoGiants/CAD/Accessories/Bottle.AD_PRT
+!CAD/D23-TSoGiants/CAD/Accessories/CinderBlock.AD_PRT
+!CAD/D23-TSoGiants/CAD/PVC/0,5 in PVC Bushing.AD_PRT
+!CAD/D23-TSoGiants/CAD/PVC/0,5 in PVC Straight for Base Screw.AD_PRT
+!CAD/D23-TSoGiants/CAD/PVC/0,5 in PVC Straight for Base Upper.AD_PRT
+!CAD/D23-TSoGiants/CAD/PVC/0,5 in PVC Straight for Base.AD_PRT
+!CAD/D23-TSoGiants/CAD/PVC/0,5 in PVC T.AD_PRT
+!CAD/D23-TSoGiants/CAD/PVC/0,5 in PVC conduit.AD_PRT
+!CAD/D23-TSoGiants/CAD/PVC/0,5 in PVC straight for Nozzle.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Base_Cap.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Cross_Brace.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Hinge_1.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Hinge_2.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Hinge_Knob.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Plate_Knob.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Plate_Threaded.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Plate_Threaded_Endcap.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Base/Plate_Unthreaded.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Jigs/Zip_Tie_Jig.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Nozzle/Cable_Housing_clamp.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Nozzle/Cuff.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Nozzle/Cuff_cover.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Nozzle/Threaded_Inner.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Nozzle/Threaded_Outer.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Trigger/Button_slide.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Trigger/Button_top.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Trigger/Housing_Bottom.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Trigger/Housing_Top.AD_PRT
+!CAD/D23-TSoGiants/CAD/To_Print/Trigger/Sled.AD_PRT
+!CAD/D23-TSoGiants/CAD/__Assemblies/Full_Assembly.AD_ASM
+!CAD/D23-TSoGiants/CAD/__Assemblies/Nozzle_Assembly.AD_ASM
+!CAD/D23-TSoGiants/CAD/__Assemblies/Trigger_Assembly.AD_ASM
+!CAD/D23-TSoGiants/CAM/Base/STL/Base_Cap.stl
+!CAD/D23-TSoGiants/CAM/Base/STL/Cross_Brace.stl
+!CAD/D23-TSoGiants/CAM/Base/STL/Hinge_1.stl
+!CAD/D23-TSoGiants/CAM/Base/STL/Hinge_2.stl
+!CAD/D23-TSoGiants/CAM/Base/STL/Hinge_Knob.stl
+!CAD/D23-TSoGiants/CAM/Base/STL/Plate_Knob.stl
+!CAD/D23-TSoGiants/CAM/Base/STL/Plate_Threaded.stl
+!CAD/D23-TSoGiants/CAM/Base/STL/Plate_Threaded_Endcap.stl
+!CAD/D23-TSoGiants/CAM/Base/STL/Plate_Unthreaded.stl
+!CAD/D23-TSoGiants/CAM/Jigs/STL/Zip_Tie_Jig.stl
+!CAD/D23-TSoGiants/CAM/Nozzle/STL/Cable_Housing_clamp.stl
+!CAD/D23-TSoGiants/CAM/Nozzle/STL/Cuff.stl
+!CAD/D23-TSoGiants/CAM/Nozzle/STL/Cuff_cover.stl
+!CAD/D23-TSoGiants/CAM/Nozzle/STL/Threaded_Inner.stl
+!CAD/D23-TSoGiants/CAM/Nozzle/STL/Threaded_Outer.stl
+!CAD/D23-TSoGiants/CAM/Trigger/STL/Button_slide.stl
+!CAD/D23-TSoGiants/CAM/Trigger/STL/Button_top.stl
+!CAD/D23-TSoGiants/CAM/Trigger/STL/Housing_Bottom.stl
+!CAD/D23-TSoGiants/CAM/Trigger/STL/Housing_Top.stl
+!CAD/D23-TSoGiants/CAM/Trigger/STL/Sled.stl
+!CAD/D23-TSoGiants/LICENSE.md
+!CAD/D23-TSoGiants/README.md

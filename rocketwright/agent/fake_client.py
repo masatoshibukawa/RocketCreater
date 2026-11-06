@@ -181,6 +181,7 @@ def tool_results_from_history(history: list[dict[str, Any]]) -> dict[str, dict[s
 DEMO_REQUIREMENTS: dict[str, dict[str, Any]] = {
     "bottle": {
         "goal_kind": "altitude",
+        "bottle_volume_m3": 0.0015,
         "target_altitude_m": 30,
         "target_apogee_m": None,
         "payload_mass_kg": 0.06,
@@ -237,7 +238,7 @@ _FINS = {
 # Bottle/amateur numbers came from scripts/tune_suborbital_demo.py (real physics, scenario env):
 #   * bottle attempt 1: 1.5 L, 40 % water, 500 kPa, no parachute -> apogee ~47 m and a 24 m/s
 #     ballistic descent; fails "add a parachute" / "recovery required" / apogee > 33 m.
-#   * bottle attempts 2-3: 0.5 m parachute, 300 kPa (1.5 L -> ~29 m, 2 L -> ~32 m) -> pass.
+#   * bottle attempts 2-3: same 1.5 L bottle and parachute, two water fill fractions -> pass.
 #   * amateur attempt 1: dummy_I200 on a 1 kg payload with a 0.6 m chute -> apogee ~1.2 km and a
 #     9.5 m/s descent; fails "larger parachute" and "apogee below target".
 #   * amateur attempt 2: dummy_J420 in a 66 mm airframe with a 1.2 m chute -> ~2.1 km, 5.5 m/s.
@@ -317,7 +318,7 @@ DEMO_DESIGNS: dict[str, list[dict[str, Any]]] = {
             "parachute_diameter_m": None,
         },
         _BOTTLE_BASE,
-        {**_BOTTLE_BASE, "bottle_volume_m3": 0.002, "dry_mass_kg": 0.14},
+        {**_BOTTLE_BASE, "water_fill_frac": 0.35},
     ],
     "amateur": [
         {  # fails: motor too small for 2 km (~1.2 km) and 0.6 m chute descends at 9.5 m/s

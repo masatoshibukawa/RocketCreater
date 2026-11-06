@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "status": "design proposal; not wired into the application",
+  "units": "CSS px unless stated",
+  "theme": "dark",
+  "color": {
+    "canvas": "#17191c",
+    "surface": "#202226",
+    "raised": "#282c32",
+    "text": "#f2f4f7",
+    "muted": "#b3bac5",
+    "separator": "#3b414b",
+    "controlBorder": "#737e90",
+    "primary": "#2563eb",
+    "onPrimary": "#ffffff",
+    "focus": "#9cc4ff",
+    "selection": "#263d5e",
+    "onSelection": "#e4efff",
+    "pendingSurface": "#352a16",
+    "pendingText": "#f4c66e",
+    "errorSurface": "#382325",
+    "errorText": "#ff9b9b",
+    "successSurface": "#20382c",
+    "successText": "#8ed8b2"
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "radius": {
+    "control": 6,
+    "panel": 0,
+    "popover": 8
+  },
+  "border": {
+    "width": 1,
+    "focusWidth": 2,
+    "focusOffset": 3
+  },
+  "type": {
+    "fontFamily": "\"Noto Sans JP\",\"Yu Gothic UI\",Meiryo,system-ui,sans-serif",
+    "fontLoading": "Use installed fallbacks; bundle/download fonts only after checking availability and license.",
+    "heading": {
+      "size": 20,
+      "lineHeight": 28,
+      "weight": 600
+    },
+    "panelTitle": {
+      "size": 16,
+      "lineHeight": 24,
+      "weight": 600
+    },
+    "body": {
+      "size": 14,
+      "lineHeight": 22,
+      "weight": 400
+    },
+    "control": {
+      "size": 14,
+      "lineHeight": 20,
+      "weight": 500
+    },
+    "metadata": {
+      "size": 12,
+      "lineHeight": 18,
+      "weight": 400
+    },
+    "metric": {
+      "size": 24,
+      "lineHeight": 32,
+      "weight": 500
+    },
+    "numericVariant": "tabular-nums"
+  },
+  "layout": {
+    "identityBar": 48,
+    "phaseBar": 44,
+    "statusBarMin": 56,
+    "globalRail": 48,
+    "desktopMinWidth": 1440,
+    "leftDock": 224,
+    "rightDock": 344,
+    "compactDesktopMinWidth": 1200,
+    "compactLeftDock": 200,
+    "compactRightDock": 320,
+    "tabletMinWidth": 768,
+    "tabletLeftDock": "drawer",
+    "phone": "single column; panels below figure",
+    "drawerWidth": 400,
+    "contentGap": 16,
+    "bodyMaxCharactersJa": 32
+  },
+  "controls": {
+    "desktopMinHeight": 36,
+    "touchMinHeight": 44,
+    "inputMinHeight": 40,
+    "fieldLabelAlwaysVisible": true,
+    "primaryActionPerDecisionArea": 1,
+    "dialogMaxWidth": 520
+  },
+  "motion": {
+    "stateTransitionMs": 140,
+    "panelTransitionMs": 180,
+    "workerLoop": "only while corresponding job is running",
+    "reducedMotion": "disable worker loops, camera motion and automatic animated transitions; retain static state and new-result notice"
+  },
+  "contrastPairs": [
+    {
+      "id": "body-on-surface",
+      "foreground": "text",
+      "background": "surface",
+      "target": 4.5
+    },
+    {
+      "id": "muted-on-surface",
+      "foreground": "muted",
+      "background": "surface",
+      "target": 4.5
+    },
+    {
+      "id": "primary-label",
+      "foreground": "onPrimary",
+      "background": "primary",
+      "target": 4.5
+    },
+    {
+      "id": "selected-label",
+      "foreground": "onSelection",
+      "background": "selection",
+      "target": 4.5
+    },
+    {
+      "id": "pending-label",
+      "foreground": "pendingText",
+      "background": "pendingSurface",
+      "target": 4.5
+    },
+    {
+      "id": "error-label",
+      "foreground": "errorText",
+      "background": "errorSurface",
+      "target": 4.5
+    },
+    {
+      "id": "success-label",
+      "foreground": "successText",
+      "background": "successSurface",
+      "target": 4.5
+    },
+    {
+      "id": "control-boundary",
+      "foreground": "controlBorder",
+      "background": "surface",
+      "target": 3
+    },
+    {
+      "id": "focus-on-surface",
+      "foreground": "focus",
+      "background": "surface",
+      "target": 3
+    }
+  ],
+  "contrastScope": "Project targets for flat, opaque token pairs only. Decorative separators are not control boundaries. Generated images, charts, transparency, hover states and whole-page accessibility require separate verification."
+}

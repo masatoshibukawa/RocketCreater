@@ -1,0 +1,49 @@
+{
+  "checks": "passed",
+  "scenes": [
+    {
+      "film": "design",
+      "meshes": [
+        {
+          "mesh": "Exact source nose STL",
+          "maximum_coordinate_error_m": 3.3974647539736225e-09,
+          "source": "nose_cone.stl"
+        },
+        {
+          "mesh": "Exact source fin STL 1",
+          "maximum_coordinate_error_m": 3.6954879711892374e-09,
+          "source": "fin_assembly.stl"
+        }
+      ],
+      "three_fin_placement": "passed",
+      "relative_asset_paths": "passed",
+      "saved_frame": 1,
+      "width": 1920,
+      "height": 1080,
+      "camera_z_m": 1.1710000038146973
+    },
+    {
+      "film": "launch",
+      "meshes": [
+        {
+          "mesh": "Exact source nose STL",
+          "maximum_coordinate_error_m": 3.3974647539736225e-09,
+          "source": "nose_cone.stl"
+        },
+        {
+          "mesh": "Exact source fin STL 1",
+          "maximum_coordinate_error_m": 3.6954879711892374e-09,
+          "source": "fin_assembly.stl"
+        }
+      ],
+      "three_fin_placement": "passed",
+      "relative_asset_paths": "passed",
+      "saved_frame": 1,
+      "width": 1920,
+      "height": 1080,
+      "camera_z_m": 0.4099999964237213
+    }
+  ],
+  "photo_asset_hashes": "passed",
+  "scope": "Original nose/fin geometry and assembly; bottle surface detail and equipment remain unmeasured illustrative geometry"
+}

@@ -1,0 +1,279 @@
+# Bottle-tier variable dictionary. Only design_inputs are accepted by BottleDesign.
+# A part id identifies a catalog choice in the search plan. Keep it with the trial for
+# provenance. When a part supplies a dimension, copy that value into the simulation input.
+version: 3
+components:
+  - kind: bottle
+    catalog_choice: {name: bottle_id, layer: L1, type: part_id, filter: {tier: bottle, kind: bottle}}
+    design_inputs:
+      bottle_volume_m3:
+        layer: L1
+        type: number
+        unit: m3
+        definition: Internal volume of the empty bottle.
+        value_from: selected_part.bottle_volume_m3
+        fixed_when: The mission specifies a bottle capacity.
+        affects: [water_mass_kg, rail_exit_speed_mps, apogee_m]
+    reserved:
+      measured_body_diameter_m:
+        type: number
+        unit: m
+        definition: External body diameter of the test article for reference area. Measure it independently of internal capacity.
+        role: measured_geometry
+    references: [R03, R14]
+  - kind: nozzle
+    references: [R02]
+    catalog_choice: {name: nozzle_id, layer: L2, type: part_id, filter: {tier: bottle, kind: nozzle}}
+    design_inputs:
+      nozzle_diameter_m:
+        type: number
+        unit: m
+        definition: Inner diameter of the circular water outlet.
+        value_from: selected_part.nozzle_diameter_m
+        affects: [peak_thrust_n, thrust_phase_duration_s, rail_exit_speed_mps, apogee_m]
+    derived:
+      nozzle_area_m2: {unit: m2, formula: "pi * (nozzle_diameter_m / 2)^2"}
+    reserved:
+      nozzle.has_flow_regulator:
+        type: boolean
+        definition: Whether a flow regulator is fitted upstream of the outlet.
+      nozzle.regulator_open_area_ratio:
+        type: number
+        unit: ratio
+        requires: {nozzle.has_flow_regulator: true}
+        definition: Total regulator orifice area divided by nozzle outlet area. This ratio can exceed one.
+      nozzle.regulator_orifice_count:
+        type: integer
+        unit: count
+        requires: {nozzle.has_flow_regulator: true}
+        definition: Number of regulator holes. At fixed total open area, changing the count changes hole diameter.
+      nozzle_length_m:
+        type: number
+        unit: m
+        definition: Axial distance from the nozzle inlet plane to the outlet plane.
+        enable_when: Part dimensions and a validated length-dependent flow model are available.
+
+  - kind: fins
+    references: [D09, R03]
+    catalog_choice:
+      name: fin_set_id
+      layer: L2
+      type: part_id
+      filter: {tier: bottle, kind: fins}
+      requires: {has_fins: true}
+    design_inputs:
+      has_fins:
+        layer: L1
+        type: boolean
+        definition: Whether a fin set is fitted. The water model uses this to select its drag coefficient.
+        values: [false, true]
+        affects: [apogee_m, max_speed_mps]
+    # Identical trapezoidal fins. The shared geometry names follow schema.FinSet.
+    # The bottle model currently has only a presence flag. Activate each dimension for
+    # exploration only when geometry data and a validated analysis sensitive to it exist.
+    reserved_requires: {has_fins: true}
+    reserved:
+      fins.planform_variant:
+        type: enum
+        values: [PN1, PN2, PN3]
+        definition: D09 CAD alternatives on its PCO-1881/G1 adapter. Use PN1 versus PN3 for a count contrast, PN1 versus PN2 for the broad/narrow assembly contrast.
+        geometry: {PN1: {count: 3, profile: narrow}, PN2: {count: 3, profile: broad}, PN3: {count: 5, profile: narrow}}
+        coupling: The CAD variant fixes its geometry. Measure exposed dimensions after clipping the adapter in CAD.
+      fins.mount_type:
+        type: enum
+        values: [standard, reinforced]
+        definition: Attachment variants compared in R03. Measure stiffness and assembled mass for each mounting.
+      fins.count: {type: integer, unit: count, definition: Number of fins in the installed set.}
+      fins.root_chord_m: {type: number, unit: m, definition: Axial chord at the body surface.}
+      fins.tip_chord_m: {type: number, unit: m, definition: Axial chord at the outer tip.}
+      fins.span_m: {type: number, unit: m, definition: Radial distance from the body surface to one fin tip.}
+      fins.sweep_m: {type: number, unit: m, definition: Aft axial offset of the tip leading edge from the root leading edge.}
+      fins.thickness_m: {type: number, unit: m, definition: Plate thickness measured normal to the fin face.}
+      fins.root_le_from_nose_m: {type: number, unit: m, definition: Axial distance aft from the nose tip to the root leading edge.}
+
+  - kind: nose_cone
+    references: [R03]
+    design_inputs: {}
+    reserved:
+      nose_profile: {type: enum, values: [conical, hemispherical], definition: External forebody shapes compared in the R03 tunnel tests.}
+      surface_treatment: {type: enum, values: [baseline, vortex_generators, dimples], definition: Surface configuration on the tested body. Select documented combinations from R03 Table 1.}
+
+  - kind: parachute
+    references: [P09]
+    catalog_choice:
+      name: parachute_id
+      layer: L2
+      type: part_id
+      filter: {tier: bottle, kind: parachute}
+      requires: {has_parachute: true}
+    design_inputs:
+      has_parachute:
+        layer: L1
+        type: boolean
+        definition: Fit a parachute that opens at apogee in the water model.
+        values: [false, true]
+        fixed_when: Recovery is required, in which case this must be true.
+        affects: [descent_speed_mps, landing_distance_m, cost_jpy]
+      parachute_diameter_m:
+        layer: L2
+        type: number_or_null
+        unit: m
+        definition: Canopy diameter used for projected drag area. Use null when absent.
+        requires: {has_parachute: true}
+        value_from: selected_part.parachute_diameter_m
+        affects: [descent_speed_mps, landing_distance_m, flight_time_s]
+    reserved:
+      recovery.release_mechanism:
+        type: enum
+        values: [passive_nose_cone]
+        definition: In the P09 kit a loose nose cone separates as the rocket turns near apogee.
+      recovery.inflation_time_s:
+        type: number
+        unit: s
+        definition: Time from canopy release to full inflation. Measure for the canopy and packing configuration.
+        role: calibration_or_uncertainty
+
+  - kind: mass
+    design_inputs:
+      dry_mass_kg:
+        layer: L1
+        type: number
+        unit: kg
+        definition: Assembled airframe mass including installed hardware, excluding payload and water.
+        value_from: Measurement or a documented estimate for this assembly. Revisit when parts change.
+        affects: [liftoff_mass_kg, rail_exit_speed_mps, apogee_m, descent_speed_mps]
+      payload_mass_kg:
+        layer: L0
+        type: number
+        unit: kg
+        definition: Actual mass carried in addition to the airframe and water.
+        value_from: Mission payload. Keep fixed when comparing designs for the same load.
+        affects: [liftoff_mass_kg, apogee_m, descent_speed_mps]
+
+  - kind: launcher
+    references: [R04]
+    design_inputs: {}
+    environment_inputs:
+      env.rail_length_m: {layer: L2, type: number, unit: m, definition: Effective guide travel used by the current flight model. Hold fixed when the launcher is specified.}
+    reserved:
+      launch_elevation_deg:
+        layer: L3
+        type: number
+        unit: deg
+        definition: Launch-axis elevation above horizontal. The current water model assumes a vertical guide.
+        fixed_when: A vertical altitude mission is specified.
+
+  - kind: operating_point
+    references: [R04, R13, R14]
+    design_inputs:
+      water_fill_frac:
+        layer: L3
+        type: number
+        unit: fraction
+        definition: Initial water volume divided by internal bottle volume.
+        domain: Strictly between zero and one.
+        affects: [water_mass_kg, liftoff_mass_kg, thrust_phase_duration_s, apogee_m]
+      initial_gauge_pressure_pa:
+        layer: L3
+        type: number
+        unit: Pa
+        definition: Initial internal pressure above ambient at the pad.
+        domain: Positive and within documented equipment limits and the model pressure cap.
+        affects: [peak_thrust_n, rail_exit_speed_mps, apogee_m]
+    reserved:
+      initial_gas_temperature_k:
+        type: number
+        unit: K
+        role: measured_condition
+        definition: Initial temperature of the internal gas charge for an expansion model.
+      initial_gas_relative_humidity_frac:
+        type: number
+        unit: fraction
+        role: measured_condition
+        definition: Initial water vapor partial pressure divided by saturation pressure at the initial gas temperature.
+    derived:
+      water_mass_kg: {unit: kg, formula: "bottle_volume_m3 * water_fill_frac * WATER_DENSITY_KGPM3"}
+
+# Keys are executable tool names. sensitive_to lists design inputs at fixed remaining inputs.
+# A part swap that changes assembled mass also requires a new dry_mass_kg.
+analysis_methods:
+  simulate_design:
+    method: Nominal water discharge, residual-air impulse and drag trajectory. Parachute descent starts at apogee when fitted.
+    arguments: [design, env, requirement, seed, tune_pitch]
+    use_when: Screening a new configuration or comparing operating points. Pass the same mission and environment, with tune_pitch false.
+    sensitive_to: [bottle_volume_m3, nozzle_diameter_m, has_fins, dry_mass_kg, payload_mass_kg, water_fill_frac, initial_gauge_pressure_pa, has_parachute, parachute_diameter_m]
+    limitation: Fin presence selects a drag coefficient. Landing speed is a recovery proxy for a fragile payload.
+  estimate_cost:
+    method: Provisional base assembly price plus the fitted parachute allowance.
+    arguments: [design]
+    use_when: Comparing recovery options or screening estimated price before running a flight.
+    sensitive_to: [has_parachute]
+    limitation: The bottle cost model resolves the parachute option only. Part-specific catalog prices do not enter this estimate.
+  run_dispersion:
+    method: Seeded Monte Carlo flights with perturbed gauge pressure and wind speed and direction.
+    arguments: [design, env, requirement, n, seed]
+    use_when: Comparing nominally passing candidates under the same mission, environment, perturbation model, sample count and seed.
+    sensitive_to: [bottle_volume_m3, nozzle_diameter_m, has_fins, dry_mass_kg, payload_mass_kg, water_fill_frac, initial_gauge_pressure_pa, has_parachute, parachute_diameter_m]
+    limitation: Success rate is conditional on the provisional perturbation distributions.
+
+# Each source is a path into an actual tool result. Directions order candidates within
+# one comparison. The success field remains the nominal verdict across all applicable rules.
+evaluation_functions:
+  nominal_pass:
+    role: acceptance
+    direction: require_true
+    unit: boolean
+    sources: {simulate_design: success}
+    definition: All applicable flight and mission checks pass for the nominal design. Supply the complete requirement.
+  altitude_band_violation:
+    role: constraint
+    direction: minimize_to_zero
+    unit: m
+    sources: {simulate_design: metrics.apogee_band_excess_m}
+    definition: Absolute apogee error in excess of the allowed tolerance, floored at zero.
+    requires: An altitude target.
+    sensitive_to: [bottle_volume_m3, nozzle_diameter_m, has_fins, dry_mass_kg, payload_mass_kg, water_fill_frac, initial_gauge_pressure_pa]
+  descent_speed_violation:
+    role: constraint
+    direction: minimize_to_zero
+    unit: m/s
+    sources: {simulate_design: metrics.descent_speed_excess_mps}
+    definition: Landing speed above the model limit for the carried load, floored at zero.
+    requires: The rocket left the launcher.
+  budget_violation:
+    role: constraint
+    direction: minimize_to_zero
+    unit: JPY
+    sources: {simulate_design: metrics.budget_excess_jpy}
+    definition: Estimated cost above the mission budget, floored at zero.
+    requires: A budget.
+    sensitive_to: [has_parachute]
+  minimize_cost:
+    role: preference
+    direction: minimize
+    unit: JPY
+    sources: {estimate_cost: cost_jpy}
+    definition: Choose the less expensive of otherwise feasible candidates.
+  maximize_success_rate:
+    role: preference
+    direction: maximize
+    unit: fraction
+    sources: {run_dispersion: success_rate}
+    definition: Fraction of perturbed flights passing all applicable flight and mission checks.
+  minimize_recovery_distance_p95:
+    role: preference
+    direction: minimize
+    unit: m
+    sources: {run_dispersion: quantiles.landing_distance_m.p95}
+    definition: 95th percentile of horizontal landing distance from the pad for recovery planning.
+    requires: Compare landing distances for feasible candidates alongside their success rates.
+  minimize_altitude_band_violation_p95:
+    role: preference
+    direction: minimize
+    unit: m
+    sources: {run_dispersion: quantiles.apogee_band_excess_m.p95}
+    sensitive_to: [bottle_volume_m3, nozzle_diameter_m, has_fins, dry_mass_kg, payload_mass_kg, water_fill_frac, initial_gauge_pressure_pa]
+    requires: An altitude target and identical environmental assumptions, seed and sample count for both candidates.
+    definition: Upper-tail magnitude of altitude-band misses. Read alongside success_rate to distinguish severity from frequency.
+    references: [R04]
+    interpretation: Project adaptation of robust-design comparisons to an altitude mission. R04 evaluates pressure versus flight distance using an SN ratio.

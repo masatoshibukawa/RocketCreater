@@ -147,6 +147,7 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
     else:
         assert any("parachute" in r for r in ordered[0]["failure_reasons"])
         for d in passing:
+            assert d["design"]["bottle_volume_m3"] == 0.0015
             assert 27 <= d["metrics"]["apogee_m"] <= 33  # +-10 % of the 30 m target
             assert d["metrics"]["descent_speed_mps"] <= 6.0  # the egg
             assert d["cost_jpy"] <= 3_000

@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0-draft",
+  "package_id": "rocketwright-water-rocket-content-example",
+  "design_revision": "r00",
+  "content_status": "draft_example",
+  "design_status": "configuration_not_confirmed",
+  "parts": [
+    {
+      "part_id": "bottle-001",
+      "revision": "r00",
+      "name_ja": "既製の耐圧ボトル",
+      "procurement": "purchase",
+      "quantity": null,
+      "geometry_status": "not_selected"
+    },
+    {
+      "part_id": "fin-001",
+      "revision": "r00",
+      "name_ja": "外付けフィン・取付部",
+      "procurement": "to_be_decided",
+      "quantity": null,
+      "geometry_status": "not_designed"
+    },
+    {
+      "part_id": "recovery-001",
+      "revision": "r00",
+      "name_ja": "回収装置・取付部",
+      "procurement": "to_be_decided",
+      "quantity": null,
+      "geometry_status": "not_designed"
+    }
+  ],
+  "dimensions": {
+    "value": null,
+    "unit": "mm",
+    "status": "not_designed"
+  },
+  "mass": {
+    "value": null,
+    "unit": "g",
+    "status": "not_evaluated"
+  },
+  "ready_for_manufacturing": false,
+  "source_ids": [
+    "user-water-rocket",
+    "user-assembly"
+  ]
+}

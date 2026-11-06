@@ -1,0 +1,8 @@
+# Keep upstream files byte-identical to the catalog checksums.
+原本/** -text -whitespace
+CAD/D09-RocketFins/** -text -whitespace
+CAD/D21-ESP-Controlled-Rocket/** -text -whitespace
+CAD/D22-FreeCAD/** -text -whitespace
+CAD/D23-TSoGiants/** -text -whitespace
+モデルロケット/*/原本/** -text -whitespace
+モデルロケット/*/モデル/** -text -whitespace

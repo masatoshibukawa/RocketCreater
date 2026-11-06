@@ -18,7 +18,14 @@ from rocketwright.agent.tools import (
 from rocketwright.cost import estimate_cost_jpy
 from rocketwright.physics import multistage as ms
 from rocketwright.physics import solid, water
-from rocketwright.schema import DesignAdapter, DispersionResult, Env, SimResult
+from rocketwright.schema import (
+    BottleDesign,
+    DesignAdapter,
+    DispersionResult,
+    Env,
+    FinSet,
+    SimResult,
+)
 
 AMATEUR_DESIGN = {
     "tier": "amateur",
@@ -146,6 +153,29 @@ def test_search_catalog_returns_lists():
         "search_catalog", {"tier": None, "query": "zzz-no-such-thing", "kind": "engines"}, "t"
     )
     assert out2["engines"] == []
+
+
+def test_bottle_catalog_variables_follow_matching_parts_and_simulator_inputs():
+    def search(query):
+        return execute_tool(
+            "search_catalog", {"tier": "bottle", "kind": "parts", "query": query}, "t"
+        )
+
+    nozzles = search("nozzle")
+    assert set(nozzles["variable_definitions"]) == {"nozzle"}
+    assert nozzles["count"] == len(nozzles["parts"])
+    for part in nozzles["parts"]:
+        design = BottleDesign.model_validate(
+            {**BOTTLE_DESIGN, "nozzle_diameter_m": part["nozzle_diameter_m"]}
+        )
+        assert design.nozzle_diameter_m > 0
+    assert set(nozzles["variable_definitions"]["nozzle"]["design_inputs"]) == {"nozzle_diameter_m"}
+
+    fins = search("bottle_fin_set_cardboard")["variable_definitions"]["fins"]
+    assert set(fins["design_inputs"]) == {"has_fins"}
+    assert {f"fins.{field}" for field in FinSet.model_fields} <= set(fins["reserved"])
+    assert "fins" not in BottleDesign.model_fields
+    assert "variable_definitions" not in search("zzz-no-match")
 
 
 def test_search_catalog_tells_the_model_which_ids_to_use():

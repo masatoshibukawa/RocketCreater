@@ -1,0 +1,20 @@
+{
+  "visual_review": "Five representative rendered frames, full-resolution posters and both eight-frame timed contact sheets",
+  "changes_observed": [
+    "Photographic workshop and outdoor lighting replace the simplified trees and grass",
+    "Thin PET, clear water, local reflections and molded surface detail replace the blue opaque appearance",
+    "Printed-part shading is smoother while every source STL vertex remains unchanged",
+    "Workbench grid, ruler and photographed asphalt establish physical scale",
+    "Launch cameras stay on the ground and look upward; the camera does not ascend with the rocket",
+    "Main viewing versions use only a small CG disclosure; engineering annotations are separate"
+  ],
+  "remaining_limits": [
+    "The bottle details and launcher are illustrative and unmeasured",
+    "Background HDRIs do not provide full geometric parallax",
+    "Water parcels are ballistic, not fluid breakup or splash CFD",
+    "No measured-flight, attitude, structural retention or recovery validation",
+    "Real-time full playback and actual audio listening were not performed"
+  ],
+  "production": "AI-assisted scene scripting, exact CAD, unchanged ODE trajectory, Cycles/OptiX rendering and original synthesized sound",
+  "claim": "Photographic rendering improvement; CG rather than actual launch footage"
+}

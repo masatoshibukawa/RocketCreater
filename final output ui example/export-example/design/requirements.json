@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0-draft",
+  "package_id": "rocketwright-water-rocket-content-example",
+  "design_revision": "r00",
+  "content_status": "draft_example",
+  "vehicle_type": "water_rocket",
+  "mission": {
+    "target_altitude": {
+      "value": null,
+      "unit": "m",
+      "status": "needs_input",
+      "source_id": "user-water-rocket"
+    },
+    "payload": {
+      "description": null,
+      "mass": {
+        "value": null,
+        "unit": "g"
+      },
+      "status": "needs_input"
+    },
+    "recovery_success_definition": {
+      "value": null,
+      "status": "needs_input"
+    }
+  },
+  "scope": {
+    "pressure_retaining_parts": "purchased_products_to_be_selected",
+    "custom_parts": "external_non_pressure_retaining_parts_pending_review",
+    "lunar_mission": "long_term_roadmap_only"
+  },
+  "requirements_confirmed": false,
+  "source_ids": [
+    "user-water-rocket"
+  ]
+}

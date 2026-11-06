@@ -102,6 +102,7 @@ def _fallback_requirement(req: Requirement, tier: Tier) -> Requirement:
         payload_mass_kg=payload,
         budget_jpy=req.budget_jpy,
         recovery_required=req.recovery_required,
+        bottle_volume_m3=req.bottle_volume_m3,
         tier_override=tier,
         text=req.text,
     )
