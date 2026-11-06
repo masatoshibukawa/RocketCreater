@@ -1,0 +1,1422 @@
+{
+  "planner": "local_llm",
+  "screening_precision": {
+    "altitude_error_m": 1.5,
+    "attitude_error_deg": 1,
+    "aero_allocation": 0.5,
+    "grid_relative_limit": 0.05,
+    "temporal_relative_limit": 0.03,
+    "structure_relative_limit": 0.05,
+    "deflection_span_limit": 0.05,
+    "maximum_incidence_deg": 15,
+    "minimum_static_margin_cal": 0.01,
+    "require_cfd": false,
+    "require_aero_audit": true,
+    "require_fem": false
+  },
+  "cases": {
+    "3_accuracy_before_design": {
+      "passed": true,
+      "unmet": [
+        "altitude",
+        "static_margin",
+        "aero_grid",
+        "aero_averaging",
+        "aero_lattice",
+        "aero_duration"
+      ],
+      "chosen": "refine/averaging",
+      "offered": [
+        "refine/averaging",
+        "refine/lattice",
+        "refine/cfd"
+      ],
+      "pending": [
+        "aero_averaging",
+        "aero_duration",
+        "aero_grid",
+        "aero_lattice"
+      ],
+      "scope": "Actual stage-6 precision rejection and refinement selection; action limit precedes recalculation",
+      "point_recalculation": {
+        "completed": true,
+        "duration_before": 40.147499999999994,
+        "duration_after": 60.0225,
+        "speed_mps": 18.0,
+        "angle_deg": 10.0,
+        "cells": 20,
+        "relative_difference": 0.0442765894062049,
+        "temporal_limit": 0.03,
+        "within_temporal_limit": false,
+        "reference_case": {
+          "Cd": 1.556285813941208,
+          "Cl": 1.6319538518491636,
+          "Cx": 1.249256523062081,
+          "Cy": 1.877407001378979,
+          "Cz": -0.008602615295616713,
+          "Croll": 0.017467762367137797,
+          "Cpitch_y": -0.0001676382387917138,
+          "Cm_z": 1.3795910759705918
+        },
+        "refined_case": {
+          "Cd": 1.582075666479894,
+          "Cl": 1.681475413603491,
+          "Cx": 1.2660552408373615,
+          "Cy": 1.9306545802315556,
+          "Cz": 0.007952865969725848,
+          "Croll": 0.00648318541686735,
+          "Cpitch_y": -0.012726088912053561,
+          "Cm_z": 1.4435045335066616
+        },
+        "table_recalculated": false,
+        "entire_design_accepted": false,
+        "artifact_hashes": {
+          "case.json": "2d384c0de7f14014d44bf4544030153f958f1ab1a0656d78cc4491907e976378",
+          "history.csv": "510053c4a5e0f8550144a4bd0836c95058a3d57b29528b658b1039cb992be6a4",
+          "line-loads.json": "bde59647210f8f0dfc17bf3b64672d78c8e0a55bb6988dc9ffa57c50752405ff",
+          "surface-loads.npz": "4b9883f6eb608de342e940cb7e363546c4a7f9c9b19b48390d6405442b085bf9",
+          "slice.npz": "76c94a2ef76d619eda81fcc8445b74e2f9c926711b73dd57e4929204e39deb4b"
+        },
+        "scope": "Executed the selected averaging duration at one independent point; full-table precision remains unresolved"
+      },
+      "selected_full_table_runtime_executed": false
+    },
+    "4_invalidate_old_verdicts": {
+      "passed": true,
+      "baseline_current": {
+        "geometry": true,
+        "fem_fine": true,
+        "modes": true,
+        "stability": true,
+        "confirm": true
+      },
+      "current_after_changes": {
+        "material": {
+          "geometry": true,
+          "fem_fine": false,
+          "modes": false,
+          "stability": false,
+          "confirm": false
+        },
+        "mount": {
+          "geometry": true,
+          "fem_fine": false,
+          "modes": false,
+          "stability": false,
+          "confirm": false
+        }
+      },
+      "scope": "Detached states against hash-verified native results; original project is unchanged",
+      "manifests": {
+        "geometry": {
+          "artifact": "v1/adaptive/1579e889bdc141fe8e162ce886e3c63d/00-geometry/data.json",
+          "sha256": "7f4adb28c02a08044c8d3bc84b9f913bdb9a7153be82f48e1faa48dd67349d1e",
+          "manifest_sha256": "95ea7456642f3c5744c6777ef1b769f15bc02e81b2aa7a9ba1a7be88986e8cc0",
+          "files": 15
+        },
+        "thermal": {
+          "artifact": "v1/adaptive/26a1774e20f941fbb607332002bb3ce7/01-thermal/data.json",
+          "sha256": "6b2dbcd960fa00094678e371d33d9db5bf6f0c453bb7a852e77fb329c10665e1",
+          "manifest_sha256": "bebd13f5df59f7c47318ca165d038da949c19fb345589cc20af8f63d073ae9cc",
+          "files": 3
+        },
+        "propulsion": {
+          "artifact": "v1/adaptive/20b1b07f5d3b46598fd27309f9e1b790/02-propulsion/data.json",
+          "sha256": "b9f755e608efdcf0e645fa783166ccbad0cb28661adec4416528b053c9bbc441",
+          "manifest_sha256": "603496f7c452efb7f55dfc539ed652dc268767ede6154c87d98bb4af1de05cf6",
+          "files": 3
+        },
+        "screen": {
+          "artifact": "v1/adaptive/8aa835450b4c4e5dbcafccc8606cdc6d/03-screen/data.json",
+          "sha256": "161441bde61951626c496050e7815af7fe9ee8494310869f0178323553b515b0",
+          "manifest_sha256": "3c75a787257109f5c2ab2443b9e731fd0e1be278b05df73ac2ab100ecb23aa91",
+          "files": 3
+        },
+        "cfd_coarse": {
+          "artifact": "v1/adaptive/022351dee9e84979a007b42463e609c9/04-cfd_coarse/data.json",
+          "sha256": "51219b2997c4bec15b6397dcae1120db1352e7c15ff28c82194cc44081c906f7",
+          "manifest_sha256": "cf6471d50ad10587a5c9a8a7d28da48dce2336a8a47870e8ab5685b201131f8b",
+          "files": 103
+        },
+        "cfd_fine": {
+          "artifact": "v1/adaptive/eb769d16009f461a82b6f2423721047c/05-cfd_fine/data.json",
+          "sha256": "326e9fb4715cdbe57015d787475aa5560c38f836055ce0a7c4eeaa09d1cca35c",
+          "manifest_sha256": "cb059cf828e1fd0f979bac66c3424ca865aed33354898af7e9f9ea4f815b376e",
+          "files": 103
+        },
+        "cfd_audit": {
+          "artifact": "v1/adaptive/9cb44f45dcca4a2590a92a1e3240211d/06-cfd_audit/data.json",
+          "sha256": "55210d9a6fdc7417e43cd86840349dda5151b4cda5a8a366b79a15b4a155af1a",
+          "manifest_sha256": "b7bee11677f42a38edfb9b29b6029cfcb9069b562e65a7b51f6b09db46109aa1",
+          "files": 46
+        },
+        "flight": {
+          "artifact": "v1/adaptive/6f9df1d2508347cabf155dcf9444dbc1/07-flight/data.json",
+          "sha256": "d26254ecbf8bcbbcf6f2af9caea55fc84df823e19ad594d2a11125030fa5d376",
+          "manifest_sha256": "58ebc2a147fcde6d9574eb876a72cb6540f13c6859a9ea635965ee4dfdd1e94f",
+          "files": 3
+        },
+        "modes": {
+          "artifact": "v1/adaptive/96b77e9d50ee436d96c88fdd5f475969/08-modes/data.json",
+          "sha256": "c420dea5bb50094f2f8563c2c26765b1234c3f19cba0f1d4fafea2e50916af15",
+          "manifest_sha256": "f0c923a63c063206ae1fbca5e31c77e59b3016c732043b7217af8e471621d3c9",
+          "files": 3
+        },
+        "refine": {
+          "artifact": "v1/adaptive/f0779a392c2f4a6b955912920ab4d7e1/09-refine/data.json",
+          "sha256": "5600f3b008fb9cac5073fbb4b907a5450d05effc9536c3e7f0c8401b5195fd19",
+          "manifest_sha256": "b294854bc356b88f2d51b9241f08b0bde16c3f7369b3af10c2acc2a81709e745",
+          "files": 3
+        },
+        "fem_coarse": {
+          "artifact": "v1/adaptive/ab1153f9a110496db4e34cac61b165f7/10-fem_coarse/data.json",
+          "sha256": "cc7a168f6e74752c34036f7429d087803659b0addb4a8bc2ebec060c08d79feb",
+          "manifest_sha256": "debd1b0b8eb49447a64e4a1668ec207bffeb21082cf3ec2b7431074dc57b10dd",
+          "files": 18
+        },
+        "fem_fine": {
+          "artifact": "v1/adaptive/4dabef2b9c7c48e884ab87d36db5bb2c/11-fem_fine/data.json",
+          "sha256": "c3375fc88ede309a5a1fe92570c59c0d0374f1804268e24b0c58bc5c24f34ce3",
+          "manifest_sha256": "9064903c92bf25e2d122f53098fc1bed2340ff00f8e62a78b92d4f99f2be761f",
+          "files": 18
+        },
+        "stability": {
+          "artifact": "v1/adaptive/031758290b4e4cb797fc267f367bd4cb/12-stability/data.json",
+          "sha256": "9d494f22ab8663ab326e1da6387b8981587b454801689ce343528472afe54693",
+          "manifest_sha256": "b1c9bf444bb99432963596a5d0a73e72190643920bc2eb3686cf901c4bfc54a2",
+          "files": 3
+        },
+        "confirm": {
+          "artifact": "v1/adaptive/b1f3f423df724e05b715800b9de17cab/13-confirm/data.json",
+          "sha256": "a2337aa8cdd00f2e6223cf02d1ce87200f4a93a68459487db2bd92b605ed2ba7",
+          "manifest_sha256": "40b86032d6eb01ddba6c74cff52a6b7c017709e1965ad9bc46ccc76221311874",
+          "files": 3
+        }
+      }
+    },
+    "1_operating_then_shape": {
+      "passed": true,
+      "run": {
+        "project_id": "865e5d123ba548179978691c6cfdca53",
+        "status": "unresolved",
+        "revisions": [
+          {
+            "from_version": 1,
+            "to_version": 2,
+            "action": "redesign/pressure-350",
+            "reason": "The 'redesign/pressure-350' action directly addresses the 'altitude' unmet requirement by utilizing an unused operating pressure scenario. This reduces uncertainty in the system's performance by increasing the potential energy/thrust potential of the propulsion system. It is a 'high' layer action, meaning it addresses a high-level system requirement rather than a low-level material or component property. Compared to the other options, it has the highest score (86.5) and the lowest resource cost (1s), making it the most efficient method to bridge the gap between the current apogee (11.22m) and the target altitude (30.0m).",
+            "change": {
+              "section": "design",
+              "field": "initial_gauge_pressure_pa",
+              "value": 350000.0
+            }
+          },
+          {
+            "from_version": 2,
+            "to_version": 3,
+            "action": "redesign/thinner-fin",
+            "reason": "The 'redesign/thinner-fin' action directly addresses the 'altitude' unmet requirement by targeting the 'fin_thickness_mm' field. By reducing the mass of the structure while maintaining the high-level 'geometry' layer, it aims to increase the apogee toward the 30.0m target. It has a higher score (70) than other available options like 'redesign/material-PETG' (60) or the 'modes' (53.2) and 'stability' (51.9) models, and it carries a low resource cost of 1s. It effectively addresses the altitude gap by optimizing the mass-to-thrust ratio in a high-level design revision.",
+            "change": {
+              "section": "geometry",
+              "field": "fin_thickness_mm",
+              "value": 2.04
+            }
+          }
+        ],
+        "decisions": [
+          {
+            "action": "geometry",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'geometry' action addresses the 'geometry_gap' by establishing a conditional numerical model. This reduces uncertainty in the physical dimensions and spatial configuration of the system, which is a foundational requirement for subsequent aerodynamic and structural evaluations. By establishing this base layer, it provides the necessary geometric definition required to satisfy the 'require_aero_audit' constraint, as accurate geometry is a prerequisite for reliable aerodynamic modeling.",
+            "errors": []
+          },
+          {
+            "action": "thermal",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'thermal' action addresses the 'thermal_gap' by establishing a conditional numerical model. This reduces uncertainty regarding the thermal environment and material behavior under operational conditions. While it is a 'low' layer requirement, it addresses a specific unmet requirement (thermal_gap) and provides a necessary baseline for environmental stability, independent of the aerodynamic or structural layers already being addressed.",
+            "errors": []
+          },
+          {
+            "action": "propulsion",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'propulsion' action addresses the 'propulsion_gap' by establishing a conditional numerical model. This reduces uncertainty regarding the thrust profile and propulsion system performance, which is a critical middle-layer requirement. By modeling the propulsion system, it provides the necessary force data required to satisfy the 'altitude' goal and subsequent trajectory calculations, moving the system closer to meeting the primary mission requirements while remaining independent of the already addressed geometry and thermal layers.",
+            "errors": []
+          },
+          {
+            "action": "screen",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'screen' action addresses the 'screen_gap' by establishing a conditional numerical model. This reduces uncertainty regarding the specific material or component behavior represented by the 'screen' requirement. As a 'high' layer requirement, it addresses a specific unmet requirement that is not currently covered by the lower-level geometry, thermal, or propulsion models. By establishing this model, it fulfills a high-level specification without requiring physical material qualification, thus reducing uncertainty in the final system configuration.",
+            "errors": []
+          },
+          {
+            "action": "redesign/pressure-350",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'redesign/pressure-350' action directly addresses the 'altitude' unmet requirement by utilizing an unused operating pressure scenario. This reduces uncertainty in the system's performance by increasing the potential energy/thrust potential of the propulsion system. It is a 'high' layer action, meaning it addresses a high-level system requirement rather than a low-level material or component property. Compared to the other options, it has the highest score (86.5) and the lowest resource cost (1s), making it the most efficient method to bridge the gap between the current apogee (11.22m) and the target altitude (30.0m).",
+            "errors": []
+          },
+          {
+            "action": "thermal",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'thermal' action addresses the 'thermal_gap' by establishing a conditional numerical model. This reduces uncertainty regarding the thermal environment and material behavior under operational conditions. While it is a 'low' layer requirement, it addresses a specific unmet requirement (thermal_gap) and provides a necessary baseline for environmental stability, independent of the aerodynamic or structural layers already being addressed.",
+            "errors": []
+          },
+          {
+            "action": "propulsion",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'propulsion' action addresses the 'propulsion_gap' by establishing a conditional numerical model, which directly reduces uncertainty regarding the thrust profile and propulsion system performance. As a middle-layer requirement, it provides the necessary force data required to satisfy the 'altitude' goal. By modeling the propulsion system, it creates a foundational dependency for trajectory calculations while remaining independent of the already resolved geometry and thermal layers, thus moving the system closer to meeting the primary mission requirements.",
+            "errors": []
+          },
+          {
+            "action": "screen",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'screen' action addresses the 'screen_gap' by establishing a conditional numerical model. This reduces uncertainty regarding the specific material or component behavior represented by the 'screen' requirement. As a 'high' layer requirement, it addresses a specific unmet requirement that is not currently covered by the lower-level geometry, thermal, or propulsion models. By establishing this model, it fulfills a high-level specification without requiring physical material qualification, thus reducing uncertainty in the final system configuration.",
+            "errors": []
+          },
+          {
+            "action": "redesign/thinner-fin",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'redesign/thinner-fin' action directly addresses the 'altitude' unmet requirement by targeting the 'fin_thickness_mm' field. By reducing the mass of the structure while maintaining the high-level 'geometry' layer, it aims to increase the apogee toward the 30.0m target. It has a higher score (70) than other available options like 'redesign/material-PETG' (60) or the 'modes' (53.2) and 'stability' (51.9) models, and it carries a low resource cost of 1s. It effectively addresses the altitude gap by optimizing the mass-to-thrust ratio in a high-level design revision.",
+            "errors": []
+          },
+          {
+            "action": "geometry",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'geometry' action addresses the 'geometry_gap' by establishing a conditional numerical model. As a 'low' layer requirement, it provides the foundational structural and spatial definition of the system. By establishing this model, it reduces uncertainty regarding the physical dimensions and configuration of the vehicle, which is a prerequisite for subsequent calculations in the thermal, propulsion, and aerodynamic layers. Although it has a higher resource cost (20.0s) compared to some other actions, it addresses a fundamental gap in the system's baseline definition.",
+            "errors": []
+          },
+          {
+            "action": "thermal",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'thermal' action addresses the 'thermal_gap' by establishing a conditional numerical model. As a 'low' layer requirement, it provides a foundational model for the system's thermal behavior. By establishing this model, it reduces uncertainty regarding thermal impacts on the system components. While it has a lower score than some high-level actions, it addresses a fundamental gap in the system's baseline definition, providing necessary data for subsequent calculations in the propulsion and aerodynamic layers.",
+            "errors": []
+          },
+          {
+            "action": "propulsion",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'propulsion' action addresses the 'propulsion_gap' by establishing a conditional numerical model. As a 'middle' layer requirement, it provides the necessary propulsion data to bridge the gap between the foundational 'geometry' and 'thermal' layers and the high-level 'altitude' goal. By establishing this model, it reduces uncertainty regarding the thrust and propulsion dynamics of the system. While it has a lower score than high-level actions like 'redesign/thinner-fin', it addresses a critical intermediate requirement that is necessary for calculating the final altitude and ensuring the system meets its primary performance goals.",
+            "errors": []
+          },
+          {
+            "action": "screen",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'screen' action addresses the 'screen_gap' by establishing a conditional numerical model. While it has a lower score than high-level redesign actions, it addresses a specific gap in the system's requirements. By establishing this model, it reduces uncertainty regarding the screen's performance or integration within the system's design. It provides a necessary data point for the high-level design, and despite its moderate resource cost of 10.0s, it fulfills a specific requirement that contributes to the overall system definition.",
+            "errors": []
+          },
+          {
+            "action": "modes",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'modes' action addresses the 'modes_gap' by establishing a conditional numerical model. As a 'middle' layer requirement, it provides a critical bridge between the foundational geometry/thermal layers and the high-level altitude goal. By establishing this model, it reduces uncertainty regarding the operational modes of the system, which is a necessary step for calculating the final altitude and ensuring the system meets its primary performance goals. It offers a high score (53.21) and a relatively low resource cost (5.0s) compared to other high-level actions, making it an efficient way to address a core requirement for the unmet 'altitude' goal.",
+            "errors": []
+          },
+          {
+            "action": "stability",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'stability' action targets the 'stability_gap' at a 'high' layer. By establishing a conditional numerical model for stability, it reduces uncertainty regarding the vehicle's aerodynamic stability, which is a critical dependency for achieving the unmet 'altitude' goal. While it has a higher resource cost than 'modes', it addresses a high-level requirement that ensures the system remains controllable during its ascent, providing a more robust path toward meeting the target altitude than lower-level refinements.",
+            "errors": []
+          },
+          {
+            "action": "refine",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'refine' action targets the 'refine_gap' at a 'high' layer. By establishing a conditional numerical model, it directly addresses the 'altitude' unmet requirement by optimizing the system's performance parameters. Given that the current apogee (14.81m) is significantly below the target altitude (30.0m), the 'refine' action provides a high-level method to bridge this gap by refining the design's performance characteristics. It offers a high score (51.56) and, while it has a higher resource cost than 'modes', it addresses a high-level requirement necessary for meeting the primary altitude goal.",
+            "errors": []
+          },
+          {
+            "action": "confirm",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'confirm' action targets the 'confirm_gap' at a 'high' layer. By establishing a conditional numerical model, it reduces uncertainty regarding the final system configuration and performance. Given that the current apogee (14.81m) is significantly below the target altitude (30.0m), the 'confirm' action provides a high-level method to validate the design's performance characteristics. It offers a high score (51.96) and, while it has a higher resource cost than 'modes', it addresses a high-level requirement necessary for meeting the primary altitude goal by solidifying the design's parameters.",
+            "errors": []
+          }
+        ],
+        "executions": [
+          {
+            "action": "geometry",
+            "execution_status": "completed"
+          },
+          {
+            "action": "thermal",
+            "execution_status": "completed"
+          },
+          {
+            "action": "propulsion",
+            "execution_status": "completed"
+          },
+          {
+            "action": "screen",
+            "execution_status": "completed"
+          },
+          {
+            "action": "thermal",
+            "execution_status": "completed"
+          },
+          {
+            "action": "propulsion",
+            "execution_status": "completed"
+          },
+          {
+            "action": "screen",
+            "execution_status": "completed"
+          },
+          {
+            "action": "geometry",
+            "execution_status": "completed"
+          },
+          {
+            "action": "thermal",
+            "execution_status": "completed"
+          },
+          {
+            "action": "propulsion",
+            "execution_status": "completed"
+          },
+          {
+            "action": "screen",
+            "execution_status": "completed"
+          },
+          {
+            "action": "modes",
+            "execution_status": "completed"
+          },
+          {
+            "action": "stability",
+            "execution_status": "completed"
+          },
+          {
+            "action": "refine",
+            "execution_status": "completed"
+          },
+          {
+            "action": "confirm",
+            "execution_status": "completed"
+          }
+        ],
+        "confirmations": [
+          {
+            "version": 3,
+            "unmet": [
+              "altitude"
+            ],
+            "apogee_m": 14.811384524764081,
+            "sha256": "03fe42b1ed99ebcc0af03f639ca8340c9fda44114030451cf4462216343a3b0d"
+          }
+        ],
+        "manifests": {
+          "geometry": {
+            "artifact": "v3/adaptive/fd61b2dfc0ad44ac8b9d2ecdc2651d53/07-geometry/data.json",
+            "sha256": "ca91b940bd2297f505cf5e3bbba72563faa2a82ee79bfe0d40b937b369b46b54",
+            "manifest_sha256": "dd7f41734c8ebdbcca668610ba90f728ee049db1d4aeabbd1470716d2469114b",
+            "files": 15
+          },
+          "thermal": {
+            "artifact": "v3/adaptive/e2ffbab8fa6b409c9824e02f2755121d/08-thermal/data.json",
+            "sha256": "7e2252740d8d315b92e7c91731231bbdb1439d3688929dd87ff8cae915428242",
+            "manifest_sha256": "e20e5d51cf4b2a4c42e4ebfdfa7180a2f78dbdad1b3308644b952cb8d6412c9a",
+            "files": 3
+          },
+          "propulsion": {
+            "artifact": "v3/adaptive/da47b5113dd3417c9846d02d8e67960f/09-propulsion/data.json",
+            "sha256": "dd4e18bd8a91c134b4edc46e5c4269002f95a8faeca0b3760aa25ec0df9800bf",
+            "manifest_sha256": "baddf88ee25a434c8264ee3f27c4dd574c2922ca7125477a691d7f8e83e65d05",
+            "files": 3
+          },
+          "screen": {
+            "artifact": "v3/adaptive/8913d2772971434e8e8b9791d297a45c/10-screen/data.json",
+            "sha256": "88b89cd407c2401497f5bf8ba94c7be4088625bd6346bd693a5742e6e446983c",
+            "manifest_sha256": "25bc9233ba8598f3dba4e4c6b3cb4e1c522f1261d1e6fa77e721eaa2b5b60d6b",
+            "files": 3
+          },
+          "modes": {
+            "artifact": "v3/adaptive/6c899bbae674472bb3586fac6596ae6d/11-modes/data.json",
+            "sha256": "8fc3175987b45e90cfdc10e280ead94c6b48fac3150f463460e1ca0c861be391",
+            "manifest_sha256": "9441aa742ad2d6050521aa2834c21cfa39a05da2a9ddc9983eafadf236a81957",
+            "files": 3
+          },
+          "stability": {
+            "artifact": "v3/adaptive/7a21be5533ee402eab2b6f605a87a2a7/12-stability/data.json",
+            "sha256": "3656235bcc24b4763aa1c3dfbe4d9dc09a40ff5509005e7f73a0318be854d755",
+            "manifest_sha256": "23c7704862eb2e24d9bf4342089c5b87e4026436be056d180730859420295697",
+            "files": 3
+          },
+          "refine": {
+            "artifact": "v3/adaptive/9c5b6241ffe34e21b12a06826812ea13/13-refine/data.json",
+            "sha256": "309610cb6c1198fb3a4765664f87336eddc77e9430b058a6aba11f64e9e58aab",
+            "manifest_sha256": "a4ffb13b6b133834c2d7a3c6273078c3d95f357505688c8fec33738bb5896d44",
+            "files": 3
+          },
+          "confirm": {
+            "artifact": "v3/adaptive/66a4eadd11e24440a5c8d6c6b29ee02d/14-confirm/data.json",
+            "sha256": "03fe42b1ed99ebcc0af03f639ca8340c9fda44114030451cf4462216343a3b0d",
+            "manifest_sha256": "56ea543c6d8479e71406d1da5321958467c06958b4b9499f7fe7597451778d1e",
+            "files": 3
+          }
+        },
+        "physical_qualification": false
+      }
+    },
+    "2_thickness_mass_tradeoff": {
+      "passed": true,
+      "thin": {
+        "dry_mass_g": 298.50249065066885,
+        "apogee_m": 11.221885245614551,
+        "deflection_ratio": 0.015208406112118473,
+        "fin_thickness_mm": 2.4,
+        "target_altitude_m": 30.0,
+        "evidence": "native CAD, heat, discharge, analytic-aero 6DOF and warm beam"
+      },
+      "thick": {
+        "dry_mass_g": 344.7001690904521,
+        "apogee_m": 9.32374631040393,
+        "deflection_ratio": 0.009251785668329593,
+        "fin_thickness_mm": 3.6,
+        "target_altitude_m": 30.0,
+        "evidence": "native CAD, heat, discharge, analytic-aero 6DOF and warm beam"
+      },
+      "run": {
+        "project_id": "2cd6592ed7d64a0c9e6bb27c776b69c5",
+        "status": "unresolved",
+        "revisions": [
+          {
+            "from_version": 1,
+            "to_version": 2,
+            "action": "redesign/thinner-fin",
+            "reason": "The 'redesign/thinner-fin' action directly addresses the 'altitude' unmet requirement by targeting the 'fin_thickness_mm' in the geometry layer. By reducing the printed mass of the fins while maintaining structural integrity, it optimizes the mass-to-thrust ratio. This is a high-layer action that addresses the primary mission goal (altitude) by reducing the weight of the system, which is a more direct path to increasing apogee than material substitution or numerical modeling of secondary gaps like 'modes' or 'stability'.",
+            "change": {
+              "section": "geometry",
+              "field": "fin_thickness_mm",
+              "value": 3.06
+            }
+          }
+        ],
+        "decisions": [
+          {
+            "action": "geometry",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'geometry' action addresses the 'geometry_gap' by establishing a conditional numerical model. This reduces uncertainty in the physical dimensions and spatial configuration of the system, which is a foundational requirement for subsequent aerodynamic and structural evaluations. By establishing this base layer, it provides the necessary geometric definition required to satisfy the 'require_aero_audit' constraint, as accurate geometry is a prerequisite for reliable aerodynamic modeling.",
+            "errors": []
+          },
+          {
+            "action": "thermal",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'thermal' action addresses the 'thermal_gap' by establishing a conditional numerical model. This reduces uncertainty regarding the thermal environment and material behavior under operational conditions. While it is a 'low' layer requirement, it addresses a specific unmet requirement (thermal_gap) and provides a necessary baseline for environmental stability, independent of the aerodynamic or structural layers already being addressed.",
+            "errors": []
+          },
+          {
+            "action": "propulsion",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'propulsion' action addresses the 'propulsion_gap' by establishing a conditional numerical model. This reduces uncertainty regarding the thrust profile and propulsion system performance, which is a critical middle-layer requirement. By modeling the propulsion system, it provides the necessary force data required to satisfy the 'altitude' goal and subsequent trajectory calculations, moving the system closer to meeting the primary mission requirements while remaining independent of the already addressed geometry and thermal layers.",
+            "errors": []
+          },
+          {
+            "action": "screen",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'screen' action addresses the 'screen_gap' by establishing a conditional numerical model. This reduces uncertainty regarding the specific material or component behavior represented by the 'screen' requirement. As a 'high' layer requirement, it addresses a specific unmet requirement that is not currently covered by the lower-level geometry, thermal, or propulsion models. By establishing this model, it fulfills a high-level specification without requiring physical material qualification, thus reducing uncertainty in the final system configuration.",
+            "errors": []
+          },
+          {
+            "action": "redesign/thinner-fin",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'redesign/thinner-fin' action directly addresses the 'altitude' unmet requirement by targeting the 'fin_thickness_mm' in the geometry layer. By reducing the printed mass of the fins while maintaining structural integrity, it optimizes the mass-to-thrust ratio. This is a high-layer action that addresses the primary mission goal (altitude) by reducing the weight of the system, which is a more direct path to increasing apogee than material substitution or numerical modeling of secondary gaps like 'modes' or 'stability'.",
+            "errors": []
+          },
+          {
+            "action": "geometry",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'geometry' action addresses the 'geometry_gap' by establishing a conditional numerical model. As a 'low' layer requirement, it provides the foundational spatial and structural definitions necessary for subsequent calculations. By establishing this model, it reduces uncertainty regarding the physical dimensions and configuration of the system, which is a prerequisite for more complex calculations in the middle and high layers (such as propulsion and aerodynamics). It is a low-cost, high-impact foundational step that establishes the baseline geometry required to evaluate the system's physical feasibility.",
+            "errors": []
+          },
+          {
+            "action": "thermal",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'thermal' action addresses the 'thermal_gap' by establishing a conditional numerical model. As a 'low' layer requirement, it provides a foundational model for the system's thermal behavior. By establishing this model, it reduces uncertainty regarding temperature distribution and material stability, which is a prerequisite for ensuring the integrity of the propulsion and structural components. This low-cost action provides the necessary data to ensure the system can operate within its intended environment without requiring immediate physical material qualification.",
+            "errors": []
+          },
+          {
+            "action": "propulsion",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'propulsion' action addresses the 'propulsion_gap' by establishing a conditional numerical model. As a 'middle' layer requirement, it provides the necessary calculations for thrust and propulsion dynamics. By establishing this model, it reduces uncertainty regarding the propulsion system's performance, which is a critical dependency for achieving the 'altitude' goal. This action is prioritized over lower-layer foundational models because it directly impacts the primary mission objective while remaining a low-cost numerical approach that avoids the need for immediate physical hardware qualification.",
+            "errors": []
+          },
+          {
+            "action": "screen",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'screen' action addresses the 'screen_gap' by establishing a conditional numerical model. As a 'high' layer requirement, it addresses a specific gap in the system's design. By providing a numerical model for the screen component, it reduces uncertainty regarding the specific functionality or interaction of this component within the system. This high-layer action is prioritized because it addresses a specific gap in the high-level requirements, and since it is a conditional numerical model, it offers a low-cost method to resolve uncertainty without requiring immediate physical material qualification or hardware testing.",
+            "errors": []
+          },
+          {
+            "action": "modes",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'modes' action targets the 'modes_gap' at a 'middle' layer. It reduces uncertainty regarding the operational states and transitions of the system, which is a critical dependency for achieving the 'altitude' goal. As a conditional numerical model, it provides a low-cost method to define the system's behavior without requiring physical hardware qualification, making it a high-impact step for resolving the current unmet requirement.",
+            "errors": []
+          },
+          {
+            "action": "stability",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'stability' action targets the 'stability_gap' at a 'high' layer. By establishing a conditional numerical model for stability, it reduces uncertainty regarding the vehicle's aerodynamic stability and control, which is a critical dependency for achieving the 'altitude' goal. As a high-layer requirement, it addresses a specific gap in the system's design. Because it is a conditional numerical model, it provides a low-cost method to resolve uncertainty without requiring physical material qualification or hardware testing, making it an effective way to address the unmet 'altitude' requirement by ensuring the vehicle remains controllable during ascent.",
+            "errors": []
+          },
+          {
+            "action": "refine",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'refine' action targets the 'refine_gap' at a 'high' layer. By establishing a conditional numerical model, it reduces uncertainty in the high-level design specifications. This is a low-cost method to resolve design ambiguities without requiring physical hardware qualification, and it addresses the high-level requirements necessary to satisfy the 'altitude' goal by ensuring the design is sufficiently refined to meet the target parameters.",
+            "errors": []
+          },
+          {
+            "action": "confirm",
+            "planner": "local_llm",
+            "model": "gemma4:12b",
+            "reason": "The 'confirm' action targets the 'confirm_gap' at a 'high' layer. By establishing a conditional numerical model, it reduces uncertainty in the high-level design specifications. This is a low-cost method to resolve design ambiguities without requiring physical hardware qualification, and it addresses the high-level requirements necessary to satisfy the 'altitude' goal by ensuring the design is sufficiently refined and validated against the target parameters.",
+            "errors": []
+          }
+        ],
+        "executions": [
+          {
+            "action": "geometry",
+            "execution_status": "completed"
+          },
+          {
+            "action": "thermal",
+            "execution_status": "completed"
+          },
+          {
+            "action": "propulsion",
+            "execution_status": "completed"
+          },
+          {
+            "action": "screen",
+            "execution_status": "completed"
+          },
+          {
+            "action": "geometry",
+            "execution_status": "completed"
+          },
+          {
+            "action": "thermal",
+            "execution_status": "completed"
+          },
+          {
+            "action": "propulsion",
+            "execution_status": "completed"
+          },
+          {
+            "action": "screen",
+            "execution_status": "completed"
+          },
+          {
+            "action": "modes",
+            "execution_status": "completed"
+          },
+          {
+            "action": "stability",
+            "execution_status": "completed"
+          },
+          {
+            "action": "refine",
+            "execution_status": "completed"
+          },
+          {
+            "action": "confirm",
+            "execution_status": "completed"
+          }
+        ],
+        "confirmations": [
+          {
+            "version": 2,
+            "unmet": [
+              "altitude"
+            ],
+            "apogee_m": 10.118524895890967,
+            "sha256": "1c377e54a5fee11edc1da105e99cb311961e7a859a1bf4b375372671eaf3ba76"
+          }
+        ],
+        "manifests": {
+          "geometry": {
+            "artifact": "v2/adaptive/4904e08a06474feca4591a8bd8b2a6ac/04-geometry/data.json",
+            "sha256": "8878f63771fe4c9cf4b005e07c6ca298b537e61a54b0a4a8bba625da9f9e5517",
+            "manifest_sha256": "644ab191f9d1db3cc2eb39218b65031937220fc8a9ea667276b806a3b3dd5fe6",
+            "files": 15
+          },
+          "thermal": {
+            "artifact": "v2/adaptive/99dc441b053e45b4b69938d2bec2692d/05-thermal/data.json",
+            "sha256": "6b2dbcd960fa00094678e371d33d9db5bf6f0c453bb7a852e77fb329c10665e1",
+            "manifest_sha256": "676bc2cb83819198242af62d5cd4ba7f5cd97886b8f42d7efe2df21dfcdd4d2a",
+            "files": 3
+          },
+          "propulsion": {
+            "artifact": "v2/adaptive/3b8b69dbff8949999597de6864e057e8/06-propulsion/data.json",
+            "sha256": "71775787a402020ef6c02cf4dcd61772ee070ec113dd6b03677bae2ecb40f82f",
+            "manifest_sha256": "ed52629561e4a74e1c574bb1829512102c0ae4d4709f8ade179ed0107447759a",
+            "files": 3
+          },
+          "screen": {
+            "artifact": "v2/adaptive/a31b40809aa84848850659a6d4af27e2/07-screen/data.json",
+            "sha256": "efa5b3c786e03fb2618e0a7ae4fa40a1305241730d93a86eaaa3f6b4c2960263",
+            "manifest_sha256": "d7e0d5098a590d5dca71cdeabd68cc6ba2dad01b59b185306d978484e61e2e23",
+            "files": 3
+          },
+          "modes": {
+            "artifact": "v2/adaptive/c3095d0155304ec4adedb11301e4f568/08-modes/data.json",
+            "sha256": "f60d887d784a2dc2553edb32543a96d058f3398c5ef89d3e87b900bfe87bf197",
+            "manifest_sha256": "3cdbf4308303b3feb2721def71a33c6372c9fea03ccfdc473a50aa8911eea25e",
+            "files": 3
+          },
+          "stability": {
+            "artifact": "v2/adaptive/5d7137cac91741bd9a8ecc16191018c5/09-stability/data.json",
+            "sha256": "b2a41416a080203e4743a528a87da0f881dd60d16723b8d948f6c013d5f4aed3",
+            "manifest_sha256": "67aad049fc2718c5ca9825e120d006b2dc5da9f579345feb9e31b5dc1fcf1ef9",
+            "files": 3
+          },
+          "refine": {
+            "artifact": "v2/adaptive/247ecf25a24c409dae6f8542afefcffb/10-refine/data.json",
+            "sha256": "1729415d3dfd64020c6772845f657b96b0e5823cd91aea0b9c934f191e81361b",
+            "manifest_sha256": "68c69a978580233b89da6be2c1a4bab5e4089333d3237bd1b4b41f9adc7473a6",
+            "files": 3
+          },
+          "confirm": {
+            "artifact": "v2/adaptive/76856efa9800496aab4241d1cb17d8ab/11-confirm/data.json",
+            "sha256": "1c377e54a5fee11edc1da105e99cb311961e7a859a1bf4b375372671eaf3ba76",
+            "manifest_sha256": "5ae6b78b806a2dfb2424e81a3be50b79acc0601ef659efe0a63a595857fa08ae",
+            "files": 3
+          }
+        },
+        "physical_qualification": false
+      }
+    },
+    "5_theorem_applicability": {
+      "passed": true,
+      "cases": {
+        "unforced_frozen": {
+          "decisions": [
+            {
+              "action": "theorem-precheck",
+              "reason": "The action targets 'stability' and addresses the 'stability_unknown' requirement. By utilizing the 'theorem_gate' method to evaluate 'theorem_applicability', it reduces uncertainty regarding the system's stability in the context of the 'frozen_pitch' problem. The method is specifically designed to handle 'frozen or scheduled reduced models', which aligns with the provided problem parameters, and it provides a definitive check on whether the current model can support the necessary stability assumptions.",
+              "planner": "local_llm",
+              "model": "gemma4:12b",
+              "errors": [],
+              "elapsed_s": 9.952999999979511
+            },
+            {
+              "action": "frozen-origin",
+              "reason": "The action targets 'stability' via the 'laselle' method to address the 'stability_unknown' requirement. While the scope notes it does not prove time-varying stability, it provides a high-confidence (score: 99.30685281944005) evaluation of 'theorem_applicability' for the 'frozen_pitch' problem, effectively reducing uncertainty regarding the core stability of the linear oscillator component.",
+              "planner": "local_llm",
+              "model": "gemma4:12b",
+              "errors": [],
+              "elapsed_s": 9.718000000109896
+            }
+          ],
+          "results": {
+            "theorem-precheck": {
+              "execution_status": "completed",
+              "fingerprint": "4298709ea989880bb3c8fd67975b7aa9130ddb58f6b7519e73929af448f9ea2b",
+              "value": {
+                "recognized_model": "frozen_pitch",
+                "barbalat_review": {
+                  "prerequisites": {
+                    "infinite_horizon": false,
+                    "bounded_below_V": null,
+                    "nonpositive_Vdot": null,
+                    "uniformly_continuous_W": null
+                  },
+                  "W_to_zero_proved": false,
+                  "state_to_origin_proved": false,
+                  "missing": [
+                    "infinite_horizon",
+                    "bounded_below_V",
+                    "nonpositive_Vdot",
+                    "uniformly_continuous_W"
+                  ],
+                  "extra_state_condition": null,
+                  "rule": "finite observed decay is not evidence of infinite-horizon uniform continuity"
+                },
+                "metrics": {
+                  "lasalle_eligible": true,
+                  "gronwall_eligible": false,
+                  "barbalat_eligible": false
+                }
+              },
+              "physical_qualification": false,
+              "artifact_hash": "94432a0393b383ebc47e8cf5f82dd2bbc3aee708aecc72603f44e2addea422a0"
+            },
+            "frozen-origin": {
+              "execution_status": "completed",
+              "fingerprint": "f93521b505728b978ad3a512fe2ac2d022a0eef22c66e51b8657aa8fcf63880c",
+              "value": {
+                "status": "globally_asymptotic_for_frozen_linear_model",
+                "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+                "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+                "V": "(I*e_dot^2+k*e^2)/2",
+                "Vdot": "-c*e_dot^2",
+                "zero_derivative_set": "e_dot=0",
+                "largest_invariant_set": "{0}",
+                "compact_invariant_sublevels": true,
+                "qualified_for_full_flight": false
+              },
+              "physical_qualification": false,
+              "artifact_hash": "d428871de8d80d0aead8f8ad0b4f0334a28973f7833c9aa096219afc3fdaa528"
+            }
+          },
+          "next_choices": {
+            "offered": {},
+            "rejected": {
+              "theorem-precheck": [
+                "already_completed"
+              ],
+              "frozen-origin": [
+                "already_completed"
+              ],
+              "finite-error-bound": [
+                "quality:gronwall_eligible"
+              ],
+              "asymptotic-prerequisites": [
+                "quality:barbalat_eligible"
+              ],
+              "repair-review": [
+                "adapter_not_available",
+                "missing_input:repair_evidence,code,requirements"
+              ],
+              "geometry-candidates": [
+                "adapter_not_available",
+                "dependency:repair-review",
+                "missing_input:repair_evidence,geometry,material,code,requirements",
+                "quality:geometry_repair_needed"
+              ],
+              "repair-fin-check": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:geometry-candidates",
+                "missing_input:repair_evidence,geometry,material,code",
+                "quality:geometry_candidate_exists"
+              ],
+              "repair-aero-probe": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:geometry-candidates",
+                "missing_input:repair_evidence,geometry,code",
+                "quality:geometry_candidate_exists",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "diagnose": [
+                "adapter_not_available",
+                "missing_input:prior,geometry,code"
+              ],
+              "aero-sensitivity": [
+                "adapter_not_available",
+                "dependency:diagnose",
+                "missing_input:prior,geometry,mass,operation,code,requirements"
+              ],
+              "angle-stencil": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "longer-average": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget"
+              ],
+              "lower-mach": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget"
+              ],
+              "angle-grid24": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "grid40": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "compare-aero": [
+                "adapter_not_available",
+                "dependency:angle-stencil,longer-average,lower-mach,angle-grid24,aero-sensitivity",
+                "missing_input:prior,geometry,code,requirements"
+              ],
+              "fin-candidates": [
+                "adapter_not_available",
+                "dependency:diagnose",
+                "missing_input:geometry,material,prior,code,requirements",
+                "outside_domain:fin_span_m"
+              ],
+              "fin-confirm": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:fin-candidates",
+                "missing_input:geometry,material,prior,code,requirements",
+                "compute_budget"
+              ],
+              "mass-reflight": [
+                "adapter_not_available",
+                "dependency:fin-confirm",
+                "missing_input:geometry,mass,operation,prior,code,requirements"
+              ],
+              "trajectory-perturbation": [
+                "adapter_not_available",
+                "dependency:aero-sensitivity",
+                "missing_input:geometry,mass,operation,prior,code"
+              ],
+              "boundary-fitted": [
+                "adapter_not_available",
+                "dependency:compare-aero",
+                "missing_input:geometry,code",
+                "compute_budget"
+              ],
+              "moving-fin": [
+                "adapter_not_available",
+                "dependency:fin-confirm,compare-aero",
+                "missing_input:geometry,material,code",
+                "quality:aero_numerical_pass",
+                "compute_budget"
+              ],
+              "body-event-loads": [
+                "adapter_not_available",
+                "missing_input:actual_wall_profile,material,load_events",
+                "compute_budget"
+              ],
+              "payload-oblique-contact": [
+                "adapter_not_available",
+                "missing_input:contact_law,landing_attitude,geometry",
+                "compute_budget"
+              ],
+              "thermal-properties": [
+                "adapter_not_available",
+                "missing_input:thermal_properties,material_curves",
+                "compute_budget"
+              ],
+              "liquid-motion": [
+                "adapter_not_available",
+                "missing_input:geometry,operation,code",
+                "compute_budget"
+              ],
+              "accept-design": [
+                "adapter_not_available",
+                "missing_input:actual_article_evidence",
+                "quality:aero_numerical_pass",
+                "quality:structure_numerical_pass",
+                "quality:physical_evidence_pass"
+              ]
+            },
+            "remaining_s": 178.0,
+            "requirement_hash": "07c5a75a4ab830022b008d7af3cbdea474cc4ad66e7341311116c8b4fddf5778"
+          }
+        },
+        "forced_frozen": {
+          "decisions": [
+            {
+              "action": "theorem-precheck",
+              "reason": "The action targets 'stability' and addresses 'stability_unknown', directly reducing uncertainty regarding the system's stability. By utilizing the 'theorem_gate' method and 'theorem_applicability' evaluation, it provides a formal verification layer for the 'frozen_pitch' problem. The scope specifically addresses the limitation of finite traces in certifying infinite-horizon assumptions, ensuring that the stability of the model is mathematically validated rather than just empirically observed.",
+              "planner": "local_llm",
+              "model": "gemma4:12b",
+              "errors": [],
+              "elapsed_s": 7.063000000081956
+            }
+          ],
+          "results": {
+            "theorem-precheck": {
+              "execution_status": "completed",
+              "fingerprint": "7e9cfa87f34ec508877bd33ff06844e1fc9bc51b0f1d9c3c9e9b64fb203b3b2c",
+              "value": {
+                "recognized_model": "frozen_pitch",
+                "barbalat_review": {
+                  "prerequisites": {
+                    "infinite_horizon": false,
+                    "bounded_below_V": null,
+                    "nonpositive_Vdot": null,
+                    "uniformly_continuous_W": null
+                  },
+                  "W_to_zero_proved": false,
+                  "state_to_origin_proved": false,
+                  "missing": [
+                    "infinite_horizon",
+                    "bounded_below_V",
+                    "nonpositive_Vdot",
+                    "uniformly_continuous_W"
+                  ],
+                  "extra_state_condition": null,
+                  "rule": "finite observed decay is not evidence of infinite-horizon uniform continuity"
+                },
+                "metrics": {
+                  "lasalle_eligible": false,
+                  "gronwall_eligible": false,
+                  "barbalat_eligible": false
+                }
+              },
+              "physical_qualification": false,
+              "artifact_hash": "092494785a8862ca1c1429948eba2d6611ec81fbb0d8bed173e906625780744e"
+            }
+          },
+          "next_choices": {
+            "offered": {},
+            "rejected": {
+              "theorem-precheck": [
+                "already_completed"
+              ],
+              "frozen-origin": [
+                "quality:lasalle_eligible"
+              ],
+              "finite-error-bound": [
+                "quality:gronwall_eligible"
+              ],
+              "asymptotic-prerequisites": [
+                "quality:barbalat_eligible"
+              ],
+              "repair-review": [
+                "adapter_not_available",
+                "missing_input:repair_evidence,code,requirements"
+              ],
+              "geometry-candidates": [
+                "adapter_not_available",
+                "dependency:repair-review",
+                "missing_input:repair_evidence,geometry,material,code,requirements",
+                "quality:geometry_repair_needed"
+              ],
+              "repair-fin-check": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:geometry-candidates",
+                "missing_input:repair_evidence,geometry,material,code",
+                "quality:geometry_candidate_exists"
+              ],
+              "repair-aero-probe": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:geometry-candidates",
+                "missing_input:repair_evidence,geometry,code",
+                "quality:geometry_candidate_exists",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "diagnose": [
+                "adapter_not_available",
+                "missing_input:prior,geometry,code"
+              ],
+              "aero-sensitivity": [
+                "adapter_not_available",
+                "dependency:diagnose",
+                "missing_input:prior,geometry,mass,operation,code,requirements"
+              ],
+              "angle-stencil": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "longer-average": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget"
+              ],
+              "lower-mach": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget"
+              ],
+              "angle-grid24": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "grid40": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "compare-aero": [
+                "adapter_not_available",
+                "dependency:angle-stencil,longer-average,lower-mach,angle-grid24,aero-sensitivity",
+                "missing_input:prior,geometry,code,requirements"
+              ],
+              "fin-candidates": [
+                "adapter_not_available",
+                "dependency:diagnose",
+                "missing_input:geometry,material,prior,code,requirements",
+                "outside_domain:fin_span_m"
+              ],
+              "fin-confirm": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:fin-candidates",
+                "missing_input:geometry,material,prior,code,requirements",
+                "compute_budget"
+              ],
+              "mass-reflight": [
+                "adapter_not_available",
+                "dependency:fin-confirm",
+                "missing_input:geometry,mass,operation,prior,code,requirements"
+              ],
+              "trajectory-perturbation": [
+                "adapter_not_available",
+                "dependency:aero-sensitivity",
+                "missing_input:geometry,mass,operation,prior,code"
+              ],
+              "boundary-fitted": [
+                "adapter_not_available",
+                "dependency:compare-aero",
+                "missing_input:geometry,code",
+                "compute_budget"
+              ],
+              "moving-fin": [
+                "adapter_not_available",
+                "dependency:fin-confirm,compare-aero",
+                "missing_input:geometry,material,code",
+                "quality:aero_numerical_pass",
+                "compute_budget"
+              ],
+              "body-event-loads": [
+                "adapter_not_available",
+                "missing_input:actual_wall_profile,material,load_events",
+                "compute_budget"
+              ],
+              "payload-oblique-contact": [
+                "adapter_not_available",
+                "missing_input:contact_law,landing_attitude,geometry",
+                "compute_budget"
+              ],
+              "thermal-properties": [
+                "adapter_not_available",
+                "missing_input:thermal_properties,material_curves",
+                "compute_budget"
+              ],
+              "liquid-motion": [
+                "adapter_not_available",
+                "missing_input:geometry,operation,code",
+                "compute_budget"
+              ],
+              "accept-design": [
+                "adapter_not_available",
+                "missing_input:actual_article_evidence",
+                "quality:aero_numerical_pass",
+                "quality:structure_numerical_pass",
+                "quality:physical_evidence_pass"
+              ]
+            },
+            "remaining_s": 179.0,
+            "requirement_hash": "07c5a75a4ab830022b008d7af3cbdea474cc4ad66e7341311116c8b4fddf5778"
+          }
+        },
+        "scheduled": {
+          "decisions": [
+            {
+              "action": "theorem-precheck",
+              "reason": "The action 'theorem-precheck' targets 'stability', which directly addresses the 'stability_unknown' requirement identified in the problem context. By utilizing the 'theorem_gate' method to evaluate 'theorem_applicability', it reduces uncertainty regarding whether the system's stability can be formally certified. This is a critical step for piecewise_affine_pitch systems where stability is a fundamental requirement, and the method specifically filters for applicable theorems to provide a formal guarantee.",
+              "planner": "local_llm",
+              "model": "gemma4:12b",
+              "errors": [],
+              "elapsed_s": 7.921000000089407
+            },
+            {
+              "action": "finite-error-bound",
+              "reason": "The 'finite-error-bound' action directly addresses the 'stability_unknown' requirement by applying the Gronwall method to bound the declared matrix interpolation. This reduces uncertainty regarding the stability of the piecewise_affine_pitch system. While it is a high-layer operation, it is the most direct method provided to establish a formal bound on the interpolation, even though it acknowledges that nonlinear remainders and event resets would require separate, subsequent bounds.",
+              "planner": "local_llm",
+              "model": "gemma4:12b",
+              "errors": [],
+              "elapsed_s": 7.859000000171363
+            }
+          ],
+          "results": {
+            "theorem-precheck": {
+              "execution_status": "completed",
+              "fingerprint": "44d22a96707a1ad704dc022dd3f98f4ac83b84d05e0d1dfa07058bec6f1418c0",
+              "value": {
+                "recognized_model": "piecewise_affine_pitch",
+                "barbalat_review": {
+                  "prerequisites": {
+                    "infinite_horizon": false,
+                    "bounded_below_V": null,
+                    "nonpositive_Vdot": null,
+                    "uniformly_continuous_W": null
+                  },
+                  "W_to_zero_proved": false,
+                  "state_to_origin_proved": false,
+                  "missing": [
+                    "infinite_horizon",
+                    "bounded_below_V",
+                    "nonpositive_Vdot",
+                    "uniformly_continuous_W"
+                  ],
+                  "extra_state_condition": null,
+                  "rule": "finite observed decay is not evidence of infinite-horizon uniform continuity"
+                },
+                "metrics": {
+                  "lasalle_eligible": false,
+                  "gronwall_eligible": true,
+                  "barbalat_eligible": false
+                }
+              },
+              "physical_qualification": false,
+              "artifact_hash": "bf9a90da81283f9179e16b5f9cb4cdca318a3118e9aa663a4847f14796f57edb"
+            },
+            "finite-error-bound": {
+              "execution_status": "completed",
+              "fingerprint": "8acc24cd75072653a81d68548a8be99dd8f6e2559c1886225e80c54b0b773014",
+              "value": {
+                "time_s": [
+                  0.0,
+                  0.5,
+                  1.0
+                ],
+                "metric": [
+                  [
+                    1.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    1.0
+                  ]
+                ],
+                "endpoint_logarithmic_norm_per_s": [
+                  -1.0,
+                  -1.0,
+                  -1.0
+                ],
+                "interval_upper_rate_per_s": [
+                  -1.0,
+                  -1.0
+                ],
+                "log10_homogeneous_gain": [
+                  0.0,
+                  -0.21714724095162588,
+                  -0.43429448190325176
+                ],
+                "additive_disturbance_bound": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "all_intervals_contracting": true,
+                "scope": "finite horizon of piecewise-affine 2-state model; not nonlinear-flight proof"
+              },
+              "physical_qualification": false,
+              "artifact_hash": "a69e894b148265ddbeadbb16cbb0643da598c18ff65545435198fa8e241f6f27"
+            }
+          },
+          "next_choices": {
+            "offered": {},
+            "rejected": {
+              "theorem-precheck": [
+                "already_completed"
+              ],
+              "frozen-origin": [
+                "quality:lasalle_eligible"
+              ],
+              "finite-error-bound": [
+                "already_completed"
+              ],
+              "asymptotic-prerequisites": [
+                "quality:barbalat_eligible"
+              ],
+              "repair-review": [
+                "adapter_not_available",
+                "missing_input:repair_evidence,code,requirements"
+              ],
+              "geometry-candidates": [
+                "adapter_not_available",
+                "dependency:repair-review",
+                "missing_input:repair_evidence,geometry,material,code,requirements",
+                "quality:geometry_repair_needed"
+              ],
+              "repair-fin-check": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:geometry-candidates",
+                "missing_input:repair_evidence,geometry,material,code",
+                "quality:geometry_candidate_exists"
+              ],
+              "repair-aero-probe": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:geometry-candidates",
+                "missing_input:repair_evidence,geometry,code",
+                "quality:geometry_candidate_exists",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "diagnose": [
+                "adapter_not_available",
+                "missing_input:prior,geometry,code"
+              ],
+              "aero-sensitivity": [
+                "adapter_not_available",
+                "dependency:diagnose",
+                "missing_input:prior,geometry,mass,operation,code,requirements"
+              ],
+              "angle-stencil": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "longer-average": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget"
+              ],
+              "lower-mach": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget"
+              ],
+              "angle-grid24": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "grid40": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:diagnose",
+                "missing_input:geometry,code",
+                "memory_budget",
+                "compute_budget"
+              ],
+              "compare-aero": [
+                "adapter_not_available",
+                "dependency:angle-stencil,longer-average,lower-mach,angle-grid24,aero-sensitivity",
+                "missing_input:prior,geometry,code,requirements"
+              ],
+              "fin-candidates": [
+                "adapter_not_available",
+                "dependency:diagnose",
+                "missing_input:geometry,material,prior,code,requirements",
+                "outside_domain:fin_span_m"
+              ],
+              "fin-confirm": [
+                "adapter_not_available",
+                "missing_capability",
+                "dependency:fin-candidates",
+                "missing_input:geometry,material,prior,code,requirements",
+                "compute_budget"
+              ],
+              "mass-reflight": [
+                "adapter_not_available",
+                "dependency:fin-confirm",
+                "missing_input:geometry,mass,operation,prior,code,requirements"
+              ],
+              "trajectory-perturbation": [
+                "adapter_not_available",
+                "dependency:aero-sensitivity",
+                "missing_input:geometry,mass,operation,prior,code"
+              ],
+              "boundary-fitted": [
+                "adapter_not_available",
+                "dependency:compare-aero",
+                "missing_input:geometry,code",
+                "compute_budget"
+              ],
+              "moving-fin": [
+                "adapter_not_available",
+                "dependency:fin-confirm,compare-aero",
+                "missing_input:geometry,material,code",
+                "quality:aero_numerical_pass",
+                "compute_budget"
+              ],
+              "body-event-loads": [
+                "adapter_not_available",
+                "missing_input:actual_wall_profile,material,load_events",
+                "compute_budget"
+              ],
+              "payload-oblique-contact": [
+                "adapter_not_available",
+                "missing_input:contact_law,landing_attitude,geometry",
+                "compute_budget"
+              ],
+              "thermal-properties": [
+                "adapter_not_available",
+                "missing_input:thermal_properties,material_curves",
+                "compute_budget"
+              ],
+              "liquid-motion": [
+                "adapter_not_available",
+                "missing_input:geometry,operation,code",
+                "compute_budget"
+              ],
+              "accept-design": [
+                "adapter_not_available",
+                "missing_input:actual_article_evidence",
+                "quality:aero_numerical_pass",
+                "quality:structure_numerical_pass",
+                "quality:physical_evidence_pass"
+              ]
+            },
+            "remaining_s": 177.0,
+            "requirement_hash": "07c5a75a4ab830022b008d7af3cbdea474cc4ad66e7341311116c8b4fddf5778"
+          }
+        }
+      },
+      "full_flight_stability_proved": false,
+      "scope": "Exact frozen/piecewise-affine model tests; forcing and finite horizon cannot become an asymptotic flight proof"
+    }
+  },
+  "physical_qualification": false,
+  "passed": true,
+  "scope": "Five defined scenarios; live choices and modeled physics, not general LLM reliability or hardware safety",
+  "physics_and_harness_commit": "1067698a462d6fed7b5cfaca59d22f3330d80ad3",
+  "verification_script_sha256": "03acc8821b584c9dedab4a1046479111a837dbf66f761701b8418cc3e4ac733f",
+  "source_stage6_summary_sha256": "679d7b12c32c254973c69da05278aabb1f5712a1f4b904c6252baa6f8c7da70c",
+  "setup_correction": "First invocation stopped before analysis on frozen geometry mutation; corrected to model-copy and restarted in a new output directory."
+}
