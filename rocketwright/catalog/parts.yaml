@@ -720,6 +720,7 @@ parts: &parts
     kind: bottle
     tier: bottle
     name: "1.5 L carbonated-drink PET bottle (PCO 1881 neck)"
+    name_ja: "1.5 L 炭酸飲料用 PET ボトル（PCO 1881 口）"
     mass_kg: 0.038
     price_jpy: 150
     source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
@@ -734,6 +735,7 @@ parts: &parts
     kind: bottle
     tier: bottle
     name: "2 L carbonated-drink PET bottle (PCO 1881 neck)"
+    name_ja: "2 L 炭酸飲料用 PET ボトル（PCO 1881 口）"
     mass_kg: 0.044
     price_jpy: 180
     source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
@@ -748,6 +750,7 @@ parts: &parts
     kind: bottle
     tier: bottle
     name: "1 L carbonated-drink PET bottle (PCO 1881 neck)"
+    name_ja: "1 L 炭酸飲料用 PET ボトル（PCO 1881 口）"
     mass_kg: 0.031
     price_jpy: 130
     source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
@@ -762,6 +765,7 @@ parts: &parts
     kind: bottle
     tier: bottle
     name: "500 mL carbonated-drink PET bottle (PCO 1881 neck)"
+    name_ja: "500 mL 炭酸飲料用 PET ボトル（PCO 1881 口）"
     mass_kg: 0.024
     price_jpy: 120
     source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"
@@ -777,6 +781,7 @@ parts: &parts
     kind: nozzle
     tier: bottle
     name: "Full-bore nozzle: open PET neck (~22 mm) with launcher seal"
+    name_ja: "全開口ノズル（PET の口そのまま、約 22 mm、発射台のシール付き）"
     mass_kg: 0.005
     price_jpy: 800
     source: "https://en.wikipedia.org/wiki/Water_rocket"
@@ -788,6 +793,7 @@ parts: &parts
     kind: nozzle
     tier: bottle
     name: "Gardena-type restricted nozzle, 9 mm bore (garden-hose quick connector in the cap)"
+    name_ja: "ガーデナ型の絞りノズル（内径 9 mm、散水ホース用コネクタ）"
     mass_kg: 0.015
     price_jpy: 500
     source: "https://arxiv.org/abs/2001.08828"
@@ -799,6 +805,7 @@ parts: &parts
     kind: nozzle
     tier: bottle
     name: "Restricted nozzle, 15 mm bore (drilled cap insert)"
+    name_ja: "絞りノズル（内径 15 mm、キャップに穴あけ）"
     mass_kg: 0.012
     price_jpy: 400
     provisional: true
@@ -810,6 +817,7 @@ parts: &parts
     kind: bottle_fin_set
     tier: bottle
     name: "3 corrugated-cardboard fins, taped to the bottle"
+    name_ja: "段ボールのフィン 3 枚（テープ留め）"
     mass_kg: 0.025
     price_jpy: 100
     provisional: true
@@ -820,6 +828,7 @@ parts: &parts
     kind: bottle_fin_set
     tier: bottle
     name: "4 polypropylene-sheet (PP 板 / 0.75 mm) fins, taped to the bottle"
+    name_ja: "PP 板のフィン 4 枚（0.75 mm、テープ留め）"
     mass_kg: 0.030
     price_jpy: 300
     provisional: true
@@ -830,6 +839,7 @@ parts: &parts
     kind: bottle_fin_set
     tier: bottle
     name: "4 wide polypropylene-sheet (PP 板 / 0.75 mm) fins, taped to the bottle"
+    name_ja: "幅広の PP 板フィン 4 枚（0.75 mm、テープ留め）"
     mass_kg: 0.040
     price_jpy: 400
     provisional: true
@@ -843,6 +853,7 @@ parts: &parts
     kind: bottle_fin_set
     tier: bottle
     name: "Apte & Apte 2 L rocket fin/nose set: 3 plastic-folder fins + nose cone cut from a 2 L bottle"
+    name_ja: "Apte & Apte の 2 L 用フィン・ノーズ一式（樹脂フォルダーのフィン 3 枚、2 L ボトルのノーズ）"
     mass_kg: 0.051
     price_jpy: 150
     source: "https://jhss.scholasticahq.com/api/v1/articles/2101-the-influence-of-different-factors-on-the-maximum-height-reached-of-a-water-powered-rocket.pdf"
@@ -854,6 +865,7 @@ parts: &parts
     kind: bottle_fin_set
     tier: bottle
     name: "Fischer et al. 1 L D.I.Y. rocket fin/nose set (3 fins, nose cone, nose ballast)"
+    name_ja: "Fischer らの 1 L 用フィン・ノーズ一式（フィン 3 枚、ノーズ、おもり）"
     mass_kg: 0.097
     price_jpy: 200
     source: "https://arxiv.org/abs/2001.08828"
@@ -866,6 +878,7 @@ parts: &parts
     kind: parachute
     tier: bottle
     name: "30 cm plastic-sheet parachute with string (homemade or Estes 12 in equivalent)"
+    name_ja: "30 cm ポリシートのパラシュート（ひも付き）"
     mass_kg: 0.003
     price_jpy: 100
     provisional: true
@@ -877,6 +890,7 @@ parts: &parts
     kind: parachute
     tier: bottle
     name: "50 cm plastic-sheet parachute with string"
+    name_ja: "50 cm ポリシートのパラシュート（ひも付き）"
     mass_kg: 0.010
     price_jpy: 150
     provisional: true
@@ -889,6 +903,7 @@ parts: &parts
     kind: launcher
     tier: bottle
     name: "Bicycle-pump launcher (hand pump with gauge, neck clamp release, 0.6 m guide rail)"
+    name_ja: "自転車の空気入れを使う発射台（圧力計、口金リリース、0.6 m ガイドレール）"
     mass_kg: 1.5
     price_jpy: 3000
     source: "https://sciencetoymaker.org/overhead-water-rocket-launcher-home/water-rocket-safety-faqs/"
@@ -900,6 +915,7 @@ parts: &parts
     kind: launcher
     tier: bottle
     name: "JAXA / association-style launcher with 60-80 cm guide rails and adjustable angle"
+    name_ja: "JAXA・協会型の発射台（60〜80 cm ガイドレール、角度調整）"
     mass_kg: 2.5
     price_jpy: 8000
     source: "https://edu.jaxa.jp/en/materialDB/contents/material/pdf/78640.pdf"

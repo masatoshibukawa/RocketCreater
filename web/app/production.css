@@ -43,5 +43,3 @@
 .backscreen { margin: 18px 0; padding: 16px 16px 0; background: #1d1d1d; border-radius: 10px; }
 .backscreen .wb-flow img { border-color: #4a4f57; background: #fff; }
 .backscreen-idle { display: flex; align-items: center; justify-content: center; min-height: 180px; margin: 0; padding: 16px; color: #d8dde3; font-size: 17px; text-align: center; border: 1px solid #4a4f57; border-radius: 6px; background: #12161c; }
-/* Sticky: the crew stay in front of a flow picture taller than the panel. */
-.backscreen-crew { position: sticky; bottom: 0; display: block; width: calc(100% + 32px); height: auto; margin: 8px -16px 0; border-radius: 0 0 10px 10px; }

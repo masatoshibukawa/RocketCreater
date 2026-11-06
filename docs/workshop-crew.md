@@ -1,19 +1,18 @@
 # Workshop guides
 
-The single design screen includes three procedural 3D mechanics with gray overalls,
-yellow helmets, a workbench and a tool cart. The visual reference is
-`final output ui example/drafts/07-analysis-explained.png`: guides stay in a separate
-foreground stage so they cannot cover dimensions, results, graphs or controls.
-They are illustrative guides, not human-clearance geometry or manufactured parts.
-They are not inserted into exported images, drawings or videos.
+The design screen shows the drafted workshop pictures with moving heads and hands. The layers are
+cut from `final output ui example/drafts/` 02 and 06 by `scripts/build_workshop_layers.py` and
+moved with CSS in `web/app/workshop-scene.css`. The pictures are decoration: they are not
+human-clearance geometry or manufactured parts, and they are not inserted into exported images,
+drawings or videos.
 
 ## State and operation boundaries
 
 | Observed application state | Guide behavior |
 | --- | --- |
-| Active design tool call, flow-analysis job, production or manufacturing generation | Inspect a part, check a clipboard and use a tool |
-| No job, queued job, between tool calls or question awaiting an answer | Wait with subtle breathing and glances |
-| A previously observed live operation finishes successfully | Put tools away, carry the toolbox and wipe the bench for six seconds, then wait |
+| Active design tool call, flow-analysis job, production or manufacturing generation | Move at the busy tempo |
+| No job, queued job, between tool calls or question awaiting an answer | Move at the calm tempo |
+| A previously observed live operation finishes successfully | Show the cleanup message for six seconds, then wait |
 | Error, interruption, failed/unconverged result or lost flow-analysis connection | Stop moving and wait for review |
 
 Restoring an already completed result does not replay cleanup. A reference seed alone

@@ -15,6 +15,7 @@ import { buildProceduralModel, disposeGroup } from "../lib/model3d";
 import { canonicalJson } from "../lib/designState";
 import { TIER_LABEL, isOrbital, type Design, type DimensionSummary, type DisplayOrigin, type ReferenceInfo, type Tier } from "../lib/types";
 import TierBadge from "./TierBadge";
+import WorkshopScene from "./WorkshopScene";
 import { useWorkshop } from "../lib/WorkshopContext";
 
 interface ModelViewerProps {
@@ -205,7 +206,7 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
       <div className="model-host" ref={hostRef} />
       {design === null && (
         <div className={`model-empty ${isOrbital(tier) || !visible ? "" : "model-empty-workshop"}`}>
-          {isOrbital(tier) || !visible ? null : <img src="/workshop/workshop.webp" alt="ペットボトルロケットを点検する小さな整備員たち" />}
+          {isOrbital(tier) || !visible ? null : <WorkshopScene scene="diorama"/>}
           <div>設計案が届くと、ここに 3D モデルを表示します</div>
           <div className="muted">（お手本の実機から縮尺した初期案 → 試行 → 合格案の順に更新）</div>
         </div>

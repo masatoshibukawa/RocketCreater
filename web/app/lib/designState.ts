@@ -577,7 +577,7 @@ function applyEvent(state: DesignState, ev: AgentEvent): DesignState {
         const requirement = asRecord(input.requirement);
         if (requirement) withInput = { ...withInput, requirement };
       }
-      return push(withInput, "system", `ツール呼び出し: ${toolLabel(asString(p.name))}`);
+      return push(withInput, "system", `${toolLabel(asString(p.name))}を実行`);
     }
     case "tool_result":
       return applyToolResult(next, ev);
@@ -632,7 +632,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
       const classify = toClassify(result);
       const tier = classify.tier ?? state.tier;
       let next: DesignState = { ...state, classify, tier };
-      if (classify.tier) next = push(next, "system", `段階を判定: ${TIER_LABEL[classify.tier]} (${classify.tier})`);
+      if (classify.tier) next = push(next, "system", `段階を判定: ${TIER_LABEL[classify.tier]}`);
       for (const w of classify.warnings) next = push(next, "error", `分類の警告: ${w}`);
       return next;
     }
@@ -706,9 +706,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
         next = push(
           next,
           "system",
-          `自動設計: ${step.trace.map((t) => `${t.stage}=${t.chosen}`).join(" → ")} (${
-            step.passed ? "合格" : "不合格"
-          })`,
+          `自動設計: ${step.trace.length} 工程で部品を選びました（${step.passed ? "合格" : "不合格"}）`,
         );
         if (step.feasibility) next = push(next, "error", `予算内の合格案なし: ${step.feasibility}`);
       }
@@ -802,9 +800,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
         next = push(
           next,
           "system",
-          `多数回試行 n=${dispersion.n}${candidateId ? ` (${candidateId})` : ""}: 成功率 ${(
-            dispersion.success_rate * 100
-          ).toFixed(1)} %`,
+          `多数回試行 ${dispersion.n} 回: 成功率 ${(dispersion.success_rate * 100).toFixed(1)} %`,
         );
       }
       return next;

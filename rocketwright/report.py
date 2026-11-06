@@ -582,7 +582,7 @@ def _catalog_row(
     price = item.get("price_jpy")
     return _row(
         str(item.get("id", row_id)),
-        str(item.get("name", name)),
+        str(item.get("name_ja") or item.get("name", name)),
         qty,
         float(mass) if isinstance(mass, (int, float)) else est_mass,
         float(price) if isinstance(price, (int, float)) else None,

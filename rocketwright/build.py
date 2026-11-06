@@ -246,7 +246,7 @@ def _row(
 ) -> BillRow:
     return BillRow(
         part_id=part.id,
-        name=part.name,
+        name=part.name_ja or part.name,
         qty=qty,
         mass_kg=part.mass_kg * qty if mass_kg is None else mass_kg,
         price_jpy=part.price_jpy * qty,

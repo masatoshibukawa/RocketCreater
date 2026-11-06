@@ -25,6 +25,7 @@ import { apiUrl, designKey, exportInfoFromEvents, exportsForDesign, requestKey, 
 import { fmt } from "./lib/format";
 import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
 import { carriesParachute } from "./lib/flightPlayback";
+import { caseLabels } from "./lib/caseLabels";
 import { useDesignStream } from "./lib/useDesignStream";
 import { useDesignSummary } from "./lib/useDesignSummary";
 import type { AeroRequest } from "./lib/useAeroLoop";
@@ -74,6 +75,8 @@ function DesignScreen() {
   }, [selectedId, stream]);
 
   const displayedId = displayed?.sourceId ?? null;
+  const labels = useMemo(() => caseLabels(stream.candidates, stream.attempts), [stream.candidates, stream.attempts]);
+  const displayedLabel = displayedId ? labels.get(displayedId) ?? "検討中の案" : null;
   const displayedAttempt = useMemo(
     () => (displayedId ? stream.attempts.find((a) => a.id === displayedId) : undefined),
     [displayedId, stream.attempts],
@@ -228,7 +231,7 @@ function DesignScreen() {
     <header className="workshop-identity">
       <a className="workshop-brand" href="/" aria-label="RocketWright ホーム" onClick={e => { e.preventDefault(); chooseStage("brief"); }}><span className="rw-mark">RW</span><strong>RocketWright</strong></a>
       <span className="identity-divider"/>
-      <span className="project-path">{tier ? TIER_LABEL[tier] : "新しいロケット"}<span>/</span><b>{displayedId ? `案 · ${displayedId}` : "条件の確認"}</b></span>
+      <span className="project-path">{tier ? TIER_LABEL[tier] : "新しいロケット"}<span>/</span><b>{displayedLabel ?? "条件の確認"}</b></span>
       <span className="session-state">セッション内の下書き</span>
       <div className="identity-actions"><button className="btn" type="button" disabled={!displayed} onClick={saveDesign}><WorkshopIcon name="download" size={16}/><span>設計を保存</span></button>
         <button className="icon-button" type="button" aria-label="表示と出力先の設定" onClick={() => settings.current?.showModal()}><WorkshopIcon name="settings"/></button></div>
@@ -246,7 +249,7 @@ function DesignScreen() {
       <aside id="workshop-targets" tabIndex={-1} className={`workshop-left${leftOpen ? " is-open" : ""}`} aria-label="工程の対象" onKeyDown={e => { if (e.key === "Escape") { e.stopPropagation(); closeTargets(); } }}>
         <div className="dock-heading"><h1>{WORKSHOP_STAGES.find(s => s.id === stage)?.title ?? "設計例と資料"}</h1><button className="mobile-close icon-button" type="button" aria-label="対象一覧を閉じる" onClick={closeTargets}><WorkshopIcon name="close" size={18}/></button></div>
         <div className="left-dock-scroll">
-          <label className="case-selector">表示する案<select value={selectedId ?? ""} onChange={e => setSelectedId(e.target.value || null)}><option value="">最新の結果に追従</option>{stream.candidates.map((c, i) => <option key={c.source_id} value={c.source_id}>{c.seededFrom ? "参照の初期案" : `案 ${i + 1}`} · {c.source_id}</option>)}</select></label>
+          <label className="case-selector">表示する案<select value={selectedId ?? ""} onChange={e => setSelectedId(e.target.value || null)}><option value="">最新の結果に追従</option>{stream.candidates.map(c => <option key={c.source_id} value={c.source_id}>{labels.get(c.source_id)}</option>)}</select></label>
           {stage === "analysis" ? <div className="dock-list" role="group" aria-label="解析の表示">{([['aero','流体解析'],['flight','飛行と回収'],['chart','高度の推移']] as const).map(([id,label]) => <button key={id} type="button" className={analysisView === id ? "dock-row is-active" : "dock-row"} aria-pressed={analysisView === id} onClick={() => { setAnalysisView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "aero" ? "analysis" : "play"} size={18}/>{label}</button>)}</div> : null}
           {stage === "exports" ? <div className="dock-list" role="group" aria-label="成果物の表示">{([['production','製作票・印刷データ'],['drawing','設計図 SVG'],['video','設計解説・打ち上げ CG']] as const).map(([id,label]) => <button key={id} type="button" className={outputView === id ? "dock-row is-active" : "dock-row"} aria-pressed={outputView === id} onClick={() => { setOutputView(id); setLeftOpen(false); }}><WorkshopIcon name={id === "video" ? "play" : "exports"} size={18}/><span>{label}<small>{id === "video" ? "保存済みの設計例" : id === "drawing" ? summary?.drawing ? "保存可能" : "未生成" : currentPackage || printFiles.length ? "保存可能" : "未生成"}</small></span></button>)}</div> : null}
           <section className="dock-section"><h2>条件の概要</h2><dl className="dock-properties">{requirementRows.map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
@@ -280,7 +283,7 @@ function DesignScreen() {
             <div className="analysis-screen" hidden={analysisView !== "aero" || isOrbital(tier)}><AeroLoopPanel request={isOrbital(tier) ? null : aeroRequest} hasDesign={displayed !== null}/></div>
             {analysisView === "aero" && isOrbital(tier) ? <div className="workspace-empty"><h2>この規模は構想設計の対象です</h2><p>飛行の結果と軌道を確認できます。</p><button className="btn" type="button" onClick={() => setAnalysisView("flight")}>飛行と回収を見る</button></div> : null}
             {analysisView === "flight" ? <div className="flight-workspace"><FlightPlayer key={displayedId ?? "none"} trace={trace} metrics={flight?.metrics ?? NO_METRICS} warnings={flight?.warnings ?? []} parachute={carriesParachute(displayed?.design)} emptyMessage="計算した飛行の時系列が届くと再生できます"/></div> : null}
-            <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedId}/></div>
+            <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedLabel}/></div>
           </div>
           {stage === "compare" ? <DesignComparison candidates={stream.candidates} selectedId={displayedId} onSelect={setSelectedId}/> : null}
           <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
@@ -289,7 +292,7 @@ function DesignScreen() {
           {stage === "library" ? <div className="reference-workspace"><ReferenceLibrary/></div> : null}
           <WorkshopCrew embedded hideScene={!showCrew}/>
         </div>
-        <div className="workspace-caption"><span>{displayedId ? `表示対象: ${displayedId}` : "まだ設計案がありません"}</span>{selectedId ? <button type="button" className="text-button" onClick={() => setSelectedId(null)}>最新へ戻る ↻</button> : <span>最新の結果に追従</span>}</div>
+        <div className="workspace-caption"><span>{displayedLabel ? `表示対象: ${displayedLabel}` : "まだ設計案がありません"}</span>{selectedId ? <button type="button" className="text-button" onClick={() => setSelectedId(null)}>最新へ戻る ↻</button> : <span>最新の結果に追従</span>}</div>
       </section>
       <aside ref={inspector} className={`workshop-right${rightOpen ? " is-open" : ""}`} aria-label="解説と設計の相談">
         <div className="inspector-tabs" role="group" aria-label="右パネルの表示">{([['explain','解説'],['history','履歴'],['consult','相談']] as const).map(([id,label]) => <button key={id} type="button" aria-pressed={rightTab === id} onClick={() => setRightTab(id)}>{label}</button>)}<button className="mobile-close icon-button" type="button" aria-label="解説と相談を閉じる" onClick={() => setRightOpen(false)}><WorkshopIcon name="close" size={18}/></button></div>

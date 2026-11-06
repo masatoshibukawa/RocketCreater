@@ -58,6 +58,7 @@ class Part(BaseModel):
     kind: str
     tier: PartTier
     name: str = Field(min_length=1)
+    name_ja: str | None = None  # shown to the user instead of `name` when present
     mass_kg: float = Field(ge=0)
     price_jpy: float = Field(ge=0)
     source: str | None = None

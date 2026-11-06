@@ -297,12 +297,13 @@ def test_trace_parsing_keeps_the_thrust_series_the_player_reads():
 
 def test_workshop_art_ships_with_the_web_app_and_stays_decoration():
     public = ROOT / "web" / "public"
-    for name in ("ModelViewer", "AeroLoopPanel"):
-        paths = re.findall(r'"(/workshop/[\w.-]+)"', _ts(f"components/{name}.tsx"))
-        assert paths
-        assert all((public / path.lstrip("/")).is_file() for path in paths)
+    layers = re.findall(r'"(/workshop/[\w.-]+)"', _ts("lib/workshopLayers.ts"))
+    assert len(layers) >= 10
+    assert all((public / path.lstrip("/")).is_file() for path in layers)
     # A rocket workshop is not the picture for an orbital run.
     assert "isOrbital(tier)" in _ts("components/ModelViewer.tsx")
-    assert "isOrbital(tier)" in PAGE_TSX
     # The crew stand under the real flow picture; the drafted charts never reach the page.
-    assert 'src={apiUrl(image.url)}' in _ts("components/AeroLoopPanel.tsx")
+    assert "src={apiUrl(image.url)}" in _ts("components/AeroLoopPanel.tsx")
+    # Errors stop the crew, and the shared motion control stops them too.
+    assert "motionEnabled" in _ts("components/WorkshopScene.tsx")
+    assert '"attention"' in _ts("components/WorkshopScene.tsx")

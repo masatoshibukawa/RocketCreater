@@ -130,7 +130,8 @@ Reply with a single JSON object and nothing else (no prose before or after, no c
               build warnings, what was assumed, what remains open",
   "open_questions": ["..."]
 }
-Write explanations in the user's language (Japanese if the request is Japanese)."""
+Write everything the user reads in the user's language (Japanese if the request is Japanese):
+your thinking, the text between tool calls, questions, summary, explanation, open_questions."""
 
 # Phase 3: per-aspect reviewers run as parallel sub-agents on the light model (review.py).
 # They reply through structured outputs (ReviewVerdict), so the prompts describe the judgement,

@@ -1,0 +1,24 @@
+/* The moving workshop picture. Decoration only; the numbers and flow pictures beside it are real. */
+.workshop-scene { position: relative; --tempo: 1; }
+.workshop-scene[data-tempo="busy"] { --tempo: .45; }
+.workshop-scene > img:first-child { display: block; width: 100%; height: 100%; }
+.ws-part { position: absolute; height: auto; animation: ws-nod calc(3.4s * var(--tempo)) ease-in-out infinite alternate; }
+.ws-write { animation-name: ws-write; animation-duration: calc(1.5s * var(--tempo)); }
+.ws-measure { animation-name: ws-measure; animation-duration: calc(2.2s * var(--tempo)); }
+.ws-fold { animation-name: ws-fold; animation-duration: calc(1.9s * var(--tempo)); }
+.ws-fold-late { animation-name: ws-fold; animation-duration: calc(2.3s * var(--tempo)); animation-direction: alternate-reverse; }
+.ws-point { animation-name: ws-point; animation-duration: calc(2.6s * var(--tempo)); }
+.workshop-scene[data-tempo="still"] .ws-part,
+.workshop-scene[data-tempo="still"] .ws-lamp,
+.workshop-scene[data-tempo="still"] .ws-scan { animation: none; }
+.ws-lamp { position: absolute; left: 66%; top: 6%; width: 16%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(#ffd98a66, transparent 68%); mix-blend-mode: screen; animation: ws-lamp 4.5s ease-in-out infinite alternate; pointer-events: none; }
+.ws-scan { position: absolute; left: 36.6%; top: 16%; width: 13.8%; height: 2px; background: #6fb6ff; box-shadow: 0 0 10px 2px #6fb6ffaa; animation: ws-scan calc(3s * var(--tempo)) ease-in-out infinite alternate; pointer-events: none; }
+.workshop-scene[data-tempo="still"] .ws-scan { opacity: 0; }
+@keyframes ws-nod { from { transform: rotate(-1.6deg); } to { transform: rotate(2.4deg); } }
+@keyframes ws-write { from { transform: rotate(-1.2deg) translateY(.5px); } to { transform: rotate(1.6deg) translateY(-1px); } }
+@keyframes ws-measure { from { transform: rotate(-2.4deg); } to { transform: rotate(1.6deg); } }
+@keyframes ws-fold { from { transform: translate(-4%, 1%); } to { transform: translate(5%, -2%); } }
+@keyframes ws-point { from { transform: rotate(-4deg); } to { transform: rotate(3deg); } }
+@keyframes ws-lamp { from { opacity: .55; } 45% { opacity: 1; } 60% { opacity: .75; } to { opacity: .95; } }
+@keyframes ws-scan { from { top: 16%; } to { top: 31%; } }
+@media (prefers-reduced-motion: reduce) { .ws-part, .ws-lamp, .ws-scan { animation: none; } }

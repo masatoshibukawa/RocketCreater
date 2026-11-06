@@ -177,5 +177,6 @@ panels now follow the classified tier / displayed design), and the old `TierBadg
 単位変換のみ行います。聞き返し（question）への回答は、元の要求に「追加情報:」として追記して
 設計をやり直します（バックエンドに会話の記憶がないため）。
 
-`public/workshop/` の整備員の絵は、`final output ui example/drafts/` の 02 と 06 から画面の文字と
-表示例のグラフを除いて切り出した装飾です。絵の横の数値と流れの画像だけが計算結果です。
+`public/workshop/` の絵は `scripts/build_workshop_layers.py` が `final output ui example/drafts/` の
+02 と 06 から切り出した装飾です。頭や手を別の層にして CSS で動かし、速さは実行中の工程に合わせます。
+絵の横の数値と流れの画像だけが計算結果です。

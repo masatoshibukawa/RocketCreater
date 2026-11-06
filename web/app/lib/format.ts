@@ -95,7 +95,7 @@ export function metricLabel(key: string): string {
   return METRIC_LABELS[key] ?? key;
 }
 
-/** Japanese labels of the agent tools (rocketwright/agent/tools.py), shown next to the id. */
+/** Japanese labels of the agent tools (rocketwright/agent/tools.py). */
 const TOOL_LABELS: Record<string, string> = {
   classify_requirement: "規模の判定",
   derive_requirements: "定量要求の算出",
@@ -113,8 +113,7 @@ const TOOL_LABELS: Record<string, string> = {
 };
 
 export function toolLabel(name: string): string {
-  const label = TOOL_LABELS[name];
-  return label === undefined ? name : `${label} (${name})`;
+  return TOOL_LABELS[name] ?? name;
 }
 
 /** Japanese names of the design-chain stages (rocketwright/design_chain.py STAGES). */

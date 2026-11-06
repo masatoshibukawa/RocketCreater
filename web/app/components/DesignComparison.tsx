@@ -19,7 +19,6 @@ export default function DesignComparison({ candidates, selectedId, onSelect }: {
           <div><dt>概算費用</dt><dd>{fmt(c.cost_jpy, 0)} 円</dd></div></dl>
         <p>{c.explanation || "説明は詳細の計算記録から確認できます。"}</p>
         <button type="button" className="btn" aria-pressed={selectedId === c.source_id} onClick={() => onSelect(c.source_id)}>この案を表示</button>
-        <small>出典 {c.source_id}</small>
       </article>)}</div>}
   </section>;
 }
