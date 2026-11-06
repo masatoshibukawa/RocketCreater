@@ -1,0 +1,5 @@
+!dist/
+!dist/**
+.sites-checkout/
+.sites-runtime/
+*.tar.gz
