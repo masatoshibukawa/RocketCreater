@@ -71,3 +71,25 @@ def test_prediction_audit_rejects_tampered_solver_evidence(tmp_path):
     Path(tmp_path / "projects/0/data.json").write_text("{}")
     with pytest.raises(ValueError, match="Invalid evidence"):
         audit(tmp_path)
+
+
+def test_different_sources_and_recovery_do_not_leak_identical_ascent_into_training(tmp_path):
+    dataset(tmp_path)
+    a, b = spec(), spec()
+    b.assumptions.evidence["initial_source"] = "different source"
+    # The historical dry mass is replaced by the current CAD-based mass in this workflow.
+    b.design = b.design.model_copy(update={"parachute_diameter_m": 0.45, "dry_mass_kg": 0.11})
+    write_json(
+        tmp_path / "report.json",
+        dict(
+            source_hash="solver",
+            observations=[
+                dict(start=label, version=1, spec=s.model_dump(), metrics=dict(dry_mass_g=200))
+                for label, s in (("A", a), ("B", b))
+            ],
+        ),
+    )
+    result = audit(tmp_path)
+    assert result["equivalent_ascent_groups"]["A"] == result["equivalent_ascent_groups"]["B"]
+    assert result["predictions_with_cross_seed_history"] == 0
+    assert result["history_adjusted_mae_m"] is None

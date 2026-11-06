@@ -143,17 +143,13 @@ def figure(report, path):
     plt.rcParams.update({"font.family": "sans-serif", "font.size": 10})
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), constrained_layout=True)
     labels = list(dict.fromkeys(r["start"] for r in report["observations"]))
-    for i, label in enumerate(labels):
+    for label in labels:
         rows = sorted(
             (r for r in report["observations"] if r["start"] == label), key=lambda r: r["version"]
         )
-        short = (
-            "Input"
-            if label == "provided"
-            else "Light geometry"
-            if label == "independent-light"
-            else f"Seed {i + 1}"
-        )
+        short = {"provided": "Input", "independent-light": "Light geometry"}.get(label)
+        if short is None:
+            short = "D01" if "/D01/" in label else "D02" if "/D02/" in label else "Generated ops"
         axes[0].plot(
             [r["version"] for r in rows],
             [r["metrics"]["apogee_m"] for r in rows],

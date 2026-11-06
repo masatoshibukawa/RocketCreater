@@ -4,15 +4,50 @@ import argparse
 import json
 from pathlib import Path
 
+from rocketwright.adaptive import digest
 from rocketwright.agent.design_projects import DesignSpec, write_json
 from rocketwright.analysis import experience, policy
 from scripts.report_design_search import verified_files
+
+
+def ascent_groups(report):
+    """Source labels and different recovery canopies do not make ascent data independent."""
+    initial = {}
+    for row in report["observations"]:
+        if "start" not in row:
+            continue
+        if row["start"] not in initial or row["version"] < initial[row["start"]]["version"]:
+            initial[row["start"]] = row
+    groups = {}
+    for label, row in initial.items():
+        spec = DesignSpec.model_validate(row["spec"])
+        design = spec.design.model_dump(
+            mode="json",
+            exclude={
+                "dry_mass_kg",
+                "geometry",
+                "parachute_diameter_m",
+                "has_parachute",
+            },
+        )
+        groups[label] = digest(
+            dict(
+                design=design,
+                geometry=spec.geometry.model_dump(mode="json"),
+                material=spec.material,
+                env=spec.env.model_dump(mode="json"),
+                assumptions=spec.assumptions.model_dump(mode="json", exclude={"evidence"}),
+                dry_mass_g=row["metrics"]["dry_mass_g"],
+            )
+        )
+    return groups
 
 
 def audit(root):
     root = Path(root)
     evidence = verified_files(root)
     report = json.loads((root / "report.json").read_text(encoding="utf-8"))
+    groups = ascent_groups(report)
     dataset = json.loads((root / "learning.json").read_text(encoding="utf-8"))
     specs = {}
     for observation in report["observations"]:
@@ -29,7 +64,8 @@ def audit(root):
             skipped.append(dict(seed=row["seed"], action=row["selected"], reason="missing_input"))
             continue
         # Hold out the entire initial-design family, including all revisions and results.
-        training = [r for r in eligible if r["seed"] != row["seed"]]
+        family = groups.get(row["seed"], row["seed"])
+        training = [r for r in eligible if groups.get(r["seed"], r["seed"]) != family]
         matches = experience.retrieve(
             [r["outcome"] for r in training],
             before,
@@ -63,7 +99,8 @@ def audit(root):
     return dict(
         source_hash=report["source_hash"],
         evidence=evidence,
-        split="leave one entire seed family out; offline predictive audit, not online timing",
+        split="leave one equivalent-ascent family out; offline predictive audit, not online timing",
+        equivalent_ascent_groups=groups,
         eligible_outcomes=len(eligible),
         held_out_predictions=len(rows),
         predictions_with_cross_seed_history=len(matched),
