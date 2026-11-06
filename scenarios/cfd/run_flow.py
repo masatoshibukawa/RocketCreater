@@ -45,6 +45,8 @@ def main():
         help="save time-averaged wall-adjacent pressure and distributed total loads",
     )
     p.add_argument("--cant", type=float, default=0, help="equal-handed fin cant in degrees")
+    p.add_argument("--wall", choices=("halfway", "interpolated"), default="halfway")
+    p.add_argument("--fin-thickness-mm", type=float, default=0)
     p.add_argument("--times", type=float, default=36, help="duration in D/U; average last half")
     p.add_argument("--speed", type=float, default=15, help="rocket free-stream speed, m/s")
     p.add_argument("--nu", type=float, default=1.5e-5, help="physical kinematic viscosity, m²/s")
@@ -64,6 +66,12 @@ def main():
         help="average adjacent lattice steps to check odd/even force sampling bias",
     )
     args = p.parse_args()
+    if args.wall == "interpolated" and args.shape not in ("empty", "sphere", "flat"):
+        p.error("interpolated walls support empty, sphere and flat geometry")
+    if not 0 <= args.fin_thickness_mm <= 10:
+        p.error("fin thickness must be in [0,10] mm")
+    if args.fin_thickness_mm and args.wall != "interpolated":
+        p.error("finite thickness requires interpolated geometry")
     if (
         not 6 <= args.cells <= 64
         or not 5 <= args.width <= 16
@@ -108,6 +116,7 @@ def main():
             args.upstream,
             math.cos(rotation_angle),
             math.sin(rotation_angle),
+            args.fin_thickness_mm / diameter,
         ],
         dtype="f",
     )
@@ -133,6 +142,8 @@ def main():
     if args.rotate_geometry and transverse_extent > args.width / 2 - 0.75:
         p.error("rotated body is too close to the periodic transverse boundaries")
     code = Path(__file__).with_name("bottle_flow.cu").read_text(encoding="utf-8")
+    wall_source = Path(__file__).with_name("interpolated_wall.cuh")
+    code = code.replace("// WALL_HELPERS", wall_source.read_text(encoding="utf-8"))
     module = cp.RawModule(code=code, options=("--std=c++11",))
     setup, advance, cut = (module.get_function(k) for k in ("setup", "advance", "cut"))
     mask = cp.empty(n, cp.uint32)
@@ -144,8 +155,27 @@ def main():
         np.float32(a)
         for a in ((speed, 0) if args.rotate_geometry else (speed * along, speed * across))
     )
-    setup(blocks, threads, (mask, src, *sizes, np.int32(shape), gpu_geometry, *inlet))
+    wall_mode = np.int32(args.wall == "interpolated")
+    setup(blocks, threads, (mask, src, *sizes, np.int32(shape), gpu_geometry, *inlet, wall_mode))
     surface_ids = cp.where((mask > 0) & (mask < (1 << 31)))[0].astype(cp.int32)
+    lookup = cp.full(n if wall_mode else 1, -1, cp.int32)
+    fractions = cp.full((len(surface_ids) if wall_mode else 1, 19), 0.5, cp.float32)
+    if wall_mode and len(surface_ids):
+        module.get_function("wall_setup")(
+            ((len(surface_ids) + 127) // 128,),
+            threads,
+            (
+                mask,
+                surface_ids,
+                np.int32(len(surface_ids)),
+                lookup,
+                fractions,
+                *sizes,
+                np.int32(shape),
+                gpu_geometry,
+            ),
+        )
+    wall_args = (lookup, fractions, wall_mode)
     surface_stats = cp.zeros((4, len(surface_ids)), cp.float32)
     surface_count = 0
     params = (
@@ -239,13 +269,21 @@ def main():
                 module.get_function("surface_probe")(
                     ((len(surface_ids) + 127) // 128,),
                     threads,
-                    (src, mask, surface_ids, np.int32(len(surface_ids)), *sizes[:3], surface_stats),
+                    (
+                        src,
+                        mask,
+                        surface_ids,
+                        np.int32(len(surface_ids)),
+                        *sizes[:3],
+                        surface_stats,
+                        *wall_args,
+                    ),
                 )
             surface_count += 1
         advance(
             blocks,
             threads,
-            (src, dst, mask, *params, np.int32(sample), forces[step // sample_every]),
+            (src, dst, mask, *params, np.int32(sample), forces[step // sample_every], *wall_args),
         )
         src, dst = dst, src
         if step % 250 == 0:
@@ -345,6 +383,8 @@ def main():
         )
     result = dict(
         shape=args.shape,
+        wall_scheme=args.wall,
+        fin_thickness_mm=args.fin_thickness_mm,
         assembly=model["key"],
         dimensions_mm=dims,
         cg_mm=model["loaded_cg_mm"],
@@ -364,7 +404,7 @@ def main():
         geometry_sha256=hashlib.sha256(args.assembly.read_bytes()).hexdigest(),
         source_sha256={
             p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in (Path(__file__), Path(__file__).with_name("bottle_flow.cu"))
+            for p in (Path(__file__), Path(__file__).with_name("bottle_flow.cu"), wall_source)
         },
         cant_deg=args.cant,
         steps=steps,
