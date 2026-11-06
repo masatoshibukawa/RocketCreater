@@ -4,6 +4,7 @@ import { useState } from "react";
 import { apiUrl } from "../lib/api";
 import { fmt } from "../lib/format";
 import { useAeroLoop, type AeroRequest } from "../lib/useAeroLoop";
+import { useCrewTask, useWorkshop } from "../lib/WorkshopContext";
 
 interface AeroLoopPanelProps {
   /** Null until there is a design and a target altitude to fly it to. */
@@ -15,13 +16,24 @@ const signedDegrees = (alpha: number): string => `${alpha > 0 ? "+" : ""}${fmt(a
 
 /** Runs the flight/CFD loop on the displayed design and shows its rounds and flow pictures. */
 export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps) {
-  const { job, starting, error, run } = useAeroLoop(request);
+  const { visible } = useWorkshop();
+  const { job, starting, error, connectionLost, run } = useAeroLoop(request);
   const [picked, setPicked] = useState<string | null>(null);
   const working = starting || job?.status === "queued" || job?.status === "running";
   const loop = job?.result ?? null;
   const images = job?.images ?? [];
   const image = images.find((row) => row.name === picked) ?? images[0];
   const hasPressure = loop?.baseline.pressure_kpa !== null;
+  useCrewTask("aero", { id: job?.id ?? "starting",
+    status: connectionLost || error || job?.status === "failed" ? "attention"
+      : starting || job?.status === "queued" ? "waiting"
+      : job?.status === "running" ? "working"
+      : job?.status === "done" ? loop?.converged ? "done" : "attention" : "idle",
+    label: connectionLost ? "接続が途切れたため、解析の状態確認を待っています"
+      : error || job?.status === "failed" ? "流体解析を止めて、エラーの確認を待っています"
+      : starting || job?.status === "queued" ? "資料を持って、流体解析の順番を待っています"
+      : job?.status === "running" ? "流れと飛行の計算を点検中"
+      : loop?.converged ? "流体解析が終了しました。結果を確認できます" : "収束は未確認です。結果の見直しを待っています" });
   return <section className="wb-detail wb-aero" aria-label="流体解析">
     <h2>流体解析</h2>
     <p className="wb-note">表示中の案について、飛行計算と流体計算を交互に回し、抗力係数の変化を確かめます。ボトルは圧力を設計値以下の範囲で選び直します。元の案そのものは変えません。</p>
@@ -31,6 +43,7 @@ export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps
     {!hasDesign ? <p className="wb-note">設計案が届くと実行できます。</p>
       : !request ? <p className="wb-note">要求の目標高度が分からないため、実行できません。</p> : null}
     {job?.status === "queued" ? <p className="wb-case-tag" role="status">順番を待っています</p> : null}
+    {connectionLost ? <p className="wb-note" role="status">接続が途切れました。解析の現在の状態は未確認です。自動で再接続を試みています。</p> : null}
     {error ? <p role="alert" className="wb-error">{error}</p> : null}
     {job?.error && !error ? <p role="alert" className="wb-error">{job.error}</p> : null}
     <div className="backscreen">
@@ -39,10 +52,11 @@ export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps
         <img src={apiUrl(image.url)} alt={image.alpha_deg === null ? `流れの画像 ${image.name}` : `迎角 ${signedDegrees(image.alpha_deg)} の流れの画像`}/>
         <figcaption>{image.speed_mps === null ? image.name : `流速 ${fmt(image.speed_mps, 1)} m/s`}{image.alpha_deg === null ? "" : ` · 迎角 ${signedDegrees(image.alpha_deg)}`}</figcaption>
       </figure> : <p className="backscreen-idle" role="status">
-        {job?.status === "running" ? `流体解析を実行中 · 経過 ${fmt(job.elapsed_s ?? 0, 0)} 秒`
+        {connectionLost ? "接続待ち · 解析の現在の状態は未確認です"
+          : job?.status === "running" ? `流体解析を実行中 · 経過 ${fmt(job.elapsed_s ?? 0, 0)} 秒`
           : loop ? "この実行には流れの画像がありません。" : "計算した流れの画像がここに映ります"}
       </p>}
-      <img className="backscreen-crew" src="/workshop/crew.webp" alt=""/>
+      {visible ? <img className="backscreen-crew" src="/workshop/crew.webp" alt=""/> : null}
     </div>
     {loop ? <>
       <p className="wb-case-tag">{loop.converged ? "抗力係数が収束しました" : "抗力係数は収束していません"} · {loop.rounds.length}周 · 計算手段 {loop.rounds.at(-1)?.backend ?? "—"}</p>

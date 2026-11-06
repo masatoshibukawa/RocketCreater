@@ -15,6 +15,9 @@ import ProductionPanel from "./components/ProductionPanel";
 import ReferenceLibrary from "./components/ReferenceLibrary";
 import ResultPanel from "./components/ResultPanel";
 import StatusStrip from "./components/StatusStrip";
+import WorkshopCrew from "./components/WorkshopCrew";
+import { WorkshopProvider, useCrewTask } from "./lib/WorkshopContext";
+import { designCrewTask } from "./lib/workshopActivity";
 import { designKey, exportInfoFromEvents, exportsForDesign, type DesignPackageRequest } from "./lib/api";
 import { centerTabs, type CenterView } from "./lib/centerViews";
 import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
@@ -28,8 +31,13 @@ const NO_TRACE: TracePoint[] = [];
 const NO_METRICS: Record<string, number> = {};
 
 export default function Home() {
+  return <WorkshopProvider><DesignScreen/></WorkshopProvider>;
+}
+
+function DesignScreen() {
   const [centerView, setCenterView] = useState<CenterView>("model");
   const stream = useDesignStream();
+  useCrewTask("design", designCrewTask(stream));
   const { start, answer, stop, reset } = stream;
   // Manual pick from 詳細 (attempt log / cards / reviews); null = follow the display rule.
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -243,6 +251,7 @@ export default function Home() {
                 <ReferenceLibrary />
               </div>
             ) : null}
+            <WorkshopCrew/>
             {view === "model" ? (
               <CostPanel
                 summary={summary}
