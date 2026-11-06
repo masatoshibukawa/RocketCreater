@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "spec": {
+    "name": "2 L・同じ形状からの制作確認",
+    "design": {
+      "tier": "bottle",
+      "bottle_volume_m3": 0.002,
+      "water_fill_frac": 0.3,
+      "initial_gauge_pressure_pa": 350000.0,
+      "nozzle_diameter_m": 0.009,
+      "dry_mass_kg": 0.1,
+      "payload_mass_kg": 0.06,
+      "has_fins": true,
+      "axial_drag_coefficient": null,
+      "has_parachute": true,
+      "parachute_diameter_m": 0.7,
+      "geometry": null
+    },
+    "geometry": {
+      "body_diameter_mm": 110.0,
+      "body_height_mm": 315.0,
+      "nose_length_mm": 95.0,
+      "fin_root_mm": 100.0,
+      "fin_tip_mm": 36.0,
+      "fin_span_mm": 50.0,
+      "fin_sweep_mm": 14.0,
+      "fin_count": 3,
+      "fin_thickness_mm": 2.4,
+      "nose_wall_mm": 1.6,
+      "fin_tail_inset_mm": 100.0,
+      "dimensions_measured": false
+    },
+    "requirement": null,
+    "env": {
+      "launch_latitude_deg": 0.0,
+      "launch_altitude_m": 0.0,
+      "wind_speed_mps": 0.0,
+      "wind_direction_deg": 0.0,
+      "temperature_offset_k": 0.0,
+      "rail_length_m": 1.5,
+      "earth_rotation": false
+    },
+    "other_dry_mass_g": 80.0,
+    "measured_printed_mass_g": null,
+    "material": "UltiMaker Tough PLA Gray"
+  }
+}

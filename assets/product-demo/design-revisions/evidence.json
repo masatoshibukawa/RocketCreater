@@ -1,0 +1,55 @@
+{
+  "source_id": "95549e3a9c044e8888345fd05d6a03a0:v1",
+  "version": 1,
+  "api_files_checked": 66,
+  "extracted_package_files_checked": 65,
+  "physical_print_success": false,
+  "paid_api_used": false,
+  "files": [
+    {
+      "file": "appearance-sources.json",
+      "sha256": "39d9938b636f28692f841246e7027fc911051c4ce51e4bede73b9df0abbc0eee",
+      "bytes": 2135
+    },
+    {
+      "file": "assembly.pdf",
+      "sha256": "040600a8890094fcc8a46d70b4a8befb34f4228d4d1be28fd63a07a5cf53958a",
+      "bytes": 94608
+    },
+    {
+      "file": "design-explanation.mp4",
+      "sha256": "3c990822fd91526d3842df57955d55dcc998b897a3b98e5b67fcf11cfd2e16aa",
+      "bytes": 1577587
+    },
+    {
+      "file": "design-input.json",
+      "sha256": "a27a0f22d298bd08834fcfe8b4b809d5ed1c5e0d50fc39d4545480d6385eed0b",
+      "bytes": 1267
+    },
+    {
+      "file": "design-sheet.pdf",
+      "sha256": "e173a8d483e294de49c219db0ac1223b1bb2d65063a602fba32e91e64ba8af24",
+      "bytes": 56375
+    },
+    {
+      "file": "design.json",
+      "sha256": "ba274ee5c67a9d12c72c1fd8af23ab42a7fd09f851ce86bb41c8cb0d6621d740",
+      "bytes": 1291
+    },
+    {
+      "file": "launch-cg.mp4",
+      "sha256": "969fe1fc1fb54a2c8e06ddc8bbd5edd39abcc9cb0627877ebb5afc10d9428fa0",
+      "bytes": 1052005
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "8a4d7a84dacb08ee8018be725328d5f88aa02e84d3f8f9811d0c6dcd5ce19c8d",
+      "bytes": 383
+    },
+    {
+      "file": "verification.json",
+      "sha256": "20a1415722174fc9d1dd22fb1a1b9c653b720f2c1a9c33289bac8a6a5b3157ff",
+      "bytes": 1069
+    }
+  ]
+}

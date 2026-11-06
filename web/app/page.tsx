@@ -231,8 +231,8 @@ function DesignScreen() {
   const hasModel = stage === "brief" || stage === "design" || stage === "assembly";
   const showCrew = (hasModel && modelView === "model" && displayed !== null) || stage === "analysis" || stage === "exports";
   const requirementRows = [
-    ["目標の高度", typeof activeRequirement?.target_altitude_m === "number" ? `${fmt(activeRequirement.target_altitude_m, 0)} m` : "未入力"],
-    ["積載物の質量", typeof activeRequirement?.payload_mass_kg === "number" ? `${fmt(activeRequirement.payload_mass_kg * 1000, 0)} g` : "未入力"],
+    ["目標の高度", typeof activeRequirement?.target_altitude_m === "number" ? `${fmt(activeRequirement.target_altitude_m, 0)} m` : productionProject ? "未指定" : "未入力"],
+    ["積載物の質量", productionProject ? `${fmt(productionProject.spec.design.payload_mass_kg * 1000, 0)} g` : typeof activeRequirement?.payload_mass_kg === "number" ? `${fmt(activeRequirement.payload_mass_kg * 1000, 0)} g` : "未入力"],
     ["予算", typeof activeRequirement?.budget_jpy === "number" ? `${fmt(activeRequirement.budget_jpy, 0)} 円` : "未入力"],
     ["規模", tier ? TIER_LABEL[tier] : "要求から判定"],
   ];
