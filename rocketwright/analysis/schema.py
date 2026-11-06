@@ -14,6 +14,17 @@ class Strict(BaseModel):
 STOCKS = {
     "UltiMaker Tough PLA Gray": dict(density=1240.0, young_pa=2e9, warm_ratio=0.5),
     "Prusament PETG": dict(density=1270.0, young_pa=1.5e9, warm_ratio=0.53),
+    "Prusament ASA": dict(density=1070.0, young_pa=1.6e9, warm_ratio=0.5),
+}
+STOCK_EVIDENCE = {
+    "Prusament ASA": {
+        "source": "https://storage.googleapis.com/prusa3d-content-prod-14e8-wordpress-prusament-prod/2024/05/bc8551ef-tds_prusament-asa_2024_en.pdf",
+        "basis": "2024-05-20 TDS p2: density and horizontal specimen tensile modulus",
+        "limitations": (
+            "Isotropic screening approximation; warm_ratio is assumed, not TDS data; "
+            "no strength allowable or printer profile"
+        ),
+    },
 }
 MOUNTS = {
     "standard": dict(root_k_n_m=5e5, additional_mass_g=0.0),
@@ -37,6 +48,7 @@ class Assumptions(Strict):
 
 class Precision(Strict):
     altitude_error_m: float = Field(default=1.5, gt=0, le=20)
+    attitude_error_deg: float = Field(default=1, gt=0, le=10)
     aero_allocation: float = Field(default=0.5, gt=0, lt=1)
     grid_relative_limit: float = Field(default=0.05, gt=0, le=0.2)
     temporal_relative_limit: float = Field(default=0.03, gt=0, le=0.2)
@@ -45,7 +57,9 @@ class Precision(Strict):
     maximum_incidence_deg: float = Field(default=15, gt=0, le=30)
     minimum_static_margin_cal: float = Field(default=1, gt=0, le=3)
     require_cfd: bool = True
+    require_aero_audit: bool = True
     require_fem: bool = True
+    require_benchmarks: bool = True
 
 
 class SearchLimits(Strict):
@@ -55,10 +69,15 @@ class SearchLimits(Strict):
     nozzle_mm: tuple[Annotated[float, Field(ge=1, le=40)], ...] = (7, 9, 11)
     allow_material_change: bool = True
     allow_geometry_change: bool = True
-    max_versions: int = Field(default=6, ge=1, le=30)
-    max_actions: int = Field(default=40, ge=1, le=200)
+    max_versions: int = Field(default=12, ge=1, le=30)
+    max_actions: int = Field(default=160, ge=1, le=500)
     budget_s: float = Field(default=3600, gt=0, le=86400)
     memory_gib: float = Field(default=8, gt=0, le=128)
     planner: Literal["local_llm", "baseline"] = "local_llm"
     fallback: Literal["stop", "baseline"] = "stop"
     planner_timeout_s: float = Field(default=90, gt=0, le=180)
+    # Exploration never changes acceptance precision. Fixed-candidate audits can disable it.
+    exploratory_redesign: bool = True
+    use_experience: bool = True
+    survey_candidates: int = Field(default=32, ge=1, le=64)
+    reserve_confirmation_fraction: float = Field(default=0.3, ge=0.1, le=0.8)

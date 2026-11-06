@@ -1,0 +1,4454 @@
+{
+  "source_commit": "1067698a462d6fed7b5cfaca59d22f3330d80ad3",
+  "project_id": "5be83ce77eaa4a649edd4e8c61d97f25",
+  "spec": {
+    "name": "階層型解析の接続確認用・未製作案",
+    "design": {
+      "tier": "bottle",
+      "bottle_volume_m3": 0.0015,
+      "water_fill_frac": 0.25,
+      "initial_gauge_pressure_pa": 300000.0,
+      "nozzle_diameter_m": 0.009,
+      "dry_mass_kg": 0.15,
+      "payload_mass_kg": 0.06,
+      "has_fins": true,
+      "axial_drag_coefficient": null,
+      "has_parachute": true,
+      "parachute_diameter_m": 0.7,
+      "geometry": null
+    },
+    "geometry": {
+      "body_diameter_mm": 90.0,
+      "body_height_mm": 400.0,
+      "nose_length_mm": 80.0,
+      "fin_root_mm": 90.0,
+      "fin_tip_mm": 40.0,
+      "fin_span_mm": 120.0,
+      "fin_sweep_mm": 35.0,
+      "fin_count": 4,
+      "fin_thickness_mm": 2.4,
+      "nose_wall_mm": 1.6,
+      "fin_tail_inset_mm": 5.0,
+      "dimensions_measured": false
+    },
+    "requirement": {
+      "goal_kind": "altitude",
+      "target_altitude_m": 30.0,
+      "target_apogee_m": null,
+      "payload_mass_kg": 0.0,
+      "budget_jpy": null,
+      "recovery_required": false,
+      "tier_override": null,
+      "text": ""
+    },
+    "env": {
+      "launch_latitude_deg": 0.0,
+      "launch_altitude_m": 0.0,
+      "wind_speed_mps": 1.5,
+      "wind_direction_deg": 270.0,
+      "temperature_offset_k": 0.0,
+      "rail_length_m": 1.5,
+      "earth_rotation": false
+    },
+    "other_dry_mass_g": 150.0,
+    "measured_printed_mass_g": null,
+    "material": "UltiMaker Tough PLA Gray",
+    "assumptions": {
+      "mount": "standard",
+      "root_capture_mm": 10.5,
+      "other_mass_station_fraction": 0.55,
+      "payload_station_fraction": 0.15,
+      "solar_w_m2": 800.0,
+      "warm_wait_s": 120.0,
+      "pitch_damping": 10.0,
+      "initial_tilt_deg": 1.0,
+      "gust_mps": 0.5,
+      "opening_s": 0.15,
+      "evidence": {}
+    }
+  },
+  "completed_runtime": {
+    "cfd_enabled": true,
+    "cfd_cells_coarse": 16,
+    "cfd_cells_fine": 20,
+    "cfd_times": 40.0,
+    "cfd_width": 10.0,
+    "cfd_lattice_speed": 0.075,
+    "cfd_speeds": [
+      1,
+      35
+    ],
+    "cfd_angles": [
+      0,
+      5,
+      15,
+      45,
+      90,
+      135,
+      180
+    ],
+    "fem_level": 4,
+    "flight_step_s": 0.02
+  },
+  "current_runtime": {
+    "cfd_enabled": true,
+    "cfd_cells_coarse": 16,
+    "cfd_cells_fine": 20,
+    "cfd_times": 60.0,
+    "cfd_width": 10.0,
+    "cfd_lattice_speed": 0.075,
+    "cfd_speeds": [
+      1,
+      35
+    ],
+    "cfd_angles": [
+      0,
+      5,
+      15,
+      45,
+      90,
+      135,
+      180
+    ],
+    "fem_level": 4,
+    "flight_step_s": 0.02
+  },
+  "precision": {
+    "altitude_error_m": 1.5,
+    "attitude_error_deg": 1.0,
+    "aero_allocation": 0.5,
+    "grid_relative_limit": 0.05,
+    "temporal_relative_limit": 0.03,
+    "structure_relative_limit": 0.05,
+    "deflection_span_limit": 0.05,
+    "maximum_incidence_deg": 15.0,
+    "minimum_static_margin_cal": 1.0,
+    "require_cfd": true,
+    "require_aero_audit": true,
+    "require_fem": true
+  },
+  "limits": {
+    "pressure_kpa": [
+      200.0,
+      250.0,
+      300.0,
+      350.0,
+      400.0
+    ],
+    "fills": [
+      0.2,
+      0.25,
+      0.3,
+      0.35
+    ],
+    "nozzle_mm": [
+      7.0,
+      9.0,
+      11.0
+    ],
+    "allow_material_change": true,
+    "allow_geometry_change": true,
+    "max_versions": 1,
+    "max_actions": 15,
+    "budget_s": 15000.0,
+    "memory_gib": 24.0,
+    "planner": "local_llm",
+    "fallback": "stop",
+    "planner_timeout_s": 90.0
+  },
+  "status": "budget_exhausted",
+  "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+  "physical_qualification": false,
+  "checks": {
+    "altitude": false,
+    "attitude": true,
+    "static_margin": false,
+    "temporal": true,
+    "fin_deformation": true,
+    "modes": true,
+    "frozen_pitch": true,
+    "aero_domain": true,
+    "thermal_balance": true,
+    "propulsion_balance": true,
+    "payload_mass": true,
+    "recovery": true,
+    "cost_evidence": true,
+    "aero_grid": false,
+    "aero_averaging": false,
+    "aero_trajectory": true,
+    "aero_interpolation": true,
+    "aero_domain_size": true,
+    "aero_lattice": false,
+    "aero_duration": false,
+    "aero_third_grid": true,
+    "fem_mesh": true
+  },
+  "unmet": [
+    "altitude",
+    "static_margin",
+    "aero_grid",
+    "aero_averaging",
+    "aero_lattice",
+    "aero_duration"
+  ],
+  "static_margin_cal": 0.067830355934803,
+  "mass_g": 298.50249065066885,
+  "material": "UltiMaker Tough PLA Gray",
+  "temperature_c": {
+    "gas": 23.116467110494625,
+    "skin": 23.379215141249574,
+    "mount": 16.812180560717536,
+    "payload": 15.02888128557231,
+    "fin": 25.290639680517188
+  },
+  "flight": {
+    "screen": {
+      "apogee_m": 11.230979701312911,
+      "ascent_incidence_deg": 10.202160370535662,
+      "max_q_pa": 105.34525392486955,
+      "impact_speed_mps": 4.687940746602592,
+      "peak_roll_rad_s": 4.434531578025586e-16
+    },
+    "flight": {
+      "apogee_m": 10.511819031517133,
+      "ascent_incidence_deg": 10.230122784395878,
+      "max_q_pa": 102.32115618530806,
+      "impact_speed_mps": 4.585435627117524,
+      "peak_roll_rad_s": 2.4160525875069613e-16
+    }
+  },
+  "confirmation": {
+    "apogee_m": 10.509157034815473,
+    "ascent_incidence_deg": 10.227028965556096,
+    "max_q_pa": 102.44137384817151,
+    "impact_speed_mps": 4.585378373991728,
+    "peak_roll_rad_s": 2.0041072810105088e-16
+  },
+  "grid_propagation": {
+    "altitude_difference_m": 0.13780066091777776,
+    "incidence_difference_deg": 0.004658164654959052,
+    "max_q_difference_pa": 0.6875166260110888,
+    "scope": "Same integration step, different CFD grids; not a bound on model error"
+  },
+  "cfd": {
+    "grid_relative_change": 0.11110615479468289,
+    "averaging_relative_change": 3.1049632830809193,
+    "audit": {
+      "condition": {
+        "speed_mps": 18,
+        "angle_deg": 10
+      },
+      "cells": [
+        16,
+        20,
+        24
+      ],
+      "differences": {
+        "wide": 0.023131499057215982,
+        "time": 0.06716367391226684,
+        "duration": 0.048310961419146085,
+        "interpolation": 0.04226208053584957,
+        "third_grid": 0.04967953104376165
+      },
+      "observed_orders": {
+        "Cx": {
+          "values": [
+            1.4667696701084756,
+            1.249256523062081,
+            1.1871940448429965
+          ],
+          "cells": [
+            16,
+            20,
+            24
+          ],
+          "observed_order": 5.102457246123157,
+          "fine_gci": 0.04256389830457797,
+          "asymptotic_range_verified": false,
+          "classification": "monotone"
+        },
+        "Cy": {
+          "values": [
+            1.7642973125340529,
+            1.877407001378979,
+            1.8533293077684387
+          ],
+          "cells": [
+            16,
+            20,
+            24
+          ],
+          "observed_order": null,
+          "fine_gci": null,
+          "asymptotic_range_verified": false,
+          "classification": "oscillatory"
+        },
+        "Cm_z": {
+          "values": [
+            1.1669198106064607,
+            1.3795910759705918,
+            1.3935573295120065
+          ],
+          "cells": [
+            16,
+            20,
+            24
+          ],
+          "observed_order": null,
+          "fine_gci": null,
+          "asymptotic_range_verified": false,
+          "classification": "no_resolved_positive_order"
+        }
+      },
+      "metrics": {
+        "aero_wide": 0.023131499057215982,
+        "aero_time": 0.06716367391226684,
+        "aero_duration": 0.048310961419146085,
+        "aero_interpolation": 0.04226208053584957,
+        "aero_third_grid": 0.04967953104376165
+      },
+      "scope": "One independent ascent condition; finite differences, not a global error bound"
+    },
+    "cases": [
+      {
+        "action": "cfd_coarse",
+        "case": "v01-a000",
+        "cells": 16,
+        "speed_mps": 1.0,
+        "angle_deg": 0.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.3600052064435366,
+          "Cl": 0.0057396599229676245,
+          "Cx": 1.3600052064435366,
+          "Cy": 0.0057396599229676245,
+          "Cz": -0.0034342163533560605,
+          "Croll": 0.011552678321010668,
+          "Cpitch_y": 0.004196929413747809,
+          "Cm_z": 0.0006070609705248937
+        },
+        "seconds": 20.562000000150874,
+        "sha256": "a496d061b57339e1fc09468076e2bd8756f1b1b01750e22b494ae638972cc660"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v01-a005",
+        "cells": 16,
+        "speed_mps": 1.0,
+        "angle_deg": 5.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.5466810992708644,
+          "Cl": 1.0027688033773408,
+          "Cx": 1.4533984508698152,
+          "Cy": 1.1337551053370276,
+          "Cz": 0.0005674649313928538,
+          "Croll": 0.0038791622465962987,
+          "Cpitch_y": 0.003942864119559017,
+          "Cm_z": 0.8966136399161823
+        },
+        "seconds": 20.57799999997951,
+        "sha256": "5d21e679615b487d99c455776607fb4e616f245ae3b7ddf244b1c4909263db5d"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v01-a015",
+        "cells": 16,
+        "speed_mps": 1.0,
+        "angle_deg": 15.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 2.156229331485736,
+          "Cl": 1.9830420477542012,
+          "Cx": 1.5695085494861953,
+          "Cy": 2.4735447451401296,
+          "Cz": 0.007716787734884033,
+          "Croll": -0.005158023187014206,
+          "Cpitch_y": -0.008488055268366188,
+          "Cm_z": 1.5125839422145564
+        },
+        "seconds": 20.625,
+        "sha256": "93fa0bca86a7ec6835361da6a0496f18062550c4d4158336e2fafd2ba073df18"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v01-a045",
+        "cells": 16,
+        "speed_mps": 1.0,
+        "angle_deg": 45.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 5.8685638812341825,
+          "Cl": 4.076932992635785,
+          "Cx": 1.2668743507112057,
+          "Cy": 7.03252828178306,
+          "Cz": 0.000805993476503134,
+          "Croll": -0.00189298840635631,
+          "Cpitch_y": -0.00868811386508224,
+          "Cm_z": 2.5901226554177854
+        },
+        "seconds": 20.67199999978766,
+        "sha256": "cf39c9a88195714c6ed7b3104b7f49db1b342c87002933f05aaa6e9a09d9b7ea"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v01-a090",
+        "cells": 16,
+        "speed_mps": 1.0,
+        "angle_deg": 90.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 9.260405799743332,
+          "Cl": -0.09156341715555062,
+          "Cx": 0.0915634171555512,
+          "Cy": 9.260405799743332,
+          "Cz": 0.04300281072713576,
+          "Croll": 0.009123589762034463,
+          "Cpitch_y": -0.06395356504362418,
+          "Cm_z": 6.198184240254886
+        },
+        "seconds": 20.79700000002049,
+        "sha256": "5261c6097d118c7751cdf66a1eaa726005b594ece5f11365375940b98272908e"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v01-a135",
+        "cells": 16,
+        "speed_mps": 1.0,
+        "angle_deg": 135.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 5.503096787958312,
+          "Cl": -3.3340218859712083,
+          "Cx": -1.5337675720966288,
+          "Cy": 6.248786540485835,
+          "Cz": -0.024919423863662287,
+          "Croll": 0.008331860417236096,
+          "Cpitch_y": -0.07146513024528599,
+          "Cm_z": 7.3069488202021295
+        },
+        "seconds": 20.92200000002049,
+        "sha256": "19f9b0f4cf57f661174129ad236b38a14fad19500a44f5a375e2020e90d10ace"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v01-a180",
+        "cells": 16,
+        "speed_mps": 1.0,
+        "angle_deg": 180.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.624879376436325,
+          "Cl": -0.004807572464796588,
+          "Cx": -1.624879376436325,
+          "Cy": 0.004807572464796787,
+          "Cz": -0.003589335535672805,
+          "Croll": -6.229220284361377e-06,
+          "Cpitch_y": 0.004372002695031605,
+          "Cm_z": 0.0024121325638211725
+        },
+        "seconds": 20.92199999978766,
+        "sha256": "14ad37d43ea4eecb189af000cabdc493444fc3a4047affbb22a977cdab7972e2"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v35-a000",
+        "cells": 16,
+        "speed_mps": 35.0,
+        "angle_deg": 0.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.295668210043438,
+          "Cl": -0.0005682817626330524,
+          "Cx": 1.295668210043438,
+          "Cy": -0.0005682817626330524,
+          "Cz": -0.011405194025274396,
+          "Croll": -0.005609690283701898,
+          "Cpitch_y": 0.007279399732914288,
+          "Cm_z": 0.006602696289528163
+        },
+        "seconds": 20.937000000150874,
+        "sha256": "d0881c2e41b9a9fed5904de3da2f4bf61497696e826ca4b2c27f1e086b2893d1"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v35-a005",
+        "cells": 16,
+        "speed_mps": 35.0,
+        "angle_deg": 5.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.496400339159104,
+          "Cl": 1.0232735891172036,
+          "Cx": 1.4015219143994175,
+          "Cy": 1.149799607183129,
+          "Cz": -0.0010229213399224153,
+          "Croll": -0.00648911051764677,
+          "Cpitch_y": 0.005853108094342877,
+          "Cm_z": 0.9415983200949353
+        },
+        "seconds": 20.937999999849126,
+        "sha256": "16181e3ccf9311245ba0412942288aeff2430e888dd9ee70851440045286ef3d"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v35-a015",
+        "cells": 16,
+        "speed_mps": 35.0,
+        "angle_deg": 15.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 2.0943741159418083,
+          "Cl": 1.9833378861198572,
+          "Cx": 1.509684430698334,
+          "Cy": 2.4578211952362308,
+          "Cz": 0.001529295395845852,
+          "Croll": -0.008210172445014567,
+          "Cpitch_y": 0.00025187995788028344,
+          "Cm_z": 1.5332558886655323
+        },
+        "seconds": 20.968999999808148,
+        "sha256": "bb2bf77d999f01094c865ca1e73fa8b9965cf57593ccebf8cc81b9b0c702f9b8"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v35-a045",
+        "cells": 16,
+        "speed_mps": 35.0,
+        "angle_deg": 45.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 5.8147434451518025,
+          "Cl": 4.08068415571687,
+          "Cx": 1.2261650825389683,
+          "Cy": 6.997123959314768,
+          "Cz": -0.0050684247841654125,
+          "Croll": -0.032350451273348346,
+          "Cpitch_y": 0.03137896952963549,
+          "Cm_z": 2.5684871858804565
+        },
+        "seconds": 20.688000000081956,
+        "sha256": "e2992f5e43f6c0eecb64dd52530798f5f95dc12496aa67fefdd824b36d09103f"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v35-a090",
+        "cells": 16,
+        "speed_mps": 35.0,
+        "angle_deg": 90.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 9.276320562126076,
+          "Cl": -0.12723272877917755,
+          "Cx": 0.12723272877917818,
+          "Cy": 9.276320562126076,
+          "Cz": -0.053429149827194294,
+          "Croll": 0.009877003666145252,
+          "Cpitch_y": 0.0674363496677456,
+          "Cm_z": 6.380259135308108
+        },
+        "seconds": 20.75,
+        "sha256": "397a9e7d976b3316542e129076a09526b545a6624a9089e738eefff605dff0ad"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v35-a135",
+        "cells": 16,
+        "speed_mps": 35.0,
+        "angle_deg": 135.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 5.496148815970614,
+          "Cl": -3.350167940904927,
+          "Cx": -1.5174376290555858,
+          "Cy": 6.255290567310884,
+          "Cz": 0.01786707589098868,
+          "Croll": 0.006787399553231033,
+          "Cpitch_y": -0.0780298869844649,
+          "Cm_z": 7.3102321047846495
+        },
+        "seconds": 20.67200000002049,
+        "sha256": "f38f1bdfcc7b730912c4dabdae164fcbeff59ddfb1d18b99568ac5f891a8a436"
+      },
+      {
+        "action": "cfd_coarse",
+        "case": "v35-a180",
+        "cells": 16,
+        "speed_mps": 35.0,
+        "angle_deg": 180.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.5887053991748854,
+          "Cl": -0.0030564251701956473,
+          "Cx": -1.5887053991748854,
+          "Cy": 0.0030564251701958424,
+          "Cz": -0.00515841688572439,
+          "Croll": -0.006356847261238436,
+          "Cpitch_y": 0.007299377887883317,
+          "Cm_z": -0.004872294772244789
+        },
+        "seconds": 20.562000000150874,
+        "sha256": "aee61ba3f3ffaabfedb9bbe36aa938a2a11d806b16edc9b395bfb6fb3ec99ebb"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v01-a000",
+        "cells": 20,
+        "speed_mps": 1.0,
+        "angle_deg": 0.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.2564205776817465,
+          "Cl": -0.002743258446862608,
+          "Cx": 1.2564205776817465,
+          "Cy": -0.002743258446862608,
+          "Cz": -0.009074803525271138,
+          "Croll": 0.003642027203390109,
+          "Cpitch_y": 0.004516765706818827,
+          "Cm_z": 0.0004082414531670626
+        },
+        "seconds": 48.40599999995902,
+        "sha256": "39c92df64a21c1cb74123305e86980be176141567f0d0a0a162de7c55252c7e6"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v01-a005",
+        "cells": 20,
+        "speed_mps": 1.0,
+        "angle_deg": 5.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.3665992743834876,
+          "Cl": 0.9891214399326191,
+          "Cx": 1.2751913377918955,
+          "Cy": 1.1044645090270513,
+          "Cz": 0.0005661848263835144,
+          "Croll": 0.006502252423056062,
+          "Cpitch_y": -0.002698776156155045,
+          "Cm_z": 0.9671536396766118
+        },
+        "seconds": 48.46900000004098,
+        "sha256": "81b8c57b29565202e4e6ee369488afa48079415a1e8ccd5b4ab7e44ab3d44136"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v01-a015",
+        "cells": 20,
+        "speed_mps": 1.0,
+        "angle_deg": 15.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.9952209211143996,
+          "Cl": 2.09411097436734,
+          "Cx": 1.3852396141321976,
+          "Cy": 2.53915704682818,
+          "Cz": 0.005731788458462484,
+          "Croll": 0.0016575214968147995,
+          "Cpitch_y": 0.002126746746200859,
+          "Cm_z": 1.6939727803525961
+        },
+        "seconds": 48.562000000150874,
+        "sha256": "65b63b2c7e1a858613f9c66ddabefa40be85034cbb38dbbe5dfad3ac245e0cec"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v01-a045",
+        "cells": 20,
+        "speed_mps": 1.0,
+        "angle_deg": 45.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 5.792750844989033,
+          "Cl": 4.250085682249182,
+          "Cx": 1.090828997673599,
+          "Cy": 7.101357810758099,
+          "Cz": -0.06622472382761432,
+          "Croll": 0.03411560751698349,
+          "Cpitch_y": 0.05290247941628562,
+          "Cm_z": 2.8389111436489425
+        },
+        "seconds": 49.01600000006147,
+        "sha256": "2e5aeb69c6e65cc492569ad365e67892021e15724c62370f5804ad585746855c"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v01-a090",
+        "cells": 20,
+        "speed_mps": 1.0,
+        "angle_deg": 90.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 9.077684480133348,
+          "Cl": -0.06268224166511953,
+          "Cx": 0.06268224166512014,
+          "Cy": 9.077684480133348,
+          "Cz": 0.0714186243587959,
+          "Croll": -0.004370372786249312,
+          "Cpitch_y": -0.11082743102257724,
+          "Cm_z": 6.184499090769863
+        },
+        "seconds": 49.20299999997951,
+        "sha256": "fd54954ae8fad7774227720a97f41374a3e20524b97f897532495260c38c88ab"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v01-a135",
+        "cells": 20,
+        "speed_mps": 1.0,
+        "angle_deg": 135.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 5.416510487197045,
+          "Cl": -3.4989863035886226,
+          "Cx": -1.3558943533187147,
+          "Cy": 6.304208238411447,
+          "Cz": 0.0083055458264036,
+          "Croll": -0.026976364507441435,
+          "Cpitch_y": 0.04952885368048087,
+          "Cm_z": 7.540103600340869
+        },
+        "seconds": 49.14099999982864,
+        "sha256": "e432e70c42a88c9813f17a8bcbec7f1752259b4dc804d03128b2f84a6a1bdd22"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v01-a180",
+        "cells": 20,
+        "speed_mps": 1.0,
+        "angle_deg": 180.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.675339264218055,
+          "Cl": -0.00019588141237035823,
+          "Cx": -1.675339264218055,
+          "Cy": 0.00019588141237056377,
+          "Cz": -0.004444668762040156,
+          "Croll": -0.0035836722643480716,
+          "Cpitch_y": 0.0019658738516168616,
+          "Cm_z": 0.024355207271959785
+        },
+        "seconds": 48.5,
+        "sha256": "90d44287ad1895b408e4264ddf5417bb293ebb3332831a522f3a335c5a5828a9"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v35-a000",
+        "cells": 20,
+        "speed_mps": 35.0,
+        "angle_deg": 0.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.1830542552491548,
+          "Cl": -0.0063014260093988,
+          "Cx": 1.1830542552491548,
+          "Cy": -0.0063014260093988,
+          "Cz": -0.022452252928990387,
+          "Croll": 0.009564086151842342,
+          "Cpitch_y": 0.01390207110288373,
+          "Cm_z": -0.017396563427741586
+        },
+        "seconds": 48.40599999995902,
+        "sha256": "e0f329b919c10cc1948d40ece18873b06f1d717afb3f4d71426a411f4fcf9f9c"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v35-a005",
+        "cells": 20,
+        "speed_mps": 35.0,
+        "angle_deg": 5.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.3065599248881876,
+          "Cl": 0.9891110279224515,
+          "Cx": 1.2153813636142807,
+          "Cy": 1.099221362538377,
+          "Cz": 0.0036020930701373727,
+          "Croll": -0.009609534327390819,
+          "Cpitch_y": -0.009480105923263043,
+          "Cm_z": 0.9438395018525507
+        },
+        "seconds": 48.42200000002049,
+        "sha256": "c36f400387e7c6d4557b557456a7f64005f7deff03f6742f120dd21519c37125"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v35-a015",
+        "cells": 20,
+        "speed_mps": 35.0,
+        "angle_deg": 15.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.9709719071379883,
+          "Cl": 2.171772832407348,
+          "Cx": 1.3417164973315359,
+          "Cy": 2.607896534584567,
+          "Cz": 0.017838774324686668,
+          "Croll": 0.012052026394163506,
+          "Cpitch_y": -0.04403340553390799,
+          "Cm_z": 1.7772804979740453
+        },
+        "seconds": 48.515000000130385,
+        "sha256": "8ff939023b40956cca233faf2feb4bc2f0429839e4aaf97909c74ccb38ae6450"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v35-a045",
+        "cells": 20,
+        "speed_mps": 35.0,
+        "angle_deg": 45.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 5.775373911341641,
+          "Cl": 4.279046504520459,
+          "Cx": 1.058063256238539,
+          "Cy": 7.1095488569565575,
+          "Cz": -0.06464477217883383,
+          "Croll": -0.0078017304365177965,
+          "Cpitch_y": 0.05988034615717214,
+          "Cm_z": 2.8968074744968804
+        },
+        "seconds": 48.625,
+        "sha256": "68bdb17c0ef49ed1effed1fe6f89cde408a114ba485843e3d76e933e2792b71f"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v35-a090",
+        "cells": 20,
+        "speed_mps": 35.0,
+        "angle_deg": 90.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 9.056584977339362,
+          "Cl": -0.09975602085691712,
+          "Cx": 0.09975602085691766,
+          "Cy": 9.056584977339362,
+          "Cz": -0.03811463900267326,
+          "Croll": 0.04143258090962587,
+          "Cpitch_y": 0.09207608774548921,
+          "Cm_z": 6.250059208784949
+        },
+        "seconds": 48.57799999997951,
+        "sha256": "55bf835bae62f4db98173d26a7b35cd477ba2e19a72f9602dcbec57fc433c2c5"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v35-a135",
+        "cells": 20,
+        "speed_mps": 35.0,
+        "angle_deg": 135.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 5.410407233866513,
+          "Cl": -3.517121603467083,
+          "Cx": -1.3387551079784832,
+          "Cy": 6.31271618011704,
+          "Cz": -0.17157588123454207,
+          "Croll": -0.01679428742844337,
+          "Cpitch_y": 0.07044495765546957,
+          "Cm_z": 7.589655701223925
+        },
+        "seconds": 48.59399999980815,
+        "sha256": "cd9808e09d5cfade7444741bdb3b654b28944b10a133db444042fb0b5003d554"
+      },
+      {
+        "action": "cfd_fine",
+        "case": "v35-a180",
+        "cells": 20,
+        "speed_mps": 35.0,
+        "angle_deg": 180.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.648021586591624,
+          "Cl": 0.0184267753039828,
+          "Cx": -1.648021586591624,
+          "Cy": -0.018426775303982585,
+          "Cz": 0.009842943066414306,
+          "Croll": 0.008869724174487592,
+          "Cpitch_y": -0.0489543872322168,
+          "Cm_z": -0.009007355479128199
+        },
+        "seconds": 48.375,
+        "sha256": "db3a83d799b9aad1636b84d05eab354c35fb700fec2c6976935568f8136d068d"
+      },
+      {
+        "action": "cfd_audit",
+        "case": "duration",
+        "cells": 20,
+        "speed_mps": 18.0,
+        "angle_deg": 10.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          40.048125,
+          80.09625
+        ],
+        "mean": {
+          "Cd": 1.5846565519500906,
+          "Cl": 1.6898524956608076,
+          "Cx": 1.2671422518246283,
+          "Cy": 1.9393525616478857,
+          "Cz": 0.014377746252455276,
+          "Croll": -0.0074183854311825085,
+          "Cpitch_y": -0.007811647860927085,
+          "Cm_z": 1.4496237952134237
+        },
+        "seconds": 96.25,
+        "sha256": "79306bcdd1efb8c8a5e528d6d1bd953655c8a7a5089222d735b743f53571662c"
+      },
+      {
+        "action": "cfd_audit",
+        "case": "grid-16",
+        "cells": 16,
+        "speed_mps": 18.0,
+        "angle_deg": 10.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.05546875,
+          40.1109375
+        ],
+        "mean": {
+          "Cd": 1.750853156190185,
+          "Cl": 1.4827917917306763,
+          "Cx": 1.4667696701084756,
+          "Cy": 1.7642973125340529,
+          "Cz": -0.009278462901565592,
+          "Croll": -0.0008179975910412979,
+          "Cpitch_y": 0.017652577781805078,
+          "Cm_z": 1.1669198106064607
+        },
+        "seconds": 20.641000000061467,
+        "sha256": "ab88bdaa895737ffdc505c1f41ae651be8cbcd07be0b59d1c5b71a9b0b82521d"
+      },
+      {
+        "action": "cfd_audit",
+        "case": "grid-20",
+        "cells": 20,
+        "speed_mps": 18.0,
+        "angle_deg": 10.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.556285813941208,
+          "Cl": 1.6319538518491636,
+          "Cx": 1.249256523062081,
+          "Cy": 1.877407001378979,
+          "Cz": -0.008602615295616713,
+          "Croll": 0.017467762367137797,
+          "Cpitch_y": -0.0001676382387917138,
+          "Cm_z": 1.3795910759705918
+        },
+        "seconds": 48.45299999997951,
+        "sha256": "194560f232f2ee9d2dba6a171191d47e80aa200750777e017c00b62e37bad3e3"
+      },
+      {
+        "action": "cfd_audit",
+        "case": "grid-24",
+        "cells": 24,
+        "speed_mps": 18.0,
+        "angle_deg": 10.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.0,
+          40.0
+        ],
+        "mean": {
+          "Cd": 1.4909851566020087,
+          "Cl": 1.6190189887510882,
+          "Cx": 1.1871940448429965,
+          "Cy": 1.8533293077684387,
+          "Cz": -0.018380638010233184,
+          "Croll": 0.009679974481535257,
+          "Cpitch_y": 0.021112904453280953,
+          "Cm_z": 1.3935573295120065
+        },
+        "seconds": 97.9069999998901,
+        "sha256": "1b1c6802ced6b0af1daed0d8cfb9927deb5fd69c9ba2374dc9a38d1f62e6406a"
+      },
+      {
+        "action": "cfd_audit",
+        "case": "time",
+        "cells": 20,
+        "speed_mps": 18.0,
+        "angle_deg": 10.0,
+        "width_D": 10.0,
+        "lattice_Ma": 0.06495190528383289,
+        "averaging_tU_D": [
+          20.0625,
+          40.125
+        ],
+        "mean": {
+          "Cd": 1.5976668923787736,
+          "Cl": 1.6439675962786302,
+          "Cx": 1.2879227651082703,
+          "Cy": 1.896423978896402,
+          "Cz": -0.00039162193587406524,
+          "Croll": 0.0005664009292763036,
+          "Cpitch_y": 0.0007246596823710014,
+          "Cm_z": 1.478920832507161
+        },
+        "seconds": 96.57799999997951,
+        "sha256": "bffc8a6c8f850f7a211d18edfac4ffac835c0a44cfcef90fe40ffaf476a95970"
+      },
+      {
+        "action": "cfd_audit",
+        "case": "wide",
+        "cells": 20,
+        "speed_mps": 18.0,
+        "angle_deg": 10.0,
+        "width_D": 12.0,
+        "lattice_Ma": 0.12990381056766578,
+        "averaging_tU_D": [
+          20.073749999999997,
+          40.147499999999994
+        ],
+        "mean": {
+          "Cd": 1.5585824085696962,
+          "Cl": 1.5998231719289953,
+          "Cx": 1.2570976612730786,
+          "Cy": 1.846163258156119,
+          "Cz": 0.011237369614462363,
+          "Croll": 0.005159729499422618,
+          "Cpitch_y": -0.009293800061656142,
+          "Cm_z": 1.3476790662974345
+        },
+        "seconds": 69.625,
+        "sha256": "13710feb77183cc7816e1d23db7b9ee9ca9916125be60912e6f868297c16be2d"
+      }
+    ]
+  },
+  "fem": {
+    "cases": [
+      {
+        "completed": true,
+        "solver": "CalculiX Version 2.23",
+        "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+        "deck_sha256": "f527d4722196e088aceeb738d06f87ef203d5f6d0431551a994c1e4f6436e701",
+        "max_displacement_m": 0.0005832207382778866,
+        "max_integration_vm_pa": 130075.28295787502,
+        "p95_integration_vm_pa": 100134.89893509613,
+        "nodal_force_sum_n": [
+          3.268201502512782e-05,
+          -0.0011988251544355298,
+          -0.2652340417014789
+        ],
+        "solver_stress_unit_pa": 1.0,
+        "solver_force_unit_n": 1.0,
+        "nodes": 8965,
+        "strength_status": "unknown_without_matching_material_evidence",
+        "mapping": {
+          "scope": "nonlinear solid fin, compliant root and follower pressure",
+          "force_target_n": 0.0,
+          "temperature_c": 25.290639680517188,
+          "q_pa": 0,
+          "target_normal_resultant": [
+            -0.265062125962785,
+            -0.013501363596380612,
+            0.00883590874956149
+          ],
+          "mapped_normal_resultant": [
+            -0.26506212596278517,
+            -0.013501363596380602,
+            0.008835908749561484
+          ],
+          "omitted_tangential_resultant": [
+            0.10050078736361127,
+            0.007118741680437451,
+            -0.0059540396920606965
+          ],
+          "pressure_range_pa": [
+            -92.3627377141064,
+            20.234351382797755
+          ],
+          "normal_load_scope": "CFD force and two root moments; signed reconstructed pressure; tangential load omitted"
+        },
+        "condition": {
+          "time_s": 0.31143738805583027,
+          "blade": 1,
+          "speed_mps": 12.276709148482327,
+          "angle_deg": 8.76372166586823,
+          "q_pa": 92.31445874252937,
+          "local_resultant": [
+            0.10050078736361127,
+            0.007118741680437451,
+            -0.265062125962785,
+            -0.013501363596380612,
+            0.00883590874956149,
+            -0.0059540396920606965
+          ],
+          "speed_clamped": false
+        }
+      },
+      {
+        "completed": true,
+        "solver": "CalculiX Version 2.23",
+        "solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+        "deck_sha256": "8a49b44e1c99d6543b40969732771fca13835f523718e47b10d6668e11c6c61a",
+        "max_displacement_m": 0.0005859039830202647,
+        "max_integration_vm_pa": 130765.07781213344,
+        "p95_integration_vm_pa": 100583.12208939827,
+        "nodal_force_sum_n": [
+          3.375726323619723e-05,
+          -0.0012104037521834922,
+          -0.26652488006732555
+        ],
+        "solver_stress_unit_pa": 1.0,
+        "solver_force_unit_n": 1.0,
+        "nodes": 8965,
+        "strength_status": "unknown_without_matching_material_evidence",
+        "mapping": {
+          "scope": "nonlinear solid fin, compliant root and follower pressure",
+          "force_target_n": 0.0,
+          "temperature_c": 25.290639680517188,
+          "q_pa": 0,
+          "target_normal_resultant": [
+            -0.26635213400971725,
+            -0.013562825989730569,
+            0.008833547408851016
+          ],
+          "mapped_normal_resultant": [
+            -0.26635213400971725,
+            -0.013562825989730564,
+            0.008833547408851013
+          ],
+          "omitted_tangential_resultant": [
+            0.10360824673184559,
+            0.0067538980162457915,
+            -0.006163816368690691
+          ],
+          "pressure_range_pa": [
+            -93.43747768244073,
+            20.90940703568087
+          ],
+          "normal_load_scope": "CFD force and two root moments; signed reconstructed pressure; tangential load omitted"
+        },
+        "condition": {
+          "time_s": 0.3206809805221497,
+          "blade": 1,
+          "speed_mps": 12.471625927482672,
+          "angle_deg": 8.358673508010321,
+          "q_pa": 95.26907448374705,
+          "local_resultant": [
+            0.10360824673184559,
+            0.0067538980162457915,
+            -0.26635213400971725,
+            -0.013562825989730569,
+            0.008833547408851016,
+            -0.006163816368690691
+          ],
+          "speed_clamped": false
+        }
+      }
+    ],
+    "max_displacement_m": 0.0005859039830202647,
+    "p95_integration_vm_pa": 100583.12208939827,
+    "metrics": {
+      "fem_deflection_ratio": 0.004882533191835539,
+      "fem_mesh_change": 0.03684635862542641
+    },
+    "load_scope": "CFD Fn and both root moments at concurrent extrema; reconstructed pressure, not local traction; tangential load omitted"
+  },
+  "modes": {
+    "tip_m": 0.0006973558811844585,
+    "max_deflection_m": 0.0006973558811844585,
+    "first_modes_hz": [
+      26.301915298318086,
+      161.19257181154967
+    ],
+    "mass_one_fin_kg": 0.026025119999999995,
+    "root_force_n": 0.2663521340849548,
+    "relative_equilibrium_residual": 1.1292951234170816e-10,
+    "load_scope": "CFD concurrent fin force envelope; beam load shape remains assumed",
+    "temperature_c": 25.290639680517188,
+    "metrics": {
+      "fin_deflection_ratio": 0.005811299009870488,
+      "positive_modes": true
+    }
+  },
+  "stability": {
+    "completed": true,
+    "frozen_checks": [
+      {
+        "time_s": 0.2817012751119798,
+        "stiffness_nm_rad": 0.40414068242207357,
+        "damping_nm_s_rad": 0.038643660968892525,
+        "inertia_kg_m2": 0.0062272508677919105,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.2850207075991059,
+        "stiffness_nm_rad": 0.424002167658802,
+        "damping_nm_s_rad": 0.03912557424988039,
+        "inertia_kg_m2": 0.006125229395462402,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.29123027697520626,
+        "stiffness_nm_rad": 0.4634854961587935,
+        "damping_nm_s_rad": 0.04003312371050213,
+        "inertia_kg_m2": 0.005928042314380381,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3023981008234178,
+        "stiffness_nm_rad": 0.5428115693910137,
+        "damping_nm_s_rad": 0.04168629874947166,
+        "inertia_kg_m2": 0.005551491432256252,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3029144299771988,
+        "stiffness_nm_rad": 0.5467571325659641,
+        "damping_nm_s_rad": 0.04176341398842085,
+        "inertia_kg_m2": 0.005533369142511537,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.30343075913097983,
+        "stiffness_nm_rad": 0.550728530553396,
+        "damping_nm_s_rad": 0.0418405915261667,
+        "inertia_kg_m2": 0.005515181719783961,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.30371977252826776,
+        "stiffness_nm_rad": 0.552962768770029,
+        "damping_nm_s_rad": 0.04188381867688783,
+        "inertia_kg_m2": 0.005504973561069526,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3040087859255557,
+        "stiffness_nm_rad": 0.5552054147151755,
+        "damping_nm_s_rad": 0.041927065472276884,
+        "inertia_kg_m2": 0.005494742714937436,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.30413197615603543,
+        "stiffness_nm_rad": 0.5561638925927349,
+        "damping_nm_s_rad": 0.041945505140068895,
+        "inertia_kg_m2": 0.005490374967152638,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3042551663865152,
+        "stiffness_nm_rad": 0.5571237658498572,
+        "damping_nm_s_rad": 0.04196394838703739,
+        "inertia_kg_m2": 0.005486004380194453,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3042767463727725,
+        "stiffness_nm_rad": 0.5572920607394716,
+        "damping_nm_s_rad": 0.04196717957226924,
+        "inertia_kg_m2": 0.005485238426103638,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.30429832635902987,
+        "stiffness_nm_rad": 0.5574073720832609,
+        "damping_nm_s_rad": 0.04196986036438048,
+        "inertia_kg_m2": 0.005484828839547318,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.304318736450536,
+        "stiffness_nm_rad": 0.5574592173671665,
+        "damping_nm_s_rad": 0.041971783132504395,
+        "inertia_kg_m2": 0.005484821570223362,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.30452283736559704,
+        "stiffness_nm_rad": 0.5579766160690449,
+        "damping_nm_s_rad": 0.041990966890173814,
+        "inertia_kg_m2": 0.005484749085306792,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3065638465162077,
+        "stiffness_nm_rad": 0.5630476132110912,
+        "damping_nm_s_rad": 0.04217844652452178,
+        "inertia_kg_m2": 0.005484029612400614,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.31143738805583027,
+        "stiffness_nm_rad": 0.574406396175193,
+        "damping_nm_s_rad": 0.04259489649315201,
+        "inertia_kg_m2": 0.005482361092669395,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3206809805221497,
+        "stiffness_nm_rad": 0.5931413727654863,
+        "damping_nm_s_rad": 0.04327117381844197,
+        "inertia_kg_m2": 0.005479379569761866,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.33413258795541195,
+        "stiffness_nm_rad": 0.6142360350365046,
+        "damping_nm_s_rad": 0.04401597085617743,
+        "inertia_kg_m2": 0.005475430978498442,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3486622783533801,
+        "stiffness_nm_rad": 0.6295604615134562,
+        "damping_nm_s_rad": 0.04454328892434325,
+        "inertia_kg_m2": 0.005471628185895424,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3637536850105819,
+        "stiffness_nm_rad": 0.6379624547139231,
+        "damping_nm_s_rad": 0.044821727821963364,
+        "inertia_kg_m2": 0.005468160321679877,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3799993451750528,
+        "stiffness_nm_rad": 0.6390927452487757,
+        "damping_nm_s_rad": 0.04484411140583754,
+        "inertia_kg_m2": 0.005465002903616223,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.38841136175017715,
+        "stiffness_nm_rad": 0.6367889897214927,
+        "damping_nm_s_rad": 0.044755145772633634,
+        "inertia_kg_m2": 0.005463612000825338,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3938559596255209,
+        "stiffness_nm_rad": 0.6343651592331698,
+        "damping_nm_s_rad": 0.04466502874058509,
+        "inertia_kg_m2": 0.005462803219119535,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.3988072176116846,
+        "stiffness_nm_rad": 0.6315823024900443,
+        "damping_nm_s_rad": 0.044562792395342686,
+        "inertia_kg_m2": 0.0054621303376144684,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.40799653972240574,
+        "stiffness_nm_rad": 0.6251216971494821,
+        "damping_nm_s_rad": 0.044327266875720306,
+        "inertia_kg_m2": 0.005461041421946372,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.42387560179844885,
+        "stiffness_nm_rad": 0.6108237674451971,
+        "damping_nm_s_rad": 0.04380754746175733,
+        "inertia_kg_m2": 0.005459649970574181,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.44050230731486895,
+        "stiffness_nm_rad": 0.5932368546660893,
+        "damping_nm_s_rad": 0.04316507706515782,
+        "inertia_kg_m2": 0.005458832997460701,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.4575050910154247,
+        "stiffness_nm_rad": 0.574389516244435,
+        "damping_nm_s_rad": 0.04246917876191052,
+        "inertia_kg_m2": 0.005458522687715924,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.47480297130808213,
+        "stiffness_nm_rad": 0.5554557463227493,
+        "damping_nm_s_rad": 0.04175945384032399,
+        "inertia_kg_m2": 0.005458360848159525,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.49173506994341915,
+        "stiffness_nm_rad": 0.5373102695301298,
+        "damping_nm_s_rad": 0.04106799751001026,
+        "inertia_kg_m2": 0.005458209942834247,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.5076838643465773,
+        "stiffness_nm_rad": 0.5205562062780241,
+        "damping_nm_s_rad": 0.040419246428105494,
+        "inertia_kg_m2": 0.005458071005787612,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.5275455196251364,
+        "stiffness_nm_rad": 0.500132713522719,
+        "damping_nm_s_rad": 0.03961428913808781,
+        "inertia_kg_m2": 0.005457902198283457,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.5475455196251364,
+        "stiffness_nm_rad": 0.4800522399638784,
+        "damping_nm_s_rad": 0.038806851070582446,
+        "inertia_kg_m2": 0.005457736821018431,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.5675455196251364,
+        "stiffness_nm_rad": 0.4604544626017979,
+        "damping_nm_s_rad": 0.03800255568221135,
+        "inertia_kg_m2": 0.005457575939138681,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.5875455196251365,
+        "stiffness_nm_rad": 0.4413374401930801,
+        "damping_nm_s_rad": 0.03720150768016367,
+        "inertia_kg_m2": 0.005457419429618973,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.6075455196251365,
+        "stiffness_nm_rad": 0.42270006848402714,
+        "damping_nm_s_rad": 0.03640385669370523,
+        "inertia_kg_m2": 0.0054572671728369,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.6275455196251365,
+        "stiffness_nm_rad": 0.4045412305554259,
+        "damping_nm_s_rad": 0.03560976458861451,
+        "inertia_kg_m2": 0.005457119052477493,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.6475455196251365,
+        "stiffness_nm_rad": 0.386859344596378,
+        "damping_nm_s_rad": 0.034819386272186434,
+        "inertia_kg_m2": 0.00545697495544054,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.6670888697011567,
+        "stiffness_nm_rad": 0.3700397908850359,
+        "damping_nm_s_rad": 0.03405077489417087,
+        "inertia_kg_m2": 0.005456837929907215,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.6870888697011567,
+        "stiffness_nm_rad": 0.3532937397959184,
+        "damping_nm_s_rad": 0.03326812964857881,
+        "inertia_kg_m2": 0.0054567014668795485,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.7070888697011567,
+        "stiffness_nm_rad": 0.33701616603138435,
+        "damping_nm_s_rad": 0.03248955753454727,
+        "inertia_kg_m2": 0.0054565687086165346,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.7270888697011567,
+        "stiffness_nm_rad": 0.3211865202668046,
+        "damping_nm_s_rad": 0.03171465425072461,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.7454666344059823,
+        "stiffness_nm_rad": 0.307035100906567,
+        "damping_nm_s_rad": 0.03100584518105756,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.7654666344059823,
+        "stiffness_nm_rad": 0.29207512927749496,
+        "damping_nm_s_rad": 0.030238655150642904,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.7854666344059823,
+        "stiffness_nm_rad": 0.27756949316643664,
+        "damping_nm_s_rad": 0.02947588654946046,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.8054666344059823,
+        "stiffness_nm_rad": 0.2635129236844025,
+        "damping_nm_s_rad": 0.028717590755715502,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.8254666344059823,
+        "stiffness_nm_rad": 0.24989991117075552,
+        "damping_nm_s_rad": 0.027963809391760405,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.8454666344059824,
+        "stiffness_nm_rad": 0.23672468777615158,
+        "damping_nm_s_rad": 0.027214571906253624,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.8654666344059824,
+        "stiffness_nm_rad": 0.22398121235517954,
+        "damping_nm_s_rad": 0.026469892910573986,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.8854666344059824,
+        "stiffness_nm_rad": 0.21166316311433353,
+        "damping_nm_s_rad": 0.025729769561048353,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.9054666344059824,
+        "stiffness_nm_rad": 0.19976394049569887,
+        "damping_nm_s_rad": 0.024994179161661953,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.9254666344059824,
+        "stiffness_nm_rad": 0.18827668429310254,
+        "damping_nm_s_rad": 0.02426307730106114,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.9454666344059824,
+        "stiffness_nm_rad": 0.1771943113242013,
+        "damping_nm_s_rad": 0.023536397067779054,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.9654666344059825,
+        "stiffness_nm_rad": 0.16650957870456684,
+        "damping_nm_s_rad": 0.022814049933141033,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 0.9854666344059825,
+        "stiffness_nm_rad": 0.15621517345815225,
+        "damping_nm_s_rad": 0.022095928731454578,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.0054666344059824,
+        "stiffness_nm_rad": 0.14630382472672515,
+        "damping_nm_s_rad": 0.021381912944361713,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.0254666344059824,
+        "stiffness_nm_rad": 0.13676843170186423,
+        "damping_nm_s_rad": 0.020671876304169823,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.0454666344059824,
+        "stiffness_nm_rad": 0.12760219863141045,
+        "damping_nm_s_rad": 0.01996569658538264,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.0654666344059824,
+        "stiffness_nm_rad": 0.11879876749967434,
+        "damping_nm_s_rad": 0.019263267344780163,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.0854666344059825,
+        "stiffness_nm_rad": 0.1103523389995615,
+        "damping_nm_s_rad": 0.018564511291898466,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.1054666344059825,
+        "stiffness_nm_rad": 0.10225777307803172,
+        "damping_nm_s_rad": 0.01786939492413605,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.1254666344059825,
+        "stiffness_nm_rad": 0.09451066155916711,
+        "damping_nm_s_rad": 0.0171779440476362,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.1454666344059825,
+        "stiffness_nm_rad": 0.08710736703953231,
+        "damping_nm_s_rad": 0.016490259830468354,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.1654666344059825,
+        "stiffness_nm_rad": 0.08004502429839917,
+        "damping_nm_s_rad": 0.01580653510184015,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.1854666344059825,
+        "stiffness_nm_rad": 0.07332150275440277,
+        "damping_nm_s_rad": 0.015127070724072161,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.1938315462791123,
+        "stiffness_nm_rad": 0.07060953733171575,
+        "damping_nm_s_rad": 0.014844248272548623,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.202196458152242,
+        "stiffness_nm_rad": 0.06795649966540504,
+        "damping_nm_s_rad": 0.014562281892706917,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.212009930214729,
+        "stiffness_nm_rad": 0.06491907777398569,
+        "damping_nm_s_rad": 0.014232637312438217,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.232009930214729,
+        "stiffness_nm_rad": 0.05897939878592988,
+        "damping_nm_s_rad": 0.013564992836298351,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.252009930214729,
+        "stiffness_nm_rad": 0.053375830614497924,
+        "damping_nm_s_rad": 0.012903638654038223,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.272009930214729,
+        "stiffness_nm_rad": 0.04810835689175163,
+        "damping_nm_s_rad": 0.012249572501481067,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.292009930214729,
+        "stiffness_nm_rad": 0.043176994102121904,
+        "damping_nm_s_rad": 0.011604008996732765,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.312009930214729,
+        "stiffness_nm_rad": 0.03858161005124057,
+        "damping_nm_s_rad": 0.010968409621560172,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.332009930214729,
+        "stiffness_nm_rad": 0.034321752340479926,
+        "damping_nm_s_rad": 0.010344520700910945,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.352009930214729,
+        "stiffness_nm_rad": 0.03039649735317681,
+        "damping_nm_s_rad": 0.009734422575986501,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.3613196070196834,
+        "stiffness_nm_rad": 0.028683080307217963,
+        "damping_nm_s_rad": 0.009455813295844061,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.3706292838246377,
+        "stiffness_nm_rad": 0.0270417576503026,
+        "damping_nm_s_rad": 0.009181025491353263,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.383481230886993,
+        "stiffness_nm_rad": 0.024894125502098404,
+        "damping_nm_s_rad": 0.008808572991234888,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.403481230886993,
+        "stiffness_nm_rad": 0.02182279977411125,
+        "damping_nm_s_rad": 0.008246834849691347,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.423481230886993,
+        "stiffness_nm_rad": 0.019077815380310184,
+        "damping_nm_s_rad": 0.007710320936959206,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.443481230886993,
+        "stiffness_nm_rad": 0.016654750048009075,
+        "damping_nm_s_rad": 0.007203683120484473,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.4634812308869931,
+        "stiffness_nm_rad": 0.01454856599339846,
+        "damping_nm_s_rad": 0.006732473046135753,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.4834812308869931,
+        "stiffness_nm_rad": 0.012753684816652882,
+        "damping_nm_s_rad": 0.006303231104149005,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.5034812308869931,
+        "stiffness_nm_rad": 0.011264078415840964,
+        "damping_nm_s_rad": 0.00592347134936617,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.5165968216478225,
+        "stiffness_nm_rad": 0.010449907487758205,
+        "damping_nm_s_rad": 0.005705253606517898,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.5297124124086519,
+        "stiffness_nm_rad": 0.009763059616691267,
+        "damping_nm_s_rad": 0.005514462614598984,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.5446174255036003,
+        "stiffness_nm_rad": 0.009135808136661545,
+        "damping_nm_s_rad": 0.005334278413356924,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.5646174255036003,
+        "stiffness_nm_rad": 0.008545652707582235,
+        "damping_nm_s_rad": 0.005159017503641341,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.5846174255036003,
+        "stiffness_nm_rad": 0.008237517590446625,
+        "damping_nm_s_rad": 0.0050651040713215,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      },
+      {
+        "time_s": 1.6046174255036003,
+        "stiffness_nm_rad": 0.008204764204084246,
+        "damping_nm_s_rad": 0.0050550190700516,
+        "inertia_kg_m2": 0.005456524250349784,
+        "status": "globally_asymptotic_for_frozen_linear_model",
+        "model": "I*e_ddot+c*e_dot+k*e=0; constant I,c,k; no forcing",
+        "origin": "e=0, e_dot=0 relative to fixed air-aligned trim",
+        "V": "(I*e_dot^2+k*e^2)/2",
+        "Vdot": "-c*e_dot^2",
+        "zero_derivative_set": "e_dot=0",
+        "largest_invariant_set": "{0}",
+        "compact_invariant_sublevels": true,
+        "qualified_for_full_flight": false
+      }
+    ],
+    "gronwall": {
+      "time_s": [
+        0.2817012751119798,
+        0.2850207075991059,
+        0.29123027697520626,
+        0.3023981008234178,
+        0.3029144299771988,
+        0.30343075913097983,
+        0.30371977252826776,
+        0.3040087859255557,
+        0.30413197615603543,
+        0.3042551663865152,
+        0.3042767463727725,
+        0.30429832635902987,
+        0.304318736450536,
+        0.30452283736559704,
+        0.3065638465162077,
+        0.31143738805583027,
+        0.3206809805221497,
+        0.33413258795541195,
+        0.3486622783533801,
+        0.3637536850105819,
+        0.3799993451750528,
+        0.38841136175017715,
+        0.3938559596255209,
+        0.3988072176116846,
+        0.40799653972240574,
+        0.42387560179844885,
+        0.44050230731486895,
+        0.4575050910154247,
+        0.47480297130808213,
+        0.49173506994341915,
+        0.5076838643465773,
+        0.5275455196251364,
+        0.5475455196251364,
+        0.5675455196251364,
+        0.5875455196251365,
+        0.6075455196251365,
+        0.6275455196251365,
+        0.6475455196251365,
+        0.6670888697011567,
+        0.6870888697011567,
+        0.7070888697011567,
+        0.7270888697011567,
+        0.7454666344059823,
+        0.7654666344059823,
+        0.7854666344059823,
+        0.8054666344059823,
+        0.8254666344059823,
+        0.8454666344059824,
+        0.8654666344059824,
+        0.8854666344059824,
+        0.9054666344059824,
+        0.9254666344059824,
+        0.9454666344059824,
+        0.9654666344059825,
+        0.9854666344059825,
+        1.0054666344059824,
+        1.0254666344059824,
+        1.0454666344059824,
+        1.0654666344059824,
+        1.0854666344059825,
+        1.1054666344059825,
+        1.1254666344059825,
+        1.1454666344059825,
+        1.1654666344059825,
+        1.1854666344059825,
+        1.1938315462791123,
+        1.202196458152242,
+        1.212009930214729,
+        1.232009930214729,
+        1.252009930214729,
+        1.272009930214729,
+        1.292009930214729,
+        1.312009930214729,
+        1.332009930214729,
+        1.352009930214729,
+        1.3613196070196834,
+        1.3706292838246377,
+        1.383481230886993,
+        1.403481230886993,
+        1.423481230886993,
+        1.443481230886993,
+        1.4634812308869931,
+        1.4834812308869931,
+        1.5034812308869931,
+        1.5165968216478225,
+        1.5297124124086519,
+        1.5446174255036003,
+        1.5646174255036003,
+        1.5846174255036003,
+        1.6046174255036003
+      ],
+      "metric": [
+        [
+          0.19537313259352337,
+          0.1035342816218914
+        ],
+        [
+          0.10353428162189146,
+          0.2917248657995966
+        ]
+      ],
+      "endpoint_logarithmic_norm_per_s": [
+        -2.6504050848355933,
+        -2.7132961037432306,
+        -2.5157972435756335,
+        -1.7540103949737458,
+        -1.7107869323100062,
+        -1.6668763571328415,
+        -1.641997086225289,
+        -1.6168967363684161,
+        -1.606130405825495,
+        -1.595325747345842,
+        -1.5934290153619302,
+        -1.5922215148285552,
+        -1.5918205839323984,
+        -1.587818500183248,
+        -1.5484923320831085,
+        -1.4597566780563735,
+        -1.3115027185438703,
+        -1.1416821446370462,
+        -1.0158881650571887,
+        -0.9448893146114107,
+        -0.9323182892709698,
+        -0.9492595816106776,
+        -0.9677972813222249,
+        -0.9893430647713505,
+        -1.0397881873006625,
+        -1.1520008274764488,
+        -1.289834119423082,
+        -1.4365297992541866,
+        -1.582144515796402,
+        -1.7196365540282998,
+        -1.8444833596327672,
+        -1.9933536196698958,
+        -2.13517566936773,
+        -2.267630845521621,
+        -2.3885417121960364,
+        -2.4940058416237396,
+        -2.576803156939606,
+        -2.623850963720488,
+        -2.616538258132479,
+        -2.5396878502705618,
+        -2.3998924781250803,
+        -2.2197312973649987,
+        -2.0353840129614267,
+        -1.8253692343468344,
+        -1.6116567668334216,
+        -1.397651527318704,
+        -1.1852490984196042,
+        -0.975547756322964,
+        -0.7692023097757118,
+        -0.5666074413189096,
+        -0.36799741403875796,
+        -0.17350298220960847,
+        0.016814480654341102,
+        0.20294137951427105,
+        0.38489736841209155,
+        0.5627249176121846,
+        0.7364813249617483,
+        0.9062322493809987,
+        1.0720462580664192,
+        1.233990117059307,
+        1.392124690654073,
+        1.546501388179186,
+        1.6971591292426003,
+        1.8441218037919946,
+        1.9873961893209984,
+        2.0462239826150563,
+        2.104402832769469,
+        2.1718256506315106,
+        2.3064325341568663,
+        2.4372233334765063,
+        2.5641079362315673,
+        2.686969743251844,
+        2.8056628427939105,
+        2.9200079215802295,
+        3.0297863920961077,
+        3.0792563829917143,
+        3.127645740326543,
+        3.1926018324432452,
+        3.2892109907307234,
+        3.379980287537002,
+        3.4643722619414326,
+        3.541730471613606,
+        3.6112657213305095,
+        3.672056067590544,
+        3.7066822618324884,
+        3.7367760426736893,
+        3.7650436258673907,
+        3.792397286224181,
+        3.8069976915980828,
+        3.808563217051042
+      ],
+      "interval_upper_rate_per_s": [
+        -2.6504050848355933,
+        -2.5157972435756335,
+        -1.7540103949737458,
+        -1.7107869323100062,
+        -1.6668763571328415,
+        -1.641997086225289,
+        -1.6168967363684161,
+        -1.606130405825495,
+        -1.595325747345842,
+        -1.5934290153619302,
+        -1.5922215148285552,
+        -1.5918205839323984,
+        -1.587818500183248,
+        -1.5484923320831085,
+        -1.4597566780563735,
+        -1.3115027185438703,
+        -1.1416821446370462,
+        -1.0158881650571887,
+        -0.9448893146114107,
+        -0.9323182892709698,
+        -0.9323182892709698,
+        -0.9492595816106776,
+        -0.9677972813222249,
+        -0.9893430647713505,
+        -1.0397881873006625,
+        -1.1520008274764488,
+        -1.289834119423082,
+        -1.4365297992541866,
+        -1.582144515796402,
+        -1.7196365540282998,
+        -1.8444833596327672,
+        -1.9933536196698958,
+        -2.13517566936773,
+        -2.267630845521621,
+        -2.3885417121960364,
+        -2.4940058416237396,
+        -2.576803156939606,
+        -2.616538258132479,
+        -2.5396878502705618,
+        -2.3998924781250803,
+        -2.2197312973649987,
+        -2.0353840129614267,
+        -1.8253692343468344,
+        -1.6116567668334216,
+        -1.397651527318704,
+        -1.1852490984196042,
+        -0.975547756322964,
+        -0.7692023097757118,
+        -0.5666074413189096,
+        -0.36799741403875796,
+        -0.17350298220960847,
+        0.016814480654341102,
+        0.20294137951427105,
+        0.38489736841209155,
+        0.5627249176121846,
+        0.7364813249617483,
+        0.9062322493809987,
+        1.0720462580664192,
+        1.233990117059307,
+        1.392124690654073,
+        1.546501388179186,
+        1.6971591292426003,
+        1.8441218037919946,
+        1.9873961893209984,
+        2.0462239826150563,
+        2.104402832769469,
+        2.1718256506315106,
+        2.3064325341568663,
+        2.4372233334765063,
+        2.5641079362315673,
+        2.686969743251844,
+        2.8056628427939105,
+        2.9200079215802295,
+        3.0297863920961077,
+        3.0792563829917143,
+        3.127645740326543,
+        3.1926018324432452,
+        3.2892109907307234,
+        3.379980287537002,
+        3.4643722619414326,
+        3.541730471613606,
+        3.6112657213305095,
+        3.672056067590544,
+        3.7066822618324884,
+        3.7367760426736893,
+        3.7650436258673907,
+        3.792397286224181,
+        3.8069976915980828,
+        3.808563217051042
+      ],
+      "log10_homogeneous_gain": [
+        0.0,
+        -0.003820853687195438,
+        -0.010605409692407666,
+        -0.019112578082665876,
+        -0.0194962030664925,
+        -0.01986998159114059,
+        -0.020076080014026575,
+        -0.02027902791821628,
+        -0.02036495723977585,
+        -0.02045030850305979,
+        -0.020465242229660466,
+        -0.02048016463948289,
+        -0.020494274521405696,
+        -0.02063501859632581,
+        -0.02200760066899202,
+        -0.025097251874454572,
+        -0.03036220242311208,
+        -0.03703186256724739,
+        -0.04344228386379448,
+        -0.049635196749504014,
+        -0.056213075733738446,
+        -0.059619107035904645,
+        -0.06186368714584829,
+        -0.06394474553223062,
+        -0.06789308695416281,
+        -0.07506366285266936,
+        -0.0833821300274122,
+        -0.09290654265775322,
+        -0.10369829171403812,
+        -0.11533261831431522,
+        -0.12724363516741688,
+        -0.14315379317527094,
+        -0.1604678427253611,
+        -0.17901374294737088,
+        -0.1987101342114438,
+        -0.2194567439194935,
+        -0.24111940341652682,
+        -0.26350123125672187,
+        -0.285709280514737,
+        -0.30776872889732176,
+        -0.32861393010553863,
+        -0.34789427118060995,
+        -0.3641394073920713,
+        -0.3799943631103272,
+        -0.39399303592148305,
+        -0.40613288284024635,
+        -0.4164278257027351,
+        -0.42490132585081836,
+        -0.4315825322228749,
+        -0.4365040219262774,
+        -0.43970040685171136,
+        -0.44120743460705913,
+        -0.4410613858837742,
+        -0.43929865945831653,
+        -0.4359554833943074,
+        -0.4310677168633387,
+        -0.42467072135422507,
+        -0.4167992880496463,
+        -0.40748761256518073,
+        -0.39676931059394066,
+        -0.38467746916849394,
+        -0.3712447287856551,
+        -0.3565033918908193,
+        -0.3404855534239326,
+        -0.32322324945637937,
+        -0.31578965521513336,
+        -0.30814470680682426,
+        -0.29888852321911963,
+        -0.2788551047697905,
+        -0.2576856518718965,
+        -0.2354140933177024,
+        -0.21207537066699694,
+        -0.1877056928528692,
+        -0.16234282630374766,
+        -0.1360264360750896,
+        -0.12357656752844232,
+        -0.11093105397438255,
+        -0.09311145205539911,
+        -0.06454172839360145,
+        -0.0351835926372197,
+        -0.005092437504822656,
+        0.025670642499385183,
+        0.05703769800858935,
+        0.08893277175646792,
+        0.1100461402806278,
+        0.13133092384398,
+        0.15570267223988202,
+        0.1886430165317226,
+        0.2217101783333119,
+        0.25479093811621123
+      ],
+      "additive_disturbance_bound": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "all_intervals_contracting": false,
+      "scope": "finite horizon of piecewise-affine 2-state model; not nonlinear-flight proof"
+    },
+    "frozen_asymptotic_count": 90,
+    "analyzed_points": 90,
+    "rate_scale_rad_s": 10.0,
+    "scheduled_model": {
+      "times": [
+        0.2817012751119798,
+        0.2850207075991059,
+        0.29123027697520626,
+        0.3023981008234178,
+        0.3029144299771988,
+        0.30343075913097983,
+        0.30371977252826776,
+        0.3040087859255557,
+        0.30413197615603543,
+        0.3042551663865152,
+        0.3042767463727725,
+        0.30429832635902987,
+        0.304318736450536,
+        0.30452283736559704,
+        0.3065638465162077,
+        0.31143738805583027,
+        0.3206809805221497,
+        0.33413258795541195,
+        0.3486622783533801,
+        0.3637536850105819,
+        0.3799993451750528,
+        0.38841136175017715,
+        0.3938559596255209,
+        0.3988072176116846,
+        0.40799653972240574,
+        0.42387560179844885,
+        0.44050230731486895,
+        0.4575050910154247,
+        0.47480297130808213,
+        0.49173506994341915,
+        0.5076838643465773,
+        0.5275455196251364,
+        0.5475455196251364,
+        0.5675455196251364,
+        0.5875455196251365,
+        0.6075455196251365,
+        0.6275455196251365,
+        0.6475455196251365,
+        0.6670888697011567,
+        0.6870888697011567,
+        0.7070888697011567,
+        0.7270888697011567,
+        0.7454666344059823,
+        0.7654666344059823,
+        0.7854666344059823,
+        0.8054666344059823,
+        0.8254666344059823,
+        0.8454666344059824,
+        0.8654666344059824,
+        0.8854666344059824,
+        0.9054666344059824,
+        0.9254666344059824,
+        0.9454666344059824,
+        0.9654666344059825,
+        0.9854666344059825,
+        1.0054666344059824,
+        1.0254666344059824,
+        1.0454666344059824,
+        1.0654666344059824,
+        1.0854666344059825,
+        1.1054666344059825,
+        1.1254666344059825,
+        1.1454666344059825,
+        1.1654666344059825,
+        1.1854666344059825,
+        1.1938315462791123,
+        1.202196458152242,
+        1.212009930214729,
+        1.232009930214729,
+        1.252009930214729,
+        1.272009930214729,
+        1.292009930214729,
+        1.312009930214729,
+        1.332009930214729,
+        1.352009930214729,
+        1.3613196070196834,
+        1.3706292838246377,
+        1.383481230886993,
+        1.403481230886993,
+        1.423481230886993,
+        1.443481230886993,
+        1.4634812308869931,
+        1.4834812308869931,
+        1.5034812308869931,
+        1.5165968216478225,
+        1.5297124124086519,
+        1.5446174255036003,
+        1.5646174255036003,
+        1.5846174255036003,
+        1.6046174255036003
+      ],
+      "matrices": [
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -6.489873155943303,
+            -6.205573179773788
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -6.922225116546732,
+            -6.387609626321064
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -7.818525435192319,
+            -6.753177792504764
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -9.777761093840017,
+            -7.5090269449500715
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -9.881089052334522,
+            -7.5475560933686205
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -9.985682404223102,
+            -7.586439332738009
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.04478518626341,
+            -7.608359642830054
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.104302303470039,
+            -7.630396480311685
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.129797981378436,
+            -7.6398252197740595
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.155364947596155,
+            -7.649273583983169
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.15985117597406,
+            -7.650930791367629
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.162712244804812,
+            -7.651990899290196
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.163670964130647,
+            -7.65235160253265
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.173238691334486,
+            -7.655950388444257
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.267041810604287,
+            -7.691141278512958
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.477354308953608,
+            -7.769443816845033
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.824973251328604,
+            -7.897093688715297
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.218039957924006,
+            -8.038813936112875
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.505907202106965,
+            -8.140774082413973
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.666857172869692,
+            -8.1968569290583
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.694280067552835,
+            -8.205688486672889
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.655091716346234,
+            -8.191494155491437
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.612447561957273,
+            -8.17621044526366
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.562929909246392,
+            -8.158500372732783
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.446931983289776,
+            -8.116998837910591
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -11.18796572559317,
+            -8.02387473516918
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.86746663512232,
+            -7.90738186810936
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.52280166457976,
+            -7.7803429960060155
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -10.176237185015726,
+            -7.650548397584347
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -9.844074800302101,
+            -7.524078029267809
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -9.537365961821282,
+            -7.405408684725036
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -9.163460526647286,
+            -7.2581529860587715
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -8.795811445417025,
+            -7.110429165644701
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -8.436977657052394,
+            -6.963266495236152
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -8.086925439481814,
+            -6.8166847279980844
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -7.7456363248620494,
+            -6.6707118308047
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -7.413091535391135,
+            -6.525377996371169
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -7.089263699308053,
+            -6.3807121265000335
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -6.781212776303361,
+            -6.240019463937029
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -6.474492730458128,
+            -6.09674724749115
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -6.1763387217904535,
+            -5.954210286629876
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -5.886284116600697,
+            -5.812244717631664
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -5.62693551461601,
+            -5.682343513651564
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -5.3527688300619545,
+            -5.541743015016288
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -5.086928609336674,
+            -5.4019528177797325
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -4.8293182911724495,
+            -5.2629823378636305
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -4.579836901755471,
+            -5.124839203265305
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -4.338378735528878,
+            -4.987528810947567
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -4.104833078324933,
+            -4.851053838691758
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -3.8790840726267297,
+            -4.715413765346865
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -3.6610107704165933,
+            -4.5806044314858
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -3.4504874468583786,
+            -4.446617697979768
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -3.247384290701951,
+            -4.313441302175149
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -3.051568563887404,
+            -4.181059019700785
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -2.862906243807828,
+            -4.049451210638007
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -2.681264079736226,
+            -3.9185957879672304
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -2.5065119373948876,
+            -3.7884696110064344
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -2.3385252731760637,
+            -3.659050279874182
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -2.177187565730307,
+            -3.5303182870570606
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -2.022392532984482,
+            -3.4022594677753717
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.8740459748067022,
+            -3.2748676821129408
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.7320671039464108,
+            -3.1481476594803053
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.5963892588573834,
+            -3.0221179406306615
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.4669599295424736,
+            -2.896813864765082
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.343740069508581,
+            -2.772290569972718
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.294038734038237,
+            -2.7204585907589522
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.245417348984544,
+            -2.668783501103916
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.1897514753979903,
+            -2.6083705779417823
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -1.080896850813942,
+            -2.4860134792636144
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.9782020232215833,
+            -2.3648091829173215
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.8816666926508703,
+            -2.2449405408022924
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.7912911612067718,
+            -2.126630152150227
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.7070730062047711,
+            -2.01014585811784
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.6290039366778177,
+            -1.8958077021737458
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.5570670257944565,
+            -1.7839969418925403
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.5256657716746933,
+            -1.7329370973175657
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.49558576869825366,
+            -1.682577602539698
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.4562267912674006,
+            -1.6143194068403939
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.39993957275480496,
+            -1.5113714282792188
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.34963310900867384,
+            -1.413046214623704
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.3052263544314211,
+            -1.3201962989576541
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.2666269831471168,
+            -1.233839113920217
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.23373276158051204,
+            -1.15517329621415
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.20643321460761205,
+            -1.0855759229854889
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.19151216064124202,
+            -1.045583845091895
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.1789245162076466,
+            -1.0106181813900095
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.16742907604737403,
+            -0.9775963907820947
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.15661348351992435,
+            -0.9454768762936642
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.1509663883546118,
+            -0.9282656575743812
+          ]
+        ],
+        [
+          [
+            0,
+            10.0
+          ],
+          [
+            -0.15036612736685426,
+            -0.9264174111803047
+          ]
+        ]
+      ],
+      "metric": [
+        [
+          0.19537313259352337,
+          0.1035342816218914
+        ],
+        [
+          0.10353428162189146,
+          0.2917248657995966
+        ]
+      ]
+    },
+    "barbalat": {
+      "prerequisites": {
+        "infinite_horizon": false,
+        "bounded_below_V": null,
+        "nonpositive_Vdot": null,
+        "uniformly_continuous_W": null
+      },
+      "W_to_zero_proved": false,
+      "state_to_origin_proved": false,
+      "missing": [
+        "infinite_horizon",
+        "bounded_below_V",
+        "nonpositive_Vdot",
+        "uniformly_continuous_W"
+      ],
+      "extra_state_condition": null,
+      "rule": "finite observed decay is not evidence of infinite-horizon uniform continuity"
+    },
+    "full_flight_stability_proved": false,
+    "omitted": [
+      "velocity-direction dynamics",
+      "time-varying trim forcing",
+      "mass-flux angular terms",
+      "flexible/slosh modes",
+      "hybrid launch and canopy events",
+      "CFD/model uncertainty"
+    ],
+    "metrics": {
+      "frozen_pitch_pass": true,
+      "perturbation_incidence_deg": 10.224406319298836
+    }
+  },
+  "decisions": [
+    {
+      "action": "geometry",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'geometry' action addresses the 'geometry_gap' by providing a numerical model of the vehicle's shape. This reduces uncertainty regarding the physical dimensions and spatial configuration of the system, which is a foundational requirement for subsequent aerodynamic and structural analyses. As a 'low' layer task, it establishes the base geometry necessary to satisfy the 'require_cfd' and 'require_fem' constraints, which depend on a defined geometry to calculate flow behavior and structural integrity.",
+      "errors": []
+    },
+    {
+      "action": "thermal",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'thermal' action addresses the 'thermal_gap' by providing a numerical model of the system's thermal behavior. As a 'low' layer task, it establishes the necessary thermal profile for the vehicle. By establishing this model, it reduces uncertainty regarding temperature distribution and material stability, which is a prerequisite for ensuring the integrity of components during flight, even though it does not involve material or hardware qualification.",
+      "errors": []
+    },
+    {
+      "action": "propulsion",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'propulsion' action addresses the 'propulsion_gap' by providing a numerical model of the propulsion system. As a 'middle' layer task, it builds upon the 'geometry' and 'thermal' foundations established in the lower layers. By modeling the propulsion system, it reduces uncertainty regarding thrust generation and power output, which are critical for meeting the 'altitude' goal. This step is a necessary dependency for subsequent high-level optimizations, as it provides the force data required to calculate flight trajectories and overcome aerodynamic drag.",
+      "errors": []
+    },
+    {
+      "action": "screen",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'screen' action addresses the 'screen_gap' by providing a conditional numerical model for the display component. While it is a 'high' layer task, it reduces uncertainty regarding the visual interface's functionality. Since the 'geometry', 'thermal', and 'propulsion' metrics are already satisfied, this action addresses a remaining gap in the system's functional requirements without introducing new dependencies on lower-layer uncertainties.",
+      "errors": []
+    },
+    {
+      "action": "cfd_coarse",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'cfd_coarse' action addresses the 'cfd_coarse_gap' by providing a conditional numerical model of the aerodynamic flow. This reduces uncertainty regarding the aerodynamic forces and coefficients acting on the vehicle. As a 'low' layer task, it establishes the foundational flow data required to satisfy the 'require_cfd' constraint and provides the necessary input for subsequent 'aero_audit' and 'propulsion' calculations. By refining the aerodynamic model, it directly addresses the 'altitude' unmet requirement by allowing for more accurate trajectory calculations to reach the target altitude.",
+      "errors": []
+    },
+    {
+      "action": "cfd_fine",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'cfd_fine' action addresses the 'cfd_fine_gap' by providing a high-fidelity numerical model of the aerodynamic flow. As a 'low' layer task, it reduces uncertainty regarding aerodynamic forces and coefficients, which is a critical dependency for the 'propulsion' and 'aero_audit' calculations. By refining the aerodynamic model beyond the 'cfd_coarse' level, it directly addresses the 'altitude' unmet requirement by providing the precise data needed to optimize the flight trajectory and overcome drag to reach the target altitude.",
+      "errors": []
+    },
+    {
+      "action": "cfd_audit",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'cfd_audit' action addresses the 'cfd_audit_gap' by providing a high-fidelity validation of the aerodynamic model. As a 'low' layer task, it reduces uncertainty regarding the aerodynamic coefficients and forces. This is a critical dependency for the 'aero_audit' requirement and the 'propulsion' calculations. By refining the aerodynamic data, it directly addresses the 'altitude' unmet requirement by providing the precise data needed to optimize the flight trajectory and overcome drag to reach the target altitude.",
+      "errors": []
+    },
+    {
+      "action": "flight",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'flight' action addresses the 'flight_gap' by providing a conditional numerical model for the flight profile. While it is a 'high' layer task, it directly addresses the 'altitude' unmet requirement by simulating the trajectory to reach the target altitude. Since the 'geometry', 'thermal', and 'propulsion' metrics are already satisfied, this action focuses on the final integration of the flight path to meet the primary goal without introducing new dependencies on lower-layer uncertainties.",
+      "errors": []
+    },
+    {
+      "action": "modes",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'modes' action addresses the 'modes_gap' by providing a conditional numerical model. While it is a 'middle' layer task, it reduces uncertainty in the flight profile and operational parameters. By establishing a more robust model of the vehicle's operational modes, it provides a necessary step toward satisfying the 'altitude' requirement by ensuring the flight logic and configuration are optimized to reach the target altitude, while maintaining a lower resource cost (5.0s) compared to higher-layer refinements.",
+      "errors": []
+    },
+    {
+      "action": "refine",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'refine' action addresses the 'refine_gap' by providing a high-fidelity numerical model. As a 'high' layer task, it reduces uncertainty in the system's performance parameters. Given that 'geometry', 'thermal_balance', and 'propulsion_balance' are already satisfied, 'refine' provides the necessary precision to optimize the flight trajectory and overcome drag, directly addressing the 'altitude' unmet requirement by refining the model to reach the target altitude.",
+      "errors": []
+    },
+    {
+      "action": "fem_coarse",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'fem_coarse' action addresses the 'fem_coarse_gap' by providing a middle-layer conditional numerical model. While the primary unmet requirement is 'altitude', the 'require_fem' precision constraint is currently unsatisfied. By addressing the 'fem_coarse_gap', this action reduces uncertainty regarding the structural integrity and mass distribution of the vehicle. This is a critical dependency for ensuring the vehicle can withstand the aerodynamic loads and structural stresses encountered during the ascent to the target altitude of 30.0m, providing a necessary step toward satisfying the 'altitude' requirement with a moderate resource cost.",
+      "errors": []
+    },
+    {
+      "action": "fem_fine",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'fem_fine' action addresses the 'fem_fine_gap' and directly addresses the 'require_fem' precision constraint which is currently unsatisfied. By providing a high-fidelity structural model, it reduces uncertainty regarding the vehicle's structural integrity under aerodynamic loads. This is a critical dependency for ensuring the vehicle can withstand the stresses of ascent to the target altitude of 30.0m, whereas the current apogee is only 10.51m. It provides a more precise structural evaluation than 'fem_coarse' to ensure the vehicle remains intact during the flight to the target altitude.",
+      "errors": []
+    },
+    {
+      "action": "stability",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'stability' action addresses the 'stability_gap' by providing a high-fidelity numerical model. While the primary unmet requirement is 'altitude', the current apogee (10.51m) is significantly below the target (30.0m). Stability is a high-layer task that reduces uncertainty in the vehicle's aerodynamic stability and control. By ensuring the vehicle remains stable during the ascent, it provides a necessary foundation for optimizing the flight path to reach the target altitude, addressing the core requirement while providing a more robust model than lower-layer options.",
+      "errors": []
+    },
+    {
+      "action": "confirm",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'confirm' action addresses the 'confirm_gap' by providing a high-layer conditional numerical model. While the primary unmet requirement is 'altitude', the current apogee of 10.51m is significantly below the target of 30.0m. By confirming the current model's validity, it reduces uncertainty in the system's performance parameters. This provides a necessary baseline to determine if the current configuration can meet the altitude requirement or if further refinement is needed, effectively addressing the 'confirm_gap' with a low resource cost.",
+      "errors": []
+    },
+    {
+      "action": "refine/averaging",
+      "planner": "local_llm",
+      "model": "gemma4:12b",
+      "reason": "The 'refine/averaging' action addresses the 'aero_averaging' unmet requirement by implementing a longer averaging method. This reduces uncertainty in the unsteady flow data by minimizing the impact of transient fluctuations on force and moment calculations. By stabilizing these values, it provides a more reliable aerodynamic baseline, which is a necessary step toward optimizing the flight path to reach the target altitude of 30.0m. It is a low-cost, low-layer intervention that directly addresses a specific data quality gap.",
+      "errors": []
+    }
+  ],
+  "executions": [
+    {
+      "action": "geometry",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "thermal",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "propulsion",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "screen",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "cfd_coarse",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "cfd_fine",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "cfd_audit",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "flight",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "modes",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "refine",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "fem_coarse",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "fem_fine",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "stability",
+      "execution_status": "completed",
+      "error": null
+    },
+    {
+      "action": "confirm",
+      "execution_status": "completed",
+      "error": null
+    }
+  ],
+  "manifests": {
+    "geometry": {
+      "artifact": "v1/adaptive/1579e889bdc141fe8e162ce886e3c63d/00-geometry/data.json",
+      "sha256": "7f4adb28c02a08044c8d3bc84b9f913bdb9a7153be82f48e1faa48dd67349d1e",
+      "manifest_sha256": "95ea7456642f3c5744c6777ef1b769f15bc02e81b2aa7a9ba1a7be88986e8cc0",
+      "files": 15
+    },
+    "thermal": {
+      "artifact": "v1/adaptive/26a1774e20f941fbb607332002bb3ce7/01-thermal/data.json",
+      "sha256": "6b2dbcd960fa00094678e371d33d9db5bf6f0c453bb7a852e77fb329c10665e1",
+      "manifest_sha256": "bebd13f5df59f7c47318ca165d038da949c19fb345589cc20af8f63d073ae9cc",
+      "files": 3
+    },
+    "propulsion": {
+      "artifact": "v1/adaptive/20b1b07f5d3b46598fd27309f9e1b790/02-propulsion/data.json",
+      "sha256": "b9f755e608efdcf0e645fa783166ccbad0cb28661adec4416528b053c9bbc441",
+      "manifest_sha256": "603496f7c452efb7f55dfc539ed652dc268767ede6154c87d98bb4af1de05cf6",
+      "files": 3
+    },
+    "screen": {
+      "artifact": "v1/adaptive/8aa835450b4c4e5dbcafccc8606cdc6d/03-screen/data.json",
+      "sha256": "161441bde61951626c496050e7815af7fe9ee8494310869f0178323553b515b0",
+      "manifest_sha256": "3c75a787257109f5c2ab2443b9e731fd0e1be278b05df73ac2ab100ecb23aa91",
+      "files": 3
+    },
+    "cfd_coarse": {
+      "artifact": "v1/adaptive/022351dee9e84979a007b42463e609c9/04-cfd_coarse/data.json",
+      "sha256": "51219b2997c4bec15b6397dcae1120db1352e7c15ff28c82194cc44081c906f7",
+      "manifest_sha256": "cf6471d50ad10587a5c9a8a7d28da48dce2336a8a47870e8ab5685b201131f8b",
+      "files": 103
+    },
+    "cfd_fine": {
+      "artifact": "v1/adaptive/eb769d16009f461a82b6f2423721047c/05-cfd_fine/data.json",
+      "sha256": "326e9fb4715cdbe57015d787475aa5560c38f836055ce0a7c4eeaa09d1cca35c",
+      "manifest_sha256": "cb059cf828e1fd0f979bac66c3424ca865aed33354898af7e9f9ea4f815b376e",
+      "files": 103
+    },
+    "cfd_audit": {
+      "artifact": "v1/adaptive/9cb44f45dcca4a2590a92a1e3240211d/06-cfd_audit/data.json",
+      "sha256": "55210d9a6fdc7417e43cd86840349dda5151b4cda5a8a366b79a15b4a155af1a",
+      "manifest_sha256": "b7bee11677f42a38edfb9b29b6029cfcb9069b562e65a7b51f6b09db46109aa1",
+      "files": 46
+    },
+    "flight": {
+      "artifact": "v1/adaptive/6f9df1d2508347cabf155dcf9444dbc1/07-flight/data.json",
+      "sha256": "d26254ecbf8bcbbcf6f2af9caea55fc84df823e19ad594d2a11125030fa5d376",
+      "manifest_sha256": "58ebc2a147fcde6d9574eb876a72cb6540f13c6859a9ea635965ee4dfdd1e94f",
+      "files": 3
+    },
+    "modes": {
+      "artifact": "v1/adaptive/96b77e9d50ee436d96c88fdd5f475969/08-modes/data.json",
+      "sha256": "c420dea5bb50094f2f8563c2c26765b1234c3f19cba0f1d4fafea2e50916af15",
+      "manifest_sha256": "f0c923a63c063206ae1fbca5e31c77e59b3016c732043b7217af8e471621d3c9",
+      "files": 3
+    },
+    "refine": {
+      "artifact": "v1/adaptive/f0779a392c2f4a6b955912920ab4d7e1/09-refine/data.json",
+      "sha256": "5600f3b008fb9cac5073fbb4b907a5450d05effc9536c3e7f0c8401b5195fd19",
+      "manifest_sha256": "b294854bc356b88f2d51b9241f08b0bde16c3f7369b3af10c2acc2a81709e745",
+      "files": 3
+    },
+    "fem_coarse": {
+      "artifact": "v1/adaptive/ab1153f9a110496db4e34cac61b165f7/10-fem_coarse/data.json",
+      "sha256": "cc7a168f6e74752c34036f7429d087803659b0addb4a8bc2ebec060c08d79feb",
+      "manifest_sha256": "debd1b0b8eb49447a64e4a1668ec207bffeb21082cf3ec2b7431074dc57b10dd",
+      "files": 18
+    },
+    "fem_fine": {
+      "artifact": "v1/adaptive/4dabef2b9c7c48e884ab87d36db5bb2c/11-fem_fine/data.json",
+      "sha256": "c3375fc88ede309a5a1fe92570c59c0d0374f1804268e24b0c58bc5c24f34ce3",
+      "manifest_sha256": "9064903c92bf25e2d122f53098fc1bed2340ff00f8e62a78b92d4f99f2be761f",
+      "files": 18
+    },
+    "stability": {
+      "artifact": "v1/adaptive/031758290b4e4cb797fc267f367bd4cb/12-stability/data.json",
+      "sha256": "9d494f22ab8663ab326e1da6387b8981587b454801689ce343528472afe54693",
+      "manifest_sha256": "b1c9bf444bb99432963596a5d0a73e72190643920bc2eb3686cf901c4bfc54a2",
+      "files": 3
+    },
+    "confirm": {
+      "artifact": "v1/adaptive/b1f3f423df724e05b715800b9de17cab/13-confirm/data.json",
+      "sha256": "a2337aa8cdd00f2e6223cf02d1ce87200f4a93a68459487db2bd92b605ed2ba7",
+      "manifest_sha256": "40b86032d6eb01ddba6c74cff52a6b7c017709e1965ad9bc46ccc76221311874",
+      "files": 3
+    }
+  },
+  "raw_evidence_verified": true,
+  "limitations": [
+    "unmeasured material and mount",
+    "meridional CFD, omitted attachment detail",
+    "reconstructed fin pressure, omitted tangential traction",
+    "one off-table ascent condition",
+    "no experimental validation or full-flight stability proof"
+  ]
+}

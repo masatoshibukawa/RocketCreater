@@ -10,8 +10,13 @@ def pool(precision):
         ("thermal", "low", "five-node heat network", ["geometry"], 5, 0, []),
         ("propulsion", "middle", "dry-gas discharge", ["thermal"], 5, 0, []),
         ("screen", "high", "rigid 6DOF screening", ["propulsion"], 10, 0, []),
+        ("survey", "high", "counterfactual axial/mass sensitivity survey", ["screen"], 60, 0, []),
     ]
     flight = "screen"
+    if precision.require_benchmarks:
+        rows.append(
+            ("benchmarks", "low", "exact and published reference comparisons", [], 15, 0, [])
+        )
     if precision.require_cfd:
         rows += [
             ("cfd_coarse", "low", "3D interpolated-wall LBM", ["screen"], 120, 3, ["cfd"]),
@@ -19,12 +24,30 @@ def pool(precision):
             ("flight", "high", "CFD-driven 6DOF and section loads", ["cfd_fine"], 15, 0, []),
         ]
         flight = "flight"
+        if precision.require_aero_audit:
+            rows.append(
+                (
+                    "cfd_audit",
+                    "low",
+                    "independent CFD accuracy checks",
+                    ["cfd_fine"],
+                    120,
+                    4,
+                    ["cfd"],
+                )
+            )
+            rows = [
+                (k, layer, name, ["cfd_audit"] if k == "flight" else deps, cost, mem, caps)
+                for k, layer, name, deps, cost, mem, caps in rows
+            ]
     rows += [
         ("refine", "high", "time-step and drag-sensitivity check", [flight], 30, 0, []),
         ("modes", "middle", "warm tapered beam and root foundation", [flight], 5, 0, []),
         ("stability", "high", "frozen LaSalle and finite-flight perturbation", [flight], 20, 0, []),
     ]
     deps = ["refine", "modes", "stability"]
+    if precision.require_benchmarks:
+        deps.append("benchmarks")
     if precision.require_fem:
         rows += [
             ("fem_coarse", "middle", "warm solid fin FEM", [flight, "thermal"], 30, 1, ["fem"]),
@@ -53,7 +76,7 @@ def pool(precision):
             label=label,
             observables=[key],
             rule="Host evaluation against saved precision and requirements",
-            evidence_level="diagnostic" if key == "screen" else "numerical",
+            evidence_level="diagnostic" if key in {"screen", "survey"} else "numerical",
         )
         actions[key] = Action(
             target=key,
@@ -72,6 +95,8 @@ def pool(precision):
             actions[key].bounds = {"fin_count": (4, 4)}
         if key == "confirm":
             actions[key].uses += ["requirements"]
+        if key == "benchmarks":
+            actions[key].uses = ["code"]
     return Pool(
         version=1,
         sources={"implementation": "rocketwright/analysis/worker.py"},

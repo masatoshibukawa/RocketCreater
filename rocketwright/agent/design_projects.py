@@ -69,13 +69,13 @@ class DesignSpec(BaseModel):
     env: Env = Field(default_factory=Env)
     other_dry_mass_g: float = Field(gt=0, le=2000)
     measured_printed_mass_g: float | None = Field(default=None, gt=0, le=1000)
-    material: str = Field(
-        default="UltiMaker Tough PLA Gray", pattern="^(UltiMaker Tough PLA Gray|Prusament PETG)$"
-    )
+    material: str = "UltiMaker Tough PLA Gray"
     assumptions: Assumptions = Field(default_factory=Assumptions)
 
     @model_validator(mode="after")
     def physical_envelope(self):
+        if self.material not in STOCKS:
+            raise ValueError("Select a registered analysis material")
         cylinder = math.pi * (self.geometry.body_diameter_mm / 2000) ** 2
         cylinder *= self.geometry.body_height_mm / 1000
         if self.design.bottle_volume_m3 > cylinder * 1.02:
@@ -503,7 +503,7 @@ class DesignProjects:
         def worker(state):
             self.require_adopted(state)
             if state["spec"]["material"] != "UltiMaker Tough PLA Gray":
-                raise Conflict("PETG用の印刷プロファイルは未登録です。PLA設定へ流用しません。")
+                raise Conflict("この材料の印刷プロファイルは未登録です。PLA設定へ流用しません。")
             for row in state["files"]:
                 self.file(project_id, row["key"])
             output = self.directory(project_id) / ("print-" + uuid.uuid4().hex[:8])

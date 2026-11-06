@@ -1,0 +1,15 @@
+{
+  "pressure_kpa": [200, 250, 300, 350, 400],
+  "fills": [0.2, 0.25, 0.3, 0.35],
+  "nozzle_mm": [7, 9, 11],
+  "max_versions": 6,
+  "max_actions": 100,
+  "budget_s": 15000,
+  "memory_gib": 24,
+  "reserve_confirmation_fraction": 0.6,
+  "survey_candidates": 40,
+  "exploratory_redesign": true,
+  "use_experience": true,
+  "planner": "local_llm",
+  "fallback": "stop"
+}

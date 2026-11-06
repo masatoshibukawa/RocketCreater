@@ -40,12 +40,14 @@ def test_planner_rejects_unoffered_ids_extra_fields_and_labels_fallback():
     assert outcome["action"] == "screen"
 
 
-def test_policy_moves_from_operating_variables_to_shape_and_invalidates_measured_mass():
+def test_policy_offers_shape_alongside_operations_and_invalidates_measured_mass():
     s = spec()
     s.measured_printed_mass_g = 30
     limits = SearchLimits(pressure_kpa=(300, 350), fills=(), nozzle_mm=())
     initial = policy.proposals(s, limits, ["altitude"], [policy.identity(s)])
-    assert list(initial) == ["redesign/pressure-350"]
+    assert "redesign/pressure-350" in initial
+    assert "redesign/thinner-fin" in initial
+    assert "redesign/nose_wall_mm-0.75" in initial
     s.design = s.design.model_copy(update={"initial_gauge_pressure_pa": 350000})
     later = policy.proposals(s, limits, ["altitude"], [policy.identity(s)])
     assert later["redesign/thinner-fin"]["spec"]["measured_printed_mass_g"] is None
@@ -67,6 +69,8 @@ class FixtureHarness(Harness):
             value = {"metrics": {}}
             if kind == "geometry":
                 value["cad_metrics"] = VOLUMES
+            if kind == "benchmarks":
+                value["metrics"] = {"exact_benchmarks_pass": True}
             if kind == "screen":
                 value.update(apogee_m=10, metrics={"apogee_m": 10})
             if kind == "confirm":
@@ -119,8 +123,9 @@ def test_failed_solver_is_bounded_and_never_counts_as_confirmation(tmp_path):
     h.fail = "geometry"
     s = h.run(s["id"], s["revision"])
     assert s["adaptive"]["status"] == "unresolved"
-    assert len(s["adaptive"]["history"]) == 2
-    assert all(r["execution_status"] == "failed" for r in s["adaptive"]["history"])
+    geometry = [r for r in s["adaptive"]["history"] if r["action"] == "geometry"]
+    assert len(geometry) == 2
+    assert all(r["execution_status"] == "failed" for r in geometry)
 
 
 def test_restart_edit_and_tampered_artifact_cannot_reuse_success(tmp_path):
@@ -155,7 +160,7 @@ def test_capability_and_fin_count_gate_cfd_without_claiming_pass(tmp_path):
 
 
 def test_numerical_failure_offers_refinement_before_redesign(tmp_path):
-    _, h, s = started(tmp_path)
+    _, h, s = started(tmp_path, exploratory_redesign=False)
     c, specification, precision, limits = h._campaign(s)
     original = h.data
     h.data = lambda campaign, key: (
@@ -186,7 +191,8 @@ def test_interrupted_attempt_keeps_time_and_retry_accounting(tmp_path):
     s = h.step(s["id"], s["revision"])
     history = s["adaptive"]["history"]
     assert [r["execution_status"] for r in history] == ["interrupted", "completed"]
-    assert s["adaptive"]["remaining_s"] <= s["adaptive"]["limits"]["budget_s"] - 40
+    executed_cost = c.pool.actions[history[-1]["action"]].cost_s
+    assert s["adaptive"]["remaining_s"] <= s["adaptive"]["limits"]["budget_s"] - 20 - executed_cost
 
 
 def test_api_rejects_runtime_paths_and_stale_revision(tmp_path, monkeypatch):
@@ -209,7 +215,7 @@ def test_api_rejects_runtime_paths_and_stale_revision(tmp_path, monkeypatch):
         },
     )
     assert response.status_code == 200
-    assert list(client.get(url + "/options").json()["offered"]) == ["geometry"]
+    assert set(client.get(url + "/options").json()["offered"]) == {"geometry", "benchmarks"}
     assert client.post(url + "/step", json={"revision": 0}).status_code == 409
     assert (
         client.post(
@@ -248,8 +254,8 @@ def test_existing_search_starts_import_without_old_mass_or_pass_claims():
 
 
 def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
-    _, h, state = started(tmp_path, max_versions=3)
-    for _ in range(4):
+    _, h, state = started(tmp_path, max_versions=3, exploratory_redesign=False)
+    for _ in range(5):
         state = h.step(state["id"], state["revision"])
     assert state["adaptive"]["results"]["screen"]["execution_status"] == "completed"
     state["adaptive"]["quality_pending"] = ["fem_mesh"]
@@ -258,3 +264,20 @@ def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
     assert not proposals  # altitude shortfall cannot bypass unfinished precision work
     assert not any(k.startswith("refine/") for k in choices["offered"])
     assert not any(k.startswith("redesign/") for k in choices["offered"])
+
+
+def test_independent_aero_failures_offer_numerical_work_and_block_redesign(tmp_path):
+    _, h, s = started(tmp_path, exploratory_redesign=False)
+    c, specification, precision, limits = h._campaign(s)
+    original = h.data
+    h.data = lambda campaign, key: (
+        {
+            "unmet": ["altitude", "aero_interpolation", "aero_domain_size", "aero_lattice"],
+            "metrics": {},
+        }
+        if key == "confirm"
+        else original(campaign, key)
+    )
+    choices, proposals, _ = h._choices(c, specification, precision, limits)
+    assert {"refine/table", "refine/domain", "refine/lattice"} <= choices["offered"].keys()
+    assert not proposals

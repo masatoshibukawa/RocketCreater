@@ -5,7 +5,7 @@ import math
 import numpy as np
 
 from rocketwright.adaptive import digest
-from rocketwright.analysis.schema import MOUNTS, STOCKS
+from rocketwright.analysis.schema import MOUNTS, STOCK_EVIDENCE, STOCKS
 from rocketwright.physics.atmosphere import state_scalar
 from rocketwright.physics.bottle_integrity.schema import AnalysisConfig, FlightConfig, Material
 from rocketwright.physics.concrete_fin import polygon_moments
@@ -147,6 +147,7 @@ def compile_record(spec, cad_metrics):
         assembly=assembly,
         config=config.model_dump(mode="json"),
         material=spec.material,
+        material_evidence=STOCK_EVIDENCE.get(spec.material, {"basis": "legacy assumed scenario"}),
         mass_basis="measured total; CAD proportions" if measured else "solid CAD estimate",
         dimensions_measured=g.dimensions_measured,
         evidence=a.evidence,
