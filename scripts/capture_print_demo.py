@@ -79,7 +79,7 @@ def capture(args) -> dict:
         "frame_count": 0,
         "audio": "none",
         "printer_control_commands_sent": 0,
-        "first_layer_adhesion": "awaiting_physical_observation",
+        "first_layer_adhesion": "not_assessed_by_camera_recorder",
     }
     write_state(directory, state)
     started = time.monotonic()
@@ -114,7 +114,13 @@ def capture(args) -> dict:
                 state["frame_count"] += 1
                 state["last_frame"] = row
                 failures = 0
-                if job.get("state") not in {"pre_print", "printing", "pausing", "paused"}:
+                if job.get("state") not in {
+                    "pre_print",
+                    "printing",
+                    "pausing",
+                    "paused",
+                    "resuming",
+                }:
                     state["status"] = "target_job_not_recordable"
                     break
             except (OSError, ValueError, urllib.error.URLError) as exc:
