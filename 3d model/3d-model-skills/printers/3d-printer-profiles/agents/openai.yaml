@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dプリンター機種別の選択"
+  short_description: "3Dプリンター機種別の選択の校正・接地・速度・接続を確認し、機種に合う試作を準備する"
+  default_prompt: "$3d-printer-profiles を使い、この機種の構成・印刷条件・接続方法を確認し、失敗箇所に合う比較試行を準備してください。"

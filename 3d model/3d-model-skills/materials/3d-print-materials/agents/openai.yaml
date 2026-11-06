@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dプリントの材料索引"
+  short_description: "材料の製品差と用途を確認し、機種との適合・支持材・置き換えの判断へ案内する"
+  default_prompt: "$3d-print-materials を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

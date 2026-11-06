@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPの3Dプリント"
+  short_description: "PPの接地と反りを専用表面で整え、支持材や柔らかさを評価する"
+  default_prompt: "$3d-material-pp を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

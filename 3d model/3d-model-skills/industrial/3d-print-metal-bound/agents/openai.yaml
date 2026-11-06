@@ -1,0 +1,4 @@
+interface:
+  display_name: "結合材を使う金属押出・脱脂・焼結"
+  short_description: "金属押出から脱脂・焼結までを一工程として寸法と支持を設計する"
+  default_prompt: "$3d-print-metal-bound を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

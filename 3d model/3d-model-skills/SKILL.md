@@ -1,6 +1,6 @@
 ---
 name: 3d-model-skills
-description: "AIを使う3Dモデル制作と3Dプリントの総合依頼を整理し、全体工程・生成・修正と設計・印刷・トラブル対処・レシピ・記録・調査の専門スキルへ案内する。複数工程の依頼や着手点が未定の場合に使う。単一工程は該当スキルを直接使える。"
+description: "3Dモデル制作と3Dプリントの依頼を整理し、生成・設計・印刷・材料と組み合わせ・実機不良・機種別条件・PC接続の専門スキルへ案内する。複数工程の依頼や着手点が未定の場合に使う。"
 ---
 
 # 3Dモデル制作の索引
@@ -15,7 +15,12 @@ description: "AIを使う3Dモデル制作と3Dプリントの総合依頼を整
 | 文章・画像から3Dを生成したい、生成案を比較したい | [AI生成](categories/3d-model-ai-generation/SKILL.md) | 入力、指示文、元メッシュ、採用理由と修正点 |
 | Blender/CADで直したい、壁厚・公差・分割を設計したい | [モデル修正と設計](categories/3d-model-preparation/SKILL.md) | 編集原本、実寸の形状、印刷用メッシュ、検査結果 |
 | スライス、FDM/光造形、出力・後処理を進めたい | [印刷と後処理](categories/3d-model-printing/SKILL.md) | スライサープロジェクト、機種用データ、確認記録 |
+| 材料を選ぶ、機械との適合、支持材や異材を組み合わせる | [材料と組み合わせ](materials/3d-print-materials/SKILL.md) | 製品条件、機械・支持材の適合、比較試作と置き換え判断 |
 | 穴が消える、折れる、剥がれる、支持から落ちる等の不良 | [トラブル対処](categories/3d-model-troubleshooting/SKILL.md) | 原因の仮説、局所修正、条件を揃えた再試作 |
+| 接地面が小さい、高い部品が途中で倒れる | [接地と転倒対策](categories/3d-print-bed-stability/SKILL.md) | 初層の実接続、姿勢・補助接地、全高の比較試行 |
+| 速度が速い、揺れる、高速部が欠ける、先端が溶ける | [速度・流量校正](categories/3d-print-speed-calibration/SKILL.md) | 特徴別速度、加速度、流量と冷却の確認 |
+| 手持ち機種の校正・設定・制約を確認したい | [機種別スキル索引](printers/3d-printer-profiles/SKILL.md) | 正確な型番・世代に合う機種別の判断 |
+| PCから接続したい、機器が見つからない、送信できない | [接続スキル索引](connections/3d-printer-connection/SKILL.md) | ソフト・OS・CPU・転送方式に合う検出と認証の切り分け |
 | 置物、寸法付き部品、浮き彫りを具体的に作りたい | [制作レシピ](categories/3d-model-recipes/SKILL.md) | 条件に合わせた手順、形状・入力・試作計画 |
 | 条件・結果を記録したい、検収・外注・受け渡しをしたい | [チェックと記録](categories/3d-model-records/SKILL.md) | 制作記録、試行ログ、検査と受け渡し資料 |
 | 根拠を探したい、仕様を再確認したい、多言語で調べたい | [多言語調査と出典](categories/3d-model-research/SKILL.md) | 適用条件付きの知見、一次資料、出典の更新 |

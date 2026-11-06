@@ -1,0 +1,4 @@
+interface:
+  display_name: "Raise3D Forge1 / MetalFuse"
+  short_description: "Forge1の材料供給と、MetalFuseの脱脂・焼結・最終寸法を詰める"
+  default_prompt: "$3d-printer-raise3d-forge1 を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

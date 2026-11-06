@@ -1,0 +1,4 @@
+interface:
+  display_name: "ステンレス鋼・316L/17-4PH"
+  short_description: "316Lと17-4PHの違い、供給形態・機種対応・耐食と熱処理を確かめる"
+  default_prompt: "$3d-metal-stainless-steel を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "工学用・高靱性・柔軟・耐熱レジンの3Dプリント"
+  short_description: "工学用レジンの靱性・剛性・耐熱と、製品別の硬化条件を照合する"
+  default_prompt: "$3d-material-engineering-resin を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

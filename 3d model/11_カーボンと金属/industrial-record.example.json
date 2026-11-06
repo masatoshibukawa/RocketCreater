@@ -1,0 +1,66 @@
+{
+  "record_type": "carbon-metal-process-template",
+  "status": "template-not-tested",
+  "checked_at": null,
+  "requirements": {
+    "part_and_revision": null,
+    "quantity": null,
+    "final_dimensions_mm": null,
+    "tolerances_mm": null,
+    "loads_life_temperature": null,
+    "acceptance_tests": []
+  },
+  "process": {
+    "family": null,
+    "machine_generation_and_config": null,
+    "software_version": null,
+    "parameter_set_id": null,
+    "material_qualification_status": "unknown",
+    "source_urls_and_revisions": []
+  },
+  "feedstocks": [
+    {
+      "role": null,
+      "manufacturer_product_revision": null,
+      "alloy_or_polymer_grade": null,
+      "form": null,
+      "lot": null,
+      "diameter_or_particle_spec": null,
+      "storage_drying_or_reuse_history": null
+    }
+  ],
+  "design": {
+    "orientation": null,
+    "fiber_paths_and_layers": null,
+    "supports_and_thermal_path": null,
+    "powder_or_binder_escape": null,
+    "green_dimensions_mm": null,
+    "scale_compensation_owner": null,
+    "axis_compensation_and_basis": null,
+    "setter_and_furnace_limits": null,
+    "machining_allowance_datums": null
+  },
+  "facility": {
+    "owner_or_service_provider": null,
+    "feedstock_and_postprocess_acceptance": null,
+    "availability_confirmed_at": null,
+    "manufacturer_sds_review": null,
+    "approved_handling_and_utilities": null
+  },
+  "postprocess": {
+    "debinding_method_and_endpoint": null,
+    "sintering_recipe_id": null,
+    "atmosphere_and_load_limit": null,
+    "heat_treatment_or_hip": null,
+    "machining_and_surface_finish": null
+  },
+  "verification": {
+    "small_trial": null,
+    "final_part_state": null,
+    "dimensions_and_mass": null,
+    "density_composition_defects": null,
+    "mechanical_or_function_test": null,
+    "certificates": [],
+    "remaining_unknowns": []
+  }
+}

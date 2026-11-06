@@ -1,0 +1,4 @@
+interface:
+  display_name: "PC・PCブレンドの3Dプリント"
+  short_description: "PCとPCブレンドの差を確かめ、高温条件・反り・プレートを選ぶ"
+  default_prompt: "$3d-material-pc を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

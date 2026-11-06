@@ -1,0 +1,4 @@
+interface:
+  display_name: "LW-PLA・発泡PLAの3Dプリント"
+  short_description: "能動発泡と既発泡を分け、壁厚・流量・実測質量を校正する"
+  default_prompt: "$3d-material-foaming-pla を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

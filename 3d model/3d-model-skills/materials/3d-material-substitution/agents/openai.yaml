@@ -1,0 +1,4 @@
+interface:
+  display_name: "3Dプリント材料の置き換え"
+  short_description: "材料変更が寸法・剛性・積層強度・質量と重心に及ぼす影響を確かめる"
+  default_prompt: "$3d-material-substitution を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

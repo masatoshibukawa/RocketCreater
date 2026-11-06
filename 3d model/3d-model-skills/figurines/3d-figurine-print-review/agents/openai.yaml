@@ -1,0 +1,4 @@
+interface:
+  display_name: "フィギュアの印刷・配色の確認"
+  short_description: "顔・薄部・支持と中空部を確認し、単色・多色の印刷経路を整える"
+  default_prompt: "$3d-figurine-print-review を使い、参照・最終サイズ・実機に合うフィギュアの工程と確認箇所を具体化してください。"

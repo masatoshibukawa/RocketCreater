@@ -1,0 +1,70 @@
+{
+  "record_type": "character-figurine-template",
+  "status": "template-not-tested",
+  "checked_at": null,
+  "target": {
+    "character_and_variant": null,
+    "pose_expression": null,
+    "display_or_other_use": null,
+    "total_height_mm": null,
+    "includes_base": null,
+    "primary_views": [],
+    "appearance_acceptance": []
+  },
+  "references": [
+    {
+      "source": null,
+      "view": null,
+      "same_pose_verified": null,
+      "observed_or_generated": null
+    }
+  ],
+  "generation": {
+    "tool_model_version": null,
+    "input_and_task_record": null,
+    "geometry_vs_texture_decisions": null,
+    "original_model_path": null,
+    "edited_model_path": null,
+    "auto_repair_target_size_and_method": null,
+    "auto_split_version_and_texture_options": null
+  },
+  "parts": [
+    {
+      "name": null,
+      "dimensions_mm": null,
+      "role": null,
+      "seam_and_key": null,
+      "pin_hole_depth_and_clearance_basis": null,
+      "print_orientation": null,
+      "coated_or_masked_faces": null
+    }
+  ],
+  "printing": {
+    "machine_firmware": null,
+    "material_product_color": null,
+    "nozzle_or_resin_profile": null,
+    "slicer_version": null,
+    "method_and_scale": null,
+    "supports_and_hidden_faces": null,
+    "hollows_and_final_holes_checked": null,
+    "color_route_and_slot_mapping": null,
+    "final_project_path": null
+  },
+  "finishing": {
+    "wash_dry_cure_product_specific": null,
+    "support_removal_timing": null,
+    "dry_fit_result": null,
+    "adhesive_filler_primer_paint_clearcoat": [],
+    "paint_test_and_masking_plan": null,
+    "assembly_order": null
+  },
+  "verification": {
+    "original_scale_partial_trials": [],
+    "final_dimensions_mm": null,
+    "appearance_photos": [],
+    "joint_and_thin_feature_result": null,
+    "printing_stability": null,
+    "display_base_stability": null,
+    "unfinished_items": []
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PA・ナイロンの3Dプリント"
+  short_description: "ナイロンの種類と吸湿状態を確認し、乾燥・反り・寸法を評価する"
+  default_prompt: "$3d-material-nylon を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "機種・ノズル・プレートと材料の適合"
+  short_description: "機械・ノズル・送り装置・プレート・乾燥条件と材料製品の適合を照合する"
+  default_prompt: "$3d-material-machine-match を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

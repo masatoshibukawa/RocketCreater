@@ -1,0 +1,4 @@
+interface:
+  display_name: "Raise3D E2CF"
+  short_description: "E2CFの短繊維材・IDEX・乾燥給材と剥離支持材を整える"
+  default_prompt: "$3d-printer-raise3d-e2cf を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

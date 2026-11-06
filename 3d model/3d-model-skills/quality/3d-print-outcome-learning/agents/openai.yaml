@@ -1,0 +1,4 @@
+interface:
+  display_name: "試行結果と改善知見"
+  short_description: "印刷失敗を試行条件と根拠に結び付け、次回への適用範囲を判断する"
+  default_prompt: "$3d-print-outcome-learning を使って、対象ファイルと条件に合う検証を行い、確認結果と未実施項目を示してください。"

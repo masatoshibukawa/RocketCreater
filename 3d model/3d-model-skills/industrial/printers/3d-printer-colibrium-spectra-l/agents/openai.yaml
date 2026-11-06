@@ -1,0 +1,4 @@
+interface:
+  display_name: "Colibrium Additive Spectra L"
+  short_description: "Spectra Lの材料グレード・版と、真空造形・粉末回収を確認する"
+  default_prompt: "$3d-printer-colibrium-spectra-l を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

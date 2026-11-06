@@ -1,0 +1,4 @@
+interface:
+  display_name: "複数材料・支持材・レジン混合の判断"
+  short_description: "接合したい材料と剥がす支持材を分け、熱条件・汚染・混合可否を判断する"
+  default_prompt: "$3d-material-pairing を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

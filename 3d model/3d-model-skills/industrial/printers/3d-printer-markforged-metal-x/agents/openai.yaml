@@ -1,0 +1,4 @@
+interface:
+  display_name: "Markforged Metal X"
+  short_description: "Metal Xの材料世代・界面材と、脱脂乾燥・焼結後の性能を確認する"
+  default_prompt: "$3d-printer-markforged-metal-x を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

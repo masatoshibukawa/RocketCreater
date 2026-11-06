@@ -1,0 +1,4 @@
+interface:
+  display_name: "ABSの3Dプリント"
+  short_description: "ABSの反り・層割れ・冷却後の寸法と、熱環境や排気を整える"
+  default_prompt: "$3d-material-abs を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"
