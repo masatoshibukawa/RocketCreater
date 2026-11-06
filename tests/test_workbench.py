@@ -66,7 +66,7 @@ def test_model_proposal_is_validated_and_does_not_execute_analysis(bench):
     assert not bench.get(state["id"])["history"]
 
 
-def test_workshop_replay_exports_same_design_and_integrity_checked_downloads(bench):
+def test_workshop_replay_exports_same_design_and_integrity_checked_downloads(bench, monkeypatch):
     # Numerical search fixture, not an equipment pressure rating. The default
     # 400 kPa ceiling must remain unchanged even if a new model cannot reach target.
     workshop = Workshop.model_validate_json(
@@ -106,6 +106,49 @@ def test_workshop_replay_exports_same_design_and_integrity_checked_downloads(ben
     report_file = next(f for f in state["files"] if f["name"] == "report.json")
     path = bench.file(state["id"], report_file["key"])
     assert json.loads(path.read_text(encoding="utf-8"))["design"] == state["design"]
+    # Real Blender/Cura builds are covered separately; here test the frozen-source
+    # boundary, revision gate and download registry through the workbench API.
+    import rocketwright.manufacturing as manufacturing
+
+    captured = []
+
+    def inspected_fixture(request, directory):
+        captured.append(request)
+        directory.mkdir()
+        (directory / "fin-S5.ufp").write_bytes(b"inspected-fixture")
+        return {"status": "slice_checked_physical_trial_pending"}
+
+    monkeypatch.setattr(manufacturing, "prepare", inspected_fixture)
+    monkeypatch.setattr(routes, "DEFAULT_WORKBENCH", bench)
+    frozen_report = path.read_bytes()
+    assembly = json.loads(
+        bench.file(state["id"], "production/assembly.json").read_text(encoding="utf-8")
+    )
+    endpoint = f"/workbench/projects/{state['id']}/print-package"
+    with TestClient(app) as client:
+        assert client.post(endpoint, json={"revision": 0}).status_code == 409
+        assert not captured
+        path.write_bytes(b"changed after export")
+        response = client.post(endpoint, json={"revision": state["revision"]})
+        assert response.status_code == 409 and "changed" in response.text
+        assert not captured
+        path.write_bytes(frozen_report)
+        state = bench.get(state["id"])
+        response = client.post(endpoint, json={"revision": state["revision"]})
+        assert response.status_code == 200, response.text
+        state = response.json()
+        assert len(captured) == 1
+        assert captured[0].design.model_dump(mode="json") == state["design"]
+        assert captured[0].geometry == manufacturing.PrintGeometry.from_plan(
+            assembly["dimensions_mm"]
+        )
+        assert state["history"] == history
+        printed = next(f for f in state["files"] if f["kind"] == "manufacturing")
+        assert client.get(printed["url"]).content == b"inspected-fixture"
+        bench.file(state["id"], printed["key"]).write_bytes(b"tampered")
+        assert client.get(printed["url"]).status_code == 409
+        assert client.post(endpoint, json={"revision": state["revision"]}).status_code == 409
+        assert len(captured) == 1
     path.write_text("tampered")
     with pytest.raises(Conflict, match="changed"):
         bench.file(state["id"], report_file["key"])
@@ -126,6 +169,13 @@ def test_api_checkpoints_validation_and_resume(monkeypatch, bench):
         endpoint = f"/workbench/projects/{state['id']}"
         assert client.get(endpoint).json()["revision"] == 0
         assert client.post(endpoint + "/exports", json={"revision": 0}).status_code == 409
+        state = client.get(endpoint).json()
+        assert (
+            client.post(
+                endpoint + "/print-package", json={"revision": state["revision"]}
+            ).status_code
+            == 409
+        )
         state = client.get(endpoint).json()
         assert (
             client.post(

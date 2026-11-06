@@ -15,6 +15,26 @@ from pathlib import Path
 MODEL_TYPES = {"WALL-OUTER", "WALL-INNER", "SKIN", "FILL", "GAP-FILL"}
 
 
+def footprint_hull(points):
+    """CCW convex support envelope of the first-layer bead centre paths."""
+    ordered = sorted(points)
+
+    def cross(a, b, c):
+        return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+    def half(sequence):
+        result = []
+        for p in sequence:
+            while len(result) >= 2 and cross(result[-2], result[-1], p) <= 0:
+                result.pop()
+            result.append(p)
+        return result
+
+    if len(ordered) < 3:
+        return ordered
+    return half(ordered)[:-1] + half(reversed(ordered))[:-1]
+
+
 def inspect(path: Path, *, material_color: str = "Black") -> dict:
     if material_color not in {"Black", "Gray"}:
         raise ValueError("Only the verified Black and Gray Tough PLA profiles are supported")
@@ -54,6 +74,7 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
     print_low, print_high = [math.inf] * 3, [-math.inf] * 3
     footprint_low, footprint_high = [math.inf] * 2, [-math.inf] * 2
     speeds = {}
+    footprint_points = set()
     for line in text.splitlines():
         if line.startswith(";LAYER:"):
             layer = int(line.split(":")[1])
@@ -89,6 +110,7 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
                         print_low[index] = min(print_low[index], point[axis])
                         print_high[index] = max(print_high[index], point[axis])
                     if layer == 0:
+                        footprint_points.add((point["X"], point["Y"]))
                         for index, axis in enumerate("XY"):
                             footprint_low[index] = min(footprint_low[index], point[axis])
                             footprint_high[index] = max(footprint_high[index], point[axis])
@@ -153,6 +175,7 @@ def inspect(path: Path, *, material_color: str = "Black") -> dict:
         "all_print_paths_inside_s5": all_bounds_ok,
         "all_print_path_bounds_mm": [print_low, print_high],
         "bed_footprint_bounds_mm": [footprint_low, footprint_high],
+        "bed_footprint_hull_xy_mm": footprint_hull(footprint_points),
         "extrusion_speed_max_mm_s_by_type": speeds,
         "wall_line_count": settings["wall_line_count"],
         "infill_pct": settings["infill_sparse_density"],

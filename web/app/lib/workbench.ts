@@ -81,7 +81,8 @@ export function useWorkbench() {
   useEffect(() => {
     mounted.current = true;
     const controller = new AbortController();
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = new URLSearchParams(window.location.search).get("project")
+      ?? localStorage.getItem(STORAGE_KEY);
     void request<RuntimeStatus>("/workbench/runtime", undefined, controller.signal)
       .then(setRuntime).catch(() => undefined);
     if (saved && /^[a-f0-9]{32}$/.test(saved)) {
