@@ -19,6 +19,7 @@ if preview:
     output = output / "preview"
     output.mkdir(exist_ok=True)
 g = {k: v / 1000 for k, v in job["dimensions_mm"].items()}
+g["fin_count"] = job["dimensions_mm"].get("fin_count", 4)
 plan = job["plan"]
 photographic = plan.get("style") == "photographic"
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "AIvideo/pet-rocket/realism"))
@@ -84,6 +85,8 @@ length = g["overall"]
 
 
 def cylinder(name, radius, depth, z, mat):
+    if depth <= 0:
+        return None
     bpy.ops.mesh.primitive_cylinder_add(vertices=48, radius=radius, depth=depth, location=(0, 0, z))
     obj = bpy.context.object
     obj.name = name
@@ -156,12 +159,14 @@ bpy.ops.mesh.primitive_cone_add(
 )
 bpy.context.object.parent = root
 bpy.context.object.data.materials.append(shell)
+nose_object = bpy.context.object
 if photographic:
     bpy.context.object.data.materials.clear()
     bpy.context.object.data.materials.append(white)
     for polygon in bpy.context.object.data.polygons:
         polygon.use_smooth = len(polygon.vertices) <= 4
-for i in range(4):
+fin_count = g.get("fin_count", 4) if job["design"]["has_fins"] else 0
+for i in range(fin_count):
     z = g["fin_tail_inset"]
     vertices = [
         (r, 0, z),
@@ -174,10 +179,26 @@ for i in range(4):
     obj = bpy.data.objects.new("Fin " + str(i + 1), mesh)
     scene.collection.objects.link(obj)
     obj.parent = root
-    obj.rotation_euler.z = i * math.pi / 2
+    obj.rotation_euler.z = i * math.tau / fin_count
     obj.data.materials.append(fin_mat)
     solid = obj.modifiers.new("Sheet thickness representation", "SOLIDIFY")
-    solid.thickness = 0.001
+    solid.thickness = g.get("fin_thickness", 0.001)
+
+if job.get("cad_files"):
+    # The exact printed part meshes, placed using the same shared stations in millimetres.
+    for obj in list(root.children):
+        if obj == nose_object or obj.name.startswith("Fin "):
+            bpy.data.objects.remove(obj, do_unlink=True)
+    for part, count in (("nose", 1), ("fin", fin_count)):
+        for i in range(count):
+            bpy.ops.wm.stl_import(filepath=job["cad_files"][part])
+            obj = bpy.context.object
+            obj.name = "Adopted CAD " + part + str(i)
+            obj.scale = (0.001, 0.001, 0.001)
+            obj.location.z = length - g["nose_length"] if part == "nose" else g["fin_tail_inset"]
+            obj.rotation_euler.z = 0 if part == "nose" else i * math.tau / count
+            obj.parent = root
+            obj.data.materials.append(white if part == "nose" else fin_mat)
 
 bpy.ops.mesh.primitive_plane_add(size=400)
 ground = bpy.context.object

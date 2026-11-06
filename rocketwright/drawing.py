@@ -461,8 +461,15 @@ def _render_bottle(design: BottleDesign, width: float) -> str:
     body_m = BOTTLE_ASPECT_RATIO * d_m
     nose_m = BOTTLE_NOSE_DIAMETERS * d_m
     neck_m = BOTTLE_NECK_DIAMETERS * d_m
+    if design.geometry:
+        d_m = design.geometry.body_diameter_mm / 1000
+        body_m = design.geometry.nose_base_mm / 1000
+        nose_m = design.geometry.nose_length_mm / 1000
+        neck_m = 0
     total_m = nose_m + body_m + neck_m
     fin_span_m = 0.8 * d_m if design.has_fins else 0.0  # SIMPLIFICATION: representative fin size
+    if design.geometry and design.has_fins:
+        fin_span_m = design.geometry.fin_span_mm / 1000
     draw_w = width - 2 * _MARGIN_X
     scale = draw_w / total_m
     r = d_m / 2.0 * scale
@@ -486,15 +493,22 @@ def _render_bottle(design: BottleDesign, width: float) -> str:
     # fins
     if design.has_fins:
         root = 1.0 * d_m * scale
+        tail = x_body1
+        sweep, tip = 0.65 * root, 0.35 * root
+        if design.geometry:
+            root = design.geometry.fin_root_mm / 1000 * scale
+            tail = x_tail - design.geometry.fin_tail_inset_mm / 1000 * scale
+            sweep = design.geometry.fin_sweep_mm / 1000 * scale
+            tip = design.geometry.fin_tip_mm / 1000 * scale
         span = fin_span_m * scale
         for sign in (-1, 1):
             y_root = body_top if sign < 0 else body_bot
             c.polygon(
                 [
-                    (x_body1 - root, y_root),
-                    (x_body1 - 0.35 * root, y_root + sign * span),
-                    (x_body1, y_root + sign * span),
-                    (x_body1, y_root),
+                    (tail - root, y_root),
+                    (tail - root + sweep, y_root + sign * span),
+                    (tail - root + sweep + tip, y_root + sign * span),
+                    (tail, y_root),
                 ],
                 fill="#cfd8e3",
                 cls="fin",

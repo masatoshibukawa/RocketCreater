@@ -454,12 +454,20 @@ def airframe(
     elif isinstance(design, BottleDesign) and design.geometry is not None:
         g = design.geometry
         shells, params = _finned_cylinder(
-            "conical", g.nose_length_mm / 1000, g.overall_mm / 1000,
+            "conical",
+            g.nose_length_mm / 1000,
+            g.overall_mm / 1000,
             g.body_diameter_mm / 1000,
-            FinSet(count=g.fin_count, root_chord_m=g.fin_root_mm / 1000,
-                   tip_chord_m=g.fin_tip_mm / 1000, span_m=g.fin_span_mm / 1000,
-                   sweep_m=g.fin_sweep_mm / 1000, thickness_m=g.fin_thickness_mm / 1000),
-            g.fin_tail_inset_mm / 1000, segments,
+            FinSet(
+                count=g.fin_count,
+                root_chord_m=g.fin_root_mm / 1000,
+                tip_chord_m=g.fin_tip_mm / 1000,
+                span_m=g.fin_span_mm / 1000,
+                sweep_m=g.fin_sweep_mm / 1000,
+                thickness_m=g.fin_thickness_mm / 1000,
+            ),
+            g.fin_tail_inset_mm / 1000,
+            segments,
         )
         if not design.has_fins:
             shells = shells[:1]
