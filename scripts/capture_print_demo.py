@@ -114,10 +114,13 @@ def capture(args) -> dict:
                 state["frame_count"] += 1
                 state["last_frame"] = row
                 failures = 0
-                if job.get("state") not in {"pre_print", "printing", "paused"}:
-                    state["status"] = "target_job_ended"
+                if job.get("state") not in {"pre_print", "printing", "pausing", "paused"}:
+                    state["status"] = "target_job_not_recordable"
                     break
             except (OSError, ValueError, urllib.error.URLError) as exc:
+                if isinstance(exc, urllib.error.HTTPError) and exc.code == 404:
+                    state["status"] = "target_job_no_longer_available"
+                    break
                 failures += 1
                 state["last_error_type"] = type(exc).__name__
                 state["consecutive_read_failures"] = failures
