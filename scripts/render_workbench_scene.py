@@ -15,7 +15,8 @@ from mathutils import Vector
 job_path = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
 job = json.loads(job_path.read_text(encoding="utf-8"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from render_checkpoint import Checkpoint
+from render_checkpoint import Checkpoint  # noqa: E402 -- Blender does not add the script directory.
+
 output = job_path.parent
 preview = "--preview" in sys.argv
 if preview:
@@ -75,10 +76,7 @@ white = material("Payload and recovery covers", (0.68, 0.72, 0.7), 0.25)
 fin_mat = material("Fin sheet", (0.19, 0.4, 0.4), 0.1)
 ground_mat = material("Ground", (0.055, 0.065, 0.07))
 if photographic:
-    shell = appearance.material(
-        "Unmeasured clear PET wall", (0.98, 1, 1), 0.04, transmission=1, ior=1.575
-    )
-    appearance.surface_detail(shell)
+    shell = appearance.readable_pet()
     fin_mat = appearance.material("Assumed sheet fins", (0.25, 0.23, 0.18), 0.65)
     white = appearance.material("Unmeasured cover material", (0.72, 0.72, 0.66), 0.3)
     if job.get("cad_files"):
@@ -353,22 +351,25 @@ for mode in ("design", "launch"):
             position = [a[k] + (b[k] - a[k]) * mix for k in ("east_m", "north_m", "altitude_m")]
             root.location = position
             if photographic:
-                # A ground-based camera pans/zooms; it does not fly alongside the rocket.
-                horizontal = max(8, max(p["altitude_m"] for p in trace) * 1.25)
+                # A fixed elevated CG viewpoint keeps terrain behind the clear PET.
+                # It pans/zooms without following the rocket's position or changing its trace.
+                apogee = max(p["altitude_m"] for p in trace)
+                horizontal = max(8, apogee * 1.25)
+                observation = (horizontal, -horizontal, apogee + max(2, length * 5))
                 camera.data.lens = max(
                     45,
                     min(
-                        850,
+                        1200,
                         45
                         * math.dist(
-                            (horizontal, -horizontal, 0.8),
+                            observation,
                             (position[0], position[1], position[2] + length / 2),
                         )
                         / camera_distance,
                     ),
                 )
                 look_at(
-                    (horizontal, -horizontal, 0.8),
+                    observation,
                     (position[0], position[1], position[2] + length / 2),
                 )
                 remaining = max(
@@ -426,6 +427,8 @@ for mode in ("design", "launch"):
             "mesh_vertex_hashes": mesh_hashes,
             "source_id": job["source_id"],
             "bottle_detail": "unmeasured illustrative PET envelope",
+            "camera": "fixed elevated CG viewpoint, not filmed observation"
+            if photographic else "illustrative tracking camera",
             "physical_validation": "not_performed",
         },
         indent=2,
