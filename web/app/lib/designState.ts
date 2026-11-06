@@ -618,6 +618,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
             design: null,
             seededFrom: null,
             tool: name,
+            build: null,
           },
         ],
       };
@@ -650,6 +651,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
         design,
         seededFrom: null,
         tool: name,
+        build: null,
       };
       let next: DesignState = { ...state, attempts: [...state.attempts, row] };
       if (!state.tier && sim.tier) next = { ...next, tier: sim.tier };
@@ -676,6 +678,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
         design,
         seededFrom: null,
         tool: name,
+        build: asRecord(result.build),
       };
       let next: DesignState = { ...state, attempts: [...state.attempts, row] };
       if (!state.tier && simRecord) {
@@ -772,6 +775,7 @@ function applyToolResult(state: DesignState, ev: AgentEvent): DesignState {
           design,
           seededFrom: referenceId,
           tool: "find_reference_designs",
+          build: null,
         };
         next = { ...next, attempts: [...next.attempts, row] };
       }

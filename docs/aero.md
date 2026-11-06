@@ -181,7 +181,7 @@ uv run python scripts/aero_loop.py --action D02/9/325/25/carton_wide --backend o
 uv run python scripts/aero_loop.py examples/designs/bottle.json --target 30 --backend barrowman
 ```
 
-`--json` で結果全体を書き出す。収束しなければ終了コード 1。設計ファイルは変更しない。ワークベンチからは `POST /workbench/projects/{id}/aero-loop`（[integration.md](integration.md)）で、確認済みの案に対して実行する。バックエンドは環境変数 `ROCKETWRIGHT_AERO_BACKEND`（既定 `auto`）。確認工程と同じ `n`、`seed` で最終 design の `run_dispersion` も回す。
+`--json` で結果全体を書き出す。収束しなければ終了コード 1。設計ファイルは変更しない。画面の案には `POST /aero/loop`、ワークベンチのプロジェクトには `POST /workbench/projects/{id}/aero-loop`（[integration.md](integration.md)）で、確認済みの案に対して実行する。バックエンドは環境変数 `ROCKETWRIGHT_AERO_BACKEND`（既定 `auto`）。確認工程と同じ `n`、`seed` で最終 design の `run_dispersion` も回す。
 
 ### 実測（ワークベンチの採用案 D02、紙製フィン幅広、325 kPa、充填率 25 %）
 

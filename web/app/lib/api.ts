@@ -1,7 +1,9 @@
 /**
  * Backend URL helpers and the artifact endpoints (api/main.py):
  *   POST /artifacts/render            {design} -> {id, download: {svg}}
- *   POST /artifacts/summary           {design, requirement|null, width_px|null} -> DesignSummary
+ *   POST /artifacts/summary           {design, requirement|null, width_px|null, build|null}
+ *                                     -> DesignSummary
+ *   POST /artifacts/package           DesignPackageRequest -> DesignPackage
  *   GET  /artifacts/{id}.{svg|md|csv|json}
  * Tool results of `export_report` / `render_drawing` carry the same `download` map, so the UI
  * only ever joins a path from the backend onto API_BASE.
@@ -29,6 +31,11 @@ export function apiUrl(path: string): string {
 /** Stable key for a design (sorted keys) so equal designs compare equal across events. */
 export function designKey(design: Design): string {
   return stableStringify(design);
+}
+
+/** Same, for a whole request: its result depends on every field, not on the design alone. */
+export function requestKey(request: unknown): string {
+  return stableStringify(request);
 }
 
 function stableStringify(value: unknown): string {
@@ -138,22 +145,56 @@ export function toDesignSummary(raw: unknown): DesignSummary {
 
 /**
  * POST /artifacts/summary for one design. `requirement` is the normalised Requirement from the
- * classify_requirement tool_call (or null before classification).
+ * classify_requirement tool_call (or null before classification). With a parts `build` the cost
+ * and BOM are the bill's rather than cost.py's estimate.
  */
 export async function fetchDesignSummary(
   design: Design,
   requirement: Record<string, unknown> | null,
   signal?: AbortSignal,
   widthPx: number | null = null,
+  build: Record<string, unknown> | null = null,
 ): Promise<DesignSummary> {
   const res = await fetch(apiUrl("/artifacts/summary"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ design, requirement, width_px: widthPx }),
+    body: JSON.stringify({ design, requirement, width_px: widthPx, build }),
     signal,
   });
   if (!res.ok) throw new Error(`summary failed: HTTP ${res.status}`);
   return toDesignSummary(await res.json());
+}
+
+export interface DesignPackageRequest {
+  design: Design;
+  /** The parts build the design resolved from, so the bill and margins stay the build's. */
+  build: Record<string, unknown> | null;
+  requirement: Record<string, unknown> | null;
+  env: Record<string, unknown> | null;
+  /** Seed and size of the agent's dispersion, so the report repeats that very run. */
+  seed: number | null;
+  n: number | null;
+}
+
+export interface DesignPackage {
+  files: { kind: string; label: string; url: string }[];
+  unavailable: { item: string; reason: string }[];
+}
+
+/** POST /artifacts/package: the production files of one design. */
+export async function createDesignPackage(
+  request: DesignPackageRequest,
+  signal?: AbortSignal,
+): Promise<DesignPackage> {
+  const res = await fetch(apiUrl("/artifacts/package"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+    signal,
+  });
+  const data = (await res.json().catch(() => ({}))) as DesignPackage & { detail?: unknown };
+  if (!res.ok) throw new Error(typeof data.detail === "string" ? data.detail : `HTTP ${res.status}`);
+  return data;
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {

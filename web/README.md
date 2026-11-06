@@ -1,8 +1,10 @@
 # RocketWright web UI
 
-The default entry is the three-column free-request design screen; its header button opens the light production workbench for the local bottle-workshop trial.
-It connects human analysis checkpoints, saved evidence, production downloads and separate
-design/flight videos. See [local workbench operation](../docs/workbench.md).
+There is one screen: the three-column free-request design screen. Its centre tabs show the 3D
+model, the flight playback, the flow analysis (`POST /aero/loop`, a polled job), the production
+data of a passing design (`POST /artifacts/package` and the print package) and the reference
+library. Multistage designs get neither the flow analysis nor the production data.
+The bottle-workshop project stays as an API, see [local workbench operation](../docs/workbench.md).
 Paid design calls are disabled by default;
 the API returns HTTP 423 until explicitly enabled during the final connection review, and the chat says so.
 
@@ -78,9 +80,12 @@ Put it in `web/.env.local` to override, e.g. `NEXT_PUBLIC_API_BASE=http://127.0.
   SVG text of `drawing.url`.
 - `app/lib/model3d.ts`: `buildProceduralModel(design)` returns a `THREE.Group`; `loadStl(url)` is
   the STL hook (see below).
+- `app/lib/useAeroLoop.ts`: starts the flow analysis job of the displayed design and polls it.
+- `app/lib/centerViews.ts`: the centre tabs per tier.
 - `app/lib/chartTheme.ts`: Recharts colours for the light palette, shared by the charts.
 - `app/components/*`: presentational client components. `StatusStrip`, `ChatPanel`, `ModelViewer`,
-  `CostPanel`, `DrawingPanel`, `FlightChart`, `BomPanel`, `DetailsPanel` form the layout;
+  `CostPanel`, `ResultPanel`, `DrawingPanel`, `FlightChart`, `BomPanel`, `DetailsPanel`,
+  `AeroLoopPanel`, `ProductionPanel`, `PrintExports` and `ReferenceLibrary` form the layout;
   `AttemptLog`, `CandidateCards`, `ReviewPanel`, `DispersionPanel` and `TierBadge` (now a chip,
   plus `ClassifyNotes`) are reused inside it.
 

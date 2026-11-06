@@ -15,4 +15,4 @@
 | 出力テキストと読取専用スクリプト | 内容設計と見本を取り込み済み。見本の全パッケージを生成するAPIは未実装 |
 | 保存した機材プロファイルを編集する設定画面 | 未実装。実際の印刷準備ではCuraの機種・材料プロファイルを使用 |
 
-主な実装は[WorkbenchPanel](../web/app/components/WorkbenchPanel.tsx)、[AnalysisEvidence](../web/app/components/AnalysisEvidence.tsx)、[ローカルAPI](../api/workbench.py)。判断基準は[UX仕様](../final%20output%20ui%20example/ux-spec.md)、[組立仕様](../final%20output%20ui%20example/assembly-spec.md)、[出力内容設計](../final%20output%20ui%20example/export-content-spec.md)。
+上の表はワークベンチの画面があったときの照合で、その画面は2026-11-06に「自由な要求から設計」の画面へ統合して外した。今の画面は[page.tsx](../web/app/page.tsx)、APIは[ローカルAPI](../api/workbench.py)に残る。判断基準は[UX仕様](../final%20output%20ui%20example/ux-spec.md)、[組立仕様](../final%20output%20ui%20example/assembly-spec.md)、[出力内容設計](../final%20output%20ui%20example/export-content-spec.md)。

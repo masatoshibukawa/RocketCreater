@@ -232,6 +232,8 @@ export interface AttemptRow {
   seededFrom: string | null;
   /** The tool that produced the row ("auto_design" rows are the staged chain's baseline). */
   tool: string;
+  /** The parts build of a design_from_parts / auto_design row, else null. */
+  build: Record<string, unknown> | null;
 }
 
 // --------------------------------------------------------------------------- design chain

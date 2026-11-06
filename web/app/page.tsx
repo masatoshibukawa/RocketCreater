@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import AeroLoopPanel from "./components/AeroLoopPanel";
 import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
@@ -9,26 +10,24 @@ import DetailsPanel from "./components/DetailsPanel";
 import DrawingPanel from "./components/DrawingPanel";
 import FlightChart from "./components/FlightChart";
 import ModelViewer from "./components/ModelViewer";
-import PrintExports from "./components/PrintExports";
+import ProductionPanel from "./components/ProductionPanel";
+import ReferenceLibrary from "./components/ReferenceLibrary";
+import ResultPanel from "./components/ResultPanel";
 import StatusStrip from "./components/StatusStrip";
-import WorkbenchPanel from "./components/WorkbenchPanel";
-import { designKey, exportInfoFromEvents, exportsForDesign } from "./lib/api";
+import { designKey, exportInfoFromEvents, exportsForDesign, type DesignPackageRequest } from "./lib/api";
+import { centerTabs, type CenterView } from "./lib/centerViews";
 import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
 import { carriesParachute } from "./lib/flightPlayback";
 import { useDesignStream } from "./lib/useDesignStream";
 import { useDesignSummary } from "./lib/useDesignSummary";
+import type { AeroRequest } from "./lib/useAeroLoop";
 import type { DispersionResult, DisplayedDesign, LandingPoint, TracePoint } from "./lib/types";
 
 const NO_TRACE: TracePoint[] = [];
 const NO_METRICS: Record<string, number> = {};
 
 export default function Home() {
-  const [workspace, setWorkspace] = useState(false);
-  useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get("project") ?? "";
-    if (/^[a-f0-9]{32}$/.test(id)) setWorkspace(true);
-  }, []);
-  const [centerView, setCenterView] = useState<"model" | "simulation">("model");
+  const [centerView, setCenterView] = useState<CenterView>("model");
   const stream = useDesignStream();
   const { start, answer, stop, reset } = stream;
   // Manual pick from 詳細 (attempt log / cards / reviews); null = follow the display rule.
@@ -96,11 +95,59 @@ export default function Home() {
     return any ? any.download.bom : null;
   }, [displayed, exportInfos]);
 
+  // Every attempt that flew this very design, the one on screen first: a trace-only re-run has
+  // neither the build nor the margins of the parts attempt, and an estimate_cost candidate no env.
+  const sameDesign = useMemo(() => {
+    if (!displayed) return [];
+    const key = designKey(displayed.design);
+    const same = stream.attempts.filter((a) => a.design !== null && designKey(a.design) === key);
+    return [...same.filter((a) => a === displayedAttempt), ...same.filter((a) => a !== displayedAttempt)];
+  }, [displayed, displayedAttempt, stream.attempts]);
+  const build = sameDesign.find((a) => a.build !== null)?.build ?? null;
+
   // /artifacts/summary for the displayed design (debounced, cached by design JSON).
-  const summaryState = useDesignSummary(displayed?.design ?? null, stream.requirement);
+  const summaryState = useDesignSummary(displayed?.design ?? null, stream.requirement, build);
   const summary = summaryState.summary;
 
   const tier = stream.tier ?? displayed?.design.tier ?? null;
+  const tabs = centerTabs(tier);
+  // A multistage run takes the flow and production tabs away while one of them is open.
+  const view: CenterView = tabs.some((t) => t.id === centerView) ? centerView : "model";
+
+  // Everything the tools reported for this very design; the attempt on screen has the last word.
+  const resultMetrics = useMemo(() => {
+    if (!displayed) return NO_METRICS;
+    const candidate = stream.candidates.find((c) => c.source_id === displayed.sourceId);
+    const flown = [...sameDesign].reverse().map((a) => a.result?.metrics);
+    return Object.assign({}, candidate?.metrics, ...flown) as Record<string, number>;
+  }, [displayed, sameDesign, stream.candidates]);
+
+  // A failing attempt or a reference seed gets no production data (CLAUDE.md section 1). A seed
+  // flew in the reference's own conditions, which the tool inputs do not hold.
+  const passed: boolean = useMemo(() => {
+    const candidate = stream.candidates.find((c) => c.source_id === displayedId);
+    if (candidate?.seededFrom || displayed?.origin === "seed") return false;
+    return candidate?.passed ?? displayedAttempt?.result?.success ?? false;
+  }, [displayed, displayedId, displayedAttempt, stream.candidates]);
+
+  // Conditions of the run on screen, so that the API repeats what the agent simulated.
+  const callEnv = [displayedId, ...sameDesign.map((a) => a.id)]
+    .map((id) => (id ? stream.toolInputs[id]?.env : undefined))
+    .find((value) => typeof value === "object" && value !== null);
+  const env = (callEnv ?? null) as Record<string, unknown> | null;
+  const rerun = useMemo(
+    () => ({ requirement: stream.requirement, env, seed: dispersion?.seed ?? null, n: dispersion?.n ?? null }),
+    [stream.requirement, env, dispersion],
+  );
+  const packageRequest: DesignPackageRequest | null = useMemo(
+    () => (displayed ? { design: displayed.design, build, ...rerun } : null),
+    [displayed, build, rerun],
+  );
+  const aeroRequest: AeroRequest | null = useMemo(() => {
+    const target = stream.requirement?.target_altitude_m;
+    if (!displayed || typeof target !== "number" || target <= 0) return null;
+    return { design: displayed.design, target_altitude_m: target, ...rerun };
+  }, [displayed, stream.requirement, rerun]);
 
   const handleStart = useCallback(
     (text: string, seed: number | null) => {
@@ -121,15 +168,9 @@ export default function Home() {
     reset();
   }, [reset]);
 
-  if (workspace) return <WorkbenchPanel onOpenDesign={() => setWorkspace(false)} />;
-
   return (
     <main className="app">
-      <StatusStrip
-        status={stream.status}
-        attemptCount={stream.attemptCount}
-        onOpenWorkbench={() => setWorkspace(true)}
-      />
+      <StatusStrip status={stream.status} attemptCount={stream.attemptCount} />
       <div className="app-columns">
         <section className="column column-chat">
           <ChatPanel
@@ -145,26 +186,20 @@ export default function Home() {
         <div className="column-rest">
           <section className="column column-center">
             <div className="center-tabs" role="group" aria-label="中央の表示">
-              <button
-                type="button"
-                className={`btn ${centerView === "model" ? "is-active" : ""}`}
-                aria-pressed={centerView === "model"}
-                onClick={() => setCenterView("model")}
-              >
-                3D モデル
-              </button>
-              <button
-                type="button"
-                className={`btn ${centerView === "simulation" ? "is-active" : ""}`}
-                aria-pressed={centerView === "simulation"}
-                onClick={() => setCenterView("simulation")}
-              >
-                シミュレーション
-              </button>
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  className={`btn ${view === tab.id ? "is-active" : ""}`}
+                  aria-pressed={view === tab.id}
+                  onClick={() => setCenterView(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            {centerView === "model" ? (
-              <>
-                <ModelViewer
+            {view === "model" ? (
+              <ModelViewer
                 design={displayed?.design ?? null}
                 tier={tier}
                 origin={displayed?.origin ?? null}
@@ -172,9 +207,8 @@ export default function Home() {
                 dimensions={summary?.dimensions ?? null}
                 notes={notes}
               />
-                <PrintExports design={displayed?.design}/>
-              </>
-            ) : (
+            ) : null}
+            {view === "simulation" ? (
               <div className="panel simulation-panel">
                 <FlightPlayer
                   key={displayedId ?? "none"}
@@ -189,8 +223,20 @@ export default function Home() {
                   }
                 />
               </div>
-            )}
-            {centerView === "model" ? (
+            ) : null}
+            {/* Kept mounted: a running job and its result survive a switch of tab. */}
+            <div className="panel simulation-panel" hidden={view !== "aero"}>
+              <AeroLoopPanel request={aeroRequest} hasDesign={displayed !== null} />
+            </div>
+            <div className="panel simulation-panel" hidden={view !== "production"}>
+              <ProductionPanel request={packageRequest} passed={passed} />
+            </div>
+            {view === "library" ? (
+              <div className="panel simulation-panel">
+                <ReferenceLibrary />
+              </div>
+            ) : null}
+            {view === "model" ? (
               <CostPanel
                 summary={summary}
                 fallbackCostJpy={fallbackCost}
@@ -200,6 +246,7 @@ export default function Home() {
             ) : null}
           </section>
           <section className="column column-right">
+            <ResultPanel tier={tier} metrics={resultMetrics} />
             <DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading} />
             <FlightChart tier={tier} trace={trace} sourceId={displayedId} />
             <BomPanel bom={summary?.bom ?? []} csvUrl={csvUrl} loading={summaryState.loading} />
