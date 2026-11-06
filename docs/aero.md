@@ -13,10 +13,10 @@
 ```
 Design ─ rocketwright/geometry.py ─ STL（メートル、ノーズ先端が原点、+x が機尾側）＋寸法 dict
             │
-AeroQuery(design, speed_mps, alphas_deg, cg_from_nose_m)
+AeroQuery(design, speed_mps, alphas_deg, cg_from_nose_m, extra, shape)
             │
 registry.evaluate(query, backend="auto" | 名前)
-   │   キャッシュ：sha256(バックエンド名, STL バイト列, 速度, 迎角) → $ROCKETWRIGHT_AERO_CACHE
+   │   キャッシュ：sha256(バックエンド名, STL バイト列, 速度, 迎角, 設定, 組立形状) → $ROCKETWRIGHT_AERO_CACHE
    ├─ openfoam_pipeline（L2）  Docker の外部プロセス：snappyHexMesh + simpleFoam（k-ω SST）
    ├─ lbm_gpu（L2）            外部プロセス：scenarios/cfd/run_flow.py（GPU の格子ボルツマン法）
    └─ barrowman（L0）          今の定数（DEFAULT_CD）と Barrowman 式。常に使える
@@ -40,6 +40,7 @@ AeroResult(cd, cn_alpha_per_rad, x_cp_from_nose_m, static_margin_cal, per_case, 
 ### 形状の割り切り（`# SIMPLIFICATION:`）
 
 - bottle：drawing.py の規則（径 d = (4V/3.5π)^(1/3)、半楕円ノーズ 0.8d、胴 3.5d、ネック 0.3d）。ノズル端は閉じる。`BottleDesign` にフィン寸法がないので、drawing.py の代表形（4 枚、翼根 1.0d、翼端 0.35×翼根、スパン 0.8d、厚さ 2 mm）を仮定している。
+- 組立形状（`AeroQuery.shape`）：`geometry.assembled_shape(plan["dimensions_mm"])` が作る `AssembledShape` を渡すと、上の規則の代わりに実機の外形を解く。`bottle_packet.side_view` の図と同じで、円錐ノーズ、スカート端までの直円筒、平らな底、フィンは底から `fin_tail_inset` 前。ノズルと底の凹みは閉じたまま。`dimensions_mm` にフィンの厚さがないので 2 mm を仮定している。形状は `BottleDesign` に持たせない（`Design` のスキーマがエージェントのツール定義に入るため）。
 - bottle の重心は離床時の概算（乾燥質量は全長の中央、積載物はノーズ根元、水は胴の後端に詰めた円柱）。
 - 胴とフィンは重なった別々の閉曲面。一体化はパイプライン側（manifold の和集合）が行う。
 - 1 つの代表速度（bottle 15 m/s、amateur 50 m/s）で求めた C_D を飛行全体で一定として使う。
@@ -57,7 +58,7 @@ uv run python scripts/aero_eval.py examples/designs/bottle.json --backend barrow
 
 エージェントのツールでは `simulate_design` / `design_from_parts` の `aero_backend` に `auto`・`barrowman`・`openfoam_pipeline`・`lbm_gpu` を渡す（`null` か `none` で無効）。結果には `metrics.aero_cd_ratio`、`aero_static_margin_cal`、`aero_x_cp_m`、出典つきの `warnings`、要約の `aero` が付く。
 
-`run_dispersion` は今のところこの層を通らない（モジュールの定数 C_D のまま）。
+`run_dispersion` はこの層を通らない（design の `axial_drag_coefficient`、なければモジュールの定数 C_D を使う）。CFD の C_D を多数回試行に反映するには §7 のループの最終 design を渡す。
 
 ### OpenFOAM イメージの作成
 
@@ -83,7 +84,7 @@ VIRTUAL_ENV=~/tools/lbm-venv uv pip install numpy "cupy-cuda12x>=13,<14"
 `assembly.json` は `lbm_gpu.assembly_for()` が設計から作る。カーネルの形状の範囲に収めるため、次の制約がある。
 
 - 機体は「ノーズ＋直円筒＋平底」のみ（円錐は `--shape flat`、半楕円とオジャイブは `--shape rounded_flat`）。bottle の肩とネックは再現されない。
-- フィンは厚さゼロの 4 枚固定。他の枚数は `supports()` が断る。
+- フィンは厚さゼロの 4 枚固定。他の枚数は `supports()` が断る。組立形状の枚数は `evaluate()` が `ValueError` で断り、`auto` では理由を `notes` に残して次のバックエンドへ進む。組立形状の平面形は `assembly_for()` がそのままカーネルに渡すが、厚さは効かない。
 - 領域が 15 胴径なので、全長 10 胴径を超える機体は断る。速度は 35 m/s まで、|α| は 15° まで（`run_flow.py` の制限）。
 
 ## 3. ライセンス
@@ -139,4 +140,66 @@ OpenFOAM は GPL-3.0 で、[docs/simulators.md §4.3](simulators.md) の方針�
 
 ## 6. テスト
 
-`tests/test_geometry.py`、`tests/test_aero.py`。Docker と GPU は使わない（CFD は偽物のバックエンドか、実行で得た出力ファイル `tests/fixtures/aero_openfoam/` で置き換える）。
+`tests/test_geometry.py`、`tests/test_aero.py`、`tests/test_aero_loop.py`。Docker と GPU は使わない（CFD は偽物のバックエンドか、実行で得た出力ファイル `tests/fixtures/aero_openfoam/` で置き換える）。
+
+## 7. 飛行 → CFD → C_D → 飛行 → 設計更新のループ
+
+`rocketwright/aero/loop.py` の `run_aero_loop()`。bottle の設計だけが対象。
+
+1. 今の design（圧力、C_D）で飛ばす（`water.simulate`）。
+2. その飛行の最大速度を 1 m/s に丸めて CFD を解く。丸めるのは、近い飛行どうしでキャッシュを共有するため。
+3. `cd_for_physics()` で飛行モデルの基準面積（90 mm）の C_D に直す。
+4. 候補の圧力のうち、新しい C_D で目標高度に最も近いものへ design を更新する。
+5. C_D の変化が 2 % 未満で、かつ圧力が変わらなければ収束。そうでなければ 1 に戻る（既定で最大 6 周）。
+
+`# SIMPLIFICATION:` 1 つの速度（最大速度）の C_D を飛行全体に使う。更新するのは圧力だけで、充填率、ノズル、機体はそのまま。
+
+`auto` は 1 周目で決まったバックエンドに固定する。2 周目以降に別の解法へ落ちると、解法の差が C_D の変化に混ざり、L0 なら設計の C_D を返すだけなので見かけ上の収束になるため。固定後に失敗したらループはそのエラーで止まる。解いた分はキャッシュに残るので、やり直しは続きから進む。
+
+### 校正の組について
+
+**`water.py` の C_D 0.8 は、空気噴射の効率 0.25 と組で、`catalog/references/bottle.yaml` の 5 回の飛行の実測に合わせた値（`scripts/calibrate_small_rockets.py`、高度の RMS 誤差 18.9 %）である。** 空気の噴射が実際より弱いぶんと抗力が実際より大きいぶんが、高度の上で打ち消し合っている可能性がある。C_D だけを CFD の値に替えると、この組が崩れる。
+
+- ループの高度と圧力は、校正された予測ではない。CFD の C_D が小さいほど高く飛ぶと計算され、圧力は下がる方向に動く。その圧力で実機が目標に届く根拠はない。
+- 対応するには、CFD の C_D を固定して効率を実測に合わせ直す必要がある。今回はやっていない。
+- そのため結果には校正の注意が `notes` として必ず付き、ワークベンチでも確認済みの案を置き換えず併記するだけにしている。製作ファイルは確認工程の design のまま。
+
+### 実機の形状
+
+`geometry.assembled_shape(plan["dimensions_mm"])` が作る `AssembledShape` を `AeroQuery.shape` で渡す（§1）。外形は STL に入り、STL のバイト列と `repr(shape)` がキャッシュのキーに入るので、フィンの幅や厚さを変えれば解き直しになる。形状を渡さない問い合わせのキーは今までと同じ。
+
+| バックエンド | 組立形状の扱い |
+| --- | --- |
+| `openfoam_pipeline` | 実機の外形の STL を解く |
+| `barrowman` | 円錐ノーズと実機のフィンで C_Nα と x_cp を計算する。`plan["cp_mm"]` と一致する。C_D は設計の値のまま |
+| `lbm_gpu` | 平面形はカーネルに渡す。厚さは解けないので結果の `notes` にその旨を残す。4 枚以外は断る |
+
+### 実行
+
+```sh
+uv run python scripts/aero_loop.py --action D02/9/325/25/carton_wide --backend openfoam_pipeline
+uv run python scripts/aero_loop.py examples/designs/bottle.json --target 30 --backend barrowman
+```
+
+`--json` で結果全体を書き出す。収束しなければ終了コード 1。設計ファイルは変更しない。ワークベンチからは `POST /workbench/projects/{id}/aero-loop`（[integration.md](integration.md)）で、確認済みの案に対して実行する。バックエンドは環境変数 `ROCKETWRIGHT_AERO_BACKEND`（既定 `auto`）。確認工程と同じ `n`、`seed` で最終 design の `run_dispersion` も回す。
+
+### 実測（ワークベンチの採用案 D02、紙製フィン幅広、325 kPa、充填率 25 %）
+
+2026-11-06、OpenFOAM coarse（19.8 万セル、表面セル 5.96 mm、壁面の層なし、8 CPU）、実機の外形（全長 572 mm、径 90 mm、フィンは翼根 70、翼端 35、スパン 140、後退 35 mm）、水を積んだ重心 428 mm。目標 20 m。
+
+| 周 | 飛行の圧力 kPa | 飛行の C_D | 高度 m | 最大速度 m/s | CFD の速度 m/s | CFD の C_D | C_D の変化 | x_cp mm | 余裕 cal | 更新後の圧力 kPa | 更新後の高度 m | 経過 s | キャッシュ |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 325 | 0.828 | 19.46 | 20.69 | 21 | 0.595 | 28.2 % | 461 | +0.36 | 325 | 20.76 | 147 | なし |
+| 2 | 325 | 0.595 | 20.76 | 20.82 | 21 | 0.595 | 0 % | 461 | +0.36 | 325 | 20.76 | 0.6 | あり |
+
+2 周で収束。L0（同じ形状）は C_Nα 14.4 /rad、x_cp 463 mm、余裕 +0.38 cal で、CFD は C_Nα 16.3 /rad、x_cp 461 mm、余裕 +0.36 cal。隣の圧力は 300 kPa で 19.00 m、350 kPa で 22.48 m なので、325 kPa のまま。
+
+`final_design`（C_D 0.595、325 kPa）の `run_dispersion`（n = 64、seed = 77131）は 59/64 = 92.2 %、高度の p05/p50/p95 は 18.9/20.6/22.6 m。確認工程の値（C_D 0.828）は同じ 59/64 で、17.8/19.3/21.0 m。
+
+読み取れること：
+
+- **実機の C_D 0.595 は、代表形の 0.312（§4）の約 2 倍。** 平らな底と幅広のフィンの効果とみられるが、分けて調べてはいない。圧力抵抗 0.434、摩擦 0.161（α = 0°）。ノズルとスカートの凹みは閉じた面として扱っている。
+- **この収束は 2 周目がキャッシュに当たったことによる。** 最大速度が 20.69 と 20.82 m/s で、どちらも 21 m/s に丸まった。C_D の速度依存は確かめていない。
+- **2 % の判定はループの止め方で、CFD の精度ではない。** §5 のとおり同じ入力でも C_D は約 1 %、coarse と medium の差は 6 % あった。この形状の medium は実行していない。フィン厚 2 mm は表面セル 5.96 mm より薄い。
+- α = 0° で C_N が 0.064（§5 の格子の非対称とみられる）。x_cp は 2 点の傾きなので、余裕の +0.36 と +0.38 の差に意味はない。どちらも 1 cal の目安を下回る。
+- 高度 20.76 m は校正の組を崩した値なので、確認工程の 19.46 m より正しいとは言えない。

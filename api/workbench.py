@@ -111,6 +111,14 @@ def export(project_id: str, request: Revision):
     return call(DEFAULT_WORKBENCH.export, project_id, request.revision)
 
 
+@router.post("/projects/{project_id}/aero-loop")
+def aero_loop(project_id: str, request: Revision):
+    try:
+        return call(DEFAULT_WORKBENCH.aero_loop, project_id, request.revision)
+    except RuntimeError as exc:  # CFD backend missing, timed out or failed
+        raise HTTPException(503, str(exc)) from exc
+
+
 @router.post("/projects/{project_id}/assembly-pdf")
 def assembly_pdf(project_id: str, request: Revision):
     return call(DEFAULT_WORKBENCH.manual, project_id, request.revision)

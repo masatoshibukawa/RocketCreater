@@ -66,7 +66,7 @@ def _option(query: AeroQuery, key: str) -> Any:
 def write_case(case_dir: Path, query: AeroQuery, *, nprocs: int = DEFAULT_CPUS) -> dict[str, Any]:
     """Write `airframe.stl` and `config.yaml` for `rocketcfd run` into case_dir. Paths inside
     the config are the container's (/case is the mounted case_dir)."""
-    frame = airframe(query.design)
+    frame = airframe(query.design, shape=query.shape)
     p = frame.params
     cg = query.cg_from_nose_m if query.cg_from_nose_m is not None else p["cg_from_nose_m"]
     case_dir.mkdir(parents=True, exist_ok=True)
@@ -235,7 +235,7 @@ class OpenFoamPipelineBackend:
     def evaluate(self, query: AeroQuery) -> AeroResult:
         cpus = int(os.environ.get("ROCKETWRIGHT_OPENFOAM_CPUS", DEFAULT_CPUS))
         timeout_s = float(os.environ.get("ROCKETWRIGHT_OPENFOAM_TIMEOUT_S", DEFAULT_TIMEOUT_S))
-        frame = airframe(query.design)
+        frame = airframe(query.design, shape=query.shape)
         p = frame.params
         cg = query.cg_from_nose_m if query.cg_from_nose_m is not None else p["cg_from_nose_m"]
         run_id = hashlib.sha256(

@@ -20,6 +20,7 @@ from typing import Literal, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from rocketwright.geometry import AssembledShape
 from rocketwright.schema import AmateurDesign, BottleDesign, Design
 
 __all__ = [
@@ -39,6 +40,7 @@ class AeroQuery:
     alphas_deg: tuple[float, ...] = (0.0, 4.0)
     cg_from_nose_m: float | None = None  # None: the geometry's CG estimate
     extra: dict[str, object] = field(default_factory=dict)  # backend-specific options
+    shape: AssembledShape | None = None  # None: the design's representative geometry
 
     def __post_init__(self) -> None:
         if not self.speed_mps > 0:

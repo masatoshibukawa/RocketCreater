@@ -18,25 +18,33 @@ Shape rules (each one a `# SIMPLIFICATION:` shared with drawing.py / stability.p
 * bottle: drawing.py's PET rule. Diameter d = (4 V / (pi * 3.5))^(1/3), half-ellipse nose
   0.8 d, body 3.5 d with a rounded aft shoulder (0.35 r), neck 0.3 d long closed at the nozzle
   end; four fins (root 1.0 d, tip 0.35 root, span 0.8 d, trailing edge at the shoulder).
+* assembled bottle (`AssembledShape`, from a bottle_assembly plan's `dimensions_mm`): the
+  built vehicle as bottle_packet.side_view draws it. Paper cone nose, then a straight cylinder
+  to the skirt's end with a flat base, fins `fin_tail_inset` ahead of that end. The skirt hides
+  the bottle's shoulder and neck, so the vehicle is 572 mm long where the bottle rule gives
+  376 mm, and a fin at the real station would float behind the rule's neck.
 """
 
 from __future__ import annotations
 
 import math
 import struct
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 from numpy.typing import NDArray
 
-from rocketwright.schema import AmateurDesign, BottleDesign, Design
+from rocketwright.schema import AmateurDesign, BottleDesign, Design, FinSet
 
 __all__ = [
     "BOTTLE_FIN_COUNT",
     "BOTTLE_FIN_THICKNESS_M",
     "Airframe",
+    "AssembledShape",
     "airframe",
+    "assembled_shape",
     "bottle_dimensions",
     "edge_use_counts",
     "write_stl",
@@ -59,6 +67,40 @@ BOTTLE_FIN_THICKNESS_M = 0.002
 MIN_TIP_CHORD_M = 1e-3
 DEFAULT_SEGMENTS = 48  # around the circumference
 NOSE_STATIONS = 24
+
+
+@dataclass(frozen=True)
+class AssembledShape:
+    """Outer shape of a built bottle vehicle: replaces the bottle rule in `airframe()`. Kept
+    apart from BottleDesign because Design's schema goes into the agent's tool definitions."""
+
+    body_diameter_m: float
+    nose_length_m: float
+    length_m: float  # nose tip to the end of the skirt
+    fins: FinSet
+    fin_tail_inset_m: float = 0.0
+    nose_shape: Literal["conical", "ogive", "elliptical"] = "conical"
+
+
+def assembled_shape(dimensions_mm: Mapping[str, float]) -> AssembledShape:
+    """The shape in a bottle_assembly plan's `dimensions_mm`."""
+    g = {key: value / 1000.0 for key, value in dimensions_mm.items()}
+    return AssembledShape(
+        body_diameter_m=g["body_diameter"],
+        nose_length_m=g["nose_length"],
+        length_m=g["overall"],
+        # SIMPLIFICATION: the plan fixes four fins and gives no sheet thickness (the catalog
+        # has none for carton board), so the representative 2 mm stands in. Provisional.
+        fins=FinSet(
+            count=BOTTLE_FIN_COUNT,
+            root_chord_m=g["fin_root"],
+            tip_chord_m=g["fin_tip"],
+            span_m=g["fin_span"],
+            sweep_m=g["fin_sweep"],
+            thickness_m=BOTTLE_FIN_THICKNESS_M,
+        ),
+        fin_tail_inset_m=g["fin_tail_inset"],
+    )
 
 
 @dataclass(frozen=True)
@@ -313,15 +355,21 @@ def _bottle_cg(design: BottleDesign, p: dict[str, Any]) -> dict[str, Any]:
     return {"cg_from_nose_m": moment / mass, "cg_basis": "liftoff, water loaded (estimate)"}
 
 
-def _amateur(design: AmateurDesign, segments: int) -> tuple[list, dict[str, Any]]:
-    d = design.body_diameter_m
+def _finned_cylinder(
+    nose_shape: str,
+    nose_length: float,
+    length: float,
+    d: float,
+    f: FinSet,
+    tail_inset: float,
+    segments: int,
+) -> tuple[list, dict[str, Any]]:
+    """Nose, straight cylinder with a flat base and a fin set `tail_inset` ahead of the base."""
     r = d / 2.0
-    length = design.nose_length_m + design.body_length_m
-    profile = _nose_profile(design.nose_shape, design.nose_length_m, r)
+    profile = _nose_profile(nose_shape, nose_length, r)
     profile += [(length, r), (length, 0.0)]
     shells = [_revolve(profile, segments)]
-    f = design.fins
-    x_le = length - f.root_chord_m
+    x_le = length - tail_inset - f.root_chord_m
     for k in range(f.count):
         shells.append(
             _fin_slab(
@@ -339,9 +387,9 @@ def _amateur(design: AmateurDesign, segments: int) -> tuple[list, dict[str, Any]
     params: dict[str, Any] = {
         "length_m": length,
         "body_diameter_m": d,
-        "nose_shape": design.nose_shape,
-        "nose_length_m": design.nose_length_m,
-        "body_length_m": design.body_length_m,
+        "nose_shape": nose_shape,
+        "nose_length_m": nose_length,
+        "body_length_m": length - nose_length,
         "fin_count": f.count,
         "fin_root_chord_m": f.root_chord_m,
         "fin_tip_chord_m": f.tip_chord_m,
@@ -349,8 +397,38 @@ def _amateur(design: AmateurDesign, segments: int) -> tuple[list, dict[str, Any]
         "fin_sweep_m": f.sweep_m,
         "fin_thickness_m": f.thickness_m,
         "fin_root_le_from_nose_m": x_le,
-        "fin_tail_inset_m": 0.0,
+        "fin_tail_inset_m": tail_inset,
     }
+    return shells, params
+
+
+def _assembled(
+    design: BottleDesign, shape: AssembledShape, segments: int
+) -> tuple[list, dict[str, Any]]:
+    shells, params = _finned_cylinder(
+        shape.nose_shape,
+        shape.nose_length_m,
+        shape.length_m,
+        shape.body_diameter_m,
+        shape.fins,
+        shape.fin_tail_inset_m,
+        segments,
+    )
+    params.update(_bottle_cg(design, params))
+    return shells, params
+
+
+def _amateur(design: AmateurDesign, segments: int) -> tuple[list, dict[str, Any]]:
+    shells, params = _finned_cylinder(
+        design.nose_shape,
+        design.nose_length_m,
+        design.nose_length_m + design.body_length_m,
+        design.body_diameter_m,
+        design.fins,
+        0.0,
+        segments,
+    )
+    params["body_length_m"] = design.body_length_m
     try:  # loaded-motor CG, the same point stability.static_margin_cal uses
         from rocketwright.physics import solid, stability
 
@@ -364,9 +442,16 @@ def _amateur(design: AmateurDesign, segments: int) -> tuple[list, dict[str, Any]
     return shells, params
 
 
-def airframe(design: Design, *, segments: int = DEFAULT_SEGMENTS) -> Airframe:
-    """Outer surface of a bottle or amateur design plus its geometry parameters (metres)."""
-    if isinstance(design, BottleDesign):
+def airframe(
+    design: Design, *, segments: int = DEFAULT_SEGMENTS, shape: AssembledShape | None = None
+) -> Airframe:
+    """Outer surface of a bottle or amateur design plus its geometry parameters (metres).
+    `shape` replaces the representative bottle with the assembled vehicle's outer surface."""
+    if shape is not None and not isinstance(design, BottleDesign):
+        raise ValueError("an assembled shape applies to bottle designs only")
+    if shape is not None:
+        shells, params = _assembled(design, shape, segments)
+    elif isinstance(design, BottleDesign):
         shells, params = _bottle(design, segments)
     elif isinstance(design, AmateurDesign):
         shells, params = _amateur(design, segments)
