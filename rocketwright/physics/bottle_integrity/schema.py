@@ -76,6 +76,9 @@ class Material(Strict):
 
 
 class FlightConfig(Strict):
+    maximum_rhs_evaluations: int = Field(default=50000, ge=1000, le=1000000)
+    air_density_kg_m3: float = Field(default=1.204, gt=0, le=3)
+    wind_to_azimuth_deg: float = Field(default=0, ge=0, lt=360)
     wind_mps: float = Field(default=2, ge=0, le=30)
     gust_mps: float = Field(default=1, ge=0, le=20)
     cant_deg: float = Field(default=0.5, ge=-5, le=5)

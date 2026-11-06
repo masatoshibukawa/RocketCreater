@@ -9,6 +9,8 @@ from rocketwright.agent.design_projects import DEFAULT_PROJECTS, DesignSpec, que
 from rocketwright.agent.production import plan_video
 from rocketwright.agent.project_assembly import Observation
 from rocketwright.agent.project_jobs import queue
+from rocketwright.analysis.schema import Precision, SearchLimits
+from rocketwright.analysis.service import Harness
 
 router = APIRouter(prefix="/design-projects", tags=["design-production"])
 
@@ -28,6 +30,37 @@ class CreateRequest(BaseModel):
 
 class ObservationRequest(Revision):
     observation: Observation
+
+
+class CampaignRequest(Revision):
+    precision: Precision = Field(default_factory=Precision)
+    limits: SearchLimits = Field(default_factory=SearchLimits)
+
+
+@router.post("/{project_id}/adaptive/start")
+def adaptive_start(project_id: str, request: CampaignRequest):
+    return call(
+        Harness(DEFAULT_PROJECTS).start,
+        project_id,
+        request.revision,
+        request.precision,
+        request.limits,
+    )
+
+
+@router.get("/{project_id}/adaptive/options")
+def adaptive_options(project_id: str):
+    return call(Harness(DEFAULT_PROJECTS).options, project_id)
+
+
+@router.post("/{project_id}/adaptive/step", status_code=202)
+def adaptive_step(project_id: str, request: Revision):
+    return call(queue_operation, DEFAULT_PROJECTS, project_id, request.revision, "adaptive_step")
+
+
+@router.post("/{project_id}/adaptive/run", status_code=202)
+def adaptive_run(project_id: str, request: Revision):
+    return call(queue_operation, DEFAULT_PROJECTS, project_id, request.revision, "adaptive_run")
 
 
 @router.get("")

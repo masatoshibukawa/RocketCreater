@@ -255,27 +255,45 @@ class DesignProjects:
         spec = DesignSpec.model_validate(spec.model_dump())
 
         def worker(state):
-            state["versions"].append(
-                dict(
-                    version=state["version"],
-                    adopted=state["adopted"],
-                    spec=state["spec"],
-                    analysis=state["analysis"],
-                )
-            )
-            state.update(
-                version=state["version"] + 1,
-                name=spec.name,
-                spec=spec.model_dump(mode="json"),
-                analysis=None,
-                adopted=False,
-                files=[],
-                video_plan=None,
-                photographic_video_plan=None,
-                observations=[],
-            )
+            self.new_version(state, spec)
 
         return self._run(project_id, revision, "edit", worker)
+
+    def new_version(self, state, spec: DesignSpec):
+        """Called under the project operation lock by human edits and host redesigns."""
+        spec = DesignSpec.model_validate(spec.model_dump())
+        self._write(state)
+        state["versions"].append(
+            dict(
+                version=state["version"],
+                adopted=state["adopted"],
+                spec=state["spec"],
+                analysis=state["analysis"],
+            )
+        )
+        state.update(
+            version=state["version"] + 1,
+            name=spec.name,
+            spec=spec.model_dump(mode="json"),
+            analysis=None,
+            adopted=False,
+            files=[],
+            video_plan=None,
+            photographic_video_plan=None,
+            observations=[],
+        )
+        if state.get("adaptive"):
+            state["adaptive"].update(status="running", accepted_spec_hash=None)
+
+    def adaptive_step(self, project_id, revision, *, started_event=None):
+        from rocketwright.analysis.service import Harness
+
+        return Harness(self).step(project_id, revision, started_event=started_event)
+
+    def adaptive_run(self, project_id, revision, *, started_event=None):
+        from rocketwright.analysis.service import Harness
+
+        return Harness(self).run(project_id, revision, started_event=started_event)
 
     def restore(self, project_id, revision, version):
         state = self.get(project_id)
@@ -422,6 +440,24 @@ class DesignProjects:
 
     def adopt(self, project_id, revision):
         def worker(state):
+            if state.get("adaptive"):
+                from rocketwright.analysis import policy
+                from rocketwright.analysis.service import Harness, code_hash
+
+                adaptive = state["adaptive"]
+                harness = Harness(self)
+                campaign, spec, _, _ = harness._campaign(state)
+                confirmation = harness.data(campaign, "confirm")
+                if (
+                    adaptive["status"] != "model_criteria_met"
+                    or adaptive["accepted_spec_hash"] != policy.identity(spec)
+                    or adaptive.get("accepted_code_hash") != code_hash()
+                    or not confirmation
+                    or not confirmation["metrics"]["criteria_met"]
+                ):
+                    raise Conflict(
+                        "階層解析のこの版の確認が未達です。基本解析だけでは採用できません。"
+                    )
             a = state["analysis"]
             if (
                 not a
@@ -701,7 +737,7 @@ def assembly_steps(state):
 
 
 def queue_operation(store, project_id, revision, method):
-    if method not in {"analyse", "print_package"}:
+    if method not in {"analyse", "print_package", "adaptive_step", "adaptive_run"}:
         raise ValueError("Unknown production operation")
     from rocketwright.agent.project_jobs import queue
 

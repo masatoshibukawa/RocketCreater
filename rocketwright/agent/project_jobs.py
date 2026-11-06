@@ -79,7 +79,13 @@ def queue(store, project_id, revision, operation, style="engineering"):
     from rocketwright.agent.design_projects import ROOT, implementation_fingerprint
     from rocketwright.manufacturing import fingerprint
 
-    if operation not in {"analyse", "print_package", "render_video"}:
+    if operation not in {
+        "analyse",
+        "print_package",
+        "render_video",
+        "adaptive_step",
+        "adaptive_run",
+    }:
         raise ValueError("Unknown production operation")
     if style not in {"engineering", "photographic"}:
         raise ValueError("Unknown render style")

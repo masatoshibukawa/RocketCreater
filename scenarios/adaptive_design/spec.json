@@ -1,0 +1,29 @@
+{
+  "name": "階層型解析の接続確認用・未製作案",
+  "design": {
+    "bottle_volume_m3": 0.0015,
+    "water_fill_frac": 0.25,
+    "initial_gauge_pressure_pa": 300000,
+    "nozzle_diameter_m": 0.009,
+    "dry_mass_kg": 0.15,
+    "payload_mass_kg": 0.06,
+    "has_parachute": true,
+    "parachute_diameter_m": 0.7
+  },
+  "geometry": {
+    "body_diameter_mm": 90,
+    "body_height_mm": 400,
+    "nose_length_mm": 80,
+    "fin_root_mm": 90,
+    "fin_tip_mm": 40,
+    "fin_span_mm": 120,
+    "fin_sweep_mm": 35,
+    "fin_tail_inset_mm": 5,
+    "fin_count": 4,
+    "fin_thickness_mm": 2.4
+  },
+  "other_dry_mass_g": 150,
+  "requirement": {"goal_kind": "altitude", "target_altitude_m": 30},
+  "env": {"wind_speed_mps": 1.5, "wind_direction_deg": 270},
+  "assumptions": {"gust_mps": 0.5, "warm_wait_s": 120}
+}

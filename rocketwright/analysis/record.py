@@ -6,6 +6,7 @@ import numpy as np
 
 from rocketwright.adaptive import digest
 from rocketwright.analysis.schema import MOUNTS, STOCKS
+from rocketwright.physics.atmosphere import state_scalar
 from rocketwright.physics.bottle_integrity.schema import AnalysisConfig, FlightConfig, Material
 from rocketwright.physics.concrete_fin import polygon_moments
 from rocketwright.physics.stability import trapezoidal_fin_force
@@ -15,6 +16,8 @@ from rocketwright.schema import FinSet
 def compile_record(spec, cad_metrics):
     """CAD volumes are supplied by the host's real geometry adapter, never by the LLM."""
     g, a = spec.geometry, spec.assumptions
+    if spec.env.earth_rotation:
+        raise ValueError("Earth rotation is not supported by this local 6DOF adapter")
     stock, mount = STOCKS[spec.material], MOUNTS[a.mount]
     length, diameter = g.overall_mm / 1000, g.body_diameter_mm / 1000
     area = math.pi * diameter**2 / 4
@@ -122,10 +125,19 @@ def compile_record(spec, cad_metrics):
             cant_deg=0,
             initial_tilt_deg=a.initial_tilt_deg,
             pitch_damping=a.pitch_damping,
-            rail_m=a.rail_m,
+            rail_m=spec.env.rail_length_m,
             opening_s=a.opening_s,
         ),
     )
+    temperature, pressure, density = state_scalar(
+        spec.env.launch_altitude_m, spec.env.temperature_offset_k
+    )
+    config.loads.ambient_pa = pressure
+    config.loads.initial_k = temperature
+    config.loads.ambient_k = temperature
+    config.loads.initial_wall_k = temperature
+    config.flight.air_density_kg_m3 = density
+    config.flight.wind_to_azimuth_deg = (spec.env.wind_direction_deg + 180) % 360
     design = spec.design.model_copy(update={"dry_mass_kg": dry, "geometry": g})
     return dict(
         design=design.model_dump(mode="json"),
