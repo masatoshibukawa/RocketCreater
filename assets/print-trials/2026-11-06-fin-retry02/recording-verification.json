@@ -1,0 +1,22 @@
+{
+  "source": "Actual built-in camera photographs, two preserved recording segments",
+  "capture_first_utc": "2026-11-06T04:05:41.025391+00:00",
+  "capture_last_utc": "2026-11-06T06:03:00.709049+00:00",
+  "frame_count": 351,
+  "playback_fps": 10,
+  "nominal_speed_multiplier": 200,
+  "duration_seconds": 35.1,
+  "gap_note": "Approximately 58 seconds between segments during nozzle reheating",
+  "printer_reported_result": "Finished",
+  "printer_reported_finish_jst": "2026-11-06 15:02:40",
+  "physical_removal_and_quality_inspection_verified": false,
+  "full_decode_passed": true,
+  "video_sha256": "a25f43c30f3b86581864e48bbc73f7269cd0f323baab00d461f63e9a8d8b661d",
+  "video_file": "fin-retry02-trial-200x.mp4",
+  "visual_quality_outcome": "Failed: extensive loose filament mass visible in late-stage actual camera photographs",
+  "quality_issue_observed_in_frame": "late-stage-failure.jpg",
+  "quality_issue_frame_capture_jst": "2026-11-06 15:02:20",
+  "printer_program_finished_does_not_mean_successful_part": true,
+  "user_observation": "The fin fell over near the end of the print; received after the trial",
+  "next_trial": "Larger removable bed adhesion footprint; inspect before physical printing"
+}
