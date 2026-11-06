@@ -2,7 +2,7 @@
   "schema_version": 1,
   "reviewed_date": "2026-11-07",
   "reviewed_commit": "c40dac00ea82309492545bdeb6b482c5f4df6aa8",
-  "scope": "All 51 research Markdown documents present before the taxonomy and skills were added; new navigation, validation and skill files are excluded from the research-document count.",
+  "scope": "The 51 research Markdown documents reviewed at c40dac0 plus six demo-video research documents added on 2026-11-07. Navigation, validation, skill instructions and their internal references are excluded from this research-document count.",
   "categories": [
     {
       "id": "planning",
@@ -675,6 +675,72 @@
         "presentation-multilingual"
       ],
       "analysis": "4言語26出典。実験・調査・図表解説・大学助言・特定制度の確度を区別。"
+    },
+    {
+      "path": "demo-videos/README.md",
+      "title": "デモ動画の構成・工夫・特徴的な実例",
+      "primary": "presentation-demo-video-audio",
+      "related": [
+        "presentation-source-research"
+      ],
+      "analysis": "追加調査の入口。6事例のうち4事例群8ファイルをフレームで確認し、公式説明のみの2例と分ける。"
+    },
+    {
+      "path": "demo-videos/01-structure.md",
+      "title": "目的別の構成と物語",
+      "primary": "presentation-demo-video-audio",
+      "related": [
+        "presentation-argument-evidence",
+        "presentation-audience-goals"
+      ],
+      "analysis": "審査・導入・教育・技術・予告の目的を分け、6つの構成パターンを使い分ける。"
+    },
+    {
+      "path": "demo-videos/02-production-techniques.md",
+      "title": "画面・編集・音声・字幕の工夫",
+      "primary": "presentation-demo-video-audio",
+      "related": [
+        "presentation-speaking",
+        "presentation-multilingual"
+      ],
+      "analysis": "画面状態、注目、編集の省略、ナレーション、音楽、字幕を設計。映像と実行条件を保つ。"
+    },
+    {
+      "path": "demo-videos/03-case-studies.md",
+      "title": "特徴的な6事例の分析",
+      "primary": "presentation-source-research",
+      "related": [
+        "presentation-demo-video-audio",
+        "presentation-provider-domain"
+      ],
+      "analysis": "Figma、Vision Pro、Atlas、Gemini、Claude、Switchの6事例。フレーム観察と公式説明を区別。"
+    },
+    {
+      "path": "demo-videos/04-workbook.md",
+      "title": "短い動画の設計と制作ワークシート",
+      "primary": "presentation-demo-video-audio",
+      "related": [
+        "presentation-duration",
+        "presentation-rehearsal"
+      ],
+      "analysis": "30・60・90・180秒の提案と制作表。実装・実行・成果物を対応させ、初見理解を確かめる。"
+    },
+    {
+      "path": "demo-videos/sources.md",
+      "title": "デモ動画の一次出典と確認範囲",
+      "primary": "presentation-source-research",
+      "related": [
+        "presentation-demo-video-audio"
+      ],
+      "analysis": "制作7件と事例9件の一次資料、抽出した範囲、認証・ブラウザの制限を明記。"
+    }
+  ],
+  "additions": [
+    {
+      "date": "2026-11-07",
+      "baseline_commit": "b69038128b40eedac30d75d564335d13ac4ca8a1",
+      "directory": "demo-videos",
+      "documents": 6
     }
   ]
 }

@@ -10,7 +10,7 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[1]
 RESEARCH_DIRS = (
     "research", "ted-talks", "fundraising", "by-duration",
-    "hackathon-demos", "domain-hackathons", "academic-presentations",
+    "hackathon-demos", "domain-hackathons", "academic-presentations", "demo-videos",
 )
 
 
@@ -122,6 +122,30 @@ def main() -> None:
         end = finish
     require(end == 180, "Demo timeline does not end at 180 seconds")
 
+    video_sources = read(ROOT / "demo-videos" / "sources.md")
+    video_ids = re.findall(r"^\| ([GC]\d+) \|", video_sources, re.M)
+    require(len(video_ids) == len(set(video_ids)) == 16, "Demo-video source IDs differ")
+    observations = json.loads(read(ROOT / "demo-videos" / "media-observations.json"))["items"]
+    require(len(observations) == 8, "Media observation inventory differs")
+    for item in observations:
+        require(bool(re.fullmatch(r"[a-f0-9]{64}", item["sha256"])), "Invalid media hash")
+        require(item["samples"] == sorted(set(item["samples"])), "Invalid sample order")
+        require(all(0 <= t < item["duration_seconds"] for t in item["samples"]), "Sample outside media")
+
+    video_workbook = read(ROOT / "demo-videos" / "04-workbook.md")
+    for line in video_workbook.splitlines():
+        if re.match(r"^\| \d+秒 \|", line):
+            seconds = [int(x) for x in re.findall(r"(\d+)秒", line)]
+            require(sum(seconds[1:]) == seconds[0], "Short video duration sum differs")
+    video_intervals = re.findall(r"^\| (\d+):(\d+)–(\d+):(\d+) \| (\d+) \|", video_workbook, re.M)
+    end = 0
+    for row in video_intervals:
+        sm, ss, em, es, length = map(int, row)
+        start, finish = sm * 60 + ss, em * 60 + es
+        require(start == end and finish - start == length, "Discontinuous video workbook timeline")
+        end = finish
+    require(len(video_intervals) == 7 and end == 180, "Video workbook does not total 180 seconds")
+
     print(json.dumps({
         "research_documents": len(records),
         "coverage": "complete",
@@ -132,6 +156,8 @@ def main() -> None:
         "valid_local_links": links,
         "all_modules_and_documents_reachable": True,
         "academic_source_ids": len(source_ids),
+        "demo_video_source_ids": len(video_ids),
+        "observed_media_files": len(observations),
         "timing_checks": "passed",
     }, ensure_ascii=False, indent=2))
 

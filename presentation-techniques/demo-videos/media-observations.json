@@ -1,0 +1,152 @@
+{
+  "observed_date": "2026-11-07",
+  "method": "Public media linked from official pages; static visual samples, not continuous audiovisual viewing. Short clips under ten seconds sampled every second, others every two seconds. No source media or extracted images redistributed.",
+  "full_audio_review": false,
+  "items": [
+    {
+      "name": "atlas",
+      "url": "https://www.hyundai.com/content/dam/hyundai/ww/en/images/newsroom/news-image/2024/04/0422-1/all-new-atlas-pc.mp4",
+      "duration_seconds": 23.0,
+      "audio_stream": false,
+      "sha256": "bb64dcbc55dc02269d07450085bc0a49e4b0cd99d512bd8c091cbb09edf196a9",
+      "samples": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+        22
+      ],
+      "bytes": 5861685
+    },
+    {
+      "name": "gemini-timer",
+      "url": "https://storage.googleapis.com/gweb-developer-goog-blog-assets/original_videos/motivational_timer.webm",
+      "duration_seconds": 14.56,
+      "audio_stream": false,
+      "sha256": "51f4d370123f3ac7d92cb8e2e3b56feb8619e87cb42d414a1a1aeccc9671e8f1",
+      "samples": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "bytes": 91053
+    },
+    {
+      "name": "vision-gestures",
+      "url": "https://www.apple.com/newsroom/videos/media/gestures/large_2x.mp4",
+      "duration_seconds": 11.58,
+      "audio_stream": true,
+      "sha256": "88dc1da0035cc9ab2ea40aec4e76f1adbec886cf5a16c9338b48d645d62926db",
+      "samples": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "bytes": 23213235
+    },
+    {
+      "name": "vision-multitasking",
+      "url": "https://www.apple.com/newsroom/videos/media/multitasking/large_2x.mp4",
+      "duration_seconds": 16.32,
+      "audio_stream": false,
+      "sha256": "8574726f380caffd3b499146afcc1375e0fe21f5af4d9383ce0642c35c61c02b",
+      "samples": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14
+      ],
+      "bytes": 12435350
+    },
+    {
+      "name": "figma-1",
+      "url": "https://cdn.sanity.io/files/599r6htc/regionalized/3c2679e50eb04d51648f437bf9a0af1a61db1f69.mp4",
+      "duration_seconds": 8.27,
+      "audio_stream": false,
+      "sha256": "d5ee280d9c0b2a316f280ffb4e8591e6641437698af9e97e2e8155ebab49a9d8",
+      "samples": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "bytes": 104178
+    },
+    {
+      "name": "figma-2",
+      "url": "https://cdn.sanity.io/files/599r6htc/regionalized/bbccf8c44ec7b8640cab1d59214c3550f8960d9e.mp4",
+      "duration_seconds": 8.94,
+      "audio_stream": false,
+      "sha256": "8b6eec4f11766f5ec9acb6504d0676c5c1c158b15c6a7066c077b06140b95b7f",
+      "samples": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "bytes": 116772
+    },
+    {
+      "name": "figma-3",
+      "url": "https://cdn.sanity.io/files/599r6htc/regionalized/eca1648522b9d1d03ff952056127ce93ac436190.mp4",
+      "duration_seconds": 22.4,
+      "audio_stream": false,
+      "sha256": "4b838e08c6890ce82ceb2bbbf00e71792bedc0323761fdb858563bce67f41bf9",
+      "samples": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20
+      ],
+      "bytes": 309367
+    },
+    {
+      "name": "figma-4",
+      "url": "https://cdn.sanity.io/files/599r6htc/regionalized/f8b31f0bc1d34b4bbf8bfc288e641e0cb8832eb5.mp4",
+      "duration_seconds": 10.67,
+      "audio_stream": false,
+      "sha256": "1c492c1568c582c4372629dc2abdae510afc1c4f4f3e0650d346b0eada943723",
+      "samples": [
+        0,
+        2,
+        4,
+        6,
+        8
+      ],
+      "bytes": 920470
+    }
+  ]
+}
