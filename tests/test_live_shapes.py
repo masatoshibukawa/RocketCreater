@@ -68,7 +68,7 @@ def test_design_stream_kwargs(captured):
         assert isinstance(system, str) or (
             isinstance(system, list) and all(b.get("type") == "text" for b in system)
         )
-        assert all(t["strict"] is True for t in kw["tools"])
+        assert all("strict" not in t for t in kw["tools"])  # API limit on nullable params
         assert len(kw["tools"]) == len(TOOL_NAMES)
 
 

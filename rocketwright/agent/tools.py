@@ -1,6 +1,6 @@
 """Tool definitions (JSON Schema) handed to Claude and their implementations.
 
-* `get_tool_definitions()` returns one strict schema per TOOL_NAMES entry (`additionalProperties:
+* `get_tool_definitions()` returns one closed schema per TOOL_NAMES entry (`additionalProperties:
   false`, every property required, no `$ref`). Input schemas are generated from the pydantic
   models in rocketwright.schema / rocketwright.build so the two never drift; numeric constraints
   are stripped from the exported schema because pydantic re-validates every input anyway.
@@ -206,7 +206,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "using config/tiers.yaml. Returns tier, required_tier, an optional budget "
                 "fallback requirement, warnings and reasons. Call this first."
             ),
-            "strict": True,
             "input_schema": _obj({"requirement": req_full}),
         },
         {
@@ -220,7 +219,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "equipment by model, shelf or role (e.g. fins, mass_measurement). "
                 "Resource ids identify planning candidates, not simulator inputs or inventory."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "tier": _nullable(tier_enum),
@@ -245,7 +243,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 f"aero_backend (null = off): {AERO_BACKEND_NAMES} gives the flight Cd (CFD: "
                 "minutes, cached; on request only)."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "design": design,
@@ -270,7 +267,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "(bill.cost_jpy from design_from_parts / auto_design) so the budget is judged "
                 "on the bill; null = cost.py estimate."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "design": design,
@@ -285,7 +281,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "estimate_cost",
             "description": "Estimate the cost of a design in JPY (provisional constants).",
-            "strict": True,
             "input_schema": _obj({"design": design}),
         },
         {
@@ -295,7 +290,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "are concept sketches). Returns artifact `id`, `svg_chars` and `download.svg` (an "
                 "API path) to quote in the final answer."
             ),
-            "strict": True,
             "input_schema": _obj({"design": design}),
         },
         {
@@ -309,7 +303,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "`id`, `markdown_chars`, `bom_rows` and `download` paths (md, json, csv) to quote "
                 "in the final answer."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "design": design,
@@ -333,7 +326,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "payload ratio and keep engine types; tune=true (orbit goals, a few seconds) "
                 "re-tunes the seed's pitch program for the target perigee."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "requirement": req,
@@ -359,7 +351,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "numbers, inputs, assumptions and a provisional flag: quote the formulas, use "
                 "the values as a scale, never as a result."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "requirement": req,
@@ -380,7 +371,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "design_from_parts; nose cones and motor mounts say which tube they fit "
                 "(fits_tube_id) and mounts which motor diameter they take."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "tier": {"type": "string", "enum": ["bottle", "amateur"]},
@@ -399,7 +389,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "(judged, cost from the bill; null when any issue is an error). Fix errors "
                 "first, then iterate on the warnings and the sim."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "build": _build_schema(),
@@ -427,7 +416,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "Ranking: buildable > passes > derive's motor class +-1 > |apogee error| > cost "
                 "> mass."
             ),
-            "strict": True,
             "input_schema": _obj(
                 {
                     "tier": part_tier,
@@ -457,7 +445,6 @@ def get_tool_definitions() -> list[dict[str, Any]]:
                 "counts as an attempt. Call it after derive_requirements, explain the trace, "
                 "then revisit stages with design_stage from the most upstream one that changes."
             ),
-            "strict": True,
             "input_schema": _obj({"tier": part_tier, "requirement": req, "env": _nullable(env)}),
         },
     ]

@@ -270,7 +270,7 @@ def test_find_reference_designs_tool_schema_and_registry():
     assert "find_reference_designs" in TOOL_REGISTRY
     defs = {d["name"]: d for d in get_tool_definitions()}
     schema = defs["find_reference_designs"]["input_schema"]
-    assert defs["find_reference_designs"]["strict"] is True
+    assert "strict" not in defs["find_reference_designs"]
     assert set(schema["properties"]) == {"requirement", "tier", "k", "seed", "tune", "env"}
     assert sorted(schema["required"]) == sorted(schema["properties"])
     assert schema["additionalProperties"] is False

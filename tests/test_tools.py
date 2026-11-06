@@ -102,7 +102,7 @@ def test_definitions_cover_all_tools_and_are_strict():
     assert [d["name"] for d in defs] == list(TOOL_NAMES)
     assert set(TOOL_REGISTRY) == set(TOOL_NAMES)
     for d in defs:
-        assert d["strict"] is True
+        assert "strict" not in d  # the API allows 16 nullable params in strict tools; we have 74
         assert d["description"]
         schema = d["input_schema"]
         assert schema["type"] == "object"
