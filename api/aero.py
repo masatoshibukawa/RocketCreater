@@ -65,6 +65,15 @@ def loop_status(job_id: str):
         raise HTTPException(404, "解析の記録がありません") from exc
 
 
+@router.get("/loop/live/{name}")
+def live_image(name: str):
+    try:
+        path = aero.live.image_path(name)
+    except KeyError as exc:
+        raise HTTPException(404, "画像がありません") from exc
+    return FileResponse(path, media_type="image/png", headers={"Cache-Control": "no-store"})
+
+
 @router.get("/loop/{job_id}/images/{name}")
 def loop_image(job_id: str, name: str):
     try:

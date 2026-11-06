@@ -235,6 +235,7 @@ class AeroJobs:
             "elapsed_s": elapsed,
             "result": result,
             "error": job.error,
+            "live": aero.live.snapshot() if job.status == "running" else None,
             "images": [
                 image | {"url": f"/aero/loop/{job.id}/images/{image['name']}"}
                 for image in aero.flow_images(artifacts)

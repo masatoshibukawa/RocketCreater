@@ -54,3 +54,18 @@
 .backscreen { margin: 18px 0; padding: 16px 16px 0; background: #1d1d1d; border-radius: 10px; }
 .backscreen .wb-flow img { border-color: #4a4f57; background: #fff; }
 .backscreen-idle { display: flex; align-items: center; justify-content: center; min-height: 180px; margin: 0; padding: 16px; color: #d8dde3; font-size: 17px; text-align: center; border: 1px solid #4a4f57; border-radius: 6px; background: #12161c; }
+/* The running solver on the backscreen. */
+.aero-live { display: grid; gap: 12px; color: #e8edf3; }
+.aero-live-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 16px; font-weight: 600; }
+.aero-live-head small { color: #aab6c5; font-weight: 400; }
+.aero-live-bar { height: 6px; border-radius: 3px; background: #2a333f; overflow: hidden; }
+.aero-live-bar span { display: block; height: 100%; background: #4389ff; transition: width 1s linear; }
+.aero-live-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.aero-live-chart { min-width: 0; padding: 10px; border: 1px solid #39424e; border-radius: 6px; background: #0f151b; }
+.aero-live-chart h3 { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+.aero-live-chart svg { display: block; width: 100%; height: 120px; }
+.aero-live-chart text { fill: #aab6c5; font-size: 12px; }
+.aero-live-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 14px; color: #c6ccd4; }
+.aero-live-legend i { display: inline-block; width: 12px; height: 3px; margin-right: 5px; vertical-align: middle; }
+.aero-live-note { margin: 0; color: #aab6c5; font-size: 14px; }
+.aero-live img { display: block; width: 100%; height: auto; background: #fff; }

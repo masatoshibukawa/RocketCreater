@@ -20,6 +20,21 @@ export interface AeroLoopResult {
   baseline: { pressure_kpa: number | null; cd: number | null };
   dispersion: { n: number; passes: number; success_rate: number } | null;
 }
+/** What the running solver reports (rocketwright/aero/live.py); series are [iteration, value]. */
+export interface AeroLive {
+  stage: "prepare" | "mesh" | "solve";
+  cells: number | null;
+  case_index: number | null;
+  case_total: number | null;
+  speed_mps: number | null;
+  alpha_deg: number | null;
+  iteration: number | null;
+  iterations_total: number | null;
+  residuals: Record<string, [number, number][]>;
+  axial_force_n: [number, number][];
+  finished: { alpha_deg: number; cd: number }[];
+  images: string[];
+}
 export interface AeroImage { name: string; url: string; speed_mps: number | null; alpha_deg: number | null }
 export interface AeroJob {
   id: string;
@@ -28,6 +43,7 @@ export interface AeroJob {
   result: AeroLoopResult | null;
   error: string | null;
   images: AeroImage[];
+  live: AeroLive | null;
 }
 export interface AeroRequest {
   design: Design;
@@ -38,7 +54,7 @@ export interface AeroRequest {
   n: number | null;
 }
 
-const POLL_MS = 2000;
+const POLL_MS = 1500;
 const FORGOTTEN = "API が再起動したため解析の記録が消えました。もう一度実行してください。";
 const isActive = (job: AeroJob): boolean => job.status === "queued" || job.status === "running";
 
