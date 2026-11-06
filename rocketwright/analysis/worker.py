@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
+from rocketwright.agent.project_equipment import procurement_summary
 from rocketwright.analysis.record import compile_record
 from rocketwright.analysis.schema import Precision
 from rocketwright.manufacturing import PrintRequest, prepare_geometry
@@ -214,7 +215,7 @@ class Worker:
             for angle in angles:
                 out = folder / f"v{speed:02.0f}-a{angle:03.0f}"
                 command = [
-                    sys.executable,
+                    runtime.get("cfd_python") or sys.executable,
                     str(ROOT / "scenarios/cfd/run_flow.py"),
                     str(assembly_file),
                     str(out),
@@ -447,7 +448,14 @@ class Worker:
                 not self.spec.requirement.recovery_required
                 or (self.design.has_parachute and result["impact_speed_mps"] <= 5)
             ),
-            cost_evidence=self.spec.requirement.budget_jpy is None,
+            cost_evidence=(
+                self.spec.requirement.budget_jpy is None
+                or (
+                    procurement_summary(self.spec)["total_jpy"] is not None
+                    and procurement_summary(self.spec)["total_jpy"]
+                    <= self.spec.requirement.budget_jpy
+                )
+            ),
         )
         if precision.require_cfd:
             allowed = self.data["refine"]["allowed_aero_relative_change"]

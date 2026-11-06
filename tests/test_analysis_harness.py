@@ -259,3 +259,19 @@ def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
     assert not proposals  # altitude shortfall cannot bypass unfinished precision work
     assert not any(k.startswith("refine/") for k in choices["offered"])
     assert not any(k.startswith("redesign/") for k in choices["offered"])
+
+
+def test_user_reviews_diff_and_creates_revision_only_from_offered_proposal(tmp_path):
+    store, h, s = started(tmp_path)
+    for _ in range(4):
+        s = h.step(s["id"], s["revision"])
+    view = h.view(s["id"])
+    assert view["proposals"]
+    action = next(iter(view["proposals"]))
+    assert view["proposals"][action]["diff"]["changes"]
+    old_version = s["version"]
+    result = h.revise(s["id"], s["revision"], action, "reviewed input diff")
+    assert result["version"] == old_version + 1 and not result["adopted"]
+    assert result["adaptive"]["revisions"][-1]["from_version"] == old_version
+    with pytest.raises(Conflict):
+        h.revise(s["id"], result["revision"], "shell", "not offered")

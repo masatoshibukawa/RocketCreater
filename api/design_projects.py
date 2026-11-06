@@ -38,6 +38,13 @@ class CampaignRequest(Revision):
     limits: SearchLimits = Field(default_factory=SearchLimits)
 
 
+class ReviseRequest(Revision):
+    action_id: str = Field(min_length=1, max_length=120)
+    reason: str = Field(
+        default="画面で差分を確認し、この変更案を新しい版として選択", max_length=800
+    )
+
+
 class IntentRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     text: str = Field(min_length=1, max_length=4000)
@@ -95,6 +102,22 @@ def adaptive_start(project_id: str, request: CampaignRequest):
 @router.get("/{project_id}/adaptive/options")
 def adaptive_options(project_id: str):
     return call(Harness(DEFAULT_PROJECTS).options, project_id)
+
+
+@router.get("/{project_id}/adaptive/view")
+def adaptive_view(project_id: str):
+    return call(Harness(DEFAULT_PROJECTS).view, project_id)
+
+
+@router.post("/{project_id}/adaptive/revise")
+def adaptive_revise(project_id: str, request: ReviseRequest):
+    return call(
+        Harness(DEFAULT_PROJECTS).revise,
+        project_id,
+        request.revision,
+        request.action_id,
+        request.reason,
+    )
 
 
 @router.post("/{project_id}/adaptive/step", status_code=202)

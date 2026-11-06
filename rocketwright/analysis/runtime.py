@@ -1,5 +1,6 @@
 """Host runtime configuration and process-tree timeout enforcement."""
 
+import importlib.util
 import os
 import signal
 import subprocess
@@ -13,6 +14,7 @@ from rocketwright.analysis.schema import Strict
 class Runtime(Strict):
     calculix: str | None = None
     cfd_enabled: bool = False
+    cfd_python: str | None = None
     cfd_cells_coarse: int = Field(default=12, ge=6, le=40)
     cfd_cells_fine: int = Field(default=16, ge=8, le=48)
     cfd_times: float = Field(default=40, ge=2, le=100)
@@ -30,11 +32,19 @@ class Runtime(Strict):
         return cls(
             calculix=os.getenv("ROCKETWRIGHT_CALCULIX"),
             cfd_enabled=os.getenv("ROCKETWRIGHT_CFD_ENABLED") == "1",
+            cfd_python=os.getenv("ROCKETWRIGHT_CFD_PYTHON"),
         )
 
     def capabilities(self):
         return (["fem"] if self.calculix and Path(self.calculix).is_file() else []) + (
-            ["cfd"] if self.cfd_enabled else []
+            ["cfd"]
+            if self.cfd_enabled
+            and (
+                Path(self.cfd_python).is_file()
+                if self.cfd_python
+                else importlib.util.find_spec("cupy") is not None
+            )
+            else []
         )
 
 

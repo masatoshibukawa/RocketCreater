@@ -6,6 +6,7 @@ import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
 import LocalDesignChat from "./components/LocalDesignChat";
+import ProjectAnalysis from "./components/ProjectAnalysis";
 import DockHandle from "./components/DockHandle";
 import CostPanel from "./components/CostPanel";
 import DrawingPanel from "./components/DrawingPanel";
@@ -274,7 +275,7 @@ function DesignScreen() {
           </div>
           <div className="drawing-workspace" hidden={!((hasModel && modelView === "drawing") || (stage === "exports" && outputView === "drawing"))}><DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading}/></div>
           <div className="analysis-workspace" hidden={stage !== "analysis"}>
-            <div className="analysis-screen" hidden={analysisView !== "aero" || isOrbital(tier)}><AeroLoopPanel request={isOrbital(tier) ? null : aeroRequest} hasDesign={displayed !== null}/></div>
+            <div className="analysis-screen" hidden={analysisView !== "aero" || isOrbital(tier)}>{productionProject ? <ProjectAnalysis project={productionProject} onProject={setProductionProject}/> : <AeroLoopPanel request={isOrbital(tier) ? null : aeroRequest} hasDesign={displayed !== null}/>}</div>
             {analysisView === "aero" && isOrbital(tier) ? <div className="workspace-empty"><h2>この規模は構想設計の対象です</h2><p>飛行の結果と軌道を確認できます。</p><button className="btn" type="button" onClick={() => setAnalysisView("flight")}>飛行と回収を見る</button></div> : null}
             {analysisView === "flight" ? <div className="flight-workspace"><FlightPlayer key={displayedId ?? "none"} trace={trace} metrics={flight?.metrics ?? NO_METRICS} warnings={flight?.warnings ?? []} parachute={carriesParachute(displayed?.design)} emptyMessage="計算した飛行の時系列が届くと再生できます"/></div> : null}
             <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedLabel}/></div>
@@ -282,7 +283,7 @@ function DesignScreen() {
           {stage === "exports" && outputView === "production" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
           <div className="production-stack" hidden={stage !== "exports" || outputView === "drawing" || isOrbital(tier)}>
           <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
-          <div className="production-workspace" hidden={stage !== "exports" || isOrbital(tier)}><DesignProduction source={packageRequest} mode={outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} active={stage === "exports"}/></div>
+          <div className="production-workspace" hidden={stage !== "exports" || isOrbital(tier)}><DesignProduction source={packageRequest} mode={outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} externalProject={productionProject} active={stage === "exports"}/></div>
           </div>
           <WorkshopCrew embedded hideScene={!showCrew}/>
         </div>

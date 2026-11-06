@@ -8,6 +8,7 @@ from pathlib import Path
 
 from rocketwright.adaptive import Campaign, Requirements, digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
+from rocketwright.agent.project_jobs import cancelled, resource_lease
 from rocketwright.agent.workbench import Conflict
 from rocketwright.analysis import catalog, planner, policy
 from rocketwright.analysis.record import scopes
@@ -183,19 +184,30 @@ class Harness:
             )
             write_json(folder / "input.json", context)
             try:
-                run(
-                    [
-                        sys.executable,
-                        "-m",
-                        "rocketwright.analysis.worker",
-                        str(folder / "input.json"),
-                        str(folder / "data.json"),
-                        kind,
-                    ],
-                    cwd=ROOT,
-                    log=folder / "worker.log",
-                    timeout=timeout,
-                )
+
+                def invoke():
+                    run(
+                        [
+                            sys.executable,
+                            "-m",
+                            "rocketwright.analysis.worker",
+                            str(folder / "input.json"),
+                            str(folder / "data.json"),
+                            kind,
+                        ],
+                        cwd=ROOT,
+                        log=folder / "worker.log",
+                        timeout=timeout,
+                    )
+
+                if kind.startswith("cfd") or kind == "geometry":
+                    with resource_lease(self.store, self.state, "renderer"):
+                        invoke()
+                elif kind.startswith("fem"):
+                    with resource_lease(self.store, self.state, "fem"):
+                        invoke()
+                else:
+                    invoke()
                 data = read(folder / "data.json")
             except (OSError, ValueError) as exc:
                 raise RuntimeError(str(exc)) from exc
@@ -344,6 +356,8 @@ class Harness:
         state["adaptive"] = a
 
     def _one(self, state):
+        if cancelled(self.store, state):
+            raise Conflict("解析を区切りで中断しました。保存済みの結果から再開できます。")
         if state["adopted"]:
             raise Conflict("Edit the adopted design into a new version before further analysis")
         c, spec, precision, limits = self._campaign(state)
@@ -470,3 +484,42 @@ class Harness:
         state = copy.deepcopy(self.store.get(project_id))
         c, spec, precision, limits = self._campaign(state)
         return self._choices(c, spec, precision, limits)[0]
+
+    def view(self, project_id):
+        from rocketwright.agent.project_revisions import difference
+
+        state = copy.deepcopy(self.store.get(project_id))
+        c, spec, precision, limits = self._campaign(state)
+        choices, proposals, confirmation = self._choices(c, spec, precision, limits)
+        return dict(
+            status=state["adaptive"]["status"],
+            version=state["version"],
+            remaining_s=state["adaptive"]["remaining_s"],
+            precision=precision.model_dump(),
+            choices=choices,
+            metrics=c.metrics,
+            checks=confirmation.get("checks", {}) if confirmation else {},
+            decisions=state["adaptive"]["decisions"][-30:],
+            proposals={
+                key: dict(
+                    reason=row["reason"],
+                    change=row["change"],
+                    diff=difference(state["spec"], row["spec"]),
+                )
+                for key, row in proposals.items()
+            },
+            physical_qualification=False,
+        )
+
+    def revise(self, project_id, revision, action_id, reason):
+        def work(state):
+            c, spec, precision, limits = self._campaign(state)
+            choices, proposals, _ = self._choices(c, spec, precision, limits)
+            if action_id not in proposals or action_id not in choices["offered"]:
+                raise Conflict("この版で選択できる変更案ではありません。")
+            decision = dict(action=action_id, reason=reason, planner="human", elapsed_s=0)
+            state["adaptive"]["decisions"].append(decision)
+            c.remaining_s -= 1
+            self._fork(proposals[action_id], decision, c)
+
+        return self.store._run(project_id, revision, "adaptive_revise", work)

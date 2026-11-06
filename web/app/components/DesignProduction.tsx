@@ -22,12 +22,13 @@ const DIMENSIONS: [keyof Omit<ProductionGeometry, "dimensions_measured">, string
 ];
 const OPERATION: Record<string, string> = { analyse: "CADと飛行を再解析中", slicing: "S5用データを検査中", render_design_and_launch: "同じ採用版の動画を制作中" };
 
-export default function DesignProduction({ source, mode, onProjectChange, active, projectId }: {
+export default function DesignProduction({ source, mode, onProjectChange, active, projectId, externalProject }: {
   source: DesignPackageRequest | null; mode: "files" | "assembly" | "video" | "edit";
-  onProjectChange: (project: DesignProject | null) => void; active: boolean; projectId: string | null;
+  onProjectChange: (project: DesignProject | null) => void; active: boolean; projectId: string | null; externalProject?: DesignProject | null;
 }) {
   const [project, setProject] = useState<DesignProject | null>(null);
   useEffect(() => { if (projectId === null) setProject(null); }, [projectId]);
+  useEffect(()=>{if(externalProject?.id===projectId)setProject(externalProject);},[externalProject,projectId]);
   const [draft, setDraft] = useState<ProductionSpec | null>(null);
   const [projects, setProjects] = useState<{ id: string; name: string; version: number }[]>([]);
   const [busy, setBusy] = useState(false);
