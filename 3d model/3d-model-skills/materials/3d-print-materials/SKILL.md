@@ -15,6 +15,8 @@ description: "3Dプリントの材料選定、製品別設定、機種との適�
 | PLA | [PLA](../3d-material-pla/SKILL.md) |
 | Tough PLA・PLA+ | [Tough PLA・PLA+](../3d-material-tough-pla/SKILL.md) |
 | PETG | [PETG](../3d-material-petg/SKILL.md) |
+| PET・PET CF | [PET系](../3d-material-pet/SKILL.md) |
+| PPS・PPS CF | [PPS系](../3d-material-pps/SKILL.md) |
 | ABS | [ABS](../3d-material-abs/SKILL.md) |
 | ASA | [ASA](../3d-material-asa/SKILL.md) |
 | TPU・TPEの柔軟材 | [TPU・TPEの柔軟材](../3d-material-tpu/SKILL.md) |

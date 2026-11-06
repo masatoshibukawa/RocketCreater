@@ -11,6 +11,8 @@ description: "FX10の複合材/Metal Kit構成、製品世代別材料、シー�
 
 現行表では金属は17-4PH v2、H13 v2、316L等。Copper/Inconel/A2/D2をMetal Xの一覧から追加しない。複合材も樹脂・繊維・ノズルと世代の対応を照合する。
 
+H13 v1と17-4PH v1はFX10非対応で、Metal X対応。v2の対応を同名のv1へ引き継がない。
+
 316LはMetal Kit、専用Metal Print Sheet（接着剤なし）、Wash-1と指定焼結炉の組が必要。製品固有のベッド上時間、脱脂減量/乾燥、炉への投入質量を確認し、他合金の値を移さない。
 
 根拠：[製品概要](https://markforged.com/3d-printers/fx10)、[材料/設備対応](https://support.markforged.com/portal/s/article/Material-Compatibility-Matrix)、[316Lの専用手順](https://support.markforged.com/portal/s/article/Printing-with-316L-Stainless-Steel)。

@@ -11,6 +11,8 @@ description: "CF/GF等の繊維充填フィラメントを基材ポリマーに�
 
 連続繊維は[専用スキル](../../industrial/3d-print-continuous-fiber/SKILL.md)、機器と金属方式の比較は[カーボン・金属索引](../../industrial/3d-carbon-metal-printing/SKILL.md)へ進む。
 
+基材の入口は[PET/PET CF](../3d-material-pet/SKILL.md)、[PPS/PPS CF](../3d-material-pps/SKILL.md)、[PA/ナイロン](../3d-material-nylon/SKILL.md)、[PC](../3d-material-pc/SKILL.md)等を製品に合わせて選ぶ。
+
 ## 機械を傷めない構成
 
 製品が指定する耐摩耗ノズル/コアと径、ギヤ・チューブ・給材経路を照合する。真鍮AA0.4等の既存設定をそのまま流用しない。0.6mmが推奨される製品はあるが、全製品の必須径にはしない。Bambuの径・高流量ノズル・AMS等もそれぞれの対応表を使う。

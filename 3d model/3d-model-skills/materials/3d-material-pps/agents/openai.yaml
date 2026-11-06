@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPS・PPS CFの3Dプリント"
+  short_description: "PPS系の製品と熱環境を照合し、PPS CFの機種・コア・支持を選ぶ"
+  default_prompt: "$3d-material-pps を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

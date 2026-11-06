@@ -11,7 +11,7 @@ description: "H13、A2、D2等の金属AM用工具鋼を用途・製品世代と
 
 焼結後/as-builtと、焼入れ・焼戻し等の後の物性を分ける。鍛造材との比較表をAM部品の実測値へ置き換えない。熱処理、研削/放電加工・仕上げ代と変形の見込みを出力前に含める。
 
-Markforgedでは[対応表](https://support.markforged.com/portal/s/article/Material-Compatibility-Matrix)のH13 v1/v2でFX10の可否が変わる。D2/A2が同社の一覧にあることだけでFX10へ採用しない。
+確認日2026-11-07のMarkforged[対応表](https://support.markforged.com/portal/s/article/Material-Compatibility-Matrix)では、H13 v1はMetal X対応・FX10非対応、H13 v2はMetal XとFX10の両方に対応。D2/A2が同社の一覧にあることだけでFX10へ採用しない。
 
 原寸の重要断面、角・薄肉/厚肉差、造形方向を含む試験で、処理後の寸法・硬度と用途の必要な靱性/寿命を確認する。硬度だけで工具として合格にしない。メーカー指定外の共通熱処理レシピを生成しない。
 

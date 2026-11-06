@@ -25,3 +25,7 @@
 | 銅・Cu/CuCrZr等 | [3d-metal-copper](../3d-model-skills/materials/3d-metal-copper/SKILL.md) |
 
 代表12機器の専用スキルは[カーボン・金属索引](../3d-model-skills/industrial/3d-carbon-metal-printing/SKILL.md)から選べる。各機種の版と材料の供給形態を照合して使う。
+
+カーボン系の基材には[PET/PET CF](../3d-model-skills/materials/3d-material-pet/SKILL.md)と[PPS/PPS CF](../3d-model-skills/materials/3d-material-pps/SKILL.md)の専用入口も用意した。短繊維入りと連続繊維は、必要な設備と荷重方向の評価を分けて使う。
+
+[確認記録](validation.md)に、全体の構造検証、6例の独立した読み取り確認と改善、実機では確認していない範囲を残した。

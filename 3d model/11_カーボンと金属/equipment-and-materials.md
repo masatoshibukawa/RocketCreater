@@ -19,6 +19,19 @@
 
 ## 現行対応で特に確認した差
 
+2026-11-07に確認したMarkforgedの当該製品の表を、参照不能時の判断用にも残す。機種/素材の改訂時は原表へ再照合する。
+
+| Markforged製品 | Metal X Gen1/2 | FX10 Metal Kit |
+| --- | --- | --- |
+| 17-4PH v1 | 対応 | 非対応 |
+| 17-4PH v2 | 対応 | 対応 |
+| 316L | 非対応 | 対応 |
+| H13 v1 | 対応 | 非対応 |
+| H13 v2 | 対応 | 対応 |
+| Copper / Inconel / A2 / D2 v1・v2 | 対応 | 非対応 |
+
+UltiMaker PET CFのS5用構成は、2.85mm製品とCC0.4またはCC0.6。Tough PLA用AA0.4や、PPS CFのFactor専用条件と混ぜない。基材・処理の入口は[PET](../3d-model-skills/materials/3d-material-pet/SKILL.md)と[PPS](../3d-model-skills/materials/3d-material-pps/SKILL.md)。
+
 [Markforgedの公式対応表](https://support.markforged.com/portal/s/article/Material-Compatibility-Matrix)では、金属FFFの316LはFX10のみ、17-4PH/H13はv1/v2でFX10の可否が異なる。旧PDFや発売記事の対応予定より現在の製品別表を使う。FX10にCopperやInconelをMetal Xの一覧から追加しない。
 
 [PPS CF公式手順](https://support.ultimaker.com/s/article/How-to-print-with-UltiMaker-PPS-CF)と[PET CF公式手順](https://support.ultimaker.com/s/article/pet-cf-instructions)は、Factorの世代とコアを別に列記する。PET CFがS5で使えることからPPS CFの可否を推定しない。
