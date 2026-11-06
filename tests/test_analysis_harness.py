@@ -245,3 +245,16 @@ def test_existing_search_starts_import_without_old_mass_or_pass_claims():
         assert imported.assumptions.evidence["initial_search_id"] == key
     with pytest.raises(ValueError):
         seeds.import_seed("unregistered", s)
+
+
+def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
+    _, h, state = started(tmp_path, max_versions=3)
+    for _ in range(4):
+        state = h.step(state["id"], state["revision"])
+    assert state["adaptive"]["results"]["screen"]["execution_status"] == "completed"
+    state["adaptive"]["quality_pending"] = ["fem_mesh"]
+    c, specification, precision, limits = h._campaign(state)
+    choices, proposals, _ = h._choices(c, specification, precision, limits)
+    assert not proposals  # altitude shortfall cannot bypass unfinished precision work
+    assert not any(k.startswith("refine/") for k in choices["offered"])
+    assert not any(k.startswith("redesign/") for k in choices["offered"])

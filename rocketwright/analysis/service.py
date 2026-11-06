@@ -61,6 +61,7 @@ class Harness:
                 revisions=[],
                 visited=[policy.identity(spec)],
                 pending=None,
+                quality_pending=[],
                 physical_qualification=False,
                 accepted_spec_hash=None,
             )
@@ -226,6 +227,12 @@ class Harness:
                 unmet = ["altitude"]
         # Numerical uncertainty must be reduced before optimizing against an unreliable prediction.
         numerical = set(unmet) & {"aero_grid", "aero_averaging", "fem_mesh", "temporal"}
+        if confirmation:
+            a["quality_pending"] = sorted(numerical)
+        else:
+            # Refinement invalidates the old confirmation. Keep its unresolved accuracy
+            # obligation until a new confirmation exists; do not optimize against stale accuracy.
+            numerical |= set(a.get("quality_pending", []))
         proposals = {} if numerical else policy.proposals(spec, limits, unmet, a["visited"])
         if self.state["version"] - a["starting_version"] + 1 >= limits.max_versions:
             proposals = {}
@@ -242,7 +249,7 @@ class Harness:
                 scope=proposal["reason"],
             )
         runtime = Runtime.model_validate(a["runtime"])
-        if "aero_grid" in numerical and runtime.cfd_cells_fine < 32:
+        if confirmation and "aero_grid" in numerical and runtime.cfd_cells_fine < 32:
             choices["offered"]["refine/cfd"] = dict(
                 target="airframe flow",
                 method="increase_grid",
@@ -253,7 +260,7 @@ class Harness:
                 addresses=["aero_grid"],
                 scope="Refine both grids within the host maximum",
             )
-        if "fem_mesh" in numerical and runtime.fem_level < 4:
+        if confirmation and "fem_mesh" in numerical and runtime.fem_level < 4:
             choices["offered"]["refine/fem"] = dict(
                 target="fin solid",
                 method="increase_mesh",
@@ -264,7 +271,7 @@ class Harness:
                 addresses=["fem_mesh"],
                 scope="Increase FEM resolutions within the host maximum",
             )
-        if "aero_averaging" in numerical and runtime.cfd_times < 100:
+        if confirmation and "aero_averaging" in numerical and runtime.cfd_times < 100:
             choices["offered"]["refine/averaging"] = dict(
                 target="unsteady flow",
                 method="longer_averaging",
@@ -275,7 +282,7 @@ class Harness:
                 addresses=["aero_averaging"],
                 scope="Increase flow duration within the host maximum",
             )
-        if "temporal" in numerical and runtime.flight_step_s > 0.0025:
+        if confirmation and "temporal" in numerical and runtime.flight_step_s > 0.0025:
             choices["offered"]["refine/time"] = dict(
                 target="flight integration",
                 method="halve_time_step",
