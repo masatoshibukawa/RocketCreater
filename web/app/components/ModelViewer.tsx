@@ -25,9 +25,11 @@ interface ModelViewerProps {
   dimensions: DimensionSummary | null;
   /** Build warnings to flag under the overlay (motor certification Level 1/2, coupler). */
   notes: string[];
+  frameRequest?: number;
+  active?: boolean;
 }
 
-const BACKGROUND = 0xffffff;
+const BACKGROUND = 0x191b1e;
 
 interface Scene3D {
   renderer: THREE.WebGLRenderer;
@@ -83,10 +85,12 @@ function fitToView(s: Scene3D, model: THREE.Object3D): void {
   cam.updateProjectionMatrix();
 }
 
-export default function ModelViewer({ design, tier, origin, reference, dimensions, notes }: ModelViewerProps) {
+export default function ModelViewer({ design, tier, origin, reference, dimensions, notes, frameRequest = 0, active = true }: ModelViewerProps) {
   const { motionEnabled, visible } = useWorkshop();
   const hostRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<Scene3D | null>(null);
+  const activeRef = useRef(active);
+  activeRef.current = active;
   const designKey = design === null ? "" : canonicalJson(design);
 
   // Renderer lifecycle: one per mount (React strict mode mounts twice in dev; cleanup is full).
@@ -146,8 +150,7 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
 
     const tick = (): void => {
       s.frame = window.requestAnimationFrame(tick);
-      controls.update();
-      renderer.render(scene, camera);
+      if (activeRef.current && !document.hidden) { controls.update(); renderer.render(scene, camera); }
     };
     tick();
 
@@ -187,6 +190,8 @@ export default function ModelViewer({ design, tier, origin, reference, dimension
     s.model = model;
     fitToView(s, model);
   }, [designKey]);
+
+  useEffect(() => { const s = sceneRef.current; if (s?.model) fitToView(s, s.model); }, [frameRequest]);
 
   const dimText =
     dimensions && dimensions.length_m !== null && dimensions.diameter_m !== null

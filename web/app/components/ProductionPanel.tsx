@@ -11,10 +11,11 @@ interface ProductionPanelProps {
   request: DesignPackageRequest | null;
   /** The displayed design passed its simulation. Only such a design gets production data. */
   passed: boolean;
+  onGenerated?: (value: DesignPackage) => void;
 }
 
 /** 製作データ: the files a passing design can support, what it cannot, and the print data. */
-export default function ProductionPanel({ request, passed }: ProductionPanelProps) {
+export default function ProductionPanel({ request, passed, onGenerated }: ProductionPanelProps) {
   const design: Design | null = request?.design ?? null;
   const key = request ? requestKey(request) : "";
   const [made, setMade] = useState<DesignPackage | null>(null);
@@ -39,7 +40,7 @@ export default function ProductionPanel({ request, passed }: ProductionPanelProp
     setError("");
     try {
       const next = await createDesignPackage(request, abort.signal);
-      if (!abort.signal.aborted) setMade(next);
+      if (!abort.signal.aborted) { setMade(next); onGenerated?.(next); }
     } catch (e) {
       if (!abort.signal.aborted) setError(e instanceof Error ? e.message : String(e));
     } finally {

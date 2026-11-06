@@ -15,13 +15,11 @@ export default function StatusStrip({ status, attemptCount }: StatusStripProps) 
   else if (status === "error") label = "エラー";
   else label = "待機中";
   return (
-    <header className={`status-strip status-${status}`}>
-      <span className="status-brand">RocketWright</span>
-      <span className="status-sub">自然文の要求から、シミュレーションで検証した設計案を返します</span>
+    <div className={`status-strip status-${status}`}>
       <span className="status-line">
         <span className="status-dot" />
         {label}
       </span>
-    </header>
+    </div>
   );
 }
