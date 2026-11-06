@@ -3,15 +3,15 @@
   "checked_on": "2026-11-07",
   "scope": "実用ロケット・衛星打上げ機。ハイブリッドの比較資料は準軌道として区別。",
   "counts": {
-    "references": 10,
-    "languages": 2,
-    "downloaded_files": 9,
-    "pdf_files": 9,
-    "pdf_pages": 195,
-    "published_files": 0,
-    "local_only_files": 9,
-    "bytes": 32887374,
-    "published_bytes": 0
+    "references": 36,
+    "languages": 7,
+    "downloaded_files": 23,
+    "pdf_files": 20,
+    "pdf_pages": 1201,
+    "published_files": 6,
+    "local_only_files": 17,
+    "bytes": 186673879,
+    "published_bytes": 89687433
   },
   "records": [
     {
@@ -315,6 +315,670 @@
           }
         }
       ]
+    },
+    {
+      "id": "LV010",
+      "vehicle": "H-IIA",
+      "lang": [
+        "en"
+      ],
+      "year": "2015-02",
+      "title": "H-IIA User's Manual, YET04001, Ver.4.0",
+      "publisher": "Mitsubishi Heavy Industries",
+      "kind": "打上げ利用者向けマニュアル",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.mhi.com/jp/products/pdf/manual.pdf",
+      "note": "衛星利用者向けの搭載条件・打上げサービス資料。H3用マニュアルとは区別する。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV010-H-IIA-users-manual-2015.pdf",
+          "url": "https://www.mhi.com/jp/products/pdf/manual.pdf",
+          "bytes": 2910645,
+          "sha256": "83f4d68e88d8d635317950d9893c8e39293810cb5b99f5892f5bc740a659c2bb",
+          "pages": 260,
+          "source_id": "LV010",
+          "credit": "Mitsubishi Heavy Industries",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "local_only",
+            "license": "再配布許諾未確認",
+            "evidence": "https://www.mhi.com/jp/products/pdf/manual.pdf",
+            "conditions": "原本全体の公開再配布許諾を確認できないためローカル限定。閲覧可能であることだけでは再配布可能としない。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV011",
+      "vehicle": "H-IIA",
+      "lang": [
+        "ja"
+      ],
+      "year": "2025",
+      "title": "H-IIAロケット最終号機 打上げ記念企画展：H-IIAロケットの歩み",
+      "publisher": "JAXA",
+      "kind": "歴史展示資料",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.rocket.jaxa.jp/rocket/h2a/f50_special/files/h2a_history.pdf",
+      "note": "日本の液体・固体ロケットの系譜とH-IIAの歩み。最終号機打上げ前の展示記述を含む。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV011-H-IIA-history-2025.pdf",
+          "url": "https://www.rocket.jaxa.jp/rocket/h2a/f50_special/files/h2a_history.pdf",
+          "bytes": 6352035,
+          "sha256": "86f5304e68f80a7d05898005aa185fa627cff9e0c0778c36e6efffb6b71c2fc5",
+          "pages": 7,
+          "source_id": "LV011",
+          "credit": "JAXA",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "local_only",
+            "license": "再配布許諾未確認",
+            "evidence": "https://www.jaxa.jp/policy_j.html",
+            "conditions": "一般利用規程は複製・配布・公衆送信に事前許可を求める。今回のGit公開に適用できる個別許諾は未確認。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV012",
+      "vehicle": "イプシロン",
+      "lang": [
+        "ja"
+      ],
+      "year": null,
+      "title": "イプシロンロケット",
+      "publisher": "JAXA",
+      "kind": "公式概要",
+      "propulsion": "固体主段",
+      "source": "https://www.jaxa.jp/projects/rockets/epsilon/index_j.html",
+      "note": "固体主段の日本の衛星打上げロケット。液体上段・補助推進系の有無は形態別の説明を参照する。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV013",
+      "vehicle": "H-IIA",
+      "lang": [
+        "en"
+      ],
+      "year": null,
+      "title": "H-IIA Launch Vehicle",
+      "publisher": "JAXA",
+      "kind": "公式概要・運用終了表示",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://global.jaxa.jp/projects/rockets/h2a/",
+      "note": "運用終了表示を確認できる公式ページ。本文の過去年次の紹介と更新状況を区別する。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV014",
+      "vehicle": "Falcon 9 / Falcon Heavy",
+      "lang": [
+        "en"
+      ],
+      "year": "2025-05",
+      "title": "Falcon User's Guide",
+      "publisher": "SpaceX",
+      "kind": "打上げ利用者向けガイド",
+      "propulsion": "液体",
+      "source": "https://www.spacex.com/assets/media/falcon-users-guide-2025-05-09.pdf",
+      "note": "再使用型液体ロケットの比較資料。性能表は軌道条件と回収条件を揃えて読む。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV014-Falcon-users-guide-2025.pdf",
+          "url": "https://content.spacex.com/cms-assets/assets/falcon-users-guide-2025-05-09.pdf",
+          "bytes": 8692278,
+          "sha256": "5fdc438528365ccebb7910171f7a8a368a162bdf8a7c1e086be382d3fd7cdb48",
+          "pages": 128,
+          "source_id": "LV014",
+          "credit": "SpaceX",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "local_only",
+            "license": "再配布許諾未確認",
+            "evidence": "https://www.spacex.com/assets/media/falcon-users-guide-2025-05-09.pdf",
+            "conditions": "PDF冒頭が複製・配布にSpaceXの事前書面同意を求める。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV015",
+      "vehicle": "Electron",
+      "lang": [
+        "en"
+      ],
+      "year": "2025-09",
+      "title": "Electron Payload User Guide, Version 8.0",
+      "publisher": "Rocket Lab",
+      "kind": "打上げ利用者向けガイド",
+      "propulsion": "液体",
+      "source": "https://rocketlabcorp.com/assets/Rocket-Lab-Electron-Payload-User-Guide-8.0.pdf",
+      "note": "小型衛星用液体ロケットの利用条件とサービス構成。H3の大型輸送との用途差を比較する。 表紙はVersion 8.0 / Sept 2025。一部フッターにV7.0が残るが、検索結果の取得日ではなく表紙の版・年月を採用した。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV015-Electron-user-guide-8.pdf",
+          "url": "https://rocketlabcorp.com/assets/Rocket-Lab-Electron-Payload-User-Guide-8.0.pdf",
+          "bytes": 6193479,
+          "sha256": "a212a499a70d44f7bde5b92d163b520558379aa0e71655be72ce936b3eb840f7",
+          "pages": 72,
+          "source_id": "LV015",
+          "credit": "Rocket Lab",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "local_only",
+            "license": "再配布許諾未確認",
+            "evidence": "https://www.rocketlabcorp.com/terms-and-conditions",
+            "conditions": "Rocket Labの利用規程が複製・公開に書面許諾を求める。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV016",
+      "vehicle": "Ariane 6",
+      "lang": [
+        "en"
+      ],
+      "year": "2021-03",
+      "title": "Ariane 6 User's Manual, Issue 2 Revision 0",
+      "publisher": "Arianespace",
+      "kind": "打上げ利用者向けマニュアル",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.arianespace.com/app/uploads/sites/4/2024/10/Mua-6_Issue-2_Revision-0_March-2021.pdf",
+      "note": "初飛行前の利用者マニュアル。現行の契約条件・実績と区別し、版を固定して参照する。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV016-Ariane6-user-manual-2021.pdf",
+          "url": "https://www.arianespace.com/app/uploads/sites/4/2024/10/Mua-6_Issue-2_Revision-0_March-2021.pdf",
+          "bytes": 8881879,
+          "sha256": "94f3d509bbe03098e9b4458ae324dadde6d51ed2ae460fddc91d42dd7876aa5d",
+          "pages": 171,
+          "source_id": "LV016",
+          "credit": "Arianespace",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "local_only",
+            "license": "再配布許諾未確認",
+            "evidence": "https://www.arianespace.com/terms-and-conditions",
+            "conditions": "Arianespaceの利用規程が全部・一部の複製に明示的許諾を求める。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV017",
+      "vehicle": "Ariane 6",
+      "lang": [
+        "en"
+      ],
+      "year": "2026-06",
+      "title": "Ariane 6 User's Manual for Multi-Launch Service, Issue 1 Revision 0",
+      "publisher": "Arianespace",
+      "kind": "複数衛星サービス用マニュアル",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.arianespace.com/app/uploads/sites/4/2026/07/a6-mls_users_manual_1-0_june2026.pdf",
+      "note": "複数衛星の打上げサービス向け資料。一般機体マニュアルの後継版と決めつけず、用途の異なる別文書として収録。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV017-Ariane6-MLS-2026.pdf",
+          "url": "https://www.arianespace.com/app/uploads/sites/4/2026/07/a6-mls_users_manual_1-0_june2026.pdf",
+          "bytes": 9640966,
+          "sha256": "86ac718a6bf615100becf66d0b75ad55eb6aa08680ce102718a7fa2966be5d50",
+          "pages": 78,
+          "source_id": "LV017",
+          "credit": "Arianespace",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "local_only",
+            "license": "再配布許諾未確認",
+            "evidence": "https://www.arianespace.com/terms-and-conditions",
+            "conditions": "Arianespaceの利用規程が全部・一部の複製に明示的許諾を求める。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV018",
+      "vehicle": "Ariane 6",
+      "lang": [
+        "fr"
+      ],
+      "year": null,
+      "title": "Ariane 6 : Le lanceur polyvalent et performant pour toutes vos missions",
+      "publisher": "Arianespace",
+      "kind": "商用打上げサービス概要",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.arianespace.com/fr/ariane-6",
+      "note": "フランス語によるAriane 6の構成・対応ミッションの紹介。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV019",
+      "vehicle": "Ariane 5 / Ariane 6",
+      "lang": [
+        "de"
+      ],
+      "year": "2026-09-09 更新",
+      "title": "Ariane: Europas Trägerrakete",
+      "publisher": "DLR",
+      "kind": "宇宙機関の計画史・概要",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.dlr.de/de/forschung-und-transfer/projekte-und-missionen/ariane-programm",
+      "note": "ドイツ語で欧州の打上げ輸送政策とAriane世代交代を追う。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV020",
+      "vehicle": "Vega-C",
+      "lang": [
+        "en"
+      ],
+      "year": "2018-05",
+      "title": "Vega C User's Manual, Issue 0 Revision 0",
+      "publisher": "Arianespace",
+      "kind": "打上げ利用者向けマニュアル",
+      "propulsion": "固体主段＋液体上段",
+      "source": "https://www.ariane.group/app/uploads/sites/4/2024/10/Vega-C-users-manual-Issue-0-Revision-0.pdf",
+      "note": "開発期の小型打上げ機マニュアル。固体3段と液体上段を使う構成の比較資料。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV020-VegaC-user-manual-2018.pdf",
+          "url": "https://www.ariane.group/app/uploads/sites/4/2024/10/Vega-C-users-manual-Issue-0-Revision-0.pdf",
+          "bytes": 18867744,
+          "sha256": "57de020b83378c0fa5cd6328fca208157e3a6ba591ccdef586a91e801cb2ac1b",
+          "pages": 118,
+          "source_id": "LV020",
+          "credit": "Arianespace",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "local_only",
+            "license": "再配布許諾未確認",
+            "evidence": "https://www.ariane.group/app/uploads/sites/4/2024/10/Vega-C-users-manual-Issue-0-Revision-0.pdf",
+            "conditions": "原本全体の公開再配布許諾を確認できないためローカル限定。閲覧可能であることだけでは再配布可能としない。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV021",
+      "vehicle": "Vega-C",
+      "lang": [
+        "fr"
+      ],
+      "year": "2025-07-31 更新",
+      "title": "Vega-C",
+      "publisher": "CNES",
+      "kind": "宇宙機関の公式概要",
+      "propulsion": "固体主段＋液体上段",
+      "source": "https://cnes.fr/projets/vega-c",
+      "note": "フランス語の運用・構成説明。開発期マニュアルと公開時期を比較する。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV022",
+      "vehicle": "Vega-C",
+      "lang": [
+        "it"
+      ],
+      "year": null,
+      "title": "Vega C - nuova generazione",
+      "publisher": "Agenzia Spaziale Italiana",
+      "kind": "宇宙機関の公式概要",
+      "propulsion": "固体主段＋液体上段",
+      "source": "https://www.asi.it/trasporto-spaziale/vega-c",
+      "note": "イタリア語によるVega-Cの位置づけと開発分担。将来形の文章は当時の計画として読む。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV023",
+      "vehicle": "長征5号",
+      "lang": [
+        "zh"
+      ],
+      "year": "2017-08-02",
+      "title": "长征五号（CZ-5）",
+      "publisher": "国家航天局 CNSA",
+      "kind": "公式機体紹介",
+      "propulsion": "液体",
+      "source": "https://www.cnsa.gov.cn/n6758824/n6759008/n6759011/c6794064/content.html",
+      "note": "中国語で液体主段・液体ブースターの構成を紹介する。2017年の記事であり、後年の長征5Bなどの派生型と仕様を混同しない。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV024",
+      "vehicle": "LVM3",
+      "lang": [
+        "en"
+      ],
+      "year": null,
+      "title": "LVM3 (Geosynchronous Satellite Launch Vehicle Mk III)",
+      "publisher": "ISRO",
+      "kind": "公式機体紹介",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.isro.gov.in/GSLVmk3_CON.html",
+      "note": "固体ブースターと液体コア・極低温上段を持つインドの大型打上げ機。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV025",
+      "vehicle": "LVM3",
+      "lang": [
+        "en"
+      ],
+      "year": "2025",
+      "title": "LVM3-M5 / CMS-03 Mission",
+      "publisher": "ISRO",
+      "kind": "ミッションパンフレット",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.isro.gov.in/media_isro/pdf/CMS-03-LVM3M5_Brochure.pdf",
+      "note": "LVM3-M5という個別ミッションの機体・衛星・飛行概要。機体共通仕様とミッション固有情報を区別する。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV025-LVM3-M5-CMS03-2025.pdf",
+          "url": "https://www.isro.gov.in/media_isro/pdf/CMS-03-LVM3M5_Brochure.pdf",
+          "bytes": 29592919,
+          "sha256": "d6d34543e561f6aea45f20760a8ac533356df76e5989aa69af23d175d41d94a0",
+          "pages": 4,
+          "source_id": "LV025",
+          "credit": "ISRO",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "published",
+            "license": "ISRO Copyright Policy",
+            "evidence": "https://www.isro.gov.in/Copyright_Policy.html",
+            "conditions": "出典DOS/ISROを明示し、正確・無改変で共有。誤解を招く・中傷的な利用をしない。全4ページに第三者著作権の個別表示がないことを確認。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV026",
+      "vehicle": "PSLV",
+      "lang": [
+        "en"
+      ],
+      "year": null,
+      "title": "PSLV",
+      "publisher": "ISRO",
+      "kind": "公式機体紹介",
+      "propulsion": "固体・液体の交互段構成",
+      "source": "https://www.isro.gov.in/PSLV_CON.html",
+      "note": "固体・液体の段を交互に用いる構成。ロケット全体を単一の推進方式で分類しない例。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV027",
+      "vehicle": "SSLV",
+      "lang": [
+        "en"
+      ],
+      "year": null,
+      "title": "Small Satellite Launch Vehicle",
+      "publisher": "ISRO",
+      "kind": "公式機体紹介",
+      "propulsion": "固体主段＋液体上段",
+      "source": "https://www.isro.gov.in/sslv_CON.html",
+      "note": "固体3段と終端の液体モジュールを区別する小型衛星打上げ機の例。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV028",
+      "vehicle": "SLS",
+      "lang": [
+        "en"
+      ],
+      "year": "2024-10",
+      "title": "SLS (Space Launch System) Fact Sheet",
+      "publisher": "NASA",
+      "kind": "公式ファクトシート",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.nasa.gov/wp-content/uploads/2024/10/sls-4960-sls-fact-sheet-oct2024-508.pdf",
+      "note": "Artemis向け大型輸送システムの構成と用途。将来のBlock構成は計画として読む。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV028-SLS-fact-sheet-2024.pdf",
+          "url": "https://www.nasa.gov/wp-content/uploads/2024/10/sls-4960-sls-fact-sheet-oct2024-508.pdf",
+          "bytes": 2241899,
+          "sha256": "e6a957c10b94b3ff554f69da0ea8b9129ce6be375ed263257f66729849a2634e",
+          "pages": 4,
+          "source_id": "LV028",
+          "credit": "NASA",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "published",
+            "license": "NASA educational/informational use",
+            "evidence": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+            "conditions": "出典NASA。教育・情報提供のため原本を無改変で共有。NASAによる推奨・公認を意味せず、ロゴの独立利用許可ではない。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV029",
+      "vehicle": "SLS",
+      "lang": [
+        "es"
+      ],
+      "year": "2021-10-01",
+      "title": "El cohete Sistema de Lanzamiento Espacial (SLS) de la NASA",
+      "publisher": "NASA",
+      "kind": "スペイン語の公式解説",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://www.nasa.gov/image-article/el-cohete-sistema-de-lanzamiento-espacial-sls-de-la-nasa",
+      "note": "初飛行前のスペイン語紹介。現在の運用実績を示す資料ではない。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV030",
+      "vehicle": "Saturn V",
+      "lang": [
+        "en"
+      ],
+      "year": "1969-06-25",
+      "title": "Technical information summary — Apollo 11 (AS-506), Apollo Saturn 5 space vehicle",
+      "publisher": "NASA / Marshall Space Flight Center",
+      "kind": "技術メモ NASA-TM-X-62812",
+      "propulsion": "液体",
+      "source": "https://ntrs.nasa.gov/citations/19700011707",
+      "note": "Apollo 11時の機体全体と月ミッションをまとめる歴史資料。NTRS登録年と原著刊行年を区別する。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV030-SaturnV-Apollo11-1969.pdf",
+          "url": "https://ntrs.nasa.gov/api/citations/19700011707/downloads/19700011707.pdf",
+          "bytes": 4188992,
+          "sha256": "3df6731e9cae9e22f291f69c30e336a5429711de2e1c674b8d38048ad00653b6",
+          "pages": 92,
+          "source_id": "LV030",
+          "credit": "NASA / Marshall Space Flight Center",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "published",
+            "license": "NTRS: Work of the US Gov. Public Use Permitted",
+            "evidence": "https://ntrs.nasa.gov/citations/19700011707",
+            "conditions": "個別Copyright欄とPublic distributionを確認。NASA・報告番号を保持し原本を無改変で共有。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV031",
+      "vehicle": "SLS Block 1",
+      "lang": [
+        "en"
+      ],
+      "year": "2025-05-14 掲載",
+      "title": "Space Launch System (SLS) Block 1",
+      "publisher": "NASA",
+      "kind": "3Dプリント用STL",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://science.nasa.gov/3d-resources/space-launch-system-sls-block-1",
+      "note": "外観の表示・教育・模型用STL。実機製造用CADではない。掲載日を機体設計年とは扱わない。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "モデル/LV031-SLS-Block1.stl",
+          "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/printable/space-launch-system-(sls)-block-1/Space%20Launch%20System%20(SLS)%20Block%201.stl",
+          "bytes": 13721684,
+          "sha256": "d3af75412a54f1d15d644cce56e895fe6813452b49dc0558b4b2ddfb484844ac",
+          "source_id": "LV031",
+          "credit": "NASA",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "published",
+            "license": "NASA 3D Resources / educational and informational use",
+            "evidence": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+            "conditions": "NASA公式3D Resourcesの無料ダウンロード・利用表示とメディア利用条件を確認。出典NASA、無改変、教育・情報提供用途。NASAの推奨を示さず、作者のreadmeを保持。"
+          }
+        }
+      ],
+      "model_details": {
+        "format": "binary STL",
+        "triangles": 274432,
+        "units": "STLに単位情報なし。実機縮尺は未検証。",
+        "purpose": "外観・教育・3Dプリント用"
+      }
+    },
+    {
+      "id": "LV032",
+      "vehicle": "SLS",
+      "lang": [
+        "en"
+      ],
+      "year": "2025-05-14 掲載",
+      "title": "Space Launch System (SLS) — printable archive",
+      "publisher": "NASA",
+      "kind": "3Dプリント用STLの配布アーカイブ",
+      "propulsion": "液体主段＋固体補助",
+      "source": "https://science.nasa.gov/3d-resources/space-launch-system-sls",
+      "note": "公式配布ZIPには単一のSTLが含まれる。作者の別添readmeとともに保存。外観・模型用であり、実機製造用CADではない。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "モデル/LV032-SLS-printable.zip",
+          "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/printable/space-launch-system-(sls)/Space%20Launch%20System%20(SLS).zip",
+          "bytes": 39941491,
+          "sha256": "df99ebf23f34c6800f31aed58756f05c7f4e929d0cf39735c6fd1ed7556c9282",
+          "source_id": "LV032",
+          "credit": "NASA",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "published",
+            "license": "NASA 3D Resources / educational and informational use",
+            "evidence": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+            "conditions": "NASA公式3D Resourcesの無料ダウンロード・利用表示とメディア利用条件を確認。出典NASA、無改変、教育・情報提供用途。NASAの推奨を示さず、作者のreadmeを保持。"
+          }
+        },
+        {
+          "path": "モデル/LV032-readme.txt",
+          "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/printable/space-launch-system-(sls)/readme.txt",
+          "bytes": 448,
+          "sha256": "d215c036aac145472dab81a4a093daf147695f62530d865bde765e7bf21dea68",
+          "source_id": "LV032",
+          "credit": "NASA",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "published",
+            "license": "NASA 3D Resources / educational and informational use",
+            "evidence": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+            "conditions": "NASA公式3D Resourcesの無料ダウンロード・利用表示とメディア利用条件を確認。出典NASA、無改変、教育・情報提供用途。NASAの推奨を示さず、作者のreadmeを保持。"
+          }
+        }
+      ],
+      "model_details": {
+        "format": "ZIP containing one binary STL",
+        "archive_member": "Space Launch System (SLS).stl",
+        "uncompressed_bytes": 77781934,
+        "triangles": 1555637,
+        "units": "STLに単位情報なし。実機縮尺は未検証。",
+        "purpose": "外観・教育・3Dプリント用"
+      }
+    },
+    {
+      "id": "LV033",
+      "vehicle": "SpaceShipTwo / RocketMotorTwo",
+      "lang": [
+        "en"
+      ],
+      "year": null,
+      "title": "Rocket Engine, Hybrid, RocketMotorTwo",
+      "publisher": "Smithsonian National Air and Space Museum",
+      "kind": "博物館所蔵資料",
+      "propulsion": "ハイブリッド・準軌道",
+      "source": "https://airandspace.si.edu/collection-objects/rocket-engine-hybrid-rocketmotortwo/nasm_A20190352000",
+      "note": "ハイブリッド推進の実用例を確認する所蔵品解説。SpaceShipTwoは準軌道飛行機であり、人工衛星の軌道投入機ではない。",
+      "checked_on": "2026-11-07",
+      "files": []
+    },
+    {
+      "id": "LV034",
+      "vehicle": "SpaceShipTwo",
+      "lang": [
+        "en"
+      ],
+      "year": "2012-05",
+      "title": "Final Environmental Assessment for the Launch and Reentry of SpaceShipTwo Reusable Suborbital Rockets at the Mojave Air and Space Port",
+      "publisher": "FAA",
+      "kind": "環境影響評価書",
+      "propulsion": "ハイブリッド・準軌道",
+      "source": "https://www.faa.gov/about/office_org/headquarters_offices/ast/media/20120502_Mojave_SS2_Final_EAandFONSI.pdf",
+      "note": "2012年時点の準軌道運用計画と環境評価。第三者図版を含むため文書全体の再配布許諾を別途確認する。",
+      "checked_on": "2026-11-07",
+      "files": [
+        {
+          "path": "原本/LV034-SpaceShipTwo-environment-2012.pdf",
+          "url": "https://www.faa.gov/about/office_org/headquarters_offices/ast/media/20120502_Mojave_SS2_Final_EAandFONSI.pdf",
+          "bytes": 2560046,
+          "sha256": "30008b6397536a3f17923264586860aa1652b894cd4fa638fa61aa2de29e5d14",
+          "pages": 72,
+          "source_id": "LV034",
+          "credit": "FAA",
+          "checked_on": "2026-11-07",
+          "redistribution": {
+            "status": "local_only",
+            "license": "再配布許諾未確認",
+            "evidence": "https://www.faa.gov/about/office_org/headquarters_offices/ast/media/20120502_Mojave_SS2_Final_EAandFONSI.pdf",
+            "conditions": "FAA資料には第三者提供図版が含まれる。原本全体の再配布条件が未確認のためローカル限定。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "LV035",
+      "vehicle": "SpaceShipTwo / RocketMotorTwo",
+      "lang": [
+        "en"
+      ],
+      "year": "2019-02-07",
+      "title": "Smithsonian's National Air and Space Museum Receives SpaceShipTwo Rocket Motor From Virgin Galactic",
+      "publisher": "Smithsonian National Air and Space Museum",
+      "kind": "所蔵品受入プレスリリース",
+      "propulsion": "ハイブリッド・準軌道",
+      "source": "https://airandspace.si.edu/newsroom/press-releases/smithsonians-national-air-and-space-museum-receives-spaceshiptwo-rocket",
+      "note": "2018年飛行に使われたハイブリッドエンジンの受入記録。準軌道飛行の実績をたどる資料。",
+      "checked_on": "2026-11-07",
+      "files": []
     },
     {
       "id": "LV036",
