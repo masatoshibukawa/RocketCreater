@@ -1,6 +1,7 @@
 """Persistent, version-aware analysis/LLM/redesign controller for saved design projects."""
 
 import copy
+import math
 import sys
 import time
 import uuid
@@ -9,7 +10,7 @@ from pathlib import Path
 from rocketwright.adaptive import Campaign, Requirements, digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.agent.workbench import Conflict
-from rocketwright.analysis import catalog, planner, policy
+from rocketwright.analysis import catalog, experience, planner, policy
 from rocketwright.analysis.aero_accuracy import holdout
 from rocketwright.analysis.record import scopes
 from rocketwright.analysis.runtime import Runtime, run
@@ -34,10 +35,11 @@ def code_hash():
 
 
 class Harness:
-    def __init__(self, store, *, runtime=None, director=None):
+    def __init__(self, store, *, runtime=None, director=None, prior_experience=()):
         self.store = store
         self.runtime = runtime or Runtime.installed()
         self.director = director
+        self.prior_experience = copy.deepcopy(list(prior_experience))
 
     def start(self, project_id, revision, precision=None, limits=None):
         precision, limits = precision or Precision(), limits or SearchLimits()
@@ -63,6 +65,9 @@ class Harness:
                 visited=[policy.identity(spec)],
                 pending=None,
                 quality_pending=[],
+                observations=[],
+                prior_experience=self.prior_experience,
+                confirmation_reserve_s=limits.budget_s * limits.reserve_confirmation_fraction,
                 physical_qualification=False,
                 accepted_spec_hash=None,
             )
@@ -117,6 +122,9 @@ class Harness:
         )
         inputs["flight_numerics"] = digest(runtime.flight_step_s)
         p = catalog.pool(precision)
+        if not limits.exploratory_redesign or limits.max_versions == 1:
+            for shelf in (p.actions, p.methods, p.targets, p.evaluations):
+                shelf.pop("survey")
         for key, action in p.actions.items():
             if key != "geometry":
                 action.uses.append("requirements")
@@ -192,6 +200,7 @@ class Harness:
                 precision=a["precision"],
                 artifacts=artifacts,
                 runtime=a["runtime"],
+                limits=a["limits"],
                 timeout_s=max(0.1, timeout - 5),
             )
             write_json(folder / "input.json", context)
@@ -257,20 +266,67 @@ class Harness:
             # Refinement invalidates the old confirmation. Keep its unresolved accuracy
             # obligation until a new confirmation exists; do not optimize against stale accuracy.
             numerical |= set(a.get("quality_pending", []))
-        proposals = {} if numerical else policy.proposals(spec, limits, unmet, a["visited"])
+        self._feedback(c, spec, precision)
+        survey = self.data(c, "survey")
+        exploration = limits.exploratory_redesign
+        # Unknown numerical accuracy blocks acceptance, not provisional exploration.
+        proposals = (
+            policy.proposals(spec, limits, unmet, a["visited"])
+            if (not numerical or exploration)
+            else {}
+        )
+        if exploration and "survey" in c.pool.actions and not survey:
+            proposals = {}
+            if "survey" in choices["offered"]:
+                choices["offered"]["survey"]["score"] = 120
+        cycle_s = sum(action.cost_s for action in c.pool.actions.values())
+        if c.remaining_s < max(a.get("confirmation_reserve_s", 0), cycle_s):
+            proposals = {}
+            choices["rejected"]["redesign"] = ["reserve_for_confirmation"]
         if self.state["version"] - a["starting_version"] + 1 >= limits.max_versions:
             proposals = {}
             choices["rejected"]["redesign"] = ["version_budget"]
         for key, proposal in proposals.items():
+            prediction = (survey or {}).get("candidates", {}).get(key)
+            if prediction and prediction["spec_hash"] != policy.identity(
+                DesignSpec.model_validate(proposal["spec"])
+            ):
+                prediction = None
+            retrieved = (
+                experience.retrieve(
+                    a.get("observations", []) + a.get("prior_experience", []),
+                    spec,
+                    proposal["change"],
+                    code=code_hash(),
+                    precision=precision.model_dump(),
+                )
+                if limits.use_experience
+                else []
+            )
+            learned = experience.estimate(retrieved, spec.requirement.target_altitude_m)
+            gain = prediction["violation_reduction"] if prediction else 0
+            # Explicit estimate, with shrinkage for sparse measured feedback.
+            score = (
+                60
+                + 80 * math.tanh(gain)
+                + learned["score_adjustment"]
+                - math.log1p(learned["mean_cost_s"] or cycle_s) / 3
+            )
             choices["offered"][key] = dict(
                 target=proposal["change"],
                 method="new_design_revision",
                 evaluation="recalculate affected analyses",
                 layer="high",
-                score=proposal["score"],
+                score=score,
                 cost_s=1,
                 addresses=unmet,
                 scope=proposal["reason"],
+                provisional=True,
+                unresolved_precision=sorted(numerical),
+                prediction=prediction,
+                experience=learned,
+                retrieved_outcomes=retrieved,
+                estimated_followup_cost_s=cycle_s,
             )
         runtime = Runtime.model_validate(a["runtime"])
         if (
@@ -359,7 +415,60 @@ class Harness:
             sorted(choices["offered"].items(), key=lambda kv: (-kv[1]["score"], kv[0]))
         )
         choices["unmet"] = unmet
+        choices["precision_pending"] = sorted(numerical)
+        choices["confirmation_reserve_s"] = a.get("confirmation_reserve_s", 0)
         return choices, proposals, confirmation
+
+    def _snapshot(self, c):
+        screen, geometry = self.data(c, "screen"), self.data(c, "geometry")
+        if not screen or not geometry or "record" not in geometry:
+            return None
+        # compile_record reflects material/operation edits even when CAD is reused.
+        from rocketwright.analysis.record import compile_record
+
+        spec = DesignSpec.model_validate(self.state["spec"])
+        record = compile_record(spec, geometry["cad_metrics"])
+        a = record["assembly"]
+        return dict(
+            apogee_m=screen["apogee_m"],
+            incidence_deg=screen["ascent_incidence_deg"],
+            dry_mass_g=a["dry_mass_g"],
+            static_margin_cal=(a["cp_mm"] - a["wet_cg_mm"]) / spec.geometry.body_diameter_mm,
+        )
+
+    def _feedback(self, c, spec, precision):
+        a = self.state["adaptive"]
+        pending = a.get("outcome_pending")
+        snapshot = self._snapshot(c)
+        if not pending or not snapshot:
+            return
+        if (
+            pending["to_spec_hash"] != policy.identity(spec)
+            or pending["code"] != code_hash()
+            or pending["precision_hash"] != digest(precision.model_dump())
+        ):
+            a.setdefault("observations", []).append(dict(pending, status="stale"))
+            a["outcome_pending"] = None
+            return
+        value = c.results["screen"]["value"]
+        row = dict(
+            pending,
+            after=snapshot,
+            delta={k: snapshot[k] - pending["before"][k] for k in snapshot},
+            cost_s=max(0, pending["remaining_s"] - c.remaining_s),
+            status="measured",
+            code=code_hash(),
+            precision_hash=digest(precision.model_dump()),
+            evidence_id=value["sha256"],
+            evidence=dict(
+                artifact=value["artifact"],
+                sha256=value["sha256"],
+                manifest_sha256=value["manifest_sha256"],
+            ),
+            scope="same analytic 6DOF metric before and after; no physical validation",
+        )
+        a.setdefault("observations", []).append(row)
+        a["outcome_pending"] = None
 
     def _persist(self, c):
         a = self.state["adaptive"]
@@ -369,6 +478,20 @@ class Harness:
     def _fork(self, proposal, decision, c):
         state, a = self.state, self.state["adaptive"]
         old = state["version"]
+        before = self._snapshot(c)
+        old_spec = DesignSpec.model_validate(state["spec"])
+        if before:
+            a["outcome_pending"] = dict(
+                before=before,
+                features=experience.features(old_spec),
+                signature=experience.signature(proposal["change"], old_spec),
+                remaining_s=c.remaining_s,
+                decision_index=len(a["decisions"]) - 1,
+                from_spec_hash=policy.identity(old_spec),
+                to_spec_hash=policy.identity(DesignSpec.model_validate(proposal["spec"])),
+                code=code_hash(),
+                precision_hash=digest(a["precision"]),
+            )
         self._persist(c)
         self.store.new_version(state, DesignSpec.model_validate(proposal["spec"]))
         a["visited"].append(policy.identity(DesignSpec.model_validate(state["spec"])))
@@ -425,26 +548,32 @@ class Harness:
             )
             self._persist(c)
             return
+        selection_context = dict(
+            version=state["version"],
+            metrics=c.metrics,
+            unmet=choices["unmet"],
+            recent_decisions=[
+                {k: d.get(k) for k in ("action", "reason", "planner")} for d in a["decisions"][-4:]
+            ],
+            requirement=spec.requirement.model_dump(),
+            precision=precision.model_dump(),
+            precision_pending=choices["precision_pending"],
+            confirmation_reserve_s=choices["confirmation_reserve_s"],
+            observations=a.get("observations", [])[-12:] if limits.use_experience else [],
+        )
         decision = planner.choose(
             choices,
-            dict(
-                version=state["version"],
-                metrics=c.metrics,
-                unmet=choices["unmet"],
-                recent_decisions=[
-                    {k: d.get(k) for k in ("action", "reason", "planner")}
-                    for d in a["decisions"][-4:]
-                ],
-                requirement=spec.requirement.model_dump(),
-                precision=precision.model_dump(),
-            ),
+            selection_context,
             limits,
             director=self.director,
             remaining_s=c.remaining_s,
         )
         c.remaining_s -= decision["elapsed_s"]
         decision.update(
-            version=state["version"], offered=list(choices["offered"]), rejected=choices["rejected"]
+            version=state["version"],
+            offered=list(choices["offered"]),
+            rejected=choices["rejected"],
+            selection_context=dict(context=selection_context, choices=choices["offered"]),
         )
         a["decisions"].append(decision)
         key = decision["action"]

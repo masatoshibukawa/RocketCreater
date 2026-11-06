@@ -40,12 +40,14 @@ def test_planner_rejects_unoffered_ids_extra_fields_and_labels_fallback():
     assert outcome["action"] == "screen"
 
 
-def test_policy_moves_from_operating_variables_to_shape_and_invalidates_measured_mass():
+def test_policy_offers_shape_alongside_operations_and_invalidates_measured_mass():
     s = spec()
     s.measured_printed_mass_g = 30
     limits = SearchLimits(pressure_kpa=(300, 350), fills=(), nozzle_mm=())
     initial = policy.proposals(s, limits, ["altitude"], [policy.identity(s)])
-    assert list(initial) == ["redesign/pressure-350"]
+    assert "redesign/pressure-350" in initial
+    assert "redesign/thinner-fin" in initial
+    assert "redesign/nose_wall_mm-0.75" in initial
     s.design = s.design.model_copy(update={"initial_gauge_pressure_pa": 350000})
     later = policy.proposals(s, limits, ["altitude"], [policy.identity(s)])
     assert later["redesign/thinner-fin"]["spec"]["measured_printed_mass_g"] is None
@@ -155,7 +157,7 @@ def test_capability_and_fin_count_gate_cfd_without_claiming_pass(tmp_path):
 
 
 def test_numerical_failure_offers_refinement_before_redesign(tmp_path):
-    _, h, s = started(tmp_path)
+    _, h, s = started(tmp_path, exploratory_redesign=False)
     c, specification, precision, limits = h._campaign(s)
     original = h.data
     h.data = lambda campaign, key: (
@@ -248,7 +250,7 @@ def test_existing_search_starts_import_without_old_mass_or_pass_claims():
 
 
 def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
-    _, h, state = started(tmp_path, max_versions=3)
+    _, h, state = started(tmp_path, max_versions=3, exploratory_redesign=False)
     for _ in range(4):
         state = h.step(state["id"], state["revision"])
     assert state["adaptive"]["results"]["screen"]["execution_status"] == "completed"
@@ -261,7 +263,7 @@ def test_pending_accuracy_blocks_redesign_until_reconfirmation(tmp_path):
 
 
 def test_independent_aero_failures_offer_numerical_work_and_block_redesign(tmp_path):
-    _, h, s = started(tmp_path)
+    _, h, s = started(tmp_path, exploratory_redesign=False)
     c, specification, precision, limits = h._campaign(s)
     original = h.data
     h.data = lambda campaign, key: (

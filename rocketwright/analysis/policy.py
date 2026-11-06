@@ -66,7 +66,6 @@ def proposals(spec, limits, unmet, visited):
                 "Change thrust duration and drag exposure",
                 65,
             )
-    operating_available = bool(result)
     if limits.allow_geometry_change:
         g = spec.geometry
         if set(unmet) & {"attitude", "static_margin", "frozen_pitch", "aero_domain"}:
@@ -105,7 +104,7 @@ def proposals(spec, limits, unmet, visited):
                 "Increase the assumed root stiffness with its added mass",
                 90,
             )
-        if "altitude" in unmet and not operating_available:
+        if "altitude" in unmet:
             add(
                 "redesign/thinner-fin",
                 "geometry",
@@ -114,15 +113,51 @@ def proposals(spec, limits, unmet, visited):
                 "Operating scenarios exhausted; compare reduced printed mass and stiffness",
                 70,
             )
-    if limits.allow_material_change and set(unmet) & {"fin_deformation", "modes", "altitude"}:
-        if "altitude" not in unmet or not operating_available:
-            for material in STOCKS:
+            # Competing operating and part choices remain available together.
+            for field, factors in {
+                "fin_root_mm": (0.85, 1.15),
+                "fin_tip_mm": (0.7, 1.2),
+                "fin_span_mm": (0.8, 1.15),
+                "fin_sweep_mm": (0.7, 1.2),
+                "nose_length_mm": (0.8, 1.2),
+                "nose_wall_mm": (0.75,),
+            }.items():
+                for factor in factors:
+                    add(
+                        f"redesign/{field}-{factor:g}",
+                        "geometry",
+                        field,
+                        getattr(g, field) * factor,
+                        "Explore mass, drag and restoring moment; provisional until recalculated",
+                        70,
+                    )
+        if set(unmet) & {"altitude", "static_margin", "attitude"}:
+            for station in (0.25, 0.4):
                 add(
-                    "redesign/material-" + material.split()[-1],
-                    None,
-                    "material",
-                    material,
-                    "Compare the registered density/stiffness assumption and recalculate mass",
-                    60,
+                    f"redesign/equipment-station-{station:g}",
+                    "assumptions",
+                    "other_mass_station_fraction",
+                    station,
+                    "Rearrange equipment mass; packaging and retention require verification",
+                    70,
                 )
+            for inset in (0.0, 15.0):
+                add(
+                    f"redesign/fin-station-{inset:g}",
+                    "geometry",
+                    "fin_tail_inset_mm",
+                    inset,
+                    "Compare fin station while retaining the same material and mass model",
+                    70,
+                )
+    if limits.allow_material_change and set(unmet) & {"fin_deformation", "modes", "altitude"}:
+        for material in STOCKS:
+            add(
+                "redesign/material-" + material.split()[-1],
+                None,
+                "material",
+                material,
+                "Compare the registered density/stiffness assumption and recalculate mass",
+                70,
+            )
     return dict(sorted(result.items(), key=lambda kv: (-kv[1]["score"], kv[0])))

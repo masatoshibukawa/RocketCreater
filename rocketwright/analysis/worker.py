@@ -198,6 +198,17 @@ class Worker:
     def screen(self):
         return self.trajectory(use_cfd=False)
 
+    def survey(self):
+        from rocketwright.analysis.screening import survey
+
+        return survey(
+            self.spec,
+            self.data["geometry"]["cad_metrics"],
+            self.precision,
+            self.ctx["limits"],
+            deadline=self.deadline,
+        )
+
     def flight(self):
         return self.trajectory()
 
@@ -633,6 +644,7 @@ class Worker:
             "thermal",
             "propulsion",
             "screen",
+            "survey",
             "flight",
             "refine",
             "modes",

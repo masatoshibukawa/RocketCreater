@@ -10,6 +10,7 @@ def pool(precision):
         ("thermal", "low", "five-node heat network", ["geometry"], 5, 0, []),
         ("propulsion", "middle", "dry-gas discharge", ["thermal"], 5, 0, []),
         ("screen", "high", "rigid 6DOF screening", ["propulsion"], 10, 0, []),
+        ("survey", "high", "counterfactual axial/mass sensitivity survey", ["screen"], 60, 0, []),
     ]
     flight = "screen"
     if precision.require_cfd:
@@ -69,7 +70,7 @@ def pool(precision):
             label=label,
             observables=[key],
             rule="Host evaluation against saved precision and requirements",
-            evidence_level="diagnostic" if key == "screen" else "numerical",
+            evidence_level="diagnostic" if key in {"screen", "survey"} else "numerical",
         )
         actions[key] = Action(
             target=key,
