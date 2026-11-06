@@ -6,6 +6,7 @@ import json
 import math
 import struct
 import sys
+import time
 from pathlib import Path
 
 import bpy
@@ -13,11 +14,14 @@ from mathutils import Vector
 
 job_path = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
 job = json.loads(job_path.read_text(encoding="utf-8"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from render_checkpoint import Checkpoint
 output = job_path.parent
 preview = "--preview" in sys.argv
 if preview:
     output = output / "preview"
     output.mkdir(exist_ok=True)
+checkpoint = Checkpoint(output, job)
 g = {k: v / 1000 for k, v in job["dimensions_mm"].items()}
 g["fin_count"] = job["dimensions_mm"].get("fin_count", 4)
 plan = job["plan"]
@@ -400,7 +404,10 @@ for mode in ("design", "launch"):
                 camera.location - root.location - Vector((0, 0, length / 2))
             ).length
         scene.render.filepath = str(frames / f"{index:04d}.png")
-        bpy.ops.render.render(write_still=True)
+        if not checkpoint.valid(scene.render.filepath):
+            frame_started = time.time()
+            bpy.ops.render.render(write_still=True)
+            checkpoint.finished(scene.render.filepath, time.time()-frame_started)
     if mode == "design" and not preview:
         # Pack licensed textures so the saved scene has no absolute image paths.
         if photographic:

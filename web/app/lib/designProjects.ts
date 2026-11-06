@@ -39,7 +39,8 @@ export function projectFileLabel(name: string): string {
 }
 export interface DesignProject {
   id: string; name: string; revision: number; version: number; spec: ProductionSpec;
-  adopted: boolean; active: { name: string; started_at: number } | null; error: string | null;
+  adopted: boolean; active: { id?:string; name: string; phase?:string; started_at: number;
+    progress?:{phase:string;completed:number;total:number|null;reused?:number;eta_s:[number,number]|null;elapsed_s:number} } | null; error: string | null;
   analysis: { design: BottleDesign; result: { success: boolean; metrics: Record<string, number>;
     trace: TracePoint[]; warnings: string[]; failure_reasons: string[] }; printed_mass_used_g: number;
     printed_solid_mass_g: number; mass_basis: string; limitations: string[];

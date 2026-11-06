@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import os
 import re
@@ -17,6 +18,7 @@ from urllib.parse import urlencode
 from pydantic import BaseModel, ConfigDict, Field
 
 from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
+from rocketwright.agent.project_jobs import cancel_path, cancelled, resource
 from rocketwright.agent.video_appearance import freeze_assets, plan_key, recipe
 from rocketwright.agent.workbench import ROOT, SKILLS, Conflict
 
@@ -187,6 +189,30 @@ def render_video(bench, project_id, revision, style="engineering", *, started=No
             }
         if style == "photographic":
             freeze_assets(directory)
+        job["render_identity"] = hashlib.sha256(
+            json.dumps(
+                {
+                    "job": job,
+                    "code": {
+                        name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+                        for name in [
+                            "scripts/render_workbench_scene.py",
+                            "scripts/render_checkpoint.py",
+                            "scripts/compose_workbench_video.py",
+                            "AIvideo/pet-rocket/realism/appearance.py",
+                        ]
+                    },
+                    "cad": {
+                        k: hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                        for k, p in job.get("cad_files", {}).items()
+                    },
+                },
+                sort_keys=True,
+            ).encode()
+        ).hexdigest()
+        if state.get("active", {}).get("id"):
+            job["job_id"] = state["active"]["id"]
+            job["cancel_file"] = str(cancel_path(bench, project_id, job["job_id"]).resolve())
         job_path = directory / "job.json"
         job_path.write_text(json.dumps(job, ensure_ascii=False, indent=2), encoding="utf-8")
         env = os.environ.copy()
@@ -211,23 +237,33 @@ def render_video(bench, project_id, revision, style="engineering", *, started=No
                 str(settings["libs"]),
             ],
         ]
-        with (directory / "render.log").open("w", encoding="utf-8") as log:
-            for command in commands:
-                try:
-                    subprocess.run(
-                        command,
-                        cwd=ROOT,
-                        env=env,
-                        check=True,
-                        timeout=3600 if style == "photographic" else 900,
-                        stdout=log,
-                        stderr=subprocess.STDOUT,
-                        creationflags=flags,
-                    )
-                except (OSError, subprocess.SubprocessError) as exc:
-                    raise LocalRuntimeError(
-                        "Video render failed; inspect the project render.log"
-                    ) from exc
+        lease = resource(bench, state, "renderer")
+        try:
+            state["active"]["phase"] = "rendering"
+            bench._write(state)
+            with (directory / "render.log").open("w", encoding="utf-8") as log:
+                for command in commands:
+                    if cancelled(bench, state):
+                        raise LocalRuntimeError(
+                            "ジョブを中断しました。保存したフレームから再試行できます。"
+                        )
+                    try:
+                        subprocess.run(
+                            command,
+                            cwd=ROOT,
+                            env=env,
+                            check=True,
+                            timeout=3600 if style == "photographic" else 900,
+                            stdout=log,
+                            stderr=subprocess.STDOUT,
+                            creationflags=flags,
+                        )
+                    except (OSError, subprocess.SubprocessError) as exc:
+                        raise LocalRuntimeError(
+                            "Video render failed or was cancelled; verified frames retained"
+                        ) from exc
+        finally:
+            lease.__exit__(None, None, None)
         verification = json.loads((directory / "verification.json").read_text())
         if not verification["passed"]:
             raise LocalRuntimeError("Video verification did not pass")

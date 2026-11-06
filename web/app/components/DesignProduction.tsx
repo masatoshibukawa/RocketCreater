@@ -65,7 +65,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
     label: project?.active ? OPERATION[project.active.name] ?? "採用版の資料を作成中" : "保存した設計と次の工程を確認できます" });
 
   async function action(operation: string, extra: Record<string, unknown> = {}) {
-    if (!project || working) return;
+    if (!project || (working && operation !== "cancel")) return;
     setBusy(true); setError(null);
     try { accept(await projectRequest<DesignProject>(`/${project.id}/${operation}`, { revision: project.revision, ...extra })); await refreshList(); }
     catch (e) { setError(String(e instanceof Error ? e.message : e));
@@ -134,6 +134,10 @@ export default function DesignProduction({ source, mode, onProjectChange, active
     {error || project?.error ? <p role="alert" className="wb-error">{error ?? project?.error}</p> : null}
     {project ? <>
       <p className="wb-case-tag" role="status">{project.active ? OPERATION[project.active.name] ?? "制作中" : project.adopted ? "試作版として採用済み" : project.analysis ? result?.success ? "数値スクリーニング済み · 採用待ち" : "計算条件が未達 · 編集して再解析" : "編集を保存済み · 再解析が必要"}</p>
+      {project.active ? <div role="status"><p>{project.active.phase?.startsWith("waiting_") ? "機材の空きを待っています" : "保存したジョブを実行中"} · {project.active.id?.slice(0,8)}</p>
+        {project.active.progress?.total ? <><progress value={project.active.progress.completed} max={project.active.progress.total}/><p>描画 {project.active.progress.completed}/{project.active.progress.total} フレーム · 再利用 {project.active.progress.reused??0}</p></> : null}
+        <p>{project.active.progress?.eta_s ? `描画の残り目安 ${Math.ceil(project.active.progress.eta_s[0]/60)}〜${Math.ceil(project.active.progress.eta_s[1]/60)}分（直近の実測時間から算出）` : "残り時間は未計測です"}</p>
+        <button className="btn" disabled={busy} onClick={()=>void action("cancel")}>区切りで中断・再開用に保存</button></div> : null}
       {project.analysis?.requirements ? <details open><summary>要求ごとの確認</summary>{project.analysis.requirements.checks.map(check => <p key={check.id}>{check.label}：{({pass:"計算・入力確認済み",fail:"未達",not_evaluated:"未評価",not_required:"要求なし"} as Record<string,string>)[check.status]} · {check.reason}</p>)}</details> : null}
       <div className="project-actions"><button className="btn" disabled={working || project.adopted || !!draft} onClick={() => void action("analyse")}>CADと飛行を再解析</button><button className="btn btn-primary" disabled={working || !result?.success || project.adopted || !!draft} onClick={() => void action("adopt")}>この版を採用</button></div>
       {result ? <div className="wb-note"><b>計算高度 {result.metrics.apogee_m?.toFixed(2)} m / 乾燥質量 {(project.analysis!.design.dry_mass_kg*1000).toFixed(2)} g</b><p>印刷部品 {project.analysis!.printed_mass_used_g.toFixed(2)} g（{project.analysis!.mass_basis === "measured" ? "実測入力" : "CADの一様固体推定"}）。{project.spec.requirement ? "保存した目標高度で判定" : "目標高度は未指定"}。</p>{result.failure_reasons.map(t => <p key={t}>{t}</p>)}<details><summary>解析の前提と限界</summary>{project.analysis!.limitations.map(t => <p key={t}>{t}</p>)}</details></div> : null}

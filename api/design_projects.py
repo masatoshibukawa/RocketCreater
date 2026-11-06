@@ -6,8 +6,9 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from api.workbench import PlanRequest, RenderRequest, Revision, call
 from rocketwright.agent.design_projects import DEFAULT_PROJECTS, DesignSpec, queue_operation
-from rocketwright.agent.production import plan_video, queue_video
+from rocketwright.agent.production import plan_video
 from rocketwright.agent.project_assembly import Observation
+from rocketwright.agent.project_jobs import queue
 
 router = APIRouter(prefix="/design-projects", tags=["design-production"])
 
@@ -104,7 +105,14 @@ def direction(project_id: str, request: PlanRequest):
 @router.post("/{project_id}/render-video", status_code=202)
 def render(project_id: str, request: RenderRequest):
     call(DEFAULT_PROJECTS.require_adopted, call(DEFAULT_PROJECTS.get, project_id))
-    return call(queue_video, DEFAULT_PROJECTS, project_id, request.revision, request.style)
+    return call(
+        queue, DEFAULT_PROJECTS, project_id, request.revision, "render_video", request.style
+    )
+
+
+@router.post("/{project_id}/cancel")
+def cancel(project_id: str, request: Revision):
+    return call(DEFAULT_PROJECTS.cancel, project_id, request.revision)
 
 
 @router.post("/{project_id}/archive")

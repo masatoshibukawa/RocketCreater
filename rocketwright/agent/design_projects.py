@@ -16,9 +16,9 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from rocketwright.agent.local_runtime import LocalRuntimeError
 from rocketwright.agent.project_assembly import STEP_IDS, Observation, assembly_assessment
 from rocketwright.agent.project_equipment import Equipment, procurement_summary
+from rocketwright.agent.project_jobs import cancel_path, file_lock, locked, progress, resource_lease
 from rocketwright.agent.project_requirements import assess_requirements, validate_requirements
 from rocketwright.agent.workbench import Conflict
 from rocketwright.analysis.schema import MOUNTS, STOCKS, Assumptions
@@ -137,11 +137,20 @@ class DesignProjects:
                 for f in state["files"]
                 if f["name"].endswith((".png", ".json")) or f["name"] == "analysis-envelope-m.stl"
             ]
-        if state["active"] and state["active"].get("owner") != self.session:
+        active = state["active"]
+        abandoned = (
+            active
+            and active.get("owner") != self.session
+            and not locked(self.base(project_id) / "operation.lock")
+            and not (active.get("phase") == "queued" and time.time() - active["started_at"] < 30)
+        )
+        if abandoned:
             state["active"] = None
             state["error"] = "前回の処理は中断されました。保存済みの入力から再試行できます。"
             state["revision"] += 1
             self._write(state)
+        elif active:
+            state["active"]["progress"] = progress(self, project_id, active)
         return state
 
     def list(self):
@@ -185,11 +194,29 @@ class DesignProjects:
             lock = self.locks.setdefault(project_id, threading.Lock())
         if not lock.acquire(blocking=False):
             raise Conflict("別の処理を実行中です。完了後に再試行してください。")
+        process_lock = None
+        process_locked = False
         try:
+            process_lock = file_lock(self.base(project_id) / "operation.lock")
+            process_lock.__enter__()
+            process_locked = True
             state = self.get(project_id)
-            if state["revision"] != revision or state["active"]:
+            reservation = state.get("active") or {}
+            own_job = reservation.get("id") == os.getenv("ROCKETWRIGHT_JOB_ID") and reservation.get(
+                "id"
+            )
+            if state["revision"] != revision or (state["active"] and not own_job):
                 raise Conflict("設計版が更新されました。最新の状態を読み直してください。")
-            state["active"] = dict(name=operation, started_at=time.time(), owner=self.session)
+            state["active"] = {
+                **reservation,
+                **dict(
+                    id=reservation.get("id") or uuid.uuid4().hex,
+                    name=operation,
+                    phase="running",
+                    started_at=reservation.get("started_at", time.time()),
+                    owner=self.session,
+                ),
+            }
             state["error"] = None
             self._write(state)
             if started_event:
@@ -203,12 +230,26 @@ class DesignProjects:
                 state["error"] = str(exc)
                 raise
             finally:
+                state.setdefault("jobs", []).append(
+                    {**state["active"], "finished_at": time.time(), "error": state["error"]}
+                )
+                state["jobs"] = state["jobs"][-50:]
                 state["active"] = None
                 state["revision"] += 1
                 self._write(state)
             return state
         finally:
+            if process_locked:
+                process_lock.__exit__(None, None, None)
             lock.release()
+
+    def cancel(self, project_id, revision):
+        state = self.get(project_id)
+        if state["revision"] != revision or not state["active"]:
+            raise Conflict("現在の処理がありません。")
+        cancel_path(self, project_id, state["active"]["id"]).parent.mkdir(exist_ok=True)
+        cancel_path(self, project_id, state["active"]["id"]).touch()
+        return self.get(project_id)
 
     def edit(self, project_id, revision, spec: DesignSpec):
         spec = DesignSpec.model_validate(spec.model_dump())
@@ -316,7 +357,8 @@ class DesignProjects:
             if cad_dir.exists():
                 cad_dir.rename(directory / ("cad-incomplete-" + uuid.uuid4().hex[:8]))
             design = spec.design.model_copy(update={"geometry": spec.geometry})
-            _, geometry = prepare_geometry(PrintRequest(design=design), cad_dir)
+            with resource_lease(self, state, "renderer"):
+                _, geometry = prepare_geometry(PrintRequest(design=design), cad_dir)
             printed = sum(
                 r["volume_mm3"]
                 * STOCKS[spec.material]["density"]
@@ -514,15 +556,16 @@ class DesignProjects:
             for row in state["files"]:
                 self.file(project_id, row["key"])
             output = self.directory(project_id) / ("print-" + uuid.uuid4().hex[:8])
-            manifest = prepare(
-                PrintRequest(
-                    design=BottleDesign.model_validate(state["analysis"]["design"]),
-                    printer=state["spec"]
-                    .get("equipment", {})
-                    .get("printer_profile", "s5-gray-aa04"),
-                ),
-                output,
-            )
+            with resource_lease(self, state, "renderer"), resource_lease(self, state, "slicer"):
+                manifest = prepare(
+                    PrintRequest(
+                        design=BottleDesign.model_validate(state["analysis"]["design"]),
+                        printer=state["spec"]
+                        .get("equipment", {})
+                        .get("printer_profile", "s5-gray-aa04"),
+                    ),
+                    output,
+                )
             # Regeneration must reproduce the exact CAD volumes that supplied the mass model.
             original = json.loads(self.file(project_id, "cad/geometry-check.json").read_text())
             actual = json.loads((output / "geometry-check.json").read_text())
@@ -660,23 +703,9 @@ def assembly_steps(state):
 def queue_operation(store, project_id, revision, method):
     if method not in {"analyse", "print_package"}:
         raise ValueError("Unknown production operation")
-    ready = threading.Event()
-    errors = []
+    from rocketwright.agent.project_jobs import queue
 
-    def work():
-        try:
-            getattr(store, method)(project_id, revision, started_event=ready)
-        except Exception as exc:
-            errors.append(exc)
-        finally:
-            ready.set()
-
-    threading.Thread(target=work, daemon=True, name="design-production").start()
-    if not ready.wait(5):
-        raise LocalRuntimeError("処理の開始状態を確認できません。案件を読み直してください。")
-    if errors:
-        raise errors[0]
-    return store.get(project_id)
+    return queue(store, project_id, revision, method)
 
 
 DEFAULT_PROJECTS = DesignProjects()
