@@ -9,5 +9,6 @@
 | 過去の失敗をどの条件へ適用するか | [試行・改善スキル](../3d-model-skills/quality/3d-print-outcome-learning/SKILL.md) |
 | 採用理由と公開実装の限界 | [比較記録](adoption.md)、[出典台帳](sources.csv) |
 | その案件の検査を保存する | [検証記録](verification-record.example.json)、[試行と知見](outcome-lesson.example.json) |
+| 今回の検証範囲と限界を知る | [動作・6ケースの確認記録](validation.md) |
 
 今回の追加は既存スキルの原本内に保存する。実機での新たな印刷・接続・耐久試験を実施したものではない。
