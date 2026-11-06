@@ -218,6 +218,7 @@ function toTrace(value: unknown): TracePoint[] {
       north_m: asNumber(rec.north_m, 0),
       speed_mps: asNumber(rec.speed_mps, 0),
       mass_kg: asNumberOrNull(rec.mass_kg),
+      extra: asNumberMap(rec.extra),
     });
   }
   return out;

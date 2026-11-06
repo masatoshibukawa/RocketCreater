@@ -2,23 +2,23 @@
    Readable at 1280x720 (demo video). No UI kit. */
 
 :root {
-  --bg: #f3f5f9;
+  --bg: #ffffff;
   --panel: #ffffff;
-  --panel-2: #f6f8fb;
-  --border: #d9e0e8;
-  --border-strong: #b9c4d0;
-  --text: #1f2933;
-  --muted: #6b7684;
-  --accent: #2f6fed;
+  --panel-2: #f4f6f9;
+  --border: #cdd5df;
+  --border-strong: #7f8b99;
+  --text: #17202a;
+  --muted: #4f5a67;
+  --accent: #1f5fd6;
   --accent-soft: #e5edff;
-  --accent-text: #1d4fc4;
-  --ok: #2a9d6f;
+  --accent-text: #1a4db0;
+  --ok: #1b7f59;
   --ok-soft: #e1f4ec;
-  --bad: #d64545;
+  --bad: #b42828;
   --bad-soft: #fbe5e5;
-  --warn: #c7810f;
+  --warn: #8f5b05;
   --warn-soft: #fff3d6;
-  --shadow: 0 1px 2px rgba(31, 41, 51, 0.06), 0 4px 14px rgba(31, 41, 51, 0.05);
+  --shadow: none;
   --font: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Meiryo",
     system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -43,8 +43,12 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+small {
   font-size: 14px;
-  line-height: 1.5;
 }
 
 button,
@@ -106,9 +110,21 @@ a {
   display: contents;
 }
 
+.center-tabs {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .column-center > .model-panel {
   flex: 1 1 52%;
   min-height: 220px;
+}
+
+.column-center > .simulation-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .column-center > .cost-panel {
@@ -147,6 +163,11 @@ a {
     flex: none;
     overflow: visible;
   }
+
+  .column-center > .simulation-panel {
+    flex: none;
+    overflow: visible;
+  }
 }
 
 @media (max-width: 799px) {
@@ -155,7 +176,7 @@ a {
   }
 
   .app-columns {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "chat" "rest";
   }
 
@@ -165,6 +186,10 @@ a {
 
   .column-rest {
     overflow: visible;
+  }
+
+  .seed-field {
+    flex-basis: 100%;
   }
 }
 
@@ -179,7 +204,7 @@ a {
 
 .panel-title {
   margin: 0 0 8px;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: 0.02em;
@@ -210,26 +235,27 @@ a {
 
 .mono {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .empty {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   padding: 12px 0;
   text-align: center;
 }
 
 .link-small {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ---------------------------------------------------------------- status strip */
 
 .status-strip {
   display: flex;
-  align-items: baseline;
-  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
   padding: 6px 14px;
   background: var(--panel);
   border: 1px solid var(--border);
@@ -238,7 +264,7 @@ a {
 }
 
 .status-brand {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: 0.01em;
   color: var(--accent-text);
@@ -246,11 +272,8 @@ a {
 
 .status-sub {
   color: var(--muted);
-  font-size: 12px;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 14px;
+  flex: 1 1 240px;
 }
 
 .status-line {
@@ -332,7 +355,7 @@ a {
 }
 
 .msg-role {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--muted);
   letter-spacing: 0.02em;
@@ -403,7 +426,7 @@ a {
 .msg-system {
   align-self: flex-start;
   padding: 1px 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   font-family: var(--mono);
 }
@@ -419,7 +442,7 @@ a {
 
 .chat-form textarea {
   width: 100%;
-  min-height: 72px;
+  min-height: 96px;
   resize: vertical;
   padding: 8px 10px;
   background: var(--panel);
@@ -449,7 +472,7 @@ a {
   align-items: center;
   gap: 4px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .seed-field input[type="number"] {
@@ -482,7 +505,7 @@ a {
 }
 
 .chip-example:disabled {
-  opacity: 0.5;
+  color: var(--muted);
   cursor: not-allowed;
 }
 
@@ -500,8 +523,17 @@ a {
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  background: var(--panel-2);
+  border-color: var(--border);
+  color: var(--muted);
   cursor: not-allowed;
+}
+
+.btn.is-active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
 }
 
 .btn-primary {
@@ -517,8 +549,8 @@ a {
 }
 
 .btn-small {
-  padding: 2px 10px;
-  font-size: 12px;
+  padding: 3px 10px;
+  font-size: 14px;
 }
 
 /* ---------------------------------------------------------------- 3D model */
@@ -590,7 +622,7 @@ a {
 }
 
 .model-caption {
-  font-size: 11px;
+  font-size: 14px;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 999px;
   padding: 1px 8px;
@@ -662,7 +694,7 @@ a {
   margin: 6px 0 0;
   padding-left: 18px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ---------------------------------------------------------------- chips */
@@ -671,7 +703,7 @@ a {
   display: inline-block;
   padding: 1px 8px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
 }
@@ -701,7 +733,7 @@ a {
   background: var(--warn-soft);
   color: #8a5a06;
   margin-left: 6px;
-  font-size: 11px;
+  font-size: 14px;
   padding: 0 7px;
 }
 
@@ -724,7 +756,7 @@ a {
 }
 
 .cost-total-sub {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .cost-bar {
@@ -757,11 +789,11 @@ a {
 
 .cost-item {
   display: grid;
-  grid-template-columns: 12px minmax(0, 1fr) auto 52px;
+  grid-template-columns: 12px minmax(0, 1fr) auto 66px;
   grid-template-areas: "swatch label value frac" "swatch note note note";
   align-items: center;
   column-gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
   padding: 3px 0;
   border-bottom: 1px solid var(--border);
 }
@@ -779,15 +811,13 @@ a {
 
 .cost-label {
   grid-area: label;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .cost-value {
   grid-area: value;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -795,25 +825,23 @@ a {
 .cost-frac {
   grid-area: frac;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
   text-align: right;
 }
 
 .cost-note {
   grid-area: note;
-  font-size: 11px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 14px;
+  overflow-wrap: anywhere;
 }
 
 .cost-mass {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .cost-fallback {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .seg-1 {
@@ -855,12 +883,38 @@ a {
   height: auto;
 }
 
+/* The drawing's own labels scale with it; at this width the smallest one is 14 px. */
+.drawing-dialog {
+  width: calc(100vw - 32px);
+  max-width: 1340px;
+  max-height: calc(100dvh - 32px);
+  padding: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.drawing-dialog::backdrop {
+  background: rgba(23, 32, 42, 0.45);
+}
+
+.drawing-dialog .panel-header {
+  position: sticky;
+  left: 0;
+}
+
+.drawing-dialog .drawing-svg svg {
+  width: 1280px;
+  max-width: none !important;
+}
+
 /* ---------------------------------------------------------------- tables */
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .table th,
@@ -884,7 +938,7 @@ a {
 .table th.num {
   text-align: right;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
 }
 
@@ -912,23 +966,23 @@ a {
 
 .fail-reasons {
   color: #9b2c2c;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .formula {
   white-space: pre-wrap;
   word-break: break-word;
-  font-size: 11.5px;
+  font-size: 14px;
 }
 
 .derived-summary {
   margin: 0 0 8px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .derived-notes {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ---------------------------------------------------------------- details (engineer view) */
@@ -952,7 +1006,7 @@ a {
 
 .details-hint {
   font-weight: 400;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .details-body {
@@ -1006,7 +1060,7 @@ a {
 
 .card-section {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   font-weight: 600;
 }
@@ -1015,7 +1069,7 @@ a {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 2px 10px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .kv dt {
@@ -1027,12 +1081,12 @@ a {
   margin: 0;
   text-align: right;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .card-explanation {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   white-space: pre-wrap;
 }
@@ -1053,22 +1107,22 @@ a {
 
 .chart {
   width: 100%;
-  height: 240px;
+  height: 270px;
   min-width: 0;
 }
 
 .chart-compact {
-  height: 190px;
+  height: 230px;
 }
 
 .chart-caption {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   margin: 0 0 4px;
 }
 
 .chart-caption-inline {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .placeholder {
@@ -1150,7 +1204,7 @@ a {
 
 .review-verdict {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .review-verdict-title {
@@ -1168,7 +1222,7 @@ a {
 
 .review-dropped {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .review-gate {
@@ -1189,7 +1243,7 @@ a {
 }
 
 .model-note {
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.4;
   padding: 3px 8px;
   border-radius: 6px;
@@ -1230,14 +1284,14 @@ a {
 }
 
 .chain-funnel {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .chain-why {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text);
   overflow-wrap: anywhere;
 }
@@ -1247,7 +1301,7 @@ a {
   margin: 2px 0 0;
   padding-left: 0;
   list-style: none;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .chain-candidate + .chain-candidate {
@@ -1255,11 +1309,152 @@ a {
 }
 
 .chain-upstream {
-  font-size: 12px;
+  font-size: 14px;
   margin: 2px 0 6px;
   overflow-wrap: anywhere;
 }
 
 .chain-table td {
   vertical-align: top;
+}
+
+/* ---------------------------------------------------------------- flight playback */
+
+.flight-player {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 100%;
+}
+
+.flight-readouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.flight-readouts > div {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-width: 0;
+}
+
+.flight-readouts dt {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.flight-readouts dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.flight-stage {
+  position: relative;
+  flex: 1 1 340px;
+  min-height: 340px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.flight-stage canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.flight-seek {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.flight-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.flight-speeds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.flight-speeds .btn {
+  padding: 6px 10px;
+}
+
+.flight-phases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.flight-phases li.is-current {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.flight-phases i {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  border-radius: 3px;
+  vertical-align: -2px;
+}
+
+.flight-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px 14px;
+  margin: 0;
+}
+
+.flight-summary dt {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.flight-summary dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 16px;
+}
+
+.flight-warnings {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #6b4a05;
+  overflow-wrap: anywhere;
+}
+
+.flight-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 799px) {
+  .flight-speeds {
+    margin-left: 0;
+  }
 }

@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import threading
 import time
 import uuid
@@ -27,6 +28,9 @@ from rocketwright.schema import SimResult
 
 ROOT = Path(__file__).resolve().parents[2]
 AERO_BACKEND_ENV = "ROCKETWRIGHT_AERO_BACKEND"
+FLOW_IMAGE_NAME = re.compile(r"[A-Za-z0-9+_.-]+\.png")
+# rocketcfd names a flow picture after its case: V015p00_A+04p00.png is 15 m/s at +4 degrees.
+FLOW_IMAGE_CASE = re.compile(r"V(\d+)p(\d+)_A([+-]?\d+)p(\d+)\.png")
 STEPS = {
     "component": "構成・重心・振動",
     "flight": "飛行・抗力の範囲",
@@ -182,6 +186,7 @@ class Workbench:
             "design": search.design(last).model_dump(mode="json") if last else None,
             "plan": plan,
             "aero_loop": state.get("aero_loop"),  # absent from projects saved before it existed
+            "aero_images": self.aero_images(state),
             "skills": SKILLS,
             "eta_seconds": None,
         }
@@ -377,6 +382,60 @@ class Workbench:
             }
 
         return self._run(project_id, revision, "aero_loop", worker)
+
+    def trajectory(self, project_id: str) -> dict:
+        """Time series of the current design, recomputed by the same simulation tool. Read-only:
+        nothing is added to the history, so it needs no revision."""
+        state = self.load(project_id)
+        search = self.search(state)
+        last = next(reversed(search.results), None)
+        if last is None:
+            raise Conflict("Run an analysis step before requesting the trajectory")
+        design = search.design(last)
+        result = flight_tool("simulate_design", design, last.id, env=search.env)
+        return {
+            "source_action": last.id,
+            "design": design.model_dump(mode="json"),
+            "trace": result["trace"],
+            "metrics": result["metrics"],
+            "warnings": result["warnings"],
+        }
+
+    def _flow_directory(self, state: dict) -> Path | None:
+        artifacts = (state.get("aero_loop") or {}).get("artifacts_dir")
+        return Path(artifacts).resolve() / "flow" if artifacts else None
+
+    def aero_images(self, state: dict) -> list[dict]:
+        """Flow pictures of the last aero loop; the analytic backends leave none."""
+        flow = self._flow_directory(state)
+        if flow is None or not flow.is_dir():
+            return []
+        images = []
+        for path in sorted(flow.glob("*.png")):
+            if not FLOW_IMAGE_NAME.fullmatch(path.name):
+                continue
+            case = FLOW_IMAGE_CASE.fullmatch(path.name)
+            images.append(
+                {
+                    "name": path.name,
+                    "url": f"/workbench/projects/{state['id']}/aero-images/{path.name}",
+                    "speed_mps": float(f"{case[1]}.{case[2]}") if case else None,
+                    "alpha_deg": float(f"{case[3]}.{case[4]}") if case else None,
+                }
+            )
+        return images
+
+    def aero_image(self, project_id: str, name: str) -> Path:
+        """One `flow/*.png` of the project's aero loop, and nothing else in that directory."""
+        if ".." in name or not FLOW_IMAGE_NAME.fullmatch(name):
+            raise KeyError("Unknown image")
+        flow = self._flow_directory(self.load(project_id))
+        if flow is None:
+            raise KeyError("Unknown image")
+        path = (flow / name).resolve()
+        if path.parent != flow or not path.is_file():
+            raise KeyError("Unknown image")
+        return path
 
     def manual(self, project_id: str, revision: int):
         def worker(state):

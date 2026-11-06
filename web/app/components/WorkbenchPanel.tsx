@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { apiUrl } from "../lib/api";
-import { useWorkbench } from "../lib/workbench";
+import { CHECK_LABELS, useWorkbench } from "../lib/workbench";
 import RocketViewport from "./RocketViewport";
 import ReferenceLibrary from "./ReferenceLibrary";
 import AnalysisEvidence from "./AnalysisEvidence";
+import SimulationPanel from "./SimulationPanel";
 
 const METHOD: Record<string, string> = { component: "構成・重心・振動", flight: "飛行と抗力", screen: "条件を変えた試行", confirm: "採用案の独立確認" };
 const VARIANT: Record<string, string> = { carton_plain: "紙製フィン / 基準", carton_damped: "紙製フィン / 緩衝材変更", carton_wide: "紙製フィン / 幅を拡大", pp_damped: "PP製フィン / 緩衝材変更", pp_wide: "PP製フィン / 幅を拡大" };
-const CHECK: Record<string, string> = { static_restoring_dry_and_wet: "乾燥・注水時の復元方向", mount_settles: "搭載部の振動減衰", payload_fits: "搭載室の寸法" };
 
 export default function WorkbenchPanel({ onOpenDesign }: { onOpenDesign: () => void }) {
   const { project, runtime, busy, error, elapsed, act } = useWorkbench();
@@ -25,7 +25,7 @@ export default function WorkbenchPanel({ onOpenDesign }: { onOpenDesign: () => v
   const metrics = pinned ? last?.chosen.startsWith("flight/") ? last.result : null : [...(project?.history ?? [])].reverse().find(row => row.chosen.startsWith("flight/"))?.result;
   const confirmation = last?.chosen.startsWith("confirm/") ? last.result : null;
   const plan = project?.video_plan;
-  const caption = working ? project?.active?.name.startsWith("component/") ? "構成・重心・振動を解析中" : project?.active?.name.startsWith("flight/") ? "飛行軌跡を計算中" : busy === "render-video" ? "設計説明と打ち上げCGを制作中" : "工程を実行中" : project?.confirmed ? "採用案の解析を確認しました" : "次の工程を選んでください";
+  const caption = working ? busy === "aero-loop" || project?.active?.name === "aero_loop" ? "流体解析を実行中" : project?.active?.name.startsWith("component/") ? "構成・重心・振動を解析中" : project?.active?.name.startsWith("flight/") ? "飛行軌跡を計算中" : busy === "render-video" ? "設計説明と打ち上げCGを制作中" : "工程を実行中" : project?.confirmed ? "採用案の解析を確認しました" : "次の工程を選んでください";
   return <main className="wb-shell">
     <header className="wb-header"><div className="wb-wordmark"><span className="wb-logo" aria-hidden="true">↟</span>RocketWright<span className="wb-divider">/</span><span className="wb-project-name">ペットボトル / 製作設計</span></div><div className="wb-header-actions"><button onClick={onOpenDesign}>自由な要求から設計</button><button disabled={working} onClick={() => { setChoice(""); setReason(""); void act("create"); }}>新しい設計</button></div></header>
     <div className="wb-body">
@@ -35,16 +35,17 @@ export default function WorkbenchPanel({ onOpenDesign }: { onOpenDesign: () => v
         <p className="wb-note">卵の回収を想定した探索例。購入候補・寸法・発射台の条件を仮定し、工程ごとに確かめます。探索上限は計算用の範囲で、機材の許容値は未確認です。</p>
         <div className="wb-dock-title">機体の構成<span>ASSEMBLY</span></div>
         <ul className="wb-tree"><li>◈ 機体全体<ul><li>ノーズ・搭載室</li><li>回収装置</li><li>市販PETボトル</li><li>フィン・取付部</li></ul></li></ul>
-        {project?.plan ? <><div className="wb-dock-title">確認結果<span>CHECKS</span></div><ul className="wb-checks">{Object.entries(project.plan.checks).map(([key, passed]) => <li key={key}><span className={passed ? "wb-pass" : "wb-fail"}>{passed ? "✓" : "×"}</span>{CHECK[key] ?? key}</li>)}</ul><p className="wb-note">計算上の条件判定。実物の保持・寸法・回収は製作後に確認します。</p></> : null}
+        {project?.plan ? <><div className="wb-dock-title">確認結果<span>CHECKS</span></div><ul className="wb-checks">{Object.entries(project.plan.checks).map(([key, passed]) => <li key={key}><span className={passed ? "wb-pass" : "wb-fail"}>{passed ? "✓" : "×"}</span>{CHECK_LABELS[key] ?? key}</li>)}</ul><p className="wb-note">計算上の条件判定。実物の保持・寸法・回収は製作後に確認します。</p></> : null}
         <div className="wb-runtime"><span className={runtime?.comfyui.available ? "wb-online" : ""}/>ComfyUI {runtime?.comfyui.available ? runtime.comfyui.version : "未接続"}<br/><span className={runtime?.ollama.models.length ? "wb-online" : ""}/>Local LLM {runtime?.ollama.models.length ? "接続済み" : "未接続"}</div>
       </aside>
       <section className="wb-center" aria-label="設計と成果物">
         <p className="wb-mobile-mission">探索例: 高度20 m · 搭載60 g · 1.5 L · 材料予算3,000円</p>
-        <nav className="wb-tabs" aria-label="設計の表示">{[["assembly", "機体"], ["analysis", "解析"], ["files", "製作ファイル"], ["video", "動画"], ["library", "設計例と資料"]].map(([id, label]) => <button key={id} aria-pressed={tab === id} className={tab === id ? "is-active" : ""} onClick={() => setTab(id)}>{label}{id === "files" && files.length > 0 ? <span>{files.filter(f => f.kind === "production").length}</span> : null}</button>)}</nav>
+        <nav className="wb-tabs" aria-label="設計の表示">{[["assembly", "機体"], ["analysis", "解析"], ["simulation", "シミュレーション"], ["files", "製作ファイル"], ["video", "動画"], ["library", "設計例と資料"]].map(([id, label]) => <button key={id} aria-pressed={tab === id} className={tab === id ? "is-active" : ""} onClick={() => setTab(id)}>{label}{id === "files" && files.length > 0 ? <span>{files.filter(f => f.kind === "production").length}</span> : null}</button>)}</nav>
         <div className="wb-main-content">
           {tab === "assembly" ? <RocketViewport project={project} working={working}/> : null}
           {tab === "library" ? <ReferenceLibrary/> : null}
           {tab === "analysis" ? <AnalysisEvidence project={project} viewedIndex={pinned?.index ?? null} unseen={pinned ? (project?.history.length ?? 0) - pinned.seenCount : 0} onLatest={() => setViewed(null)}/> : null}
+          {tab === "simulation" ? <SimulationPanel project={project} busy={busy} working={working} elapsed={elapsed} error={error} onRunAero={() => void act("aero-loop")}/> : null}
           {tab === "files" ? <div className="wb-detail"><p className="wb-eyebrow">PRODUCTION / FROZEN DESIGN</p><h2>同じ設計から、製作へ</h2><p className="wb-note">組立配置図、原寸フィン型紙、組立手順PDF、部品表、購入計画、搭載部カラーとフィン位置決め治具のSTL。プリンターの機種に合わせたスライスと現物の確認は別工程です。</p><button className="wb-primary" disabled={!project?.confirmed || working || files.some(f => f.kind === "production")} onClick={() => void act("exports")}>確認した案の製作ファイルを生成</button><button disabled={working || !files.some(f => f.kind === "production") || files.some(f => f.kind === "manual")} onClick={() => void act("assembly-pdf")}>組立手順PDFを生成</button><div className="wb-file-list">{files.filter(f => f.kind === "production" || f.kind === "manual").map(f => <a key={f.key} href={apiUrl(f.url)} download><span>{f.name}</span><small>{f.name.split(".").at(-1)?.toUpperCase()} ↗</small></a>)}</div></div> : null}
           {tab === "video" ? <div className="wb-detail"><p className="wb-eyebrow">FILM / DESIGN & FLIGHT</p><h2>設計を説明し、飛行を再生する</h2><p className="wb-note">寸法と飛行軌跡からBlender映像を作ります。Wan2.2の映像は演出用の別ショットとして保存します。音声なし。</p><div className="wb-video-actions"><button disabled={working || !files.length || Boolean(plan)} onClick={() => void act("video-plan", { local: false })}>標準のショット構成を確認</button><button disabled={working || !files.length || !runtime?.ollama.models.length || plan?.status === "rendered"} onClick={() => void act("video-plan", { local: true })}>ローカルLLMで演出を提案</button></div>{plan ? <div className="wb-shot-plan"><p><b>設計説明</b> {plan.design_caption}</p><p><b>打ち上げCG</b> {plan.launch_caption}</p><small>{plan.width} × {plan.height} / {plan.fps} fps / 各{plan.frames_per_clip / plan.fps}秒 · {plan.model}</small></div> : null}<button className="wb-primary" disabled={working || plan?.status !== "planned"} onClick={() => void act("render-video")}>この構成で2本の映像を制作</button>{files.filter(f => f.name.endsWith(".mp4")).map(f => <figure className="wb-video" key={f.key}><figcaption>{f.name === "design-explanation.mp4" ? "設計説明" : f.name === "launch-cg.mp4" ? "飛行軌跡のCG再生" : "AI映像 / 形状は要確認"}</figcaption><video controls preload="metadata" src={apiUrl(f.url)}/><a href={apiUrl(f.url)} download>MP4を保存 ↗</a></figure>)}<div className="wb-wan"><h3>Wan2.2で映像ショットを生成</h3><p className="wb-note">CGの参照フレームと確認したプロンプトを、このPCのComfyUIへ送ります。設計寸法と軌跡の忠実性は保証されません。</p><button disabled={working || !runtime?.comfyui.available || plan?.status !== "rendered" || plan.wan_status !== "not_submitted"} onClick={() => void act("wan")}>参照フレームから生成</button>{plan?.wan_status === "queued" || plan?.wan_status === "running" ? <button disabled={working} onClick={() => void act("wan-result")}>生成結果を確認</button> : null}<span className="wb-note">{plan?.wan_status}</span></div></div> : null}
         </div>

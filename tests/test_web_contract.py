@@ -209,3 +209,23 @@ def test_ogive_nose_points_up_in_the_3d_model():
     assert math.isclose(rs[0], radius, rel_tol=1e-9)
     assert rs[-1] < 1e-9
     assert all(a >= b for a, b in zip(rs, rs[1:], strict=False))
+
+
+def test_home_opens_on_the_free_request_screen_with_a_way_to_the_workbench():
+    assert "const [workspace, setWorkspace] = useState(false);" in PAGE_TSX
+    strip = (WEB_APP / "components" / "StatusStrip.tsx").read_text(encoding="utf-8")
+    assert "製作ワークベンチへ" in strip
+
+
+def test_a_switched_off_design_api_reads_as_off_in_the_chat():
+    stream = (WEB_APP / "lib" / "useDesignStream.ts").read_text(encoding="utf-8")
+    refusal = re.search(r"status === 423\) \{\s*return \"([^\"]+)\"", stream)
+    assert refusal and "Claude の設計は今オフです" in refusal[1]
+    assert "designRefusalMessage(res.status, detail)" in stream
+
+
+def test_trace_parsing_keeps_the_thrust_series_the_player_reads():
+    state = (WEB_APP / "lib" / "designState.ts").read_text(encoding="utf-8")
+    assert "extra: asNumberMap(rec.extra)" in state
+    playback = (WEB_APP / "lib" / "flightPlayback.ts").read_text(encoding="utf-8")
+    assert "point.extra.thrust_n" in playback

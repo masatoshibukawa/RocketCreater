@@ -119,6 +119,20 @@ def aero_loop(project_id: str, request: Revision):
         raise HTTPException(503, str(exc)) from exc
 
 
+@router.get("/projects/{project_id}/trajectory")
+def trajectory(project_id: str):
+    try:
+        return call(DEFAULT_WORKBENCH.trajectory, project_id)
+    except RuntimeError as exc:  # the simulation tool reported an error
+        raise HTTPException(503, str(exc)) from exc
+
+
+@router.get("/projects/{project_id}/aero-images/{name}")
+def aero_image(project_id: str, name: str):
+    path = call(DEFAULT_WORKBENCH.aero_image, project_id, name)
+    return FileResponse(path, media_type="image/png", headers={"Cache-Control": "no-store"})
+
+
 @router.post("/projects/{project_id}/assembly-pdf")
 def assembly_pdf(project_id: str, request: Revision):
     return call(DEFAULT_WORKBENCH.manual, project_id, request.revision)

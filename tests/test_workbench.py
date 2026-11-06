@@ -137,6 +137,107 @@ def test_api_checkpoints_validation_and_resume(monkeypatch, bench):
         assert client.get(endpoint + "/files/state.json").status_code == 404
 
 
+def _flown_project(bench):
+    """A project through its first flight step, on the recommended path."""
+    state = bench.create()
+    while not any(row["chosen"].startswith("flight/") for row in state["history"]):
+        choice = StepChoice(id=state["recommendation"], reason="follow the recommended path")
+        state = bench.step(state["id"], state["revision"], choice)
+    return state
+
+
+def _with_flow_images(bench, state, tmp_path):
+    """Save a finished aero loop whose artifacts hold two flow pictures and one other file."""
+    artifacts = tmp_path / "artifacts"
+    (artifacts / "flow").mkdir(parents=True)
+    for name in ("V015p00_A+00p00.png", "V015p00_A+04p00.png"):
+        (artifacts / "flow" / name).write_bytes(b"\x89PNG flow " + name.encode())
+    (artifacts / "aoa_sweep.png").write_bytes(b"\x89PNG not a flow picture")
+    (artifacts / "report.md").write_text("private", encoding="utf-8")
+    saved = bench.load(state["id"])
+    saved["aero_loop"] = {"artifacts_dir": str(artifacts)}
+    bench._write(saved)
+    return artifacts
+
+
+def test_trajectory_needs_a_step_and_then_returns_the_current_design_flight(
+    monkeypatch, bench, tmp_path
+):
+    monkeypatch.setattr(routes, "DEFAULT_WORKBENCH", bench)
+    with TestClient(app) as client:
+        project_id = client.post("/workbench/projects", json={}).json()["id"]
+        before = client.get(f"/workbench/projects/{project_id}/trajectory")
+        assert before.status_code == 409
+        assert client.get(f"/workbench/projects/{'0' * 32}/trajectory").status_code == 404
+
+        state = _flown_project(bench)
+        revision = bench.get(state["id"])["revision"]
+        response = client.get(f"/workbench/projects/{state['id']}/trajectory")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["source_action"] == state["history"][-1]["chosen"]
+    assert body["design"] == state["design"]
+    assert isinstance(body["warnings"], list)
+    assert body["metrics"]["apogee_m"] == pytest.approx(state["history"][-1]["result"]["apogee_m"])
+
+    trace = body["trace"]
+    times = [point["t_s"] for point in trace]
+    assert times == sorted(times)
+    assert any(point["extra"].get("thrust_n", 0) > 0 for point in trace)
+    assert max(point["altitude_m"] for point in trace) == pytest.approx(body["metrics"]["apogee_m"])
+    # water.py appends the parachute descent, so the series reaches the ground
+    assert trace[-1]["altitude_m"] == pytest.approx(0, abs=1e-6)
+    assert trace[-1]["t_s"] == pytest.approx(body["metrics"]["flight_time_s"])
+    assert bench.get(state["id"])["revision"] == revision  # reading it records nothing
+
+
+def test_project_view_lists_only_flow_pictures_with_their_case(bench, tmp_path):
+    state = bench.create()
+    assert bench.get(state["id"])["aero_images"] == []
+    _with_flow_images(bench, state, tmp_path)
+
+    images = bench.get(state["id"])["aero_images"]
+
+    assert [image["name"] for image in images] == ["V015p00_A+00p00.png", "V015p00_A+04p00.png"]
+    assert [image["alpha_deg"] for image in images] == [0.0, 4.0]
+    assert {image["speed_mps"] for image in images} == {15.0}
+
+
+def test_aero_image_serves_flow_pictures_only(monkeypatch, bench, tmp_path):
+    monkeypatch.setattr(routes, "DEFAULT_WORKBENCH", bench)
+    state = bench.create()
+    base = f"/workbench/projects/{state['id']}/aero-images"
+    with TestClient(app) as client:
+        assert client.get(f"{base}/V015p00_A+00p00.png").status_code == 404  # no loop run yet
+        artifacts = _with_flow_images(bench, state, tmp_path)
+        (artifacts / "flow" / "linked.png").symlink_to(artifacts / "aoa_sweep.png")
+
+        response = client.get(f"{base}/V015p00_A%2B04p00.png")
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "image/png"
+        assert response.content.endswith(b"V015p00_A+04p00.png")
+
+        for name in (
+            "..%2Faoa_sweep.png",
+            "..%2F..%2Fstate.json",
+            "%2e%2e%2freport.md",
+            "..png",
+            "aoa_sweep.png",
+            "report.md",
+            "linked.png",
+        ):
+            assert client.get(f"{base}/{name}").status_code == 404, name
+
+
+@pytest.mark.parametrize("name", ["../aoa_sweep.png", "..", "flow/a.png", "a..png", "a.PNG", ""])
+def test_aero_image_rejects_names_outside_the_flow_directory(bench, tmp_path, name):
+    state = bench.create()
+    _with_flow_images(bench, state, tmp_path)
+    with pytest.raises(KeyError):
+        bench.aero_image(state["id"], name)
+
+
 @pytest.mark.parametrize(
     "url",
     [

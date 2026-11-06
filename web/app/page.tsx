@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
 import CostPanel from "./components/CostPanel";
@@ -10,14 +11,19 @@ import FlightChart from "./components/FlightChart";
 import ModelViewer from "./components/ModelViewer";
 import StatusStrip from "./components/StatusStrip";
 import WorkbenchPanel from "./components/WorkbenchPanel";
-import { exportInfoFromEvents, exportsForDesign } from "./lib/api";
+import { designKey, exportInfoFromEvents, exportsForDesign } from "./lib/api";
 import { certificationNotes, selectDisplayedDesign } from "./lib/designState";
+import { carriesParachute } from "./lib/flightPlayback";
 import { useDesignStream } from "./lib/useDesignStream";
 import { useDesignSummary } from "./lib/useDesignSummary";
 import type { DispersionResult, DisplayedDesign, LandingPoint, TracePoint } from "./lib/types";
 
+const NO_TRACE: TracePoint[] = [];
+const NO_METRICS: Record<string, number> = {};
+
 export default function Home() {
-  const [workspace, setWorkspace] = useState(true);
+  const [workspace, setWorkspace] = useState(false);
+  const [centerView, setCenterView] = useState<"model" | "simulation">("model");
   const stream = useDesignStream();
   const { start, answer, stop, reset } = stream;
   // Manual pick from 詳細 (attempt log / cards / reviews); null = follow the display rule.
@@ -43,7 +49,16 @@ export default function Home() {
     () => (displayedId ? stream.attempts.find((a) => a.id === displayedId) : undefined),
     [displayedId, stream.attempts],
   );
-  const trace: TracePoint[] = displayedAttempt?.result?.trace ?? [];
+  // auto_design and reference seeds leave the time series out of their event, so a design shown
+  // from one of them flies on the trace of an attempt that simulated the very same design.
+  const flight = useMemo(() => {
+    if (displayedAttempt?.result?.trace.length || !displayed) return displayedAttempt?.result;
+    const key = designKey(displayed.design);
+    return stream.attempts.find(
+      (a) => a.design !== null && a.result?.trace.length && designKey(a.design) === key,
+    )?.result;
+  }, [displayed, displayedAttempt, stream.attempts]);
+  const trace: TracePoint[] = flight?.trace ?? NO_TRACE;
   // Certification / coupler warnings of the displayed build (amber note under the 3D view).
   const notes: string[] = useMemo(
     () => certificationNotes(displayedAttempt?.result?.warnings ?? []),
@@ -105,10 +120,13 @@ export default function Home() {
 
   return (
     <main className="app">
-      <StatusStrip status={stream.status} attemptCount={stream.attemptCount} />
+      <StatusStrip
+        status={stream.status}
+        attemptCount={stream.attemptCount}
+        onOpenWorkbench={() => setWorkspace(true)}
+      />
       <div className="app-columns">
         <section className="column column-chat">
-          <button onClick={() => setWorkspace(true)}>製作ワークベンチに戻る</button>
           <ChatPanel
             messages={stream.messages}
             status={stream.status}
@@ -121,20 +139,57 @@ export default function Home() {
         </section>
         <div className="column-rest">
           <section className="column column-center">
-            <ModelViewer
-              design={displayed?.design ?? null}
-              tier={tier}
-              origin={displayed?.origin ?? null}
-              reference={stream.reference}
-              dimensions={summary?.dimensions ?? null}
-              notes={notes}
-            />
-            <CostPanel
-              summary={summary}
-              fallbackCostJpy={fallbackCost}
-              loading={summaryState.loading}
-              error={summaryState.error}
-            />
+            <div className="center-tabs" role="group" aria-label="中央の表示">
+              <button
+                type="button"
+                className={`btn ${centerView === "model" ? "is-active" : ""}`}
+                aria-pressed={centerView === "model"}
+                onClick={() => setCenterView("model")}
+              >
+                3D モデル
+              </button>
+              <button
+                type="button"
+                className={`btn ${centerView === "simulation" ? "is-active" : ""}`}
+                aria-pressed={centerView === "simulation"}
+                onClick={() => setCenterView("simulation")}
+              >
+                シミュレーション
+              </button>
+            </div>
+            {centerView === "model" ? (
+              <ModelViewer
+                design={displayed?.design ?? null}
+                tier={tier}
+                origin={displayed?.origin ?? null}
+                reference={stream.reference}
+                dimensions={summary?.dimensions ?? null}
+                notes={notes}
+              />
+            ) : (
+              <div className="panel simulation-panel">
+                <FlightPlayer
+                  key={displayedId ?? "none"}
+                  trace={trace}
+                  metrics={flight?.metrics ?? NO_METRICS}
+                  warnings={flight?.warnings ?? []}
+                  parachute={carriesParachute(displayed?.design)}
+                  emptyMessage={
+                    displayed
+                      ? "この案の飛行の時系列はまだありません。シミュレーションを実行した案を選ぶと再生できます。"
+                      : "設計案が届くと、飛行を再生できます"
+                  }
+                />
+              </div>
+            )}
+            {centerView === "model" ? (
+              <CostPanel
+                summary={summary}
+                fallbackCostJpy={fallbackCost}
+                loading={summaryState.loading}
+                error={summaryState.error}
+              />
+            ) : null}
           </section>
           <section className="column column-right">
             <DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading} />
