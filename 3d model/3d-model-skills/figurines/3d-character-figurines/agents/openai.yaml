@@ -1,0 +1,4 @@
+interface:
+  display_name: "キャラクターフィギュアの制作"
+  short_description: "キャラクターの形・細部・分割から印刷と配色・塗装までをつなぐ"
+  default_prompt: "$3d-character-figurines を使い、参照・最終サイズ・実機に合うフィギュアの工程と確認箇所を具体化してください。"
