@@ -1,0 +1,4 @@
+interface:
+  display_name: "学位・資格審査"
+  short_description: "学位・資格審査の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-defense to prepare or improve a presentation for my audience, purpose and time limit."

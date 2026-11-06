@@ -1,0 +1,4 @@
+interface:
+  display_name: "声・間・身体・チーム"
+  short_description: "声・間・身体・チームの構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-speaking to prepare or improve a presentation for my audience, purpose and time limit."

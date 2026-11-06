@@ -1,0 +1,4 @@
+interface:
+  display_name: "言語・文化・アクセシビリティ"
+  short_description: "言語・文化・アクセシビリティの構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-localization to prepare or improve a presentation for my audience, purpose and time limit."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "学会・研究成果の口頭発表"
+  short_description: "学会・研究成果の口頭発表の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-research-talks to prepare or improve a presentation for my audience, purpose and time limit."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "ハッカソン・デモ・動画・音"
+  short_description: "ハッカソン・デモ・動画・音の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-demos to prepare or improve a presentation for my audience, purpose and time limit."
