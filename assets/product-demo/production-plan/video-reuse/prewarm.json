@@ -1,0 +1,38 @@
+{
+  "templates": [
+    {
+      "template": {
+        "id": "compact",
+        "camera_distance_m": 1.466505324870671,
+        "fstop": 11
+      },
+      "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+      "reused": false,
+      "stage_sha256": "83dd37a9ed48fad7456584f81ac1ef6120df9c98efd2087782c98d49d8e96948",
+      "elapsed_s": 0.6673016001004726
+    },
+    {
+      "template": {
+        "id": "standard",
+        "camera_distance_m": 1.466505324870671,
+        "fstop": 11
+      },
+      "identity": "a41dfb738276e5b78975c492882f9d073596ba076eab77159c839bc408d9b001",
+      "reused": false,
+      "stage_sha256": "0249310cd85c72614b0d40d7df23206b243093098768724fa9f65fe016340225",
+      "elapsed_s": 0.6702195999678224
+    },
+    {
+      "template": {
+        "id": "large",
+        "camera_distance_m": 1.466505324870671,
+        "fstop": 11
+      },
+      "identity": "fac97ab7b43dbf63ad31401253306d4ae4f1de142303ed683115093887223cf9",
+      "reused": false,
+      "stage_sha256": "5858dcc9f9570c96dcd42a07b19f58cf7e3c0e3f3df756ddcd3f7ef0ab7bfb49",
+      "elapsed_s": 0.6762752998620272
+    }
+  ],
+  "physical_geometry_in_templates": false
+}

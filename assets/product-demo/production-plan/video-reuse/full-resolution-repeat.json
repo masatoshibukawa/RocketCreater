@@ -1,0 +1,58 @@
+{
+  "total_s": 2.4722945000976324,
+  "stages_s": [
+    2.4719165000133216
+  ],
+  "cache": {
+    "stage": {
+      "template": {
+        "id": "compact",
+        "camera_distance_m": 1.466505324870671,
+        "fstop": 11
+      },
+      "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+      "reused": true,
+      "stage_sha256": "83dd37a9ed48fad7456584f81ac1ef6120df9c98efd2087782c98d49d8e96948"
+    },
+    "clips": {
+      "design": {
+        "identity": "1038a778d793a962b4a3c5bab9c311c20cee6a6096f28dfffe686baf5484d721",
+        "restored": 3,
+        "resumed": 0,
+        "rendered": 0,
+        "frames": 384
+      },
+      "launch": {
+        "identity": "839ffbced86b1e1d3b7d67ab1212df217f0d68ce5bf3c640db81ac263e227d0c",
+        "restored": 3,
+        "resumed": 0,
+        "rendered": 0,
+        "frames": 288
+      }
+    },
+    "quality": "final"
+  },
+  "scene": {
+    "style": "photographic",
+    "dimensions_sha256": "a12e6649f21789134369e2f206602a7668ea0f663cc939c9dec70a1aa9cbe0fc",
+    "mesh_vertex_hashes": {
+      "Adopted CAD fin0": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+      "Adopted CAD fin1": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+      "Adopted CAD fin2": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+      "Adopted CAD fin3": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+      "Adopted CAD nose0": "82de43da5f2eec8a9d10ed2c1d767a5a9334efac563fbe207d25c067315c8774",
+      "Bottle": "b4962bbf01b8a0a6d226ae7bd2c65723a80282c493a5deda6dc5b47a21a92d72",
+      "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "template": {
+      "id": "compact",
+      "camera_distance_m": 1.466505324870671,
+      "fstop": 11
+    },
+    "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+    "bottle_detail": "unmeasured illustrative PET envelope",
+    "camera": "fixed elevated CG viewpoint, not filmed observation",
+    "physical_validation": "not_performed"
+  },
+  "isolated_fixture": true
+}

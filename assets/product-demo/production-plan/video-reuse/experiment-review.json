@@ -1,0 +1,55 @@
+{
+  "source_commit": "6cdae027595132b90bfef761399cdb375581be3f",
+  "timings_s": {
+    "preview_first": 378.1023559998721,
+    "preview_same_inputs": 11.383254766464233,
+    "caption_only": 10.461959199979901,
+    "synthetic_trajectory": 167.48475649999455,
+    "full_resolution_six_stills": 23.300450999988243,
+    "full_resolution_six_stills_reused": 2.4722945000976324
+  },
+  "comparison_scope": "single observed local runs; first and warm preview share 540p/12fps; full resolution comparison is six stills only",
+  "first_preview_rendered": 336,
+  "first_preview_raw_heuristic_note": "cold_frames is a historical-directory heuristic; actual cache counts establish all 336 frames were rendered",
+  "same_input_preview_speedup": 33.215663161100885,
+  "mesh_signatures_match": 7,
+  "full_resolution_repeat_identical_png_bytes": true,
+  "visual_review": {
+    "method": "9 timed samples per preview, same-index 1080p comparison and two full-resolution prepared stills",
+    "body_visibility": "retained in reviewed samples",
+    "large_photorealism_improvement": "not_established",
+    "continuous_every_frame_visual_review": false,
+    "new_final_1080p_movies_rendered": false
+  },
+  "checks": {
+    "native_tests_passed": 36,
+    "ruff": "passed",
+    "typescript": "passed",
+    "next_production_build": "passed",
+    "native_cad_audit": "passed",
+    "api_byte_hashes": "passed",
+    "browser_both_ended": true
+  },
+  "paid_api_used": false,
+  "new_model_inference": false,
+  "passed": true,
+  "artifacts": {
+    "browser-playback.json": "73ee9f978f5d2202c2bca1b9c29f79ce822f6ec807e913412d81a404bd81baec",
+    "design-contact.jpg": "1b232c428388656b859d23bb295957a401132293430002c5e9b547a9e498bfe9",
+    "design-prepared.png": "e92a6554d62b117fc3f4eba9b1a5d0542e925a9400977ddf5d1357f8c562cd52",
+    "design-previous.png": "5b48ba0ee44e1221d67da42a26546200249bcad66718f42e0dde2da18800ae46",
+    "full-resolution-repeat.json": "91365421234d90e01fa78f1c5be4e6a91110130447786131c052abee9efc2b52",
+    "launch-contact.jpg": "e86bce3f0ef4d92babc1f8cfb2bf7df35b0f69dd95cc17034b9019726d787679",
+    "launch-prepared.png": "f437862462e83b53766ee98f7da034d9d4fc0febaf50d483f76bc99fdaecd372",
+    "launch-previous.png": "c4e352fddea6645775d4b6922fbc6d58e57be65cfffbf4fd1f2f218f2ba4f3ac",
+    "mesh-verification.json": "e61637df1634064b8d380d22f0f3257207bc7f64e15807290415f6cc11c17ccb",
+    "preview-cold.json": "61732ad571f78633076dd585634a0b99d8b780cc929d4089ed915cf4161c550a",
+    "preview-design-explanation.mp4": "7a1e2c8f30a309a6865ae8db452fad6c7db236a0c91646486625c9638f4d7b7c",
+    "preview-launch-cg.mp4": "398c20230316625d4e7bcd52bd61ef45e9cdfae9d064ce249f0fb8f7abebde6d",
+    "preview-warm-browser.json": "fdb7d2903c4efc048471feac4d006c7a07532409c53920eb7f9ea97f8a4028ee",
+    "prewarm.json": "19f524805c60770403f4819258fdecc789e599bebcfd835f9b6283045c61f36a",
+    "probe-report.json": "fd27b0b60fa377641752d3a4a054d04d051beb6fd8fd10dcd4556da2024b43ed",
+    "quality-comparison.jpg": "dc3fc970341db3af31c78722ae97a2816273c1f159637be48d555ea944c4ce57",
+    "workshop-preview.png": "bcc6639c6f669058cf16e018c77c711811601d7e60395091f89c2103c8ff4608"
+  }
+}
