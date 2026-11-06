@@ -16,5 +16,4 @@
 .crew-description p { margin: 0 0 3px; font-size: 12px; line-height: 1.5; }
 .crew-description small { display: block; font-size: 10px; line-height: 1.5; color: #708278; }
 .column-center { overflow-y: auto; }
-.crew-banner img { height: 72px; }
 @media (max-width: 600px) { .crew-stage { height: 140px; } .crew-toolbar { padding-inline: 10px; } }

@@ -52,7 +52,7 @@ export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps
         <img src={apiUrl(image.url)} alt={image.alpha_deg === null ? `流れの画像 ${image.name}` : `迎角 ${signedDegrees(image.alpha_deg)} の流れの画像`}/>
         <figcaption>{image.speed_mps === null ? image.name : `流速 ${fmt(image.speed_mps, 1)} m/s`}{image.alpha_deg === null ? "" : ` · 迎角 ${signedDegrees(image.alpha_deg)}`}</figcaption>
       </figure> : <p className="backscreen-idle" role="status">
-        {connectionLost ? "接続待ち · 解析の現在の状態は未確認です"
+        {connectionLost ? "解析の状態は未確認です"
           : job?.status === "running" ? `流体解析を実行中 · 経過 ${fmt(job.elapsed_s ?? 0, 0)} 秒`
           : loop ? "この実行には流れの画像がありません。" : "計算した流れの画像がここに映ります"}
       </p>}
