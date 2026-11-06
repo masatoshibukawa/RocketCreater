@@ -26,7 +26,7 @@ interface ModelViewerProps {
   notes: string[];
 }
 
-const BACKGROUND = 0xf6f8fb;
+const BACKGROUND = 0xffffff;
 
 interface Scene3D {
   renderer: THREE.WebGLRenderer;

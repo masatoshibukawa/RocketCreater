@@ -1,12 +1,12 @@
 /** Recharts styling shared by the flight and dispersion charts (light palette, globals.css). */
 
-export const AXIS_STYLE = { fill: "#6b7684", fontSize: 11 };
+export const AXIS_STYLE = { fill: "#3d4752", fontSize: 14 };
 export const GRID_STROKE = "#e3e8ef";
 export const TOOLTIP_STYLE = {
   backgroundColor: "#ffffff",
   border: "1px solid #d7dde6",
   borderRadius: 6,
-  fontSize: 12,
+  fontSize: 14,
   color: "#1f2933",
 };
 

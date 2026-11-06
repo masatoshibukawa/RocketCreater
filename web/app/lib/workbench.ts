@@ -2,13 +2,36 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiUrl } from "./api";
-import type { BottleDesign } from "./types";
+import type { BottleDesign, TracePoint } from "./types";
 
 export interface WorkbenchFile { name: string; key: string; kind: string; url: string; sha256: string }
 export interface AnalysisOption {
   id: string; label: string; method: string; architecture: string;
   variant: string; pressure_kpa: number; fill_pct: number;
 }
+export interface AeroLoopRound {
+  round: number; cfd_speed_mps: number; cd: number; cd_change_frac: number;
+  static_margin_cal: number | null; pressure_kpa: number; apogee_m: number;
+  descent_speed_mps: number; backend: string;
+}
+export interface AeroLoop {
+  rounds: AeroLoopRound[]; converged: boolean; notes: string[];
+  baseline: { pressure_kpa: number; cd: number | null; success_rate: number };
+  dispersion: { n: number; passes: number; success_rate: number };
+}
+export interface AeroImage { name: string; url: string; speed_mps: number | null; alpha_deg: number | null }
+export interface Trajectory {
+  source_action: string; design: BottleDesign; trace: TracePoint[];
+  metrics: Record<string, number>; warnings: string[];
+}
+export const CHECK_LABELS: Record<string, string> = {
+  resources_available_to_plan: "必要な部品と機材の手配",
+  dry_cg_inside_vehicle: "空の機体の重心が機体内にある",
+  payload_fits: "搭載室の寸法",
+  static_restoring_dry_and_wet: "乾燥・注水時の復元方向",
+  pitch_common_certificate: "縦揺れ（ピッチ）の安定の計算証明",
+  mount_settles: "搭載部の振動減衰",
+};
 export interface WorkbenchProject {
   print_package?: { status: string; brim_width_mm: number; brim_gap_mm: number;
     parts: { part: string; model_layers: number; estimated_mass_g: number;
@@ -23,6 +46,7 @@ export interface WorkbenchProject {
     wet_cg_mm: number; checks: Record<string, boolean>; pending_evidence?: string[];
     bill: { id: string; name: string; mass_g: number; allowance_jpy: number }[] } | null;
   history: { chosen: string; reason: string; result: Record<string, unknown> }[];
+  aero_loop: AeroLoop | null; aero_images: AeroImage[];
   last_elapsed_seconds?: number;
   video_plan?: { status: string; model: string; design_caption: string; launch_caption: string;
     wan_status: string; width: number; height: number; fps: number; frames_per_clip: number };
@@ -39,6 +63,10 @@ async function request<T>(path: string, body?: unknown, signal?: AbortSignal): P
   const data = await response.json().catch(() => ({})) as T & { detail?: unknown };
   if (!response.ok) throw new Error(typeof data.detail === "string" ? data.detail : `HTTP ${response.status}`);
   return data;
+}
+
+export function loadTrajectory(projectId: string, signal: AbortSignal): Promise<Trajectory> {
+  return request<Trajectory>(`/workbench/projects/${projectId}/trajectory`, undefined, signal);
 }
 
 export function useWorkbench() {

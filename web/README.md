@@ -1,10 +1,10 @@
 # RocketWright web UI
 
-The default entry is now a dark production workbench for the local bottle-workshop trial.
+The default entry is the three-column free-request design screen; its header button opens the light production workbench for the local bottle-workshop trial.
 It connects human analysis checkpoints, saved evidence, production downloads and separate
 design/flight videos. See [local workbench operation](../docs/workbench.md).
-The general conversation screen remains available. Paid design calls are disabled by default;
-the API returns HTTP 423 until explicitly enabled during the final connection review.
+Paid design calls are disabled by default;
+the API returns HTTP 423 until explicitly enabled during the final connection review, and the chat says so.
 
 Single-screen Next.js (App Router, TypeScript, React 19) frontend for the RocketWright design
 agent. Light theme, Japanese labels, no navigation; the audience is hackathon judges and the

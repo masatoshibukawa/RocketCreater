@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { apiUrl } from "../lib/api";
 
 interface DrawingPanelProps {
@@ -15,18 +16,37 @@ interface DrawingPanelProps {
  * is why `dangerouslySetInnerHTML` is acceptable here.
  */
 export default function DrawingPanel({ svg, url, loading }: DrawingPanelProps) {
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
   return (
     <div className="panel drawing-panel">
       <div className="panel-header">
         <h2 className="panel-title">図面（側面図）</h2>
-        {url !== null && (
-          <a className="link-small" href={apiUrl(url)} target="_blank" rel="noreferrer" download>
-            SVG をダウンロード
-          </a>
-        )}
+        <div className="panel-header-right">
+          {svg !== null && (
+            <button type="button" className="btn btn-small" onClick={() => dialogRef.current?.showModal()}>
+              拡大して読む
+            </button>
+          )}
+          {url !== null && (
+            <a className="link-small" href={apiUrl(url)} target="_blank" rel="noreferrer" download>
+              SVG をダウンロード
+            </a>
+          )}
+        </div>
       </div>
       {svg !== null ? (
-        <div className="drawing-svg" dangerouslySetInnerHTML={{ __html: svg }} />
+        <>
+          <div className="drawing-svg" dangerouslySetInnerHTML={{ __html: svg }} />
+          <dialog ref={dialogRef} className="drawing-dialog" aria-label="図面の拡大表示">
+            <div className="panel-header">
+              <h2 className="panel-title">図面（側面図）</h2>
+              <button type="button" className="btn btn-small" onClick={() => dialogRef.current?.close()}>
+                閉じる
+              </button>
+            </div>
+            <div className="drawing-svg" dangerouslySetInnerHTML={{ __html: svg }} />
+          </dialog>
+        </>
       ) : (
         <div className="placeholder placeholder-short">
           {loading ? "図面を描画中…" : "設計案が届くと寸法線つきの側面図を表示します"}

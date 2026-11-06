@@ -28,6 +28,14 @@ export interface DesignStream extends DesignState {
   reset: () => void;
 }
 
+/** Chat line for a refused POST /design. 423 is the switched-off paid API, not a fault. */
+export function designRefusalMessage(status: number, detail: string): string {
+  if (status === 423) {
+    return "Claude の設計は今オフです（課金 API の実行が無効です）。要求は送信されていません。条件を決めた計算は「製作ワークベンチ」で実行できます。";
+  }
+  return `バックエンドが HTTP ${status} を返しました ${detail.slice(0, 200)}`;
+}
+
 /** Validate one decoded SSE `data` payload against AgentEvent. `fallbackType` is the SSE event name. */
 export function toAgentEvent(raw: unknown, fallbackType: string): AgentEvent | null {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) return null;
@@ -102,7 +110,7 @@ export function useDesignStream(): DesignStream {
         });
         if (!res.ok) {
           const detail = await res.text().catch(() => "");
-          dispatch({ type: "fail", message: `バックエンドが HTTP ${res.status} を返しました ${detail.slice(0, 200)}` });
+          dispatch({ type: "fail", message: designRefusalMessage(res.status, detail) });
           return;
         }
         if (!res.body) {

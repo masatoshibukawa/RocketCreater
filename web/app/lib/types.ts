@@ -132,6 +132,8 @@ export interface TracePoint {
   north_m: number;
   speed_mps: number;
   mass_kg: number | null;
+  /** Model-specific series with unit-suffixed keys; `thrust_n` for the bottle and amateur tiers. */
+  extra: Record<string, number>;
 }
 
 export interface SimResult {

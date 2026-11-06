@@ -47,10 +47,10 @@ export function ellipsePolygon(e: Ellipse95, segments = ELLIPSE_SEGMENTS): Landi
 
 /** Colour of the big success-rate number (inline so globals.css stays untouched). */
 function rateColor(rate: number): string {
-  if (!Number.isFinite(rate)) return "#6b7684";
-  if (rate >= 0.9) return "#2a9d6f";
-  if (rate >= 0.6) return "#c7810f";
-  return "#d64545";
+  if (!Number.isFinite(rate)) return "#4f5a67";
+  if (rate >= 0.9) return "#1b7f59";
+  if (rate >= 0.6) return "#8f5b05";
+  return "#b42828";
 }
 
 /** Success rate as a large number plus the run's n / seed / matched candidate. */
@@ -80,7 +80,7 @@ function RateHeader({ dispersion, selectedId }: { dispersion: DispersionResult; 
         </span>
       )}
       {failures.length > 0 && (
-        <span className="muted" style={{ flexBasis: "100%", fontSize: 12 }}>
+        <span className="muted" style={{ flexBasis: "100%", fontSize: 14 }}>
           不合格の内訳: {failures.map(([reason, count]) => `${reason} ×${count}`).join(" / ")}
         </span>
       )}

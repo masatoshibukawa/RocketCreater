@@ -101,28 +101,30 @@ function DesignVars({ design }: { design: Design }) {
     return (
       <>
         <div className="card-section">段構成</div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>段</th>
-              <th>エンジン</th>
-              <th className="num">基数</th>
-              <th className="num">推進剤</th>
-              <th className="num">構造比</th>
-            </tr>
-          </thead>
-          <tbody>
-            {design.stages.map((s, i) => (
-              <tr key={i}>
-                <td>{i + 1}</td>
-                <td className="mono">{s.engine_id}</td>
-                <td className="num">{s.engine_count}</td>
-                <td className="num">{fmt(s.propellant_mass_kg, 0)} kg</td>
-                <td className="num">{fmtPercent(s.structural_fraction)}</td>
+        <div className="table-scroll">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>段</th>
+                <th>エンジン</th>
+                <th className="num">基数</th>
+                <th className="num">推進剤</th>
+                <th className="num">構造比</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {design.stages.map((s, i) => (
+                <tr key={i}>
+                  <td>{i + 1}</td>
+                  <td className="mono">{s.engine_id}</td>
+                  <td className="num">{s.engine_count}</td>
+                  <td className="num">{fmt(s.propellant_mass_kg, 0)} kg</td>
+                  <td className="num">{fmtPercent(s.structural_fraction)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <dl className="kv" style={{ marginTop: 6 }}>
           {design.boosters.length > 0 && (
             <>
