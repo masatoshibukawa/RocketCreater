@@ -1,6 +1,6 @@
 ---
 name: web-design-implementation
-description: "決めたWebデザインをHTML・CSS・JavaScriptや既存フレームワークで実装・修正する。レスポンシブ、入力・処理中・失敗などの状態、読み順、表示速度まで具体化する場合に使う。"
+description: "決めたWebデザインをHTML・CSS・JavaScriptや既存フレームワークで実装・修正する。レスポンシブ、状態、表示速度、デプロイ・公開方法を具体化する場合に使う。"
 ---
 
 # 設計を動く画面へ落とす
@@ -30,6 +30,8 @@ description: "決めたWebデザインをHTML・CSS・JavaScriptや既存フレ�
 入力・通信・処理を伴う画面では、[状態と確認の表](references/state-and-verification.md) を必要な範囲で使う。
 
 ブラウザ確認の高速化やサイト性能の診断には [CDPの使い分け](references/cdp-workflow.md) を読む。自動化の所要時間と、サイト自体の読み込み・操作性能を別に測る。
+
+デプロイ・公開・無料ホストの選定には [公開の判断と確認](references/deployment-workflow.md) を読む。公開対象の動作と費用を見積もり、プレビューと本番の範囲を分ける。
 
 ## 深掘り
 

@@ -1,0 +1,42 @@
+provider,product,plan,metric,value,unit,period,scope,limit_behavior,source_id
+Supabase,Database,Free,db_size,500,MB,current,project,service_restrictions_on_excess,B12
+Supabase,Auth,Free,monthly_active_users,50000,MAU,billing_month,organization,notice_then_restrictions,B35
+Supabase,Storage,Free,file_storage,1,GB,current_usage,organization,notice_grace_then_restrictions,B36
+Supabase,Platform,Free,uncached_egress,5,GB,billing_month,organization,notice_then_restrictions,B14
+Supabase,Storage,Free,cached_egress,5,GB,billing_month,organization,notice_then_restrictions,B14
+Supabase,Platform,Free,inactivity_pause,7,days,low_activity,project,pause,B12
+Supabase,Platform,Free,active_free_projects,2,projects,current,member_with_owner_admin_rules,block_new_projects,B13
+Neon,Postgres,Free,compute,100,CU_hours,month,project,suspend_compute_until_next_period,B20
+Neon,Postgres,Free,storage_per_project,1,GB,current,project,block_writes,B20
+Neon,Postgres,Free,storage_account_total,20,GB,current,account,block_writes,B20
+Neon,Postgres,Free,egress,5,GB,month,project,suspend_compute_until_next_period,B20
+Neon,Postgres,Free,scale_to_zero_idle,5,minutes,idle,compute,scale_to_zero,B20
+Neon,Platform,Free,projects,100,projects,current,plan,plan_limit,B19
+Firebase,Firestore Standard,Free quota,stored_data,1,GiB,current,one_database_per_project,billing_required_for_more_quota,B21
+Firebase,Firestore Standard,Free quota,document_reads,50000,documents,day_Pacific,one_database_per_project,billing_required_for_more_quota,B21
+Firebase,Firestore Standard,Free quota,document_writes,20000,documents,day_Pacific,one_database_per_project,billing_required_for_more_quota,B21
+Firebase,Firestore Standard,Free quota,document_deletes,20000,documents,day_Pacific,one_database_per_project,billing_required_for_more_quota,B21
+Firebase,Firestore Standard,Free quota,outbound_transfer,10,GiB,month,one_database_per_project,billing_required_for_more_quota,B21
+Firebase,Authentication,Spark,email_link_sign_in_emails,5,emails,day,project,billing_required_for_more,B22
+Cloudflare,D1,Workers Free,rows_read,5000000,rows,day_UTC,account,queries_fail_at_limit,B25
+Cloudflare,D1,Workers Free,rows_written,100000,rows,day_UTC,account,queries_fail_at_limit,B25
+Cloudflare,D1,Workers Free,total_storage,5,GB,current,account,storage_limit,B25
+Cloudflare,D1,Workers Free,storage_per_database,500,MB,current,database,storage_limit,B26
+Cloudflare,D1,Workers Free,databases,10,databases,current,account,creation_limit,B26
+Cloudflare,Queues,Workers Free,standard_operations,10000,operations,day,account,operation_quota,B27
+Cloudflare,Queues,Workers Free,message_retention,24,hours,message,queue,message_expiry,B28
+Cloudflare,R2 Standard,Included free usage,storage,10,GB_month,month,account,bill_excess,B29
+Cloudflare,R2 Standard,Included free usage,class_A_operations,1000000,operations,month,account,bill_excess,B29
+Cloudflare,R2 Standard,Included free usage,class_B_operations,10000000,operations,month,account,bill_excess,B29
+Cloudflare,Workers,Free,http_requests,100000,requests,day_UTC,account,request_limit_errors,B08
+Cloudflare,Workers,Free,http_cpu_time,10,ms,request,invocation,cpu_limit_error,B08
+Cloudflare,Workers,Free,memory,128,MB,runtime,isolate,memory_limit_error,B08
+Google Cloud,Cloud Run request-based,Included free usage,requests,2000000,requests,month,billing_account_tier1_discount,bill_excess_and_related_products,B04
+Google Cloud,Cloud Run request-based,Included free usage,active_cpu,180000,vCPU_seconds,month,billing_account_tier1_discount,bill_excess_and_related_products,B04
+Google Cloud,Cloud Run request-based,Included free usage,memory,360000,GiB_seconds,month,billing_account_tier1_discount,bill_excess_and_related_products,B04
+Vercel,Functions,Hobby,invocations,1000000,invocations,monthly_usage,team,feature_pause_or_wait,B09
+Vercel,Functions,Hobby,active_cpu,4,CPU_hours,monthly_usage,team,feature_pause_or_wait,B09
+Vercel,Functions,Hobby,provisioned_memory,360,GB_hours,monthly_usage,team,feature_pause_or_wait,B09
+Render,Web Service,Free,free_instance_hours,750,hours,calendar_month,workspace,suspend_until_next_month,B10
+Render,Web Service,Free,idle_timeout,15,minutes,no_inbound_traffic,service,spin_down,B10
+Railway,Resources,Free,credit,1,USD,month,Free_plan,limited_credit_not_runtime_guarantee,B11
