@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from scripts import benchmark_expanded_search as study
+from scripts.report_expanded_search import audit_rows, local_file
 
 
 @pytest.fixture
@@ -69,3 +70,36 @@ def test_failures_consume_budget_without_fabricated_height(tmp_path, anchor, mon
     assert result["evaluations"] == 16 == len(rows)
     assert result["completed"] == 0 and result["best"] is None
     assert all("metrics" not in row and row["loss"] == 1e12 for row in rows)
+    audit_rows(rows, result, anchor, 8, 1)
+    rows[0]["metrics"] = {"apogee_m": 0}
+    with pytest.raises(ValueError, match="fabricated"):
+        audit_rows(rows, result, anchor, 8, 1)
+
+
+def test_audit_rejects_changed_loss_and_population(tmp_path, anchor, monkeypatch):
+    path = tmp_path / "model.json"
+    path.write_text(
+        json.dumps(dict(anchor=anchor.model_dump(mode="json"), cad={})), encoding="utf-8"
+    )
+    monkeypatch.setattr(study, "code_hash", lambda: "source")
+    monkeypatch.setattr(study, "make_advisor", lambda *args: lambda x: np.zeros(len(x)))
+    monkeypatch.setattr(
+        study,
+        "measure",
+        lambda *args: dict(
+            static_margin_cal=1.2, scenario_height_m=[20.0, 25.0], conservative_beam_ratio=0.01
+        ),
+    )
+    output = tmp_path / "rows.jsonl"
+    result = study.experiment((path, "core-old", 137, 0, 8, 1, output, "source"))
+    rows = [json.loads(line) for line in output.read_text(encoding="utf-8").splitlines()]
+    assert len(audit_rows(rows, result, anchor, 8, 1)) == 16
+    rows[0]["loss"] = -40
+    with pytest.raises(ValueError, match="loss"):
+        audit_rows(rows, result, anchor, 8, 1)
+    rows[0]["loss"] = -20
+    rows[0]["unit"][0] = 1
+    with pytest.raises(ValueError, match="Initial population"):
+        audit_rows(rows, result, anchor, 8, 1)
+    with pytest.raises(ValueError, match="escapes"):
+        local_file(tmp_path, "../foreign.json")
