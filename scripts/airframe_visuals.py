@@ -50,6 +50,10 @@ def lathe(profile):
 
 def body(job, radius, height, parent, material, cache_root):
     recipe = job.get("airframe")
+    for name, expected in (recipe or {}).get("asset_sha256", {}).items():
+        source = (REFERENCES / name).resolve()
+        if not source.is_relative_to(REFERENCES.resolve()) or file_sha(source) != expected:
+            raise ValueError("Reference asset changed after the render was planned")
     reference_height = job["dimensions_mm"].get("bottle_length", height * 1000) / 1000
     profile = legacy_profile(radius, height)
     wall = True
@@ -146,9 +150,19 @@ def body(job, radius, height, parent, material, cache_root):
     if wall:
         solidify = bottle.modifiers.new("Assumed PET thickness", "SOLIDIFY")
         solidify.thickness, solidify.offset = 0.00035, -1
+    bounds = [
+        [min(v.co[i] for v in mesh.vertices) for i in range(3)],
+        [max(v.co[i] for v in mesh.vertices) for i in range(3)],
+    ]
+    actual_radius = max(math.hypot(v.co.x, v.co.y) for v in mesh.vertices)
+    if bounds[0][2] < -1e-6 or bounds[1][2] > height + 1e-6 or actual_radius > radius + 1e-6:
+        raise ValueError("Reference body exceeds the design envelope or nose mounting plane")
     return profile, dict(
         identity=identity,
         reused=reused,
         template=recipe,
+        vertices=len(mesh.vertices),
+        bounds_m=bounds,
+        maximum_radius_m=actual_radius,
         wall_basis="illustrative 0.35 mm" if wall else "reference CAD wall; unmeasured",
     )

@@ -9,6 +9,7 @@ import VideoOutputs from "./VideoOutputs";
 import ProjectEquipmentEditor from "./ProjectEquipmentEditor";
 import ProjectObservations from "./ProjectObservations";
 import ProjectComparison from "./ProjectComparison";
+import AirframeTemplates from "./AirframeTemplates";
 
 const STORAGE = "rocketwright-production-project-v1";
 const DIMENSIONS: [keyof Omit<ProductionGeometry, "dimensions_measured">, string][] = [
@@ -115,6 +116,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
   return <section className="wb-detail production-project" aria-label="設計の保存と制作">
     <h2>{project ? `${project.name} / v${project.version}` : "同じ設計から、製作と映像へ"}</h2>
     <p className="wb-note">寸法・材料・質量を保存し、再解析した版を採用してから出力します。このPCで制作します。プリンターへの送信は別操作です。</p>
+    <AirframeTemplates disabled={working || !!draft} onCreated={value => { accept(value); setDraft(null); void refreshList(); }}/>
     <div className="project-actions">
       <label>保存した案件<select aria-label="保存した案件" value={project?.id ?? ""} disabled={busy} onChange={e => void open(e.target.value)}><option value="">案件を選択</option>{projects.map(p => <option key={p.id} value={p.id}>{p.name} / v{p.version}</option>)}</select></label>
       <button className="btn" disabled={busy} onClick={() => { const next = project ? structuredClone(project.spec) : newSpec(source); setProject(null); onProjectChange(null); setDraft(next); }}>表示中の案から新しい案件</button>

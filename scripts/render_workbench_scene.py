@@ -385,7 +385,7 @@ for mode in ("design", "launch"):
     cache_report["clips"][mode] = dict(
         identity=clip_identity, restored=restored, resumed=resumed, rendered=rendered, frames=count
     )
-    if mode == "design" and not preview:
+    if mode == "design":
         # Pack licensed textures so the saved scene has no absolute image paths.
         if photographic:
             bpy.ops.file.pack_all()
