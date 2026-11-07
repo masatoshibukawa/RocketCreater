@@ -45,3 +45,16 @@ def test_budget_abort_and_invalid_losses_are_not_hidden():
         minimize(abort, points, generations=1, seed=1)
     with pytest.raises(ValueError, match="finite scalar"):
         minimize(lambda x: float("nan"), points, generations=1, seed=1)
+
+
+def test_invalid_decoded_geometry_is_rejected_without_aborting_search(monkeypatch):
+    from scripts import search_joint_designs as search
+
+    def invalid(*args):
+        raise ValueError("Fin tip and sweep must fit inside the root chord")
+
+    monkeypatch.setattr(search, "decode", invalid)
+    row, loss = search.proposal(np.ones(12), None, None, "initial")
+    assert row["status"] == "failed" and "root chord" in row["error"]
+    assert "metrics" not in row and "spec" not in row
+    assert loss == 1e12

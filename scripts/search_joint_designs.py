@@ -57,6 +57,32 @@ def measure(spec, anchor, cad):
     return serial(result)
 
 
+def proposal(unit, anchor, cad, profile, seen=None):
+    """A rejected genotype is evidence, not a fatal error or a passing design."""
+    row = dict(unit=unit.tolist(), status="failed")
+    loss = 1e12
+    try:
+        spec = decode(anchor, unit)
+        row.update(
+            spec=spec.model_dump(mode="json"), spec_hash=digest(spec.model_dump(mode="json"))
+        )
+        if seen is not None:
+            if row["spec_hash"] in seen:
+                return dict(row, status="duplicate"), loss
+            seen.add(row["spec_hash"])
+        m = measure(spec, anchor, cad)
+        row.update(metrics=m, status="completed")
+        key = "static_margin_cal" if profile == "initial" else "axial_free_margin_cal"
+        margin = m[key]
+        # Search headroom does not replace the final 1-caliber acceptance check.
+        loss = 10000 if margin is None else 2000 * max(0, 1.12 - margin) - m["scenario_height_m"][0]
+        if profile == "guided":
+            loss += 2000 * max(0, m["conservative_beam_ratio"] - 0.045)
+    except (ValueError, RuntimeError) as error:
+        row["error"] = str(error)
+    return row, loss
+
+
 def run(
     template,
     root,
@@ -161,24 +187,14 @@ def run(
                 ):
                     if time.monotonic() - start > budget_s * 0.45:
                         break
-                    spec = decode(anchor, unit)
-                    identity = digest(spec.model_dump(mode="json"))
-                    if identity in seen:
+                    row, _ = proposal(unit, anchor, cad[label], profile, seen)
+                    if row["status"] == "duplicate":
                         continue
-                    seen.add(identity)
-                    row = dict(
+                    row.update(
                         id=f"q{len(rows):04d}",
                         seed=label,
                         round=round_no,
-                        unit=unit.tolist(),
-                        spec=spec.model_dump(mode="json"),
-                        status="failed",
-                        spec_hash=identity,
                     )
-                    try:
-                        row.update(metrics=measure(spec, anchor, cad[label]), status="completed")
-                    except (ValueError, RuntimeError) as error:
-                        row["error"] = str(error)
                     rows.append(row)
             print(
                 json.dumps(
@@ -189,6 +205,7 @@ def run(
                         best=min(
                             (r["metrics"] for r in rows if r["status"] == "completed"),
                             key=lambda m: score(m, target, profile),
+                            default=None,
                         ),
                     )
                 ),
@@ -204,39 +221,25 @@ def run(
             def objective(unit, label=label, anchor=anchor):
                 if time.monotonic() - start > budget_s * 0.65:
                     raise TimeoutError("Exploration budget reserved for native promotion")
-                spec = decode(anchor, unit)
-                row = dict(
+                row, value = proposal(unit, anchor, cad[label], profile)
+                row.update(
                     id=f"q{len(rows):04d}",
                     seed=label,
                     round="evolution",
-                    unit=unit.tolist(),
-                    spec=spec.model_dump(mode="json"),
-                    status="failed",
-                    spec_hash=digest(spec.model_dump(mode="json")),
                 )
-                try:
-                    m = measure(spec, anchor, cad[label])
-                    row.update(status="completed", metrics=m)
-                    # Extra search headroom compensates for approximate CAD; acceptance stays 1.
-                    margin_key = (
-                        "static_margin_cal" if profile == "initial" else "axial_free_margin_cal"
-                    )
-                    margin = m[margin_key]
-                    value = (
-                        10000
-                        if margin is None
-                        else (2000 * max(0, 1.12 - margin) - m["scenario_height_m"][0])
-                    )
-                    if profile == "guided":
-                        value += 2000 * max(0, m["conservative_beam_ratio"] - 0.045)
-                except (ValueError, RuntimeError) as error:
-                    row["error"] = str(error)
-                    value = 10000
                 rows.append(row)
                 if len(rows) % 144 == 0:
                     completed = [r for r in rows if r["status"] == "completed"]
-                    best = min(completed, key=lambda r: score(r["metrics"], target, profile))
-                    progress = dict(evolution=label, evaluations=len(rows), best=best["metrics"])
+                    best = (
+                        min(completed, key=lambda r: score(r["metrics"], target, profile))
+                        if completed
+                        else None
+                    )
+                    progress = dict(
+                        evolution=label,
+                        evaluations=len(rows),
+                        best=best["metrics"] if best else None,
+                    )
                     write_json(root / "evolution-progress.json", progress)
                     print(json.dumps(progress), flush=True)
                 return value
