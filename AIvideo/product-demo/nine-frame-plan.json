@@ -1,0 +1,107 @@
+{
+  "status": "structure_and_look_discussion",
+  "duration_s": 175,
+  "priority": "why_this_is_needed",
+  "scenes": [
+    {
+      "id": "01-why-mission",
+      "title": "要求を形にする難しさ",
+      "start_s": 0,
+      "end_s": 8,
+      "image": "output/media/product-demo/generated/storyboard-v1/01-why-mission.png",
+      "kind": "ai_storyboard_concept",
+      "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
+    },
+    {
+      "id": "02-why-coordination",
+      "title": "分野間の連携",
+      "start_s": 8,
+      "end_s": 32,
+      "image": "output/media/product-demo/generated/storyboard-v1/02-why-coordination.png",
+      "kind": "ai_storyboard_concept",
+      "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
+    },
+    {
+      "id": "03-why-tradeoffs",
+      "title": "フィンの変更が質量・高度へ波及する",
+      "start_s": 32,
+      "end_s": 50,
+      "image": "output/media/product-demo/generated/storyboard-v1/03-why-tradeoffs.png",
+      "kind": "ai_storyboard_concept",
+      "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
+    },
+    {
+      "id": "04-cockpit-team",
+      "title": "コックピットで2人を紹介",
+      "start_s": 50,
+      "end_s": 66,
+      "image": "output/media/product-demo/generated/storyboard-v1/04-cockpit-team.png",
+      "kind": "ai_storyboard_concept",
+      "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
+    },
+    {
+      "id": "05-space-connections",
+      "title": "背景から階層型・適応型と5者の分担へ",
+      "start_s": 66,
+      "end_s": 100,
+      "image": "output/media/product-demo/generated/storyboard-v1/05-space-connections.png",
+      "kind": "ai_storyboard_concept",
+      "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
+    },
+    {
+      "id": "06-adaptive-feedback",
+      "title": "同じ案件の一巡で仕組みの動作を確かめる",
+      "start_s": 100,
+      "end_s": 132,
+      "image": "output/media/product-demo/generated/storyboard-v1/06-adaptive-feedback.png",
+      "kind": "ai_storyboard_concept",
+      "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
+    },
+    {
+      "id": "07-design-output",
+      "title": "機能・性能・結果を確かめ、成果物を開く",
+      "start_s": 132,
+      "end_s": 150,
+      "image": "output/media/product-demo/generated/storyboard-v1/07-design-output.jpg",
+      "kind": "existing_ui_reference",
+      "note": "既存UI資料。今回の案件の通し収録ではない。"
+    },
+    {
+      "id": "08-real-printing",
+      "title": "実写の印刷工程",
+      "start_s": 150,
+      "end_s": 162,
+      "image": "output/media/product-demo/generated/storyboard-v1/08-real-printing.png",
+      "kind": "actual_printer_recording_still",
+      "note": "既存2L案の別試作。印刷工程の実写。"
+    },
+    {
+      "id": "09-development-future",
+      "title": "Claude Codeでの開発と展望",
+      "start_s": 162,
+      "end_s": 175,
+      "image": "output/media/product-demo/generated/storyboard-v1/09-development-future.png",
+      "kind": "ai_storyboard_concept",
+      "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
+    }
+  ],
+  "analysis_reference": "analysis-story.md",
+  "concept_bridge_reference": "concept-to-demo.md",
+  "bridge_segments": [
+    {
+      "start_s": 66,
+      "end_s": 78,
+      "concept": "hierarchical_analysis"
+    },
+    {
+      "start_s": 78,
+      "end_s": 88,
+      "concept": "adaptive_selection"
+    },
+    {
+      "start_s": 88,
+      "end_s": 100,
+      "concept": "five_roles"
+    }
+  ]
+}

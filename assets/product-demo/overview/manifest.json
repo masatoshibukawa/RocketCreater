@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "status": "planning",
+  "product": "RocketWright",
+  "purpose": "application overview demo",
+  "artifacts": [],
+  "sources": [],
+  "verification": {
+    "full_playback": "not_run",
+    "audio_listening": "not_run",
+    "caption_review": "not_run",
+    "public_url_access": "not_run",
+    "submission_name_metadata_review": "not_run"
+  },
+  "published_url": null
+}
