@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "status": "not_run",
+  "purpose": "Compare narration for the RocketWright product demo; proposed inputs, not benchmark results.",
+  "language": "ja-JP",
+  "duration_policy": "Measure actual speech first; target windows are editorial goals, not guaranteed model durations.",
+  "candidates": [
+    {
+      "id": "haruka-baseline",
+      "engine": "Windows.Media.SpeechSynthesis",
+      "model_id": null,
+      "revision": null,
+      "speaker": "Microsoft Haruka",
+      "role": "existing_preview_reference",
+      "selected": false
+    },
+    {
+      "id": "aivis",
+      "engine": "AivisSpeech Engine",
+      "model_id": null,
+      "revision": null,
+      "speaker": null,
+      "role": "local_japanese_editing",
+      "selected": false
+    },
+    {
+      "id": "voicevox",
+      "engine": "VOICEVOX ENGINE",
+      "model_id": null,
+      "revision": null,
+      "speaker": null,
+      "role": "local_pronunciation_control",
+      "selected": false
+    },
+    {
+      "id": "qwen",
+      "engine": "qwen-tts",
+      "model_id": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+      "revision": null,
+      "speaker": null,
+      "role": "instruction_control_comparison",
+      "selected": false
+    }
+  ],
+  "trial_policy": {
+    "select_candidates_before_run": true,
+    "shortlist_count_guidance": "2–3 plus existing baseline if useful",
+    "same_display_content": true,
+    "listen_to_raw_and_level_matched": true,
+    "shortlist_before_long_form": true,
+    "compare_changing_one_setting_at_a_time": true
+  },
+  "cases": [
+    {
+      "id": "why-tradeoff",
+      "display_text": "フィンを厚くすると変形は減ります。一方で、重くなり、概算高度は下がりました。",
+      "speech_text": "フィンを厚くすると変形は減ります。一方で、重くなり、概算高度は下がりました。",
+      "focus": [
+        "pause",
+        "emphasis",
+        "contrast"
+      ],
+      "must_preserve": [
+        "deflection_decreased",
+        "mass_increased",
+        "screening_altitude_decreased"
+      ]
+    },
+    {
+      "id": "concept-and-roles",
+      "display_text": "階層型は、部品、機体、ミッションをつなぎます。利用者が目的を決め、ハーネスが実行を管理します。",
+      "speech_text": "階層型は、部品、機体、ミッションをつなぎます。利用者が目的を決め、ハーネスが実行を管理します。",
+      "focus": [
+        "technical_terms",
+        "rhythm"
+      ],
+      "must_preserve": [
+        "user_sets_goal",
+        "harness_manages_execution"
+      ]
+    },
+    {
+      "id": "precise-number",
+      "display_text": "詳細解析の高度は18.857 m。要求の30 mには未達です。",
+      "speech_text": "詳細解析の高度は、十八点八五七メートル。要求の三十メートルには、未達です。",
+      "focus": [
+        "digits",
+        "units",
+        "negation"
+      ],
+      "must_preserve": [
+        "altitude_m=18.857",
+        "target_m=30",
+        "target_not_met"
+      ]
+    },
+    {
+      "id": "rounded-number",
+      "display_text": "詳細解析の高度は18.857 m。要求の30 mには未達です。",
+      "speech_text": "詳細解析の高度は、約十八点九メートル。要求の三十メートルには、未達です。",
+      "focus": [
+        "explicit_rounding",
+        "subtitle_text_difference"
+      ],
+      "must_preserve": [
+        "approximate_spoken_value",
+        "exact_display_value_retained",
+        "target_not_met"
+      ]
+    },
+    {
+      "id": "names-and-roadmap",
+      "display_text": "RocketWright。開発の主力はClaude Code。実行時はClaude APIへ移行予定です。",
+      "speech_text": "ロケットライト。開発の主力は、クロードコード。実行時は、クロードエーピーアイへ移行予定です。",
+      "focus": [
+        "proper_names",
+        "latin_letters",
+        "planned_status"
+      ],
+      "must_preserve": [
+        "runtime_migration_is_planned"
+      ]
+    },
+    {
+      "id": "chapter-continuity",
+      "display_text": "一つの部品を変えると、ロケット全体が変わる。階層型では部品と機体とミッションをつなぎます。適応型では、対象、手法、評価方法を選び直します。概算高度は改善しました。目標は未達です。設計、解析、試作を、一つの流れに。",
+      "speech_text": "一つの部品を変えると、ロケット全体が変わる。階層型では部品と機体とミッションをつなぎます。適応型では、対象、手法、評価方法を選び直します。概算高度は改善しました。目標は未達です。設計、解析、試作を、一つの流れに。",
+      "focus": [
+        "beginning_middle_end_voice",
+        "chunk_seams",
+        "repetition",
+        "omission"
+      ],
+      "must_preserve": [
+        "hierarchy",
+        "adaptive_selection",
+        "target_not_met"
+      ],
+      "instruction": "Only run after a short-take shortlist. Compare continuous generation with semantic chunks when supported."
+    }
+  ],
+  "record_fields": {
+    "identity": [
+      "candidate_id",
+      "case_id",
+      "take_id",
+      "engine_version",
+      "model_revision",
+      "speaker_id",
+      "reference_audio_sha256_if_used",
+      "dictionary_sha256_if_used",
+      "seed_if_supported",
+      "generation_settings"
+    ],
+    "conditions": [
+      "os",
+      "runtime",
+      "device",
+      "precision",
+      "batch_size",
+      "warm_or_cold",
+      "other_gpu_processes",
+      "timing_start_definition",
+      "sample_rate_hz"
+    ],
+    "measurements": [
+      "output_duration_s",
+      "load_time_s",
+      "synthesis_time_s",
+      "rtf",
+      "ttfa_s_if_streaming",
+      "peak_vram_mib",
+      "peak_ram_mib",
+      "raw_asr_text_if_used",
+      "normalized_asr_text_if_used",
+      "cer_if_computed",
+      "wer_tokenizer_if_used",
+      "integrated_lufs_if_measured",
+      "true_peak_dbtp_if_measured"
+    ],
+    "human_review": [
+      "pronunciation_issues",
+      "factual_terms_preserved",
+      "prosody_notes",
+      "speaker_consistency_notes",
+      "seam_notes",
+      "listener_language",
+      "presentation_order",
+      "adopted",
+      "reason"
+    ],
+    "output": [
+      "raw_wav_path",
+      "edited_wav_path",
+      "audio_sha256",
+      "subtitle_path_if_created",
+      "export_verified"
+    ]
+  },
+  "unmeasured_value_policy": "Use null or an explicit not_measured status; never use zero to stand for unmeasured.",
+  "records": []
+}
