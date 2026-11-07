@@ -18,7 +18,7 @@ const INSPECTION: Record<string, string> = {
   export_report: "出力ファイルを点検中", design_stage: "設計条件を点検中",
 };
 
-export function designCrewTask(state: Pick<DesignState, "status" | "pendingQuestion" | "events" | "candidates" | "final">): CrewTask {
+export function designCrewTask(state: Pick<DesignState, "refused" | "status" | "pendingQuestion" | "events" | "candidates" | "final">): CrewTask {
   if (state.status === "error") return { id: "design", status: "attention", label: "処理を止めて、エラーの確認を待っています" };
   if (state.pendingQuestion) return { id: "design", status: "waiting", label: "資料を持って、追加の回答を待っています" };
   if (state.status === "streaming") {
