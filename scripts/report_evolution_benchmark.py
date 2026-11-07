@@ -2,18 +2,25 @@
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
 
 from rocketwright.agent.design_projects import sha, write_json
-from rocketwright.analysis.schema import Precision
 from rocketwright.analysis.worker import read
 from scripts.report_initial_models import verified
 
 
 def export(training, benchmark, destination):
     report, files = verified(benchmark)
+    first = report["results"][0]
+    precision = read(benchmark / first["evidence"]["directory"] / "geometry/input.json")[
+        "precision"
+    ]
+    target = first["spec"]["requirement"]["target_altitude_m"]
+    if any(r["spec"]["requirement"] != first["spec"]["requirement"] for r in report["results"]):
+        raise ValueError("Native requirements differ")
     training_report = read(training / "report.json")
     if sha(training / "report.json") != report["training_report_sha256"]:
         raise ValueError("Training report changed")
@@ -45,8 +52,8 @@ def export(training, benchmark, destination):
             if r["status"] == "completed"
             and r["temporal_pass"]
             and r["aero_domain_pass"]
-            and r["metrics"]["static_margin_cal"] >= 1
-            and r["metrics"]["incidence_deg"] <= Precision().maximum_incidence_deg
+            and r["metrics"]["static_margin_cal"] >= precision["minimum_static_margin_cal"]
+            and r["metrics"]["incidence_deg"] <= precision["maximum_incidence_deg"]
         ]
         by_seed = []
         for seed in report["seeds"]:
@@ -88,7 +95,7 @@ def export(training, benchmark, destination):
                 native_completed=sum(r["status"] == "completed" for r in native),
                 native_screen_passes=len(passed),
                 best_native_height_m=best_native["metrics"]["apogee_m"] if best_native else None,
-                native_height_target_passes=sum(r["metrics"]["apogee_m"] >= 30 for r in passed),
+                native_height_target_passes=sum(r["metrics"]["apogee_m"] >= target for r in passed),
                 best_native_spec=best_native["spec"] if best_native else None,
                 native=[
                     dict(
@@ -96,6 +103,23 @@ def export(training, benchmark, destination):
                         status=r["status"],
                         metrics=r.get("metrics"),
                         screen_pass=r in passed,
+                        completed_methods=r["completed_methods"],
+                        failed_stage=next(
+                            (
+                                stage
+                                for stage in (
+                                    "geometry",
+                                    "thermal",
+                                    "propulsion",
+                                    "screen",
+                                    "refine",
+                                )
+                                if stage not in r["completed_methods"]
+                            ),
+                            None,
+                        )
+                        if r["status"] != "completed"
+                        else None,
                         manifest_sha256=r["evidence"]["manifest_sha256"],
                     )
                     for r in native
@@ -117,6 +141,8 @@ def export(training, benchmark, destination):
         matched_evaluations=report["matched_evaluations"],
         physical_qualification=False,
         acceptance_performed=False,
+        target_altitude_m=target,
+        screening_precision=precision,
         limitations=[
             "Analytic aerodynamic exploration, not CFD/FEM acceptance",
             "Three seeds and three fixed anchors, no general optimizer superiority",
@@ -129,13 +155,114 @@ def export(training, benchmark, destination):
     return portable
 
 
+def plot(benchmark, report, destination):
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    raw = read(benchmark / "report.json")
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5), layout="constrained")
+    colors = {"ga": "#8e8f98", "de": "#b18b59", "ga-nn": "#3274a1", "de-nn": "#07847d"}
+    count = raw["population_size"]
+    for method, color in colors.items():
+        curves = []
+        for seed in raw["seeds"]:
+            anchor_curves = []
+            for run in raw["runs"]:
+                if run["method"] != method or run["seed"] != seed:
+                    continue
+                values = [
+                    json.loads(line)["loss"]
+                    for line in (benchmark / run["data_file"])
+                    .read_text(encoding="utf-8")
+                    .splitlines()
+                ]
+                anchor_curves.append(np.minimum.accumulate(values)[count - 1 :: count])
+            curves.append(np.min(anchor_curves, axis=0))
+        curves = np.asarray(curves)
+        x = np.arange(1, curves.shape[1] + 1) * count * 3
+        axes[0].plot(x, np.median(curves, axis=0), label=method.upper(), color=color)
+        axes[0].fill_between(x, curves.min(0), curves.max(0), color=color, alpha=0.10)
+    axes[0].set(
+        title="Measured search objective",
+        xlabel="Simulator calls per seed (3 anchors)",
+        ylabel="Best loss: median and range of 3 seeds (lower is better)",
+    )
+    axes[0].legend(frameon=False, fontsize=8)
+    for i, method in enumerate(report["methods"]):
+        for j, row in enumerate(method["native"]):
+            if row["status"] != "completed":
+                continue
+            axes[1].scatter(
+                i + (j - 1) * 0.13,
+                row["metrics"]["apogee_m"],
+                s=55,
+                facecolors=colors.get(method["method"], "#aaa") if row["screen_pass"] else "none",
+                edgecolors="#34454b",
+            )
+    axes[1].axhline(report["target_altitude_m"], color="#ac504b", ls="--", lw=1)
+    axes[1].set(
+        xticks=np.arange(len(report["methods"])),
+        xticklabels=[r["method"].upper().replace("-ADAPTIVE", "-A") for r in report["methods"]],
+        ylabel="Fresh-CAD / 6DOF apogee (m)",
+        title="3 native promotions per method\nFilled: original screening checks pass",
+    )
+    axes[1].tick_params(axis="x", rotation=40)
+    rejected = sum(len(r["native"]) - r["native_completed"] for r in report["methods"])
+    if rejected:
+        axes[1].text(
+            0.03,
+            0.92,
+            f"{rejected} native rejection(s); no altitude assigned",
+            transform=axes[1].transAxes,
+            fontsize=8,
+            color="#8a4742",
+        )
+    training = report["training"]["anchors"]
+    x = np.arange(len(training))
+    axes[2].bar(
+        x - 0.18,
+        [r["test_mean_baseline_mae"][0] for r in training],
+        width=0.36,
+        color="#c3c6ca",
+        label="Training mean",
+    )
+    axes[2].bar(
+        x + 0.18, [r["test_mae"][0] for r in training], width=0.36, color="#07847d", label="MLP"
+    )
+    axes[2].set(
+        xticks=x,
+        xticklabels=["Anchor 1", "Anchor 2", "Anchor 3"],
+        title="Held-out surrogate error\n308 new examples per anchor",
+        ylabel="Conservative-height prediction MAE (m)",
+    )
+    axes[2].legend(frameon=False)
+    for ax in axes:
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.grid(axis="y", alpha=0.15)
+        ax.set_axisbelow(True)
+    fig.suptitle(
+        "Adaptive evolutionary search + neural proposal ranking\n"
+        "6,144 offline training/validation/test simulations are additional cost; "
+        "no CFD/FEM or hardware acceptance",
+        fontsize=12,
+    )
+    fig.savefig(destination.with_suffix(".png"), dpi=170)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("training", type=Path)
     p.add_argument("benchmark", type=Path)
     p.add_argument("destination", type=Path)
+    p.add_argument("--plot-libraries", type=Path)
     a = p.parse_args()
     result = export(a.training, a.benchmark, a.destination)
+    if a.plot_libraries:
+        sys.path.append(str(a.plot_libraries.resolve()))
+        plot(a.benchmark, result, a.destination)
     print(
         json.dumps(
             [
