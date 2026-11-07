@@ -281,6 +281,15 @@ def plot(root, result, destination):
         ylabel="Simulated apogee (m)",
     )
     axes[2].tick_params(axis="x", rotation=25)
+    failures = sum(r["status"] != "completed" for m in result["methods"] for r in m["native"])
+    axes[2].text(
+        0.03,
+        0.9,
+        f"{failures} CAD/analysis rejections; no altitude assigned",
+        transform=axes[2].transAxes,
+        fontsize=8,
+        color="#944c42",
+    )
     for ax in axes:
         ax.grid(axis="y", alpha=0.15)
         ax.spines[["right", "top"]].set_visible(False)
