@@ -36,6 +36,7 @@ Built with Claude: Japan 2026の提出に向け、専門分野間の設計の往
 ## 参考原稿と制作記録
 
 - [仮v1動画の確認・再書き出し](preview-v1.md)：175秒、仮ナレーション・字幕・印刷実写入り
+- [AIナレーションの4案比較と差し替え版](narration-v1.md)：ローカル合成と読み戻し、同じ映像への音声差し替え
 - [狙いと5行のメッセージ](brief.md)
 - [旧175秒・10場面の構成データ](plan.json) / [日本語台本](script.ja.md) / [絵コンテ](storyboard.md)：保留中の未採用原稿
 - [旧仮字幕SRT](captions/overview.ja.srt)：旧台本と同じ文。録音前の仮時刻

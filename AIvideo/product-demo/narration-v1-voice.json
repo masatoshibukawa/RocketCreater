@@ -1,0 +1,29 @@
+{
+  "voice_id": "qwen-clear-fixed",
+  "model_id": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+  "revision": "fd4b254389122332181a7c3db7f27e918eec64e3",
+  "selected_trial": "qwen-clear",
+  "selection_basis": "Lowest normalized ASR character error in the four matched trials; numbers preserved. Editorial preference remains provisional without human listening.",
+  "reference": {
+    "source": "output/media/product-demo/audio/narration-trials/qwen/qwen-clear/comparison.wav",
+    "sha256": "8b8171ae077805cde0ca854bc03c6bb6c173be4a3aa5fc292fb1106b985879cb",
+    "stop_s": 6.75,
+    "text": "一つの部品を変えると、ロケット全体が変わる。部品と機体、そしてミッションをつなぐ。",
+    "provenance": "Original VoiceDesign-generated reference, no human recording."
+  },
+  "batch_size": 4,
+  "seed": 7920,
+  "generation": {
+    "temperature": 0.68,
+    "top_p": 0.9,
+    "max_new_tokens": 310
+  },
+  "speech_overrides": {
+    "8": "部品から機体へ。機体から、ミッションの要求へ。階層型の解析で、結果をつなぎます。",
+    "9": "てきおう型では、情報と計算資源に応じて、対象、手法、評価方法を選び直します。",
+    "12": "ハーネスが候補を絞り、予測器が改善の見込みを示します。",
+    "13": "モデルは、フィンの形状変更を選択。",
+    "15": "おおよその高度は伸びました。でも、目標には届いていません。",
+    "17": "詳細解析でも、高度は約十八点九メートル。解析を回せたことと、機体が要求を満たしたことは別です。"
+  }
+}

@@ -215,6 +215,23 @@ def srt_stamp(seconds):
     return f"{seconds//3600:02d}:{(seconds//60)%60:02d}:{seconds%60:02d},000"
 
 
+def score_bed(duration):
+    """Original chord bed shared by the preview and audio-only revisions."""
+    bed = np.zeros(duration*SAMPLE, dtype=np.float32)
+    chords = [(0, 50, (55, 82.41, 110)), (50, 66, (65.41, 98, 130.81)),
+              (66, 100, (55, 82.41, 130.81)), (100, 150, (49, 73.42, 110)),
+              (150, 162, (65.41, 98, 130.81)), (162, duration, (55, 82.41, 164.81))]
+    for start, end, notes in chords:
+        t = np.arange((end-start)*SAMPLE)/SAMPLE
+        fade = np.minimum(np.clip(t/1.6, 0, 1), np.clip((end-start-t)/1.5, 0, 1))
+        section = np.zeros_like(t)
+        for j, hz in enumerate(notes):
+            section += np.sin(2*np.pi*hz*t + .28*np.sin(2*np.pi*.16*t + j)) * (0.012 - j*.002)
+            section += .003 * np.sin(2*np.pi*(hz*2.005)*t + j)
+        bed[start*SAMPLE:end*SAMPLE] = section * fade * (0.86 + 0.14*np.cos(2*np.pi*.21*t))
+    return bed
+
+
 def mix_audio(shots, duration):
     takes = AUDIO / "takes"
     subprocess.run(["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
@@ -249,19 +266,7 @@ def mix_audio(shots, duration):
         activity[max(0, start-SAMPLE//8):min(len(activity), end+SAMPLE//6)] = 1
         subtitle_entries.append(
             f"{len(subtitle_entries)+1}\n{srt_stamp(shot['start_s'])} --> {srt_stamp(shot['end_s'])}\n{shot['caption']}")
-    # Original, quiet chord beds. Layer changes are tied to the story chapters.
-    bed = np.zeros_like(speech)
-    chords = [(0, 50, (55, 82.41, 110)), (50, 66, (65.41, 98, 130.81)),
-              (66, 100, (55, 82.41, 130.81)), (100, 150, (49, 73.42, 110)),
-              (150, 162, (65.41, 98, 130.81)), (162, duration, (55, 82.41, 164.81))]
-    for start, end, notes in chords:
-        t = np.arange((end-start)*SAMPLE)/SAMPLE
-        fade = np.minimum(np.clip(t/1.6, 0, 1), np.clip((end-start-t)/1.5, 0, 1))
-        section = np.zeros_like(t)
-        for j, hz in enumerate(notes):
-            section += np.sin(2*np.pi*hz*t + .28*np.sin(2*np.pi*.16*t + j)) * (0.012 - j*.002)
-            section += .003 * np.sin(2*np.pi*(hz*2.005)*t + j)
-        bed[start*SAMPLE:end*SAMPLE] = section * fade * (0.86 + 0.14*np.cos(2*np.pi*.21*t))
+    bed = score_bed(duration)
     write_wav(AUDIO / "narration.wav", speech)
     write_wav(AUDIO / "mix.wav", speech + bed*(1-.58*activity))
     (OUT / "rocketwright-preview-v1.ja.srt").write_text("\n\n".join(subtitle_entries)+"\n", encoding="utf-8")

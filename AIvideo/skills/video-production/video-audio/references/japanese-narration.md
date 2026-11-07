@@ -60,6 +60,8 @@
 
 ## このプロジェクトでの引継ぎ
 
-仮v1の [発音用文字列を含む編集データ](../../../../product-demo/preview-v1.json) と [既存の音声生成](../../../../product-demo/tools/preview_voice.ps1) はWindows音声Haruka用。AivisSpeechやQwen3-TTSを調査しただけで、この生成経路が置き換わったとは扱わない。新しいTTSを導入する場合は、ComfyUIやアプリの環境に依存関係を追加せず、専用環境または公式配布を使う。
+仮v1の [発音用文字列を含む編集データ](../../../../product-demo/preview-v1.json) と [元の音声生成](../../../../product-demo/tools/preview_voice.ps1) はWindows音声Haruka用。[実際の比較と差し替え記録](../../../../product-demo/narration-v1.md) では、AivisSpeechとQwen3-TTSで4案を作り、設計した合成声を参照して23カットに同じ声を使った。比較は自動検査で、人の試聴とは区別する。新しいTTSの依存関係は、ComfyUIやアプリと分けて管理する。
+
+繰り返し生成する声は、VoiceDesignの指示だけを固定するより、採用済み合成音声の明瞭な区間・対応する文・ハッシュを固定する方法を比較する。ASRの時刻は元のWAVより長く出ることがあるので、切る前に波形と元の尺を確認する。「未達」のような重要語を認識しづらい場合は、表示を保って「目標には届いていません」のように読み上げを言い換える。
 
 素材は`output/media/product-demo/audio/`等のGit対象外領域へ、再利用する設定や原稿は制作側へ保存する。ナレーションの声を変更しても、解析が未達であることや、Claude APIが移行予定であることなど、デモが示す事実は維持する。
