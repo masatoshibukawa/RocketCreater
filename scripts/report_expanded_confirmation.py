@@ -147,6 +147,9 @@ def export(search, old, new, destination):
             "Two selected finalists; not independent estimates of general optimizer performance",
             "Grid/time/parameter sensitivity is not experimental validation",
             "Constitutive and mount scenarios are unmeasured; no hardware qualification",
+            "One-way CFD load transfer to FEM; deformed geometry is not fed back into CFD/flight",
+            "Point-mass equipment/payload placement omits volumetric packaging checks",
+            "FEM stress is reported without qualified material strength allowables",
             "Local linear stability does not prove full-flight nonlinear stability",
         ],
     )
