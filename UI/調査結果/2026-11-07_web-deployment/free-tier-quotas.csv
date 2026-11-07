@@ -1,0 +1,36 @@
+provider,product,plan,metric,value,unit,period,scope,limit_behavior,source_id
+GitHub,Pages,Free,published_site_size,1,GB,current,site,may_not_serve,H02
+GitHub,Pages,Free,bandwidth_soft_limit,100,GB,month,site,soft_limit_contact_or_restrict,H02
+GitHub,Pages,Free,builds_soft_limit,10,builds,hour,site,custom_actions_workflow_exception,H02
+Cloudflare,Workers Static Assets,Free,static_files,20000,files,version,worker,reject_excess,H07
+Cloudflare,Workers Static Assets,Free,file_size,25,MiB,file,asset,reject_excess,H07
+Cloudflare,Workers,Free,dynamic_requests,100000,requests,day_UTC,account,request_limit_errors,H07
+Cloudflare,Workers,Free,cpu_time,10,ms,request,invocation,terminate_if_consistently_exceeded,H07
+Cloudflare,Workers,Free,memory,128,MB,runtime,isolate,resource_limit_error,H07
+Cloudflare,Workers Builds,Free,build_time,3000,minutes,month,account,build_limit,H08
+Cloudflare,Workers Builds,Free,build_timeout,20,minutes,build,build,terminate_build,H08
+Cloudflare,Pages,Free,builds,500,builds,month,account,build_limit,H09
+Cloudflare,Pages,Free,concurrent_builds,1,build,concurrent,account,queue,H09
+Vercel,Platform,Hobby,fast_data_transfer,100,GB,monthly_usage,team,feature_pause_or_wait,H14
+Vercel,Platform,Hobby,cdn_requests,1000000,requests,monthly_usage,team,feature_pause_or_wait,H14
+Vercel,Functions,Hobby,invocations,1000000,invocations,monthly_usage,team,feature_pause_or_wait,H14
+Vercel,Functions,Hobby,active_cpu,4,CPU_hours,monthly_usage,team,feature_pause_or_wait,H14
+Vercel,Functions,Hobby,provisioned_memory,360,GB_hours,monthly_usage,team,feature_pause_or_wait,H14
+Netlify,Platform,Credit-based Free,credits,300,credits,billing_month,team,pause_all_projects_no_auto_recharge,H18
+Netlify,Platform,Credit-based,production_deploy_rate,15,credits_per_deploy,event,team,deduct_shared_credits,H33
+Netlify,Platform,Credit-based,bandwidth_rate,20,credits_per_GB,usage,team,deduct_shared_credits,H33
+Netlify,Platform,Credit-based,web_request_rate,2,credits_per_10000_requests,usage,team,deduct_shared_credits,H33
+Netlify,Functions,Credit-based,compute_rate,10,credits_per_GB_hour,usage,team,deduct_shared_credits,H33
+Render,Web Service,Free,free_instance_hours,750,hours,calendar_month,workspace,suspend_free_web_services_until_next_month,H20
+Render,Web Service,Free,memory,512,MB,runtime,service,resource_constraint,H21
+Render,Web Service,Free,idle_timeout,15,minutes,no_inbound_traffic,service,spin_down,H20
+Render,Workspace,Hobby,bandwidth,5,GB,month,workspace,bill_extra_or_suspend_without_payment_method,H21
+Render,Workspace,Hobby,standard_build_pipeline,500,minutes,month,workspace,bill_extra_or_disable_builds,H21
+Render,Postgres,Free,lifetime,30,days,after_creation,database,expire,H20
+Firebase,Hosting,Spark,storage,10,GB,current,project,block_new_deploys,H24
+Firebase,Hosting,Spark,data_transfer,10,GB,month,project,disable_sites_after_grace_until_next_month,H24
+Firebase,App Hosting,Blaze,outgoing_bandwidth_no_cost,10,GiB,month,billing_account,bill_excess_and_other_product_usage,H26
+Railway,Resources,Trial,credit,5,USD,one_time_max_30_days,account,revert_to_Free,H28
+Railway,Resources,Free,credit,1,USD,month,account,limited_credit_not_runtime_guarantee,H28
+Railway,Service,Free,memory_max,0.5,GB,runtime,service,usage_also_consumes_credit,H29
+Railway,Networking,Free,custom_domains,0,domains,current,plan,requires_other_plan,H30
