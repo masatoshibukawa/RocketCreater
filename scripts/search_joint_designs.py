@@ -24,6 +24,7 @@ from rocketwright.analysis.service import code_hash
 from rocketwright.analysis.tradeoff import environment, reconcile_payload
 from rocketwright.analysis.worker import read, serial
 from rocketwright.physics import fin_candidates
+from scripts import mixed_genetic
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -66,10 +67,15 @@ def run(
     budget_s=3600,
     generations=0,
     profile="initial",
+    optimizer="de",
+    seed=7261,
 ):
+    if optimizer not in {"de", "ga"}:
+        raise ValueError("Unknown evolutionary candidate generator")
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=False)
     start, source, script_hash = time.monotonic(), code_hash(), sha(Path(__file__))
+    optimizer_hash = sha(Path(mixed_genetic.__file__))
     template, reconciliation = reconcile_payload(template)
     if template.design.initial_gauge_pressure_pa > 400000:
         raise ValueError("Use the existing pressure ceiling")
@@ -89,10 +95,15 @@ def run(
         count_per_seed=count,
         rounds=rounds,
         promote=promote,
-        seed=7261,
+        seed=seed,
         budget_s=budget_s,
         workers=2,
         evolutionary_generations=generations,
+        evolutionary_optimizer=optimizer,
+        optimizer_sha256=optimizer_hash,
+        evolutionary_population_size=6 * len(AXES),
+        categorical_axes=["material_index"],
+        fin_count_search_enabled=False,
         exploration_profile=profile,
         guided_profile_is_diagnostic_only=True,
         reconciliation=reconciliation,
@@ -146,7 +157,7 @@ def run(
                 batches += [(r["unit"], count // 4, 0.20 / round_no) for r in prior[:3]]
             for j, (center, n, radius) in enumerate(batches):
                 for unit in samples(
-                    n, 7261 + 1000 * round_no + 50 * i + j, center=center, radius=radius
+                    n, seed + 1000 * round_no + 50 * i + j, center=center, radius=radius
                 ):
                     if time.monotonic() - start > budget_s * 0.45:
                         break
@@ -231,14 +242,40 @@ def run(
                 return value
 
             try:
-                fit = differential_evolution(
-                    objective,
-                    [(0, 1)] * len(AXES),
-                    seed=921 + i,
-                    maxiter=generations,
-                    popsize=6,
-                    polish=False,
-                    tol=0.002,
+                category = {list(AXES).index("material_index"): int(AXES["material_index"][1])}
+                initial = mixed_genetic.canonical(
+                    samples(6 * len(AXES), seed + 100000 + i), category
+                )
+                write_json(root / f"population-{i}.json", dict(seed=label, points=initial.tolist()))
+                if optimizer == "ga":
+                    fit = mixed_genetic.minimize(
+                        objective,
+                        initial,
+                        generations=generations,
+                        seed=seed + 200000 + i,
+                        categories=category,
+                    )
+                else:
+                    fit = differential_evolution(
+                        objective,
+                        [(0, 1)] * len(AXES),
+                        seed=seed + 200000 + i,
+                        maxiter=generations,
+                        init=initial,
+                        polish=False,
+                        tol=0,
+                        atol=0,
+                    )
+                write_json(
+                    root / f"optimizer-{i}.json",
+                    dict(
+                        method=optimizer,
+                        seed=label,
+                        evaluations=int(fit.nfev),
+                        loss=float(fit.fun),
+                        initial_sha256=sha(root / f"population-{i}.json"),
+                        history=getattr(fit, "history", None),
+                    ),
                 )
                 print(
                     json.dumps(
@@ -252,7 +289,11 @@ def run(
                 root / "exploration.json",
                 dict(source_hash=source, script_sha256=script_hash, pool=pool, results=rows),
             )
-    if code_hash() != source or sha(Path(__file__)) != script_hash:
+    if (
+        code_hash() != source
+        or sha(Path(__file__)) != script_hash
+        or sha(Path(mixed_genetic.__file__)) != optimizer_hash
+    ):
         raise ValueError("Source changed during search")
     viable = sorted(
         [r for r in rows if r["status"] == "completed"],
@@ -328,7 +369,11 @@ def run(
     report = dict(
         source_hash=source,
         script_sha256=script_hash,
-        source_unchanged=code_hash() == source and sha(Path(__file__)) == script_hash,
+        source_unchanged=(
+            code_hash() == source
+            and sha(Path(__file__)) == script_hash
+            and sha(Path(mixed_genetic.__file__)) == optimizer_hash
+        ),
         pool=pool,
         sampled=len(rows),
         failed=sum(r["status"] != "completed" for r in rows),
@@ -355,6 +400,8 @@ if __name__ == "__main__":
     p.add_argument("--budget", type=float, default=3600)
     p.add_argument("--evolve-generations", type=int, default=0)
     p.add_argument("--profile", choices=("initial", "guided"), default="initial")
+    p.add_argument("--optimizer", choices=("de", "ga"), default="de")
+    p.add_argument("--seed", type=int, default=7261)
     a = p.parse_args()
     if (
         not 8 <= a.count <= 512
@@ -373,4 +420,6 @@ if __name__ == "__main__":
         budget_s=a.budget,
         generations=a.evolve_generations,
         profile=a.profile,
+        optimizer=a.optimizer,
+        seed=a.seed,
     )
