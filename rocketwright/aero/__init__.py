@@ -11,7 +11,7 @@ from rocketwright.aero.base import (
     cd_for_physics,
     physics_ref_diameter_m,
 )
-from rocketwright.aero.flow_images import flow_image_path, flow_images
+from rocketwright.aero.flow_images import flow_frames_of, flow_image_path, flow_images
 from rocketwright.aero.lbm_gpu import LbmGpuBackend
 from rocketwright.aero.loop import (
     AeroLoopResult,
@@ -52,6 +52,7 @@ __all__ = [
     "cache_key",
     "cd_for_physics",
     "evaluate",
+    "flow_frames_of",
     "flow_image_path",
     "flow_images",
     "get_backend",

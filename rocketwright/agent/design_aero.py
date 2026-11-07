@@ -246,6 +246,10 @@ class AeroJobs:
                 image | {"url": f"/aero/loop/{job.id}/images/{image['name']}"}
                 for image in aero.flow_images(artifacts)
             ],
+            "frames": [
+                frame | {"url": f"/aero/loop/{job.id}/images/{frame['name']}"}
+                for frame in aero.flow_frames_of(artifacts)
+            ],
         }
 
     def view(self, job_id: str) -> dict[str, Any]:

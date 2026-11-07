@@ -65,6 +65,7 @@ export type Status = "idle" | "streaming" | "done" | "error";
 
 export interface DesignState {
   status: Status;
+  refused: boolean;
   request: string;
   events: AgentEvent[];
   messages: ChatMessage[];
@@ -98,6 +99,7 @@ export interface DesignState {
 
 export const initialState: DesignState = {
   status: "idle",
+  refused: false,
   request: "",
   events: [],
   messages: [],
@@ -920,7 +922,7 @@ function applyError(state: DesignState, ev: AgentEvent): DesignState {
   if (kind === "out_of_scope") {
     // A refusal is an answer, not a failure: it reads as the agent's reply.
     const text = [detail, suggestion].filter(Boolean).join("\n");
-    return push({ ...state, status: "done" }, "agent", text);
+    return push({ ...state, status: "done", refused: true }, "agent", text);
   }
   const text = `[${kind}] ${detail || JSON.stringify(p)}${suggestion ? `\n提案: ${suggestion}` : ""}`;
   return push({ ...state, status: "error", errors: [...state.errors, text] }, "error", text);

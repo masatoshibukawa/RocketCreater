@@ -1,8 +1,8 @@
 "use client";
 
-import { apiUrl } from "../lib/api";
 import { fmt } from "../lib/format";
 import type { AeroLive } from "../lib/useAeroLoop";
+import FlowVideo from "./FlowVideo";
 
 const WIDTH = 320;
 const HEIGHT = 150;
@@ -53,27 +53,28 @@ function ForceChart({ points, xMax }: { points: [number, number][]; xMax: number
 }
 
 /** The solver at work, from the files it writes: no number here is estimated. */
-export default function AeroLiveView({ live, elapsedS }: { live: AeroLive; elapsedS: number }) {
+export default function AeroLiveView({ live }: { live: AeroLive }) {
   const total = live.iterations_total ?? 0;
   const xMax = Math.max(total, live.iteration ?? 1, 1);
   const stage = live.stage === "solve"
     ? `計算 ${live.case_index ?? "?"} / ${live.case_total ?? "?"} ケース目`
     : live.stage === "mesh" ? "格子を作成中" : "準備中";
-  const image = live.images.at(-1);
   return <div className="aero-live" role="status">
     <div className="aero-live-head">
       <span>{stage}{live.speed_mps === null ? "" : ` · 流速 ${fmt(live.speed_mps, 0)} m/s · 迎角 ${fmt(live.alpha_deg ?? 0, 0)}°`}</span>
-      <small>経過 {fmt(elapsedS, 0)} 秒{live.cells === null ? "" : ` · 格子 ${live.cells.toLocaleString("ja-JP")} セル`}</small>
+      {live.cells === null ? null : <small>格子 {live.cells.toLocaleString("ja-JP")} セル</small>}
     </div>
     {live.iteration !== null && total > 0 ? <>
       <div className="aero-live-bar"><span style={{ width: `${Math.min(100, (live.iteration / total) * 100)}%` }}/></div>
       <p className="aero-live-note">反復 {live.iteration} / 上限 {total}（収束すると早く終わります）</p>
     </> : null}
-    <div className="aero-live-charts">
-      <ResidualChart residuals={live.residuals} xMax={xMax}/>
-      <ForceChart points={live.axial_force_n} xMax={xMax}/>
+    <div className={live.frames.length > 0 ? "aero-live-main" : undefined}>
+      <FlowVideo frames={live.frames.map((frame) => ({ ...frame, url: `/aero/loop/live/${frame.name}` }))} loop={false}/>
+      <div className="aero-live-charts">
+        <ResidualChart residuals={live.residuals} xMax={xMax}/>
+        <ForceChart points={live.axial_force_n} xMax={xMax}/>
+      </div>
     </div>
     {live.finished.length > 0 ? <p className="aero-live-note">終わったケース：{live.finished.map((c) => `迎角 ${fmt(c.alpha_deg, 0)}° の抗力係数 ${fmt(c.cd, 3)}`).join("、")}</p> : null}
-    {image ? <img src={apiUrl(`/aero/loop/live/${image}`)} alt="終わったケースの流れの画像"/> : null}
   </div>;
 }

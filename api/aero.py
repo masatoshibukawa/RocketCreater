@@ -74,7 +74,7 @@ def live_image(name: str):
         path = aero.live.image_path(name)
     except KeyError as exc:
         raise HTTPException(404, "画像がありません") from exc
-    return FileResponse(path, media_type="image/png", headers={"Cache-Control": "no-store"})
+    return FileResponse(path, headers={"Cache-Control": "no-store"})
 
 
 @router.get("/loop/{job_id}/images/{name}")
@@ -83,4 +83,4 @@ def loop_image(job_id: str, name: str):
         path = aero.flow_image_path(DEFAULT_AERO_JOBS.artifacts_dir(job_id), name)
     except KeyError as exc:
         raise HTTPException(404, "画像がありません") from exc
-    return FileResponse(path, media_type="image/png", headers={"Cache-Control": "no-store"})
+    return FileResponse(path, headers={"Cache-Control": "no-store"})

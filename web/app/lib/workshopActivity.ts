@@ -37,6 +37,7 @@ export function designCrewTask(state: Pick<DesignState, "status" | "pendingQuest
     return { id: "design", status: "waiting", label: "資料を確認し、次の処理を待っています" };
   }
   if (state.status === "done") {
+    if (state.refused) return { id: "design", status: "done", label: "ペットボトルロケットの範囲を超える要求でした" };
     if (!state.final) return { id: "design", status: "stopped", label: "処理は中断されました。受け取った結果を確認できます" };
     const passed = state.candidates.some(c => c.passed === true && !c.seededFrom);
     return passed

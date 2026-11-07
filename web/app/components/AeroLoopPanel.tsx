@@ -4,6 +4,7 @@ import { useState } from "react";
 import { apiUrl } from "../lib/api";
 import { fmt } from "../lib/format";
 import AeroLiveView from "./AeroLiveView";
+import FlowVideo from "./FlowVideo";
 import { useAeroLoop, type AeroRequest } from "../lib/useAeroLoop";
 import { useCrewTask } from "../lib/WorkshopContext";
 
@@ -47,13 +48,14 @@ export default function AeroLoopPanel({ request, hasDesign }: AeroLoopPanelProps
     {error ? <p role="alert" className="wb-error">{error}</p> : null}
     {job?.error && !error ? <p role="alert" className="wb-error">{job.error}</p> : null}
     <div className="backscreen">
+      {job?.status === "done" ? <FlowVideo frames={job.frames} loop/> : null}
       {image ? <figure className="wb-flow">
         <div className="wb-flow-picker" role="group" aria-label="迎角">{images.map(row => <button type="button" key={row.name} aria-pressed={row.name === image.name} className={`btn ${row.name === image.name ? "is-active" : ""}`} onClick={() => setPicked(row.name)}>{row.alpha_deg === null ? row.name : `迎角 ${signedDegrees(row.alpha_deg)}`}</button>)}</div>
         <img src={apiUrl(image.url)} alt={image.alpha_deg === null ? `流れの画像 ${image.name}` : `迎角 ${signedDegrees(image.alpha_deg)} の流れの画像`}/>
         <figcaption>{image.speed_mps === null ? image.name : `流速 ${fmt(image.speed_mps, 1)} m/s`}{image.alpha_deg === null ? "" : ` · 迎角 ${signedDegrees(image.alpha_deg)}`}</figcaption>
-      </figure> : job?.status === "running" && job.live && !connectionLost ? <AeroLiveView live={job.live} elapsedS={job.elapsed_s ?? 0}/> : <p className="backscreen-idle" role="status">
+      </figure> : job?.status === "running" && job.live && !connectionLost ? <AeroLiveView live={job.live}/> : <p className="backscreen-idle" role="status">
         {connectionLost ? "解析の状態は未確認です"
-          : job?.status === "running" ? `流体解析を実行中 · 経過 ${fmt(job.elapsed_s ?? 0, 0)} 秒（目安 5〜12 分）`
+          : job?.status === "running" ? "流体解析を実行中（目安 5〜12 分）"
           : loop ? "この実行には流れの画像がありません。" : "計算した流れの画像がここに映ります"}
       </p>}
     </div>

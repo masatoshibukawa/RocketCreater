@@ -1,18 +1,26 @@
 """What a running CFD job is doing now, read from the files the solver writes.
 
-The pipeline runs as an external process, so this only reads what it leaves in the case
-directory: pipeline.log for the stage, and per-iteration residuals and forces.
+The pipeline runs as an external process, so this reads what it leaves in the case directory:
+pipeline.log for the stage, and per-iteration residuals and forces. While a run is on, a watcher
+thread also has each case sample the flow and turns the samples into frames (flow_frames.py).
 """
 
 from __future__ import annotations
 
+import logging
 import re
 import threading
 from pathlib import Path
 from typing import Any
 
+from rocketwright.aero import flow_frames
+
+log = logging.getLogger(__name__)
+
 MAX_SERIES_POINTS = 200
 RUN_FOLDER = "rw"
+WATCH_PERIOD_S = 0.5
+WATCH_STOP_TIMEOUT_S = 30.0
 _IMAGE_NAME = re.compile(r"^[\w.+-]+\.png$")
 _CASE_LINE = re.compile(
     r"\[(\d+)/(\d+)\] (\S+) \(V = ([\d.]+) m/s, AoA = ([-\d.]+) deg\): "
@@ -23,19 +31,48 @@ _END_TIME = re.compile(r"^endTime\s+(\d+)", re.M)
 
 _lock = threading.Lock()
 _case_dir: Path | None = None
+_watcher: tuple[threading.Thread, threading.Event] | None = None
+
+
+def scan(case_dir: Path) -> None:
+    """One look at the run: new cases start sampling, new samples become frames."""
+    for case in sorted((case_dir / "foam" / RUN_FOLDER / "cases").glob("*")):
+        flow_frames.sample_during_the_run(case / "system" / "controlDict")
+        flow_frames.render_new_frames(case, case_dir / flow_frames.FRAME_FOLDER)
+
+
+def _watch(case_dir: Path, stop: threading.Event) -> None:
+    finished = False
+    while not finished:
+        finished = stop.wait(WATCH_PERIOD_S)
+        try:
+            scan(case_dir)
+        except (OSError, ValueError) as exc:  # a picture is never worth failing a run over
+            log.warning("flow frames of %s: %s", case_dir, exc)
 
 
 def begin(case_dir: Path) -> None:
-    global _case_dir
+    global _case_dir, _watcher
+    stop = threading.Event()
+    thread = threading.Thread(target=_watch, args=(case_dir, stop), daemon=True)
     with _lock:
         _case_dir = case_dir
+        _watcher = (thread, stop)
+    thread.start()
 
 
 def end(case_dir: Path) -> None:
-    global _case_dir
+    global _case_dir, _watcher
     with _lock:
-        if _case_dir == case_dir:
-            _case_dir = None
+        if _case_dir != case_dir:
+            return
+        watcher = _watcher
+        _case_dir = None
+        _watcher = None
+    if watcher is not None:
+        thread, stop = watcher
+        stop.set()
+        thread.join(WATCH_STOP_TIMEOUT_S)
 
 
 def _current() -> Path | None:
@@ -133,6 +170,7 @@ def read_run(case_dir: Path) -> dict[str, Any]:
         "axial_force_n": [],
         "finished": [],
         "images": sorted(p.name for p in out_dir.glob("flow/*.png")),
+        "frames": flow_frames.list_frames(case_dir / flow_frames.FRAME_FOLDER),
     }
     if "Meshing" in log:
         state["stage"] = "mesh"
@@ -168,9 +206,13 @@ def snapshot() -> dict[str, Any] | None:
 
 
 def image_path(name: str) -> Path:
-    """A flow picture of the running job. KeyError for anything else."""
+    """A flow picture or frame of the running job. KeyError for anything else."""
     case_dir = _current()
-    if case_dir is None or not _IMAGE_NAME.fullmatch(name):
+    if case_dir is None:
+        raise KeyError(name)
+    if flow_frames.FRAME_NAME.fullmatch(name):
+        return flow_frames.frame_path(case_dir / flow_frames.FRAME_FOLDER, name)
+    if not _IMAGE_NAME.fullmatch(name):
         raise KeyError(name)
     for path in (case_dir / "out").glob(f"*/flow/{name}"):
         return path

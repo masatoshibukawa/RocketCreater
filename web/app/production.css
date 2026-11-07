@@ -68,4 +68,13 @@
 .aero-live-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 14px; color: #c6ccd4; }
 .aero-live-legend i { display: inline-block; width: 12px; height: 3px; margin-right: 5px; vertical-align: middle; }
 .aero-live-note { margin: 0; color: #aab6c5; font-size: 14px; }
+.aero-live-main { display: grid; grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr); gap: 12px; align-items: start; }
+.aero-live-main .aero-live-charts { grid-template-columns: minmax(0, 1fr); }
+.aero-live-main .aero-live-chart svg { height: 72px; }
+@media (max-width: 900px) { .aero-live-main { grid-template-columns: minmax(0, 1fr); } }
+.flow-video { display: grid; gap: 6px; margin: 0; }
+.flow-video img { display: block; width: 100%; height: auto; border-radius: 6px; background: #1d2127; }
+.flow-video figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; color: #aab6c5; font-size: 14px; }
+.flow-video-scale { display: inline-flex; align-items: center; gap: 6px; }
+.flow-video-scale i { display: inline-block; width: 96px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, rgb(68 1 84), rgb(59 82 139), rgb(33 145 140), rgb(94 201 98), rgb(253 231 37)); }
 .aero-live img { display: block; width: 100%; height: auto; background: #fff; }

@@ -5,7 +5,9 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-__all__ = ["flow_image_path", "flow_images"]
+from rocketwright.aero.flow_frames import FRAME_FOLDER, FRAME_NAME, frame_path, list_frames
+
+__all__ = ["flow_frames_of", "flow_image_path", "flow_images"]
 
 FLOW_IMAGE_NAME = re.compile(r"[A-Za-z0-9+_.-]+\.png")
 # rocketcfd names a flow picture after its case: V015p00_A+04p00.png is 15 m/s at +4 degrees.
@@ -36,8 +38,15 @@ def flow_images(artifacts_dir: str | None) -> list[dict]:
     return images
 
 
+def flow_frames_of(artifacts_dir: str | None) -> list[dict]:
+    """The frames taken while the run was solving, in order; only an OpenFOAM run has any."""
+    return list_frames(Path(artifacts_dir) / FRAME_FOLDER) if artifacts_dir else []
+
+
 def flow_image_path(artifacts_dir: str | None, name: str) -> Path:
-    """One `flow/*.png` of a run, and nothing else in that directory. KeyError otherwise."""
+    """One `flow/*.png` or frame of a run, and nothing else there. KeyError otherwise."""
+    if artifacts_dir and FRAME_NAME.fullmatch(name):
+        return frame_path(Path(artifacts_dir) / FRAME_FOLDER, name)
     if ".." in name or not FLOW_IMAGE_NAME.fullmatch(name):
         raise KeyError("Unknown image")
     flow = _flow_directory(artifacts_dir)

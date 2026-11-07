@@ -36,7 +36,10 @@ export interface AeroLive {
   axial_force_n: [number, number][];
   finished: { alpha_deg: number; cd: number }[];
   images: string[];
+  frames: AeroFrameInfo[];
 }
+export interface AeroFrameInfo { name: string; speed_mps: number; alpha_deg: number; iteration: number }
+export interface AeroFrame extends AeroFrameInfo { url: string }
 export interface AeroImage { name: string; url: string; speed_mps: number | null; alpha_deg: number | null }
 export interface AeroJob {
   id: string;
@@ -45,6 +48,7 @@ export interface AeroJob {
   result: AeroLoopResult | null;
   error: string | null;
   images: AeroImage[];
+  frames: AeroFrame[];
   live: AeroLive | null;
 }
 export interface AeroRequest {

@@ -35,6 +35,7 @@ import yaml
 
 from rocketwright.aero import live
 from rocketwright.aero.base import AeroCase, AeroQuery, AeroResult
+from rocketwright.aero.flow_frames import FRAME_FOLDER
 from rocketwright.geometry import airframe, write_stl
 from rocketwright.schema import AmateurDesign, BottleDesign, Design
 
@@ -277,6 +278,10 @@ class OpenFoamPipelineBackend:
             target = artifacts / png.relative_to(out_dir)
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(png, target)
+        for frame in (case_dir / FRAME_FOLDER).glob("*.jpg"):
+            target = artifacts / FRAME_FOLDER / frame.name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(frame, target)
         result = parse_results(
             out_dir,
             query,

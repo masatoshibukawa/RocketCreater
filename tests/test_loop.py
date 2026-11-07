@@ -739,6 +739,15 @@ async def test_a_bottle_only_run_offers_claude_the_bottle_tier_only():
 
 
 @pytest.mark.anyio
+async def test_a_japanese_request_asks_for_a_japanese_answer():
+    client = FakeAnthropicClient([make_message([text_block("どこまで上げますか？")])])
+
+    [ev async for ev in run_design_loop(BOTTLE_TEXT, client=client)]
+
+    assert "in Japanese" in client.calls[0]["messages"][0]["content"]
+
+
+@pytest.mark.anyio
 async def test_a_plain_refusal_from_claude_reads_as_a_refusal():
     client = FakeAnthropicClient([make_message([text_block("できません。軌道には届きません。")])])
 

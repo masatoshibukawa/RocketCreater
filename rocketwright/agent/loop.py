@@ -264,6 +264,14 @@ def _seed_candidate(tool_use_id: str, result: dict[str, Any]) -> dict[str, Any] 
     }
 
 
+_JAPANESE = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff]")
+# The light model drifted into English in open_questions when the system prompt alone asked.
+_REPLY_IN_JAPANESE = (
+    "This request is in Japanese: write summary, explanation, open_questions and every "
+    "question in Japanese."
+)
+
+
 def _initial_user_message(
     text: str, env: Env | None, seed: int | None, legal_note: str | None
 ) -> str:
@@ -277,6 +285,8 @@ def _initial_user_message(
         lines.append(f"Use seed {seed} for every simulate_design and run_dispersion call.")
     if legal_note:
         lines.append(f"Note from the scope guard: {legal_note}")
+    if _JAPANESE.search(text):
+        lines.append(_REPLY_IN_JAPANESE)
     return "\n\n".join(lines)
 
 

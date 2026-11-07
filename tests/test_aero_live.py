@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from rocketwright.aero import live
@@ -85,3 +87,48 @@ def test_snapshot_follows_the_running_job_only(run):
     assert live.snapshot() is None
     with pytest.raises(KeyError):
         live.image_path("V021p00_A+00p00.png")
+
+
+def _writing_case(tmp_path: Path) -> Path:
+    from tests.test_flow_frames import CONTROL_DICT, PLANE, SURFACE
+
+    case = tmp_path / "foam" / "rw" / "cases" / "V021p00_A+04p00"
+    (case / "system").mkdir(parents=True)
+    (case / "system" / "controlDict").write_text(CONTROL_DICT)
+    sample = case / "postProcessing" / "slices" / "10"
+    sample.mkdir(parents=True)
+    (sample / "pitchPlane.vtk").write_text(PLANE)
+    (sample / "rocketSurface.vtk").write_text(SURFACE)
+    return case
+
+
+def test_scan_starts_sampling_and_makes_frames(tmp_path):
+    case = _writing_case(tmp_path)
+
+    live.scan(tmp_path)
+
+    assert "writeTime" not in (case / "system" / "controlDict").read_text()
+    frames = live.read_run(tmp_path)["frames"]
+    assert [frame["iteration"] for frame in frames] == [10]
+
+
+def test_the_watcher_leaves_the_last_frames_behind_when_the_run_ends(tmp_path):
+    _writing_case(tmp_path)
+
+    live.begin(tmp_path)
+    live.end(tmp_path)
+
+    assert (tmp_path / "frames" / "V021p00_A+04p00_00010.jpg").is_file()
+
+
+def test_a_frame_of_the_running_job_is_served(tmp_path):
+    _writing_case(tmp_path)
+    live.begin(tmp_path)
+    try:
+        live.scan(tmp_path)
+        name = "V021p00_A+04p00_00010.jpg"
+        assert live.image_path(name) == tmp_path / "frames" / name
+        with pytest.raises(KeyError):
+            live.image_path("V021p00_A+04p00_00011.jpg")
+    finally:
+        live.end(tmp_path)
