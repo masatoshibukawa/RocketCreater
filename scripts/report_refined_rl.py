@@ -39,10 +39,36 @@ def audit_incumbents(rows):
 def export(root, training, original, previous, destination):
     report, files = verified(root)
     tr, old, base = [read(p / "report.json") for p in (training, original, previous)]
-    for folder in (training, original, previous):
-        if sha(folder / "report.json") != report["input_reports"][str(folder)]:
+    for folder, expected in (
+        (training, report["training_report_sha256"]),
+        (original, base["training_report_sha256"]),
+        (previous, report["previous_report_sha256"]),
+    ):
+        if sha(folder / "report.json") != expected:
             raise ValueError("Changed input report")
     audit_runs(root, report)
+    audit_runs(previous, base)
+    diagnosis = []
+    for method in ("ppo", "sac"):
+        regrets = []
+        for run in base["runs"]:
+            if run["method"] != method:
+                continue
+            rows = [
+                json.loads(s)
+                for s in (previous / run["data_file"]).read_text(encoding="utf-8").splitlines()
+            ]
+            for episode in range(32):
+                group = [r for r in rows if r["episode"] == episode]
+                regrets.append(group[-1]["loss"] - min(r["loss"] for r in group))
+        diagnosis.append(
+            dict(
+                method=method,
+                episodes=len(regrets),
+                final_worse_than_best=sum(r > 1e-8 for r in regrets),
+                median_final_regret=float(np.median(regrets)),
+            )
+        )
     for entry in report["frozen_baselines"] + report["training"]:
         local_file(root, entry["policy_file"], entry["policy_sha256"])
         if "transitions_file" not in entry:
@@ -205,6 +231,7 @@ def export(root, training, original, previous, destination):
         total_elapsed_s=report["elapsed_s"],
         new_simulator_calls=sum(r["evaluations"] for r in report["runs"]),
         development_validation=tr["anchors"],
+        prior_rollout_diagnosis=diagnosis,
         fresh_rollout_prediction_errors=errors,
         verified_native_files=files,
         verified_search_logs=len(report["runs"]),

@@ -14,6 +14,23 @@ from rocketwright.analysis.worker import read
 from scripts.search_surrogate import fit, predict, targets
 
 
+def partition_records(records, held_out):
+    """Reserve held-out identities even if they also occur in a historical rollout."""
+    validation = {
+        r["spec_hash"]: r
+        for r in records
+        if r["split"] == "validation" and r["spec_hash"] not in held_out
+    }
+    train = {
+        r["spec_hash"]: r
+        for r in records
+        if r["split"] == "train"
+        and r["spec_hash"] not in validation
+        and r["spec_hash"] not in held_out
+    }
+    return train, validation
+
+
 def run(training, evolution, rl, output):
     output.mkdir(parents=True, exist_ok=False)
     begin, source = time.monotonic(), code_hash()
@@ -62,8 +79,15 @@ def run(training, evolution, rl, output):
         ):
             raise ValueError("Original training evidence changed")
         old = read(model_path)
-        for line in examples_path.read_text(encoding="utf-8").splitlines():
-            row = json.loads(line)
+        original_rows = list(
+            map(json.loads, examples_path.read_text(encoding="utf-8").splitlines())
+        )
+        held_out = {
+            r["spec_hash"]
+            for r in original_rows
+            if r["split"] == "test" and r["status"] == "completed"
+        }
+        for row in original_rows:
             if row["status"] == "completed" and row["split"] != "test":
                 records[i].append(
                     dict(
@@ -75,12 +99,7 @@ def run(training, evolution, rl, output):
                     )
                 )
         # Whole optimizer seed is held for validation; remove overlaps from training first.
-        validation = {r["spec_hash"]: r for r in records[i] if r["split"] == "validation"}
-        train = {
-            r["spec_hash"]: r
-            for r in records[i]
-            if r["split"] == "train" and r["spec_hash"] not in validation
-        }
+        train, validation = partition_records(records[i], held_out)
         selected = list(train.values()) + list(validation.values())
         data_path = output / f"examples-{i}.jsonl"
         with data_path.open("w", encoding="utf-8") as stream:
