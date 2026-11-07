@@ -2,7 +2,7 @@
 
 RocketCreater内のスキルを、用途と参照先から探すための索引です。各項目のリンクから `SKILL.md` を読み、必要な専門スキルと資料へ進んでください。
 
-確認日：2026-11-07。基準は [mainの `7f2183c`](https://github.com/masatoshibukawa/RocketCreater/commit/7f2183c262b56dd0d90b81b31d48ea0464995174) です。確認したリモートブランチを通じて、同じパスの重複を除くと **144スキル**があります。このうち **mainに28件、未統合の追加分が116件**です。件数は入口・カテゴリ案内もそれぞれ1件として数えています。
+2026-11-07時点で、確認したリモートブランチに **145スキル**があります。内訳は **mainに28件、未統合の追加分が117件**です。同じパスは1件として集計し、入口やカテゴリ案内も含めています。[基準となるmainのコミット `a579315`](https://github.com/masatoshibukawa/RocketCreater/commit/a579315056ef3cd51026a1dc3ac517e842523705)
 
 ## 用途から選ぶ
 
@@ -14,6 +14,7 @@ RocketCreater内のスキルを、用途と参照先から探すための索引�
 | 共同作業中のGit同期、commit・push・PRの維持 | [Git同期](../.agents/skills/frequent-git-sync/SKILL.md) | 1 |
 | 機種・材料・接続別の3Dプリント、品質検証、フィギュア | [3Dプリント拡張の索引](printing-extensions.md)（未統合） | 追加85 |
 | ピッチ、研究発表、スライド、デモ、話し方、質疑 | [プレゼンテーションの索引](presentation-extensions.md)（未統合） | 追加31 |
+| WebアプリのAPI、認証、データ保存、バックグラウンド処理 | [Webバックエンド](#webバックエンド1件)（未統合） | 追加1 |
 
 複数工程にまたがる依頼は入口から、用途が決まっている依頼は以下の専門スキルから始められます。
 
@@ -75,15 +76,23 @@ RocketCreater内のスキルを、用途と参照先から探すための索引�
 
 ## 未統合のスキルと更新
 
-以下は確認日時点でmainに入っていないPRです。拡張索引のスキルリンクは、確認したコミットに固定しています。mainに存在しないファイルは、相対パスのリンクにしていません。
+以下は確認日時点でmainに入っていないPRです。スキルの参照先は確認したコミットに固定しています。
 
 | PR | 内容 | 索引への数え方 |
 | --- | --- | --- |
 | [#53：3D制作・印刷と検証の拡張](https://github.com/masatoshibukawa/RocketCreater/pull/53) | 接地・速度、PC接続、機種、材料、カーボン・金属、フィギュア、出力・ツールパス・結果検証。[詳細索引](printing-extensions.md) | 3D分野は既存9件＋追加85件＝94件 |
 | [#49：プレゼンテーションの拡張](https://github.com/masatoshibukawa/RocketCreater/pull/49) | 共通入口、8カテゴリ、22専門スキル。[詳細索引](presentation-extensions.md) | 31件すべて追加 |
+| [#63：Web公開とバックエンド](https://github.com/masatoshibukawa/RocketCreater/pull/63) | バックエンド設計を追加し、Webデザインの入口と実装・公開の手順を更新。[詳細](#webバックエンド1件) | 追加1件 |
+| [#64：製品デモと多言語ナレーション](https://github.com/masatoshibukawa/RocketCreater/pull/64) | 動画制作の入口と [video-audio](https://github.com/masatoshibukawa/RocketCreater/blob/7283e4a2312ab1d78aea7d5179a74ccf6b11d712/AIvideo/skills/video-production/video-audio/SKILL.md) を更新。TTSの比較、読み・演技・尺の調整を扱う。 | 既存2件の更新 |
 | [#59：PR活動の定期確認](https://github.com/masatoshibukawa/RocketCreater/pull/59) | 既存のGit同期スキルに、最新PR・レビュー・CIの確認を追加 | 既存1件の更新。追加件数には含めない |
 
 mainの [presentation-techniques](../presentation-techniques/README.md) は、現時点では発表方針・調査資料・ワークシートの資料集です。31件のスキル本体は上記PR #49で追加されています。
+
+### Webバックエンド（1件）
+
+| スキル | 使う場面 |
+| --- | --- |
+| [web-design-backend](https://github.com/masatoshibukawa/RocketCreater/blob/ebc2f20f758e6ce2fc8c1e714f5c5a2a92bb71cf/UI/web-design-skills/categories/web-design-backend/SKILL.md) | API、認証・認可、データベース、ファイル保存、長時間ジョブを設計する。既存サービスとの接続、無料枠と実行制約の比較、公開後の動作確認にも使う。 |
 
 ## 使い方
 
