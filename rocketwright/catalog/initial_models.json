@@ -1,0 +1,322 @@
+{
+  "version": 1,
+  "literature_commit": "3da2a93",
+  "sources": {
+    "D09": {
+      "title": "RocketFins",
+      "author": "Adrian Schlatter",
+      "license": "BSD-2-Clause",
+      "commit": "57f2c9fd475be499aafb2655b12f20a75f135e60",
+      "files": [
+        {
+          "path": "文献/CAD/D09-RocketFins/PN1_3_narrow_fins.scad",
+          "sha256": "931d2e02ead434db1209bd2ce87408fac00846077fa0de22896454f52ec774a3",
+          "url": "https://github.com/adrianschlatter/RocketFins/blob/57f2c9fd475be499aafb2655b12f20a75f135e60/PN1_3_narrow_fins.scad"
+        },
+        {
+          "path": "文献/CAD/D09-RocketFins/PN2_3_broad_fins.scad",
+          "sha256": "39e1a027bc3220db628ef640cf745259698e9a5b7a68cddac723177542fc4cc5",
+          "url": "https://github.com/adrianschlatter/RocketFins/blob/57f2c9fd475be499aafb2655b12f20a75f135e60/PN2_3_broad_fins.scad"
+        },
+        {
+          "path": "文献/CAD/D09-RocketFins/PN3_5_narrow_fins.scad",
+          "sha256": "cb73021b71881d773a02a0775b8b6d09e6a06c94090e365d1373f9a8a611ad86",
+          "url": "https://github.com/adrianschlatter/RocketFins/blob/57f2c9fd475be499aafb2655b12f20a75f135e60/PN3_5_narrow_fins.scad"
+        },
+        {
+          "path": "文献/CAD/D09-RocketFins/rocket_fins.scad",
+          "sha256": "8ad2dc36aca07834209b4e20ed5c84e7cc4efd05d875155b6c2268e2db71d93d",
+          "url": "https://github.com/adrianschlatter/RocketFins/blob/57f2c9fd475be499aafb2655b12f20a75f135e60/rocket_fins.scad"
+        },
+        {
+          "path": "文献/CAD/D09-RocketFins/fins.scad",
+          "sha256": "5a852ae48cc98e648ae24f18c5b14926d2e9ab7a9c2a324fa91bfd4f9c2f0c64",
+          "url": "https://github.com/adrianschlatter/RocketFins/blob/57f2c9fd475be499aafb2655b12f20a75f135e60/fins.scad"
+        },
+        {
+          "path": "文献/CAD/D09-RocketFins/bottle.scad",
+          "sha256": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2",
+          "url": "https://github.com/adrianschlatter/RocketFins/blob/57f2c9fd475be499aafb2655b12f20a75f135e60/bottle.scad"
+        }
+      ]
+    },
+    "D22": {
+      "title": "Physics Water Rocket Project",
+      "author": "Julius Grimm",
+      "license": "Educational License",
+      "commit": "c047014fdfa9b1004959c10a114613ec0f1979e8",
+      "files": [
+        {
+          "path": "文献/CAD/D22-FreeCAD/README.md",
+          "sha256": "ed3d268058a82ce72c8b3adf35082c13ea301b92117f85e21ef11c4c6dec59b4",
+          "url": "https://github.com/JustThatRandomCoder/physics-water-rocket-project/blob/c047014fdfa9b1004959c10a114613ec0f1979e8/README.md"
+        },
+        {
+          "path": "文献/CAD/D22-FreeCAD/physics-water-rocket-tail-ring-macro.FCMacro",
+          "sha256": "fbe3bd77d602f3b00b4d355c6bfd005b4490db0ad8cce36d2e0945ed7a66d620",
+          "url": "https://github.com/JustThatRandomCoder/physics-water-rocket-project/blob/c047014fdfa9b1004959c10a114613ec0f1979e8/physics-water-rocket-tail-ring-macro.FCMacro"
+        },
+        {
+          "path": "文献/CAD/D22-FreeCAD/physics-water-rocket-nose-macroFCMacro.FCMacro",
+          "sha256": "fdb4ed2a35bafc5882bbba83d616571cb7844600cdf333de84bccfa50cae6bf7",
+          "url": "https://github.com/JustThatRandomCoder/physics-water-rocket-project/blob/c047014fdfa9b1004959c10a114613ec0f1979e8/physics-water-rocket-nose-macroFCMacro.FCMacro"
+        }
+      ]
+    },
+    "D40": {
+      "title": "waterRocketToolbox",
+      "author": "Baptiste Castets",
+      "license": "MIT",
+      "commit": "d87fd7d0cd3d4465272dbdb49eec49352ca4dd55",
+      "files": [
+        {
+          "path": "文献/CAD/D40-waterRocketToolbox/B-Rocket_Simulator/constants.py",
+          "sha256": "6fd870a793df9a27d129988fa48a0f508bf3a9b907889698e3624f88f21b6437",
+          "url": "https://github.com/castetsb/waterRocketToolbox/blob/d87fd7d0cd3d4465272dbdb49eec49352ca4dd55/B-Rocket_Simulator/constants.py"
+        }
+      ]
+    }
+  },
+  "models": [
+    {
+      "id": "reference/D09-narrow3",
+      "label": "RocketFins narrow3 adapted",
+      "family": "D09",
+      "kind": "adapted_reference",
+      "design": {
+        "bottle_volume_m3": 0.0015
+      },
+      "geometry": {
+        "body_diameter_mm": 92,
+        "body_height_mm": 320,
+        "nose_length_mm": 100,
+        "fin_span_mm": 44,
+        "fin_count": 3,
+        "fin_thickness_mm": 2.4,
+        "nose_wall_mm": 1.6,
+        "fin_tail_inset_mm": 0,
+        "dimensions_measured": false,
+        "fin_root_mm": 35.0,
+        "fin_tip_mm": 23.507462686567166,
+        "fin_sweep_mm": 3.447761194029851
+      },
+      "documented": {
+        "center_chord_mm": 40,
+        "tip_chord_mm": 20,
+        "fin_radius_mm": 90,
+        "bottle_radius_mm": 46,
+        "fin_count": 3
+      },
+      "conversion": "Project centerline foil to a 92 mm cylindrical body: root=Hcenter+(Htip-Hcenter)*46/90; span=90-46; sweep=0.3*(root-tip). Chords uniformly enlarged when root is below the 35 mm adapter minimum.",
+      "chord_scale": 1.1753731343283582,
+      "assumptions": [
+        "1.5 L capacity, 320 mm body and 100 mm nose are host assumptions, not a dimensioned original vehicle.",
+        "Flat solid 2.4 mm fins replace NACA0009 sections; source neck-mounted adapter/clearance, threads and exact root are omitted.",
+        "1.6 mm conical nose shell and tail placement are host assumptions.",
+        "Other dry mass, material, attachment and operating conditions come from the template."
+      ],
+      "cfd_blocker": "Current detailed CFD adapter supports four fins only."
+    },
+    {
+      "id": "reference/D09-broad3",
+      "label": "RocketFins broad3 adapted",
+      "family": "D09",
+      "kind": "adapted_reference",
+      "design": {
+        "bottle_volume_m3": 0.0015
+      },
+      "geometry": {
+        "body_diameter_mm": 92,
+        "body_height_mm": 320,
+        "nose_length_mm": 100,
+        "fin_span_mm": 44,
+        "fin_count": 3,
+        "fin_thickness_mm": 2.4,
+        "nose_wall_mm": 1.6,
+        "fin_tail_inset_mm": 0,
+        "dimensions_measured": false,
+        "fin_root_mm": 44.666666666666664,
+        "fin_tip_mm": 30,
+        "fin_sweep_mm": 4.3999999999999995
+      },
+      "documented": {
+        "center_chord_mm": 60,
+        "tip_chord_mm": 30,
+        "fin_radius_mm": 90,
+        "bottle_radius_mm": 46,
+        "fin_count": 3
+      },
+      "conversion": "Project centerline foil to a 92 mm cylindrical body: root=Hcenter+(Htip-Hcenter)*46/90; span=90-46; sweep=0.3*(root-tip). Chords uniformly enlarged when root is below the 35 mm adapter minimum.",
+      "chord_scale": 1,
+      "assumptions": [
+        "1.5 L capacity, 320 mm body and 100 mm nose are host assumptions, not a dimensioned original vehicle.",
+        "Flat solid 2.4 mm fins replace NACA0009 sections; source neck-mounted adapter/clearance, threads and exact root are omitted.",
+        "1.6 mm conical nose shell and tail placement are host assumptions.",
+        "Other dry mass, material, attachment and operating conditions come from the template."
+      ],
+      "cfd_blocker": "Current detailed CFD adapter supports four fins only."
+    },
+    {
+      "id": "reference/D09-narrow5",
+      "label": "RocketFins narrow5 adapted",
+      "family": "D09",
+      "kind": "adapted_reference",
+      "design": {
+        "bottle_volume_m3": 0.0015
+      },
+      "geometry": {
+        "body_diameter_mm": 92,
+        "body_height_mm": 320,
+        "nose_length_mm": 100,
+        "fin_span_mm": 44,
+        "fin_count": 5,
+        "fin_thickness_mm": 2.4,
+        "nose_wall_mm": 1.6,
+        "fin_tail_inset_mm": 0,
+        "dimensions_measured": false,
+        "fin_root_mm": 35.0,
+        "fin_tip_mm": 23.507462686567166,
+        "fin_sweep_mm": 3.447761194029851
+      },
+      "documented": {
+        "center_chord_mm": 40,
+        "tip_chord_mm": 20,
+        "fin_radius_mm": 90,
+        "bottle_radius_mm": 46,
+        "fin_count": 5
+      },
+      "conversion": "Project centerline foil to a 92 mm cylindrical body: root=Hcenter+(Htip-Hcenter)*46/90; span=90-46; sweep=0.3*(root-tip). Chords uniformly enlarged when root is below the 35 mm adapter minimum.",
+      "chord_scale": 1.1753731343283582,
+      "assumptions": [
+        "1.5 L capacity, 320 mm body and 100 mm nose are host assumptions, not a dimensioned original vehicle.",
+        "Flat solid 2.4 mm fins replace NACA0009 sections; source neck-mounted adapter/clearance, threads and exact root are omitted.",
+        "1.6 mm conical nose shell and tail placement are host assumptions.",
+        "Other dry mass, material, attachment and operating conditions come from the template."
+      ],
+      "cfd_blocker": "Current detailed CFD adapter supports four fins only."
+    },
+    {
+      "id": "reference/D22-500ml",
+      "label": "0.5 L four-fin adapted",
+      "family": "D22",
+      "kind": "adapted_reference",
+      "design": {
+        "bottle_volume_m3": 0.0005
+      },
+      "geometry": {
+        "body_diameter_mm": 70,
+        "body_height_mm": 220,
+        "nose_length_mm": 95,
+        "fin_root_mm": 35,
+        "fin_tip_mm": 10,
+        "fin_span_mm": 60,
+        "fin_sweep_mm": 22,
+        "fin_count": 4,
+        "fin_thickness_mm": 4,
+        "nose_wall_mm": 3,
+        "fin_tail_inset_mm": 40,
+        "dimensions_measured": false
+      },
+      "documented": {
+        "bottle_volume_l": 0.5,
+        "body_diameter_cm": 7,
+        "fin_count": 4,
+        "fin_span_cm": 6,
+        "rounded_fin_root_cm": 3.2,
+        "fin_root_thickness_cm": 0.4,
+        "fin_tip_thickness_cm": 0.35,
+        "fin_tip_offset_from_root_center_cm": 2.2,
+        "nose_cap_length_cm": 8,
+        "nose_glue_depth_cm": 1.5,
+        "nose_wall_cm": 0.3
+      },
+      "conversion": "cm to mm. Replace rounded/teardrop fins with a host trapezoid: root 35 mm (source 32 mm), tip 10 mm, sweep 22 mm. Replace rounded nose by a 95 mm cone (80 mm cap + 15 mm glue zone). These shape changes are approximations.",
+      "assumptions": [
+        "220 mm body length and 40 mm fin tail inset are host assumptions.",
+        "7 cm diameter is reported measured by the source author; our manufactured part remains unmeasured.",
+        "Uniform 4 mm solid fins replace the tapered rounded source section.",
+        "Other dry mass, material, attachment and operating conditions come from the template."
+      ],
+      "cfd_blocker": null
+    },
+    {
+      "id": "reference/D40-1.5l",
+      "label": "waterRocketToolbox 1.5 L parameter adaptation",
+      "family": "D40",
+      "kind": "parameter_adaptation",
+      "design": {
+        "bottle_volume_m3": 0.0015
+      },
+      "geometry": {
+        "body_diameter_mm": 100,
+        "body_height_mm": 300,
+        "nose_length_mm": 100,
+        "fin_root_mm": 100,
+        "fin_tip_mm": 35,
+        "fin_span_mm": 80,
+        "fin_sweep_mm": 35,
+        "fin_count": 4,
+        "fin_thickness_mm": 2.4,
+        "nose_wall_mm": 1.6,
+        "fin_tail_inset_mm": 0,
+        "dimensions_measured": false
+      },
+      "documented": {
+        "bottle_volume_m3": 0.0015,
+        "bottle_diameter_m": 0.1,
+        "source_bottle_mass_kg": 0.1,
+        "source_nozzle_diameter_m": 0.02
+      },
+      "conversion": "Only capacity and diameter from simulator constants are adopted; this is not the FreeCAD multi-bottle assembly.",
+      "assumptions": [
+        "Body length, all fin/nose geometry, material and attachment are host assumptions.",
+        "Source bottle mass is not a total dry mass; retain the template other-dry-mass budget.",
+        "Source launch pressure, nozzle, computers/camera masses and aerodynamic coefficient are not imported.",
+        "The single-reservoir adapter does not reproduce staged or multi-bottle vehicles."
+      ],
+      "cfd_blocker": null
+    },
+    {
+      "id": "reference/D40-2l",
+      "label": "waterRocketToolbox 2 L parameter adaptation",
+      "family": "D40",
+      "kind": "parameter_adaptation",
+      "design": {
+        "bottle_volume_m3": 0.002
+      },
+      "geometry": {
+        "body_diameter_mm": 100,
+        "body_height_mm": 350,
+        "nose_length_mm": 100,
+        "fin_root_mm": 100,
+        "fin_tip_mm": 35,
+        "fin_span_mm": 80,
+        "fin_sweep_mm": 35,
+        "fin_count": 4,
+        "fin_thickness_mm": 2.4,
+        "nose_wall_mm": 1.6,
+        "fin_tail_inset_mm": 0,
+        "dimensions_measured": false
+      },
+      "documented": {
+        "bottle_volume_m3": 0.002,
+        "bottle_diameter_m": 0.1,
+        "source_bottle_mass_kg": 0.045,
+        "source_nozzle_diameter_m": 0.02
+      },
+      "conversion": "Only capacity and diameter from simulator constants are adopted; this is not the FreeCAD multi-bottle assembly.",
+      "assumptions": [
+        "Body length, all fin/nose geometry, material and attachment are host assumptions.",
+        "Source bottle mass is not a total dry mass; retain the template other-dry-mass budget.",
+        "Source launch pressure, nozzle, computers/camera masses and aerodynamic coefficient are not imported.",
+        "The single-reservoir adapter does not reproduce staged or multi-bottle vehicles."
+      ],
+      "cfd_blocker": null
+    }
+  ],
+  "not_imported": [
+    "OpenRocket motor, thrust curve, and pressure ratings: not applicable to water propulsion",
+    "Launcher-only CAD: not an airframe",
+    "Original flight scores: not validation of an adapted model"
+  ]
+}

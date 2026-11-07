@@ -12,7 +12,7 @@ from rocketwright.analysis.service import Harness, code_hash
 
 
 def starts(template):
-    result = {"provided": template.model_copy(deep=True)}
+    result = {"provided": DesignSpec.model_validate(template.model_dump(mode="json"))}
     for key in seeds.options():
         result[key] = seeds.import_seed(key, template)
     # Independent lighter geometry, explicitly generated rather than attributed to literature.
@@ -45,12 +45,14 @@ def rank(row, precision, target):
     )
 
 
-def run(template, root, *, runtime, precision=None, limits=None, max_starts=5, emit=print):
+def run(template, root, *, runtime, precision=None, limits=None, max_starts=None, emit=print):
     """One global wall/time budget; restart never resets persisted child campaigns.
 
     A new output directory is required to avoid accidental replay as a fresh budget.
     Individual saved projects remain resumable through run_adaptive_design.
     """
+    if max_starts is not None and max_starts < 1:
+        raise ValueError("At least one start required")
     root = Path(root)
     root.mkdir(parents=True, exist_ok=False)
     precision, limits = precision or Precision(), limits or SearchLimits()
