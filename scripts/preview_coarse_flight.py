@@ -1,4 +1,4 @@
-"""Propagate a completed coarse CFD table without treating it as a precision-qualified table."""
+"""Propagate a completed CFD table separately from precision qualification."""
 
 import argparse
 import time
@@ -20,12 +20,15 @@ def verify_folder(folder):
     return len(manifest)
 
 
-def run(parent, output):
+def run(parent, output, table_method="cfd_coarse"):
+    if table_method not in ("cfd_coarse", "cfd_fine"):
+        raise ValueError("Select a complete coarse or fine table")
     protocol = read(parent / "protocol.json")
     source = code_hash()
     if protocol["source_hash"] != source:
-        raise ValueError("Coarse preview requires unchanged source")
-    dependencies = ("geometry", "thermal", "propulsion", "screen", "cfd_coarse")
+        raise ValueError("CFD preview requires unchanged source")
+    base_dependencies = ("geometry", "thermal", "propulsion", "screen")
+    dependencies = (*base_dependencies, table_method)
     artifacts = {m: str((parent / m / "data.json").resolve()) for m in dependencies}
     hashes = {m: sha(Path(p)) for m, p in artifacts.items()}
     manifests = {m: sha(parent / m / "manifest.json") for m in dependencies}
@@ -35,16 +38,17 @@ def run(parent, output):
         spec=protocol["spec"],
         precision=protocol["precision"],
         runtime=protocol["runtime"],
-        artifacts=artifacts,
+        artifacts={k: artifacts[k] for k in base_dependencies},
+        preview_table=dict(method=table_method, data=artifacts[table_method]),
         timeout_s=300,
     )
     write_json(output / "input.json", context)
     worker = Worker(context, output)
     worker.setup()
-    coarse = read(Path(artifacts["cfd_coarse"]))
-    table = TunnelDatabase(coarse["table_folder"])
+    table_data = read(Path(artifacts[table_method]))
+    table = TunnelDatabase(table_data["table_folder"])
     begin = time.monotonic()
-    # The public aero_model hook selects the actual coarse table. No fine-result alias.
+    # Explicit model selection; the base worker retains its analytic comparison load.
     flight = worker.trajectory(aero_model=table)
     envelope = aero_accuracy.fin_envelope(table, flight)
     write_json(output / "flight.json", serial(flight))
@@ -58,8 +62,9 @@ def run(parent, output):
         source_unchanged=code_hash() == source
         and hashes == {m: sha(Path(p)) for m, p in artifacts.items()}
         and manifests == {m: sha(parent / m / "manifest.json") for m in dependencies},
-        fidelity="coarse CFD only; grid/time/holdout precision checks pending",
-        cells=coarse["cells"],
+        fidelity=f"{table_method} standalone; grid/time/holdout precision checks pending",
+        table_method=table_method,
+        cells=table_data["cells"],
         width_d=protocol["runtime"]["cfd_width"],
         apogee_m=flight["apogee_m"],
         incidence_deg=flight["ascent_incidence_deg"],
@@ -116,5 +121,6 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("parent", type=Path)
     p.add_argument("output", type=Path)
+    p.add_argument("--method", choices=("cfd_coarse", "cfd_fine"), default="cfd_coarse")
     a = p.parse_args()
-    run(a.parent, a.output)
+    run(a.parent, a.output, a.method)

@@ -143,20 +143,46 @@ python -m scripts.prepare_paired_cfd output/expanded-confirm-runtime.json output
 python -m scripts.render_search_flow output/esc-new2/cfd_fine/tunnel/v35-a000 output/expanded-flow-fine1 --preview-libraries path/to/installed/preview/libraries
 ```
 
-## 先行した構造診断（CFD荷重とは別）
+## 粗密CFDの飛行への影響（監査前の中間結果）
 
 粗い格子16セル／口径・幅12.5口径の14条件が両候補で完了した時点で、
 そのテーブルを明示的に6自由度計算へ渡した中間診断も保存した。
 高度は旧候補19.130 m、新候補20.554 m、上昇中の最大迎角は8.569度と7.845度。
 同時刻の流速・迎角・動圧から取り出したフィン最大法線力は0.388 Nと0.515 Nである。
 下表の解析的な最大動圧×最大迎角の荷重とは、荷重モデル・時刻の扱いが異なる。
-細かい格子、時間・補間監査、CFD荷重によるFEMは未完了のため、この中間値で合否を確定しない。
+時間・補間監査、CFD荷重によるFEMは未完了のため、この中間値で合否を確定しない。
 [入力と結果を照合した中間JSON](../scenarios/adaptive_design/expanded-coarse-flight.json)に記録した。
 
 ```powershell
 python -m scripts.preview_coarse_flight output/esc-old2 output/ecf-old2
 python -m scripts.preview_coarse_flight output/esc-new2 output/ecf-new2
 ```
+
+続いて細格子20セル／口径でも14条件が完了し、同じ時刻刻み0.02秒の中間診断を行った。
+
+| 指標 | 従来候補 | 新候補 |
+|---|---:|---:|
+| 粗格子の高度 | 19.130 m | 20.554 m |
+| 細格子の高度 | 19.791 m | 21.255 m |
+| 細格子の上昇中最大迎角 | 9.694度 | 8.416度 |
+| 細格子のフィン最大法線力 | 0.369 N | 0.436 N |
+| 空力係数の格子差 | 16.904% | 29.901% |
+
+新候補の高度は約7.4%高いが、両者とも30 m未達。係数の格子差は上限5%を超える。
+飛行へ伝わる差は別に評価し、最終確認では積分刻みをそろえた再比較を行う。
+[細格子の中間結果](../scenarios/adaptive_design/expanded-fine-flight.json)は精度合格を主張しない。
+
+平均化区間による最大相対差は5.279／3.443（比率）で、旧候補の35 m/s・45度、新候補の
+1 m/s・45度の `Cpitch_y` が該当した。旧候補は平均−0.00249に対して区間差−0.26397、
+新候補は平均0.07563に対して区間差0.26040。分母の下限0.05を使う係数の指標であり、
+これを高度の誤差率や実飛行誤差と解釈しない。判定基準は変更していない。
+
+```powershell
+python -m scripts.preview_coarse_flight output/esc-old2 output/eff-old1 --method cfd_fine
+python -m scripts.preview_coarse_flight output/esc-new2 output/eff-new1 --method cfd_fine
+```
+
+## 先行した構造診断（CFD荷重とは別）
 
 CFD計算中に、同じ選択候補を解析的な飛行荷重で梁・モード・粗密FEMへ通した。
 最大動圧と最大迎角を掛け合わせる保守的な包絡荷重であり、同時刻のCFD荷重ではない。
