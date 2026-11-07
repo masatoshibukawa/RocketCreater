@@ -1,0 +1,47 @@
+{
+  "build": {
+    "adapter_sha256": "75749b5f8984c4358d4c8c887c607bf3006f3486949d3008839fc167a3fe1dde",
+    "native_solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+    "template_sha256": "e7b9f15d4fbca301a086ff5fc11051a65404704225c44f894cf296bd6507b01c",
+    "compiler_sha256": "46809206887326d2d24db1eff1f3064de972c3451abe766b49111450a5e08e00",
+    "generated_source_sha256": "b80dbeaa8dfc9622218d72a975f8f09bab32edb9ac8fe66fcbfd4b84cb4cd801"
+  },
+  "build_report_sha256": "986985ee9e5c8a1242535dd684271cdc825d1cf686e5775f183c7a83040858d3",
+  "short_native_replay": {
+    "returncode": 0,
+    "finished": true,
+    "elapsed_s": 10.358999999938533,
+    "original_deck_sha256": "3929e2a678cac5cb20ee8023017aced46c888f09d5668b0a03c1cfd601899494",
+    "replayed_deck_sha256": "3929e2a678cac5cb20ee8023017aced46c888f09d5668b0a03c1cfd601899494",
+    "original_aux_path_length": 261,
+    "short_aux_path_length": 143
+  },
+  "adapter_replay": {
+    "returncode": 0,
+    "finished": true,
+    "elapsed_s": 10.672000000020489,
+    "original_deck_sha256": "3929e2a678cac5cb20ee8023017aced46c888f09d5668b0a03c1cfd601899494",
+    "replayed_deck_sha256": "3929e2a678cac5cb20ee8023017aced46c888f09d5668b0a03c1cfd601899494",
+    "adapter_sha256": "75749b5f8984c4358d4c8c887c607bf3006f3486949d3008839fc167a3fe1dde",
+    "original_aux_path_length": 264,
+    "native_dat_identical": true
+  },
+  "guards": {
+    "invalid_job": {
+      "returncode": 86,
+      "rejected": true,
+      "message": "Solver transport failed: Expected a plain CalculiX job name"
+    },
+    "wrong_solver": {
+      "returncode": 86,
+      "rejected": true,
+      "message": "Solver transport failed: Native solver differs from the hash bound into this adapter"
+    }
+  },
+  "failures_preserved": [
+    "two native Windows long-path failures",
+    "two adapter stdout-forwarding failures"
+  ],
+  "physical_inputs_changed": false,
+  "native_solver_changed": false
+}

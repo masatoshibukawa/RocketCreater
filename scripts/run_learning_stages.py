@@ -208,6 +208,11 @@ def main():
             args.through,
         )
     if args.through == 7:
+        # Nested campaign UUIDs plus descriptive case names exceed legacy Windows
+        # path limits in CAD tools when appended to a long stage-run name.
+        stage7_output = args.output.parent / ("s7-" + Path(report["stage6_project"]).name[:8])
+        report["stage7_root"] = str(stage7_output.resolve())
+        write_json(args.output / "report.json", report)
         subprocess.run(
             [
                 sys.executable,
@@ -215,7 +220,7 @@ def main():
                 "-m",
                 "scripts.verify_adaptive_scenarios",
                 report["stage6_project"],
-                str((args.output / "stage7").resolve()),
+                str(stage7_output.resolve()),
                 "--planner",
                 args.planner,
                 "--experience",

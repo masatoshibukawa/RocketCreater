@@ -73,7 +73,8 @@ def export(root, destination):
     report = read(root / "report.json")
     if report["source_hash"] != code_hash() or report["planner"] != "local_llm":
         raise ValueError("Expected current-source local-model evidence")
-    stage7 = read(root / "stage7" / "report.json")
+    stage7_root = Path(report.get("stage7_root", root / "stage7"))
+    stage7 = read(stage7_root / "report.json")
     if len(stage7.get("cases", {})) != 5:
         raise ValueError("All five stage-7 scenarios must finish, including recorded failures")
     stage5 = read(next((root / "stage5" / "projects").glob("*/state.json")))
@@ -85,7 +86,18 @@ def export(root, destination):
         "policy_efficiency_improvement_proved": False,
         "evidence": verified_tree(root),
         "report_sha256": sha(root / "report.json"),
-        "stage7_report_sha256": sha(root / "stage7" / "report.json"),
+        "stage7_report_sha256": sha(stage7_root / "report.json"),
+        "stage7_evidence": verified_tree(stage7_root),
+        "earlier_stage7_attempt": {
+            "report_sha256": sha(root / "stage7/report.json"),
+            "cases": {
+                k: v["passed"] for k, v in read(root / "stage7/report.json")["cases"].items()
+            },
+            "failure": "CAD output path exceeded the native tool limit before redesign selection",
+        }
+        if stage7_root.resolve() != (root / "stage7").resolve()
+        and (root / "stage7/report.json").exists()
+        else None,
         "stage5": {
             **{k: v for k, v in report["stage5"].items() if k not in ("observations", "decisions")},
             "observations": [
@@ -96,6 +108,10 @@ def export(root, destination):
             "planner_counts": dict(Counter(d["planner"] for d in stage5["adaptive"]["decisions"])),
         },
         "stage6": read(root / "stage6-summary.json"),
+        "runtime_recoveries": [
+            dict(audit=read(path), audit_sha256=sha(path))
+            for path in sorted((root / "stage6/projects").rglob("transport-recovery*/audit.json"))
+        ],
         "stage6_planner_counts": dict(
             Counter(d["planner"] for d in stage6["adaptive"]["decisions"])
         ),
