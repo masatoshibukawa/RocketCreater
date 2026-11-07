@@ -229,7 +229,7 @@ function DesignScreen() {
     ["目標の高度", typeof activeRequirement?.target_altitude_m === "number" ? fmtAltitude(activeRequirement.target_altitude_m) : productionProject ? "未指定" : "未入力"],
     ["積載物の質量", productionProject ? fmtMass(productionProject.spec.design.payload_mass_kg) : typeof activeRequirement?.payload_mass_kg === "number" ? fmtMass(activeRequirement.payload_mass_kg) : "未入力"],
     ["予算", typeof activeRequirement?.budget_jpy === "number" ? fmtJpy(activeRequirement.budget_jpy) : "未入力"],
-    ["規模", tier ? TIER_LABEL[tier] : "要求から判定"],
+    ["規模", TIER_LABEL[tier ?? "bottle"]],
   ];
   function saveDesign() {
     if (!displayed) return;
@@ -243,7 +243,7 @@ function DesignScreen() {
     <header className="workshop-identity">
       <a className="workshop-brand" href="/" aria-label="RocketWright ホーム" onClick={e => { e.preventDefault(); chooseStage("design"); }}><span className="rw-mark">RW</span><strong>RocketWright</strong></a>
       <span className="identity-divider"/>
-      <span className="project-path">{tier ? TIER_LABEL[tier] : "新しいロケット"}<span>/</span><b>{displayedLabel ?? "条件の確認"}</b></span>
+      <span className="project-path">{TIER_LABEL[tier ?? "bottle"]}<span>/</span><b>{displayedLabel ?? "条件の確認"}</b></span>
       <span className="session-state">{productionProject ? `保存済み / v${productionProject.version}` : "セッション内の下書き"}</span>
       <div className="identity-actions"><button className="btn" type="button" disabled={!displayed} onClick={saveDesign}><WorkshopIcon name="download" size={16}/><span>設計を保存</span></button>
         <button className="icon-button" type="button" aria-label="表示と出力先の設定" onClick={() => settings.current?.showModal()}><WorkshopIcon name="settings"/></button></div>

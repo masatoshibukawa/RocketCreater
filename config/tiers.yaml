@@ -16,6 +16,9 @@ tiers:
   bottle:
     notes: "Water + compressed air. Tens of metres, egg-class payload, recovered intact."
     target_altitude_max: {value: 100, unit: m, provisional: true, source: null}
+    # What today's parts catalog reaches: auto_design tops out at 36.7 m, which passes a 40 m
+    # target within its +/-10 %. tests/test_guard.py fails if the catalog moves this.
+    design_reach_max: {value: 40, unit: m, provisional: false, source: "auto_design sweep, 2026-11-07"}
     payload_mass_max: {value: 0.2, unit: kg, provisional: true, source: null}
     budget_min: {value: 1000, unit: jpy, provisional: true, source: null}
     orbit_capable: {value: false, unit: bool, provisional: false, source: "CLAUDE.md section 3"}

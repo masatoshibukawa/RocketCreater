@@ -902,6 +902,9 @@ function applyFinal(state: DesignState, ev: AgentEvent): DesignState {
     );
     if (final.raw_text) next = push(next, "agent", final.raw_text);
   }
+  const rejected = resultRec?.rejected_by_check;
+  const removed = Array.isArray(rejected) ? rejected.length : 0;
+  if (removed > 0) next = push(next, "notice", `検算で ${removed} 件の案を外しました。数値か合否が、計算結果と合いませんでした。`);
   if (final.provenance_violations.length > 0) {
     const text = `出典のない数値が説明文に含まれています: ${final.provenance_violations.join(", ")}`;
     next = push({ ...next, errors: [...next.errors, text] }, "error", text);
@@ -914,6 +917,11 @@ function applyError(state: DesignState, ev: AgentEvent): DesignState {
   const kind = asString(p.kind) || "error";
   const detail = asString(p.reason) || asString(p.detail) || asString(p.error) || asString(p.text);
   const suggestion = asString(p.suggestion);
+  if (kind === "out_of_scope") {
+    // A refusal is an answer, not a failure: it reads as the agent's reply.
+    const text = [detail, suggestion].filter(Boolean).join("\n");
+    return push({ ...state, status: "done" }, "agent", text);
+  }
   const text = `[${kind}] ${detail || JSON.stringify(p)}${suggestion ? `\n提案: ${suggestion}` : ""}`;
   return push({ ...state, status: "error", errors: [...state.errors, text] }, "error", text);
 }

@@ -28,6 +28,7 @@ from rocketwright.agent.fake_client import (
 from rocketwright.agent.loop import ATTEMPT_TOOLS, AgentConfig, run_design_loop
 from rocketwright.design_chain import STAGES
 from rocketwright.references import load_references
+from rocketwright.schema import Tier
 
 SCENARIO_DIR = Path(__file__).resolve().parent.parent / "scenarios"
 SCENARIOS = sorted(SCENARIO_DIR.glob("*.yaml"))
@@ -53,7 +54,7 @@ async def _run(scenario: dict[str, Any]) -> list[AgentEvent]:
     client = FakeAnthropicClient(
         build_demo_script(tier, text, env, seed, story=scenario.get("story"))
     )
-    cfg = AgentConfig.load()
+    cfg = AgentConfig.load().model_copy(update={"allowed_tiers": tuple(Tier)})
     return [ev async for ev in run_design_loop(text, client=client, config=cfg, env=env, seed=seed)]
 
 

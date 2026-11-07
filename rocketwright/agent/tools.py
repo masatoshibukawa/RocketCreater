@@ -162,13 +162,20 @@ def _schema_of(model: type[BaseModel]) -> dict[str, Any]:
     return _strictify(raw, raw.get("$defs", {}))
 
 
-def _design_schema() -> dict[str, Any]:
-    raw = DesignAdapter.json_schema()
+def _without_geometry(bottle: dict[str, Any]) -> dict[str, Any]:
     # Production sets the measured geometry; Claude never does, and every turn pays for the schema.
-    defs = {name: schema for name, schema in raw["$defs"].items() if name != "BottleGeometry"}
-    bottle = defs["BottleDesign"]
     properties = {k: v for k, v in bottle["properties"].items() if k != "geometry"}
-    defs = {**defs, "BottleDesign": {**bottle, "properties": properties}}
+    return {**bottle, "properties": properties}
+
+
+def _design_schema(tiers: tuple[Tier, ...]) -> dict[str, Any]:
+    if tiers == (Tier.BOTTLE,):
+        raw = BottleDesign.model_json_schema()
+        defs = {name: schema for name, schema in raw["$defs"].items() if name != "BottleGeometry"}
+        return _strictify({**_without_geometry(raw), "$defs": defs}, defs)
+    raw = DesignAdapter.json_schema()
+    defs = {name: schema for name, schema in raw["$defs"].items() if name != "BottleGeometry"}
+    defs = {**defs, "BottleDesign": _without_geometry(defs["BottleDesign"])}
     return _strictify({**raw, "$defs": defs}, defs)
 
 
@@ -190,7 +197,7 @@ def _obj(properties: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def get_tool_definitions() -> list[dict[str, Any]]:
+def get_tool_definitions(tiers: tuple[Tier, ...] = tuple(Tier)) -> list[dict[str, Any]]:
     # The Requirement / Env docstrings are shown once (classify_requirement /
     # simulate_design); the other tools reuse the bare schemas to keep the tool list
     # small (every tool definition is sent on every turn).
@@ -198,9 +205,12 @@ def get_tool_definitions() -> list[dict[str, Any]]:
     env_full = _schema_of(Env)
     req = {k: v for k, v in req_full.items() if k != "description"}
     env = {k: v for k, v in env_full.items() if k != "description"}
-    design = _design_schema()
-    tier_enum = {"type": "string", "enum": [t.value for t in Tier]}
-    part_tier = {"type": "string", "enum": ["bottle", "amateur"]}
+    design = _design_schema(tiers)
+    tier_enum = {"type": "string", "enum": [t.value for t in tiers]}
+    part_tier = {
+        "type": "string",
+        "enum": [t.value for t in tiers if t in (Tier.BOTTLE, Tier.AMATEUR)],
+    }
     stage_enum = {"type": "string", "enum": list(ALL_STAGES)}
     aero_backend = _nullable({"type": "string"})
     return [

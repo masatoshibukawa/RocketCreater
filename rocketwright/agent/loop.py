@@ -25,7 +25,7 @@ Reference seeds (references.py): when a `find_reference_designs` result carries 
 simulate_design call, so it is not counted as an attempt and not reviewed; the agent adopts
 it by simulating it (that call is attempt 1 and is reviewed as usual).
 
-Facts baked in (anthropic SDK 1.x, claude-opus-5-5 / claude-haiku-5-5):
+Facts baked in (anthropic SDK 1.x, claude-haiku-5-5 and the other adaptive-thinking models):
   * thinking = {"type": "adaptive", "display": "summarized"}; never `budget_tokens`;
   * depth via output_config={"effort": ...}; no forced tool_choice (prompt steers instead);
   * `client.messages.stream(...)` + `await stream.get_final_message()`;
@@ -48,7 +48,8 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 from rocketwright.agent.events import AgentEvent
-from rocketwright.agent.prompts import SYSTEM_PROMPT
+from rocketwright.agent.final_check import split_checked_designs
+from rocketwright.agent.prompts import system_prompt
 from rocketwright.agent.provenance import find_unsourced_numbers
 from rocketwright.agent.review import (
     SEVERITY_ORDER,
@@ -58,8 +59,15 @@ from rocketwright.agent.review import (
     review_feedback_message,
 )
 from rocketwright.agent.tools import execute_tool, get_tool_definitions
-from rocketwright.guard import check_scope
-from rocketwright.schema import Env
+from rocketwright.guard import (
+    TIER_LIMIT,
+    GuardResult,
+    check_bottle_limit,
+    check_scope,
+    requirement_in_reach,
+    tier_limit_refusal,
+)
+from rocketwright.schema import Env, Tier
 
 __all__ = ["AgentConfig", "ReviewerConfig", "models_config_path", "run_design_loop"]
 
@@ -70,6 +78,8 @@ ATTEMPT_TOOL = "simulate_design"
 PART_ATTEMPT_TOOLS = ("design_from_parts", "auto_design")
 ATTEMPT_TOOLS = (ATTEMPT_TOOL, *PART_ATTEMPT_TOOLS)
 REFERENCE_TOOL = "find_reference_designs"
+CLASSIFY_TOOL = "classify_requirement"
+CANNOT_DO = "できません"
 _TRACE_KEY = "trace"
 _ATTEMPT_NAMES = "simulate_design / design_from_parts / auto_design calls"
 
@@ -97,14 +107,19 @@ class ReviewerConfig(BaseModel):
 class AgentConfig(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    design_model: str = "claude-opus-5-5"
+    allowed_tiers: tuple[Tier, ...] = (Tier.BOTTLE,)
+    design_model: str = "claude-haiku-5-5"
     light_model: str = "claude-haiku-5-5"
-    effort: Effort = "high"
+    effort: Effort = "low"
     thinking_display: str = "summarized"
-    max_tokens: int = Field(default=64000, gt=0)
-    max_attempts: int = Field(default=40, ge=1)
-    max_turns: int = Field(default=80, ge=1)
+    max_tokens: int = Field(default=16000, gt=0)
+    max_attempts: int = Field(default=8, ge=1)
+    max_turns: int = Field(default=24, ge=1)
     reviewers: ReviewerConfig = Field(default_factory=ReviewerConfig)
+
+    @property
+    def bottle_only(self) -> bool:
+        return self.allowed_tiers == (Tier.BOTTLE,)
 
     @property
     def reviewers_enabled(self) -> bool:
@@ -118,6 +133,42 @@ class AgentConfig(BaseModel):
 
 
 # --------------------------------------------------------------------------- helpers
+
+
+def _refusal_payload(guard: GuardResult) -> dict[str, Any]:
+    return {
+        "kind": "out_of_scope",
+        "category": guard.category,
+        "reason": guard.reason,
+        "suggestion": guard.suggestion,
+    }
+
+
+def _final_check_feedback(mismatches: list[dict[str, Any]]) -> str:
+    lines = [
+        f"- designs[{found['index']}]: {'; '.join(found['problems'])}" for found in mismatches
+    ]
+    return (
+        "The final answer disagrees with the tool results it cites:\n"
+        + "\n".join(lines)
+        + "\nCopy the numbers, the pass/fail and the source ids from the tool results and send "
+        "the corrected final JSON. A design that still disagrees is removed."
+    )
+
+
+def _tier_refusal(
+    tool: str, tool_input: dict[str, Any], result: dict[str, Any], cfg: AgentConfig
+) -> GuardResult | None:
+    """The refusal when classify_requirement puts the normalised request out of reach. The text
+    screen only sees what is plainly written; the model reads the rest."""
+    if tool != CLASSIFY_TOOL or "error" in result:
+        return None
+    requirement = tool_input.get("requirement") or {}
+    required = str(result.get("required_tier"))
+    in_reach = not cfg.bottle_only or requirement_in_reach(requirement)
+    if required in cfg.allowed_tiers and in_reach:
+        return None
+    return tier_limit_refusal(requirement, required)
 
 
 def _parse_final_json(text: str) -> dict[str, Any] | None:
@@ -299,16 +350,11 @@ async def run_design_loop(
 
     # 1. scope guard before anything reaches the model
     guard = check_scope(requirement_text)
+    if guard.allowed and cfg.bottle_only:
+        limit = check_bottle_limit(requirement_text)
+        guard = guard if limit.allowed else limit
     if not guard.allowed:
-        yield ev(
-            "error",
-            {
-                "kind": "out_of_scope",
-                "category": guard.category,
-                "reason": guard.reason,
-                "suggestion": guard.suggestion,
-            },
-        )
+        yield ev("error", _refusal_payload(guard))
         return
     legal_note = guard.suggestion if guard.category == "legal_approval" else None
 
@@ -319,9 +365,10 @@ async def run_design_loop(
             "content": _initial_user_message(requirement_text, env_model, seed, legal_note),
         }
     ]
-    tools = get_tool_definitions()
+    tools = get_tool_definitions(cfg.allowed_tiers)
     tool_results_log: list[dict[str, Any]] = []
     budget_exhausted_told = False
+    final_corrected = False  # the model gets one chance to fix a final that fails the check
     review_rounds: dict[str, int] = {}  # source_id -> times reviewed (never above the cap)
     review_blocked: dict[str, list[str]] = {}  # source_id -> blocker findings
 
@@ -336,7 +383,7 @@ async def run_design_loop(
                 system=[
                     {
                         "type": "text",
-                        "text": SYSTEM_PROMPT,
+                        "text": system_prompt(cfg.bottle_only),
                         "cache_control": {"type": "ephemeral"},
                     }
                 ],
@@ -401,7 +448,10 @@ async def run_design_loop(
             text = "".join(text_parts)
             parsed = _parse_final_json(text)
             if parsed is None:
-                if _looks_like_question(text):
+                if text.lstrip().startswith(CANNOT_DO):
+                    refusal = GuardResult(False, TIER_LIMIT, text.strip(), "")
+                    yield ev("error", _refusal_payload(refusal))
+                elif _looks_like_question(text):
                     yield ev("question", {"text": text})
                 else:
                     yield ev(
@@ -409,8 +459,24 @@ async def run_design_loop(
                         {"result": None, "raw_text": text, "parse_error": "not a JSON object"},
                     )
                 return
-            violations = find_unsourced_numbers(_explanation_text(parsed), tool_results_log)
-            parsed, rejected_ids = _apply_review_gate(parsed, review_blocked)
+            checked, mismatches = split_checked_designs(parsed, tool_results_log)
+            if mismatches and not final_corrected:
+                final_corrected = True
+                messages.append({"role": "assistant", "content": response.content})
+                messages.append({"role": "user", "content": _final_check_feedback(mismatches)})
+                continue
+            if mismatches:
+                yield ev(
+                    "warning",
+                    {
+                        "kind": "final_check",
+                        "detail": "designs that disagree with the tool results they cite were "
+                        "moved from `designs` to `rejected_by_check` in the final result",
+                        "rejected": mismatches,
+                    },
+                )
+            violations = find_unsourced_numbers(_explanation_text(checked), tool_results_log)
+            parsed, rejected_ids = _apply_review_gate(checked, review_blocked)
             if rejected_ids:
                 yield ev(
                     "warning",
@@ -458,6 +524,10 @@ async def run_design_loop(
                 "tool_result",
                 {"id": tu.id, "name": tu.name, "is_error": is_error, "result": result},
             )
+            refusal = _tier_refusal(tu.name, tool_input, result, cfg)
+            if refusal is not None:
+                yield ev("error", _refusal_payload(refusal))
+                return
             if tu.name == REFERENCE_TOOL and not is_error:
                 seed_candidate = _seed_candidate(tu.id, result)
                 if seed_candidate is not None:

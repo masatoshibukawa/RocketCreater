@@ -18,6 +18,8 @@ from rocketwright.agent.loop import (
     _apply_review_gate,
     run_design_loop,
 )
+from rocketwright.agent.prompts import SYSTEM_PROMPT
+from rocketwright.schema import Tier
 
 AMATEUR_TEXT = "1 kg の荷物を高度 2 km まで上げてパラシュートで回収したい。予算 5 万円。"
 # the demo_amateur scenario env: the seeded first attempt is about a tenth too high there
@@ -29,16 +31,25 @@ def anyio_backend() -> str:
     return "asyncio"  # trio is not installed
 
 
+def _all_tiers(**update) -> AgentConfig:
+    """These tests drive the loop itself; the amateur script is the fullest one it has."""
+    return AgentConfig.load().model_copy(update={"allowed_tiers": tuple(Tier), **update})
+
+
 async def _collect(client, text=AMATEUR_TEXT, **kwargs) -> list[AgentEvent]:
+    kwargs.setdefault("config", _all_tiers())
     return [ev async for ev in run_design_loop(text, client=client, **kwargs)]
 
 
 def test_config_loads_from_yaml():
     cfg = AgentConfig.load()
-    assert cfg.design_model == "claude-opus-5-5"
+    assert cfg.allowed_tiers == (Tier.BOTTLE,)
+    assert cfg.design_model == "claude-haiku-5-5"
     assert cfg.light_model == "claude-haiku-5-5"
-    assert cfg.max_attempts == 40
-    assert cfg.max_tokens == 64000
+    assert cfg.effort == "low"
+    assert cfg.max_attempts == 8
+    assert cfg.max_turns == 24
+    assert cfg.max_tokens == 16000
 
 
 @pytest.mark.anyio
@@ -86,10 +97,10 @@ async def test_scripted_amateur_run_event_sequence():
 
     # every API call used the configured model, streaming helper, strict tools, adaptive thinking
     for call in client.calls:
-        assert call["model"] == "claude-opus-5-5"
-        assert call["max_tokens"] == 64000
+        assert call["model"] == "claude-haiku-5-5"
+        assert call["max_tokens"] == 16000
         assert call["thinking"] == {"type": "adaptive", "display": "summarized"}
-        assert call["output_config"] == {"effort": "high"}
+        assert call["output_config"] == {"effort": "low"}
         assert "tool_choice" not in call
         assert all("strict" not in t for t in call["tools"])  # API limit on nullable params
         assert "budget_tokens" not in json.dumps(call["thinking"])
@@ -129,7 +140,7 @@ async def test_attempt_budget_is_enforced():
     client = FakeAnthropicClient(
         build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, dispersion=False)
     )
-    cfg = AgentConfig.load().model_copy(update={"max_attempts": 1})
+    cfg = _all_tiers(max_attempts=1)
     events = await _collect(client, env=ENV, seed=1, config=cfg)
     results = [e for e in events if e.type == "tool_result"]
     attempts = [e for e in results if e.payload["name"] in ("auto_design", "design_from_parts")]
@@ -384,7 +395,7 @@ async def test_reviewers_can_be_disabled_and_never_run_on_failed_attempts():
     client = FakeAnthropicClient(
         build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, reviews=True, dispersion=False)
     )
-    cfg = AgentConfig.load().model_copy(update={"reviewers": ReviewerConfig(enabled=False)})
+    cfg = _all_tiers(reviewers=ReviewerConfig(enabled=False))
     events = await _collect(client, env=ENV, seed=1, config=cfg)
     assert not _by_type(events, "review")
     assert client.parse_calls == []
@@ -616,7 +627,6 @@ def test_for_model_strips_nested_sim_traces():
 
 
 def test_system_prompt_describes_the_staged_chain_workflow():
-    from rocketwright.agent.prompts import SYSTEM_PROMPT
     from rocketwright.design_chain import AMATEUR_STAGES, BOTTLE_STAGES
 
     text = " ".join(SYSTEM_PROMPT.split())
@@ -652,3 +662,157 @@ def test_a_plain_statement_is_not_a_question():
     from rocketwright.agent.loop import _looks_like_question
 
     assert not _looks_like_question("設計が完了しました。合格案は 2 件です。")
+
+
+# --- bottle only -----------------------------------------------------------------------
+
+BOTTLE_TEXT = "卵を割らずに 30 m まで上げて回収したい"
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize(
+    "text",
+    [
+        "150 kg の小型衛星を高度 400 km の軌道に投入したい。予算 20 億円",
+        "1 kg の荷物を 2 km まで上げて回収したい",
+        "企業級のロケットを設計して",
+    ],
+)
+async def test_a_request_past_the_bottle_range_is_refused_before_any_api_call(text):
+    client = FakeAnthropicClient([])
+
+    events = [ev async for ev in run_design_loop(text, client=client)]
+
+    assert [e.type for e in events] == ["error"]
+    assert events[0].payload["kind"] == "out_of_scope"
+    assert events[0].payload["category"] == "tier_limit"
+    assert events[0].payload["reason"].startswith("できません")
+    assert client.calls == []
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize(
+    ("altitude_m", "payload_kg", "named"),
+    [(2000.0, 0.06, "2 km"), (60.0, 0.06, "60 m"), (20.0, 1.0, "1 kg")],
+)
+async def test_classify_stops_what_the_text_screen_could_not_read(altitude_m, payload_kg, named):
+    requirement = {
+        "goal_kind": "altitude",
+        "target_altitude_m": altitude_m,
+        "target_apogee_m": None,
+        "payload_mass_kg": payload_kg,
+        "budget_jpy": None,
+        "recovery_required": True,
+        "tier_override": None,
+        "text": "",
+    }
+    client = FakeAnthropicClient(
+        [
+            make_message(
+                [tool_use_block("toolu_c", "classify_requirement", {"requirement": requirement})],
+                stop_reason="tool_use",
+            )
+        ]
+    )
+
+    events = [ev async for ev in run_design_loop("もっと高く飛ばしたい", client=client)]
+
+    assert events[-1].type == "error"
+    assert events[-1].payload["category"] == "tier_limit"
+    assert named in events[-1].payload["reason"]
+    assert len(client.calls) == 1
+
+
+@pytest.mark.anyio
+async def test_a_bottle_only_run_offers_claude_the_bottle_tier_only():
+    client = FakeAnthropicClient([make_message([text_block("どこまで上げますか？")])])
+
+    [ev async for ev in run_design_loop(BOTTLE_TEXT, client=client)]
+
+    call = client.calls[0]
+    tools = {tool["name"]: tool for tool in call["tools"]}
+    schema = json.dumps(tools["simulate_design"]["input_schema"])
+    assert "stages" not in schema and "motor_id" not in schema
+    assert tools["auto_design"]["input_schema"]["properties"]["tier"]["enum"] == ["bottle"]
+    assert call["system"][0]["text"].startswith(SYSTEM_PROMPT)
+    assert "できません" in call["system"][0]["text"]
+
+
+@pytest.mark.anyio
+async def test_a_plain_refusal_from_claude_reads_as_a_refusal():
+    client = FakeAnthropicClient([make_message([text_block("できません。軌道には届きません。")])])
+
+    events = [ev async for ev in run_design_loop(BOTTLE_TEXT, client=client)]
+
+    assert [e.type for e in events] == ["text", "error"]
+    assert events[-1].payload["kind"] == "out_of_scope"
+    assert events[-1].payload["reason"] == "できません。軌道には届きません。"
+
+
+# --- the check of the final answer ------------------------------------------------------
+
+CLASSIFY_INPUT = {
+    "requirement": {
+        "goal_kind": "altitude",
+        "target_altitude_m": 30.0,
+        "target_apogee_m": None,
+        "payload_mass_kg": 0.06,
+        "budget_jpy": None,
+        "recovery_required": True,
+        "tier_override": None,
+        "text": "",
+    }
+}
+
+
+def _final_message(sources: dict, apogee_m: float = 30.0) -> object:
+    row = {
+        "design": {},
+        "metrics": {"apogee_m": apogee_m},
+        "passed": False,
+        "cost_jpy": None,
+        "success_rate": None,
+        "sources": sources,
+        "explanation": "",
+    }
+    return make_message([text_block(json.dumps({"designs": [row], "summary": "s"}))])
+
+
+def _classify_message() -> object:
+    return make_message(
+        [tool_use_block("toolu_c", "classify_requirement", CLASSIFY_INPUT)], stop_reason="tool_use"
+    )
+
+
+@pytest.mark.anyio
+async def test_a_final_that_fails_the_check_gets_one_correction():
+    client = FakeAnthropicClient(
+        [
+            _classify_message(),
+            _final_message({"apogee_m": "toolu_made_up"}),
+            _final_message({"apogee_m": "toolu_c"}, apogee_m=1000.0),  # the tier's budget floor
+        ]
+    )
+
+    events = [ev async for ev in run_design_loop(BOTTLE_TEXT, client=client)]
+
+    sent = client.calls[-1]["messages"][-1]
+    assert sent["role"] == "user"
+    assert "toolu_made_up" in sent["content"]
+    assert events[-1].type == "final"
+    assert len(events[-1].payload["result"]["designs"]) == 1
+    assert "rejected_by_check" not in events[-1].payload["result"]
+
+
+@pytest.mark.anyio
+async def test_a_final_that_fails_twice_loses_the_design():
+    bad = {"apogee_m": "toolu_made_up"}
+    client = FakeAnthropicClient([_classify_message(), _final_message(bad), _final_message(bad)])
+
+    events = [ev async for ev in run_design_loop(BOTTLE_TEXT, client=client)]
+
+    assert events[-2].type == "warning"
+    assert events[-2].payload["kind"] == "final_check"
+    result = events[-1].payload["result"]
+    assert result["designs"] == []
+    assert result["rejected_by_check"][0]["check_problems"]

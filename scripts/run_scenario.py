@@ -23,6 +23,7 @@ import yaml
 from rocketwright.agent.events import AgentEvent
 from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
 from rocketwright.agent.loop import AgentConfig, run_design_loop
+from rocketwright.schema import Tier
 
 _MAX_LINE = 220
 
@@ -74,7 +75,7 @@ async def _run(scenario: dict[str, Any], dummy: bool) -> int:
                 expected_tier, text, env, seed, reviews=True, story=scenario.get("story")
             )
         )
-    cfg = AgentConfig.load()
+    cfg = AgentConfig.load().model_copy(update={"allowed_tiers": tuple(Tier)})
     print(f"# scenario {scenario.get('name')}  model={cfg.design_model}  dummy={dummy}")
     print(f"# request: {text}")
     classified: str | None = None

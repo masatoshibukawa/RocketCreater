@@ -30,6 +30,7 @@ from rocketwright.agent.events import AgentEvent
 from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_script
 from rocketwright.agent.loop import AgentConfig, run_design_loop
 from rocketwright.references import load_references
+from rocketwright.schema import Tier
 
 ROOT = Path(__file__).resolve().parent.parent
 MAX_WALL_S = 10.0
@@ -43,7 +44,7 @@ async def _collect(scenario: dict[str, Any]) -> list[AgentEvent]:
     client = FakeAnthropicClient(
         build_demo_script(tier, text, env, seed, reviews=True, story=scenario.get("story"))
     )
-    cfg = AgentConfig.load()
+    cfg = AgentConfig.load().model_copy(update={"allowed_tiers": tuple(Tier)})
     return [ev async for ev in run_design_loop(text, client=client, config=cfg, env=env, seed=seed)]
 
 

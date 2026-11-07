@@ -135,6 +135,19 @@ Reply with a single JSON object and nothing else (no prose before or after, no c
 Write everything the user reads in the user's language (Japanese if the request is Japanese):
 your thinking, the text between tool calls, questions, summary, explanation, open_questions."""
 
+BOTTLE_ONLY_NOTE: str = """
+
+## This deployment designs bottle rockets only
+Only the bottle tier is open. The other tiers described above are not available here. When a
+request needs anything else (a solid motor, a satellite, an orbit, a target the bottle cannot
+reach), do not design it: answer in one sentence beginning with 「できません」 and name what
+is out of reach. Never suggest another tier."""
+
+
+def system_prompt(bottle_only: bool) -> str:
+    return SYSTEM_PROMPT + BOTTLE_ONLY_NOTE if bottle_only else SYSTEM_PROMPT
+
+
 # Phase 3: per-aspect reviewers run as parallel sub-agents on the light model (review.py).
 # They reply through structured outputs (ReviewVerdict), so the prompts describe the judgement,
 # not the JSON shape. CLAUDE.md principle: reviewers never invent numbers.

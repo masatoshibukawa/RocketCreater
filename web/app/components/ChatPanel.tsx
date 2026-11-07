@@ -17,9 +17,7 @@ interface ChatPanelProps {
 
 const EXAMPLES: readonly string[] = [
   "卵を割らずに 30 m まで上げて回収したい",
-  "1 kg の荷物を 2 km まで上げてパラシュートで回収したい。予算 5 万円",
-  "200 g の荷物を 500 m まで上げて回収したい。予算 2 万円。資格なしで飛ばしたい",
-  "150 kg の小型衛星を高度 400 km の軌道に投入したい。予算 20 億円",
+  "1.5 L のペットボトルで卵を 20 m まで上げて、パラシュートで回収したい。予算 3,000 円",
 ];
 
 const ROLE_LABEL: Record<ChatMessage["role"], string> = {
@@ -75,7 +73,7 @@ export default function ChatPanel({
           <div className="chat-empty">
             <p>どこまで飛ばすか・何を載せるか・回収するか・予算を、ふつうの文章で書いてください。</p>
             <p className="muted">
-              段階（ペットボトル／アマチュア／企業級／重工級）を判定し、物理シミュレーションで検証した設計案だけを返します。
+              ペットボトルロケット専用です。物理シミュレーションで検証した設計案だけを返します。
             </p>
           </div>
         ) : (
@@ -121,7 +119,7 @@ export default function ChatPanel({
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="例: 1 kg の荷物を 2 km まで上げてパラシュートで回収したい。予算 5 万円"
+          placeholder="例: 1.5 L のペットボトルで卵を 20 m まで上げて、パラシュートで回収したい。予算 3,000 円"
           disabled={streaming}
         />
         <div className="chat-actions">

@@ -1,6 +1,6 @@
 """Live-API readiness without network: the exact kwargs loop.py passes to
 `client.messages.stream` and review.py passes to `client.messages.parse`, captured through the
-fake client, must have the shape the Claude API accepts for claude-opus-5-5 / claude-haiku-5-5
+fake client, must have the shape the Claude API accepts for claude-haiku-5-5
 (adaptive thinking, no budget_tokens, no forced tool_choice, tool_results leading the user turn
 that follows every tool_use turn, all of them in ONE message)."""
 
@@ -14,10 +14,11 @@ from rocketwright.agent.fake_client import FakeAnthropicClient, build_demo_scrip
 from rocketwright.agent.loop import AgentConfig, run_design_loop
 from rocketwright.agent.review import ReviewVerdict
 from rocketwright.agent.tools import TOOL_NAMES
+from rocketwright.schema import Tier
 
 TEXT = "1 kg の荷物を高度 2 km まで上げてパラシュートで回収したい。予算 5 万円。"
 ENV = {"launch_latitude_deg": 36.0, "launch_altitude_m": 300, "wind_speed_mps": 3.0}
-DESIGN_MODEL = "claude-opus-5-5"
+DESIGN_MODEL = "claude-haiku-5-5"
 LIGHT_MODEL = "claude-haiku-5-5"
 
 
@@ -32,7 +33,7 @@ def captured() -> dict[str, list[dict[str, Any]]]:
     import asyncio
 
     client = FakeAnthropicClient(build_demo_script("amateur", TEXT, ENV, seed=42, reviews=True))
-    cfg = AgentConfig.load()
+    cfg = AgentConfig.load().model_copy(update={"allowed_tiers": tuple(Tier)})
 
     async def run() -> None:
         async for _ in run_design_loop(TEXT, client=client, config=cfg, env=ENV, seed=42):

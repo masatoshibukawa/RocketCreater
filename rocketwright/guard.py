@@ -11,6 +11,11 @@ Keyword/regex screening in Japanese and English, run BEFORE the request reaches 
 `legal_approval` (asking us to obtain permits or rule on legality) is NOT refused: the request
 passes but is flagged so the agent answers with a checklist of items and offices to confirm.
 
+`check_bottle_limit` is the second screen, for a deployment that designs bottle rockets only: a
+request for a satellite, an orbit or a target past the bottle range is answered 「できません」
+before any model call. It only catches what is plain from the text; classify_requirement
+catches the rest through `tier_limit_refusal`.
+
 False positives are costly (a refused demo is a dead demo), so the patterns are deliberately
 narrow: 回収 / パラシュート / 軌道 / 衛星 / recovery / orbit / satellite never trigger.
 """
@@ -18,9 +23,23 @@ narrow: 回収 / パラシュート / 軌道 / 衛星 / recovery / orbit / satel
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
+from typing import Any
 
-__all__ = ["GuardResult", "check_scope", "CATEGORY_PATTERNS"]
+from rocketwright.classify import load_tiers
+
+__all__ = [
+    "CATEGORY_PATTERNS",
+    "GuardResult",
+    "TIER_LIMIT",
+    "check_bottle_limit",
+    "check_scope",
+    "requirement_in_reach",
+    "tier_limit_refusal",
+]
+
+TIER_LIMIT = "tier_limit"
 
 
 @dataclass(frozen=True)
@@ -114,30 +133,13 @@ _LEGAL_PATTERNS = _rx(
 )
 
 _REASONS: dict[str, str] = {
-    "propellant": "propellant formulation or manufacture is out of scope",
-    "engine_internals": "engine/motor internal design is out of scope",
-    "guidance_control": "guidance and attitude-control software is out of scope",
-    "weapon_target": "ground targets, warheads and re-entry vehicles are out of scope",
+    "propellant": "できません。推進薬の配合や製造は扱いません。",
+    "engine_internals": "できません。エンジンの内部設計は扱いません。",
+    "guidance_control": "できません。誘導や姿勢制御のソフトは扱いません。",
+    "weapon_target": "できません。地上の目標、弾頭、再突入体は扱いません。",
 }
 
-_SUGGESTIONS: dict[str, str] = {
-    "propellant": (
-        "I can select a certified commercial motor or a representative engine from the catalog "
-        "and size the vehicle around it."
-    ),
-    "engine_internals": (
-        "I can pick an engine/motor from the catalog by thrust, Isp and mass and design the rest "
-        "of the vehicle (stages, mass budget, fins, recovery) around it."
-    ),
-    "guidance_control": (
-        "I can run an open-loop gravity-turn pitch program for concept design and report the "
-        "resulting trajectory and static stability margin."
-    ),
-    "weapon_target": (
-        "I can design for an altitude or orbit goal; landing points are only computed for "
-        "recovery and safety-zone checks."
-    ),
-}
+_SUGGESTION = "水と空気で飛ぶペットボトルロケットの設計なら、お手伝いできます。"
 
 _LEGAL_SUGGESTION = (
     "I do not decide on permits or legality; I will add a checklist of items to confirm and the "
@@ -155,8 +157,8 @@ def check_scope(text: str) -> GuardResult:
                 return GuardResult(
                     allowed=False,
                     category=category,
-                    reason=f"{_REASONS[category]} (matched /{pattern.pattern}/)",
-                    suggestion=_SUGGESTIONS[category],
+                    reason=_REASONS[category],
+                    suggestion=_SUGGESTION,
                 )
     for pattern in _LEGAL_PATTERNS:
         if pattern.search(text):
@@ -167,3 +169,150 @@ def check_scope(text: str) -> GuardResult:
                 suggestion=_LEGAL_SUGGESTION,
             )
     return GuardResult(allowed=True, category=None, reason="in scope", suggestion="")
+
+
+# --------------------------------------------------------------------------- bottle only
+
+_NUMBER = r"(\d+(?:,\d{3})*(?:\.\d+)?)"
+_LENGTH_UNITS = {"km": 1000.0, "キロメートル": 1000.0, "キロ": 1000.0, "m": 1.0, "メートル": 1.0}
+_MASS_UNITS = {
+    "kg": 1.0,
+    "キログラム": 1.0,
+    "g": 0.001,
+    "グラム": 0.001,
+    "トン": 1000.0,
+    "ton": 1000.0,
+    "tons": 1000.0,
+    "tonne": 1000.0,
+    "tonnes": 1000.0,
+}
+_LENGTH = rf"{_NUMBER}\s*(km|キロメートル|キロ(?!グラム)|メートル|m(?![a-zA-Z/²³]))"
+_HEIGHT_RX = re.compile(
+    rf"(?:高度|高さ|上空|altitude|apogee|height)[^、。,.\d]{{0,10}}{_LENGTH}"
+    rf"|{_LENGTH}\s*(?:まで|の高さ|の高度|上空|上げ|飛ば|に到達|届|altitude|apogee|high\b)"
+    rf"|(?:\bto|\breach)\s+{_LENGTH}",
+    re.IGNORECASE,
+)
+# Any distance in km is past a bottle rocket, but only the height counts as a target.
+_KM_RX = re.compile(rf"{_NUMBER}\s*(km|キロメートル)(?!\s*(?:/\s*h|毎時))", re.IGNORECASE)
+_NOT_HEIGHT_NEARBY = re.compile(r"半径|以内|離|時速|距離|範囲")
+_MASS_RX = re.compile(
+    rf"{_NUMBER}\s*(kg|キログラム|グラム|トン|tonnes?|tons?|g(?![a-zA-Z]))", re.IGNORECASE
+)
+# Water, the airframe and limits are masses too, but not what is carried.
+_NOT_PAYLOAD_BEFORE = re.compile(r"水|機体|全備|総重量|総質量|全体|本体|空虚|自重")
+_NOT_PAYLOAD_AFTER = re.compile(r"\s*(以下|未満|以内|の水)")
+
+_OTHER_VEHICLES: tuple[tuple[re.Pattern[str], str], ...] = (
+    (
+        re.compile(r"衛星|\bcubesat\b|\bsatellite", re.I),
+        "人工衛星の打ち上げは設計できません。",
+    ),
+    (
+        re.compile(r"軌道[にへ]|軌道投入|周回軌道|低軌道|静止軌道|\b(LEO|GTO|SSO|orbit)\b", re.I),
+        "軌道への投入は設計できません。",
+    ),
+    (
+        re.compile(r"企業級|重工級|多段|ブースター|\bmultistage\b|\bbooster", re.I),
+        "企業級や重工級のロケットは設計できません。",
+    ),
+    (
+        re.compile(
+            r"モデルロケット|アマチュア|固体モーター|固体ロケット|液体エンジン|液体燃料"
+            r"|ハイパワー|\bmodel\s+rocket|\bsolid\s+motor|\bhigh[\s-]power",
+            re.I,
+        ),
+        "火薬や燃料を使うロケットは設計できません。",
+    ),
+    (re.compile(r"\d\s*億円"), "この規模の予算のロケットは設計できません。"),
+)
+
+
+def _value(number: str, unit: str, units: dict[str, float]) -> float:
+    return float(number.replace(",", "")) * units[unit.lower()]
+
+
+def _heights(text: str) -> list[float]:
+    found: list[float] = []
+    for match in _HEIGHT_RX.finditer(text):
+        number, unit = (group for group in match.groups() if group is not None)
+        found.append(_value(number, unit, _LENGTH_UNITS))
+    for match in _KM_RX.finditer(text):
+        nearby = text[max(0, match.start() - 6) : match.end() + 6]
+        if not _NOT_HEIGHT_NEARBY.search(nearby):
+            found.append(_value(match[1], match[2], _LENGTH_UNITS))
+    return found
+
+
+def _payloads(text: str) -> list[float]:
+    found: list[float] = []
+    for match in _MASS_RX.finditer(text):
+        before = text[max(0, match.start() - 6) : match.start()]
+        if _NOT_PAYLOAD_BEFORE.search(before) or _NOT_PAYLOAD_AFTER.match(text, match.end()):
+            continue
+        found.append(_value(match[1], match[2], _MASS_UNITS))
+    return found
+
+
+def _length_text(metres: float) -> str:
+    return f"{metres / 1000:g} km" if metres >= 1000 else f"{metres:g} m"
+
+
+def _mass_text(kg: float) -> str:
+    return f"{kg:g} kg" if kg >= 1 else f"{kg * 1000:g} g"
+
+
+def _bottle_limits() -> tuple[float, float]:
+    bottle = load_tiers()["tiers"]["bottle"]
+    return bottle["design_reach_max"]["value"], bottle["payload_mass_max"]["value"]
+
+
+def _refusal(detail: str) -> GuardResult:
+    reach, payload = _bottle_limits()
+    return GuardResult(
+        allowed=False,
+        category=TIER_LIMIT,
+        reason=f"できません。このツールはペットボトルロケット専用です。{detail}",
+        suggestion=(
+            f"高度 {_length_text(reach)} まで、荷物 {_mass_text(payload)} までの"
+            "ペットボトルロケットなら設計できます。"
+        ),
+    )
+
+
+def _limit_detail(height_m: float, payload_kg: float) -> str | None:
+    reach, payload = _bottle_limits()
+    if height_m > reach:
+        return f"高度 {_length_text(height_m)} は届きません。"
+    if payload_kg > payload:
+        return f"荷物 {_mass_text(payload_kg)} は重すぎます。"
+    return None
+
+
+def check_bottle_limit(text: str) -> GuardResult:
+    """Refuse what the text plainly asks of something other than a bottle rocket."""
+    plain = unicodedata.normalize("NFKC", text)
+    if not _BOTTLE_CONTEXT.search(plain):
+        for pattern, detail in _OTHER_VEHICLES:
+            if pattern.search(plain):
+                return _refusal(detail)
+    detail = _limit_detail(max(_heights(plain), default=0.0), max(_payloads(plain), default=0.0))
+    if detail:
+        return _refusal(detail)
+    return GuardResult(allowed=True, category=None, reason="in scope", suggestion="")
+
+
+def requirement_in_reach(requirement: dict[str, Any]) -> bool:
+    height = float(requirement.get("target_altitude_m") or 0.0)
+    payload = float(requirement.get("payload_mass_kg") or 0.0)
+    return _limit_detail(height, payload) is None
+
+
+def tier_limit_refusal(requirement: dict[str, Any], required_tier: str) -> GuardResult:
+    """The refusal for a normalised Requirement the bottle tier cannot cover."""
+    height = float(requirement.get("target_altitude_m") or 0.0)
+    payload = float(requirement.get("payload_mass_kg") or 0.0)
+    if requirement.get("goal_kind") == "orbit":
+        return _refusal("軌道への投入は設計できません。")
+    detail = _limit_detail(height, payload)
+    return _refusal(detail or f"{required_tier} の規模のロケットは設計できません。")
