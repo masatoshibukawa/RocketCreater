@@ -7,7 +7,8 @@ from pathlib import Path
 import numpy as np
 
 from rocketwright.agent.design_projects import sha, write_json
-from rocketwright.analysis.worker import read
+from rocketwright.analysis.worker import integrated_coefficients, read, serial
+from rocketwright.physics.flight_loads import TunnelDatabase
 from scripts.report_joint_confirmation import export as export_candidate
 
 
@@ -67,11 +68,38 @@ def numerical_details(root, report):
                     seconds=case["seconds"],
                 )
             )
+    fine = read(method_folder(root, report, "cfd_fine") / "data.json")
+    coarse = read(method_folder(root, report, "cfd_coarse") / "data.json")
+    assembly = read(method_folder(root, report, "geometry") / "data.json")["record"]["assembly"]
+    table = TunnelDatabase(fine["table_folder"])
+    args = (table.stations, table.diameter, assembly["loaded_cg_mm"] / 1000)
+    before = integrated_coefficients(np.asarray(coarse["coefficients"]), *args)
+    after = integrated_coefficients(table.table, *args)
+    delta = abs(after - before)
+    denominator = np.maximum(np.max(abs(after), axis=(0, 1)), 0.01)
+    ratios = np.max(delta, axis=(0, 1)) / denominator
+    component = int(np.argmax(ratios))
+    i, j = np.unravel_index(np.argmax(delta[:, :, component]), delta.shape[:2])
+    if not np.isclose(ratios[component], fine["grid_relative_change"], rtol=1e-12):
+        raise ValueError("Grid diagnostic differs from sealed worker metric")
+    driver = serial(
+        dict(
+            component=("Cx", "Cy", "Cz", "Croll", "Cpitch_y", "Cm_z")[component],
+            speed_mps=table.speeds[i],
+            angle_deg=table.angles[j],
+            coarse=before[i, j, component],
+            fine=after[i, j, component],
+            component_scale=denominator[component],
+            relative_change=ratios[component],
+            scope="Maximum over all tabulated conditions; separate from trajectory propagation",
+        )
+    )
     return dict(
         fem_geometric_nonlinearity=True,
         fem_input_deck_hashes=decks,
         fine_fem_cases=fem_cases,
         cfd_cases=cases,
+        grid_change_driver=driver,
         geometry_resolution_note=(
             "Interpolated walls place specified surfaces between nodes; spacing ratios alone "
             "do not establish near-wall/thin-fin flow resolution or model validity"
