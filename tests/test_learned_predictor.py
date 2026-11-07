@@ -39,6 +39,30 @@ def test_sparse_or_duplicate_data_does_not_fit(tmp_path):
     assert fitted["status"] == "insufficient_samples" and fitted["samples"] == 1
 
 
+def test_validated_selection_checks_each_large_artifact_once(tmp_path, monkeypatch):
+    data = rows(tmp_path)
+    original, calls = predictor.sealed, []
+
+    def check(row):
+        calls.append(row["transition_id"])
+        return original(row)
+
+    monkeypatch.setattr(predictor, "sealed", check)
+    result = predictor.estimate(data, query(data[-1]), correction_limit_m=1)
+    assert result["status"] == "fitted"
+    assert calls == [r["transition_id"] for r in data]
+
+
+def test_distant_forecast_abstains_from_extrapolating_correction(tmp_path):
+    data = rows(tmp_path)
+    q = query(data[-1])
+    q["raw_delta"] = 100
+    result = predictor.estimate(data, q, correction_limit_m=1)
+    assert result["status"] == "fitted"
+    assert not result["correction_supported"]
+    assert result["height_correction_m"] == 0
+
+
 @pytest.mark.parametrize("field", ["cost_s", "features", "prediction_residual_m"])
 def test_training_metadata_tampering_is_rejected(tmp_path, field):
     data = rows(tmp_path)

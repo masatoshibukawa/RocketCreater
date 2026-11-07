@@ -9,7 +9,7 @@ from rocketwright.analysis import predictor
 from rocketwright.analysis.worker import read
 
 
-def export(source, destination):
+def export(source, destination, live=None):
     r = read(source)
     if set(r["training_ids"]) & set(r["evaluation_ids"]):
         raise ValueError("Training/evaluation transition overlap")
@@ -61,6 +61,43 @@ def export(source, destination):
         )
         for t in r["trials"]
     ]
+    if live:
+        from scripts.report_design_search import verified_files
+
+        run = read(live / "report.json")
+        if run["source_hash"] != r["source_hash"] or run["planner"] != "local_llm":
+            raise ValueError("Live run uses different source or provider")
+        state = read(live / "stage5/projects" / run["stage5"]["project_id"] / "state.json")
+        adaptive = state["adaptive"]
+        decisions = []
+        for d in adaptive["decisions"]:
+            chosen = d.get("selection_context", {}).get("choices", {}).get(d["action"], {})
+            fit = chosen.get("learned_prediction", {})
+            if fit.get("status") == "fitted":
+                shown = d.get("prompt_view", {}).get("choices", {}).get(d["action"], {})
+                decisions.append(
+                    dict(
+                        action=d["action"],
+                        planner=d["planner"],
+                        model=d.get("model"),
+                        predictor=shown.get("predictor"),
+                        cited_cases=shown.get("retrieved_cases"),
+                        model_hash=fit["model_hash"],
+                    )
+                )
+        result["live_integration"] = dict(
+            source_hash=run["source_hash"],
+            status=adaptive["status"],
+            selected_learned_candidates=decisions,
+            native_choice_count=sum(d["planner"] == "local_llm" for d in adaptive["decisions"]),
+            observations=[
+                dict(version=v["version"], metrics=v["metrics"])
+                for v in adaptive["design_observations"]
+            ],
+            accepted_spec_hash=adaptive["accepted_spec_hash"],
+            evidence=verified_files(live / "stage5"),
+            live_report_sha256=sha(live / "report.json"),
+        )
     write_json(destination.with_suffix(".json"), result)
     import matplotlib.pyplot as plt
     import numpy as np
@@ -107,7 +144,8 @@ if __name__ == "__main__":
     p.add_argument("source", type=Path)
     p.add_argument("destination", type=Path)
     p.add_argument("--plot-libraries", type=Path)
+    p.add_argument("--live", type=Path)
     a = p.parse_args()
     if a.plot_libraries:
         sys.path.append(str(a.plot_libraries.resolve()))
-    export(a.source, a.destination)
+    export(a.source, a.destination, a.live)

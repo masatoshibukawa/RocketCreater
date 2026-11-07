@@ -1679,5 +1679,74 @@
       "actual_delta_m": 0.9239365126949188,
       "observation_sha256": "64dee1b8f27e841b104f07369ed4a8dcc3f816f083bcbf430a56c1ada759561b"
     }
-  ]
+  ],
+  "live_integration": {
+    "source_hash": "25e417a5da0cf7614924a5e41df621521ddc5e7af2e416a449811b42f4815b76",
+    "status": "unresolved",
+    "selected_learned_candidates": [
+      {
+        "action": "redesign/fin_root_mm-0.85",
+        "planner": "local_llm",
+        "model": "gemma4:12b",
+        "predictor": {
+          "status": "fitted",
+          "samples": 8,
+          "model_hash": "ba779574b98fc75bf56478b259b589599a74a2dc59a1ddf96749435992f4bd85",
+          "height_correction_m": 0.0310691,
+          "predicted_cost_s": 14.8365,
+          "selected_method": "ridge_0.3",
+          "validation_mae_m": 0.0019016,
+          "correction_supported": true
+        },
+        "cited_cases": [
+          {
+            "id": "033e11e6425e119d5c07c5dda5d5894bdd589e1ec5d86cbc1e780491194a421d",
+            "signature": "geometry.fin_root_mm:-1",
+            "similarity": 0.987,
+            "delta_height_m": 0.948932,
+            "prediction_residual_m": 0.0337665,
+            "cost_s": 14.812
+          }
+        ],
+        "model_hash": "ba779574b98fc75bf56478b259b589599a74a2dc59a1ddf96749435992f4bd85"
+      }
+    ],
+    "native_choice_count": 8,
+    "observations": [
+      {
+        "version": 1,
+        "metrics": {
+          "apogee_m": 17.01400971018351,
+          "incidence_deg": 8.65150461409626,
+          "dry_mass_g": 307.91094778478225,
+          "static_margin_cal": 0.1277772162151886
+        }
+      },
+      {
+        "version": 2,
+        "metrics": {
+          "apogee_m": 19.994182208286603,
+          "incidence_deg": 8.451753300410425,
+          "dry_mass_g": 307.91094778478225,
+          "static_margin_cal": 0.1277772162151886
+        }
+      },
+      {
+        "version": 3,
+        "metrics": {
+          "apogee_m": 20.917800804017137,
+          "incidence_deg": 7.477254782475206,
+          "dry_mass_g": 293.79813916656065,
+          "static_margin_cal": 0.2247488895026979
+        }
+      }
+    ],
+    "accepted_spec_hash": null,
+    "evidence": {
+      "manifests": 21,
+      "referenced_files": 82,
+      "verified_gpu_case_files": 0
+    },
+    "live_report_sha256": "657d67a63963d19f25e52829f902b5b4b6f03af8e4329c88a00522658c051b85"
+  }
 }

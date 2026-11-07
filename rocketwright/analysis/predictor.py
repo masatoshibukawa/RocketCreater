@@ -117,38 +117,51 @@ def ridge_estimate(rows, query, *, correction_limit_m):
 
 def estimate(rows, query, *, correction_limit_m):
     """Validate method choice on training groups; preserve the small-data fallback."""
-    baseline = ridge_estimate(rows, query, correction_limit_m=correction_limit_m)
-    if baseline.get("status") != "fitted" or baseline["samples"] < 6:
-        return baseline
-    unique = {
-        r["transition_id"]: r
-        for r in rows
-        if r.get("prediction_residual_m") is not None and sealed(r)
-    }
+    if len(rows) < 6:
+        return ridge_estimate(rows, query, correction_limit_m=correction_limit_m)
+    unique = {}
+    for r in rows:
+        key = r.get("transition_id")
+        if key and key not in unique and r.get("prediction_residual_m") is not None and sealed(r):
+            unique[key] = r
     rows = list(unique.values())
+    if len(rows) < 6:
+        return ridge_estimate(rows, query, correction_limit_m=correction_limit_m)
     cohorts = {
         (r.get("code"), r.get("precision_hash"), r.get("signature"), r.get("screen_step_s", 0.02))
         for r in rows
     }
     if len(cohorts) != 1:
         return dict(status="incompatible_training_cohorts", samples=len(rows))
-    x = np.array(
-        [
-            vector(
-                r["features"],
-                r["before"],
-                (r["change_to"] - r["change_from"]) / max(abs(r["change_from"]), 1),
-                r["prediction"]["delta_height_m"],
-            )
-            for r in rows
-        ]
-    )
-    q = vector(**query)
-    weights = np.array([r["similarity"] for r in rows])
+    try:
+        x = np.array(
+            [
+                vector(
+                    r["features"],
+                    r["before"],
+                    (r["change_to"] - r["change_from"]) / max(abs(r["change_from"]), 1),
+                    r["prediction"]["delta_height_m"],
+                )
+                for r in rows
+            ]
+        )
+        q = vector(**query)
+        weights = np.array([r["similarity"] for r in rows])
+        costs = np.array([r["cost_s"] for r in rows])
+        targets = np.array([r["prediction_residual_m"] for r in rows])
+        if (
+            not all(np.isfinite(v).all() for v in (x, q, weights, costs, targets))
+            or np.any(weights <= 0)
+            or np.any(costs < 0)
+        ):
+            raise ValueError("Invalid fitted data")
+    except (KeyError, TypeError, ValueError):
+        return dict(status="invalid_training_data", samples=len(rows), minimum_samples=4)
     groups = [
         digest(dict(features=r["features"], dry_mass_g=r["before"]["dry_mass_g"])) for r in rows
     ]
     if len(set(groups)) < 4:
+        baseline = ridge_estimate(rows, query, correction_limit_m=correction_limit_m)
         baseline["selection_fallback"] = "fewer than four initial-state groups"
         return baseline
     bound = max(0.0, correction_limit_m)
