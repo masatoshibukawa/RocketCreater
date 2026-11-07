@@ -16,7 +16,7 @@
 | Firebase App Hosting / Blaze | サーバー描画等。Blaze契約が必要で、送信10 GiB/月など関連製品の無料枠あり | 無料枠を超えると従量課金。SparkのHostingと同じ無課金方式ではない [H26] |
 | Railway Trial → Free | 試用は最長30日・一度だけ$5。その後は$1/月の継続無料クレジット。Freeは最大0.5 GB RAM/サービス | 試用と継続枠を分ける。小さなクレジットを資源で消費する方式で、常時稼働時間の保証ではない。Hobbyは最低$5/月 [H28][H29][H30] |
 
-原資料: [GitHub制限](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)、[GitHubプラン](https://docs.github.com/en/get-started/learning-about-github/githubs-plans)、[Workers static assets](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/)、[Workers制限](https://developers.cloudflare.com/workers/platform/limits/)、[Pages制限](https://developers.cloudflare.com/pages/platform/limits/)、[Pages Functions料金](https://developers.cloudflare.com/pages/functions/pricing/)、[Pages新規案内](https://developers.cloudflare.com/pages/get-started/)、[Vercel Hobby](https://vercel.com/docs/plans/hobby)、[Vercel利用条件](https://vercel.com/docs/limits/fair-use-guidelines)、[Netlify credits](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work)、[Netlify Free](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans)、[Render Free](https://render.com/docs/free)、[Render料金](https://render.com/pricing)、[Firebase Hosting枠](https://firebase.google.com/docs/hosting/usage-quotas-pricing)、[Firebase料金](https://firebase.google.com/pricing)、[App Hosting費用](https://firebase.google.com/docs/app-hosting/costs)、[Railway試用](https://docs.railway.com/pricing/free-trial)、[Railwayプラン](https://docs.railway.com/pricing/plans)、[Railway料金](https://railway.com/pricing)。
+各行のH番号から [出典台帳](sources.csv) で原資料を引ける。
 
 ## 読み違えやすい条件
 
@@ -30,17 +30,17 @@
 
 Workersを先に実行する設定では、静的ファイルへのアクセスもWorkerの枠を使うことがある。`run_worker_first` の対象ではFreeの要求上限超過時に429となり、単純な静的配信へ戻る保証はない。[static assetsの課金](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/) [H06]
 
-CPU 10 msはネットワーク応答を待つ実時間とは別である。SSR、認証、大きなJSON処理が枠内に収まるかは実測する。静的assetへの要求数が無制限でも、計算・ファイル・build・各ストレージまで無制限にはならない。[Workers制限](https://developers.cloudflare.com/workers/platform/limits/) [H07]
+CPU 10 msはネットワーク応答を待つ実時間とは別である。SSR、認証、大きなJSON処理が枠内に収まるかは実測する。要求数はアカウント単位で、毎日00:00 UTC（09:00 JST）にリセットする。静的assetへの要求数が無制限でも、計算・ファイル・build・各ストレージまで無制限にはならない。[Workers制限](https://developers.cloudflare.com/workers/platform/limits/) [H07]
 
 ### Vercel
 
-HobbyはActive CPU 4時間、Provisioned Memory 360 GB-hours等も別に数える。帯域100 GBだけを見て選ばない。超過時の停止期間は機能ごとに異なり、原資料は多くの場合30日待つと説明する。すべての機能が暦月1日に一斉回復するという説明にはしない。[Hobbyの枠](https://vercel.com/docs/plans/hobby) [H14]
+HobbyはActive CPU 4時間、Provisioned Memory 360 GB-hours等も別に数える。比較表でのFunction実行時間の最大値は300秒。対象ランタイムと設定を確認し、帯域100 GBだけを見て選ばない。超過時の停止期間は機能ごとに異なり、原資料は多くの場合30日待つと説明する。[Hobbyの枠](https://vercel.com/docs/plans/hobby) [H14]
 
 業務・広告・報酬のある案件などはcommercial usageの原文を先に確認する。少ないアクセス数だからHobbyで商用利用できる、という判断にはしない。[Fair Use](https://vercel.com/docs/limits/fair-use-guidelines) [H15]
 
 ### Netlify
 
-2025-09-04より前に作られた対象アカウントのLegacyプランと、現在のCredit-basedプランを分ける。新規Freeに昔の100 GB帯域等を流用しない。Deploy Previewのdeploy自体は0 creditsでも、そのURLへの要求・転送やcomputeは別に消費する。[creditsの仕組み](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work) [H17]
+2025-09-04より前に作られた対象アカウントのLegacyプランと、現在のCredit-basedプランを分ける。新規Freeに旧プランの帯域枠を流用しない。Deploy Previewのdeploy自体は0 creditsでも、そのURLへの要求・転送やcomputeは別に消費する。[creditsの仕組み](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work) [H17]
 
 Freeの上限はプロジェクトごと300ではなく、teamの残高である。ひとつのサイトの消費によって他サイトも停止しうる。Freeは追加購入できないため、必要なら次の周期まで待つかプランの変更を検討する。[Freeプラン](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans) [H18]
 

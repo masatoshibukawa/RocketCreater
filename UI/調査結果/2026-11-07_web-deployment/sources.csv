@@ -32,3 +32,7 @@ H30,Pricing,Railway,en,https://railway.com/pricing,2026-11-07,official_extracted
 H31,Cost Control,Railway,en,https://docs.railway.com/pricing/cost-control,2026-11-07,official_extracted_excerpt,Soft alerts versus hard limits; serverless setting
 H32,Static exports in Next.js 15,Next.js,en,https://nextjs.org/docs/15/app/guides/static-exports,2026-11-07,official_extracted_excerpt,Export output directory and compatibility
 H33,Billing FAQ for Credit-based pricing plans,Netlify,en,https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/billing-faq-for-credit-based-plans/,2026-11-07,official_search_excerpt,Production; bandwidth; request and compute credit rates
+H34,Get Started with Workers Static Assets,Cloudflare,en,https://developers.cloudflare.com/workers/static-assets/get-started/,2026-11-07,official_extracted_excerpt,Static project setup and Wrangler deployment
+H35,Framework environment variables,Vercel,en,https://vercel.com/docs/environment-variables/framework-environment-variables,2026-11-07,official_search_excerpt,Provider vercel.app domains
+H36,Environment Variables in Next.js 15,Next.js,en,https://nextjs.org/docs/15/app/guides/environment-variables.md,2026-11-07,official_extracted_excerpt,Build-time public variable inlining
+H37,Production deploy,Netlify,en,https://docs.netlify.com/deploy/deploy-types/production-deploy,2026-11-07,official_search_excerpt,Default netlify.app domain and production workflow

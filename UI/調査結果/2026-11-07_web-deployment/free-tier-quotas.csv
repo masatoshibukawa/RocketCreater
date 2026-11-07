@@ -31,6 +31,6 @@ Firebase,Hosting,Spark,storage,10,GB,current,project,block_new_deploys,H24
 Firebase,Hosting,Spark,data_transfer,10,GB,month,project,disable_sites_after_grace_until_next_month,H24
 Firebase,App Hosting,Blaze,outgoing_bandwidth_no_cost,10,GiB,month,billing_account,bill_excess_and_other_product_usage,H26
 Railway,Resources,Trial,credit,5,USD,one_time_max_30_days,account,revert_to_Free,H28
-Railway,Resources,Free,credit,1,USD,month,account,limited_credit_not_runtime_guarantee,H28
+Railway,Resources,Free,credit,1,USD,month,Free_plan,limited_credit_not_runtime_guarantee,H28
 Railway,Service,Free,memory_max,0.5,GB,runtime,service,usage_also_consumes_credit,H29
 Railway,Networking,Free,custom_domains,0,domains,current,plan,requires_other_plan,H30
