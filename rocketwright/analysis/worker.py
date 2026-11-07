@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
-from rocketwright.analysis import aero_accuracy
+from rocketwright.analysis import aero_accuracy, flight_phases
 from rocketwright.analysis.record import compile_record
 from rocketwright.analysis.schema import Precision
 from rocketwright.manufacturing import PrintRequest, prepare_geometry
@@ -550,6 +550,7 @@ class Worker:
         result = stability_theorems.flight_screen(
             self.assembly, self.base_flight(), aero, mass, self.cfg.flight
         )
+        result["phase_diagnostics"] = flight_phases.diagnose(self.assembly, self.base_flight())
         perturbed = self.trajectory(tilt=min(10, self.spec.assumptions.initial_tilt_deg + 1))
         result["perturbed_flight"] = perturbed
         result["metrics"] = dict(

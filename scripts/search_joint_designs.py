@@ -13,6 +13,7 @@ from scipy.optimize import differential_evolution
 from rocketwright.adaptive import digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.analysis.design_space import AXES, decode, samples
+from rocketwright.analysis.flight_phases import exploration_score
 from rocketwright.analysis.record import compile_record
 from rocketwright.analysis.runtime import Runtime
 from rocketwright.analysis.runtime import run as run_process
@@ -27,11 +28,9 @@ from rocketwright.physics import fin_candidates
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def score(metrics, target, margin=1.0):
+def score(metrics, target, profile="initial"):
     """Joint feasibility first, then conservative scenario height; never acceptance."""
-    low = metrics["scenario_height_m"][0]
-    violation = max(0, (target - low) / target) + max(0, margin - metrics["static_margin_cal"])
-    return (violation, -low)
+    return exploration_score(metrics, target, profile)
 
 
 def measure(spec, anchor, cad):
@@ -57,7 +56,17 @@ def measure(spec, anchor, cad):
     return serial(result)
 
 
-def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, generations=0):
+def run(
+    template,
+    root,
+    *,
+    count=192,
+    rounds=3,
+    promote=12,
+    budget_s=3600,
+    generations=0,
+    profile="initial",
+):
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=False)
     start, source, script_hash = time.monotonic(), code_hash(), sha(Path(__file__))
@@ -84,6 +93,8 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, gener
         budget_s=budget_s,
         workers=2,
         evolutionary_generations=generations,
+        exploration_profile=profile,
+        guided_profile_is_diagnostic_only=True,
         reconciliation=reconciliation,
         pressure_cap_pa=400000,
         requirement=template.requirement.model_dump(mode="json"),
@@ -127,7 +138,7 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, gener
         for i, (label, anchor) in enumerate(anchors.items()):
             prior = sorted(
                 [r for r in rows if r.get("seed") == label and r["status"] == "completed"],
-                key=lambda r: score(r["metrics"], target),
+                key=lambda r: score(r["metrics"], target, profile),
             )
             # Retain global coverage while refining four independent promising neighborhoods.
             batches = [(None, count if round_no == 0 else count // 4, 1.0)]
@@ -166,7 +177,7 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, gener
                         samples=len(rows),
                         best=min(
                             (r["metrics"] for r in rows if r["status"] == "completed"),
-                            key=lambda m: score(m, target),
+                            key=lambda m: score(m, target, profile),
                         ),
                     )
                 ),
@@ -196,14 +207,24 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, gener
                     m = measure(spec, anchor, cad[label])
                     row.update(status="completed", metrics=m)
                     # Extra search headroom compensates for approximate CAD; acceptance stays 1.
-                    value = 2000 * max(0, 1.12 - m["static_margin_cal"]) - m["scenario_height_m"][0]
+                    margin_key = (
+                        "static_margin_cal" if profile == "initial" else "axial_free_margin_cal"
+                    )
+                    margin = m[margin_key]
+                    value = (
+                        10000
+                        if margin is None
+                        else (2000 * max(0, 1.12 - margin) - m["scenario_height_m"][0])
+                    )
+                    if profile == "guided":
+                        value += 2000 * max(0, m["conservative_beam_ratio"] - 0.045)
                 except (ValueError, RuntimeError) as error:
                     row["error"] = str(error)
                     value = 10000
                 rows.append(row)
                 if len(rows) % 144 == 0:
                     completed = [r for r in rows if r["status"] == "completed"]
-                    best = min(completed, key=lambda r: score(r["metrics"], target))
+                    best = min(completed, key=lambda r: score(r["metrics"], target, profile))
                     progress = dict(evolution=label, evaluations=len(rows), best=best["metrics"])
                     write_json(root / "evolution-progress.json", progress)
                     print(json.dumps(progress), flush=True)
@@ -234,7 +255,8 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, gener
     if code_hash() != source or sha(Path(__file__)) != script_hash:
         raise ValueError("Source changed during search")
     viable = sorted(
-        [r for r in rows if r["status"] == "completed"], key=lambda r: score(r["metrics"], target)
+        [r for r in rows if r["status"] == "completed"],
+        key=lambda r: score(r["metrics"], target, profile),
     )
     # Three distinct geometry/material families get representation; rest follow joint feasibility.
     chosen = []
@@ -287,6 +309,22 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, gener
     eligible.sort(key=lambda r: r["drag_plus_10pct_height_m"], reverse=True)
     if eligible:
         write_json(root / "selected.json", eligible[0]["spec"])
+    guided = sorted(
+        [
+            r
+            for r in native
+            if r["status"] == "completed"
+            and r["temporal_pass"]
+            and r["aero_domain_pass"]
+            and r["phase_diagnostics"]["free_ascent_min_margin_cal"]
+            >= precision.minimum_static_margin_cal
+            and r["metrics"]["incidence_deg"] <= precision.maximum_incidence_deg
+        ],
+        key=lambda r: r["drag_plus_10pct_height_m"],
+        reverse=True,
+    )
+    if guided:
+        write_json(root / "selected-guided-diagnostic.json", guided[0]["spec"])
     report = dict(
         source_hash=source,
         script_sha256=script_hash,
@@ -298,6 +336,8 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, gener
         results=native,
         selected=eligible[0]["label"] if eligible else None,
         screening_feasible=sum(r["metrics"]["apogee_m"] >= target for r in eligible),
+        guided_diagnostic_selected=guided[0]["label"] if guided else None,
+        guided_diagnostic_height_pass=sum(r["metrics"]["apogee_m"] >= target for r in guided),
         physical_qualification=False,
         acceptance_performed=False,
     )
@@ -314,6 +354,7 @@ if __name__ == "__main__":
     p.add_argument("--promote", type=int, default=12)
     p.add_argument("--budget", type=float, default=3600)
     p.add_argument("--evolve-generations", type=int, default=0)
+    p.add_argument("--profile", choices=("initial", "guided"), default="initial")
     a = p.parse_args()
     if (
         not 8 <= a.count <= 512
@@ -331,4 +372,5 @@ if __name__ == "__main__":
         promote=a.promote,
         budget_s=a.budget,
         generations=a.evolve_generations,
+        profile=a.profile,
     )

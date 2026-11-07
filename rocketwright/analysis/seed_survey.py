@@ -8,7 +8,7 @@ from pathlib import Path
 
 from rocketwright.adaptive import digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
-from rocketwright.analysis import seeds
+from rocketwright.analysis import flight_phases, seeds
 from rocketwright.analysis.portfolio import rank, starts
 from rocketwright.analysis.runtime import Runtime
 from rocketwright.analysis.runtime import run as run_process
@@ -122,6 +122,7 @@ def _case(job):
                 for f in (fine, refinement["sensitivity_flight"])
             ),
             detailed_cfd_available=spec.geometry.fin_count == 4,
+            phase_diagnostics=flight_phases.diagnose(a, fine),
         )
     except (OSError, ValueError, RuntimeError) as exc:
         row["error"] = str(exc)[-2000:]
