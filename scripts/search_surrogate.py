@@ -49,6 +49,27 @@ def advisor(model):
     return rank
 
 
+def load_advisor(folder, index, anchor, cad, source):
+    """A frozen model applies only to its exact anchor, CAD and physical source."""
+    from rocketwright.agent.design_projects import sha
+    from rocketwright.analysis.worker import read
+
+    report = read(folder / "report.json")
+    entry = report["anchors"][index]
+    path = folder / f"model-{index}.json"
+    model = read(path)
+    if (
+        not report["source_unchanged"]
+        or report["source_hash"] != source
+        or model["source_hash"] != source
+        or sha(path) != entry["model_sha256"]
+        or model["anchor"] != anchor.model_dump(mode="json")
+        or model["cad"] != cad
+    ):
+        raise ValueError("Surrogate source, anchor or CAD differs; collect matching examples")
+    return advisor(model), entry["model_sha256"]
+
+
 def fit(x, y, validation_x, validation_y, *, categories, seed=9021):
     """Training normalization and internal early stopping never see held-out test labels."""
     from sklearn.exceptions import ConvergenceWarning

@@ -24,7 +24,7 @@ from rocketwright.analysis.service import code_hash
 from rocketwright.analysis.tradeoff import environment, reconcile_payload
 from rocketwright.analysis.worker import read, serial
 from rocketwright.physics import fin_candidates
-from scripts import adaptive_evolution, mixed_genetic
+from scripts import adaptive_evolution, mixed_genetic, search_surrogate
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -95,9 +95,12 @@ def run(
     profile="initial",
     optimizer="de",
     seed=7261,
+    surrogate_dir=None,
 ):
     if optimizer not in {"de", "ga", "de-adaptive", "ga-adaptive"}:
         raise ValueError("Unknown evolutionary candidate generator")
+    if surrogate_dir is not None and (not optimizer.endswith("-adaptive") or profile != "initial"):
+        raise ValueError("Neural ranking requires an adaptive optimizer and initial-static profile")
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=False)
     start, source, script_hash = time.monotonic(), code_hash(), sha(Path(__file__))
@@ -106,7 +109,7 @@ def run(
         return digest(
             {
                 module.__name__: sha(Path(module.__file__))
-                for module in (mixed_genetic, adaptive_evolution)
+                for module in (mixed_genetic, adaptive_evolution, search_surrogate)
             }
         )
 
@@ -139,6 +142,7 @@ def run(
         evolutionary_population_size=6 * len(AXES),
         categorical_axes=["material_index"],
         promotion_policy="Best measured evolutionary loss per anchor, then joint feasibility",
+        surrogate_requested=surrogate_dir is not None,
         fin_count_search_enabled=False,
         exploration_profile=profile,
         guided_profile_is_diagnostic_only=True,
@@ -261,6 +265,11 @@ def run(
                     samples(6 * len(AXES), seed + 100000 + i), category
                 )
                 write_json(root / f"population-{i}.json", dict(seed=label, points=initial.tolist()))
+                advice, model_sha = None, None
+                if surrogate_dir is not None:
+                    advice, model_sha = search_surrogate.load_advisor(
+                        Path(surrogate_dir), i, anchor, cad[label], source
+                    )
                 if optimizer.endswith("-adaptive"):
                     fit = adaptive_evolution.minimize(
                         objective,
@@ -269,6 +278,7 @@ def run(
                         seed=seed + 200000 + i,
                         categories=category,
                         method=optimizer.split("-")[0],
+                        advisor=advice,
                     )
                 elif optimizer == "ga":
                     fit = mixed_genetic.minimize(
@@ -298,6 +308,9 @@ def run(
                         loss=float(fit.fun),
                         initial_sha256=sha(root / f"population-{i}.json"),
                         history=getattr(fit, "history", None),
+                        surrogate_model_sha256=model_sha,
+                        surrogate_enabled=advice is not None,
+                        predicted_candidates=getattr(fit, "predicted_candidates", 0),
                     ),
                 )
                 measured = [
@@ -436,6 +449,7 @@ if __name__ == "__main__":
     p.add_argument("--profile", choices=("initial", "guided"), default="initial")
     p.add_argument("--optimizer", choices=("de", "ga", "de-adaptive", "ga-adaptive"), default="de")
     p.add_argument("--seed", type=int, default=7261)
+    p.add_argument("--surrogate-dir", type=Path)
     a = p.parse_args()
     if (
         not 8 <= a.count <= 512
@@ -456,4 +470,5 @@ if __name__ == "__main__":
         profile=a.profile,
         optimizer=a.optimizer,
         seed=a.seed,
+        surrogate_dir=a.surrogate_dir,
     )

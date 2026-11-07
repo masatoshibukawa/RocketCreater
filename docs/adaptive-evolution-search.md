@@ -33,4 +33,17 @@ NN利用時は3倍の候補を生成し、約30%を予測順位に依存しな�
 [データ漏洩を防ぐ分割](https://scikit-learn.org/stable/common_pitfalls.html)。
 参照実装を実行したという意味ではなく、今回の独自実装・利用ライブラリは上記の通り。
 
-実測した探索比較は別途結果を追記する。これらの候補生成改善は空力精度や実機安全性の証明ではない。
+通常の探索にも `--optimizer de-adaptive --surrogate-dir output/nn-search1` のように指定できる。
+モデルと機体・CAD・物理ソースが違う場合は拒否し、検証で有効化されなかったモデルは
+NNなしへ戻る。現在のモデルは `initial` プロファイル専用で、guided用に流用しない。
+
+```powershell
+python -m scripts.train_search_surrogate output/ga-pilot2 output/nn-search1 --count 2048 --workers 2
+python -m scripts.benchmark_evolution output/nn-search1 output/evolution-comparison1 --population 32 --generations 10 --workers 3
+python -m scripts.report_evolution_benchmark output/nn-search1 output/evolution-comparison1 scenarios/adaptive_design/adaptive-evolution.json
+```
+
+比較は旧GA・旧DE・適応GA・適応DE・各NN併用版の6方式、3初期機体、3乱数設定。
+各組は同じ初期32個体と10世代で352回を計算する。NNの事前学習6,144回は別計上する。
+各方式について、初期機体ごとに3設定中で最良の実計算個体を選び、計3案を新規CAD・6DOFへ進める。
+全18案の確認後に結果を追記する。これらの候補生成改善は空力精度や実機安全性の証明ではない。
