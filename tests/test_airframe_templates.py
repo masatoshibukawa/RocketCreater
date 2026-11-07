@@ -1,5 +1,9 @@
 """Template choices stay editable and unanalysed; CAD reuse cannot carry old flight results."""
 
+import copy
+import json
+import zipfile
+
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
@@ -13,6 +17,47 @@ from rocketwright.agent.airframe_templates import (
 )
 from rocketwright.agent.video_cache import file_sha
 from tests.test_design_projects import store as store
+
+
+def test_template_recipe_is_frozen_and_damaged_reference_is_rejected(store, monkeypatch, tmp_path):
+    import rocketwright.agent.airframe_templates as module
+
+    monkeypatch.setenv("ROCKETWRIGHT_AIRFRAME_CACHE", str(store.root / "shared-parts"))
+    data = copy.deepcopy(module.catalog())
+    folder = tmp_path / "catalog"
+    (folder / "reference").mkdir(parents=True)
+    source = folder / "reference/schlatter-bottle.scad"
+    source.write_text("original profile")
+    path = folder / "catalog.json"
+    path.write_text(json.dumps(data))
+    monkeypatch.setattr(module, "CATALOG", path)
+    state = create(store, TemplateRequest(template_id="pet-1l"))
+    frozen = module.visual_recipe(state)
+    data["templates"][0]["visual"]["source_file"] = "new.scad"
+    path.write_text(json.dumps(data))
+    assert module.visual_recipe(state) == frozen
+    source.write_text("changed")
+    with pytest.raises(ValueError, match="changed"):
+        module.visual_recipe(state)
+
+
+def test_template_archive_contains_models_licenses_and_renderer_modules(store, monkeypatch):
+    monkeypatch.setenv("ROCKETWRIGHT_AIRFRAME_CACHE", str(store.root / "shared-parts"))
+    state = create(store, TemplateRequest(template_id="pet-15l"))
+    state = store.analyse(state["id"], state["revision"])
+    state = store.adopt(state["id"], state["revision"])
+    state = store.archive(state["id"], state["revision"])
+    with zipfile.ZipFile(store.file(state["id"], "package/design-package.zip")) as archive:
+        for path in (
+            "scripts/airframe_visuals.py",
+            "scripts/video_scene_templates.py",
+            "rocketwright/catalog/airframes/reference/kirin-lemon-15l-visual.stl",
+            "rocketwright/catalog/airframes/reference/toolbox-LICENSE.txt",
+            "rocketwright/catalog/airframes/reference/schlatter-LICENSE.txt",
+        ):
+            assert "source/" + path in archive.namelist()
+        expected = json.loads(archive.read("reproduction/input.json"))
+        assert expected["airframe_template"] == state["airframe_template"]
 
 
 @pytest.mark.parametrize("template_id,litres", [("pet-1l", 1), ("pet-15l", 1.5), ("pet-2l", 2)])

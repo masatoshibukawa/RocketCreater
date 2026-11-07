@@ -67,7 +67,9 @@ def test_captions_recompose_without_rerendering_and_trace_only_invalidates_fligh
     assert keys(job)["launch"] != before["launch"]
 
 
-@pytest.mark.parametrize("change", ["cad", "dimensions", "assets", "quality", "runtime"])
+@pytest.mark.parametrize(
+    "change", ["cad", "dimensions", "assets", "airframe", "quality", "runtime"]
+)
 def test_visual_changes_invalidate_both_clips(job, change):
     before = keys(job)
     if change == "cad":
@@ -78,6 +80,8 @@ def test_visual_changes_invalidate_both_clips(job, change):
         job["dimensions_mm"]["overall"] += 10
     elif change == "assets":
         job["appearance_sha256"] = "new-assets"
+    elif change == "airframe":
+        job["airframe"] = {"id": "pet-15l", "asset_sha256": {"bottle": "changed"}}
     elif change == "quality":
         job["plan"].update(recipe("photographic", "preview"))
     after = (

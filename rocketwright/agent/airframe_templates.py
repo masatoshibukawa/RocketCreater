@@ -64,14 +64,16 @@ def make_spec(request: TemplateRequest):
 def create(store, request: TemplateRequest):
     from rocketwright.agent.airframe_parts import seed_parts
 
-    state = store.create(make_spec(request))
     row = next(r for r in catalog()["templates"] if r["id"] == request.template_id)
-    state["airframe_template"] = dict(
+    origin = dict(
         id=row["id"],
         label=row["label"],
         catalog_revision=catalog()["revision"],
         shape_basis="reference CAD fitted to editable envelope; unmeasured",
     )
+    frozen = visual_recipe({"airframe_template": origin})
+    state = store.create(make_spec(request))
+    state["airframe_template"] = origin | {"visual_recipe": frozen}
     seed_parts(store, state)
     store._write(state)
     return store.get(state["id"])
@@ -81,6 +83,23 @@ def visual_recipe(state):
     origin = state.get("airframe_template")
     if not origin:
         return None
+    if origin.get("visual_recipe"):
+        from rocketwright.agent.video_cache import file_sha
+
+        frozen = copy.deepcopy(origin["visual_recipe"])
+        if frozen["id"] != origin["id"] or frozen["kind"] not in {
+            "reference-mesh",
+            "schlatter-profile",
+        }:
+            raise ValueError("Invalid saved visual template")
+        for key in ("mesh", "profile", "source_file"):
+            if key in frozen and frozen[key] not in frozen["asset_sha256"]:
+                raise ValueError("Saved visual asset is not hash-bound")
+        for name, expected in frozen["asset_sha256"].items():
+            path = (CATALOG.parent / name).resolve()
+            if not path.is_relative_to(CATALOG.parent.resolve()) or file_sha(path) != expected:
+                raise ValueError("Saved reference model changed; restore its pinned source")
+        return frozen
     row = next((r for r in catalog()["templates"] if r["id"] == origin["id"]), None)
     if not row:
         raise ValueError("Unknown saved airframe template")

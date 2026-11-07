@@ -77,6 +77,8 @@ def add_reproduction(z, store, state, root):
         "scripts/compose_workbench_video.py",
         "scripts/render_workbench_scene.py",
         "scripts/render_checkpoint.py",
+        "scripts/video_scene_templates.py",
+        "scripts/airframe_visuals.py",
         "scripts/reproduce_design_package.py",
         "scripts/verify_design_package.py",
         "3d model/prototypes/pet-rocket-coke-2l/build.py",
@@ -86,7 +88,11 @@ def add_reproduction(z, store, state, root):
     for path in (root / "AIvideo/pet-rocket/realism").iterdir():
         if path.is_file() and path.suffix in {".py", ".json", ".md"}:
             source[path.relative_to(root).as_posix()] = path
-    if any(r["kind"] == "photographic_video" for r in state["files"]):
+    if state.get("airframe_template"):
+        for path in (root / "rocketwright/catalog/airframes/reference").iterdir():
+            if path.is_file() and path.suffix in {".stl", ".step", ".scad", ".txt"}:
+                source[path.relative_to(root).as_posix()] = path
+    if any(r["kind"] in {"photographic_video", "photographic_preview"} for r in state["files"]):
         from rocketwright.agent.video_appearance import asset_files
 
         _, pairs = asset_files()
@@ -107,7 +113,10 @@ def add_reproduction(z, store, state, root):
         )
     env = environment(root)
     if (
-        any(r["kind"] in {"video", "photographic_video"} for r in state["files"])
+        any(
+            r["kind"] in {"video", "photographic_video", "photographic_preview"}
+            for r in state["files"]
+        )
         and not env["packages"]["imageio-ffmpeg"]
     ):
         raise ValueError(
@@ -137,6 +146,16 @@ def add_reproduction(z, store, state, root):
         input_sha256=state["analysis"]["input_sha256"],
         print_required=any(r["kind"] == "print" for r in state["files"]),
         video_styles=styles,
+        video_outputs=[
+            dict(style=style, quality=quality)
+            for style, quality, kind in (
+                ("engineering", "final", "video"),
+                ("photographic", "final", "photographic_video"),
+                ("photographic", "preview", "photographic_preview"),
+            )
+            if any(r["kind"] == kind for r in state["files"])
+        ],
+        airframe_template=state.get("airframe_template"),
         adopted_scope=state.get("adoption_scope", "prototype_screening"),
         adaptive_required=bool(state.get("adaptive")),
     )

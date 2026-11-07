@@ -51,7 +51,9 @@ def main():
     if not all(availability.values()):
         raise RuntimeError("Configure missing Blender/Cura tools before reproduction")
     os.environ["ROCKETWRIGHT_MEDIA_ROOT"] = str(source / "AIvideo")
-    if "photographic" in expected["video_styles"]:
+    if "photographic" in expected["video_styles"] or any(
+        output["style"] == "photographic" for output in expected.get("video_outputs", [])
+    ):
         from rocketwright.agent.video_appearance import asset_files
 
         asset_files()
@@ -63,6 +65,9 @@ def main():
     os.environ["ROCKETWRIGHT_MEDIA_ROOT"] = str(source / "AIvideo")
     store = DesignProjects(args.output.resolve() / "projects")
     state = store.create(DesignSpec.model_validate(expected["spec"]))
+    if expected.get("airframe_template"):
+        state["airframe_template"] = expected["airframe_template"]
+        store._write(state)
     if expected["adaptive_required"]:
         from rocketwright.analysis.runtime import Runtime
         from rocketwright.analysis.schema import Precision, SearchLimits
@@ -94,9 +99,17 @@ def main():
         state = store.print_package(state["id"], state["revision"])
     from rocketwright.agent.production import plan_video, render_video
 
-    for style in [] if args.skip_video else expected["video_styles"]:
-        state = plan_video(store, state["id"], state["revision"], local=False, style=style)
-        state = render_video(store, state["id"], state["revision"], style=style)
+    outputs = expected.get(
+        "video_outputs", [dict(style=s, quality="final") for s in expected["video_styles"]]
+    )
+    for output in [] if args.skip_video else outputs:
+        style = output["style"]
+        key = "photographic_video_plan" if style == "photographic" else "video_plan"
+        if not state.get(key):
+            state = plan_video(store, state["id"], state["revision"], local=False, style=style)
+        state = render_video(
+            store, state["id"], state["revision"], style=style, quality=output["quality"]
+        )
     state = store.archive(state["id"], state["revision"])
     geometry = json.loads(
         store.file(state["id"], "cad/geometry-check.json").read_text(encoding="utf-8")
@@ -115,9 +128,7 @@ def main():
         )
     result = dict(
         passed=all(comparisons.values()),
-        full_reproduction=not args.skip_video
-        and bool(expected["video_styles"])
-        and expected["print_required"],
+        full_reproduction=not args.skip_video and bool(outputs) and expected["print_required"],
         comparisons=comparisons,
         project_id=state["id"],
         source_project_id=expected["source_project_id"],
