@@ -22,6 +22,7 @@ from reportlab.platypus import (
 
 from rocketwright.agent.manual import japanese_font
 from rocketwright.agent.project_assembly import assembly_assessment
+from rocketwright.agent.project_detail_drawing import fin_detail, nose_detail
 from rocketwright.agent.project_drawing import (
     ACCENT,
     INK,
@@ -198,20 +199,47 @@ def write_project_manual(state, steps, output):
     parts.append(("J01", "試着リング", 1, "嵌合確認用の治具", "fit-ring-preview.png"))
     previews = []
     files = {row["key"]: row for row in state["files"]}
-    for ident, name, _, _, filename in parts:
+    cad_directory = output.parent.parent / "cad"
+
+    def registered_cad(filename):
         row = files.get(f"cad/{filename}")
         if row is None:
-            continue
-        path = output.parent.parent / "cad" / filename
+            return None
+        path = cad_directory / filename
         if not path.is_file() or sha(path) != row["sha256"]:
-            raise Conflict("CAD部品図が採用版と一致しません。再解析が必要です。")
-        mesh_row = files.get("cad/fin-assembly-mm.stl") if ident == "F01" else None
-        if mesh_row is not None:
-            mesh = path.with_name("fin-assembly-mm.stl")
-            if not mesh.is_file() or sha(mesh) != mesh_row["sha256"]:
-                raise Conflict("フィンCADが採用版と一致しません。再解析が必要です。")
-            previews.append([p(f"{ident}  {name}・側面投影", small), fin_projection(mesh)])
+            raise Conflict("CAD成果物が採用版と一致しません。再解析が必要です。")
+        return path
+
+    # Older or imported records can still export the nominal overview.
+    cad_inputs = registered_cad("parameters.json")
+    fin_mesh = None
+    nose_mesh = None
+    if cad_inputs is not None:
+        if json.loads(cad_inputs.read_text(encoding="utf-8")) != cad:
+            raise Conflict("採用CADの寸法設定が保存した設計と一致しません。")
+        nose_mesh = registered_cad("nose-mm.stl")
+        if cad["include_fins"]:
+            fin_mesh = registered_cad("fin-assembly-mm.stl")
+    sheet_count = 1 + int(fin_mesh is not None) + int(nose_mesh is not None)
+    plate = design_plate(state, g, cad, font, sheet_count=sheet_count)
+    detail_plates = []
+    drawing_sources = []
+    if fin_mesh is not None:
+        detail_plates.append(fin_detail(state, g, cad, fin_mesh, sheet_count, font))
+        drawing_sources.append(files["cad/fin-assembly-mm.stl"])
+    if nose_mesh is not None:
+        detail_plates.append(nose_detail(state, g, cad, nose_mesh, sheet_count, sheet_count, font))
+        drawing_sources.append(files["cad/nose-mm.stl"])
+
+    for ident, name, _, _, filename in parts:
+        path = registered_cad(filename) if filename else None
+        if path is None:
             continue
+        if ident == "F01":
+            mesh = fin_mesh or registered_cad("fin-assembly-mm.stl")
+            if mesh is not None:
+                previews.append([p(f"{ident}  {name}・側面投影", small), fin_projection(mesh)])
+                continue
         preview = Image(str(path))
         scale = min(145 / preview.imageWidth, 126 / preview.imageHeight)
         preview.drawWidth = preview.imageWidth * scale
@@ -388,12 +416,13 @@ def write_project_manual(state, steps, output):
         ).build(content, onFirstPage=footer, onLaterPages=footer)
 
     build(output, story, "組立手順書")
-    plate = design_plate(state, g, cad, font)
     width, height = landscape(A4)
     drawing = Canvas(str(output.parent / "design-drawing.pdf"), pagesize=(width, height))
     drawing.setTitle(spec["name"] + " 組立設計図")
     drawing.setAuthor("RocketWright")
-    renderPDF.draw(plate, drawing, (width - plate.width) / 2, (height - plate.height) / 2)
+    for sheet in (plate, *detail_plates):
+        renderPDF.draw(sheet, drawing, (width - sheet.width) / 2, (height - sheet.height) / 2)
+        drawing.showPage()
     drawing.save()
     (output.parent / "side-view.svg").write_text(plate_svg(plate, font), encoding="utf-8")
 
@@ -449,6 +478,10 @@ def write_project_manual(state, steps, output):
                 "input_sha256": analysis["input_sha256"],
                 "geometry_sha256": analysis["geometry_sha256"],
                 "implementation_sha256": analysis["implementation_sha256"],
+                "drawing_page_count": sheet_count,
+                "drawing_cad_sources": [
+                    {"key": row["key"], "sha256": row["sha256"]} for row in drawing_sources
+                ],
                 "physical_print_verified": False,
             },
             ensure_ascii=False,

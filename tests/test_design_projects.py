@@ -8,6 +8,7 @@ from api.main import app
 from rocketwright.agent import design_projects as module
 from rocketwright.agent.design_projects import DesignProjects, DesignSpec
 from rocketwright.agent.production import plan_video
+from rocketwright.agent.project_detail_drawing import axial_section
 from rocketwright.agent.workbench import Conflict
 from rocketwright.manufacturing import PrintGeometry
 from rocketwright.schema import BottleDesign
@@ -85,6 +86,8 @@ def test_manual_archive_integrity_and_tampering(store, tmp_path):
     pdf = store.file(s["id"], "manual/assembly.pdf")
     assert pdf.read_bytes().startswith(b"%PDF-")
     assert store.file(s["id"], "manual/design-drawing.pdf").read_bytes().startswith(b"%PDF-")
+    provenance = json.loads(store.file(s["id"], "manual/provenance.json").read_text())
+    assert provenance["drawing_page_count"] == 1 and provenance["drawing_cad_sources"] == []
     svg = store.file(s["id"], "manual/side-view.svg").read_text(encoding="utf-8")
     assert "ノズル端を 0 mm" in svg and "翼後端 100" in svg and "4 枚 / 90° 等配" in svg
     s = store.archive(s["id"], s["revision"])
@@ -110,6 +113,20 @@ def test_manual_archive_integrity_and_tampering(store, tmp_path):
         store.file(s["id"], "manual/assembly.pdf")
     with pytest.raises(KeyError):
         store.file(s["id"], "../state.json")
+
+
+def test_axial_section_deduplicates_plane_edges_and_interpolates_crossings():
+    seam = ((5, 0, 2), (3, 0, 1))
+    faces = (
+        (*seam, (5, 2, 0)),
+        (*reversed(seam), (4, -2, 4)),
+        ((2, -1, 0), (4, 1, 2), (1, 1, 3)),
+        ((7, 0, 7), (7, 2, 8), (9, 2, 8)),
+    )
+    assert axial_section(faces) == [
+        ((1.0, 3.0), (1.5, 1.5)),
+        ((1, 3), (2, 5)),
+    ]
 
 
 def test_video_plan_and_geometry_bound_to_adopted_revision(store):

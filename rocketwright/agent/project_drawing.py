@@ -176,28 +176,36 @@ def end_view(drawing, g, cad, cx, cy, radius):
     drawing.add(Circle(cx, cy, 2, fillColor=INK, strokeColor=None))
 
 
-def fin_projection(path):
-    """Orthographic blade-face projection of the registered assembly STL."""
+def stl_triangles(path):
     data = path.read_bytes()
     if len(data) < 84 or len(data) != 84 + 50 * unpack_from("<I", data, 80)[0]:
-        raise ValueError("Expected a binary assembly fin STL")
+        raise ValueError("Expected a binary CAD STL")
     triangles = [
-        [(row[i + 2], row[i]) for i in (3, 6, 9)]
+        tuple(row[i : i + 3] for i in (3, 6, 9))
         for row in iter_unpack("<12fH", memoryview(data)[84:])
     ]
     if not triangles:
-        raise ValueError("The assembly fin mesh is empty")
-    axial, radial = zip(*(point for triangle in triangles for point in triangle), strict=True)
-    left, right = min(axial), max(axial)
-    low, high = min(radial), max(radial)
-    scale = min(126 / (right - left), 98 / (high - low))
+        raise ValueError("The CAD STL is empty")
+    return triangles
+
+
+def draw_fin_projection(drawing, triangles, x_at, y_at):
+    """Project the blade face along the tangential axis of the assembly mesh."""
+    for triangle in triangles:
+        points = [coord for radial, _, axial in triangle for coord in (x_at(axial), y_at(radial))]
+        drawing.add(Polygon(points, fillColor=ACCENT, strokeColor=None))
+
+
+def fin_projection(path):
+    triangles = stl_triangles(path)
+    radial, _, axial = zip(*(point for triangle in triangles for point in triangle), strict=True)
+    left, low = min(axial), min(radial)
+    scale = min(126 / (max(axial) - left), 98 / (max(radial) - low))
     drawing = Drawing(144, 126)
     drawing.add(Rect(0, 0, 144, 126, fillColor=colors.white, strokeColor=RULE, strokeWidth=0.5))
-    for triangle in triangles:
-        points = [
-            coord for x, y in triangle for coord in (9 + (x - left) * scale, 14 + (y - low) * scale)
-        ]
-        drawing.add(Polygon(points, fillColor=ACCENT, strokeColor=None))
+    draw_fin_projection(
+        drawing, triangles, lambda z: 9 + (z - left) * scale, lambda r: 14 + (r - low) * scale
+    )
     return drawing
 
 
@@ -209,12 +217,14 @@ def fit_labels(g):
     )
 
 
-def design_plate(state, g, cad, font):
+def design_plate(state, g, cad, font, *, sheet_count=1):
     d = Drawing(760, 516)
     d.add(Rect(0, 0, 760, 516, fillColor=colors.white, strokeColor=None))
     label(d, 0, 498, "組立設計図", font, 23)
     label(d, 0, 472, state["spec"]["name"][:45], font, 12)
-    label(d, 760, 499, f"RW / v{state['version']} / 01", font, 12, ACCENT, "end")
+    label(
+        d, 760, 499, f"RW / v{state['version']} / 01 / {sheet_count:02d}", font, 12, ACCENT, "end"
+    )
     basis = "実測入力" if g.dimensions_measured else "公称値・現物照合待ち"
     label(d, 760, 472, f"寸法 mm　/　{basis}", font, 10, MUTED, "end")
     side_title = "A  側面・ノズル端を 0 mm"
@@ -283,7 +293,12 @@ def design_plate(state, g, cad, font):
         )
     ):
         label(d, 531, 168 - i * 18, text, font, 9.6)
-    label(d, 0, 23, "試作・仮組み用　/　外形と角部は模式　/　縮尺なし", font, 9, MUTED)
+    scope = (
+        "試作・仮組み用 / 外形は模式 / 部品詳細は次のシート"
+        if sheet_count > 1
+        else ("試作・仮組み用 / 外形と角部は模式 / 表示寸法を参照")
+    )
+    label(d, 0, 23, scope, font, 9, MUTED)
     label(d, 760, 23, f"入力 {state['analysis']['input_sha256'][:12]}", font, 9, MUTED, "end")
     return d
 
