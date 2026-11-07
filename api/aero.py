@@ -32,6 +32,11 @@ class AeroLoopRequest(BaseModel):
     build: Build | None = None  # the parts, so that the flow sees the fins the design chose
 
 
+def _image_headers(name: str) -> dict[str, str]:
+    # A frame never changes once written, and the player shows each one again and again.
+    return {"Cache-Control": "max-age=60" if name.endswith(".jpg") else "no-store"}
+
+
 @router.post("/loop", status_code=202)
 def start_loop(request: AeroLoopRequest):
     if not isinstance(request.design, AmateurDesign | BottleDesign):
@@ -74,7 +79,7 @@ def live_image(name: str):
         path = aero.live.image_path(name)
     except KeyError as exc:
         raise HTTPException(404, "画像がありません") from exc
-    return FileResponse(path, headers={"Cache-Control": "no-store"})
+    return FileResponse(path, headers=_image_headers(name))
 
 
 @router.get("/loop/{job_id}/images/{name}")
@@ -83,4 +88,4 @@ def loop_image(job_id: str, name: str):
         path = aero.flow_image_path(DEFAULT_AERO_JOBS.artifacts_dir(job_id), name)
     except KeyError as exc:
         raise HTTPException(404, "画像がありません") from exc
-    return FileResponse(path, headers={"Cache-Control": "no-store"})
+    return FileResponse(path, headers=_image_headers(name))

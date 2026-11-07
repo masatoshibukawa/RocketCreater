@@ -20,11 +20,14 @@ to the simulate callable as keyword scales (`thrust_scale`, `isp_scale`).
 
 Samples run in a `concurrent.futures.ProcessPoolExecutor` when n >= `POOL_THRESHOLD`
 (environment variable ROCKETWRIGHT_DISPERSION_WORKERS overrides the worker count; 0 = inline).
+The workers come from a forkserver, never from a fork of the caller: the API has other threads,
+and a child forked while one of them holds the stdout lock hangs forever when it exits.
 """
 
 from __future__ import annotations
 
 import math
+import multiprocessing
 import os
 import re
 from collections import Counter
@@ -115,6 +118,7 @@ _STRUCTURAL_FRACTION_CLIP = (1e-3, 0.999)
 CHI2_2DOF_95 = 5.991
 MAX_SAMPLES = 5000  # schema cap on LandingScatter.points / OrbitInsertionStats.samples
 POOL_THRESHOLD = 32  # below this the process-pool start-up costs more than it saves
+POOL_PRELOAD = ["rocketwright.agent.tools"]
 
 Perturbation = tuple[Design, Env, dict[str, float]]
 PerturbFn = Callable[[Design, Env, np.random.Generator], Perturbation]
@@ -367,6 +371,12 @@ def _worker_count(n: int) -> int:
     return max(1, min(os.cpu_count() or 1, 8, n // 8))
 
 
+def pool_context() -> multiprocessing.context.BaseContext:
+    context = multiprocessing.get_context("forkserver")
+    context.set_forkserver_preload(POOL_PRELOAD)  # workers start warm, not with a fresh import
+    return context
+
+
 def _simulate_all(
     args: list[tuple[Any, ...]], workers: int, warnings: list[str]
 ) -> list[SimResult]:
@@ -374,7 +384,7 @@ def _simulate_all(
         return [_run_sample(a) for a in args]
     chunksize = max(1, len(args) // (workers * 4))
     try:
-        with ProcessPoolExecutor(max_workers=workers) as pool:
+        with ProcessPoolExecutor(max_workers=workers, mp_context=pool_context()) as pool:
             return list(pool.map(_run_sample, args, chunksize=chunksize))
     except (BrokenProcessPool, OSError) as exc:
         warnings.append(f"process pool unavailable ({type(exc).__name__}); samples ran inline")

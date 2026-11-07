@@ -442,3 +442,7 @@ def test_commercial_dispersion_reports_orbit_errors_about_the_nominal() -> None:
         solid.dispersion(bottle_design(), env, 4, 1)
     with pytest.raises(ValueError):
         water.dispersion(design, env, 4, 1)
+
+
+def test_workers_never_fork_from_the_threaded_caller() -> None:
+    assert mc.pool_context().get_start_method() == "forkserver"
