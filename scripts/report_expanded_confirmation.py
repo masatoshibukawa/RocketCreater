@@ -197,13 +197,14 @@ def plot(result, destination):
     x = np.arange(3)
     keys = ("screen", "cfd", "confirm")
     for i, (row, color) in enumerate(zip(rows, colors, strict=True)):
-        axes[0].bar(
+        bars = axes[0].bar(
             x + (i - 0.5) * 0.35,
             [row["heights_m"][k] for k in keys],
             width=0.35,
             label=row["method"],
             color=color,
         )
+        axes[0].bar_label(bars, fmt="%.2f", padding=3, fontsize=8)
     axes[0].axhline(30, color="#ad5045", ls="--", lw=1)
     axes[0].set(
         xticks=x,
@@ -218,7 +219,8 @@ def plot(result, destination):
             row["aero"]["averaging_relative_change"],
             row["aero"]["audit_differences"]["interpolation"],
         ]
-        axes[1].bar(x + (i - 0.5) * 0.35, 100 * np.asarray(values), width=0.35, color=color)
+        bars = axes[1].bar(x + (i - 0.5) * 0.35, 100 * np.asarray(values), width=0.35, color=color)
+        axes[1].bar_label(bars, fmt="%.1f", padding=3, fontsize=8)
     axes[1].set(
         xticks=x,
         xticklabels=("Grid", "Averaging", "Interpolation"),
@@ -230,13 +232,14 @@ def plot(result, destination):
             row["beam"]["metrics"]["fin_deflection_ratio"],
             row["structure"]["metrics"]["fem_deflection_ratio"],
         ]
-        axes[2].bar(
+        bars = axes[2].bar(
             np.arange(2) + (i - 0.5) * 0.35,
             100 * np.asarray(values),
             width=0.35,
             color=color,
             label=row["method"],
         )
+        axes[2].bar_label(bars, fmt="%.1f", padding=3, fontsize=8)
     limit = rows[0]["precision"]["deflection_span_limit"] * 100
     axes[2].axhline(limit, color="#ad5045", ls="--", lw=1, label=f"Limit {limit:g}%")
     axes[2].set(

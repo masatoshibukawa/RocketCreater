@@ -1,0 +1,2029 @@
+{
+  "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+  "search_report_sha256": "89987291bb1e34e44d73c814ab557eb18d8b6bac82e14237f1b38c2a55e269ee",
+  "methods": [
+    {
+      "method": "wide-old",
+      "selected_label": "wide-old-1",
+      "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+      "report_sha256": "f88b0b6966d37c0656d2ddc70e702f839c7f17e5036208a0e789b0e97850de72",
+      "spec": {
+        "name": "階層型解析の接続確認用・未製作案",
+        "design": {
+          "tier": "bottle",
+          "bottle_volume_m3": 0.0015,
+          "water_fill_frac": 0.3262,
+          "initial_gauge_pressure_pa": 400000.0,
+          "nozzle_diameter_m": 0.032142000000000004,
+          "dry_mass_kg": 0.15,
+          "payload_mass_kg": 0.06,
+          "has_fins": true,
+          "axial_drag_coefficient": null,
+          "has_parachute": true,
+          "parachute_diameter_m": 0.7,
+          "geometry": {
+            "body_diameter_mm": 90.0,
+            "body_height_mm": 400.0,
+            "nose_length_mm": 267.051,
+            "fin_root_mm": 40.227,
+            "fin_tip_mm": 34.436,
+            "fin_span_mm": 144.907,
+            "fin_sweep_mm": 1.158,
+            "fin_count": 4,
+            "fin_thickness_mm": 1.202,
+            "nose_wall_mm": 1.672,
+            "fin_tail_inset_mm": 0.0,
+            "dimensions_measured": false
+          }
+        },
+        "geometry": {
+          "body_diameter_mm": 90.0,
+          "body_height_mm": 400.0,
+          "nose_length_mm": 267.051,
+          "fin_root_mm": 40.227,
+          "fin_tip_mm": 34.436,
+          "fin_span_mm": 144.907,
+          "fin_sweep_mm": 1.158,
+          "fin_count": 4,
+          "fin_thickness_mm": 1.202,
+          "nose_wall_mm": 1.672,
+          "fin_tail_inset_mm": 0.0,
+          "dimensions_measured": false
+        },
+        "requirement": {
+          "goal_kind": "altitude",
+          "target_altitude_m": 30.0,
+          "target_apogee_m": null,
+          "payload_mass_kg": 0.06,
+          "budget_jpy": null,
+          "recovery_required": false,
+          "tier_override": null,
+          "text": ""
+        },
+        "env": {
+          "launch_latitude_deg": 0.0,
+          "launch_altitude_m": 0.0,
+          "wind_speed_mps": 1.5,
+          "wind_direction_deg": 270.0,
+          "temperature_offset_k": 0.0,
+          "rail_length_m": 1.5,
+          "earth_rotation": false
+        },
+        "other_dry_mass_g": 150.0,
+        "measured_printed_mass_g": null,
+        "material": "Prusament ASA",
+        "assumptions": {
+          "fixed_bottle_mass_g": 48.0,
+          "mount": "standard",
+          "root_capture_mm": 10.5,
+          "other_mass_station_fraction": 0.0925,
+          "payload_station_fraction": 0.0464,
+          "solar_w_m2": 800.0,
+          "warm_wait_s": 120.0,
+          "pitch_damping": 10.0,
+          "initial_tilt_deg": 1.0,
+          "gust_mps": 0.5,
+          "opening_s": 0.15,
+          "evidence": {
+            "bottle_mass": "Fixed 48 g shell scenario shared by GA and DE; unweighed",
+            "initial_source_scope": "independent host geometry scenario"
+          }
+        }
+      },
+      "runtime": {
+        "cfd_enabled": true,
+        "cfd_cells_coarse": 16,
+        "cfd_cells_fine": 20,
+        "cfd_times": 40.0,
+        "cfd_width": 12.5,
+        "cfd_lattice_speed": 0.075,
+        "cfd_speeds": [
+          1,
+          35
+        ],
+        "cfd_angles": [
+          0,
+          5,
+          15,
+          45,
+          90,
+          135,
+          180
+        ],
+        "fem_level": 4,
+        "flight_step_s": 0.02
+      },
+      "reused_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "benchmarks",
+        "cfd_coarse",
+        "cfd_fine",
+        "cfd_audit",
+        "flight",
+        "refine",
+        "modes",
+        "stability"
+      ],
+      "parent_report_sha256": "dfca089c6683a96d0a70a325aae71977a6e88cd46c9d9764d50f267ea8feab31",
+      "precision": {
+        "altitude_error_m": 1.5,
+        "attitude_error_deg": 1.0,
+        "aero_allocation": 0.5,
+        "grid_relative_limit": 0.05,
+        "temporal_relative_limit": 0.03,
+        "structure_relative_limit": 0.05,
+        "deflection_span_limit": 0.05,
+        "maximum_incidence_deg": 15.0,
+        "minimum_static_margin_cal": 1.0,
+        "require_cfd": true,
+        "require_aero_audit": true,
+        "require_fem": true,
+        "require_benchmarks": true
+      },
+      "elapsed_s": 6072.718999999808,
+      "resume_elapsed_s": 87.2819999998901,
+      "parent_elapsed_s": 5985.436999999918,
+      "solver_build": {
+        "adapter_sha256": "f27e465f4519ccc4e0d82094f5dafbafa6369982d8aedaba2cd2d584ed3c8612",
+        "native_solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+        "template_sha256": "1d8107fa842961c6cd093c632229f601d6efca1768132e571b0a685356cd4b1e",
+        "compiler_sha256": "46809206887326d2d24db1eff1f3064de972c3451abe766b49111450a5e08e00",
+        "generated_source_sha256": "b52b4a03d49099ad51e8f02bb285a26bfc05bd26a8ce74623abbb9ba19f60f72"
+      },
+      "verified_files": 332,
+      "gpu_cases": 34,
+      "assembly": {
+        "key": "design-65cccf2b20b420c2",
+        "axial_cd": 0.55,
+        "dimensions_mm": {
+          "overall": 609.0509999999999,
+          "body_diameter": 90.0,
+          "nose_length": 267.051,
+          "bottle_length": 400.0,
+          "fin_root": 40.227,
+          "fin_tip": 34.436,
+          "fin_span": 144.907,
+          "fin_sweep": 1.158,
+          "fin_tail_inset": 0.0,
+          "fin_count": 4,
+          "fin_thickness": 1.202,
+          "fin_tab": 10.5,
+          "fin_root_offset": 0,
+          "fin_shoe_width": 0,
+          "skirt_length": 0
+        },
+        "bill": [
+          {
+            "id": "other_dry",
+            "mass_g": 102.0,
+            "station_mm": 56.337217499999994
+          },
+          {
+            "id": "printed_nose",
+            "mass_g": 95.819817543969,
+            "station_mm": 173.58315
+          },
+          {
+            "id": "printed_fins",
+            "mass_g": 35.29913575057599,
+            "station_mm": 588.0912106174856
+          },
+          {
+            "id": "fixed_bottle_shell",
+            "mass_g": 48.0,
+            "station_mm": 438.05099999999993,
+            "local_inertia_kg_m2": [
+              0.0005164559999999998,
+              0.0005164559999999998,
+              9.719999999999999e-05
+            ]
+          }
+        ],
+        "dry_mass_g": 281.118953294545,
+        "dry_cg_mm": 228.24736885237857,
+        "loaded_cg_mm": 193.0712403164137,
+        "wet_cg_mm": 409.623506865395,
+        "cp_mm": 513.2836134218154,
+        "fin_set_CNalpha_per_rad": 10.243509432422577,
+        "physical_qualification": false
+      },
+      "checks": {
+        "altitude": false,
+        "attitude": true,
+        "static_margin": true,
+        "temporal": true,
+        "fin_deformation": false,
+        "modes": true,
+        "frozen_pitch": true,
+        "aero_domain": true,
+        "thermal_balance": true,
+        "propulsion_balance": true,
+        "payload_mass": true,
+        "recovery": true,
+        "cost_evidence": true,
+        "aero_grid": false,
+        "aero_averaging": false,
+        "aero_trajectory": true,
+        "aero_interpolation": false,
+        "aero_domain_size": true,
+        "aero_lattice": false,
+        "aero_duration": true,
+        "aero_third_grid": false,
+        "fem_mesh": true,
+        "solver_benchmarks": true
+      },
+      "unmet": [
+        "altitude",
+        "fin_deformation",
+        "aero_grid",
+        "aero_averaging",
+        "aero_interpolation",
+        "aero_lattice",
+        "aero_third_grid"
+      ],
+      "criteria_met": false,
+      "physical_qualification": false,
+      "model_validation_complete": false,
+      "heights_m": {
+        "screen": 22.717135564284565,
+        "cfd": 19.79098695017709,
+        "finer_time": 19.790986691754267,
+        "confirm": 19.785440643144124,
+        "coefficient_plus_10pct": 19.356092892737028
+      },
+      "incidence_deg": {
+        "base": 9.694149375680073,
+        "confirm": 9.555071701273675,
+        "perturbation": 9.074047739220783
+      },
+      "phase_diagnostics": {
+        "initial_with_gas_margin_cal": 1.1490875623835928,
+        "exit_margin_cal": 3.5315443735601324,
+        "free_ascent_min_margin_cal": 3.5315443735601324,
+        "free_ascent_samples": 117,
+        "rail_exit_s": 0.08411117701150664,
+        "rail_exit_speed_mps": 21.58973338722527,
+        "maximum_guide_force_n": 1.317899561331006,
+        "maximum_guide_moment_nm": 0.3631107894961106,
+        "guide_capacity_verified": false,
+        "physical_qualification": false,
+        "acceptance_changed": false,
+        "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+      },
+      "aero": {
+        "grid_relative_change": 0.16903966216060023,
+        "averaging_relative_change": 5.279322684236405,
+        "allowed_relative_change": 0.05,
+        "grid_altitude_difference_m": 0.6607323455501763,
+        "grid_attitude_difference_deg": 0.2976971887714921,
+        "audit_condition": {
+          "speed_mps": 18,
+          "angle_deg": 10
+        },
+        "audit_differences": {
+          "wide": 0.011186857510225664,
+          "time": 0.11385662783193909,
+          "duration": 0.02013729847709268,
+          "interpolation": 0.0638148790510872,
+          "third_grid": 0.1006835532308161
+        },
+        "observed_orders": {
+          "Cx": {
+            "values": [
+              1.4545079350255243,
+              1.3452200526593077,
+              1.2295399138736345
+            ],
+            "cells": [
+              16,
+              20,
+              24
+            ],
+            "observed_order": null,
+            "fine_gci": null,
+            "asymptotic_range_verified": false,
+            "classification": "no_resolved_positive_order"
+          },
+          "Cy": {
+            "values": [
+              1.8576691454806666,
+              1.4301137055182467,
+              1.3065975522409154
+            ],
+            "cells": [
+              16,
+              20,
+              24
+            ],
+            "observed_order": 5.043238678727939,
+            "fine_gci": 0.07835859010832787,
+            "asymptotic_range_verified": false,
+            "classification": "monotone"
+          },
+          "Cm_z": {
+            "values": [
+              5.588281606599455,
+              3.9889956768666854,
+              3.587369418297383
+            ],
+            "cells": [
+              16,
+              20,
+              24
+            ],
+            "observed_order": 5.710712291473124,
+            "fine_gci": 0.0763650098576817,
+            "asymptotic_range_verified": false,
+            "classification": "monotone"
+          }
+        }
+      },
+      "beam": {
+        "max_deflection_m": 0.017088405135685644,
+        "first_modes_hz": [
+          11.092931153781116,
+          66.88375881138917
+        ],
+        "load_scope": "CFD concurrent fin force envelope; beam load shape remains assumed",
+        "temperature_c": 25.290639680632466,
+        "metrics": {
+          "fin_deflection_ratio": 0.1179267056504216,
+          "positive_modes": true
+        }
+      },
+      "structure": {
+        "load_scope": "CFD Fn and both root moments at concurrent extrema; reconstructed pressure, not local traction; tangential load omitted",
+        "max_displacement_m": 0.01762269235122522,
+        "p95_integration_vm_pa": 1623478.954083846,
+        "max_integration_vm_pa": 2250498.054643322,
+        "metrics": {
+          "fem_deflection_ratio": 0.1216138099003169,
+          "fem_mesh_change": 0.005211554962197688
+        }
+      },
+      "stability": {
+        "completed": true,
+        "frozen_asymptotic_count": 115,
+        "analyzed_points": 115,
+        "barbalat": {
+          "prerequisites": {
+            "infinite_horizon": false,
+            "bounded_below_V": null,
+            "nonpositive_Vdot": null,
+            "uniformly_continuous_W": null
+          },
+          "W_to_zero_proved": false,
+          "state_to_origin_proved": false,
+          "missing": [
+            "infinite_horizon",
+            "bounded_below_V",
+            "nonpositive_Vdot",
+            "uniformly_continuous_W"
+          ],
+          "extra_state_condition": null,
+          "rule": "finite observed decay is not evidence of infinite-horizon uniform continuity"
+        },
+        "full_flight_stability_proved": false,
+        "omitted": [
+          "velocity-direction dynamics",
+          "time-varying trim forcing",
+          "mass-flux angular terms",
+          "flexible/slosh modes",
+          "hybrid launch and canopy events",
+          "CFD/model uncertainty"
+        ],
+        "metrics": {
+          "frozen_pitch_pass": true,
+          "perturbation_incidence_deg": 9.074047739220783
+        }
+      },
+      "thermal": {
+        "final_c": {
+          "gas": 23.04959927345317,
+          "skin": 23.36030328378024,
+          "mount": 16.80702244972383,
+          "payload": 15.028801117679109,
+          "fin": 25.290639680632466
+        },
+        "metrics": {
+          "thermal_balance": true
+        }
+      },
+      "limitations": [
+        "attachment and constitutive properties are assumptions",
+        "CFD/FEM envelopes omit printed clip/slot detail",
+        "BOM local inertias are surrogates",
+        "not physical qualification"
+      ],
+      "numerical_details": {
+        "fem_geometric_nonlinearity": true,
+        "fem_input_deck_hashes": {
+          "fem_coarse": {
+            "fin-0.inp": "8621f414fdbeb454f6b1622b5ebd151b68d15ee07d25415639ef8cf035d579c4"
+          },
+          "fem_fine": {
+            "fin-0.inp": "65e947cbf7a3d0368dc4da66caf087019871b7c1e161f55dee1f934e16475721"
+          }
+        },
+        "fine_fem_cases": [
+          {
+            "max_displacement_m": 0.01762269235122522,
+            "max_integration_vm_pa": 2250498.054643322,
+            "p95_integration_vm_pa": 1623478.954083846,
+            "mapping": {
+              "scope": "nonlinear solid fin, compliant root and follower pressure",
+              "force_target_n": 0.0,
+              "temperature_c": 25.290639680632466,
+              "q_pa": 0,
+              "target_normal_resultant": [
+                0.36880631587453677,
+                0.025403500883385163,
+                -0.0030498797598866364
+              ],
+              "mapped_normal_resultant": [
+                0.36880631587453694,
+                0.025403500883385135,
+                -0.00304987975988664
+              ],
+              "omitted_tangential_resultant": [
+                0.3350315662269182,
+                0.0070145605681418075,
+                -0.026369146262388742
+              ],
+              "pressure_range_pa": [
+                -48.75589206528494,
+                194.2631049000373
+              ],
+              "normal_load_scope": "CFD force and two root moments; signed reconstructed pressure; tangential load omitted"
+            },
+            "condition": {
+              "time_s": 0.08411117701150664,
+              "blade": 3,
+              "speed_mps": 21.657249033290064,
+              "angle_deg": 4.460606280666012,
+              "q_pa": 287.28461890038096,
+              "local_resultant": [
+                0.3350315662269182,
+                0.0070145605681418075,
+                0.36880631587453677,
+                0.025403500883385163,
+                -0.0030498797598866364,
+                -0.026369146262388742
+              ],
+              "speed_clamped": false
+            }
+          }
+        ],
+        "cfd_cases": [
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a000",
+            "sha256": "7b2e64b2703c8bcd708c989b94fd288bdefa3f007dec1a2ca70c9cf0697c710c",
+            "speed_mps": 1.0,
+            "angle_deg": 0.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 85.65599999995902
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a005",
+            "sha256": "fc1707d1dcb90a318028e747157b85b1e9a6ec355c61bcc32e9e5e9c9812ff2e",
+            "speed_mps": 1.0,
+            "angle_deg": 5.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 85.32800000021234
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a015",
+            "sha256": "30e3af984b07c5dcef0166fb60da37f3d6c12d19a13580607fc9d1fa98ac86d6",
+            "speed_mps": 1.0,
+            "angle_deg": 15.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 86.39099999982864
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a045",
+            "sha256": "f01113e75ec69235722e1f7ce2795165609f41863644e7764c76c72b94454194",
+            "speed_mps": 1.0,
+            "angle_deg": 45.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 85.75
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a090",
+            "sha256": "5b1fd546414baf0f7cd17ca60fc5e30598cd2f4086429d6a584201c1945558f1",
+            "speed_mps": 1.0,
+            "angle_deg": 90.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 86.20299999997951
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a135",
+            "sha256": "7e07aa0967e536f191715e03b3030b73c693ff02e51d9db01d81f91b1d018566",
+            "speed_mps": 1.0,
+            "angle_deg": 135.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 86.59400000004098
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a180",
+            "sha256": "ec71c86189c3d98825f14922786181073014445f6273206992250fcc767710d7",
+            "speed_mps": 1.0,
+            "angle_deg": 180.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 85.93800000008196
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a000",
+            "sha256": "4ca9b4f33ffab22773692065d2fe7813afe87b667ac03d33eca5d6e7b7e4c4e4",
+            "speed_mps": 35.0,
+            "angle_deg": 0.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 85.98500000010245
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a005",
+            "sha256": "a1acab24deabab138c9ef5bad8c4762008cc2a031e5be70ed9bb46f948a75978",
+            "speed_mps": 35.0,
+            "angle_deg": 5.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 85.64000000013039
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a015",
+            "sha256": "1604f17bb007a2a693682dbfe246ace6a28d24b146d65045f9ff2c3d4476f017",
+            "speed_mps": 35.0,
+            "angle_deg": 15.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 86.01600000006147
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a045",
+            "sha256": "0233b77b033c569ed9f2d82b68a0da05359bfc7fb37051f22dc13ecc234bceaf",
+            "speed_mps": 35.0,
+            "angle_deg": 45.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 85.65599999995902
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a090",
+            "sha256": "43b95b1418df0940aad5cfc323f04ca1fcbaf516a9159f906ab6ff8de9d7fae5",
+            "speed_mps": 35.0,
+            "angle_deg": 90.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 86.26600000006147
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a135",
+            "sha256": "f0848b3607ccc207e69744248ce1a0677f557ac3d7149b351f31d2b2bce4fa3f",
+            "speed_mps": 35.0,
+            "angle_deg": 135.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 85.53099999995902
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a180",
+            "sha256": "c1f9474e06bdbb152070469a942c8b6c5da96abc345db4ca93de2e6acf575f58",
+            "speed_mps": 35.0,
+            "angle_deg": 180.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 86.23499999986961
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a000",
+            "sha256": "45d87b346a0a28a9f8669f0cc798f658ac5d3839277adc25cb485beb7a2e4249",
+            "speed_mps": 1.0,
+            "angle_deg": 0.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 203.25
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a005",
+            "sha256": "fe37b81378a24149220f227a45ee862e245a6744bd65ba2f721d443a9a02e029",
+            "speed_mps": 1.0,
+            "angle_deg": 5.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 204.78099999995902
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a015",
+            "sha256": "db5087fd540d5172e114174e1b479f906533cefef6202cd1e43b1c756787d059",
+            "speed_mps": 1.0,
+            "angle_deg": 15.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 203.4210000000894
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a045",
+            "sha256": "fbc7134d026e54491ffead316cdb63617cc705681f3848391bbb0c434280df1b",
+            "speed_mps": 1.0,
+            "angle_deg": 45.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 205.81199999991804
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a090",
+            "sha256": "8ec3f3227ce878407e44edccac6178d33cc44b8513167cec26ae8d1f6d552318",
+            "speed_mps": 1.0,
+            "angle_deg": 90.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 203.35899999993853
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a135",
+            "sha256": "400a3c12a43ad50c1a456b14e9680833086d3d63b2892ee160decbeac853e1ba",
+            "speed_mps": 1.0,
+            "angle_deg": 135.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 204.7970000000205
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a180",
+            "sha256": "4d55f650c93294010c7b6b4129fecf72f9e3366c05f776de18b2fdbbb8b8baab",
+            "speed_mps": 1.0,
+            "angle_deg": 180.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 203.11000000010245
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a000",
+            "sha256": "61513cf9ee80530fb8a3696428b67628556d9cae56aea7c69011ef4be074a908",
+            "speed_mps": 35.0,
+            "angle_deg": 0.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 204.7970000000205
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a005",
+            "sha256": "a20a46b34356e3900c28ee7c3f526e159d21130ca860a85aa6a2f039d59de46f",
+            "speed_mps": 35.0,
+            "angle_deg": 5.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 203.2819999998901
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a015",
+            "sha256": "7873a5fc574df9d0114db581aa505f7ab6ac64b3d68f983830d89d9bf713a0a9",
+            "speed_mps": 35.0,
+            "angle_deg": 15.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 204.6569999998901
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a045",
+            "sha256": "1088d355de57fd1037a58121f6fb7bc9ce4ee5da78d063b3ceed04db1c6cdc35",
+            "speed_mps": 35.0,
+            "angle_deg": 45.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 203.35999999986961
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a090",
+            "sha256": "4d69841c8e6b3c20a37385c5bf4e73e219e090dd1ac9823a01b20c91c74954cd",
+            "speed_mps": 35.0,
+            "angle_deg": 90.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 205.18700000015087
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a135",
+            "sha256": "e45c72266b65dba8b154033eef72ee4b39d92e7aaabf4722c02566de1c778a75",
+            "speed_mps": 35.0,
+            "angle_deg": 135.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 203.3279999999795
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a180",
+            "sha256": "27db33979567e4ba459ef19f0b50e3b92b67080a81adacc6e40acaa1bdec84bc",
+            "speed_mps": 35.0,
+            "angle_deg": 180.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 204.43799999984913
+          },
+          {
+            "method": "cfd_audit",
+            "case": "duration",
+            "sha256": "8dd1fc52ecdc60c1aa593029c453b120a3d4f441b45f124903983ba0baa9c408",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 406.1879999998491
+          },
+          {
+            "method": "cfd_audit",
+            "case": "grid-16",
+            "sha256": "ee6eca3ff4efe635ff9cf1cf5915f16c3f0aaadc26f043958f4d20db4d9e0136",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.21368888888888887,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 85.71900000004098
+          },
+          {
+            "method": "cfd_audit",
+            "case": "grid-20",
+            "sha256": "380f357768857486ab2792af7fd4c5a223ec2f26000f235351c8e8beb28a4eb5",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 203.43700000015087
+          },
+          {
+            "method": "cfd_audit",
+            "case": "grid-24",
+            "sha256": "1b746200f8cab9b8076abe2e572e54fa219c92e5471d2c2a6fae503ace256ba3",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 24,
+            "spacing_mm": 3.75,
+            "fin_thickness_cells": 0.32053333333333334,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 414.3120000001509
+          },
+          {
+            "method": "cfd_audit",
+            "case": "time",
+            "sha256": "312c67d047115d8bc53776c5e3866588a567cbac89abec865a37ff7ab18ed458",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 408.31300000008196
+          },
+          {
+            "method": "cfd_audit",
+            "case": "wide",
+            "sha256": "4f524445be785ad0d10877f9bc0d387ce29c5179635206f9875319ee744e71fb",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2671111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 14.5,
+            "seconds": 271.4680000001099
+          }
+        ],
+        "grid_change_driver": {
+          "component": "Cm_z",
+          "speed_mps": 35,
+          "angle_deg": 135,
+          "coarse": 24.80371607508532,
+          "fine": 20.674993583653578,
+          "component_scale": 24.424578460817962,
+          "relative_change": 0.16903966216060023,
+          "scope": "Maximum over all tabulated conditions; separate from trajectory propagation"
+        },
+        "geometry_resolution_note": "Interpolated walls place specified surfaces between nodes; spacing ratios alone do not establish near-wall/thin-fin flow resolution or model validity"
+      }
+    },
+    {
+      "method": "wide-new",
+      "selected_label": "wide-new-0",
+      "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+      "report_sha256": "b7db3dfe23676d7b0e9391cfa71713c6e39d7fd23256c93d2b01f1458287ac86",
+      "spec": {
+        "name": "階層型解析の接続確認用・未製作案",
+        "design": {
+          "tier": "bottle",
+          "bottle_volume_m3": 0.0015,
+          "water_fill_frac": 0.3,
+          "initial_gauge_pressure_pa": 400000.0,
+          "nozzle_diameter_m": 0.023627,
+          "dry_mass_kg": 0.15,
+          "payload_mass_kg": 0.06,
+          "has_fins": true,
+          "axial_drag_coefficient": null,
+          "has_parachute": true,
+          "parachute_diameter_m": 0.7,
+          "geometry": {
+            "body_diameter_mm": 90.0,
+            "body_height_mm": 400.0,
+            "nose_length_mm": 276.696,
+            "fin_root_mm": 38.863,
+            "fin_tip_mm": 22.82,
+            "fin_span_mm": 144.739,
+            "fin_sweep_mm": 13.923,
+            "fin_count": 4,
+            "fin_thickness_mm": 1.246,
+            "nose_wall_mm": 1.013,
+            "fin_tail_inset_mm": 0.0,
+            "dimensions_measured": false
+          }
+        },
+        "geometry": {
+          "body_diameter_mm": 90.0,
+          "body_height_mm": 400.0,
+          "nose_length_mm": 276.696,
+          "fin_root_mm": 38.863,
+          "fin_tip_mm": 22.82,
+          "fin_span_mm": 144.739,
+          "fin_sweep_mm": 13.923,
+          "fin_count": 4,
+          "fin_thickness_mm": 1.246,
+          "nose_wall_mm": 1.013,
+          "fin_tail_inset_mm": 0.0,
+          "dimensions_measured": false
+        },
+        "requirement": {
+          "goal_kind": "altitude",
+          "target_altitude_m": 30.0,
+          "target_apogee_m": null,
+          "payload_mass_kg": 0.06,
+          "budget_jpy": null,
+          "recovery_required": false,
+          "tier_override": null,
+          "text": ""
+        },
+        "env": {
+          "launch_latitude_deg": 0.0,
+          "launch_altitude_m": 0.0,
+          "wind_speed_mps": 1.5,
+          "wind_direction_deg": 270.0,
+          "temperature_offset_k": 0.0,
+          "rail_length_m": 1.5,
+          "earth_rotation": false
+        },
+        "other_dry_mass_g": 150.0,
+        "measured_printed_mass_g": null,
+        "material": "Prusament ASA",
+        "assumptions": {
+          "fixed_bottle_mass_g": 48.0,
+          "mount": "standard",
+          "root_capture_mm": 10.5,
+          "other_mass_station_fraction": 0.0564,
+          "payload_station_fraction": 0.0325,
+          "solar_w_m2": 800.0,
+          "warm_wait_s": 120.0,
+          "pitch_damping": 10.0,
+          "initial_tilt_deg": 1.0,
+          "gust_mps": 0.5,
+          "opening_s": 0.15,
+          "evidence": {
+            "bottle_mass": "Fixed 48 g shell scenario shared by GA and DE; unweighed"
+          }
+        }
+      },
+      "runtime": {
+        "cfd_enabled": true,
+        "cfd_cells_coarse": 16,
+        "cfd_cells_fine": 20,
+        "cfd_times": 40.0,
+        "cfd_width": 12.5,
+        "cfd_lattice_speed": 0.075,
+        "cfd_speeds": [
+          1,
+          35
+        ],
+        "cfd_angles": [
+          0,
+          5,
+          15,
+          45,
+          90,
+          135,
+          180
+        ],
+        "fem_level": 4,
+        "flight_step_s": 0.02
+      },
+      "reused_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "benchmarks",
+        "cfd_coarse",
+        "cfd_fine",
+        "cfd_audit",
+        "flight",
+        "refine",
+        "modes",
+        "stability"
+      ],
+      "parent_report_sha256": "5ea7536d29e6c1253180b3b2ae81bef265ba4316ae7a5927c4316fe48a11069d",
+      "precision": {
+        "altitude_error_m": 1.5,
+        "attitude_error_deg": 1.0,
+        "aero_allocation": 0.5,
+        "grid_relative_limit": 0.05,
+        "temporal_relative_limit": 0.03,
+        "structure_relative_limit": 0.05,
+        "deflection_span_limit": 0.05,
+        "maximum_incidence_deg": 15.0,
+        "minimum_static_margin_cal": 1.0,
+        "require_cfd": true,
+        "require_aero_audit": true,
+        "require_fem": true,
+        "require_benchmarks": true
+      },
+      "elapsed_s": 6126.467999999877,
+      "resume_elapsed_s": 137.35899999993853,
+      "parent_elapsed_s": 5989.1089999999385,
+      "solver_build": {
+        "adapter_sha256": "f27e465f4519ccc4e0d82094f5dafbafa6369982d8aedaba2cd2d584ed3c8612",
+        "native_solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+        "template_sha256": "1d8107fa842961c6cd093c632229f601d6efca1768132e571b0a685356cd4b1e",
+        "compiler_sha256": "46809206887326d2d24db1eff1f3064de972c3451abe766b49111450a5e08e00",
+        "generated_source_sha256": "b52b4a03d49099ad51e8f02bb285a26bfc05bd26a8ce74623abbb9ba19f60f72"
+      },
+      "verified_files": 350,
+      "gpu_cases": 34,
+      "assembly": {
+        "key": "design-4d7ec6865ed8e0db",
+        "axial_cd": 0.55,
+        "dimensions_mm": {
+          "overall": 618.696,
+          "body_diameter": 90.0,
+          "nose_length": 276.696,
+          "bottle_length": 400.0,
+          "fin_root": 38.863,
+          "fin_tip": 22.82,
+          "fin_span": 144.739,
+          "fin_sweep": 13.923,
+          "fin_tail_inset": 0.0,
+          "fin_count": 4,
+          "fin_thickness": 1.246,
+          "fin_tab": 10.5,
+          "fin_root_offset": 0,
+          "fin_shoe_width": 0,
+          "skirt_length": 0
+        },
+        "bill": [
+          {
+            "id": "other_dry",
+            "mass_g": 102.0,
+            "station_mm": 34.8944544
+          },
+          {
+            "id": "printed_nose",
+            "mass_g": 59.904827378046996,
+            "station_mm": 179.85240000000002
+          },
+          {
+            "id": "printed_fins",
+            "mass_g": 31.0109454763644,
+            "station_mm": 601.9594319072246
+          },
+          {
+            "id": "fixed_bottle_shell",
+            "mass_g": 48.0,
+            "station_mm": 447.696,
+            "local_inertia_kg_m2": [
+              0.0005164559999999999,
+              0.0005164559999999999,
+              9.719999999999999e-05
+            ]
+          }
+        ],
+        "dry_mass_g": 240.91577285441141,
+        "dry_cg_mm": 226.17863413664793,
+        "loaded_cg_mm": 185.08985792889186,
+        "wet_cg_mm": 417.7488004341276,
+        "cp_mm": 518.3864749033072,
+        "fin_set_CNalpha_per_rad": 8.823572569643586,
+        "physical_qualification": false
+      },
+      "checks": {
+        "altitude": false,
+        "attitude": true,
+        "static_margin": true,
+        "temporal": true,
+        "fin_deformation": false,
+        "modes": true,
+        "frozen_pitch": true,
+        "aero_domain": true,
+        "thermal_balance": true,
+        "propulsion_balance": true,
+        "payload_mass": true,
+        "recovery": true,
+        "cost_evidence": true,
+        "aero_grid": false,
+        "aero_averaging": false,
+        "aero_trajectory": false,
+        "aero_interpolation": false,
+        "aero_domain_size": true,
+        "aero_lattice": false,
+        "aero_duration": true,
+        "aero_third_grid": false,
+        "fem_mesh": true,
+        "solver_benchmarks": true
+      },
+      "unmet": [
+        "altitude",
+        "fin_deformation",
+        "aero_grid",
+        "aero_averaging",
+        "aero_trajectory",
+        "aero_interpolation",
+        "aero_lattice",
+        "aero_third_grid"
+      ],
+      "criteria_met": false,
+      "physical_qualification": false,
+      "model_validation_complete": false,
+      "heights_m": {
+        "screen": 24.9388706916731,
+        "cfd": 21.25494015359475,
+        "finer_time": 21.25290662326403,
+        "confirm": 21.249568339632308,
+        "coefficient_plus_10pct": 20.716455676493183
+      },
+      "incidence_deg": {
+        "base": 8.416426833431577,
+        "confirm": 8.938087667667526,
+        "perturbation": 8.795657550556582
+      },
+      "phase_diagnostics": {
+        "initial_with_gas_margin_cal": 1.1146773460038173,
+        "exit_margin_cal": 3.671710825260945,
+        "free_ascent_min_margin_cal": 3.671710825260945,
+        "free_ascent_samples": 122,
+        "rail_exit_s": 0.09171331330395906,
+        "rail_exit_speed_mps": 23.090494706607757,
+        "maximum_guide_force_n": 1.52176948621373,
+        "maximum_guide_moment_nm": 0.44378987371114165,
+        "guide_capacity_verified": false,
+        "physical_qualification": false,
+        "acceptance_changed": false,
+        "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+      },
+      "aero": {
+        "grid_relative_change": 0.2990116649738959,
+        "averaging_relative_change": 3.4432287957356436,
+        "allowed_relative_change": 0.05,
+        "grid_altitude_difference_m": 0.698467953802492,
+        "grid_attitude_difference_deg": 1.1672938806918962,
+        "audit_condition": {
+          "speed_mps": 18,
+          "angle_deg": 10
+        },
+        "audit_differences": {
+          "wide": 0.004067588042573593,
+          "time": 0.04896323129148213,
+          "duration": 0.022254712773543562,
+          "interpolation": 0.1995084861766021,
+          "third_grid": 0.12576853340347002
+        },
+        "observed_orders": {
+          "Cx": {
+            "values": [
+              1.582604275164967,
+              1.334486672094943,
+              1.1878738796212867
+            ],
+            "cells": [
+              16,
+              20,
+              24
+            ],
+            "observed_order": 1.5898983526347836,
+            "fine_gci": 0.458817166126102,
+            "asymptotic_range_verified": false,
+            "classification": "monotone"
+          },
+          "Cy": {
+            "values": [
+              1.100464165564461,
+              1.194087754408661,
+              1.2532850258425459
+            ],
+            "cells": [
+              16,
+              20,
+              24
+            ],
+            "observed_order": 1.259153040886736,
+            "fine_gci": 0.22879229247885502,
+            "asymptotic_range_verified": false,
+            "classification": "monotone"
+          },
+          "Cm_z": {
+            "values": [
+              2.7061686737224466,
+              3.269152110792051,
+              3.7394582964614456
+            ],
+            "cells": [
+              16,
+              20,
+              24
+            ],
+            "observed_order": null,
+            "fine_gci": null,
+            "asymptotic_range_verified": false,
+            "classification": "no_resolved_positive_order"
+          }
+        }
+      },
+      "beam": {
+        "max_deflection_m": 0.018145569003526804,
+        "first_modes_hz": [
+          12.874327101370191,
+          71.85889376543797
+        ],
+        "load_scope": "CFD concurrent fin force envelope; beam load shape remains assumed",
+        "temperature_c": 25.290639680607228,
+        "metrics": {
+          "fin_deflection_ratio": 0.1253675167268449,
+          "positive_modes": true
+        }
+      },
+      "structure": {
+        "load_scope": "CFD Fn and both root moments at concurrent extrema; reconstructed pressure, not local traction; tangential load omitted",
+        "max_displacement_m": 0.01850705425733709,
+        "p95_integration_vm_pa": 1755587.7063375735,
+        "max_integration_vm_pa": 2196386.922835142,
+        "metrics": {
+          "fem_deflection_ratio": 0.1278650139723025,
+          "fem_mesh_change": 0.006887556200548577
+        }
+      },
+      "stability": {
+        "completed": true,
+        "frozen_asymptotic_count": 120,
+        "analyzed_points": 120,
+        "barbalat": {
+          "prerequisites": {
+            "infinite_horizon": false,
+            "bounded_below_V": null,
+            "nonpositive_Vdot": null,
+            "uniformly_continuous_W": null
+          },
+          "W_to_zero_proved": false,
+          "state_to_origin_proved": false,
+          "missing": [
+            "infinite_horizon",
+            "bounded_below_V",
+            "nonpositive_Vdot",
+            "uniformly_continuous_W"
+          ],
+          "extra_state_condition": null,
+          "rule": "finite observed decay is not evidence of infinite-horizon uniform continuity"
+        },
+        "full_flight_stability_proved": false,
+        "omitted": [
+          "velocity-direction dynamics",
+          "time-varying trim forcing",
+          "mass-flux angular terms",
+          "flexible/slosh modes",
+          "hybrid launch and canopy events",
+          "CFD/model uncertainty"
+        ],
+        "metrics": {
+          "frozen_pitch_pass": true,
+          "perturbation_incidence_deg": 8.795657550556582
+        }
+      },
+      "thermal": {
+        "final_c": {
+          "gas": 23.02473617747569,
+          "skin": 23.35347073044221,
+          "mount": 16.80522308737153,
+          "payload": 15.028773688339186,
+          "fin": 25.290639680607228
+        },
+        "metrics": {
+          "thermal_balance": true
+        }
+      },
+      "limitations": [
+        "attachment and constitutive properties are assumptions",
+        "CFD/FEM envelopes omit printed clip/slot detail",
+        "BOM local inertias are surrogates",
+        "not physical qualification"
+      ],
+      "numerical_details": {
+        "fem_geometric_nonlinearity": true,
+        "fem_input_deck_hashes": {
+          "fem_coarse": {
+            "fin-0.inp": "23953744a653487142c46c17f959bf082fdae8a91e934fe481c82b1e78400d10",
+            "fin-1.inp": "0db05990c20ea842bfb4c1c4bb51fa3ac744f59528528405a2f0ba74e953d2ae"
+          },
+          "fem_fine": {
+            "fin-0.inp": "6fb429649b9bf9a5f04842f13e491568af25facf5f4c7558b83d621da85cfcf8",
+            "fin-1.inp": "644563e1eb8ce985c75e4a59af6897751cb32321a798d79aed91ea04386bfa15"
+          }
+        },
+        "fine_fem_cases": [
+          {
+            "max_displacement_m": 0.01850705425733709,
+            "max_integration_vm_pa": 2196386.922835142,
+            "p95_integration_vm_pa": 1755587.7063375735,
+            "mapping": {
+              "scope": "nonlinear solid fin, compliant root and follower pressure",
+              "force_target_n": 0.0,
+              "temperature_c": 25.290639680607228,
+              "q_pa": 0,
+              "target_normal_resultant": [
+                -0.4349751782586266,
+                -0.0282640531459697,
+                0.00686621110051325
+              ],
+              "mapped_normal_resultant": [
+                -0.43497517825862675,
+                -0.02826405314596971,
+                0.006866211100513259
+              ],
+              "omitted_tangential_resultant": [
+                0.3569941441058186,
+                0.0019893873251483427,
+                -0.02707679687044033
+              ],
+              "pressure_range_pa": [
+                -233.5032259079541,
+                30.395331881080523
+              ],
+              "normal_load_scope": "CFD force and two root moments; signed reconstructed pressure; tangential load omitted"
+            },
+            "condition": {
+              "time_s": 0.09171331330395906,
+              "blade": 1,
+              "speed_mps": 23.155080564061876,
+              "angle_deg": 4.2113046426361205,
+              "q_pa": 328.3963992173451,
+              "local_resultant": [
+                0.3569941441058186,
+                0.0019893873251483427,
+                -0.4349751782586266,
+                -0.0282640531459697,
+                0.00686621110051325,
+                -0.02707679687044033
+              ],
+              "speed_clamped": false
+            }
+          },
+          {
+            "max_displacement_m": 0.018438102341137953,
+            "max_integration_vm_pa": 2190743.2201410276,
+            "p95_integration_vm_pa": 1750124.4172440849,
+            "mapping": {
+              "scope": "nonlinear solid fin, compliant root and follower pressure",
+              "force_target_n": 0.0,
+              "temperature_c": 25.290639680607228,
+              "q_pa": 0,
+              "target_normal_resultant": [
+                0.43573952059895027,
+                0.02820951377549311,
+                -0.0068684697573261864
+              ],
+              "mapped_normal_resultant": [
+                0.43573952059895005,
+                0.028209513775493116,
+                -0.006868469757326197
+              ],
+              "omitted_tangential_resultant": [
+                0.3568762468402901,
+                0.0017955188588598438,
+                -0.027024788271356247
+              ],
+              "pressure_range_pa": [
+                -29.83436667149533,
+                235.0635239114981
+              ],
+              "normal_load_scope": "CFD force and two root moments; signed reconstructed pressure; tangential load omitted"
+            },
+            "condition": {
+              "time_s": 0.09171331330395906,
+              "blade": 3,
+              "speed_mps": 23.155080564061876,
+              "angle_deg": 4.2113046426361205,
+              "q_pa": 328.3963992173451,
+              "local_resultant": [
+                0.3568762468402901,
+                0.0017955188588598438,
+                0.43573952059895027,
+                0.02820951377549311,
+                -0.0068684697573261864,
+                -0.027024788271356247
+              ],
+              "speed_clamped": false
+            }
+          }
+        ],
+        "cfd_cases": [
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a000",
+            "sha256": "98e93b29b87f0463e4bb6f56771797873e4e0f8025f645ff4aab716b5f1d2aa8",
+            "speed_mps": 1.0,
+            "angle_deg": 0.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 85.17200000002049
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a005",
+            "sha256": "eba18819da7fd000674dbde31ddda54a9bac9f2c903ac5228f1ce6b048989979",
+            "speed_mps": 1.0,
+            "angle_deg": 5.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 85.84400000004098
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a015",
+            "sha256": "72353cfc63b57b6dc33e487b73121ee9fe25dabd6eaf174f35870b48818b717b",
+            "speed_mps": 1.0,
+            "angle_deg": 15.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 86.09399999980815
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a045",
+            "sha256": "a96aef7ada36d6fb9b695b1862301ea67900fd15c3c760a7eaa5f2e15e27590e",
+            "speed_mps": 1.0,
+            "angle_deg": 45.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 86.35900000017136
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a090",
+            "sha256": "d7ea4a9671ca92bd093caa8b80f74e69fe49aef349ddab7497db74188babdf79",
+            "speed_mps": 1.0,
+            "angle_deg": 90.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 85.67200000002049
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a135",
+            "sha256": "4ed42a93328f20c63b8cae74394e56c618a2dfb335fd57e304fe005360e7f9e7",
+            "speed_mps": 1.0,
+            "angle_deg": 135.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 86.17199999978766
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v01-a180",
+            "sha256": "b74b649ec47c82992c1bb2784f568a58e4f3e1e03720adfb69df4f5fa146aefc",
+            "speed_mps": 1.0,
+            "angle_deg": 180.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 86.45300000021234
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a000",
+            "sha256": "d2d8fef4e5552bac68f5dd1bb3d9c190384861c27ec4a962fadb03be7e635fab",
+            "speed_mps": 35.0,
+            "angle_deg": 0.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 85.48499999986961
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a005",
+            "sha256": "cc70bf444f02bfb3858aabd88f763e60563ecc4ae87e44169d50b5f1ac30984d",
+            "speed_mps": 35.0,
+            "angle_deg": 5.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 86.125
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a015",
+            "sha256": "d0a237c26d536ad858fdab87a8907aafa0e157fe5f6021c56dc7b8d20c9e4023",
+            "speed_mps": 35.0,
+            "angle_deg": 15.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 85.48499999986961
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a045",
+            "sha256": "76d1c41fe0d10a572c3ec7e464472c7ec1194db69b511ccf0c2c51b2e9a878c7",
+            "speed_mps": 35.0,
+            "angle_deg": 45.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 86.15600000019185
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a090",
+            "sha256": "f19c813ae1d2b6fb95c9aa3ce1401b58c884b9f96c0c6339ea5e76e1db3eeaaa",
+            "speed_mps": 35.0,
+            "angle_deg": 90.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 85.68799999984913
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a135",
+            "sha256": "6e0bc180acde5eb83cf27709e6ed9070937b666a0a44fd17952f6311d6d3fa01",
+            "speed_mps": 35.0,
+            "angle_deg": 135.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 86.04700000002049
+          },
+          {
+            "method": "cfd_coarse",
+            "case": "tunnel/v35-a180",
+            "sha256": "a899f0d8283b5f3bb4d45f3b3c0205eb97bb37f4f3e907d1daa2419810b291b3",
+            "speed_mps": 35.0,
+            "angle_deg": 180.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 85.73499999986961
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a000",
+            "sha256": "1317b6905863e08b188b10be48d952c82ffbaedf94570cbbce6be62133889ac4",
+            "speed_mps": 1.0,
+            "angle_deg": 0.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 204.7029999999795
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a005",
+            "sha256": "7332dd012d0c4d7b2f1fc7148942379aa413428203d05096f3d8182177f3c267",
+            "speed_mps": 1.0,
+            "angle_deg": 5.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 203.2970000000205
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a015",
+            "sha256": "5bbbd9786a35afc4388d6e7070389a2b6eaa57cfb82ad893585e931ea69a9771",
+            "speed_mps": 1.0,
+            "angle_deg": 15.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 204.9220000000205
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a045",
+            "sha256": "452d3e9aa77849f0baa09fdbe6f72779b85e8b3595f026b4a9aff565658ae9ae",
+            "speed_mps": 1.0,
+            "angle_deg": 45.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 203.85900000017136
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a090",
+            "sha256": "3c3095079a87b626d6a1e8a9c9f2807ab526684d8a02cf0b0fa5199b3ae71fe9",
+            "speed_mps": 1.0,
+            "angle_deg": 90.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 204.78100000019185
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a135",
+            "sha256": "5dacfdeb2260f8d8ba729215f6b023f47bfdbf750b0e2af890f3fb167a1acb3e",
+            "speed_mps": 1.0,
+            "angle_deg": 135.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 203.38999999989755
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v01-a180",
+            "sha256": "31c33cb30e0b174e9f98d06be7c42e29b2825bc3c8d0aabec2d7befa2758a241",
+            "speed_mps": 1.0,
+            "angle_deg": 180.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 6000.0,
+            "width_d": 12.5,
+            "seconds": 204.73499999986961
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a000",
+            "sha256": "229040bba2f2078216141027e71699df210cddedf190dfbbfa4c3eb2214ff455",
+            "speed_mps": 35.0,
+            "angle_deg": 0.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 203.31200000015087
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a005",
+            "sha256": "79c2a8dea468143f04e23775e3735089fde59b1a9a5fb7f4c86091f260bc9126",
+            "speed_mps": 35.0,
+            "angle_deg": 5.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 204.9220000000205
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a015",
+            "sha256": "06342642ef885a40e516eaaad3ec0a9e0df4773bd90d8ff7f633750be1d22070",
+            "speed_mps": 35.0,
+            "angle_deg": 15.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 203.2029999999795
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a045",
+            "sha256": "d54d16c32f0013be3dd4a1681c4ce79234b13abed0bf70bbe084396a508a5c44",
+            "speed_mps": 35.0,
+            "angle_deg": 45.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 204.89100000006147
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a090",
+            "sha256": "ed02e87f42cbd6aacc328952931f8a3a8dda24705a21c8af9bed9f74ae1d82ba",
+            "speed_mps": 35.0,
+            "angle_deg": 90.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 203.78099999995902
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a135",
+            "sha256": "d2f15f5e13be2788dc2348b9d14f2f341ba05197d7798d5cd1e9b51c36bb2b6d",
+            "speed_mps": 35.0,
+            "angle_deg": 135.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 204.7970000000205
+          },
+          {
+            "method": "cfd_fine",
+            "case": "tunnel/v35-a180",
+            "sha256": "214b85150d37fe690f74862078638819741f5ab89ec14831e1667952f568f30b",
+            "speed_mps": 35.0,
+            "angle_deg": 180.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 210000.0,
+            "width_d": 12.5,
+            "seconds": 203.0470000000205
+          },
+          {
+            "method": "cfd_audit",
+            "case": "duration",
+            "sha256": "97ce734bc30c0074f0e1b3f49c8a11cf86076fdf9d26f8e4af59d446c96d03c2",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 408.2819999998901
+          },
+          {
+            "method": "cfd_audit",
+            "case": "grid-16",
+            "sha256": "130eaaa35964e60b63149b8eef60a7f9bec7ed5cab29d4273e2bfe1137418b3a",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 16,
+            "spacing_mm": 5.625,
+            "fin_thickness_cells": 0.2215111111111111,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 86.06200000015087
+          },
+          {
+            "method": "cfd_audit",
+            "case": "grid-20",
+            "sha256": "a7c0ada34b11dbd232a407604690d028d4315b07970883c91d2340b2ad61cf69",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 204.89000000013039
+          },
+          {
+            "method": "cfd_audit",
+            "case": "grid-24",
+            "sha256": "6f24d4db6354e75c12751084695d206d2c0539ae861d5126c64ae3b8f342edd6",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 24,
+            "spacing_mm": 3.75,
+            "fin_thickness_cells": 0.33226666666666665,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 412.1569999998901
+          },
+          {
+            "method": "cfd_audit",
+            "case": "time",
+            "sha256": "9d16439eb00877a0c5916bcc57597e53741cd6e89532978fbbf37f97f176da03",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 12.5,
+            "seconds": 404.7819999998901
+          },
+          {
+            "method": "cfd_audit",
+            "case": "wide",
+            "sha256": "42dbc02dbdf4556a43ca91c73fa98d9dd4618e5bac937ea520150dcaed5bfe1b",
+            "speed_mps": 18.0,
+            "angle_deg": 10.0,
+            "cells_per_diameter": 20,
+            "spacing_mm": 4.5,
+            "fin_thickness_cells": 0.2768888888888889,
+            "wall_scheme": "interpolated",
+            "reynolds": 107999.99999999999,
+            "width_d": 14.5,
+            "seconds": 273.7180000001099
+          }
+        ],
+        "grid_change_driver": {
+          "component": "Cx",
+          "speed_mps": 35,
+          "angle_deg": 180,
+          "coarse": -8.847155768838155,
+          "fine": -6.789314969089088,
+          "component_scale": 6.882142206487893,
+          "relative_change": 0.2990116649738959,
+          "scope": "Maximum over all tabulated conditions; separate from trajectory propagation"
+        },
+        "geometry_resolution_note": "Interpolated walls place specified surfaces between nodes; spacing ratios alone do not establish near-wall/thin-fin flow resolution or model validity"
+      }
+    }
+  ],
+  "physical_qualification": false,
+  "confirmation_height_change_m": 1.464127696488184,
+  "total_gpu_cases": 68,
+  "verified_files": 682,
+  "conditional_acceptance": {
+    "wide-old": false,
+    "wide-new": false
+  },
+  "limitations": [
+    "Two selected finalists; not independent estimates of general optimizer performance",
+    "Grid/time/parameter sensitivity is not experimental validation",
+    "Constitutive and mount scenarios are unmeasured; no hardware qualification",
+    "One-way CFD load transfer to FEM; deformed geometry is not fed back into CFD/flight",
+    "Point-mass equipment/payload placement omits volumetric packaging checks",
+    "FEM stress is reported without qualified material strength allowables",
+    "Local linear stability does not prove full-flight nonlinear stability"
+  ],
+  "initial_attempts": [
+    {
+      "report_sha256": "55895d8c80e8124ad1ad468869be738012d8fd9e9933e19ed5e443b8ab5a4478",
+      "width_d": 10.0,
+      "elapsed_s": 197.65599999995902,
+      "completed_cfd_cases": 3,
+      "verified_files": 58,
+      "failed_methods": [
+        "cfd_coarse"
+      ]
+    },
+    {
+      "report_sha256": "dcb77d9f25e0ed46e1cc5302e34274b718236b4e8ec19b077c9a82f5e777c55d",
+      "width_d": 10.0,
+      "elapsed_s": 197.875,
+      "completed_cfd_cases": 3,
+      "verified_files": 58,
+      "failed_methods": [
+        "cfd_coarse"
+      ]
+    }
+  ],
+  "all_completed_cfd_cases": 74,
+  "summed_execution_s_including_failed_attempts": 12594.717999999644,
+  "execution_cost_scope": "Sum of simultaneous candidate executions including failed domain attempts and resumed-parent time; not wall time or training/diagnostic/development cost"
+}

@@ -1,0 +1,415 @@
+{
+  "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+  "report_sha256": "f88b0b6966d37c0656d2ddc70e702f839c7f17e5036208a0e789b0e97850de72",
+  "spec": {
+    "name": "階層型解析の接続確認用・未製作案",
+    "design": {
+      "tier": "bottle",
+      "bottle_volume_m3": 0.0015,
+      "water_fill_frac": 0.3262,
+      "initial_gauge_pressure_pa": 400000.0,
+      "nozzle_diameter_m": 0.032142000000000004,
+      "dry_mass_kg": 0.15,
+      "payload_mass_kg": 0.06,
+      "has_fins": true,
+      "axial_drag_coefficient": null,
+      "has_parachute": true,
+      "parachute_diameter_m": 0.7,
+      "geometry": {
+        "body_diameter_mm": 90.0,
+        "body_height_mm": 400.0,
+        "nose_length_mm": 267.051,
+        "fin_root_mm": 40.227,
+        "fin_tip_mm": 34.436,
+        "fin_span_mm": 144.907,
+        "fin_sweep_mm": 1.158,
+        "fin_count": 4,
+        "fin_thickness_mm": 1.202,
+        "nose_wall_mm": 1.672,
+        "fin_tail_inset_mm": 0.0,
+        "dimensions_measured": false
+      }
+    },
+    "geometry": {
+      "body_diameter_mm": 90.0,
+      "body_height_mm": 400.0,
+      "nose_length_mm": 267.051,
+      "fin_root_mm": 40.227,
+      "fin_tip_mm": 34.436,
+      "fin_span_mm": 144.907,
+      "fin_sweep_mm": 1.158,
+      "fin_count": 4,
+      "fin_thickness_mm": 1.202,
+      "nose_wall_mm": 1.672,
+      "fin_tail_inset_mm": 0.0,
+      "dimensions_measured": false
+    },
+    "requirement": {
+      "goal_kind": "altitude",
+      "target_altitude_m": 30.0,
+      "target_apogee_m": null,
+      "payload_mass_kg": 0.06,
+      "budget_jpy": null,
+      "recovery_required": false,
+      "tier_override": null,
+      "text": ""
+    },
+    "env": {
+      "launch_latitude_deg": 0.0,
+      "launch_altitude_m": 0.0,
+      "wind_speed_mps": 1.5,
+      "wind_direction_deg": 270.0,
+      "temperature_offset_k": 0.0,
+      "rail_length_m": 1.5,
+      "earth_rotation": false
+    },
+    "other_dry_mass_g": 150.0,
+    "measured_printed_mass_g": null,
+    "material": "Prusament ASA",
+    "assumptions": {
+      "fixed_bottle_mass_g": 48.0,
+      "mount": "standard",
+      "root_capture_mm": 10.5,
+      "other_mass_station_fraction": 0.0925,
+      "payload_station_fraction": 0.0464,
+      "solar_w_m2": 800.0,
+      "warm_wait_s": 120.0,
+      "pitch_damping": 10.0,
+      "initial_tilt_deg": 1.0,
+      "gust_mps": 0.5,
+      "opening_s": 0.15,
+      "evidence": {
+        "bottle_mass": "Fixed 48 g shell scenario shared by GA and DE; unweighed",
+        "initial_source_scope": "independent host geometry scenario"
+      }
+    }
+  },
+  "runtime": {
+    "cfd_enabled": true,
+    "cfd_cells_coarse": 16,
+    "cfd_cells_fine": 20,
+    "cfd_times": 40.0,
+    "cfd_width": 12.5,
+    "cfd_lattice_speed": 0.075,
+    "cfd_speeds": [
+      1,
+      35
+    ],
+    "cfd_angles": [
+      0,
+      5,
+      15,
+      45,
+      90,
+      135,
+      180
+    ],
+    "fem_level": 4,
+    "flight_step_s": 0.02
+  },
+  "reused_methods": [
+    "geometry",
+    "thermal",
+    "propulsion",
+    "screen",
+    "benchmarks",
+    "cfd_coarse",
+    "cfd_fine",
+    "cfd_audit",
+    "flight",
+    "refine",
+    "modes",
+    "stability"
+  ],
+  "parent_report_sha256": "dfca089c6683a96d0a70a325aae71977a6e88cd46c9d9764d50f267ea8feab31",
+  "precision": {
+    "altitude_error_m": 1.5,
+    "attitude_error_deg": 1.0,
+    "aero_allocation": 0.5,
+    "grid_relative_limit": 0.05,
+    "temporal_relative_limit": 0.03,
+    "structure_relative_limit": 0.05,
+    "deflection_span_limit": 0.05,
+    "maximum_incidence_deg": 15.0,
+    "minimum_static_margin_cal": 1.0,
+    "require_cfd": true,
+    "require_aero_audit": true,
+    "require_fem": true,
+    "require_benchmarks": true
+  },
+  "elapsed_s": 6072.718999999808,
+  "resume_elapsed_s": 87.2819999998901,
+  "parent_elapsed_s": 5985.436999999918,
+  "solver_build": {
+    "adapter_sha256": "f27e465f4519ccc4e0d82094f5dafbafa6369982d8aedaba2cd2d584ed3c8612",
+    "native_solver_sha256": "27a9426a1ee2f72c38fbe892e0ffaf38e14867628ffd0235770261b6f3ec9c5f",
+    "template_sha256": "1d8107fa842961c6cd093c632229f601d6efca1768132e571b0a685356cd4b1e",
+    "compiler_sha256": "46809206887326d2d24db1eff1f3064de972c3451abe766b49111450a5e08e00",
+    "generated_source_sha256": "b52b4a03d49099ad51e8f02bb285a26bfc05bd26a8ce74623abbb9ba19f60f72"
+  },
+  "verified_files": 332,
+  "gpu_cases": 34,
+  "assembly": {
+    "key": "design-65cccf2b20b420c2",
+    "axial_cd": 0.55,
+    "dimensions_mm": {
+      "overall": 609.0509999999999,
+      "body_diameter": 90.0,
+      "nose_length": 267.051,
+      "bottle_length": 400.0,
+      "fin_root": 40.227,
+      "fin_tip": 34.436,
+      "fin_span": 144.907,
+      "fin_sweep": 1.158,
+      "fin_tail_inset": 0.0,
+      "fin_count": 4,
+      "fin_thickness": 1.202,
+      "fin_tab": 10.5,
+      "fin_root_offset": 0,
+      "fin_shoe_width": 0,
+      "skirt_length": 0
+    },
+    "bill": [
+      {
+        "id": "other_dry",
+        "mass_g": 102.0,
+        "station_mm": 56.337217499999994
+      },
+      {
+        "id": "printed_nose",
+        "mass_g": 95.819817543969,
+        "station_mm": 173.58315
+      },
+      {
+        "id": "printed_fins",
+        "mass_g": 35.29913575057599,
+        "station_mm": 588.0912106174856
+      },
+      {
+        "id": "fixed_bottle_shell",
+        "mass_g": 48.0,
+        "station_mm": 438.05099999999993,
+        "local_inertia_kg_m2": [
+          0.0005164559999999998,
+          0.0005164559999999998,
+          9.719999999999999e-05
+        ]
+      }
+    ],
+    "dry_mass_g": 281.118953294545,
+    "dry_cg_mm": 228.24736885237857,
+    "loaded_cg_mm": 193.0712403164137,
+    "wet_cg_mm": 409.623506865395,
+    "cp_mm": 513.2836134218154,
+    "fin_set_CNalpha_per_rad": 10.243509432422577,
+    "physical_qualification": false
+  },
+  "checks": {
+    "altitude": false,
+    "attitude": true,
+    "static_margin": true,
+    "temporal": true,
+    "fin_deformation": false,
+    "modes": true,
+    "frozen_pitch": true,
+    "aero_domain": true,
+    "thermal_balance": true,
+    "propulsion_balance": true,
+    "payload_mass": true,
+    "recovery": true,
+    "cost_evidence": true,
+    "aero_grid": false,
+    "aero_averaging": false,
+    "aero_trajectory": true,
+    "aero_interpolation": false,
+    "aero_domain_size": true,
+    "aero_lattice": false,
+    "aero_duration": true,
+    "aero_third_grid": false,
+    "fem_mesh": true,
+    "solver_benchmarks": true
+  },
+  "unmet": [
+    "altitude",
+    "fin_deformation",
+    "aero_grid",
+    "aero_averaging",
+    "aero_interpolation",
+    "aero_lattice",
+    "aero_third_grid"
+  ],
+  "criteria_met": false,
+  "physical_qualification": false,
+  "model_validation_complete": false,
+  "heights_m": {
+    "screen": 22.717135564284565,
+    "cfd": 19.79098695017709,
+    "finer_time": 19.790986691754267,
+    "confirm": 19.785440643144124,
+    "coefficient_plus_10pct": 19.356092892737028
+  },
+  "incidence_deg": {
+    "base": 9.694149375680073,
+    "confirm": 9.555071701273675,
+    "perturbation": 9.074047739220783
+  },
+  "phase_diagnostics": {
+    "initial_with_gas_margin_cal": 1.1490875623835928,
+    "exit_margin_cal": 3.5315443735601324,
+    "free_ascent_min_margin_cal": 3.5315443735601324,
+    "free_ascent_samples": 117,
+    "rail_exit_s": 0.08411117701150664,
+    "rail_exit_speed_mps": 21.58973338722527,
+    "maximum_guide_force_n": 1.317899561331006,
+    "maximum_guide_moment_nm": 0.3631107894961106,
+    "guide_capacity_verified": false,
+    "physical_qualification": false,
+    "acceptance_changed": false,
+    "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+  },
+  "aero": {
+    "grid_relative_change": 0.16903966216060023,
+    "averaging_relative_change": 5.279322684236405,
+    "allowed_relative_change": 0.05,
+    "grid_altitude_difference_m": 0.6607323455501763,
+    "grid_attitude_difference_deg": 0.2976971887714921,
+    "audit_condition": {
+      "speed_mps": 18,
+      "angle_deg": 10
+    },
+    "audit_differences": {
+      "wide": 0.011186857510225664,
+      "time": 0.11385662783193909,
+      "duration": 0.02013729847709268,
+      "interpolation": 0.0638148790510872,
+      "third_grid": 0.1006835532308161
+    },
+    "observed_orders": {
+      "Cx": {
+        "values": [
+          1.4545079350255243,
+          1.3452200526593077,
+          1.2295399138736345
+        ],
+        "cells": [
+          16,
+          20,
+          24
+        ],
+        "observed_order": null,
+        "fine_gci": null,
+        "asymptotic_range_verified": false,
+        "classification": "no_resolved_positive_order"
+      },
+      "Cy": {
+        "values": [
+          1.8576691454806666,
+          1.4301137055182467,
+          1.3065975522409154
+        ],
+        "cells": [
+          16,
+          20,
+          24
+        ],
+        "observed_order": 5.043238678727939,
+        "fine_gci": 0.07835859010832787,
+        "asymptotic_range_verified": false,
+        "classification": "monotone"
+      },
+      "Cm_z": {
+        "values": [
+          5.588281606599455,
+          3.9889956768666854,
+          3.587369418297383
+        ],
+        "cells": [
+          16,
+          20,
+          24
+        ],
+        "observed_order": 5.710712291473124,
+        "fine_gci": 0.0763650098576817,
+        "asymptotic_range_verified": false,
+        "classification": "monotone"
+      }
+    }
+  },
+  "beam": {
+    "max_deflection_m": 0.017088405135685644,
+    "first_modes_hz": [
+      11.092931153781116,
+      66.88375881138917
+    ],
+    "load_scope": "CFD concurrent fin force envelope; beam load shape remains assumed",
+    "temperature_c": 25.290639680632466,
+    "metrics": {
+      "fin_deflection_ratio": 0.1179267056504216,
+      "positive_modes": true
+    }
+  },
+  "structure": {
+    "load_scope": "CFD Fn and both root moments at concurrent extrema; reconstructed pressure, not local traction; tangential load omitted",
+    "max_displacement_m": 0.01762269235122522,
+    "p95_integration_vm_pa": 1623478.954083846,
+    "max_integration_vm_pa": 2250498.054643322,
+    "metrics": {
+      "fem_deflection_ratio": 0.1216138099003169,
+      "fem_mesh_change": 0.005211554962197688
+    }
+  },
+  "stability": {
+    "completed": true,
+    "frozen_asymptotic_count": 115,
+    "analyzed_points": 115,
+    "barbalat": {
+      "prerequisites": {
+        "infinite_horizon": false,
+        "bounded_below_V": null,
+        "nonpositive_Vdot": null,
+        "uniformly_continuous_W": null
+      },
+      "W_to_zero_proved": false,
+      "state_to_origin_proved": false,
+      "missing": [
+        "infinite_horizon",
+        "bounded_below_V",
+        "nonpositive_Vdot",
+        "uniformly_continuous_W"
+      ],
+      "extra_state_condition": null,
+      "rule": "finite observed decay is not evidence of infinite-horizon uniform continuity"
+    },
+    "full_flight_stability_proved": false,
+    "omitted": [
+      "velocity-direction dynamics",
+      "time-varying trim forcing",
+      "mass-flux angular terms",
+      "flexible/slosh modes",
+      "hybrid launch and canopy events",
+      "CFD/model uncertainty"
+    ],
+    "metrics": {
+      "frozen_pitch_pass": true,
+      "perturbation_incidence_deg": 9.074047739220783
+    }
+  },
+  "thermal": {
+    "final_c": {
+      "gas": 23.04959927345317,
+      "skin": 23.36030328378024,
+      "mount": 16.80702244972383,
+      "payload": 15.028801117679109,
+      "fin": 25.290639680632466
+    },
+    "metrics": {
+      "thermal_balance": true
+    }
+  },
+  "limitations": [
+    "attachment and constitutive properties are assumptions",
+    "CFD/FEM envelopes omit printed clip/slot detail",
+    "BOM local inertias are surrogates",
+    "not physical qualification"
+  ]
+}
