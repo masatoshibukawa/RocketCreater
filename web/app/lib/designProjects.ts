@@ -32,9 +32,9 @@ export interface ProductionSpec {
 }
 export interface ProjectFile { name: string; key: string; kind: string; url: string; version: number; sha256: string }
 export function projectFileLabel(name: string): string {
-  return ({ "assembly.pdf": "組立手順 PDF", "design-sheet.pdf": "製作・計算確認票 PDF",
+  return ({ "assembly.pdf": "組立手順 PDF", "design-drawing.pdf": "組立設計図 PDF", "design-sheet.pdf": "製作・計算確認票 PDF",
     "calculation-report.md": "計算レポート", "bom.csv": "部品表 CSV", "flight.csv": "飛行データ CSV",
-    "side-view.svg": "側面図 SVG", "design.json": "設計 JSON", "print-package.zip": "S5印刷データ一式",
+    "side-view.svg": "設計図 SVG", "design.json": "設計 JSON", "print-package.zip": "S5印刷データ一式",
     "design-package.zip": "採用版の一括 ZIP", "analysis-envelope-m.stl": "解析用包絡（m単位・印刷用ではありません）",
   } as Record<string, string>)[name] ?? name;
 }

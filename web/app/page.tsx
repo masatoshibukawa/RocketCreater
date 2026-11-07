@@ -34,7 +34,7 @@ import type { AeroRequest } from "./lib/useAeroLoop";
 import { isOrbital, TIER_LABEL, type DispersionResult, type DisplayedDesign, type TracePoint } from "./lib/types";
 
 const ANALYSIS_VIEWS = [["aero", "流体解析"], ["flight", "飛行と回収"], ["chart", "高度の推移"]] as const;
-const OUTPUT_VIEWS = [["production", "製作票・印刷データ"], ["drawing", "設計図 SVG"], ["video", "設計解説・打ち上げ CG"]] as const;
+const OUTPUT_VIEWS = [["production", "製作票・印刷データ"], ["drawing", "設計図"], ["video", "設計解説・打ち上げ CG"]] as const;
 const NO_TRACE: TracePoint[] = [];
 const NO_METRICS: Record<string, number> = {};
 
@@ -273,7 +273,7 @@ function DesignScreen() {
             <ModelViewer design={displayed?.design ?? null} tier={tier} origin={displayed?.origin ?? null} statusLabel={displayed?.origin === "seed" ? "参照の初期案" : passed ? "条件を満たす案" : "検討中の案"} reference={stream.reference} dimensions={summary?.dimensions ?? null} notes={notes} frameRequest={frameRequest} active={hasModel && modelView === "model"}/>
             {!displayed ? <span className="scene-image-label">工房のイメージ · 設計データはまだありません</span> : null}
           </div>
-          <div className="drawing-workspace" hidden={!((hasModel && modelView === "drawing") || (stage === "exports" && outputView === "drawing"))}><DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading}/></div>
+          <div className="drawing-workspace" hidden={!((hasModel && modelView === "drawing") || (stage === "exports" && outputView === "drawing" && !productionProject))}><DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading}/></div>
           <div className="analysis-workspace" hidden={stage !== "analysis"}>
             <div className="analysis-screen" hidden={analysisView !== "aero" || isOrbital(tier)}>{productionProject ? <ProjectAnalysis project={productionProject} onProject={setProductionProject}/> : <AeroLoopPanel request={isOrbital(tier) ? null : aeroRequest} hasDesign={displayed !== null}/>}</div>
             {analysisView === "aero" && isOrbital(tier) ? <div className="workspace-empty"><h2>この規模は構想設計の対象です</h2><p>飛行の結果と軌道を確認できます。</p><button className="btn" type="button" onClick={() => setAnalysisView("flight")}>飛行と回収を見る</button></div> : null}
@@ -281,9 +281,9 @@ function DesignScreen() {
             <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedLabel}/></div>
           </div>
           {stage === "exports" && outputView === "production" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
-          <div className="production-stack" hidden={stage !== "exports" || outputView === "drawing" || isOrbital(tier)}>
+          <div className="production-stack" hidden={stage !== "exports" || (outputView === "drawing" && !productionProject) || isOrbital(tier)}>
           <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
-          <div className="production-workspace" hidden={stage !== "exports" || isOrbital(tier)}><DesignProduction source={packageRequest} mode={outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} externalProject={productionProject} active={stage === "exports"}/></div>
+          <div className="production-workspace" hidden={stage !== "exports" || isOrbital(tier)}><DesignProduction source={packageRequest} mode={outputView === "production" ? "files" : outputView} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} externalProject={productionProject} active={stage === "exports"}/></div>
           </div>
           <WorkshopCrew embedded hideScene={!showCrew}/>
         </div>

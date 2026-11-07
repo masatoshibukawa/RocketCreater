@@ -24,7 +24,7 @@ const DIMENSIONS: [keyof Omit<ProductionGeometry, "dimensions_measured">, string
 const OPERATION: Record<string, string> = { analyse: "CADと飛行を再解析中", slicing: "S5用データを検査中", render_design_and_launch: "同じ採用版の動画を制作中" };
 
 export default function DesignProduction({ source, mode, onProjectChange, active, projectId, externalProject }: {
-  source: DesignPackageRequest | null; mode: "files" | "assembly" | "video" | "edit";
+  source: DesignPackageRequest | null; mode: "files" | "assembly" | "video" | "edit" | "drawing";
   onProjectChange: (project: DesignProject | null) => void; active: boolean; projectId: string | null; externalProject?: DesignProject | null;
 }) {
   const [project, setProject] = useState<DesignProject | null>(null);
@@ -113,6 +113,23 @@ export default function DesignProduction({ source, mode, onProjectChange, active
   const result = project?.analysis?.result;
   const mainFile = (f: { kind: string; name: string }) => f.kind === "manual" || f.kind === "package" || ["design.json", "bom.csv", "print-package.zip"].includes(f.name);
   const num = (label: string, value: number | null, change: (value: number) => void) => <label>{label}<input type="number" step="any" required value={value ?? ""} onChange={e => change(Number(e.target.value))}/></label>;
+  if (mode === "drawing") {
+    const current = project?.id === projectId ? project : null;
+    const files = current?.files.filter(f => f.kind === "manual" &&
+      ["design-drawing.pdf", "side-view.svg", "assembly.pdf"].includes(f.name)) ?? [];
+    const svg = files.some(f => f.name === "design-drawing.pdf") ? files.find(f => f.name === "side-view.svg") : undefined;
+    return <section className="wb-detail production-project" aria-label="採用版の組立設計図" aria-busy={working}>
+      <h2>組立設計図</h2>
+      {current ? <p>{current.name} / v{current.version}</p> : null}
+      <p className="wb-note">{outputReady ? "側面・後面・嵌合とフィンの公称寸法を確認します。" : "この版を解析・採用してから設計図を出力できます。"}</p>
+      <button className="btn" disabled={working || !outputReady || !!draft} onClick={() => void action("manual")}>
+        {working ? "出力中…" : "この版の組立手順書と設計図を生成"}
+      </button>
+      {error || project?.error ? <p role="alert" className="wb-error">{error ?? project?.error}</p> : null}
+      <div className="wb-file-list">{files.map(f => <a key={f.url} href={apiUrl(f.url)} download>{projectFileLabel(f.name)}<small>v{f.version}</small></a>)}</div>
+      {svg ? <img src={apiUrl(svg.url) + "?sha256=" + svg.sha256} alt="採用版の側面・後面・フィン・嵌合寸法" style={{ width: "100%", height: "auto" }} /> : null}
+    </section>;
+  }
   return <section className="wb-detail production-project" aria-label="設計の保存と制作">
     <h2>{project ? `${project.name} / v${project.version}` : "同じ設計から、製作と映像へ"}</h2>
     <p className="wb-note">寸法・材料・質量を保存し、再解析した版を採用してから出力します。このPCで制作します。プリンターへの送信は別操作です。</p>
@@ -158,7 +175,7 @@ export default function DesignProduction({ source, mode, onProjectChange, active
       <div className="project-actions"><button className="btn" disabled={working || project.adopted || !!draft} onClick={() => void action("analyse")}>CADと飛行を再解析</button><button className="btn btn-primary" disabled={working || !result?.success || project.analysis_stale || project.adopted || !!draft} onClick={() => void action("adopt")}>この版を採用</button></div>
       {result ? <div className="wb-note"><b>計算高度 {result.metrics.apogee_m?.toFixed(2)} m / 乾燥質量 {(project.analysis!.design.dry_mass_kg*1000).toFixed(2)} g</b><p>印刷部品 {project.analysis!.printed_mass_used_g.toFixed(2)} g（{project.analysis!.mass_basis === "measured" ? "実測入力" : "CADの一様固体推定"}）。{project.spec.requirement ? "保存した目標高度で判定" : "目標高度は未指定"}。</p>{result.failure_reasons.map(t => <p key={t}>{t}</p>)}<details><summary>解析の前提と限界</summary>{project.analysis!.limitations.map(t => <p key={t}>{t}</p>)}</details></div> : null}
       {project.analysis && mode !== "video" ? <div className="project-model"><ModelViewer design={project.analysis.design} tier="bottle" origin="attempt" reference={null} dimensions={null} notes={[]} active={active} statusLabel={`採用候補 v${project.version} の寸法付き包絡`}/></div> : null}
-      {mode === "assembly" || mode === "files" ? <div className="project-actions"><button className="btn" disabled={working || !outputReady || !!draft} onClick={() => void action("manual")}>この版の組立PDFを生成</button><button className="btn" disabled={working || !outputReady || !!draft} onClick={() => void action("print")}>この版のS5印刷データを生成</button></div> : null}
+      {mode === "assembly" || mode === "files" ? <div className="project-actions"><button className="btn" disabled={working || !outputReady || !!draft} onClick={() => void action("manual")}>この版の組立手順書と設計図を生成</button><button className="btn" disabled={working || !outputReady || !!draft} onClick={() => void action("print")}>この版のS5印刷データを生成</button></div> : null}
       {mode === "assembly" || mode === "files" ? <ProjectObservations key={`observations:${project.id}:${project.version}`} project={project} disabled={working || !!draft} save={action}/> : null}
       {mode === "video" ? <>
         <div className="project-actions"><label>仕上げ<select value={style} disabled={working} onChange={e => setStyle(e.target.value as typeof style)}><option value="photographic">写真調 1080p / 16秒・12秒</option><option value="engineering">簡易CG / 各4秒</option></select></label><label><input type="checkbox" checked={local} disabled={working} onChange={e => setLocal(e.target.checked)}/>Gemmaで演出を提案</label></div>
