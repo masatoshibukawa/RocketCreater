@@ -76,6 +76,27 @@ python -m scripts.benchmark_expanded_search output/nn-expanded-model1 output/exp
 時間刻み・空力適用範囲のスクリーニングを通過したが、30 mには届かなかった。
 合計354個のネイティブ解析ファイルをハッシュ照合した。
 
+### CAD棄却を追跡した結果
+
+棄却2件は、組付け姿勢のフィンSTLを同じ入力からバイト単位で再生成できた。
+別実装の三角形交差検査では、組付け姿勢は両方通過し、現在の印刷姿勢への変換後は
+両方で交差1組を再現した。穴・非多様体・縮退三角形の検出は0である。
+交差は根元の微小面に集中し、最小三角形面積は約2.3〜2.4×10⁻⁹ mm²だった。
+
+同じ組付けSTLに倍精度の剛体変換を適用した診断では交差0組で、最後に単精度へ
+丸めても0組だった。印刷姿勢を生成する演算の丸め方と微小面を調べる根拠になる。
+ただし、これは交差項目の診断であり、代替変換の製造適格性や完全な修正を証明しない。
+元の棄却を維持して比較候補は変更せず、解析結果や学習器の物理コード識別も更新していない。
+[再現条件・独立検査・算術診断](../scenarios/adaptive_design/expanded-cad-rejections.json)を保存した。
+
+```powershell
+# 例。Blenderで診断用メッシュを作成し、独立したSTL検査を実行する。
+blender --background --factory-startup --python scripts/probe_rejected_fin.py -- output/expanded-search1/wide-new-2/geometry/cad output/rejected-fin-wide-new-2
+python '3d model/prototypes/pet-rocket-coke-2l/verify_stl.py' --directory output/rejected-fin-wide-new-2 --out output/rejected-fin-wide-new-2/sat.json
+# core-old-2についても同様に実行し、2候補を照合する。
+python -m scripts.report_rejected_fins output/expanded-search1 output/rejected-fin-core-old-2 output/rejected-fin-wide-new-2 scenarios/adaptive_design/expanded-cad-rejections.json
+```
+
 ![予測器変更による探索曲線と新規CADでの飛行確認](../scenarios/adaptive_design/expanded-search.png)
 
 [全組の比較・誤差・候補と証拠ハッシュ](../scenarios/adaptive_design/expanded-search.json)。
