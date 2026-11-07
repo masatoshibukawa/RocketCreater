@@ -1,0 +1,37 @@
+id,title,publisher,language,url,accessed,method,checked_scope
+B01,Background Tasks,FastAPI,en,https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/background-tasks.md,2026-11-07,official_extracted_excerpt,Response lifecycle and heavy background computation
+B02,Deployments Concepts,FastAPI,en,https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/concepts.md,2026-11-07,official_extracted_excerpt,Restart; processes; memory; deployment concerns
+B03,CORS,FastAPI,en,https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/cors.md,2026-11-07,official_extracted_excerpt,Origin and browser credential behavior
+B04,Cloud Run pricing,Google Cloud,en,https://docs.cloud.google.com/run/pricing,2026-11-07,official_search_and_extracted_excerpt,Request-based free discount; account scope; region and additional costs
+B05,Build and deploy a Python service,Google Cloud,en,https://docs.cloud.google.com/run/docs/quickstarts/build-and-deploy/deploy-python-service,2026-11-07,official_extracted_excerpt,Billing activation and source build prerequisites
+B06,Configure request timeout for services,Google Cloud,en,https://docs.cloud.google.com/run/docs/configuring/request-timeout,2026-11-07,official_extracted_excerpt,Default/max service timeout and continued processing after 504
+B07,Set task timeout for jobs,Google Cloud,en,https://docs.cloud.google.com/run/docs/configuring/task-timeout,2026-11-07,official_extracted_excerpt,Task attempts; maximum duration versus interruption; GPU preview caveat
+B08,Workers platform limits,Cloudflare,en,https://developers.cloudflare.com/workers/platform/limits/,2026-11-07,official_extracted_excerpt,Free CPU; requests; memory and distinction from network wait
+B09,Vercel Hobby Plan,Vercel,en,https://vercel.com/docs/plans/hobby,2026-11-07,official_extracted_excerpt,Function resources; duration; noncommercial condition
+B10,Deploy for Free,Render,en,https://render.com/docs/free,2026-11-07,official_search_excerpt,Runtime quota; sleep; storage; billing distinctions
+B11,Pricing Plans,Railway,en,https://docs.railway.com/pricing/plans,2026-11-07,official_search_excerpt,Free credit and resource usage versus subscription
+B12,Supabase Pricing,Supabase,en,https://supabase.com/pricing,2026-11-07,official_extracted_excerpt,DB; Auth; storage; free projects; pauses and backups
+B13,Billing FAQ,Supabase,en,https://supabase.com/docs/guides/platform/billing-faq,2026-11-07,official_extracted_excerpt,Organizations; active-project rules; free overage restrictions
+B14,Manage Egress usage,Supabase,en,https://supabase.com/docs/guides/platform/manage-your-usage/egress,2026-11-07,official_extracted_excerpt,Unified uncached and cached quota; cycle and restrictions
+B15,Row Level Security,Supabase,en,https://supabase.com/docs/guides/database/postgres/row-level-security,2026-11-07,official_extracted_excerpt,RLS; grants; per-operation policy and allow/deny tests
+B16,Which API key do you use,Supabase,en,https://supabase.com/docs/guides/api/api-keys,2026-11-07,official_extracted_excerpt,Publishable and secret keys; roles; BYPASSRLS; legacy migration
+B17,Send emails with custom SMTP,Supabase,en,https://supabase.com/docs/guides/auth/auth-smtp,2026-11-07,official_search_and_extracted_excerpt,Default recipient restrictions and email rate; custom SMTP
+B18,Connect to your database,Supabase,en,https://supabase.com/docs/guides/database/connecting-to-postgres,2026-11-07,official_extracted_excerpt,Serverless transaction pooler versus persistent backend connections
+B19,Neon plans,Neon,en,https://neon.com/docs/introduction/plans,2026-11-07,official_extracted_excerpt,Current project compute/storage/transfer limits and plans
+B20,Neon Pricing Plans,Neon,en,https://neon.com/pricing,2026-11-07,official_extracted_excerpt,CU-hours; free storage/egress; scale-to-zero; overage behavior
+B21,Cloud Firestore usage and limits,Firebase,en,https://firebase.google.com/docs/firestore/quotas,2026-11-07,official_search_and_extracted_excerpt,Standard free document quotas; Pacific reset; backup and PITR exclusions
+B22,Firebase Authentication limits,Firebase,en,https://firebase.google.com/docs/auth/limits,2026-11-07,official_extracted_excerpt,Email link quota and SMS Blaze requirement
+B23,Cloud Storage default bucket and billing requirements,Firebase,en,https://firebase.google.com/docs/storage/faqs-storage-changes-announced-sept-2024,2026-11-07,official_extracted_excerpt,Blaze required with product-specific no-cost usage
+B24,Basic Security Rules,Firebase,en,https://firebase.google.com/docs/rules/basics,2026-11-07,official_extracted_excerpt,Test versus locked mode; owner-based access
+B25,D1 Pricing,Cloudflare,en,https://developers.cloudflare.com/d1/platform/pricing/,2026-11-07,official_extracted_excerpt,Free rows/read/write/storage; reset and quota behavior
+B26,D1 Limits,Cloudflare,en,https://developers.cloudflare.com/d1/platform/limits/,2026-11-07,official_extracted_excerpt,Per-database storage; account databases; Time Travel
+B27,Queues Pricing,Cloudflare,en,https://developers.cloudflare.com/queues/platform/pricing/,2026-11-07,official_extracted_excerpt,Free operations; write/read/delete; retention
+B28,Queues Limits,Cloudflare,en,https://developers.cloudflare.com/queues/platform/limits/,2026-11-07,official_extracted_excerpt,Message size; free retention; consumer limits
+B29,R2 Pricing,Cloudflare,en,https://developers.cloudflare.com/r2/pricing/,2026-11-07,official_extracted_excerpt,Standard no-cost storage/operations; egress and rounding
+B30,R2 Get started,Cloudflare,en,https://developers.cloudflare.com/r2/get-started/,2026-11-07,official_extracted_excerpt,Monthly billed usage with included free allowance
+B31,API1 Broken Object Level Authorization,OWASP,en,https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/,2026-11-07,official_extracted_excerpt,Authorization for each record access and tests
+B32,Storage Access Control,Supabase,en,https://supabase.com/docs/guides/storage/security/access-control,2026-11-07,official_extracted_excerpt,Storage object policies and separate operation permissions
+B33,Queues Delivery guarantees,Cloudflare,en,https://developers.cloudflare.com/queues/reference/delivery-guarantees/,2026-11-07,official_extracted_excerpt,At-least-once delivery and possible duplicates
+B34,Understand Cloud Firestore billing,Firebase,en,https://firebase.google.com/docs/firestore/pricing,2026-11-07,official_extracted_excerpt,Document/index reads and realtime listener charging
+B35,Manage Monthly Active Users usage,Supabase,en,https://supabase.com/docs/guides/platform/manage-your-usage/monthly-active-users,2026-11-07,official_extracted_excerpt,Organization MAU allowance and billing cycle
+B36,Manage Storage size usage,Supabase,en,https://supabase.com/docs/guides/platform/manage-your-usage/storage-size,2026-11-07,official_extracted_excerpt,Organization file storage quota; grace and restrictions
