@@ -73,6 +73,7 @@
 .aero-live-main .aero-live-chart svg { height: 72px; }
 @media (max-width: 900px) { .aero-live-main { grid-template-columns: minmax(0, 1fr); } }
 .flow-video { display: grid; gap: 6px; margin: 0; }
+.backscreen > .flow-video { max-width: 640px; margin: 0 auto 14px; }
 .flow-video img { display: block; width: 100%; height: auto; border-radius: 6px; background: #1d2127; }
 .flow-video figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; color: #aab6c5; font-size: 14px; }
 .flow-video-scale { display: inline-flex; align-items: center; gap: 6px; }
