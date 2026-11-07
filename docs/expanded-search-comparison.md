@@ -124,6 +124,19 @@ CFD・FEM・振動・安定性の接続確認は進行中であり、この表�
 python -m scripts.prepare_paired_cfd output/expanded-confirm-runtime.json output/esc-old1/cfd_coarse/assembly.json output/esc-new1/cfd_coarse/assembly.json output/expanded-confirm-domain-runtime.json
 ```
 
+新候補の正面風35 m/s・20セル／口径の計算が完了した時点の流れ場を示す。
+青い面は流れ方向速度が主流の80%となる面。断面と抗力履歴も保存した数値配列から描いた。
+「100%」はこの1ケースの完了率であり、全解析の完了や精度達成を意味しない。
+機体の重ね描きは簡略形状である。
+
+![新候補の細格子CFD・正面風35 m/s](../scenarios/adaptive_design/expanded-candidate-flow.png)
+
+[画像・計算配列・ソルバーの対応ハッシュ](../scenarios/adaptive_design/expanded-candidate-flow.json)。
+
+```powershell
+python -m scripts.render_search_flow output/esc-new2/cfd_fine/tunnel/v35-a000 output/expanded-flow-fine1 --preview-libraries path/to/installed/preview/libraries
+```
+
 ## 先行した構造診断（CFD荷重とは別）
 
 粗い格子16セル／口径・幅12.5口径の14条件が両候補で完了した時点で、

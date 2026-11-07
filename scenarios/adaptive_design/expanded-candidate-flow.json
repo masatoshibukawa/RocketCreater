@@ -1,0 +1,27 @@
+{
+  "case_files": {
+    "case.json": "229040bba2f2078216141027e71699df210cddedf190dfbbfa4c3eb2214ff455",
+    "volume.npz": "2d303d5660888618c1efc5ee23a2f0ceff12140c258cb3fcf38810aa7a150494",
+    "slice.npz": "f6577a244b7cfc91ae5cac53ecc60c7266071fe3042591d123c2ce91b1b63029",
+    "history.csv": "6ebbdd87597c261c125777cb235d36a08c483afc5853ba5c2cd4ed1e60da6c67"
+  },
+  "geometry_sha256": "62627151aea74fc5bf948e411bbec299dac28a122348dc693c2abdc2d8865486",
+  "solver_sources": {
+    "run_flow.py": "da9504c47feb373add9655e9ebf1aa1ffe5f73150fcdf67d5cbf568a9c0cd5be",
+    "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+    "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb"
+  },
+  "speed_mps": 35.0,
+  "cells_per_d": 20,
+  "width_d": 12.5,
+  "snapshot": "end of this single CFD case",
+  "render_sha256": "df856d099f58ed892f263a6052b7b225b826664b1623df07c3b45573dd00469d",
+  "renderer_sha256": "e203e421d1a47386a8ab66f0317dc0edb3337a4631ed9373720765386c8b13b9",
+  "physical_qualification": false,
+  "limitations": [
+    "Simplified body overlay",
+    "100% is case progress, not accuracy or acceptance"
+  ],
+  "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+  "candidate_label": "wide-new-0"
+}

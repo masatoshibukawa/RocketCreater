@@ -160,7 +160,8 @@ def plot(result, destination):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5), layout="constrained")
+    fig, panels = plt.subplots(2, 2, figsize=(13, 11), layout="constrained")
+    axes = panels.flat
     rows, colors = result["methods"], ("#9b7653", "#1679ad")
     x = np.arange(3)
     keys = ("screen", "cfd", "confirm")
@@ -193,27 +194,48 @@ def plot(result, destination):
         ylabel="Relative difference (%)",
         title="Numerical sensitivity; not real-flight error",
     )
+    for i, (row, color) in enumerate(zip(rows, colors, strict=True)):
+        values = [
+            row["beam"]["metrics"]["fin_deflection_ratio"],
+            row["structure"]["metrics"]["fem_deflection_ratio"],
+        ]
+        axes[2].bar(
+            np.arange(2) + (i - 0.5) * 0.35,
+            100 * np.asarray(values),
+            width=0.35,
+            color=color,
+            label=row["method"],
+        )
+    limit = rows[0]["precision"]["deflection_span_limit"] * 100
+    axes[2].axhline(limit, color="#ad5045", ls="--", lw=1, label=f"Limit {limit:g}%")
+    axes[2].set(
+        xticks=[0, 1],
+        xticklabels=("Linear beam", "Geometric nonlinear FEM"),
+        ylabel="Deflection / span (%)",
+        title="Concurrent CFD loads; assumed material and root",
+    )
+    axes[2].legend(frameon=False)
     names = sorted(set().union(*(r["checks"] for r in rows)))
     table = np.array([[bool(r["checks"][key]) for r in rows] for key in names])
     from matplotlib.colors import ListedColormap
 
-    axes[2].imshow(
+    axes[3].imshow(
         table, aspect="auto", cmap=ListedColormap(["#e6a094", "#83c1af"]), vmin=0, vmax=1
     )
-    axes[2].set(
+    axes[3].set(
         xticks=[0, 1],
         xticklabels=[r["method"] for r in rows],
         yticks=np.arange(len(names)),
         yticklabels=names,
         title="Unchanged confirmation gates",
     )
-    axes[2].tick_params(axis="y", labelsize=7)
+    axes[3].tick_params(axis="y", labelsize=8)
     for j in range(len(names)):
         for i in range(2):
-            axes[2].text(
-                i, j, "pass" if table[j, i] else "fail", ha="center", va="center", fontsize=6
+            axes[3].text(
+                i, j, "pass" if table[j, i] else "fail", ha="center", va="center", fontsize=8
             )
-    for ax in axes[:2]:
+    for ax in axes[:3]:
         ax.grid(axis="y", alpha=0.15)
         ax.set_axisbelow(True)
         ax.spines[["right", "top"]].set_visible(False)

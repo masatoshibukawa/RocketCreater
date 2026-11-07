@@ -156,3 +156,7 @@ python -m scripts.report_expanded_training output/nn-expanded1 output/nn-refined
 ```
 
 関連する35テストとRuffが成功。公開集計・図・文書リンクを確認済み。
+
+次の[同じ評価枠での探索比較](expanded-search-comparison.md)では、重みを固定したまま
+通常域・広域それぞれで新旧の候補選びを比較し、新規CADとCFD・構造・飛行へ進めている。
+予測誤差の改善と、要求を満たす機体の発見を別々に評価する。
