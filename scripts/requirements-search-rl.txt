@@ -1,0 +1,4 @@
+# Optional PPO/SAC experiments; inference/training is isolated from the application.
+stable-baselines3==2.7.0
+gymnasium==1.2.1
+torch==2.9.0
