@@ -1,0 +1,342 @@
+{
+  "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+  "workers": 2,
+  "elapsed_s": 123.0930000001099,
+  "charged_case_s": 240.15599999949336,
+  "budget_s": 1800.0,
+  "aliases": {
+    "component/D02/9/300/35": "provided",
+    "component/D01/22/300/35": "provided",
+    "component/new/22/300/35": "provided"
+  },
+  "requirement": {
+    "goal_kind": "altitude",
+    "target_altitude_m": 30.0,
+    "target_apogee_m": null,
+    "payload_mass_kg": 0.0,
+    "budget_jpy": null,
+    "recovery_required": false,
+    "tier_override": null,
+    "text": ""
+  },
+  "precision": {
+    "altitude_error_m": 1.5,
+    "attitude_error_deg": 1.0,
+    "aero_allocation": 0.5,
+    "grid_relative_limit": 0.05,
+    "temporal_relative_limit": 0.03,
+    "structure_relative_limit": 0.05,
+    "deflection_span_limit": 0.05,
+    "maximum_incidence_deg": 15.0,
+    "minimum_static_margin_cal": 1.0,
+    "require_cfd": true,
+    "require_aero_audit": true,
+    "require_fem": true,
+    "require_benchmarks": true
+  },
+  "ranked_ids": [
+    "provided",
+    "independent-light",
+    "reference/D40-2l",
+    "reference/D22-500ml",
+    "reference/D09-narrow5",
+    "reference/D40-1.5l",
+    "reference/D09-broad3",
+    "reference/D09-narrow3"
+  ],
+  "selected": "provided",
+  "selected_cfd_compatible": "provided",
+  "candidate_count": 8,
+  "common_operation": {
+    "water_fill_frac": 0.3,
+    "initial_gauge_pressure_pa": 400000.0,
+    "nozzle_diameter_m": 0.022,
+    "payload_mass_kg": 0.06,
+    "has_parachute": true,
+    "parachute_diameter_m": 0.7,
+    "axial_drag_coefficient": null
+  },
+  "catalog_hash": "86451e5e23b499ac9ed8e4d8efc45a53aecd21f9abd8ac3f7bc5fce40406d924",
+  "verified_files": 544,
+  "raw_reports": {
+    "parallel": "a50a04f90febf445bec0232ab4d6a7d444a13c0fa869991fa1a8fe8e501fa0cf",
+    "serial": "4a8e1969bfec24c58aaeb1d6e74404437375e099e7a59bfdc3cf02451b1b4eb7"
+  },
+  "comparison": {
+    "all_completed": true,
+    "max_absolute_metric_differences": {
+      "apogee_m": 0,
+      "incidence_deg": 0,
+      "static_margin_cal": 0,
+      "dry_mass_g": 0,
+      "cg_mm": 0,
+      "cp_mm": 0
+    },
+    "equivalence_tolerance": 1e-08,
+    "numerically_equivalent": true,
+    "same_ranking": true,
+    "wall_time_ratio_serial_over_parallel": 1.6038442478438597,
+    "scope": "One sequential comparison on the same PC; cache/order/background activity are uncontrolled. Not an accuracy gain or a general speed guarantee."
+  },
+  "serial_elapsed_s": 197.4220000000205,
+  "physical_qualification": false,
+  "acceptance_performed": false,
+  "results": [
+    {
+      "label": "provided",
+      "status": "completed",
+      "metrics": {
+        "apogee_m": 21.46450120269525,
+        "incidence_deg": 6.936029525932278,
+        "static_margin_cal": 0.37498662415048706,
+        "dry_mass_g": 285.830580089621,
+        "cg_mm": 288.34645492767095,
+        "cp_mm": 322.0952511012148
+      },
+      "temporal_pass": true,
+      "time_step_difference_m": 0.0008745071904741053,
+      "drag_plus_10pct_height_m": 21.21234285185359,
+      "aero_domain_pass": true,
+      "detailed_cfd_available": true,
+      "completed_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine"
+      ],
+      "elapsed_s": 43.21899999980815,
+      "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+      "physical_qualification": false,
+      "evidence": {
+        "directory": "s00",
+        "manifest_sha256": "5e903b77403c07637202c0b724c7cfe1afec923767269229ca279250d5359e7b"
+      },
+      "joint_violation": 0.909530002426338
+    },
+    {
+      "label": "reference/D09-narrow3",
+      "status": "completed",
+      "metrics": {
+        "apogee_m": 27.193222444108553,
+        "incidence_deg": 9.204326915607654,
+        "static_margin_cal": -0.5973596645306408,
+        "dry_mass_g": 211.99516254660594,
+        "cg_mm": 239.44795878611754,
+        "cp_mm": 184.4908696492986
+      },
+      "temporal_pass": true,
+      "time_step_difference_m": 0.00020299308267013316,
+      "drag_plus_10pct_height_m": 26.69289913131821,
+      "aero_domain_pass": true,
+      "detailed_cfd_available": false,
+      "completed_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine"
+      ],
+      "elapsed_s": 45.311999999918044,
+      "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+      "physical_qualification": false,
+      "evidence": {
+        "directory": "s01",
+        "manifest_sha256": "c0d1780e333fedc7f92a02b9ee8577dbc41b2ebce823ee5fb7478abe6b472866"
+      },
+      "joint_violation": 1.6909189163936889
+    },
+    {
+      "label": "reference/D09-broad3",
+      "status": "completed",
+      "metrics": {
+        "apogee_m": 26.770529779024685,
+        "incidence_deg": 9.35774983047251,
+        "static_margin_cal": -0.5665361687429532,
+        "dry_mass_g": 216.7496931067019,
+        "cg_mm": 240.02679756684876,
+        "cp_mm": 187.90547004249706
+      },
+      "temporal_pass": true,
+      "time_step_difference_m": 0.001374572442738753,
+      "drag_plus_10pct_height_m": 26.291803478421496,
+      "aero_domain_pass": true,
+      "detailed_cfd_available": false,
+      "completed_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine"
+      ],
+      "elapsed_s": 27.0,
+      "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+      "physical_qualification": false,
+      "evidence": {
+        "directory": "s02",
+        "manifest_sha256": "56e229ed1f3239a86132fd8c349f07f7ec9c638f0c7f364bcbb4916ba54a4641"
+      },
+      "joint_violation": 1.674185176108797
+    },
+    {
+      "label": "reference/D09-narrow5",
+      "status": "completed",
+      "metrics": {
+        "apogee_m": 26.19568933061038,
+        "incidence_deg": 8.029406561594426,
+        "static_margin_cal": -0.2334954813488827,
+        "dry_mass_g": 223.34566899575145,
+        "cg_mm": 241.18112157172612,
+        "cp_mm": 219.6995372876289
+      },
+      "temporal_pass": true,
+      "time_step_difference_m": 0.0005645640739224689,
+      "drag_plus_10pct_height_m": 25.74321589035578,
+      "aero_domain_pass": true,
+      "detailed_cfd_available": false,
+      "completed_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine"
+      ],
+      "elapsed_s": 26.765999999828637,
+      "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+      "physical_qualification": false,
+      "evidence": {
+        "directory": "s03",
+        "manifest_sha256": "d437c28dd9ee72b88b452dd0ef34b5c709bb6339a1ad0fc76f5a6f7af8c73b94"
+      },
+      "joint_violation": 1.3603058369952035
+    },
+    {
+      "label": "reference/D22-500ml",
+      "status": "completed",
+      "metrics": {
+        "apogee_m": 5.414798417862574,
+        "incidence_deg": 11.901768862501237,
+        "static_margin_cal": 0.46090096830651045,
+        "dry_mass_g": 247.6012668077518,
+        "cg_mm": 133.50111226970355,
+        "cp_mm": 165.7641800511593
+      },
+      "temporal_pass": true,
+      "time_step_difference_m": 2.537211329922684e-09,
+      "drag_plus_10pct_height_m": 5.402585567710427,
+      "aero_domain_pass": true,
+      "detailed_cfd_available": true,
+      "completed_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine"
+      ],
+      "elapsed_s": 20.046000000089407,
+      "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+      "physical_qualification": false,
+      "evidence": {
+        "directory": "s04",
+        "manifest_sha256": "aa59de5d18e1fee0404ec1790f3dd5a53a38da7901506716e1a3b25b7311aa0e"
+      },
+      "joint_violation": 1.3586057510980705
+    },
+    {
+      "label": "reference/D40-1.5l",
+      "status": "completed",
+      "metrics": {
+        "apogee_m": 20.966097275552116,
+        "incidence_deg": 8.943720215108959,
+        "static_margin_cal": -0.07641548562674245,
+        "dry_mass_g": 284.7927421686263,
+        "cg_mm": 234.7684743179944,
+        "cp_mm": 227.12692575532014
+      },
+      "temporal_pass": true,
+      "time_step_difference_m": 0.0006591400188256102,
+      "drag_plus_10pct_height_m": 20.675665934142017,
+      "aero_domain_pass": true,
+      "detailed_cfd_available": true,
+      "completed_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine"
+      ],
+      "elapsed_s": 24.625,
+      "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+      "physical_qualification": false,
+      "evidence": {
+        "directory": "s05",
+        "manifest_sha256": "47097f5b3e3775a4ba004bd9b8a346e6020fdb029883a575db0edfe7d9752694"
+      },
+      "joint_violation": 1.377545576441672
+    },
+    {
+      "label": "reference/D40-2l",
+      "status": "completed",
+      "metrics": {
+        "apogee_m": 28.90719638803824,
+        "incidence_deg": 5.294416928904515,
+        "static_margin_cal": -0.15846906955043494,
+        "dry_mass_g": 284.7927421686263,
+        "cg_mm": 276.0654417730326,
+        "cp_mm": 260.2185348179891
+      },
+      "temporal_pass": true,
+      "time_step_difference_m": 0.00016480966209897474,
+      "drag_plus_10pct_height_m": 28.385047996722573,
+      "aero_domain_pass": true,
+      "detailed_cfd_available": true,
+      "completed_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine"
+      ],
+      "elapsed_s": 27.156999999890104,
+      "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+      "physical_qualification": false,
+      "evidence": {
+        "directory": "s06",
+        "manifest_sha256": "1ccd299a7c1cedb8d776de1e43c58a7b786d58b15a56bc46c71350b7b9881357"
+      },
+      "joint_violation": 1.194895856615827
+    },
+    {
+      "label": "independent-light",
+      "status": "completed",
+      "metrics": {
+        "apogee_m": 25.406547690245475,
+        "incidence_deg": 6.611095347608443,
+        "static_margin_cal": 0.009931788103995764,
+        "dry_mass_g": 234.74537389102431,
+        "cg_mm": 284.8033941252511,
+        "cp_mm": 285.6972550546107
+      },
+      "temporal_pass": true,
+      "time_step_difference_m": 0.0013975348731527504,
+      "drag_plus_10pct_height_m": 25.010232390213226,
+      "aero_domain_pass": true,
+      "detailed_cfd_available": true,
+      "completed_methods": [
+        "geometry",
+        "thermal",
+        "propulsion",
+        "screen",
+        "refine"
+      ],
+      "elapsed_s": 26.030999999959022,
+      "source_hash": "d5f23f101fe76cd17e6a6e29b55bc3c7c0232326dd4428c96004e27682f39b32",
+      "physical_qualification": false,
+      "evidence": {
+        "directory": "s07",
+        "manifest_sha256": "1d8538d21a861025d7c86fc72929587c5c42eb89f6616a590976e840595417b5"
+      },
+      "joint_violation": 1.1431832888878217
+    }
+  ]
+}

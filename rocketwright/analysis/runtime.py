@@ -57,7 +57,7 @@ class Runtime(Strict):
         )
 
 
-def run(command, *, cwd, log, timeout):
+def run(command, *, cwd, log, timeout, env=None):
     """Timeout cancels this worker and its solver descendants, never unrelated processes."""
     if timeout <= 0:
         raise RuntimeError("No execution time remains")
@@ -65,6 +65,7 @@ def run(command, *, cwd, log, timeout):
         p = subprocess.Popen(
             command,
             cwd=cwd,
+            env=env,
             stdout=out,
             stderr=subprocess.STDOUT,
             start_new_session=os.name != "nt",

@@ -1,0 +1,205 @@
+{
+  "source_hash": "e260d11ddb6329d1e9c1f68d65a45c262f29587844961e4ef1e5a70a65ef39d1",
+  "campaigns": [
+    {
+      "project_id": "1eee09a258554c618fa6bec230c21ead",
+      "fill": 0.25,
+      "status": "unresolved",
+      "versions": 2,
+      "decisions": 17,
+      "shown_verified_corrections": [],
+      "requirement": {
+        "goal_kind": "altitude",
+        "target_altitude_m": 30.0,
+        "target_apogee_m": null,
+        "payload_mass_kg": 0.0,
+        "budget_jpy": null,
+        "recovery_required": false,
+        "tier_override": null,
+        "text": ""
+      },
+      "precision": {
+        "altitude_error_m": 1.5,
+        "attitude_error_deg": 1.0,
+        "aero_allocation": 0.5,
+        "grid_relative_limit": 0.05,
+        "temporal_relative_limit": 0.03,
+        "structure_relative_limit": 0.05,
+        "deflection_span_limit": 0.05,
+        "maximum_incidence_deg": 15.0,
+        "minimum_static_margin_cal": 1.0,
+        "require_cfd": false,
+        "require_aero_audit": true,
+        "require_fem": false,
+        "require_benchmarks": true
+      },
+      "limits": {
+        "pressure_kpa": [
+          200.0,
+          250.0,
+          300.0,
+          350.0,
+          400.0
+        ],
+        "fills": [
+          0.2,
+          0.25,
+          0.3,
+          0.35
+        ],
+        "nozzle_mm": [
+          7.0,
+          9.0,
+          11.0
+        ],
+        "allow_material_change": true,
+        "allow_geometry_change": true,
+        "max_versions": 2,
+        "max_actions": 60,
+        "budget_s": 900.0,
+        "memory_gib": 24.0,
+        "planner": "local_llm",
+        "fallback": "stop",
+        "planner_timeout_s": 90.0,
+        "skip_forced_choices": true,
+        "exploratory_redesign": true,
+        "use_experience": true,
+        "survey_candidates": 40,
+        "reserve_confirmation_fraction": 0.1
+      },
+      "spent_s": 404.92199999978766,
+      "outcomes": [
+        {
+          "signature": "geometry.fin_root_mm:-1",
+          "transition_id": "3b23e433201803d5c53128532d618283454f0e2f97f9c125c9f0594ca3cf0210",
+          "delta": {
+            "apogee_m": 0.8441424697409161,
+            "incidence_deg": -0.12685780781761125,
+            "dry_mass_g": -12.671910561047866,
+            "static_margin_cal": 0.08748710368559565
+          },
+          "residual_m": 0.030208416816609684,
+          "prediction_sha256": "6c5cd89632d52d7bbfd93b867851fb49401d1ced6f09fac7bda58279e8b6d914",
+          "before_sha256": "f0826eb598488c0137466da1efbb4e86803095b04e16ac12788bcc091e50512e",
+          "after_sha256": "ceea92c6f9d1ec55e35d34b2bbab66c7088a0b01402a590a02a60eb2769fa955",
+          "cost_s": 29.282000000122935
+        }
+      ]
+    },
+    {
+      "project_id": "8671a8889f9d44b48f761e5e26b73ff2",
+      "fill": 0.35,
+      "status": "unresolved",
+      "versions": 2,
+      "decisions": 17,
+      "shown_verified_corrections": [
+        {
+          "action": "redesign/fin_root_mm-0.85",
+          "selected": true,
+          "expected": {
+            "delta_height_m": 0.839310550270608,
+            "raw_delta_height_m": 0.8317584460664555,
+            "delta_mass_g": -12.223157044366985,
+            "delta_static_margin_cal": 0.08479634757299553,
+            "violation_reduction": 0.11277336591534892
+          },
+          "history": {
+            "samples": 1,
+            "residual_samples": 1,
+            "height_correction_m": 0.007552104204152421,
+            "mean_cost_s": 29.282000000122935
+          },
+          "forecast_cost_s": 29.28
+        }
+      ],
+      "requirement": {
+        "goal_kind": "altitude",
+        "target_altitude_m": 30.0,
+        "target_apogee_m": null,
+        "payload_mass_kg": 0.0,
+        "budget_jpy": null,
+        "recovery_required": false,
+        "tier_override": null,
+        "text": ""
+      },
+      "precision": {
+        "altitude_error_m": 1.5,
+        "attitude_error_deg": 1.0,
+        "aero_allocation": 0.5,
+        "grid_relative_limit": 0.05,
+        "temporal_relative_limit": 0.03,
+        "structure_relative_limit": 0.05,
+        "deflection_span_limit": 0.05,
+        "maximum_incidence_deg": 15.0,
+        "minimum_static_margin_cal": 1.0,
+        "require_cfd": false,
+        "require_aero_audit": true,
+        "require_fem": false,
+        "require_benchmarks": true
+      },
+      "limits": {
+        "pressure_kpa": [
+          200.0,
+          250.0,
+          300.0,
+          350.0,
+          400.0
+        ],
+        "fills": [
+          0.2,
+          0.25,
+          0.3,
+          0.35
+        ],
+        "nozzle_mm": [
+          7.0,
+          9.0,
+          11.0
+        ],
+        "allow_material_change": true,
+        "allow_geometry_change": true,
+        "max_versions": 2,
+        "max_actions": 60,
+        "budget_s": 900.0,
+        "memory_gib": 24.0,
+        "planner": "local_llm",
+        "fallback": "stop",
+        "planner_timeout_s": 90.0,
+        "skip_forced_choices": true,
+        "exploratory_redesign": true,
+        "use_experience": true,
+        "survey_candidates": 40,
+        "reserve_confirmation_fraction": 0.1
+      },
+      "spent_s": 397.4830000002403,
+      "outcomes": [
+        {
+          "signature": "geometry.fin_root_mm:-1",
+          "transition_id": "f4cf4b4ed40c103f19c5d5a4b84cb40247ed3a289c01d3a58d3c12bc79377f64",
+          "delta": {
+            "apogee_m": 0.860063169932392,
+            "incidence_deg": -0.13206921256057846,
+            "dry_mass_g": -12.671910561047866,
+            "static_margin_cal": 0.0853334546351347
+          },
+          "residual_m": 0.02830472386593641,
+          "prediction_sha256": "c9db534b99cf1e760b6acc020572d28a53179160f8d3b2962ff3cdb58ade1462",
+          "before_sha256": "1f9159856ce3fc79244a83ab869e3b9655f391dfc7387c58d77e9668fb1885b1",
+          "after_sha256": "bf97ba57af27d2e8ebb5122e4c348d389b96a12334076b67d94de046d86c1961",
+          "cost_s": 29.140000000130385
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "manifests": 32,
+    "referenced_files": 142
+  },
+  "feedback_integration_pass": true,
+  "automatic_weight_training": false,
+  "general_efficiency_improvement_proved": false,
+  "physical_qualification": false,
+  "scope": "Separate regression budget; not a continuation/reset of the multi-start campaign",
+  "raw_report_sha256": "b768f4dfd0c6518b2a3c7c55990aa7a134575fbf32760c27f24a73d55fb4f3dc",
+  "source_commit": "0431737a040bd26db91e04c572069c0f06d65ff6"
+}

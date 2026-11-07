@@ -1,0 +1,1015 @@
+{
+  "batches": [
+    {
+      "run": "joint1",
+      "source_hash": "89dd2b587f42e06aa8e256532649d4e0417c84ad1ac0381a994c24fa77a84ac7",
+      "report_sha256": "88ee98e58a3c94250eb3cc0a1e8d69d8d0f4afb5c55f8f41d8810daa2305463b",
+      "native_verified_files": 408,
+      "sampled": 1728,
+      "results": [
+        {
+          "label": "q1224",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 21.4242360251623,
+            "incidence_deg": 5.914284436898567,
+            "static_margin_cal": 0.9640969676323847,
+            "dry_mass_g": 245.64143614043343,
+            "cg_mm": 315.9324330216361,
+            "cp_mm": 402.7011601085507
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 21.143337317774574,
+          "manifest_sha256": "e5c9f06f5b8ffe8243f0098d5113339089d6cf8f287f7367d3772b10948ecd88"
+        },
+        {
+          "label": "q1472",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 17.13320375706415,
+            "incidence_deg": 7.119744298784142,
+            "static_margin_cal": 1.0359392940344878,
+            "dry_mass_g": 244.23782252353516,
+            "cg_mm": 291.8577319545282,
+            "cp_mm": 385.0922684176321
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 16.949901145506036,
+          "manifest_sha256": "139f2e938fa5bdc47e15075c02575da487b47ac5c10b359d815b9ac2e77b944c"
+        },
+        {
+          "label": "q1706",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 17.244194570445952,
+            "incidence_deg": 7.137127431478776,
+            "static_margin_cal": 0.9842154031500001,
+            "dry_mass_g": 247.2979660391336,
+            "cg_mm": 244.08219728658452,
+            "cp_mm": 342.50373760158453
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 17.02458856793054,
+          "manifest_sha256": "25d905ea4bcc1668a7ed65bb283d934494fcddcdd998b22be6308779e4db705e"
+        },
+        {
+          "label": "q1210",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 20.89805149253301,
+            "incidence_deg": 6.063340631546769,
+            "static_margin_cal": 0.9727261532979993,
+            "dry_mass_g": 252.85257349055718,
+            "cg_mm": 308.07794690518443,
+            "cp_mm": 395.62330070200437
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 20.635470839449773,
+          "manifest_sha256": "f928a772ec9de363ee5b8f38948e88e6b066623e057f0401d11be6f6b8cf13ae"
+        },
+        {
+          "label": "q1249",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 23.641206599495693,
+            "incidence_deg": 5.252210877748369,
+            "static_margin_cal": 0.895425331378202,
+            "dry_mass_g": 238.62358271423327,
+            "cg_mm": 323.9980581825247,
+            "cp_mm": 404.58633800656287
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 23.304162916186023,
+          "manifest_sha256": "defb2c3e364fb6b89256d26288ddcb3b2524a896b8fa1fec51fb88622bc7f529"
+        },
+        {
+          "label": "q1289",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 23.377083549680187,
+            "incidence_deg": 4.996271004037363,
+            "static_margin_cal": 0.8973638342575555,
+            "dry_mass_g": 240.47616606554863,
+            "cg_mm": 314.2410908947274,
+            "cp_mm": 395.0038359779074
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 23.047987259013798,
+          "manifest_sha256": "29537eafbcbf711a8d72d8bd27b20afe1d7f01c1519d2557bcd8d93fb1b82a49"
+        },
+        {
+          "label": "q1212",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 19.974009820792144,
+            "incidence_deg": 6.759123299709898,
+            "static_margin_cal": 0.9785360200091304,
+            "dry_mass_g": 262.81965095967837,
+            "cg_mm": 312.62653415460517,
+            "cp_mm": 400.6947759554269
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 19.742596784084625,
+          "manifest_sha256": "bcd618e8ae0966ec464bba410601a7a6cf89b6ead747119c2bed7be9168ffa37"
+        },
+        {
+          "label": "q1238",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 20.15044877419264,
+            "incidence_deg": 6.2901489732660165,
+            "static_margin_cal": 0.9597122119400195,
+            "dry_mass_g": 271.15728506374614,
+            "cg_mm": 319.3967085229067,
+            "cp_mm": 405.77080759750845
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 19.91881714413422,
+          "manifest_sha256": "f6789e817b66ff5fdbeb0728e6ff91ac9367ee6c92d4fdc7b06897a159c48603"
+        },
+        {
+          "label": "q1215",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 22.920243204427887,
+            "incidence_deg": 5.4101432785534325,
+            "static_margin_cal": 0.8829995539081665,
+            "dry_mass_g": 247.10639845312082,
+            "cg_mm": 321.95577080791304,
+            "cp_mm": 401.425730659648
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 22.60580087016553,
+          "manifest_sha256": "f47b5e562458de938878096884ad52211084e050523f1a1b977a2f9b338b79f7"
+        },
+        {
+          "label": "q1204",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 21.304826557361913,
+            "incidence_deg": 6.179670265470857,
+            "static_margin_cal": 0.9359435939235097,
+            "dry_mass_g": 263.6707010247114,
+            "cg_mm": 317.1797254601314,
+            "cp_mm": 401.4146489132473
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 21.042366747533517,
+          "manifest_sha256": "3cf4ce0c09de5245019b3b47f89dadb5df9c581dc5804bb14dd68dc665d451d2"
+        },
+        {
+          "label": "q1256",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 23.647288753118396,
+            "incidence_deg": 4.874366252859498,
+            "static_margin_cal": 0.8666941323950703,
+            "dry_mass_g": 235.09895422455185,
+            "cg_mm": 319.1561329966607,
+            "cp_mm": 397.158604912217
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 23.303888300868906,
+          "manifest_sha256": "a6c15567409ea0595d1bf5d97e19741e5a0279203971977779a76eaa6fa29850"
+        },
+        {
+          "label": "q1236",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 21.533636962305884,
+            "incidence_deg": 6.3782852498934295,
+            "static_margin_cal": 0.9084763252957708,
+            "dry_mass_g": 254.7571547056926,
+            "cg_mm": 315.3114332171198,
+            "cp_mm": 397.0743024937392
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 21.258975381109327,
+          "manifest_sha256": "fe8dd2ef46a2e4e46be3d353e48b0132a58f51ecf1cc8c0d50751376e68233fc"
+        }
+      ],
+      "acceptance_performed": false,
+      "physical_qualification": false
+    },
+    {
+      "run": "joint2",
+      "source_hash": "b5038813146eac76b28a338ec2f6af02086939d463c53daf8ba24d49ec817bda",
+      "report_sha256": "92e8f5571d17d929e8300af168b536768018d769dc635a14d5e2e33ce129441d",
+      "native_verified_files": 408,
+      "sampled": 7416,
+      "results": [
+        {
+          "label": "q2217",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.461235525814185,
+            "incidence_deg": 4.956029355295648,
+            "static_margin_cal": 1.017678295136784,
+            "dry_mass_g": 245.7466166272283,
+            "cg_mm": 413.7295436478033,
+            "cp_mm": 505.3205902101139
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 25.076850835225272,
+          "manifest_sha256": "ca939dc85f12a358860775dc7a7138501b61b7791e85d87bf251b2264c6f7cb8"
+        },
+        {
+          "label": "q4947",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 24.994469100750976,
+            "incidence_deg": 5.0493768609232825,
+            "static_margin_cal": 1.02272299204605,
+            "dry_mass_g": 247.43881436819424,
+            "cg_mm": 408.7199105677795,
+            "cp_mm": 500.764979851924
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.633153946012495,
+          "manifest_sha256": "46050158ffab679c8be73cfa56548a21cd0c1484de2365f2c2e8ffede3159042"
+        },
+        {
+          "label": "q6965",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 24.99372637884797,
+            "incidence_deg": 5.486329331286606,
+            "static_margin_cal": 1.0334658959930563,
+            "dry_mass_g": 261.6744736006406,
+            "cg_mm": 362.81418905646257,
+            "cp_mm": 466.1607786557682
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.588027654081856,
+          "manifest_sha256": "270523c57acbbba79323e7fc3b7658dcd42cf593d483761d3aa31558349a2eeb"
+        },
+        {
+          "label": "q2524",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.352088579295255,
+            "incidence_deg": 5.33948447597566,
+            "static_margin_cal": 0.9899109160905772,
+            "dry_mass_g": 245.90453583573026,
+            "cg_mm": 417.52397709239756,
+            "cp_mm": 506.6159595405495
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.973858934570806,
+          "manifest_sha256": "ef573c10281e3136d2cfe95d3d4359d62894f20515f44af0eb0c0804159b8bc0"
+        },
+        {
+          "label": "q2597",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.336714351094376,
+            "incidence_deg": 5.0913853904601964,
+            "static_margin_cal": 1.0010132394403848,
+            "dry_mass_g": 244.8098825502965,
+            "cg_mm": 400.4968434296611,
+            "cp_mm": 490.58803497929574
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.95698213062408,
+          "manifest_sha256": "47d9f382623e266a1e699979013b7d11ae82ce0eec61b7dde5ed348ec1ec7ad2"
+        },
+        {
+          "label": "q2580",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.224647407215773,
+            "incidence_deg": 4.563261152186051,
+            "static_margin_cal": 0.9896930838976055,
+            "dry_mass_g": 243.42299062987186,
+            "cg_mm": 398.65282353341786,
+            "cp_mm": 487.72520108420235
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.854930145453096,
+          "manifest_sha256": "4db360cf9b974fbb09853a1ca63d97a54997eb61fe3710a988ed886c0281ba4f"
+        },
+        {
+          "label": "q2464",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.166002683614426,
+            "incidence_deg": 4.872566941507116,
+            "static_margin_cal": 0.9885582061882259,
+            "dry_mass_g": 246.50472878684158,
+            "cg_mm": 397.12708048826926,
+            "cp_mm": 486.0973190452096
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.794168652181664,
+          "manifest_sha256": "deaae5c2e360393274fb0109a008150e49258afb14ec4b2049d34914757aa31c"
+        },
+        {
+          "label": "q2069",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.1135754767819,
+            "incidence_deg": 4.947335002532823,
+            "static_margin_cal": 1.0017615688075239,
+            "dry_mass_g": 249.34597570740672,
+            "cg_mm": 400.86279031545143,
+            "cp_mm": 491.0213315081286
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.747731767323554,
+          "manifest_sha256": "bab4a18ca4aace270aad8b2153d4ef7bb64285fb383b49280d1e28d6b8f91595"
+        },
+        {
+          "label": "q1051",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.0911004714457,
+            "incidence_deg": 4.842873646230179,
+            "static_margin_cal": 1.0164040197248692,
+            "dry_mass_g": 246.42154167255273,
+            "cg_mm": 397.76507626200765,
+            "cp_mm": 489.24143803724587
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.717365092584686,
+          "manifest_sha256": "9937e020472f48b2645b947cd3cd5afd3fc5300f5d794fdf17c90ecc3c7504d6"
+        },
+        {
+          "label": "q1558",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.084147755877208,
+            "incidence_deg": 5.0708560380552,
+            "static_margin_cal": 1.0274872052672965,
+            "dry_mass_g": 249.2474675556421,
+            "cg_mm": 416.04530462439016,
+            "cp_mm": 508.51915309844685
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.714105143014134,
+          "manifest_sha256": "56e1cc1cb2fedb46bb825b894757f0c6e3f2c29b1546259d639b7af42d34316d"
+        },
+        {
+          "label": "q2031",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.07486777176031,
+            "incidence_deg": 5.145977485867676,
+            "static_margin_cal": 1.0092234382553753,
+            "dry_mass_g": 249.34504027369616,
+            "cg_mm": 410.4337258351371,
+            "cp_mm": 501.2638352781209
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.70858394395634,
+          "manifest_sha256": "0f10a9eabe4128165bbce5baacf86b76af798255cc6b77bc5703b8b3ce8b8fee"
+        },
+        {
+          "label": "q2523",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 25.029377788131235,
+            "incidence_deg": 4.901305756628114,
+            "static_margin_cal": 1.0278593719204365,
+            "dry_mass_g": 244.88094551667697,
+            "cg_mm": 408.0049731419092,
+            "cp_mm": 500.5123166147485
+          },
+          "phase": null,
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 24.663514476142414,
+          "manifest_sha256": "92c7f35d1035f36d6b41cf881650520e0e404675f765edf2cadb33bd3d1fd4a7"
+        }
+      ],
+      "acceptance_performed": false,
+      "physical_qualification": false
+    },
+    {
+      "run": "joint3",
+      "source_hash": "f4a0ba731b3854ac7ec277bb2554840166691774baf1c821467ffd560ae47a8b",
+      "report_sha256": "367b0a82f42d232fe197d6d27eaf74089b6386d2f06cc1043f138eaec3344d66",
+      "native_verified_files": 408,
+      "sampled": 5688,
+      "results": [
+        {
+          "label": "q2043",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 30.038690112697097,
+            "incidence_deg": 5.9674330814460665,
+            "static_margin_cal": -0.5888058930583646,
+            "dry_mass_g": 192.33182446509147,
+            "cg_mm": 286.1943716418547,
+            "cp_mm": 233.20184126660186
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.5852748189226505,
+            "exit_margin_cal": 1.1340372748832461,
+            "free_ascent_min_margin_cal": 1.1340372748832461,
+            "free_ascent_samples": 244,
+            "rail_exit_s": 0.0979690535859094,
+            "rail_exit_speed_mps": 26.800277412434586,
+            "maximum_guide_force_n": 0.9503455959746246,
+            "maximum_guide_moment_nm": 0.09721946919588555,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 29.42681306352933,
+          "manifest_sha256": "3b9b70165fd9779be135f8e37c117f1116c647a7689746a77834c611459cab75"
+        },
+        {
+          "label": "q3797",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 30.44453697041168,
+            "incidence_deg": 5.385013648291879,
+            "static_margin_cal": -0.5832691760133548,
+            "dry_mass_g": 186.94693859943135,
+            "cg_mm": 280.30715259567256,
+            "cp_mm": 227.81292675447062
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.5806825775837774,
+            "exit_margin_cal": 1.4108664750676385,
+            "free_ascent_min_margin_cal": 1.4108664750676385,
+            "free_ascent_samples": 253,
+            "rail_exit_s": 0.09907037000537348,
+            "rail_exit_speed_mps": 27.097060586215505,
+            "maximum_guide_force_n": 0.8750266383313737,
+            "maximum_guide_moment_nm": 0.11137735540844772,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 29.808679511385176,
+          "manifest_sha256": "bed04a297586048cde54ac8586e03bfe10662708573c14e43e8c9ce63e53f077"
+        },
+        {
+          "label": "q5475",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.51605818233411,
+            "incidence_deg": 3.364295848297649,
+            "static_margin_cal": -0.4350460577003926,
+            "dry_mass_g": 195.44412156692704,
+            "cg_mm": 247.80065568266073,
+            "cp_mm": 204.29604991262147
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.429493497750843,
+            "exit_margin_cal": 1.1811810856363198,
+            "free_ascent_min_margin_cal": 1.1811810856363198,
+            "free_ascent_samples": 278,
+            "rail_exit_s": 0.107830304817386,
+            "rail_exit_speed_mps": 29.451459653427943,
+            "maximum_guide_force_n": 1.2569428913107619,
+            "maximum_guide_moment_nm": 0.14878809486942923,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.51610317652063,
+          "manifest_sha256": "379cb8376f60c7072f5cb7c0c6a011f4767eb4eff51677c958c9b84dff588160"
+        },
+        {
+          "label": "q5184",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.12055060383759,
+            "incidence_deg": 3.6666870463504138,
+            "static_margin_cal": -0.6436822920088346,
+            "dry_mass_g": 199.69108898129164,
+            "cg_mm": 270.59800750307863,
+            "cp_mm": 206.22977830219517
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.6383878928422312,
+            "exit_margin_cal": 1.003229841301487,
+            "free_ascent_min_margin_cal": 1.003229841301487,
+            "free_ascent_samples": 282,
+            "rail_exit_s": 0.11892216355983351,
+            "rail_exit_speed_mps": 27.33986315367046,
+            "maximum_guide_force_n": 1.0735562072784783,
+            "maximum_guide_moment_nm": 0.10798831687092834,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.15840793561742,
+          "manifest_sha256": "df4f39bae6f8afaa781899ec5cfe90592bf8c0836900ca8f106fba06d74f6d3e"
+        },
+        {
+          "label": "q5527",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.30479220693884,
+            "incidence_deg": 3.314472715469046,
+            "static_margin_cal": -0.48713505182880484,
+            "dry_mass_g": 197.7103423173179,
+            "cg_mm": 268.7974617321405,
+            "cp_mm": 220.08395654926002
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.48132624748016467,
+            "exit_margin_cal": 1.0489252542330023,
+            "free_ascent_min_margin_cal": 1.0489252542330023,
+            "free_ascent_samples": 280,
+            "rail_exit_s": 0.10483005157023925,
+            "rail_exit_speed_mps": 29.792911041691532,
+            "maximum_guide_force_n": 1.2426295811012444,
+            "maximum_guide_moment_nm": 0.13062032414121996,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.320013146932254,
+          "manifest_sha256": "d87786554c47c0e091a2ccd3698408dabc5db72717ef0ca9db4e3b8d42cb84b3"
+        },
+        {
+          "label": "q5654",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.240596633765406,
+            "incidence_deg": 3.5707165806820997,
+            "static_margin_cal": -0.43429602094380926,
+            "dry_mass_g": 197.50717303215538,
+            "cg_mm": 261.4822127711489,
+            "cp_mm": 218.05261067676798
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.4287676887499062,
+            "exit_margin_cal": 1.173657086676782,
+            "free_ascent_min_margin_cal": 1.173657086676782,
+            "free_ascent_samples": 280,
+            "rail_exit_s": 0.11571639463212068,
+            "rail_exit_speed_mps": 27.99112696233805,
+            "maximum_guide_force_n": 1.231694232122345,
+            "maximum_guide_moment_nm": 0.14489770955943396,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.265696681279096,
+          "manifest_sha256": "0d42f4754ab5379a73c532490906ed996b461dcd6bb77f9ee55112d49c135146"
+        },
+        {
+          "label": "q5656",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.24175947862623,
+            "incidence_deg": 3.5452589314869103,
+            "static_margin_cal": -0.4023792509577618,
+            "dry_mass_g": 197.86489235462307,
+            "cg_mm": 249.47519592714556,
+            "cp_mm": 209.2372708313694
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.39653768307032267,
+            "exit_margin_cal": 1.1120670900336607,
+            "free_ascent_min_margin_cal": 1.1120670900336607,
+            "free_ascent_samples": 277,
+            "rail_exit_s": 0.11476362075027598,
+            "rail_exit_speed_mps": 28.161018066366562,
+            "maximum_guide_force_n": 1.2902243581558144,
+            "maximum_guide_moment_nm": 0.14380503138057613,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.26632280085978,
+          "manifest_sha256": "50531a4ccb1f6b6c98d604394b78cf65759cc98c53b0ce9ae9f0e59f33d92497"
+        },
+        {
+          "label": "q5528",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.12296299502618,
+            "incidence_deg": 3.4642705631896873,
+            "static_margin_cal": -0.3872300766971301,
+            "dry_mass_g": 200.12451267841402,
+            "cg_mm": 253.36263157991496,
+            "cp_mm": 214.63962391020195
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.3817128212702789,
+            "exit_margin_cal": 1.1996318438358378,
+            "free_ascent_min_margin_cal": 1.1996318438358378,
+            "free_ascent_samples": 277,
+            "rail_exit_s": 0.11134139752638014,
+            "rail_exit_speed_mps": 28.712703168835922,
+            "maximum_guide_force_n": 1.2770286588343152,
+            "maximum_guide_moment_nm": 0.1535371350759462,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.15671595778175,
+          "manifest_sha256": "d4f08ec8c1b9c09c566e8b334255a27d10623ffef99ce0ad4d552c7ab12ce720"
+        },
+        {
+          "label": "q5664",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.069892818468865,
+            "incidence_deg": 3.644509525382835,
+            "static_margin_cal": -0.36003717496178295,
+            "dry_mass_g": 200.74448727185603,
+            "cg_mm": 259.2638262530294,
+            "cp_mm": 223.26010875685108
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.35464148869070067,
+            "exit_margin_cal": 1.2401887725937748,
+            "free_ascent_min_margin_cal": 1.2401887725937748,
+            "free_ascent_samples": 278,
+            "rail_exit_s": 0.11799261703479975,
+            "rail_exit_speed_mps": 27.487401655963094,
+            "maximum_guide_force_n": 1.2573345338430426,
+            "maximum_guide_moment_nm": 0.15630288280337354,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.11409505541002,
+          "manifest_sha256": "cadc3a66a59ebd8201e925dc32a23612a96b2c30c1ae8c39b0b0673e02808386"
+        },
+        {
+          "label": "q5613",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.104565763564345,
+            "incidence_deg": 3.3372597537479973,
+            "static_margin_cal": -0.4047395941773854,
+            "dry_mass_g": 201.44629325903787,
+            "cg_mm": 265.5823713777867,
+            "cp_mm": 225.1084119600482
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.39881992435897656,
+            "exit_margin_cal": 1.0416384475064797,
+            "free_ascent_min_margin_cal": 1.0416384475064797,
+            "free_ascent_samples": 280,
+            "rail_exit_s": 0.10565036399633262,
+            "rail_exit_speed_mps": 29.61814560807442,
+            "maximum_guide_force_n": 1.3598182905042577,
+            "maximum_guide_moment_nm": 0.14193193707807536,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.138959946198014,
+          "manifest_sha256": "402012d2600c0f93c3676c88e4db8a785d250c919ca3c255e0929dce2a7b9a2a"
+        },
+        {
+          "label": "q5179",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 35.77238448568045,
+            "incidence_deg": 3.583269414460872,
+            "static_margin_cal": -0.6176711754347579,
+            "dry_mass_g": 201.18680854061978,
+            "cg_mm": 269.4500046096594,
+            "cp_mm": 207.6828870661836
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.6124663245208806,
+            "exit_margin_cal": 1.0509954093066305,
+            "free_ascent_min_margin_cal": 1.0509954093066305,
+            "free_ascent_samples": 274,
+            "rail_exit_s": 0.11548093505015689,
+            "rail_exit_speed_mps": 27.878543456566042,
+            "maximum_guide_force_n": 1.116563585204111,
+            "maximum_guide_moment_nm": 0.11764701092473707,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 34.82813461312492,
+          "manifest_sha256": "cbb35edcdbc45228afba66cdd42d21b890b9e04ec0a63cad0269ca981658402d"
+        },
+        {
+          "label": "q5424",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 35.779395272710204,
+            "incidence_deg": 3.410878991062778,
+            "static_margin_cal": -0.4748776459436692,
+            "dry_mass_g": 202.82541541070898,
+            "cg_mm": 267.6760015074015,
+            "cp_mm": 220.1882369130346
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.4694964158227716,
+            "exit_margin_cal": 1.1423444478650915,
+            "free_ascent_min_margin_cal": 1.1423444478650915,
+            "free_ascent_samples": 275,
+            "rail_exit_s": 0.10803786341876706,
+            "rail_exit_speed_mps": 29.055808593192886,
+            "maximum_guide_force_n": 1.2231810308578752,
+            "maximum_guide_moment_nm": 0.14004310768965458,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 34.83498452570248,
+          "manifest_sha256": "c1af4244fe4384951350a73348bdc53f49718908c931f40c4565fc00d2aa3f16"
+        }
+      ],
+      "acceptance_performed": false,
+      "physical_qualification": false
+    },
+    {
+      "run": "fixed2",
+      "source_hash": "25e417a5da0cf7614924a5e41df621521ddc5e7af2e416a449811b42f4815b76",
+      "report_sha256": "3ed53510e88b4f76e59fe08cc31ae88b84d93d1c0b701081952d866151ef4638",
+      "native_verified_files": 136,
+      "sampled": null,
+      "results": [
+        {
+          "label": "span-54.612",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.518382119343805,
+            "incidence_deg": 3.360695189710851,
+            "static_margin_cal": -0.5145941221391745,
+            "dry_mass_g": 195.44412156692707,
+            "cg_mm": 255.75546212653893,
+            "cp_mm": 204.29604991262147
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.5083566329785821,
+            "exit_margin_cal": 0.8996988339978199,
+            "free_ascent_min_margin_cal": 0.8996988339978199,
+            "free_ascent_samples": 265,
+            "rail_exit_s": 0.10783027017604993,
+            "rail_exit_speed_mps": 29.451571662548428,
+            "maximum_guide_force_n": 1.2569476115243545,
+            "maximum_guide_moment_nm": 0.11333146031153075,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.519478552618786,
+          "manifest_sha256": "23f6ac6d7d1cff8513d2a0b303aa646654fd9d906c0e5d0fb82f8a8dbff7ff2b"
+        },
+        {
+          "label": "span-65",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.2965905224076,
+            "incidence_deg": 3.3785369208725395,
+            "static_margin_cal": -0.3489726224975786,
+            "dry_mass_g": 198.1586510779579,
+            "cg_mm": 256.00260248829204,
+            "cp_mm": 221.10534023853418
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.34273197017993584,
+            "exit_margin_cal": 1.0447730093737349,
+            "free_ascent_min_margin_cal": 1.0447730093737349,
+            "free_ascent_samples": 268,
+            "rail_exit_s": 0.1080694780323162,
+            "rail_exit_speed_mps": 29.31624328172444,
+            "maximum_guide_force_n": 1.4244645561233833,
+            "maximum_guide_moment_nm": 0.14912016273501372,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.315936709584726,
+          "manifest_sha256": "a7ac9bc0dad2a566a7d965010e92e58db77ff565760b4dc31cf74afe5fde31af"
+        },
+        {
+          "label": "span-70",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.190381118095665,
+            "incidence_deg": 3.3868897584928357,
+            "static_margin_cal": -0.2836888877399514,
+            "dry_mass_g": 199.46525491001188,
+            "cg_mm": 256.1210465583184,
+            "cp_mm": 227.7521577843233
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.2774467634434097,
+            "exit_margin_cal": 1.100324237885472,
+            "free_ascent_min_margin_cal": 1.100324237885472,
+            "free_ascent_samples": 272,
+            "rail_exit_s": 0.10818456321896962,
+            "rail_exit_speed_mps": 29.25163711976487,
+            "maximum_guide_force_n": 1.5054485478706967,
+            "maximum_guide_moment_nm": 0.1659655363252723,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.21832533088917,
+          "manifest_sha256": "7ecd393113c6d8560c2adecd2d46a8481f9a3127acbdbf5aeba7753b84850bd6"
+        },
+        {
+          "label": "span-75",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 36.08216152786652,
+            "incidence_deg": 3.395288476771093,
+            "static_margin_cal": -0.2258791552006011,
+            "dry_mass_g": 200.77187594709957,
+            "cg_mm": 256.239160212009,
+            "cp_mm": 233.65124469194888
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.219635591418178,
+            "exit_margin_cal": 1.1485035337334872,
+            "free_ascent_min_margin_cal": 1.1485035337334872,
+            "free_ascent_samples": 273,
+            "rail_exit_s": 0.10830009994330025,
+            "rail_exit_speed_mps": 29.186171663832933,
+            "maximum_guide_force_n": 1.5863150555780987,
+            "maximum_guide_moment_nm": 0.18252569217689596,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.11992590174465,
+          "manifest_sha256": "42fce94768566efc8c87f8f81719efc36e6da921d24ee7a835181a99554ff037"
+        }
+      ],
+      "acceptance_performed": false,
+      "physical_qualification": false
+    },
+    {
+      "run": "fixed3",
+      "source_hash": "25e417a5da0cf7614924a5e41df621521ddc5e7af2e416a449811b42f4815b76",
+      "report_sha256": "b65d0ccc8bf1d5a62b2456e3423b48fc25f27c0fbf0a5158541ebd8556c2f401",
+      "native_verified_files": 68,
+      "sampled": null,
+      "results": [
+        {
+          "label": "span-80",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 35.97657318400148,
+            "incidence_deg": 3.4034208939253143,
+            "static_margin_cal": -0.1744322207880748,
+            "dry_mass_g": 202.07851546329726,
+            "cg_mm": 256.3569449447103,
+            "cp_mm": 238.9137228659028
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.16818724975821708,
+            "exit_margin_cal": 1.1904199063758514,
+            "free_ascent_min_margin_cal": 1.1904199063758514,
+            "free_ascent_samples": 273,
+            "rail_exit_s": 0.10841503841126411,
+            "rail_exit_speed_mps": 29.122710242733557,
+            "maximum_guide_force_n": 1.66707656048791,
+            "maximum_guide_moment_nm": 0.19880668604519103,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 35.021190034325684,
+          "manifest_sha256": "52050632328edf9b784787aed48cc9538b97df42e51b530726a20dbbf250ad4f"
+        },
+        {
+          "label": "span-90",
+          "status": "completed",
+          "metrics": {
+            "apogee_m": 35.76247139301806,
+            "incidence_deg": 3.4198645682612776,
+            "static_margin_cal": -0.08709029585248601,
+            "dry_mass_g": 204.69180939862582,
+            "cg_mm": 256.59152949913624,
+            "cp_mm": 247.88249991388764
+          },
+          "phase": {
+            "initial_with_gas_margin_cal": -0.0808426060820791,
+            "exit_margin_cal": 1.2589965580087716,
+            "free_ascent_min_margin_cal": 1.2589965580087716,
+            "free_ascent_samples": 276,
+            "rail_exit_s": 0.10864585003338019,
+            "rail_exit_speed_mps": 28.993977467501487,
+            "maximum_guide_force_n": 1.8274818501755052,
+            "maximum_guide_moment_nm": 0.23046492308367364,
+            "guide_capacity_verified": false,
+            "physical_qualification": false,
+            "acceptance_changed": false,
+            "scope": "sampled analytic CP/CG; ideal continuous two-axis guide, no friction or clearance"
+          },
+          "temporal_pass": true,
+          "aero_domain_pass": true,
+          "drag_plus_10pct_height_m": 34.82465439714258,
+          "manifest_sha256": "3ee809af0ad3fd9ad04043183bb951dd0d4ea0502b157d25edbffed47b371744"
+        }
+      ],
+      "acceptance_performed": false,
+      "physical_qualification": false
+    }
+  ],
+  "mission": {
+    "payload_g": 60,
+    "altitude_m": 30,
+    "initial_gauge_kpa": 400
+  },
+  "scope": "Analytic-aero screening; phase diagnostics are not an alternate acceptance",
+  "original_initial_static_margin_cal": 1,
+  "mass_placement_note": "joint1–3 lump all other mass; fixed2–3 separate a nominal 48g shell"
+}

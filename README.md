@@ -13,6 +13,11 @@
 
 ペットボトルロケットの設計変数・解析手法・評価指標は、[ブラウザで読める設計ガイド](UI/bottle-pool/README.md)にまとめています。
 
+階層型探索の実行結果は、[候補プールを広げた探索](docs/joint-design-search.md)、
+[学習予測器の精度・速度比較](docs/validated-predictor.md)、
+[CFD・構造・飛行の確認結果](docs/joint-candidate-confirmation.md)で追えます。
+確認済みの数値条件と未達項目を分けて記録しており、現時点で実機安全性を認定した設計はありません。
+
 1.5 L ペットボトル機の[試作手順](scenarios/bottle_prototype.md)では、手持ちゼロからの購入表、等倍フィン型紙、3Dプリント用ホルダーと治具を生成できます。
 
 ## 画面

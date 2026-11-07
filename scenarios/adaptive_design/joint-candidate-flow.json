@@ -1,0 +1,10 @@
+{
+  "source_hash": "25e417a5da0cf7614924a5e41df621521ddc5e7af2e416a449811b42f4815b76",
+  "case_files": {
+    "case.json": "7a83bab2fee5f208059b9acee134fb591a338744bfa56204fa0aac29dc5cc958",
+    "volume.npz": "aae1deaef5eb9052dd0739a63be139021e0cc51bf207a8bfdd643561a6d82839",
+    "slice.npz": "1482fdf6d827d160026b57dc6ad8f136180c9eece574b7d6f9e45599b4ec4401",
+    "history.csv": "19a01096e3f8b0b49e00346048d824266054ce73c8dd1530cce29a99882abe87"
+  },
+  "physical_qualification": false
+}

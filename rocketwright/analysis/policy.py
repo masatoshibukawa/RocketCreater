@@ -110,7 +110,7 @@ def proposals(spec, limits, unmet, visited):
                 "geometry",
                 "fin_thickness_mm",
                 g.fin_thickness_mm * 0.85,
-                "Operating scenarios exhausted; compare reduced printed mass and stiffness",
+                "Compare reduced printed mass and stiffness alongside operating scenarios",
                 70,
             )
             # Competing operating and part choices remain available together.

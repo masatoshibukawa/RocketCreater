@@ -246,10 +246,14 @@ def test_existing_search_starts_import_without_old_mass_or_pass_claims():
     s.measured_printed_mass_g = 20
     choices = seeds.options()
     assert {v["label"] for v in choices.values()}
-    assert len(choices) == 3
+    assert len(choices) == 9
     for key in choices:
         imported = seeds.import_seed(key, s)
-        assert imported.geometry == s.geometry
+        if "geometry" not in choices[key]:
+            assert imported.geometry == s.geometry
+        else:
+            assert imported.geometry.model_dump() == choices[key]["geometry"]
+        assert imported.design.geometry.model_dump() == imported.geometry.model_dump()
         assert imported.other_dry_mass_g == s.other_dry_mass_g
         assert imported.requirement == s.requirement
         assert imported.measured_printed_mass_g is None

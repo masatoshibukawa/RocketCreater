@@ -1,0 +1,172 @@
+{
+  "cad_source_sha256": "2b97d958705681e0710c0dc1a808ca7a036c41d821179e4853758816f67bd6b1",
+  "failed_parameters_sha256": "1d13e89f0a1c6157976eb1a581550954f330a4e2242730c626565b3a51c47361",
+  "before": {
+    "vertices": 455,
+    "triangles": 914,
+    "connected_components": 1,
+    "non_manifold_edges": 0,
+    "boundary_edges": 0,
+    "zero_area_triangles": 6,
+    "nonadjacent_intersection_pairs": 0,
+    "volume_mm3": 8015.4246504058165,
+    "solid_mass_g_at_assumed_density": 9.939126566503212,
+    "centroid_mm": [
+      25.169254302978516,
+      10.396476745605469,
+      27.56905174255371
+    ],
+    "bounds_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        82.92398071289062,
+        20.792951583862305,
+        65.02590942382812
+      ]
+    ],
+    "dimensions_mm": [
+      82.92398071289062,
+      20.792951583862305,
+      65.02590942382812
+    ]
+  },
+  "after": {
+    "fin": {
+      "vertices": 438,
+      "triangles": 880,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 8015.424957760588,
+      "solid_mass_g_at_assumed_density": 9.93912694762313,
+      "centroid_mm": [
+        25.16925621032715,
+        10.396478652954102,
+        27.56905174255371
+      ],
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          82.92398071289062,
+          20.792951583862305,
+          65.02590942382812
+        ]
+      ],
+      "dimensions_mm": [
+        82.92398071289062,
+        20.792951583862305,
+        65.02590942382812
+      ],
+      "preview_visible_meshes": [
+        "FinPrint"
+      ]
+    },
+    "nose": {
+      "vertices": 8800,
+      "triangles": 17600,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 21791.91436122756,
+      "solid_mass_g_at_assumed_density": 27.021973807922173,
+      "centroid_mm": [
+        8.794564223535417e-07,
+        -4.142932994000148e-06,
+        33.123069763183594
+      ],
+      "bounds_mm": [
+        [
+          -46.599998474121094,
+          -46.599998474121094,
+          0.0
+        ],
+        [
+          46.599998474121094,
+          46.599998474121094,
+          80.0
+        ]
+      ],
+      "dimensions_mm": [
+        93.19999694824219,
+        93.19999694824219,
+        80.0
+      ],
+      "preview_visible_meshes": [
+        "Nose"
+      ]
+    },
+    "fit-ring": {
+      "vertices": 640,
+      "triangles": 1280,
+      "connected_components": 1,
+      "non_manifold_edges": 0,
+      "boundary_edges": 0,
+      "zero_area_triangles": 0,
+      "nonadjacent_intersection_pairs": 0,
+      "volume_mm3": 8358.005230785368,
+      "solid_mass_g_at_assumed_density": 10.363926486173856,
+      "centroid_mm": [
+        9.931534805218689e-06,
+        -7.8375142038567e-06,
+        8.999905586242676
+      ],
+      "bounds_mm": [
+        [
+          -47.0,
+          -47.0,
+          0.0
+        ],
+        [
+          47.0,
+          47.0,
+          18.0
+        ]
+      ],
+      "dimensions_mm": [
+        94.0,
+        94.0,
+        18.0
+      ],
+      "preview_visible_meshes": [
+        "FitRing"
+      ]
+    }
+  },
+  "volume_change_mm3": 0.0003073547713938751,
+  "maximum_weld_tolerance_mm": 0.0005,
+  "topology_thresholds_relaxed": false,
+  "selected_geometry_comparison": [
+    {
+      "part": "fin-mm.stl",
+      "before_sha256": "fef59571eac78af6eea6ae2973067e888e77355b8187b6f8ce1f3252d29eb45c",
+      "after_sha256": "fef59571eac78af6eea6ae2973067e888e77355b8187b6f8ce1f3252d29eb45c",
+      "byte_identical": true
+    },
+    {
+      "part": "nose-mm.stl",
+      "before_sha256": "08711e8d23afcb2e1ce524af933b003bfd1fdaacea760b61db563d600cbc76c9",
+      "after_sha256": "08711e8d23afcb2e1ce524af933b003bfd1fdaacea760b61db563d600cbc76c9",
+      "byte_identical": true
+    },
+    {
+      "part": "fit-ring-mm.stl",
+      "before_sha256": "9cd210e1b222d0b1b30435dc62edbbdcf14e12c9e04d29559f3a7b345f459f8a",
+      "after_sha256": "9cd210e1b222d0b1b30435dc62edbbdcf14e12c9e04d29559f3a7b345f459f8a",
+      "byte_identical": true
+    }
+  ],
+  "physical_qualification": false,
+  "scope": "Numerical CAD geometry regression, not manufacturing or strength qualification"
+}

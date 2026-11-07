@@ -1,0 +1,69 @@
+{
+  "pairs": [
+    {
+      "transition_id": "dd58ac34bb7c4c50a891157b513d3374f42a88be6fd8a7876440695487703994",
+      "order": [
+        "old",
+        "fast"
+      ],
+      "old_s": 2.767004800029099,
+      "fast_s": 1.3511367999017239,
+      "exact_outputs_equal": true
+    },
+    {
+      "transition_id": "d4da35cec624a8cc9e377fcd3573aa075384ed06ecfb2c946e6203b4ac4b5f89",
+      "order": [
+        "fast",
+        "old"
+      ],
+      "fast_s": 1.409594900207594,
+      "old_s": 2.7213203001301736,
+      "exact_outputs_equal": true
+    },
+    {
+      "transition_id": "014e358e47e7f0de23cbfb22c79f7fa079c2440119b92b88c23c11a3fc6daa17",
+      "order": [
+        "old",
+        "fast"
+      ],
+      "old_s": 2.710288899950683,
+      "fast_s": 1.3507194998674095,
+      "exact_outputs_equal": true
+    },
+    {
+      "transition_id": "8638a3f9d5043859eceee54f82c0ad6d5811ff673bb59b71b1f950690f6401d0",
+      "order": [
+        "fast",
+        "old"
+      ],
+      "fast_s": 1.3915675000753254,
+      "old_s": 2.7116374000906944,
+      "exact_outputs_equal": true
+    },
+    {
+      "transition_id": "5668364efbd5e7ef5418c6a9c8f0b2d04519e762c0373f55fa7e8b995c202774",
+      "order": [
+        "old",
+        "fast"
+      ],
+      "old_s": 2.7183654999826103,
+      "fast_s": 1.401065400103107,
+      "exact_outputs_equal": true
+    },
+    {
+      "transition_id": "2b95d262e701fa27df0c423ab93777e809d428b86df95d42137387efa2672ddd",
+      "order": [
+        "fast",
+        "old"
+      ],
+      "fast_s": 1.3028592001646757,
+      "old_s": 2.7230237999465317,
+      "exact_outputs_equal": true
+    }
+  ],
+  "old_median_s": 2.719842900056392,
+  "fast_median_s": 1.3713521499885246,
+  "old_sha256": "391b46795aa831ec7938e188278dece1cd02a0e040adc2d6b53288cff688237c",
+  "fast_sha256": "ff5adac5543daa382c5d07784eece67f5ee569835bc9967311a59405d0a0288f",
+  "scope": "Paired alternating order on six held-out queries, including all evidence checks; warm filesystem, CFD concurrent; not end-to-end policy speed"
+}
