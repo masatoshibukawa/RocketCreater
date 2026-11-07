@@ -825,3 +825,45 @@ async def test_a_final_that_fails_twice_loses_the_design():
     result = events[-1].payload["result"]
     assert result["designs"] == []
     assert result["rejected_by_check"][0]["check_problems"]
+
+
+@pytest.mark.anyio
+async def test_a_broken_final_gets_one_correction():
+    broken = '{"designs": [], "summary": "「最高到達高度" は 20 m"}'
+    client = FakeAnthropicClient(
+        [
+            make_message([text_block(broken)]),
+            make_message([text_block('{"designs": [], "summary": "直しました"}')]),
+        ]
+    )
+
+    events = [ev async for ev in run_design_loop(BOTTLE_TEXT, client=client)]
+
+    assert "not valid JSON" in client.calls[-1]["messages"][-1]["content"]
+    assert events[-1].type == "final"
+    assert events[-1].payload["result"]["summary"] == "直しました"
+
+
+@pytest.mark.anyio
+async def test_a_final_broken_twice_ends_without_a_result():
+    broken = '{"designs": [], "summary": "「高度" は 20 m"}'
+    client = FakeAnthropicClient(
+        [make_message([text_block(broken)]), make_message([text_block(broken)])]
+    )
+
+    events = [ev async for ev in run_design_loop(BOTTLE_TEXT, client=client)]
+
+    assert events[-1].type == "final"
+    assert events[-1].payload["result"] is None
+    assert events[-1].payload["parse_error"]
+
+
+@pytest.mark.anyio
+async def test_a_bare_line_break_in_a_string_does_not_break_the_final():
+    text = '{"designs": [], "summary": "1 行目\n2 行目"}'.replace("\\n", "\n")
+    client = FakeAnthropicClient([make_message([text_block(text)])])
+
+    events = [ev async for ev in run_design_loop(BOTTLE_TEXT, client=client)]
+
+    assert events[-1].payload["result"]["summary"] == "1 行目\n2 行目"
+    assert len(client.calls) == 1

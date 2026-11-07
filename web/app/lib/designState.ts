@@ -562,9 +562,14 @@ function upsertCandidate(list: Candidate[], candidate: Candidate): Candidate[] {
   return copy;
 }
 
+/** Claude cites tool call ids in prose; they mean nothing to the reader. */
+function withoutSourceIds(text: string): string {
+  return text.replace(/\s*[\[(（【]?\s*toolu_[A-Za-z0-9_]+\s*[\])）】]?/g, "");
+}
+
 function looksLikeJson(text: string): boolean {
   const t = text.trim();
-  return t.startsWith("{") && t.endsWith("}");
+  return (t.startsWith("{") && t.endsWith("}")) || t.includes('"designs"');
 }
 
 // --------------------------------------------------------------------------- event handlers
@@ -893,9 +898,11 @@ function applyFinal(state: DesignState, ev: AgentEvent): DesignState {
     next = push(
       next,
       "agent",
-      `${final.result.summary}\n（最終案 ${final.result.designs.length} 件、うち合格 ${passedCount} 件）`,
+      `${withoutSourceIds(final.result.summary)}\n（最終案 ${final.result.designs.length} 件、うち合格 ${passedCount} 件）`,
     );
-    for (const q of final.result.open_questions) next = push(next, "question", q);
+    for (const q of final.result.open_questions) next = push(next, "question", withoutSourceIds(q));
+  } else if (looksLikeJson(final.raw_text)) {
+    next = push(next, "notice", "最終回答の形式が崩れていたので、要約は出せません。右の欄の数値は計算の結果です。");
   } else {
     next = push(
       next,

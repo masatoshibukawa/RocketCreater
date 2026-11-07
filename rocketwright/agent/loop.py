@@ -80,6 +80,12 @@ ATTEMPT_TOOLS = (ATTEMPT_TOOL, *PART_ATTEMPT_TOOLS)
 REFERENCE_TOOL = "find_reference_designs"
 CLASSIFY_TOOL = "classify_requirement"
 CANNOT_DO = "できません"
+FINAL_KEY = '"designs"'
+_BROKEN_FINAL_FEEDBACK = (
+    "The final answer is not valid JSON, so nothing could be read from it. Send it again as a "
+    "single valid JSON object: escape every double quote and line break inside a string, and "
+    "add no text before or after the object."
+)
 _TRACE_KEY = "trace"
 _ATTEMPT_NAMES = "simulate_design / design_from_parts / auto_design calls"
 
@@ -180,7 +186,8 @@ def _parse_final_json(text: str) -> dict[str, Any] | None:
         if not candidate:
             continue
         try:
-            parsed = json.loads(candidate)
+            # strict=False: the light model leaves bare line breaks inside its strings.
+            parsed = json.loads(candidate, strict=False)
         except ValueError:
             continue
         if isinstance(parsed, dict):
@@ -458,6 +465,11 @@ async def run_design_loop(
             text = "".join(text_parts)
             parsed = _parse_final_json(text)
             if parsed is None:
+                if FINAL_KEY in text and not final_corrected:
+                    final_corrected = True
+                    messages.append({"role": "assistant", "content": response.content})
+                    messages.append({"role": "user", "content": _BROKEN_FINAL_FEEDBACK})
+                    continue
                 if text.lstrip().startswith(CANNOT_DO):
                     refusal = GuardResult(False, TIER_LIMIT, text.strip(), "")
                     yield ev("error", _refusal_payload(refusal))
