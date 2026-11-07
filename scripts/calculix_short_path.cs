@@ -72,6 +72,10 @@ class ShortPathSolver
                 string file = Path.GetFileName(path);
                 if (file == name + ".inp") continue;
                 string saved = file;
+                // Solver-wide diagnostics such as spooles.out are emitted by every
+                // deck in this directory. Preserve each under its own job name.
+                if (!file.StartsWith(name + ".", StringComparison.OrdinalIgnoreCase))
+                    saved = name + "-" + file;
                 if (Path.Combine(original, saved).Length >= 255)
                     saved = name + "-a" + (index++).ToString("D3") + Path.GetExtension(file);
                 string target = Path.Combine(original, saved);

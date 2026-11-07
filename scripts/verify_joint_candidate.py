@@ -33,7 +33,7 @@ METHODS = (
 )
 
 
-def verify(spec, runtime, root, budget=10800):
+def verify(spec, runtime, root, budget=10800, resume=None):
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=False)
     source, script = code_hash(), sha(Path(__file__))
@@ -43,7 +43,7 @@ def verify(spec, runtime, root, budget=10800):
         source_hash=source,
         script_sha256=script,
         spec=spec.model_dump(mode="json"),
-        runtime=runtime.model_dump(),
+        runtime=runtime.model_dump(mode="json"),
         precision=precision.model_dump(),
         budget_s=budget,
         acceptance_unchanged=True,
@@ -52,7 +52,39 @@ def verify(spec, runtime, root, budget=10800):
     )
     write_json(root / "protocol.json", protocol)
     artifacts, rows = {}, []
+    if resume:
+        resume = resume.resolve()
+        parent = read(resume / "report.json")
+        previous_runtime = dict(parent["runtime"])
+        previous_runtime["calculix"] = runtime.calculix
+        if (
+            parent["source_hash"] != source
+            or not parent["source_unchanged"]
+            or parent["spec"] != protocol["spec"]
+            or parent["precision"] != protocol["precision"]
+            or previous_runtime != protocol["runtime"]
+        ):
+            raise ValueError(
+                "Resume requires identical numerical source, inputs and runtime except transport"
+            )
+        protocol["resumed_from"] = dict(root=str(resume), report_sha256=sha(resume / "report.json"))
+        for saved in parent["results"]:
+            method = saved["method"]
+            if saved["status"] != "completed" or method.startswith("fem_") or method == "confirm":
+                break
+            folder = resume / method
+            if sha(folder / "manifest.json") != saved["manifest_sha256"]:
+                raise ValueError("Parent manifest changed")
+            for name, expected in read(folder / "manifest.json").items():
+                path = (folder / name).resolve()
+                if not path.is_relative_to(folder) or sha(path) != expected:
+                    raise ValueError("Parent artifact changed")
+            rows.append(dict(saved, reused_from=str(folder)))
+            artifacts[method] = str(folder / "data.json")
+        write_json(root / "protocol.json", protocol)
     for method in METHODS:
+        if method in artifacts:
+            continue
         if code_hash() != source or sha(Path(__file__)) != script:
             raise ValueError("Source changed during fixed verification")
         remaining = budget - (time.monotonic() - start)
@@ -124,6 +156,11 @@ if __name__ == "__main__":
     p.add_argument("runtime", type=Path)
     p.add_argument("output", type=Path)
     p.add_argument("--budget", type=float, default=10800)
+    p.add_argument(
+        "--resume",
+        type=Path,
+        help="Reuse verified pre-FEM evidence under identical numerical source",
+    )
     a = p.parse_args()
     if not 300 <= a.budget <= 86400:
         p.error("Use a 300–86400 second budget")
@@ -132,4 +169,5 @@ if __name__ == "__main__":
         Runtime.model_validate(read(a.runtime)),
         a.output,
         a.budget,
+        a.resume,
     )
