@@ -24,7 +24,7 @@ from rocketwright.analysis.service import code_hash
 from rocketwright.analysis.tradeoff import environment, reconcile_payload
 from rocketwright.analysis.worker import read, serial
 from rocketwright.physics import fin_candidates
-from scripts import mixed_genetic
+from scripts import adaptive_evolution, mixed_genetic
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -96,12 +96,21 @@ def run(
     optimizer="de",
     seed=7261,
 ):
-    if optimizer not in {"de", "ga"}:
+    if optimizer not in {"de", "ga", "de-adaptive", "ga-adaptive"}:
         raise ValueError("Unknown evolutionary candidate generator")
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=False)
     start, source, script_hash = time.monotonic(), code_hash(), sha(Path(__file__))
-    optimizer_hash = sha(Path(mixed_genetic.__file__))
+
+    def optimizer_digest():
+        return digest(
+            {
+                module.__name__: sha(Path(module.__file__))
+                for module in (mixed_genetic, adaptive_evolution)
+            }
+        )
+
+    optimizer_hash = optimizer_digest()
     template, reconciliation = reconcile_payload(template)
     if template.design.initial_gauge_pressure_pa > 400000:
         raise ValueError("Use the existing pressure ceiling")
@@ -129,6 +138,7 @@ def run(
         optimizer_sha256=optimizer_hash,
         evolutionary_population_size=6 * len(AXES),
         categorical_axes=["material_index"],
+        promotion_policy="Best measured evolutionary loss per anchor, then joint feasibility",
         fin_count_search_enabled=False,
         exploration_profile=profile,
         guided_profile_is_diagnostic_only=True,
@@ -170,7 +180,7 @@ def run(
             env=environment(),
         )
         cad[label] = read(folder / "data.json")["cad_metrics"]
-    rows, seen = [], set()
+    rows, seen, winners = [], set(), []
     for round_no in range(rounds):
         for i, (label, anchor) in enumerate(anchors.items()):
             prior = sorted(
@@ -226,6 +236,7 @@ def run(
                     id=f"q{len(rows):04d}",
                     seed=label,
                     round="evolution",
+                    optimizer_loss=value,
                 )
                 rows.append(row)
                 if len(rows) % 144 == 0:
@@ -250,7 +261,16 @@ def run(
                     samples(6 * len(AXES), seed + 100000 + i), category
                 )
                 write_json(root / f"population-{i}.json", dict(seed=label, points=initial.tolist()))
-                if optimizer == "ga":
+                if optimizer.endswith("-adaptive"):
+                    fit = adaptive_evolution.minimize(
+                        objective,
+                        initial,
+                        generations=generations,
+                        seed=seed + 200000 + i,
+                        categories=category,
+                        method=optimizer.split("-")[0],
+                    )
+                elif optimizer == "ga":
                     fit = mixed_genetic.minimize(
                         objective,
                         initial,
@@ -280,6 +300,15 @@ def run(
                         history=getattr(fit, "history", None),
                     ),
                 )
+                measured = [
+                    r
+                    for r in rows
+                    if r.get("seed") == label
+                    and r.get("round") == "evolution"
+                    and r["status"] == "completed"
+                ]
+                if measured:
+                    winners.append(min(measured, key=lambda r: r["optimizer_loss"]))
                 print(
                     json.dumps(
                         dict(evolution=label, loss=float(fit.fun), evaluations=int(fit.nfev))
@@ -295,7 +324,7 @@ def run(
     if (
         code_hash() != source
         or sha(Path(__file__)) != script_hash
-        or sha(Path(mixed_genetic.__file__)) != optimizer_hash
+        or optimizer_digest() != optimizer_hash
     ):
         raise ValueError("Source changed during search")
     viable = sorted(
@@ -303,8 +332,10 @@ def run(
         key=lambda r: score(r["metrics"], target, profile),
     )
     # Three distinct geometry/material families get representation; rest follow joint feasibility.
-    chosen = []
+    chosen = list(winners)
     for label in anchors:
+        if len(chosen) >= promote or any(r["seed"] == label for r in chosen):
+            continue
         group = [r for r in viable if r["seed"] == label]
         if group:
             chosen.append(group[0])
@@ -375,7 +406,7 @@ def run(
         source_unchanged=(
             code_hash() == source
             and sha(Path(__file__)) == script_hash
-            and sha(Path(mixed_genetic.__file__)) == optimizer_hash
+            and optimizer_digest() == optimizer_hash
         ),
         pool=pool,
         sampled=len(rows),
@@ -403,7 +434,7 @@ if __name__ == "__main__":
     p.add_argument("--budget", type=float, default=3600)
     p.add_argument("--evolve-generations", type=int, default=0)
     p.add_argument("--profile", choices=("initial", "guided"), default="initial")
-    p.add_argument("--optimizer", choices=("de", "ga"), default="de")
+    p.add_argument("--optimizer", choices=("de", "ga", "de-adaptive", "ga-adaptive"), default="de")
     p.add_argument("--seed", type=int, default=7261)
     a = p.parse_args()
     if (
