@@ -105,6 +105,19 @@ python -m scripts.prepare_paired_cfd output/expanded-confirm-runtime.json output
 
 ## 先行した構造診断（CFD荷重とは別）
 
+粗い格子16セル／口径・幅12.5口径の14条件が両候補で完了した時点で、
+そのテーブルを明示的に6自由度計算へ渡した中間診断も保存した。
+高度は旧候補19.130 m、新候補20.554 m、上昇中の最大迎角は8.569度と7.845度。
+同時刻の流速・迎角・動圧から取り出したフィン最大法線力は0.388 Nと0.515 Nである。
+下表の解析的な最大動圧×最大迎角の荷重とは、荷重モデル・時刻の扱いが異なる。
+細かい格子、時間・補間監査、CFD荷重によるFEMは未完了のため、この中間値で合否を確定しない。
+[入力と結果を照合した中間JSON](../scenarios/adaptive_design/expanded-coarse-flight.json)に記録した。
+
+```powershell
+python -m scripts.preview_coarse_flight output/esc-old2 output/ecf-old2
+python -m scripts.preview_coarse_flight output/esc-new2 output/ecf-new2
+```
+
 CFD計算中に、同じ選択候補を解析的な飛行荷重で梁・モード・粗密FEMへ通した。
 最大動圧と最大迎角を掛け合わせる保守的な包絡荷重であり、同時刻のCFD荷重ではない。
 
