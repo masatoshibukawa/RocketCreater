@@ -41,27 +41,27 @@
     },
     {
       "id": "05-space-connections",
-      "title": "光が集まり解決へ",
+      "title": "背景から階層型・適応型と5者の分担へ",
       "start_s": 66,
-      "end_s": 88,
+      "end_s": 100,
       "image": "output/media/product-demo/generated/storyboard-v1/05-space-connections.png",
       "kind": "ai_storyboard_concept",
       "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
     },
     {
       "id": "06-adaptive-feedback",
-      "title": "部品・機体・ミッションの結果から次の一手を選ぶ",
-      "start_s": 88,
-      "end_s": 126,
+      "title": "同じ案件の一巡で仕組みの動作を確かめる",
+      "start_s": 100,
+      "end_s": 132,
       "image": "output/media/product-demo/generated/storyboard-v1/06-adaptive-feedback.png",
       "kind": "ai_storyboard_concept",
       "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
     },
     {
       "id": "07-design-output",
-      "title": "根拠付きの成果物",
-      "start_s": 126,
-      "end_s": 147,
+      "title": "機能・性能・結果を確かめ、成果物を開く",
+      "start_s": 132,
+      "end_s": 150,
       "image": "output/media/product-demo/generated/storyboard-v1/07-design-output.jpg",
       "kind": "existing_ui_reference",
       "note": "既存UI資料。今回の案件の通し収録ではない。"
@@ -69,8 +69,8 @@
     {
       "id": "08-real-printing",
       "title": "実写の印刷工程",
-      "start_s": 147,
-      "end_s": 159,
+      "start_s": 150,
+      "end_s": 162,
       "image": "output/media/product-demo/generated/storyboard-v1/08-real-printing.png",
       "kind": "actual_printer_recording_still",
       "note": "既存2L案の別試作。印刷工程の実写。"
@@ -78,12 +78,30 @@
     {
       "id": "09-development-future",
       "title": "Claude Codeでの開発と展望",
-      "start_s": 159,
+      "start_s": 162,
       "end_s": 175,
       "image": "output/media/product-demo/generated/storyboard-v1/09-development-future.png",
       "kind": "ai_storyboard_concept",
       "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
     }
   ],
-  "analysis_reference": "analysis-story.md"
+  "analysis_reference": "analysis-story.md",
+  "concept_bridge_reference": "concept-to-demo.md",
+  "bridge_segments": [
+    {
+      "start_s": 66,
+      "end_s": 78,
+      "concept": "hierarchical_analysis"
+    },
+    {
+      "start_s": 78,
+      "end_s": 88,
+      "concept": "adaptive_selection"
+    },
+    {
+      "start_s": 88,
+      "end_s": 100,
+      "concept": "five_roles"
+    }
+  ]
 }
