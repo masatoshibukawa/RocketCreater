@@ -40,6 +40,11 @@ def export(search, old, new, destination):
                 raise ValueError("Structural report differs from sealed worker output")
         beam, fem = rows["modes"], rows["fem_fine"]
         ratio = fem["metrics"]["fem_deflection_ratio"]
+        decks = list(folder.glob("fem_*/*.inp"))
+        if len(decks) != 2 or not all(
+            "*STEP,NLGEOM" in p.read_text(encoding="utf-8").upper() for p in decks
+        ):
+            raise ValueError("Expected geometric-nonlinearity flags in both sealed input decks")
         output["methods"].append(
             dict(
                 method=method,
@@ -55,8 +60,11 @@ def export(search, old, new, destination):
                 fem_deflection_ratio=ratio,
                 mesh_relative_change=fem["metrics"]["fem_mesh_change"],
                 deflection_check=ratio <= 0.05,
-                linear_solution_caution=(
-                    "Large deformation: displacement/stress are not validated predictions"
+                geometric_nonlinearity=True,
+                input_deck_hashes={p.relative_to(folder).as_posix(): sha(p) for p in decks},
+                beam_caution="Large deformation exceeds the linear beam approximation",
+                fem_caution=(
+                    "NLGEOM with assumed elastic material/root/pressure; not physical qualification"
                 ),
                 elapsed_s=report["elapsed_s"],
             )

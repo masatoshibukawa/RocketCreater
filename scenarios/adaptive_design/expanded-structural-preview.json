@@ -22,7 +22,13 @@
       "fem_deflection_ratio": 0.3576539280900167,
       "mesh_relative_change": 0.010281679132691833,
       "deflection_check": false,
-      "linear_solution_caution": "Large deformation: displacement/stress are not validated predictions",
+      "geometric_nonlinearity": true,
+      "input_deck_hashes": {
+        "fem_coarse/fin-0.inp": "35899ba218a24376fe17fd763bc2ba0851ace829fc391a7cb73be28cac4e5301",
+        "fem_fine/fin-0.inp": "b98d9bf392ee2d531c5f380c9402b917063255926a3fa863b462e1b7b073e9dc"
+      },
+      "beam_caution": "Large deformation exceeds the linear beam approximation",
+      "fem_caution": "NLGEOM with assumed elastic material/root/pressure; not physical qualification",
       "elapsed_s": 74.875
     },
     {
@@ -42,7 +48,13 @@
       "fem_deflection_ratio": 0.30104571541378855,
       "mesh_relative_change": 0.008175157472353235,
       "deflection_check": false,
-      "linear_solution_caution": "Large deformation: displacement/stress are not validated predictions",
+      "geometric_nonlinearity": true,
+      "input_deck_hashes": {
+        "fem_coarse/fin-0.inp": "fe9d6e31c29aeb6d087630b50edcdded778b66d261d43d4a81060dab0cd7c8a9",
+        "fem_fine/fin-0.inp": "a8c7443d0cbf6059376d74938de0413b80cc9a7bf0461d4a5c047d623f7cd78f"
+      },
+      "beam_caution": "Large deformation exceeds the linear beam approximation",
+      "fem_caution": "NLGEOM with assumed elastic material/root/pressure; not physical qualification",
       "elapsed_s": 70.5930000001099
     }
   ]
