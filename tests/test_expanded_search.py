@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from scripts import benchmark_expanded_search as study
+from scripts.report_expanded_confirmation import export as export_confirmation
 from scripts.report_expanded_search import audit_rows, local_file
 
 
@@ -103,3 +104,26 @@ def test_audit_rejects_changed_loss_and_population(tmp_path, anchor, monkeypatch
         audit_rows(rows, result, anchor, 8, 1)
     with pytest.raises(ValueError, match="escapes"):
         local_file(tmp_path, "../foreign.json")
+
+
+@pytest.mark.parametrize("field", ["source_hash", "spec"])
+def test_confirmation_cannot_substitute_candidate_or_physics(tmp_path, field):
+    from rocketwright.agent.design_projects import write_json
+
+    search, old = tmp_path / "search", tmp_path / "old"
+    search.mkdir()
+    old.mkdir()
+    write_json(
+        search / "report.json",
+        dict(
+            source_hash="source",
+            detailed_candidates={"wide-old": "winner"},
+            results=[dict(label="winner", spec={"candidate": "selected"})],
+        ),
+    )
+    raw = dict(source_hash="source", spec={"candidate": "selected"})
+    raw[field] = "changed" if field == "source_hash" else {"candidate": "substituted"}
+    write_json(old / "report.json", raw)
+    with pytest.raises(ValueError, match="selected candidate/source"):
+        export_confirmation(search, old, tmp_path / "new", tmp_path / "portable.json")
+    assert not (tmp_path / "portable.json").exists()
