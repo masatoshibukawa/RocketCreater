@@ -17,7 +17,7 @@ AXES = {
     "fin_sweep_fraction": (0.0, 1.0),
     "fin_span_mm": (45.0, 145.0),
     "fin_thickness_mm": (1.2, 3.6),
-    "nose_length_mm": (60.0, 160.0),
+    "nose_length_mm": (60.0, 280.0),
     "nose_wall_mm": (1.0, 1.6),
     "equipment_station_fraction": (0.15, 0.40),
     "payload_station_fraction": (0.06, 0.20),

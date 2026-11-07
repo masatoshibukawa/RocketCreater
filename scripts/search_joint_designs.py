@@ -8,6 +8,8 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from scipy.optimize import differential_evolution
+
 from rocketwright.adaptive import digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.analysis.design_space import AXES, decode, samples
@@ -55,7 +57,7 @@ def measure(spec, anchor, cad):
     return serial(result)
 
 
-def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600):
+def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600, generations=0):
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=False)
     start, source, script_hash = time.monotonic(), code_hash(), sha(Path(__file__))
@@ -81,6 +83,7 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600):
         seed=7261,
         budget_s=budget_s,
         workers=2,
+        evolutionary_generations=generations,
         reconciliation=reconciliation,
         pressure_cap_pa=400000,
         requirement=template.requirement.model_dump(mode="json"),
@@ -173,6 +176,61 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600):
                 root / "exploration.json",
                 dict(source_hash=source, script_sha256=script_hash, pool=pool, results=rows),
             )
+    if generations:
+        for i, (label, anchor) in enumerate(anchors.items()):
+
+            def objective(unit, label=label, anchor=anchor):
+                if time.monotonic() - start > budget_s * 0.65:
+                    raise TimeoutError("Exploration budget reserved for native promotion")
+                spec = decode(anchor, unit)
+                row = dict(
+                    id=f"q{len(rows):04d}",
+                    seed=label,
+                    round="evolution",
+                    unit=unit.tolist(),
+                    spec=spec.model_dump(mode="json"),
+                    status="failed",
+                    spec_hash=digest(spec.model_dump(mode="json")),
+                )
+                try:
+                    m = measure(spec, anchor, cad[label])
+                    row.update(status="completed", metrics=m)
+                    # Extra search headroom compensates for approximate CAD; acceptance stays 1.
+                    value = 2000 * max(0, 1.12 - m["static_margin_cal"]) - m["scenario_height_m"][0]
+                except (ValueError, RuntimeError) as error:
+                    row["error"] = str(error)
+                    value = 10000
+                rows.append(row)
+                if len(rows) % 144 == 0:
+                    completed = [r for r in rows if r["status"] == "completed"]
+                    best = min(completed, key=lambda r: score(r["metrics"], target))
+                    progress = dict(evolution=label, evaluations=len(rows), best=best["metrics"])
+                    write_json(root / "evolution-progress.json", progress)
+                    print(json.dumps(progress), flush=True)
+                return value
+
+            try:
+                fit = differential_evolution(
+                    objective,
+                    [(0, 1)] * len(AXES),
+                    seed=921 + i,
+                    maxiter=generations,
+                    popsize=6,
+                    polish=False,
+                    tol=0.002,
+                )
+                print(
+                    json.dumps(
+                        dict(evolution=label, loss=float(fit.fun), evaluations=int(fit.nfev))
+                    ),
+                    flush=True,
+                )
+            except TimeoutError as error:
+                print(json.dumps(dict(evolution=label, error=str(error))), flush=True)
+            write_json(
+                root / "exploration.json",
+                dict(source_hash=source, script_sha256=script_hash, pool=pool, results=rows),
+            )
     if code_hash() != source or sha(Path(__file__)) != script_hash:
         raise ValueError("Source changed during search")
     viable = sorted(
@@ -184,7 +242,14 @@ def run(template, root, *, count=192, rounds=3, promote=12, budget_s=3600):
         group = [r for r in viable if r["seed"] == label]
         if group:
             chosen.append(group[0])
-    chosen += [r for r in viable if r not in chosen][: max(0, promote - len(chosen))]
+    # Distinct finite proposals only; repeated optimizer evaluations are not independent designs.
+    chosen_hashes = {r["spec_hash"] for r in chosen}
+    for row in viable:
+        if len(chosen) >= promote:
+            break
+        if row["spec_hash"] not in chosen_hashes:
+            chosen.append(row)
+            chosen_hashes.add(row["spec_hash"])
     available = budget_s - (time.monotonic() - start)
     share = min(180, available / max(len(chosen), 1))
     jobs = [
@@ -248,12 +313,14 @@ if __name__ == "__main__":
     p.add_argument("--rounds", type=int, default=3)
     p.add_argument("--promote", type=int, default=12)
     p.add_argument("--budget", type=float, default=3600)
+    p.add_argument("--evolve-generations", type=int, default=0)
     a = p.parse_args()
     if (
         not 8 <= a.count <= 512
         or not 1 <= a.rounds <= 5
         or not 3 <= a.promote <= 24
         or not 300 <= a.budget <= 86400
+        or not 0 <= a.evolve_generations <= 80
     ):
         p.error("Use 8–512 samples, 1–5 rounds, 3–24 promotions and 300–86400 seconds")
     run(
@@ -263,4 +330,5 @@ if __name__ == "__main__":
         rounds=a.rounds,
         promote=a.promote,
         budget_s=a.budget,
+        generations=a.evolve_generations,
     )
