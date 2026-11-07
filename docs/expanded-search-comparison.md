@@ -103,6 +103,36 @@ CFD・FEM・振動・安定性の接続確認は進行中であり、この表�
 python -m scripts.prepare_paired_cfd output/expanded-confirm-runtime.json output/esc-old1/cfd_coarse/assembly.json output/esc-new1/cfd_coarse/assembly.json output/expanded-confirm-domain-runtime.json
 ```
 
+## 先行した構造診断（CFD荷重とは別）
+
+CFD計算中に、同じ選択候補を解析的な飛行荷重で梁・モード・粗密FEMへ通した。
+最大動圧と最大迎角を掛け合わせる保守的な包絡荷重であり、同時刻のCFD荷重ではない。
+
+| 指標 | 従来候補 | 新候補 |
+|---|---:|---:|
+| 仮定したフィン荷重 | 1.108 N | 1.019 N |
+| 梁の変形／スパン比 | 35.44% | 29.31% |
+| FEMの変形／スパン比 | 35.77% | 30.10% |
+| FEM細分化による最大変化 | 1.03% | 0.82% |
+| 梁の第1／第2固有振動数 | 11.09／66.88 Hz | 12.87／71.86 Hz |
+
+両者とも5%の変形基準を超える。この大変形では線形モデルの変位や応力を正確な物理予測と
+扱えない。格子差が小さくても線形近似の妥当性は回復しない。実際の同時刻の動圧・迎角を使う
+CFD荷重での確認は別に続ける。高度・初期静安定を中心にした現在の探索得点だけでは、
+フィンの剛性まで満たす候補を選べないことへの注意点である。
+
+68ファイルを照合した[構造診断JSON](../scenarios/adaptive_design/expanded-structural-preview.json)を参照。
+最初の呼出しは作業場所の環境設定不足、次はWindows実行制限下でのDLL読込により停止した。
+両失敗のログを残し、同じハッシュのCalculiXと入力で通常プロセスから再実行した。
+成功分は `output/ess-old3` / `output/ess-new3`。これらをCFD荷重による構造検証へ流用しない。
+
+```powershell
+# 既存のハッシュ検証済みネイティブCalculiXと短い作業場所を指定したプロセスで実行
+python -m scripts.preview_selected_structure output/esc-old2 output/ess-old3
+python -m scripts.preview_selected_structure output/esc-new2 output/ess-new3
+python -m scripts.report_structural_preview output/expanded-search1 output/ess-old3 output/ess-new3 scenarios/adaptive_design/expanded-structural-preview.json
+```
+
 ```powershell
 python -m scripts.report_expanded_search output/expanded-search1 output/nn-expanded-model1 scenarios/adaptive_design/expanded-search.json --plot-libraries output/optimizer-plot-libs
 ```

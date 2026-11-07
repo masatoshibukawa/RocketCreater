@@ -1,0 +1,49 @@
+{
+  "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+  "search_report_sha256": "89987291bb1e34e44d73c814ab557eb18d8b6bac82e14237f1b38c2a55e269ee",
+  "load_scope": "maximum dynamic pressure times maximum incidence; not concurrent CFD",
+  "deflection_limit_ratio": 0.05,
+  "physical_qualification": false,
+  "methods": [
+    {
+      "method": "wide-old",
+      "label": "wide-old-1",
+      "report_sha256": "f5e6131370fc702e8ded3c049a248a1527d16caf1abeeed9e477c6e7c0b731fd",
+      "manifest_sha256": "69833c32f3fcd508de2cb003840b498dd2f26c5c7151830dda20efbddd4c86e8",
+      "verified_files": 34,
+      "beam_deflection_ratio": 0.354399717948881,
+      "modes_hz": [
+        11.092931153781116,
+        66.88375881138917
+      ],
+      "fin_temperature_c": 25.290639680632466,
+      "assumed_force_n": 1.108356700132461,
+      "fem_displacement_m": 0.05182655775774006,
+      "fem_deflection_ratio": 0.3576539280900167,
+      "mesh_relative_change": 0.010281679132691833,
+      "deflection_check": false,
+      "linear_solution_caution": "Large deformation: displacement/stress are not validated predictions",
+      "elapsed_s": 74.875
+    },
+    {
+      "method": "wide-new",
+      "label": "wide-new-0",
+      "report_sha256": "004024864487fc035a4d6c3fcc0515346464129a732db596f0f4f7306406fa0d",
+      "manifest_sha256": "16259231675f11103b6cdc2a07010dd1e153861dc4a46b477d266173381d3dc2",
+      "verified_files": 34,
+      "beam_deflection_ratio": 0.29308854090242126,
+      "modes_hz": [
+        12.874327101370191,
+        71.85889376543797
+      ],
+      "fin_temperature_c": 25.290639680607228,
+      "assumed_force_n": 1.0186870063154052,
+      "fem_displacement_m": 0.04357305580327634,
+      "fem_deflection_ratio": 0.30104571541378855,
+      "mesh_relative_change": 0.008175157472353235,
+      "deflection_check": false,
+      "linear_solution_caution": "Large deformation: displacement/stress are not validated predictions",
+      "elapsed_s": 70.5930000001099
+    }
+  ]
+}
