@@ -61,3 +61,5 @@ python -m scripts.report_surrogate_depth output/nn-depth1 output/nn-refined1 out
 新しい学習では未使用の出力先を指定する。同じ計算結果の再集計は、内容が一致する既存モデル束を照合できる。
 原データは既存シミュレーションの再利用で、この比較のための新規物理計算は0回。
 データ追加の効果は[再学習と探索比較](refined-reinforcement-search.md)を参照。
+その後の[学習範囲・分布の拡張](expanded-training-distribution.md)では、温度・圧力・荷物を含めた
+20変数で新しい物理計算データを生成し、データ量を変えた比較を行う。
