@@ -8,6 +8,8 @@ from api.main import app
 from rocketwright.agent import design_projects as module
 from rocketwright.agent.design_projects import DesignProjects, DesignSpec
 from rocketwright.agent.production import plan_video
+from rocketwright.agent.project_assembly import assembly_assessment
+from rocketwright.agent.project_assembly_guide import assembly_procedures
 from rocketwright.agent.project_detail_drawing import axial_section
 from rocketwright.agent.workbench import Conflict
 from rocketwright.manufacturing import PrintGeometry
@@ -97,6 +99,7 @@ def test_manual_archive_integrity_and_tampering(store, tmp_path):
         assert "source/rocketwright/agent/project_package.py" in z.namelist()
         assert "reproduction/requirements.txt" in z.namelist()
         assert "scripts/reproduce_package.py" in z.namelist()
+        assert "source/rocketwright/agent/project_assembly_guide.py" in z.namelist()
         assert "manual/design-drawing.pdf" in z.namelist()
         assert "manual/side-view.svg" in z.namelist()
         assert not any("node_modules" in name or "/.env" in name for name in z.namelist())
@@ -127,6 +130,20 @@ def test_axial_section_deduplicates_plane_edges_and_interpolates_crossings():
         ((1.0, 3.0), (1.5, 1.5)),
         ((1, 3), (2, 5)),
     ]
+
+
+def test_assembly_procedures_match_saved_component_options():
+    s = spec()
+    guide = assembly_procedures(s, assembly_assessment(s)["cad_parameters"])
+    assert "90°" in guide["fin_mount"].actions[1][1]
+    assert "S1・S2" in guide["finish"].actions[-1][1]
+    s = s.model_copy(
+        update={"design": s.design.model_copy(update={"has_fins": False, "has_parachute": False})}
+    )
+    guide = assembly_procedures(s, assembly_assessment(s)["cad_parameters"])
+    assert len(guide["fin_mount"].actions) == 1
+    assert "S1" not in str(guide["finish"].actions)
+    assert "回収傘" not in str(guide["recovery"].actions)
 
 
 def test_video_plan_and_geometry_bound_to_adopted_revision(store):

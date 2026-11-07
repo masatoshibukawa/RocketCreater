@@ -2,16 +2,18 @@
 
 import csv
 import json
+from math import cos, pi, sin
 from xml.sax.saxutils import escape
 
 from reportlab.graphics import renderPDF
-from reportlab.graphics.shapes import Drawing, Polygon
+from reportlab.graphics.shapes import Circle, Drawing, Polygon
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import (
     Image,
+    KeepTogether,
     PageBreak,
     Paragraph,
     SimpleDocTemplate,
@@ -22,12 +24,15 @@ from reportlab.platypus import (
 
 from rocketwright.agent.manual import japanese_font
 from rocketwright.agent.project_assembly import assembly_assessment
+from rocketwright.agent.project_assembly_guide import assembly_procedures
 from rocketwright.agent.project_detail_drawing import fin_detail, nose_detail
 from rocketwright.agent.project_drawing import (
     ACCENT,
+    BODY,
     INK,
     MUTED,
     PAPER,
+    PART,
     RULE,
     design_plate,
     dimension,
@@ -44,17 +49,6 @@ from rocketwright.agent.project_drawing import (
 from rocketwright.agent.project_equipment import procurement_summary
 
 WIDTH = 490
-CHECKS = {
-    "parts": "PDF・部品表・印刷データの版を照合し、部品の数とボトルの胴径を記録する。",
-    "finish": (
-        "ブリム除去後の外周、割れ、反りを確認する。"
-        "フィンがある場合は固定材がスロットを通るか確認する。"
-    ),
-    "fin_mount": "全ての翼後端が同じ位置にあり、軸方向にねじれていないかを横と後ろから見る。",
-    "nose_fit": "はめ込みと取外しを試し、がたつき・浮き・ボトルの傷を記録する。",
-    "recovery": "搭載物を入れた状態で、保持と取出し・展開の経路を別途確認する。",
-    "measure": "実測質量と重心の測定条件を記録し、設計を更新する。",
-}
 ACCESS_STATUS = {
     "not_evaluated": "未評価",
     "screen_pass": "公称寸法を比較済み",
@@ -99,9 +93,14 @@ def step_figure(g, cad, step, font):
     x, cy = 32, 85
     scale = side_view(d, g, cad, (x, cy, 289 if fins else 416, 50), focus=step, gap_mm=gap)
     if fins:
-        end_view(d, g, cad, 405, 83, 38)
-        label(d, 405, 31, f"{g.fin_count} 枚 / {mm(360 / g.fin_count)}°", font, 10, INK, "middle")
-        label(d, 405, 15, "ノズル側から見る", font, 8, MUTED, "middle")
+        end_view(d, g, cad, 405, 87, 33)
+        for i in range(g.fin_count):
+            theta = pi / 2 + i * 2 * pi / g.fin_count
+            label(
+                d, 405 + 46 * cos(theta), 84 + 46 * sin(theta), str(i + 1), font, 8, INK, "middle"
+            )
+        label(d, 405, 27, f"{g.fin_count} 枚 / {mm(360 / g.fin_count)}°", font, 10, INK, "middle")
+        label(d, 405, 12, "ノズル側から見る", font, 8, MUTED, "middle")
         tail = x + g.fin_tail_inset_mm * scale
         dimension(d, x, tail, 30, cy, f"翼後端 {mm(g.fin_tail_inset_mm)} mm", font)
         if g.fin_tail_inset_mm == 0:
@@ -124,6 +123,25 @@ def step_figure(g, cad, step, font):
     else:
         label(d, 17, 17, "ノズル側  0 mm", font, 9, MUTED)
         label(d, 473, 17, "先端側", font, 9, MUTED, "end")
+    return d
+
+
+def ring_fit_figure(g, cad, font):
+    d = Drawing(WIDTH, 166)
+    panel(d, 0, 0, WIDTH, 166, "J01 を円筒部に通すときの断面", font)
+    body = g.body_diameter_mm / 2
+    inner = body + g.radial_clearance_mm
+    outer = inner + cad["fit_ring"]["wall"]
+    scale = 49 / outer
+    cx, cy = 96, 81
+    for radius, fill in ((outer, PART), (inner, colors.white), (body, BODY)):
+        d.add(Circle(cx, cy, radius * scale, fillColor=fill, strokeColor=INK, strokeWidth=0.5))
+    label(d, cx, cy - 4, "B01", font, 12, INK, "middle")
+    label(d, cx, 17, "ボトルとリングの公称断面", font, 8, MUTED, "middle")
+    label(d, 191, 110, f"J01 リング内径  {mm(2 * inner)} mm", font, 12)
+    label(d, 191, 84, f"B01 ボトル胴径  {mm(2 * body)} mm", font, 12)
+    label(d, 191, 58, f"設計上の片側の余裕  {mm(g.radial_clearance_mm)} mm", font, 10, ACCENT)
+    label(d, 191, 26, "口側から通し、取外しも同じ経路で確認", font, 9, MUTED)
     return d
 
 
@@ -150,9 +168,9 @@ def write_project_manual(state, steps, output):
     def p(text, style=body):
         return Paragraph(escape(str(text)).replace("\n", "<br/>"), style)
 
-    def grid(rows, widths, *, header=True):
+    def grid(rows, widths, *, header=True, style=small, padding=6):
         table = Table(
-            [[p(value, small) for value in row] for row in rows],
+            [[p(value, style) for value in row] for row in rows],
             colWidths=widths,
             hAlign="LEFT",
             repeatRows=int(header),
@@ -160,8 +178,8 @@ def write_project_manual(state, steps, output):
         rules = [
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("ROWBACKGROUNDS", (0, 0), (-1, -1), [colors.white, PAPER]),
-            ("TOPPADDING", (0, 0), (-1, -1), 6),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ("TOPPADDING", (0, 0), (-1, -1), padding),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), padding),
             ("LINEBELOW", (0, 0), (-1, -1), 0.35, RULE),
         ]
         if header:
@@ -174,6 +192,7 @@ def write_project_manual(state, steps, output):
     g = current.geometry
     access = assembly_assessment(current)
     cad = access["cad_parameters"]
+    procedures = assembly_procedures(current, cad)
     identity = f"v{state['version']}   /   入力 {analysis['input_sha256'][:12]}"
     basis = "実測入力" if g.dimensions_measured else "公称値。現物を測って照合する。"
     parts = [
@@ -262,7 +281,7 @@ def write_project_manual(state, steps, output):
         Spacer(1, 12),
         grid(
             [
-                ["用途", "試作の仮組みと現物照合"],
+                ["用途", "空のボトルを使った無加圧の机上仮組み"],
                 ["確認範囲", "取付保持・回収・実飛行は現物検証待ち。加圧・打上げ手順は別途確定。"],
             ],
             [96, 394],
@@ -277,13 +296,50 @@ def write_project_manual(state, steps, output):
         p(
             "定規・ノギス・はかりを用意する。固定材と軟質キャップは現物に合わせて選ぶ。位置と寸法は同じ版の組立設計図を参照。"
         ),
+        p("進め方", sub),
+        p("部品照合 → 仕上げ → リング試着 → 取付 → 搭載物確認 → 実測記録"),
     ]
+
+    def procedure_content(procedure):
+        actions = [
+            (f"{i:02d}", name, instruction)
+            for i, (name, instruction) in enumerate(procedure.actions, 1)
+        ]
+        return [
+            Spacer(1, 8),
+            p("手順", sub),
+            grid([["順", "作業", "やり方"], *actions], [34, 118, 338], style=body, padding=4),
+            Spacer(1, 9),
+            grid(
+                [["進む目安", procedure.proceed], ["止める目安", procedure.stop]],
+                [96, 394],
+                header=False,
+                padding=4,
+            ),
+        ]
+
+    def record_fields(procedure):
+        return KeepTogether(
+            [
+                p("現物記録", sub),
+                p("□ 未確認　 □ 要修正　 □ 現物確認", small),
+                Spacer(1, 5),
+                grid(
+                    [
+                        ["担当・日付", "__________________  /  __________________"],
+                        ["記録する項目", procedure.record],
+                        ["記録・修正点", "　"],
+                    ],
+                    [96, 394],
+                    header=False,
+                    padding=4,
+                ),
+            ]
+        )
 
     for number, step in enumerate(steps, 1):
         key = step["id"]
-        check = CHECKS[key]
-        if key == "fin_mount" and not cad["include_fins"]:
-            check = "この工程を飛ばし、ノーズの仮合わせへ進む。"
+        procedure = procedures[key]
         story += [
             PageBreak(),
             p(f"工程 {number:02d} / {len(steps):02d}", sub),
@@ -291,11 +347,8 @@ def write_project_manual(state, steps, output):
             preview_table
             if key == "finish" and preview_table is not None
             else step_figure(g, cad, key, font),
-            Spacer(1, 12),
-            p("作業", sub),
-            p(step["instruction"]),
-            p("現物で見る場所", sub),
-            p(check),
+            *procedure_content(procedure),
+            Spacer(1, 7),
             grid(
                 [
                     ["準備", "、".join(step.get("tools", [])) or "作業に必要な工具を確認"],
@@ -304,19 +357,9 @@ def write_project_manual(state, steps, output):
                 ],
                 [96, 394],
                 header=False,
+                padding=4,
             ),
-            p("現物記録", sub),
-            p("□ 未確認　 □ 要修正　 □ 現物確認", small),
-            Spacer(1, 8),
-            grid(
-                [
-                    ["担当・日付", "　　　　　　　　　 / 　　　　　　　　　"],
-                    ["測定・観察", "　"],
-                    ["修正点", "　"],
-                ],
-                [96, 394],
-                header=False,
-            ),
+            record_fields(procedure),
         ]
         observations = [row for row in state.get("observations", []) if row["step"] == key]
         for row in observations[-3:]:
@@ -332,6 +375,16 @@ def write_project_manual(state, steps, output):
                 story.append(
                     grid([["測定項目", "値"], *row["measured_values"].items()], [340, 150])
                 )
+        if key == "finish":
+            trial = procedures["ring_fit"]
+            story += [
+                PageBreak(),
+                p(f"工程 {number:02d} / 補足", sub),
+                p("試着リングで胴径を確認", title),
+                ring_fit_figure(g, cad, font),
+                *procedure_content(trial),
+                record_fields(trial),
+            ]
 
     story += [PageBreak(), p("仮組みの確認票", title), p(identity, small), Spacer(1, 12)]
     story.append(
@@ -350,6 +403,7 @@ def write_project_manual(state, steps, output):
                         ACCESS_STATUS[check["status"]],
                     )
                     for check in access["checks"]
+                    if cad["include_fins"] or check["id"] == "force"
                 ],
             ],
             [192, 92, 86, 120],
