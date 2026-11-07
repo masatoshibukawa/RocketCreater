@@ -38,7 +38,8 @@
           "sha256": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2",
           "url": "https://github.com/adrianschlatter/RocketFins/blob/57f2c9fd475be499aafb2655b12f20a75f135e60/bottle.scad"
         }
-      ]
+      ],
+      "license_url": "https://github.com/adrianschlatter/RocketFins/blob/57f2c9fd475be499aafb2655b12f20a75f135e60/LICENSE"
     },
     "D22": {
       "title": "Physics Water Rocket Project",
@@ -61,11 +62,13 @@
           "sha256": "fdb4ed2a35bafc5882bbba83d616571cb7844600cdf333de84bccfa50cae6bf7",
           "url": "https://github.com/JustThatRandomCoder/physics-water-rocket-project/blob/c047014fdfa9b1004959c10a114613ec0f1979e8/physics-water-rocket-nose-macroFCMacro.FCMacro"
         }
-      ]
+      ],
+      "use_restrictions": "Educational and personal purposes; commercial use of the upstream project or substantial portions requires prior written permission.",
+      "license_url": "https://github.com/JustThatRandomCoder/physics-water-rocket-project/blob/c047014fdfa9b1004959c10a114613ec0f1979e8/LICENSE"
     },
     "D40": {
       "title": "waterRocketToolbox",
-      "author": "Baptiste Castets",
+      "author": "castetsb (repository account); copyright OpenSource Engineer",
       "license": "MIT",
       "commit": "d87fd7d0cd3d4465272dbdb49eec49352ca4dd55",
       "files": [
@@ -74,7 +77,8 @@
           "sha256": "6fd870a793df9a27d129988fa48a0f508bf3a9b907889698e3624f88f21b6437",
           "url": "https://github.com/castetsb/waterRocketToolbox/blob/d87fd7d0cd3d4465272dbdb49eec49352ca4dd55/B-Rocket_Simulator/constants.py"
         }
-      ]
+      ],
+      "license_url": "https://github.com/castetsb/waterRocketToolbox/blob/d87fd7d0cd3d4465272dbdb49eec49352ca4dd55/LICENSE"
     }
   },
   "models": [
@@ -318,5 +322,6 @@
     "OpenRocket motor, thrust curve, and pressure ratings: not applicable to water propulsion",
     "Launcher-only CAD: not an airframe",
     "Original flight scores: not validation of an adapted model"
-  ]
+  ],
+  "source_notices": "docs/initial-model-source-notices.md"
 }
