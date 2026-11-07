@@ -86,6 +86,23 @@ python -m scripts.benchmark_expanded_search output/nn-expanded-model1 output/exp
 両者の新規CAD・解析的空力による高度は22.717 mと24.939 m、抗力10%増では22.432 mと24.562 m。
 CFD・FEM・振動・安定性の接続確認は進行中であり、この表を最終合格と解釈しない。
 
+## CFD領域の事前確認と再実行
+
+最初の幅10口径の実行は、両候補とも45度で回転させた機体が横方向境界へ近づきすぎて停止した。
+各3ケースの結果と失敗ログは `output/esc-old1` / `output/esc-new1` に保持した。
+未計算の角度を補間で埋めたり、必要な角度を省いたりしない。
+
+選択済みの同じCADから全迎角での横方向包絡を計算する事前確認を追加した。
+既存ソルバーの境界余裕0.75口径を確保する必要幅は最大12.0178口径。
+格子上の丸めも確認し、両候補とも幅12.5口径、領域依存性の監査は14.5口径で再実行する。
+格子16/20口径セル、第三格子24、時間設定、選択機体、合格条件は維持した。
+この修正は領域不適合への対処であり、良い高度が出る設定を選んだものではない。
+登録済みの領域上限に収まらない場合は自動で切り詰めず、未実行として止める。
+
+```powershell
+python -m scripts.prepare_paired_cfd output/expanded-confirm-runtime.json output/esc-old1/cfd_coarse/assembly.json output/esc-new1/cfd_coarse/assembly.json output/expanded-confirm-domain-runtime.json
+```
+
 ```powershell
 python -m scripts.report_expanded_search output/expanded-search1 output/nn-expanded-model1 scenarios/adaptive_design/expanded-search.json --plot-libraries output/optimizer-plot-libs
 ```
