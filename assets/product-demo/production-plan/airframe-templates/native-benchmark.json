@@ -1,0 +1,1420 @@
+{
+  "source_commit": "1ed3041f64149ad6e67f238bd2afc49602f07aa1",
+  "paid_api_used": false,
+  "template_results": [
+    {
+      "id": "pet-1l",
+      "cold": {
+        "elapsed_s": 2.7006855001673102,
+        "cad_reused": false,
+        "project_id": "35af2f25063440b895a9e886908988b6",
+        "input": {
+          "name": "1 L\u30fb\u30b3\u30f3\u30d1\u30af\u30c8\u6a5f\u4f53",
+          "design": {
+            "tier": "bottle",
+            "bottle_volume_m3": 0.001,
+            "water_fill_frac": 0.3,
+            "initial_gauge_pressure_pa": 350000.0,
+            "nozzle_diameter_m": 0.009,
+            "dry_mass_kg": 0.15,
+            "payload_mass_kg": 0.06,
+            "has_fins": true,
+            "axial_drag_coefficient": null,
+            "has_parachute": true,
+            "parachute_diameter_m": 0.7,
+            "geometry": null
+          },
+          "geometry": {
+            "body_diameter_mm": 87.30705785825097,
+            "body_height_mm": 250.01566568499143,
+            "nose_length_mm": 75.40154996848948,
+            "fin_root_mm": 79.37005259840998,
+            "fin_tip_mm": 28.573218935427594,
+            "fin_span_mm": 39.68502629920499,
+            "fin_sweep_mm": 11.111807363777396,
+            "fin_count": 4,
+            "fin_thickness_mm": 2.4,
+            "nose_wall_mm": 1.6,
+            "radial_clearance_mm": 0.4,
+            "fin_slot_width_mm": 3.6,
+            "fin_tail_inset_mm": 79.37005259840998,
+            "dimensions_measured": false
+          },
+          "requirement": null,
+          "env": {
+            "launch_latitude_deg": 0.0,
+            "launch_altitude_m": 0.0,
+            "wind_speed_mps": 0.0,
+            "wind_direction_deg": 0.0,
+            "temperature_offset_k": 0.0,
+            "rail_length_m": 1.5,
+            "earth_rotation": false
+          },
+          "other_dry_mass_g": 80.0,
+          "measured_printed_mass_g": null,
+          "material": "UltiMaker Tough PLA Gray",
+          "assumptions": {
+            "mount": "standard",
+            "root_capture_mm": 10.5,
+            "other_mass_station_fraction": 0.55,
+            "payload_station_fraction": 0.15,
+            "solar_w_m2": 800.0,
+            "warm_wait_s": 120.0,
+            "pitch_damping": 10.0,
+            "initial_tilt_deg": 1.0,
+            "gust_mps": 1.0,
+            "opening_s": 0.15,
+            "evidence": {}
+          },
+          "equipment": {
+            "printer_profile": "s5-gray-aa04",
+            "printer_label": "\u5b9f\u9a13\u5ba41 / UltiMaker-006707",
+            "print_core": "AA 0.4",
+            "build_plate": "glass",
+            "material_lot": "",
+            "print_orientation": "host_validated_profile",
+            "operator": "\u672a\u6307\u5b9a",
+            "glove": "\u672a\u6307\u5b9a",
+            "hand_width_mm": null,
+            "glove_allowance_mm": null,
+            "strap_width_mm": null,
+            "strap_thickness_mm": null,
+            "tool_radius_mm": null,
+            "required_force_n": null,
+            "allowable_force_n": null,
+            "tools": [
+              "\u30ce\u30ae\u30b9",
+              "\u306f\u304b\u308a",
+              "\u9069\u5408\u3059\u308b\u56fa\u5b9a\u6750"
+            ],
+            "workbench_clear_width_mm": null,
+            "procurement": []
+          },
+          "altitude_rule": "band_10pct"
+        },
+        "printed_mass_g": 75.93582493085388,
+        "apogee_m": 15.197147071887702,
+        "cad_sha256": {
+          "fin-assembly-mm.stl": "a4bd993398aae6db4edc8f53dc915054c423685d55e5a2b78075e7e0792e8a96",
+          "fin-mm.3mf": "c1db3fa1def6d5bc33d148fba379fb608eecdd33f2b58acb2889950021093bb1",
+          "fin-mm.stl": "063391f458bd2a5c55bcd694f917d88518a907f0992797ae8cd500f5706d6d66",
+          "fin-preview.png": "a2cddfbb7fb2d607d2c5848ef6a1bc7e55273022f5fc353f2474a16b39f01043",
+          "fit-ring-mm.3mf": "b7a71af0c084238dffa3430bf56679ad67a4e6e516acd47fbf886dce2621df01",
+          "fit-ring-mm.stl": "af237e294f015ed3aa3fc5e4763d338d86ea8f335bb8ebb63d3f40e51abf2422",
+          "fit-ring-preview.png": "35672bcf3f048ce1ad4c6a2f3909fdde8b235f77a263711c0c496a0b6de33dd7",
+          "geometry-check.json": "f6555a4bfc89ff877727cfbdb6fb60a0d695219bffe382012224cc2ea3dd1eca",
+          "nose-mm.3mf": "92aa2e02bb70af7a4f4048f7d2407953d28e41e30984747f7cc078dde727dfcf",
+          "nose-mm.stl": "083a796d5b04054ec684ce0e383e5250e06fce99df160cb2920b2a4035094a38",
+          "nose-preview.png": "99233f88779d627ca0c121204b7b2c21cb14785fa26cd27695f7e691eedced5a",
+          "parameters.json": "2212773422d8e0ab216fd2d5ad1ad59cecd657f2dcff2bb801758ec668b287ad"
+        }
+      },
+      "payload_changed": {
+        "elapsed_s": 0.1253555000294,
+        "cad_reused": true,
+        "project_id": "64ba10eec86b465fabd716ea1088e506",
+        "input": {
+          "name": "1 L\u30fb\u30b3\u30f3\u30d1\u30af\u30c8\u6a5f\u4f53",
+          "design": {
+            "tier": "bottle",
+            "bottle_volume_m3": 0.001,
+            "water_fill_frac": 0.3,
+            "initial_gauge_pressure_pa": 350000.0,
+            "nozzle_diameter_m": 0.009,
+            "dry_mass_kg": 0.15,
+            "payload_mass_kg": 0.08,
+            "has_fins": true,
+            "axial_drag_coefficient": null,
+            "has_parachute": true,
+            "parachute_diameter_m": 0.7,
+            "geometry": null
+          },
+          "geometry": {
+            "body_diameter_mm": 87.30705785825097,
+            "body_height_mm": 250.01566568499143,
+            "nose_length_mm": 75.40154996848948,
+            "fin_root_mm": 79.37005259840998,
+            "fin_tip_mm": 28.573218935427594,
+            "fin_span_mm": 39.68502629920499,
+            "fin_sweep_mm": 11.111807363777396,
+            "fin_count": 4,
+            "fin_thickness_mm": 2.4,
+            "nose_wall_mm": 1.6,
+            "radial_clearance_mm": 0.4,
+            "fin_slot_width_mm": 3.6,
+            "fin_tail_inset_mm": 79.37005259840998,
+            "dimensions_measured": false
+          },
+          "requirement": null,
+          "env": {
+            "launch_latitude_deg": 0.0,
+            "launch_altitude_m": 0.0,
+            "wind_speed_mps": 0.0,
+            "wind_direction_deg": 0.0,
+            "temperature_offset_k": 0.0,
+            "rail_length_m": 1.5,
+            "earth_rotation": false
+          },
+          "other_dry_mass_g": 80.0,
+          "measured_printed_mass_g": null,
+          "material": "UltiMaker Tough PLA Gray",
+          "assumptions": {
+            "mount": "standard",
+            "root_capture_mm": 10.5,
+            "other_mass_station_fraction": 0.55,
+            "payload_station_fraction": 0.15,
+            "solar_w_m2": 800.0,
+            "warm_wait_s": 120.0,
+            "pitch_damping": 10.0,
+            "initial_tilt_deg": 1.0,
+            "gust_mps": 1.0,
+            "opening_s": 0.15,
+            "evidence": {}
+          },
+          "equipment": {
+            "printer_profile": "s5-gray-aa04",
+            "printer_label": "\u5b9f\u9a13\u5ba41 / UltiMaker-006707",
+            "print_core": "AA 0.4",
+            "build_plate": "glass",
+            "material_lot": "",
+            "print_orientation": "host_validated_profile",
+            "operator": "\u672a\u6307\u5b9a",
+            "glove": "\u672a\u6307\u5b9a",
+            "hand_width_mm": null,
+            "glove_allowance_mm": null,
+            "strap_width_mm": null,
+            "strap_thickness_mm": null,
+            "tool_radius_mm": null,
+            "required_force_n": null,
+            "allowable_force_n": null,
+            "tools": [
+              "\u30ce\u30ae\u30b9",
+              "\u306f\u304b\u308a",
+              "\u9069\u5408\u3059\u308b\u56fa\u5b9a\u6750"
+            ],
+            "workbench_clear_width_mm": null,
+            "procurement": []
+          },
+          "altitude_rule": "band_10pct"
+        },
+        "printed_mass_g": 75.93582493085388,
+        "apogee_m": 13.827748122007003,
+        "cad_sha256": {
+          "fin-assembly-mm.stl": "a4bd993398aae6db4edc8f53dc915054c423685d55e5a2b78075e7e0792e8a96",
+          "fin-mm.3mf": "c1db3fa1def6d5bc33d148fba379fb608eecdd33f2b58acb2889950021093bb1",
+          "fin-mm.stl": "063391f458bd2a5c55bcd694f917d88518a907f0992797ae8cd500f5706d6d66",
+          "fin-preview.png": "a2cddfbb7fb2d607d2c5848ef6a1bc7e55273022f5fc353f2474a16b39f01043",
+          "fit-ring-mm.3mf": "b7a71af0c084238dffa3430bf56679ad67a4e6e516acd47fbf886dce2621df01",
+          "fit-ring-mm.stl": "af237e294f015ed3aa3fc5e4763d338d86ea8f335bb8ebb63d3f40e51abf2422",
+          "fit-ring-preview.png": "35672bcf3f048ce1ad4c6a2f3909fdde8b235f77a263711c0c496a0b6de33dd7",
+          "geometry-check.json": "f6555a4bfc89ff877727cfbdb6fb60a0d695219bffe382012224cc2ea3dd1eca",
+          "nose-mm.3mf": "92aa2e02bb70af7a4f4048f7d2407953d28e41e30984747f7cc078dde727dfcf",
+          "nose-mm.stl": "083a796d5b04054ec684ce0e383e5250e06fce99df160cb2920b2a4035094a38",
+          "nose-preview.png": "99233f88779d627ca0c121204b7b2c21cb14785fa26cd27695f7e691eedced5a",
+          "parameters.json": "2212773422d8e0ab216fd2d5ad1ad59cecd657f2dcff2bb801758ec668b287ad"
+        }
+      },
+      "draw": {
+        "elapsed_s": 19.555610000155866,
+        "actual_stills": 6,
+        "cache": {
+          "stage": {
+            "template": {
+              "id": "compact",
+              "camera_distance_m": 1.270870420882418,
+              "fstop": 11
+            },
+            "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+            "reused": false,
+            "stage_sha256": "42abb8cdb35ce980a56f6b533513415ba347ebb38b24303e42b3bf9c33f63f9f"
+          },
+          "body": {
+            "identity": "4ce494ad7706a49fe90797bb691d1bfb434e0b8bdae870897698ea5f1f66a43b",
+            "reused": false,
+            "template": {
+              "kind": "schlatter-profile",
+              "source": "Adrian Schlatter / RocketFins",
+              "license": "BSD-2-Clause",
+              "source_file": "reference/schlatter-bottle.scad",
+              "asset_sha256": {
+                "reference/schlatter-bottle.scad": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2"
+              },
+              "id": "pet-1l",
+              "basis": "reference CAD fitted to editable envelope; unmeasured"
+            },
+            "vertices": 4736,
+            "bounds_m": [
+              [
+                -0.04365352913737297,
+                -0.04365352913737297,
+                0.0
+              ],
+              [
+                0.04365352913737297,
+                0.04365352913737297,
+                0.20701409876346588
+              ]
+            ],
+            "maximum_radius_m": 0.04365353095917522,
+            "wall_basis": "illustrative 0.35 mm"
+          },
+          "clips": {
+            "design": {
+              "identity": "30568cd56e5f1c584c91d8eb6b6d10cf002f427d163d93c46ef312276f13c714",
+              "restored": 0,
+              "resumed": 0,
+              "rendered": 3,
+              "frames": 384
+            },
+            "launch": {
+              "identity": "8843d1a9ded8567d6d29ac856b8d7925f0aa7920a8d0923c231094f12d2ec49d",
+              "restored": 0,
+              "resumed": 0,
+              "rendered": 3,
+              "frames": 288
+            }
+          },
+          "quality": "final"
+        },
+        "scene": {
+          "style": "photographic",
+          "dimensions_sha256": "602a1b5ce75db0a67233af617350a8ec883684150960b4e3e02b4a71de8c156f",
+          "mesh_vertex_hashes": {
+            "Adopted CAD fin0": "563110dff04787a014ae427154e8f7c752575b449147afa355056502387939bd",
+            "Adopted CAD fin1": "563110dff04787a014ae427154e8f7c752575b449147afa355056502387939bd",
+            "Adopted CAD fin2": "563110dff04787a014ae427154e8f7c752575b449147afa355056502387939bd",
+            "Adopted CAD fin3": "563110dff04787a014ae427154e8f7c752575b449147afa355056502387939bd",
+            "Adopted CAD nose0": "e791bb477a1edf2ea90a6127c1ab892780c517c982c7bc6a717bf352b8130720",
+            "Bottle": "23a04908c5c55ebeb14454004c6ed7bd11592243341eb6a875f0bda6309096d5",
+            "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.270870420882418,
+            "fstop": 11
+          },
+          "body_reference": {
+            "kind": "schlatter-profile",
+            "source": "Adrian Schlatter / RocketFins",
+            "license": "BSD-2-Clause",
+            "source_file": "reference/schlatter-bottle.scad",
+            "asset_sha256": {
+              "reference/schlatter-bottle.scad": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2"
+            },
+            "id": "pet-1l",
+            "basis": "reference CAD fitted to editable envelope; unmeasured"
+          },
+          "source_id": "35af2f25063440b895a9e886908988b6:v1",
+          "bottle_detail": "unmeasured illustrative PET envelope",
+          "camera": "fixed elevated CG viewpoint, not filmed observation",
+          "physical_validation": "not_performed"
+        }
+      },
+      "repeat": {
+        "elapsed_s": 2.543275599833578,
+        "actual_stills": 6,
+        "cache": {
+          "stage": {
+            "template": {
+              "id": "compact",
+              "camera_distance_m": 1.270870420882418,
+              "fstop": 11
+            },
+            "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+            "reused": true,
+            "stage_sha256": "42abb8cdb35ce980a56f6b533513415ba347ebb38b24303e42b3bf9c33f63f9f"
+          },
+          "body": {
+            "identity": "4ce494ad7706a49fe90797bb691d1bfb434e0b8bdae870897698ea5f1f66a43b",
+            "reused": true,
+            "template": {
+              "kind": "schlatter-profile",
+              "source": "Adrian Schlatter / RocketFins",
+              "license": "BSD-2-Clause",
+              "source_file": "reference/schlatter-bottle.scad",
+              "asset_sha256": {
+                "reference/schlatter-bottle.scad": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2"
+              },
+              "id": "pet-1l",
+              "basis": "reference CAD fitted to editable envelope; unmeasured"
+            },
+            "vertices": 4736,
+            "bounds_m": [
+              [
+                -0.04365352913737297,
+                -0.04365352913737297,
+                0.0
+              ],
+              [
+                0.04365352913737297,
+                0.04365352913737297,
+                0.20701409876346588
+              ]
+            ],
+            "maximum_radius_m": 0.04365353095917522,
+            "wall_basis": "illustrative 0.35 mm"
+          },
+          "clips": {
+            "design": {
+              "identity": "30568cd56e5f1c584c91d8eb6b6d10cf002f427d163d93c46ef312276f13c714",
+              "restored": 3,
+              "resumed": 0,
+              "rendered": 0,
+              "frames": 384
+            },
+            "launch": {
+              "identity": "8843d1a9ded8567d6d29ac856b8d7925f0aa7920a8d0923c231094f12d2ec49d",
+              "restored": 3,
+              "resumed": 0,
+              "rendered": 0,
+              "frames": 288
+            }
+          },
+          "quality": "final"
+        },
+        "scene": {
+          "style": "photographic",
+          "dimensions_sha256": "602a1b5ce75db0a67233af617350a8ec883684150960b4e3e02b4a71de8c156f",
+          "mesh_vertex_hashes": {
+            "Adopted CAD fin0": "563110dff04787a014ae427154e8f7c752575b449147afa355056502387939bd",
+            "Adopted CAD fin1": "563110dff04787a014ae427154e8f7c752575b449147afa355056502387939bd",
+            "Adopted CAD fin2": "563110dff04787a014ae427154e8f7c752575b449147afa355056502387939bd",
+            "Adopted CAD fin3": "563110dff04787a014ae427154e8f7c752575b449147afa355056502387939bd",
+            "Adopted CAD nose0": "e791bb477a1edf2ea90a6127c1ab892780c517c982c7bc6a717bf352b8130720",
+            "Bottle": "23a04908c5c55ebeb14454004c6ed7bd11592243341eb6a875f0bda6309096d5",
+            "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.270870420882418,
+            "fstop": 11
+          },
+          "body_reference": {
+            "kind": "schlatter-profile",
+            "source": "Adrian Schlatter / RocketFins",
+            "license": "BSD-2-Clause",
+            "source_file": "reference/schlatter-bottle.scad",
+            "asset_sha256": {
+              "reference/schlatter-bottle.scad": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2"
+            },
+            "id": "pet-1l",
+            "basis": "reference CAD fitted to editable envelope; unmeasured"
+          },
+          "source_id": "35af2f25063440b895a9e886908988b6:v1",
+          "bottle_detail": "unmeasured illustrative PET envelope",
+          "camera": "fixed elevated CG viewpoint, not filmed observation",
+          "physical_validation": "not_performed"
+        }
+      }
+    },
+    {
+      "id": "pet-15l",
+      "cold": {
+        "elapsed_s": 2.758381900144741,
+        "cad_reused": false,
+        "project_id": "59a10cf6aa0a48529b1c2d56bf91ed24",
+        "input": {
+          "name": "1.5 L\u30fb\u56de\u53ce\u4ed8\u304d\u6a5f\u4f53",
+          "design": {
+            "tier": "bottle",
+            "bottle_volume_m3": 0.0015,
+            "water_fill_frac": 0.3,
+            "initial_gauge_pressure_pa": 350000.0,
+            "nozzle_diameter_m": 0.009,
+            "dry_mass_kg": 0.15,
+            "payload_mass_kg": 0.06,
+            "has_fins": true,
+            "axial_drag_coefficient": null,
+            "has_parachute": true,
+            "parachute_diameter_m": 0.7,
+            "geometry": null
+          },
+          "geometry": {
+            "body_diameter_mm": 88.8,
+            "body_height_mm": 306.919043,
+            "nose_length_mm": 86.31322815952663,
+            "fin_root_mm": 90.85602964160698,
+            "fin_tip_mm": 32.70817067097851,
+            "fin_span_mm": 45.42801482080349,
+            "fin_sweep_mm": 12.719844149824977,
+            "fin_count": 4,
+            "fin_thickness_mm": 2.4,
+            "nose_wall_mm": 1.6,
+            "radial_clearance_mm": 0.4,
+            "fin_slot_width_mm": 3.6,
+            "fin_tail_inset_mm": 90.85602964160698,
+            "dimensions_measured": false
+          },
+          "requirement": null,
+          "env": {
+            "launch_latitude_deg": 0.0,
+            "launch_altitude_m": 0.0,
+            "wind_speed_mps": 0.0,
+            "wind_direction_deg": 0.0,
+            "temperature_offset_k": 0.0,
+            "rail_length_m": 1.5,
+            "earth_rotation": false
+          },
+          "other_dry_mass_g": 80.0,
+          "measured_printed_mass_g": null,
+          "material": "UltiMaker Tough PLA Gray",
+          "assumptions": {
+            "mount": "standard",
+            "root_capture_mm": 10.5,
+            "other_mass_station_fraction": 0.55,
+            "payload_station_fraction": 0.15,
+            "solar_w_m2": 800.0,
+            "warm_wait_s": 120.0,
+            "pitch_damping": 10.0,
+            "initial_tilt_deg": 1.0,
+            "gust_mps": 1.0,
+            "opening_s": 0.15,
+            "evidence": {}
+          },
+          "equipment": {
+            "printer_profile": "s5-gray-aa04",
+            "printer_label": "\u5b9f\u9a13\u5ba41 / UltiMaker-006707",
+            "print_core": "AA 0.4",
+            "build_plate": "glass",
+            "material_lot": "",
+            "print_orientation": "host_validated_profile",
+            "operator": "\u672a\u6307\u5b9a",
+            "glove": "\u672a\u6307\u5b9a",
+            "hand_width_mm": null,
+            "glove_allowance_mm": null,
+            "strap_width_mm": null,
+            "strap_thickness_mm": null,
+            "tool_radius_mm": null,
+            "required_force_n": null,
+            "allowable_force_n": null,
+            "tools": [
+              "\u30ce\u30ae\u30b9",
+              "\u306f\u304b\u308a",
+              "\u9069\u5408\u3059\u308b\u56fa\u5b9a\u6750"
+            ],
+            "workbench_clear_width_mm": null,
+            "procurement": []
+          },
+          "altitude_rule": "band_10pct"
+        },
+        "printed_mass_g": 91.18984297408433,
+        "apogee_m": 21.417287069916917,
+        "cad_sha256": {
+          "fin-assembly-mm.stl": "59c517ad58f14cd4f6095f941a9e6add048ea9f54dd8dcf32c2105023977295b",
+          "fin-mm.3mf": "a585d0f511363b05c7e657349c252e5aef86480d0de49dc70babc0f9c24c1df7",
+          "fin-mm.stl": "16438e244704f32b8e0b1b7def99dc722df8528b2356f8c6eabcefc8b657be58",
+          "fin-preview.png": "c708d1d4d6de657425f5420e160833cd0944be6060a0da213a1174996ad51fcc",
+          "fit-ring-mm.3mf": "788d6ffe155df38b49ba0a16d0b813f65bb09ea038491205947ea9dbc114a2e5",
+          "fit-ring-mm.stl": "1fbf30e3f92c80999ab318df883ec5a46134bbf9774922ddab6b8c2f8b755db2",
+          "fit-ring-preview.png": "a69f725f833443658965d205bc18ac38122f5b9bf4643dfcb661f9fd9c90cd61",
+          "geometry-check.json": "6f3b96e83dd0e5abb0a00ea3a6d8771e778b091d928651011ea36960d76adbac",
+          "nose-mm.3mf": "d9c5b3e0fecbeacd66a978a36d6ffe20be320d187d0f2ceb5aaf4565267da823",
+          "nose-mm.stl": "8af05ff3e302f383f20987aa264865713ff4e4f1e6e51c2acb9dfd3b0cd9dd07",
+          "nose-preview.png": "65f08f09eba96a67ea39e4898ed9c3634763edbbaf294623eb59329a95052a69",
+          "parameters.json": "802e46598d123fa6913b5ba6d9b9ba29d7835488aa1d14775f212f18d6a4337f"
+        }
+      },
+      "payload_changed": {
+        "elapsed_s": 0.13835329981520772,
+        "cad_reused": true,
+        "project_id": "32a8e8830588408dbb6b090b0893d2b5",
+        "input": {
+          "name": "1.5 L\u30fb\u56de\u53ce\u4ed8\u304d\u6a5f\u4f53",
+          "design": {
+            "tier": "bottle",
+            "bottle_volume_m3": 0.0015,
+            "water_fill_frac": 0.3,
+            "initial_gauge_pressure_pa": 350000.0,
+            "nozzle_diameter_m": 0.009,
+            "dry_mass_kg": 0.15,
+            "payload_mass_kg": 0.08,
+            "has_fins": true,
+            "axial_drag_coefficient": null,
+            "has_parachute": true,
+            "parachute_diameter_m": 0.7,
+            "geometry": null
+          },
+          "geometry": {
+            "body_diameter_mm": 88.8,
+            "body_height_mm": 306.919043,
+            "nose_length_mm": 86.31322815952663,
+            "fin_root_mm": 90.85602964160698,
+            "fin_tip_mm": 32.70817067097851,
+            "fin_span_mm": 45.42801482080349,
+            "fin_sweep_mm": 12.719844149824977,
+            "fin_count": 4,
+            "fin_thickness_mm": 2.4,
+            "nose_wall_mm": 1.6,
+            "radial_clearance_mm": 0.4,
+            "fin_slot_width_mm": 3.6,
+            "fin_tail_inset_mm": 90.85602964160698,
+            "dimensions_measured": false
+          },
+          "requirement": null,
+          "env": {
+            "launch_latitude_deg": 0.0,
+            "launch_altitude_m": 0.0,
+            "wind_speed_mps": 0.0,
+            "wind_direction_deg": 0.0,
+            "temperature_offset_k": 0.0,
+            "rail_length_m": 1.5,
+            "earth_rotation": false
+          },
+          "other_dry_mass_g": 80.0,
+          "measured_printed_mass_g": null,
+          "material": "UltiMaker Tough PLA Gray",
+          "assumptions": {
+            "mount": "standard",
+            "root_capture_mm": 10.5,
+            "other_mass_station_fraction": 0.55,
+            "payload_station_fraction": 0.15,
+            "solar_w_m2": 800.0,
+            "warm_wait_s": 120.0,
+            "pitch_damping": 10.0,
+            "initial_tilt_deg": 1.0,
+            "gust_mps": 1.0,
+            "opening_s": 0.15,
+            "evidence": {}
+          },
+          "equipment": {
+            "printer_profile": "s5-gray-aa04",
+            "printer_label": "\u5b9f\u9a13\u5ba41 / UltiMaker-006707",
+            "print_core": "AA 0.4",
+            "build_plate": "glass",
+            "material_lot": "",
+            "print_orientation": "host_validated_profile",
+            "operator": "\u672a\u6307\u5b9a",
+            "glove": "\u672a\u6307\u5b9a",
+            "hand_width_mm": null,
+            "glove_allowance_mm": null,
+            "strap_width_mm": null,
+            "strap_thickness_mm": null,
+            "tool_radius_mm": null,
+            "required_force_n": null,
+            "allowable_force_n": null,
+            "tools": [
+              "\u30ce\u30ae\u30b9",
+              "\u306f\u304b\u308a",
+              "\u9069\u5408\u3059\u308b\u56fa\u5b9a\u6750"
+            ],
+            "workbench_clear_width_mm": null,
+            "procurement": []
+          },
+          "altitude_rule": "band_10pct"
+        },
+        "printed_mass_g": 91.18984297408433,
+        "apogee_m": 19.89881691490845,
+        "cad_sha256": {
+          "fin-assembly-mm.stl": "59c517ad58f14cd4f6095f941a9e6add048ea9f54dd8dcf32c2105023977295b",
+          "fin-mm.3mf": "a585d0f511363b05c7e657349c252e5aef86480d0de49dc70babc0f9c24c1df7",
+          "fin-mm.stl": "16438e244704f32b8e0b1b7def99dc722df8528b2356f8c6eabcefc8b657be58",
+          "fin-preview.png": "c708d1d4d6de657425f5420e160833cd0944be6060a0da213a1174996ad51fcc",
+          "fit-ring-mm.3mf": "788d6ffe155df38b49ba0a16d0b813f65bb09ea038491205947ea9dbc114a2e5",
+          "fit-ring-mm.stl": "1fbf30e3f92c80999ab318df883ec5a46134bbf9774922ddab6b8c2f8b755db2",
+          "fit-ring-preview.png": "a69f725f833443658965d205bc18ac38122f5b9bf4643dfcb661f9fd9c90cd61",
+          "geometry-check.json": "6f3b96e83dd0e5abb0a00ea3a6d8771e778b091d928651011ea36960d76adbac",
+          "nose-mm.3mf": "d9c5b3e0fecbeacd66a978a36d6ffe20be320d187d0f2ceb5aaf4565267da823",
+          "nose-mm.stl": "8af05ff3e302f383f20987aa264865713ff4e4f1e6e51c2acb9dfd3b0cd9dd07",
+          "nose-preview.png": "65f08f09eba96a67ea39e4898ed9c3634763edbbaf294623eb59329a95052a69",
+          "parameters.json": "802e46598d123fa6913b5ba6d9b9ba29d7835488aa1d14775f212f18d6a4337f"
+        }
+      },
+      "draw": {
+        "elapsed_s": 19.960105000063777,
+        "actual_stills": 6,
+        "cache": {
+          "stage": {
+            "template": {
+              "id": "compact",
+              "camera_distance_m": 1.55043165086787,
+              "fstop": 11
+            },
+            "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+            "reused": true,
+            "stage_sha256": "42abb8cdb35ce980a56f6b533513415ba347ebb38b24303e42b3bf9c33f63f9f"
+          },
+          "body": {
+            "identity": "ef21eedf4439594eb8539c055049c74bdeccbe00874a451a883547d444679df5",
+            "reused": false,
+            "template": {
+              "kind": "reference-mesh",
+              "source": "castetsb / waterRocketToolbox / Kirin Lemon",
+              "license": "MIT",
+              "mesh": "reference/kirin-lemon-15l-visual.stl",
+              "profile": "reference/kirin-lemon-15l-visual.json",
+              "asset_sha256": {
+                "reference/kirin-lemon-15l-visual.stl": "10c0ef086dfa06d1a691014c3bd43d537de5159b0d56f08456bcabfe14a23524",
+                "reference/kirin-lemon-15l-visual.json": "0c201df3ac9074ab28021ab189ca91b28d295eac1eda6547399179b068c7fde1"
+              },
+              "id": "pet-15l",
+              "basis": "reference CAD fitted to editable envelope; unmeasured"
+            },
+            "vertices": 44804,
+            "bounds_m": [
+              [
+                -0.04439999908208847,
+                -0.04439999908208847,
+                0.0
+              ],
+              [
+                0.04439999908208847,
+                0.04439999908208847,
+                0.25822713971138
+              ]
+            ],
+            "maximum_radius_m": 0.044400003665956804,
+            "wall_basis": "reference CAD wall; unmeasured"
+          },
+          "clips": {
+            "design": {
+              "identity": "bf996953be21ec82457a823c67e57ad00a5249bbbf9e9c2acf1988846d33aaf2",
+              "restored": 0,
+              "resumed": 0,
+              "rendered": 3,
+              "frames": 384
+            },
+            "launch": {
+              "identity": "3b92013d3f74490c8d334ea9840477dd68728843d36ef0338f1e0cb08362a012",
+              "restored": 0,
+              "resumed": 0,
+              "rendered": 3,
+              "frames": 288
+            }
+          },
+          "quality": "final"
+        },
+        "scene": {
+          "style": "photographic",
+          "dimensions_sha256": "7ef79806b4506be9569dae2b249f999535ddde41e60457bcdae9045aa1ce22c6",
+          "mesh_vertex_hashes": {
+            "Adopted CAD fin0": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin1": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin2": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin3": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD nose0": "7e0619c58c12c2cb72a8b44cb42c5ce195ec845b8bb01cdd0b92393908ce71fb",
+            "Bottle": "9352ef7c6329a74c3d1c5197f4bec98553047df5ae80c62afa5eba1fab2f89ad",
+            "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.55043165086787,
+            "fstop": 11
+          },
+          "body_reference": {
+            "kind": "reference-mesh",
+            "source": "castetsb / waterRocketToolbox / Kirin Lemon",
+            "license": "MIT",
+            "mesh": "reference/kirin-lemon-15l-visual.stl",
+            "profile": "reference/kirin-lemon-15l-visual.json",
+            "asset_sha256": {
+              "reference/kirin-lemon-15l-visual.stl": "10c0ef086dfa06d1a691014c3bd43d537de5159b0d56f08456bcabfe14a23524",
+              "reference/kirin-lemon-15l-visual.json": "0c201df3ac9074ab28021ab189ca91b28d295eac1eda6547399179b068c7fde1"
+            },
+            "id": "pet-15l",
+            "basis": "reference CAD fitted to editable envelope; unmeasured"
+          },
+          "source_id": "59a10cf6aa0a48529b1c2d56bf91ed24:v1",
+          "bottle_detail": "unmeasured illustrative PET envelope",
+          "camera": "fixed elevated CG viewpoint, not filmed observation",
+          "physical_validation": "not_performed"
+        }
+      },
+      "repeat": {
+        "elapsed_s": 2.8584549999795854,
+        "actual_stills": 6,
+        "cache": {
+          "stage": {
+            "template": {
+              "id": "compact",
+              "camera_distance_m": 1.55043165086787,
+              "fstop": 11
+            },
+            "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+            "reused": true,
+            "stage_sha256": "42abb8cdb35ce980a56f6b533513415ba347ebb38b24303e42b3bf9c33f63f9f"
+          },
+          "body": {
+            "identity": "ef21eedf4439594eb8539c055049c74bdeccbe00874a451a883547d444679df5",
+            "reused": true,
+            "template": {
+              "kind": "reference-mesh",
+              "source": "castetsb / waterRocketToolbox / Kirin Lemon",
+              "license": "MIT",
+              "mesh": "reference/kirin-lemon-15l-visual.stl",
+              "profile": "reference/kirin-lemon-15l-visual.json",
+              "asset_sha256": {
+                "reference/kirin-lemon-15l-visual.stl": "10c0ef086dfa06d1a691014c3bd43d537de5159b0d56f08456bcabfe14a23524",
+                "reference/kirin-lemon-15l-visual.json": "0c201df3ac9074ab28021ab189ca91b28d295eac1eda6547399179b068c7fde1"
+              },
+              "id": "pet-15l",
+              "basis": "reference CAD fitted to editable envelope; unmeasured"
+            },
+            "vertices": 44804,
+            "bounds_m": [
+              [
+                -0.04439999908208847,
+                -0.04439999908208847,
+                0.0
+              ],
+              [
+                0.04439999908208847,
+                0.04439999908208847,
+                0.25822713971138
+              ]
+            ],
+            "maximum_radius_m": 0.044400003665956804,
+            "wall_basis": "reference CAD wall; unmeasured"
+          },
+          "clips": {
+            "design": {
+              "identity": "bf996953be21ec82457a823c67e57ad00a5249bbbf9e9c2acf1988846d33aaf2",
+              "restored": 3,
+              "resumed": 0,
+              "rendered": 0,
+              "frames": 384
+            },
+            "launch": {
+              "identity": "3b92013d3f74490c8d334ea9840477dd68728843d36ef0338f1e0cb08362a012",
+              "restored": 3,
+              "resumed": 0,
+              "rendered": 0,
+              "frames": 288
+            }
+          },
+          "quality": "final"
+        },
+        "scene": {
+          "style": "photographic",
+          "dimensions_sha256": "7ef79806b4506be9569dae2b249f999535ddde41e60457bcdae9045aa1ce22c6",
+          "mesh_vertex_hashes": {
+            "Adopted CAD fin0": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin1": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin2": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin3": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD nose0": "7e0619c58c12c2cb72a8b44cb42c5ce195ec845b8bb01cdd0b92393908ce71fb",
+            "Bottle": "9352ef7c6329a74c3d1c5197f4bec98553047df5ae80c62afa5eba1fab2f89ad",
+            "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.55043165086787,
+            "fstop": 11
+          },
+          "body_reference": {
+            "kind": "reference-mesh",
+            "source": "castetsb / waterRocketToolbox / Kirin Lemon",
+            "license": "MIT",
+            "mesh": "reference/kirin-lemon-15l-visual.stl",
+            "profile": "reference/kirin-lemon-15l-visual.json",
+            "asset_sha256": {
+              "reference/kirin-lemon-15l-visual.stl": "10c0ef086dfa06d1a691014c3bd43d537de5159b0d56f08456bcabfe14a23524",
+              "reference/kirin-lemon-15l-visual.json": "0c201df3ac9074ab28021ab189ca91b28d295eac1eda6547399179b068c7fde1"
+            },
+            "id": "pet-15l",
+            "basis": "reference CAD fitted to editable envelope; unmeasured"
+          },
+          "source_id": "59a10cf6aa0a48529b1c2d56bf91ed24:v1",
+          "bottle_detail": "unmeasured illustrative PET envelope",
+          "camera": "fixed elevated CG viewpoint, not filmed observation",
+          "physical_validation": "not_performed"
+        }
+      },
+      "geometry_changed": {
+        "elapsed_s": 2.7710544001311064,
+        "cad_reused": false,
+        "project_id": "78d26c866bca4a2198f5abad34dcd957",
+        "input": {
+          "name": "1.5 L\u30fb\u56de\u53ce\u4ed8\u304d\u6a5f\u4f53",
+          "design": {
+            "tier": "bottle",
+            "bottle_volume_m3": 0.0015,
+            "water_fill_frac": 0.3,
+            "initial_gauge_pressure_pa": 350000.0,
+            "nozzle_diameter_m": 0.009,
+            "dry_mass_kg": 0.15,
+            "payload_mass_kg": 0.06,
+            "has_fins": true,
+            "axial_drag_coefficient": null,
+            "has_parachute": true,
+            "parachute_diameter_m": 0.7,
+            "geometry": null
+          },
+          "geometry": {
+            "body_diameter_mm": 88.8,
+            "body_height_mm": 306.919043,
+            "nose_length_mm": 86.31322815952663,
+            "fin_root_mm": 90.85602964160698,
+            "fin_tip_mm": 32.70817067097851,
+            "fin_span_mm": 50.42801482080349,
+            "fin_sweep_mm": 12.719844149824977,
+            "fin_count": 4,
+            "fin_thickness_mm": 2.4,
+            "nose_wall_mm": 1.6,
+            "radial_clearance_mm": 0.4,
+            "fin_slot_width_mm": 3.6,
+            "fin_tail_inset_mm": 90.85602964160698,
+            "dimensions_measured": false
+          },
+          "requirement": null,
+          "env": {
+            "launch_latitude_deg": 0.0,
+            "launch_altitude_m": 0.0,
+            "wind_speed_mps": 0.0,
+            "wind_direction_deg": 0.0,
+            "temperature_offset_k": 0.0,
+            "rail_length_m": 1.5,
+            "earth_rotation": false
+          },
+          "other_dry_mass_g": 80.0,
+          "measured_printed_mass_g": null,
+          "material": "UltiMaker Tough PLA Gray",
+          "assumptions": {
+            "mount": "standard",
+            "root_capture_mm": 10.5,
+            "other_mass_station_fraction": 0.55,
+            "payload_station_fraction": 0.15,
+            "solar_w_m2": 800.0,
+            "warm_wait_s": 120.0,
+            "pitch_damping": 10.0,
+            "initial_tilt_deg": 1.0,
+            "gust_mps": 1.0,
+            "opening_s": 0.15,
+            "evidence": {}
+          },
+          "equipment": {
+            "printer_profile": "s5-gray-aa04",
+            "printer_label": "\u5b9f\u9a13\u5ba41 / UltiMaker-006707",
+            "print_core": "AA 0.4",
+            "build_plate": "glass",
+            "material_lot": "",
+            "print_orientation": "host_validated_profile",
+            "operator": "\u672a\u6307\u5b9a",
+            "glove": "\u672a\u6307\u5b9a",
+            "hand_width_mm": null,
+            "glove_allowance_mm": null,
+            "strap_width_mm": null,
+            "strap_thickness_mm": null,
+            "tool_radius_mm": null,
+            "required_force_n": null,
+            "allowable_force_n": null,
+            "tools": [
+              "\u30ce\u30ae\u30b9",
+              "\u306f\u304b\u308a",
+              "\u9069\u5408\u3059\u308b\u56fa\u5b9a\u6750"
+            ],
+            "workbench_clear_width_mm": null,
+            "procurement": []
+          },
+          "altitude_rule": "band_10pct"
+        },
+        "printed_mass_g": 94.86650282743548,
+        "apogee_m": 21.131626857916253,
+        "cad_sha256": {
+          "fin-assembly-mm.stl": "855b992056c99cb5ee791d4825d827163a0b2d05f8808b17a0aa85e2eea02b21",
+          "fin-mm.3mf": "a4787c87518c101b9c30f558e8ae4e428973b960893420c3f51324edff9a0ae5",
+          "fin-mm.stl": "dc87a42753bac9a52269267ccf167412660ee826ebc8b1780baa6b6c1b306efe",
+          "fin-preview.png": "cf867886f2ff27298af5c1af61e4579cb5a1e8a12b657bbfbb9e75d280833dd6",
+          "fit-ring-mm.3mf": "5055e5e591eb6570ad677e63dd68ae27353d1e30b5f157e1d1b2154ec367362e",
+          "fit-ring-mm.stl": "1fbf30e3f92c80999ab318df883ec5a46134bbf9774922ddab6b8c2f8b755db2",
+          "fit-ring-preview.png": "a69f725f833443658965d205bc18ac38122f5b9bf4643dfcb661f9fd9c90cd61",
+          "geometry-check.json": "5c4ab04b80bfec060397053cd3bda6d2c17953e6e3c255c5b8b8adc8701e71cb",
+          "nose-mm.3mf": "636f19bcb6f3cb58c27f60fbf81ebd71698a9c2d33781cdab8c803005bcd9a14",
+          "nose-mm.stl": "8af05ff3e302f383f20987aa264865713ff4e4f1e6e51c2acb9dfd3b0cd9dd07",
+          "nose-preview.png": "65f08f09eba96a67ea39e4898ed9c3634763edbbaf294623eb59329a95052a69",
+          "parameters.json": "f11f1c24bcd57dda37182f129bbeded7d7ccfe50c18763a60eb594ea5c424cb5"
+        }
+      },
+      "legacy_draw": {
+        "elapsed_s": 20.17760800011456,
+        "actual_stills": 6,
+        "cache": {
+          "stage": {
+            "template": {
+              "id": "compact",
+              "camera_distance_m": 1.55043165086787,
+              "fstop": 11
+            },
+            "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+            "reused": true,
+            "stage_sha256": "42abb8cdb35ce980a56f6b533513415ba347ebb38b24303e42b3bf9c33f63f9f"
+          },
+          "body": {
+            "identity": "7395a9c2524c16a54a2e9f2a016f9f3d6c161d24b9e301fe636cb2f986551a9b",
+            "reused": false,
+            "template": null,
+            "vertices": 11648,
+            "bounds_m": [
+              [
+                -0.04439999908208847,
+                -0.04439999908208847,
+                0.0
+              ],
+              [
+                0.04439999908208847,
+                0.04439999908208847,
+                0.25822713971138
+              ]
+            ],
+            "maximum_radius_m": 0.04440000106739228,
+            "wall_basis": "illustrative 0.35 mm"
+          },
+          "clips": {
+            "design": {
+              "identity": "aad34d7eb701ea73486e001e619e16a68770f6c4ee2ad5ab9ed1f6bcdf436135",
+              "restored": 0,
+              "resumed": 0,
+              "rendered": 3,
+              "frames": 384
+            },
+            "launch": {
+              "identity": "203db4998c09d2928e58f2a094e9a94633837535953ceba4011322b43f60f84d",
+              "restored": 0,
+              "resumed": 0,
+              "rendered": 3,
+              "frames": 288
+            }
+          },
+          "quality": "final"
+        },
+        "scene": {
+          "style": "photographic",
+          "dimensions_sha256": "7ef79806b4506be9569dae2b249f999535ddde41e60457bcdae9045aa1ce22c6",
+          "mesh_vertex_hashes": {
+            "Adopted CAD fin0": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin1": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin2": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD fin3": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+            "Adopted CAD nose0": "7e0619c58c12c2cb72a8b44cb42c5ce195ec845b8bb01cdd0b92393908ce71fb",
+            "Bottle": "b94055cf45ebfdc1599930d8608ce2b35b46167b192832d821e140029b69b7cd",
+            "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.55043165086787,
+            "fstop": 11
+          },
+          "body_reference": null,
+          "source_id": "59a10cf6aa0a48529b1c2d56bf91ed24:v1",
+          "bottle_detail": "unmeasured illustrative PET envelope",
+          "camera": "fixed elevated CG viewpoint, not filmed observation",
+          "physical_validation": "not_performed"
+        }
+      }
+    },
+    {
+      "id": "pet-2l",
+      "cold": {
+        "elapsed_s": 2.932990999892354,
+        "cad_reused": false,
+        "project_id": "9b430fd4c38d48a1a96f05be8f824ad7",
+        "input": {
+          "name": "2 L\u30fb\u6a19\u6e96\u6a5f\u4f53",
+          "design": {
+            "tier": "bottle",
+            "bottle_volume_m3": 0.002,
+            "water_fill_frac": 0.3,
+            "initial_gauge_pressure_pa": 350000.0,
+            "nozzle_diameter_m": 0.009,
+            "dry_mass_kg": 0.15,
+            "payload_mass_kg": 0.06,
+            "has_fins": true,
+            "axial_drag_coefficient": null,
+            "has_parachute": true,
+            "parachute_diameter_m": 0.7,
+            "geometry": null
+          },
+          "geometry": {
+            "body_diameter_mm": 109.0,
+            "body_height_mm": 296.99999999898216,
+            "nose_length_mm": 95.0,
+            "fin_root_mm": 100.0,
+            "fin_tip_mm": 36.0,
+            "fin_span_mm": 50.0,
+            "fin_sweep_mm": 14.0,
+            "fin_count": 4,
+            "fin_thickness_mm": 2.4,
+            "nose_wall_mm": 1.6,
+            "radial_clearance_mm": 0.4,
+            "fin_slot_width_mm": 3.6,
+            "fin_tail_inset_mm": 100.0,
+            "dimensions_measured": false
+          },
+          "requirement": null,
+          "env": {
+            "launch_latitude_deg": 0.0,
+            "launch_altitude_m": 0.0,
+            "wind_speed_mps": 0.0,
+            "wind_direction_deg": 0.0,
+            "temperature_offset_k": 0.0,
+            "rail_length_m": 1.5,
+            "earth_rotation": false
+          },
+          "other_dry_mass_g": 80.0,
+          "measured_printed_mass_g": null,
+          "material": "UltiMaker Tough PLA Gray",
+          "assumptions": {
+            "mount": "standard",
+            "root_capture_mm": 10.5,
+            "other_mass_station_fraction": 0.55,
+            "payload_station_fraction": 0.15,
+            "solar_w_m2": 800.0,
+            "warm_wait_s": 120.0,
+            "pitch_damping": 10.0,
+            "initial_tilt_deg": 1.0,
+            "gust_mps": 1.0,
+            "opening_s": 0.15,
+            "evidence": {}
+          },
+          "equipment": {
+            "printer_profile": "s5-gray-aa04",
+            "printer_label": "\u5b9f\u9a13\u5ba41 / UltiMaker-006707",
+            "print_core": "AA 0.4",
+            "build_plate": "glass",
+            "material_lot": "",
+            "print_orientation": "host_validated_profile",
+            "operator": "\u672a\u6307\u5b9a",
+            "glove": "\u672a\u6307\u5b9a",
+            "hand_width_mm": null,
+            "glove_allowance_mm": null,
+            "strap_width_mm": null,
+            "strap_thickness_mm": null,
+            "tool_radius_mm": null,
+            "required_force_n": null,
+            "allowable_force_n": null,
+            "tools": [
+              "\u30ce\u30ae\u30b9",
+              "\u306f\u304b\u308a",
+              "\u9069\u5408\u3059\u308b\u56fa\u5b9a\u6750"
+            ],
+            "workbench_clear_width_mm": null,
+            "procurement": []
+          },
+          "altitude_rule": "band_10pct"
+        },
+        "printed_mass_g": 113.27598153388931,
+        "apogee_m": 23.416596516483473,
+        "cad_sha256": {
+          "fin-assembly-mm.stl": "9a9e942ff92fefbf95fbe62d0306f0e6eba895b3e99092eca5c99c01e2baeaac",
+          "fin-mm.3mf": "fc7bad4e7f1085e87c484a7ffbb1fe056e6223bc384970287545ca43e59a1d54",
+          "fin-mm.stl": "0be3a920e128e89e015a2e576d0c2da1d10f380ed7bbee9ec3d05b0df081b117",
+          "fin-preview.png": "64004d831008258b0de2fba0d31cb4ceecf72cb4d21dcabc01fe9d5972ca9ed8",
+          "fit-ring-mm.3mf": "a72c38b02a6aa3022ed55b62e46e34d31ab59a634baf5853e0f55e1fc4ad309e",
+          "fit-ring-mm.stl": "45c9c457af3acf02b9a70234fa2601a2236fddbf46c89658c1aecd9503e9eef4",
+          "fit-ring-preview.png": "95a0656d52b6ef1a63cc52fc4583714ec19d7e61d0008236fa387860e53e3b29",
+          "geometry-check.json": "a989ddc12ec51031d9319fcd2f220b5ec201d3ad3521969fd60ad134f461f461",
+          "nose-mm.3mf": "2101afef2f06eb479cda230cfcb672e71eae6742da57cfe9d0ca099f7cb49c83",
+          "nose-mm.stl": "3a49ab2e924d9e3960279c1b41850ed8ccf5e05ab01ef8763c99eda9167ef994",
+          "nose-preview.png": "d5f868f0262d7cec60322e436d34e3fa3d4f3eb0864e6a9ec6274abfdd81af06",
+          "parameters.json": "7da1e9545236aff0b3fc2643d46b04e4b8aa54d511de584840870b98c0c77a01"
+        }
+      },
+      "payload_changed": {
+        "elapsed_s": 0.155306400032714,
+        "cad_reused": true,
+        "project_id": "21bc0cc4554448d08272696d3e20a1f4",
+        "input": {
+          "name": "2 L\u30fb\u6a19\u6e96\u6a5f\u4f53",
+          "design": {
+            "tier": "bottle",
+            "bottle_volume_m3": 0.002,
+            "water_fill_frac": 0.3,
+            "initial_gauge_pressure_pa": 350000.0,
+            "nozzle_diameter_m": 0.009,
+            "dry_mass_kg": 0.15,
+            "payload_mass_kg": 0.08,
+            "has_fins": true,
+            "axial_drag_coefficient": null,
+            "has_parachute": true,
+            "parachute_diameter_m": 0.7,
+            "geometry": null
+          },
+          "geometry": {
+            "body_diameter_mm": 109.0,
+            "body_height_mm": 296.99999999898216,
+            "nose_length_mm": 95.0,
+            "fin_root_mm": 100.0,
+            "fin_tip_mm": 36.0,
+            "fin_span_mm": 50.0,
+            "fin_sweep_mm": 14.0,
+            "fin_count": 4,
+            "fin_thickness_mm": 2.4,
+            "nose_wall_mm": 1.6,
+            "radial_clearance_mm": 0.4,
+            "fin_slot_width_mm": 3.6,
+            "fin_tail_inset_mm": 100.0,
+            "dimensions_measured": false
+          },
+          "requirement": null,
+          "env": {
+            "launch_latitude_deg": 0.0,
+            "launch_altitude_m": 0.0,
+            "wind_speed_mps": 0.0,
+            "wind_direction_deg": 0.0,
+            "temperature_offset_k": 0.0,
+            "rail_length_m": 1.5,
+            "earth_rotation": false
+          },
+          "other_dry_mass_g": 80.0,
+          "measured_printed_mass_g": null,
+          "material": "UltiMaker Tough PLA Gray",
+          "assumptions": {
+            "mount": "standard",
+            "root_capture_mm": 10.5,
+            "other_mass_station_fraction": 0.55,
+            "payload_station_fraction": 0.15,
+            "solar_w_m2": 800.0,
+            "warm_wait_s": 120.0,
+            "pitch_damping": 10.0,
+            "initial_tilt_deg": 1.0,
+            "gust_mps": 1.0,
+            "opening_s": 0.15,
+            "evidence": {}
+          },
+          "equipment": {
+            "printer_profile": "s5-gray-aa04",
+            "printer_label": "\u5b9f\u9a13\u5ba41 / UltiMaker-006707",
+            "print_core": "AA 0.4",
+            "build_plate": "glass",
+            "material_lot": "",
+            "print_orientation": "host_validated_profile",
+            "operator": "\u672a\u6307\u5b9a",
+            "glove": "\u672a\u6307\u5b9a",
+            "hand_width_mm": null,
+            "glove_allowance_mm": null,
+            "strap_width_mm": null,
+            "strap_thickness_mm": null,
+            "tool_radius_mm": null,
+            "required_force_n": null,
+            "allowable_force_n": null,
+            "tools": [
+              "\u30ce\u30ae\u30b9",
+              "\u306f\u304b\u308a",
+              "\u9069\u5408\u3059\u308b\u56fa\u5b9a\u6750"
+            ],
+            "workbench_clear_width_mm": null,
+            "procurement": []
+          },
+          "altitude_rule": "band_10pct"
+        },
+        "printed_mass_g": 113.27598153388931,
+        "apogee_m": 22.220650622292972,
+        "cad_sha256": {
+          "fin-assembly-mm.stl": "9a9e942ff92fefbf95fbe62d0306f0e6eba895b3e99092eca5c99c01e2baeaac",
+          "fin-mm.3mf": "fc7bad4e7f1085e87c484a7ffbb1fe056e6223bc384970287545ca43e59a1d54",
+          "fin-mm.stl": "0be3a920e128e89e015a2e576d0c2da1d10f380ed7bbee9ec3d05b0df081b117",
+          "fin-preview.png": "64004d831008258b0de2fba0d31cb4ceecf72cb4d21dcabc01fe9d5972ca9ed8",
+          "fit-ring-mm.3mf": "a72c38b02a6aa3022ed55b62e46e34d31ab59a634baf5853e0f55e1fc4ad309e",
+          "fit-ring-mm.stl": "45c9c457af3acf02b9a70234fa2601a2236fddbf46c89658c1aecd9503e9eef4",
+          "fit-ring-preview.png": "95a0656d52b6ef1a63cc52fc4583714ec19d7e61d0008236fa387860e53e3b29",
+          "geometry-check.json": "a989ddc12ec51031d9319fcd2f220b5ec201d3ad3521969fd60ad134f461f461",
+          "nose-mm.3mf": "2101afef2f06eb479cda230cfcb672e71eae6742da57cfe9d0ca099f7cb49c83",
+          "nose-mm.stl": "3a49ab2e924d9e3960279c1b41850ed8ccf5e05ab01ef8763c99eda9167ef994",
+          "nose-preview.png": "d5f868f0262d7cec60322e436d34e3fa3d4f3eb0864e6a9ec6274abfdd81af06",
+          "parameters.json": "7da1e9545236aff0b3fc2643d46b04e4b8aa54d511de584840870b98c0c77a01"
+        }
+      },
+      "draw": {
+        "elapsed_s": 20.30973089998588,
+        "actual_stills": 6,
+        "cache": {
+          "stage": {
+            "template": {
+              "id": "compact",
+              "camera_distance_m": 1.549349999995878,
+              "fstop": 11
+            },
+            "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+            "reused": true,
+            "stage_sha256": "42abb8cdb35ce980a56f6b533513415ba347ebb38b24303e42b3bf9c33f63f9f"
+          },
+          "body": {
+            "identity": "5a40bb1d239be71a4148c84f262163147e573b5302b933f996eadfb7557bfce3",
+            "reused": false,
+            "template": {
+              "kind": "reference-mesh",
+              "source": "castetsb / waterRocketToolbox / Soda 2L",
+              "license": "MIT",
+              "mesh": "reference/soda-2l-visual.stl",
+              "profile": "reference/soda-2l-visual.json",
+              "asset_sha256": {
+                "reference/soda-2l-visual.stl": "f97b5d0f8fdc8cae098e80ba282da275196e936777f236507523b8f74162ed22",
+                "reference/soda-2l-visual.json": "0e1d2f3111195fd3ef30998c8fbb41b7857dab1e47d13dabe8448c7603a09810"
+              },
+              "id": "pet-2l",
+              "basis": "reference CAD fitted to editable envelope; unmeasured"
+            },
+            "vertices": 50434,
+            "bounds_m": [
+              [
+                -0.054499998688697815,
+                -0.054499998688697815,
+                0.0
+              ],
+              [
+                0.054499998688697815,
+                0.054499998688697815,
+                0.2493000030517578
+              ]
+            ],
+            "maximum_radius_m": 0.054500002445191265,
+            "wall_basis": "reference CAD wall; unmeasured"
+          },
+          "clips": {
+            "design": {
+              "identity": "05b35b742d85b898c98d340c6de2777688d2ef4a05fba235a9590c4227d3e549",
+              "restored": 0,
+              "resumed": 0,
+              "rendered": 3,
+              "frames": 384
+            },
+            "launch": {
+              "identity": "412b6252f1fe9c99599ecc18b256bbbcaa777b9df6da90c4476c2e0054f30460",
+              "restored": 0,
+              "resumed": 0,
+              "rendered": 3,
+              "frames": 288
+            }
+          },
+          "quality": "final"
+        },
+        "scene": {
+          "style": "photographic",
+          "dimensions_sha256": "be93ed8f96f11d69f189ee97410d9ccada07964e3b2cc58c8ca07254c0e2d22f",
+          "mesh_vertex_hashes": {
+            "Adopted CAD fin0": "66c989883d05fedefe75e60e1e7fab5b5c7983bde42c06f9b69985cda057f336",
+            "Adopted CAD fin1": "66c989883d05fedefe75e60e1e7fab5b5c7983bde42c06f9b69985cda057f336",
+            "Adopted CAD fin2": "66c989883d05fedefe75e60e1e7fab5b5c7983bde42c06f9b69985cda057f336",
+            "Adopted CAD fin3": "66c989883d05fedefe75e60e1e7fab5b5c7983bde42c06f9b69985cda057f336",
+            "Adopted CAD nose0": "ff731992eca4430c46eea67fbeb34fdfd9e936f8aeaa6e084d3b14846b9b2ead",
+            "Bottle": "563ff7b249f67d853e9fb59b74e1067a5d10419371c0bfdadf11ae77e1232b02",
+            "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.549349999995878,
+            "fstop": 11
+          },
+          "body_reference": {
+            "kind": "reference-mesh",
+            "source": "castetsb / waterRocketToolbox / Soda 2L",
+            "license": "MIT",
+            "mesh": "reference/soda-2l-visual.stl",
+            "profile": "reference/soda-2l-visual.json",
+            "asset_sha256": {
+              "reference/soda-2l-visual.stl": "f97b5d0f8fdc8cae098e80ba282da275196e936777f236507523b8f74162ed22",
+              "reference/soda-2l-visual.json": "0e1d2f3111195fd3ef30998c8fbb41b7857dab1e47d13dabe8448c7603a09810"
+            },
+            "id": "pet-2l",
+            "basis": "reference CAD fitted to editable envelope; unmeasured"
+          },
+          "source_id": "9b430fd4c38d48a1a96f05be8f824ad7:v1",
+          "bottle_detail": "unmeasured illustrative PET envelope",
+          "camera": "fixed elevated CG viewpoint, not filmed observation",
+          "physical_validation": "not_performed"
+        }
+      },
+      "repeat": {
+        "elapsed_s": 2.866179100004956,
+        "actual_stills": 6,
+        "cache": {
+          "stage": {
+            "template": {
+              "id": "compact",
+              "camera_distance_m": 1.549349999995878,
+              "fstop": 11
+            },
+            "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+            "reused": true,
+            "stage_sha256": "42abb8cdb35ce980a56f6b533513415ba347ebb38b24303e42b3bf9c33f63f9f"
+          },
+          "body": {
+            "identity": "5a40bb1d239be71a4148c84f262163147e573b5302b933f996eadfb7557bfce3",
+            "reused": true,
+            "template": {
+              "kind": "reference-mesh",
+              "source": "castetsb / waterRocketToolbox / Soda 2L",
+              "license": "MIT",
+              "mesh": "reference/soda-2l-visual.stl",
+              "profile": "reference/soda-2l-visual.json",
+              "asset_sha256": {
+                "reference/soda-2l-visual.stl": "f97b5d0f8fdc8cae098e80ba282da275196e936777f236507523b8f74162ed22",
+                "reference/soda-2l-visual.json": "0e1d2f3111195fd3ef30998c8fbb41b7857dab1e47d13dabe8448c7603a09810"
+              },
+              "id": "pet-2l",
+              "basis": "reference CAD fitted to editable envelope; unmeasured"
+            },
+            "vertices": 50434,
+            "bounds_m": [
+              [
+                -0.054499998688697815,
+                -0.054499998688697815,
+                0.0
+              ],
+              [
+                0.054499998688697815,
+                0.054499998688697815,
+                0.2493000030517578
+              ]
+            ],
+            "maximum_radius_m": 0.054500002445191265,
+            "wall_basis": "reference CAD wall; unmeasured"
+          },
+          "clips": {
+            "design": {
+              "identity": "05b35b742d85b898c98d340c6de2777688d2ef4a05fba235a9590c4227d3e549",
+              "restored": 3,
+              "resumed": 0,
+              "rendered": 0,
+              "frames": 384
+            },
+            "launch": {
+              "identity": "412b6252f1fe9c99599ecc18b256bbbcaa777b9df6da90c4476c2e0054f30460",
+              "restored": 3,
+              "resumed": 0,
+              "rendered": 0,
+              "frames": 288
+            }
+          },
+          "quality": "final"
+        },
+        "scene": {
+          "style": "photographic",
+          "dimensions_sha256": "be93ed8f96f11d69f189ee97410d9ccada07964e3b2cc58c8ca07254c0e2d22f",
+          "mesh_vertex_hashes": {
+            "Adopted CAD fin0": "66c989883d05fedefe75e60e1e7fab5b5c7983bde42c06f9b69985cda057f336",
+            "Adopted CAD fin1": "66c989883d05fedefe75e60e1e7fab5b5c7983bde42c06f9b69985cda057f336",
+            "Adopted CAD fin2": "66c989883d05fedefe75e60e1e7fab5b5c7983bde42c06f9b69985cda057f336",
+            "Adopted CAD fin3": "66c989883d05fedefe75e60e1e7fab5b5c7983bde42c06f9b69985cda057f336",
+            "Adopted CAD nose0": "ff731992eca4430c46eea67fbeb34fdfd9e936f8aeaa6e084d3b14846b9b2ead",
+            "Bottle": "563ff7b249f67d853e9fb59b74e1067a5d10419371c0bfdadf11ae77e1232b02",
+            "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.549349999995878,
+            "fstop": 11
+          },
+          "body_reference": {
+            "kind": "reference-mesh",
+            "source": "castetsb / waterRocketToolbox / Soda 2L",
+            "license": "MIT",
+            "mesh": "reference/soda-2l-visual.stl",
+            "profile": "reference/soda-2l-visual.json",
+            "asset_sha256": {
+              "reference/soda-2l-visual.stl": "f97b5d0f8fdc8cae098e80ba282da275196e936777f236507523b8f74162ed22",
+              "reference/soda-2l-visual.json": "0e1d2f3111195fd3ef30998c8fbb41b7857dab1e47d13dabe8448c7603a09810"
+            },
+            "id": "pet-2l",
+            "basis": "reference CAD fitted to editable envelope; unmeasured"
+          },
+          "source_id": "9b430fd4c38d48a1a96f05be8f824ad7:v1",
+          "bottle_detail": "unmeasured illustrative PET envelope",
+          "camera": "fixed elevated CG viewpoint, not filmed observation",
+          "physical_validation": "not_performed"
+        }
+      }
+    }
+  ],
+  "physical_validation": "not_performed",
+  "passed": true
+}

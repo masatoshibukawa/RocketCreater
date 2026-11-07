@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "benchmark_source_commit": "1ed3041f64149ad6e67f238bd2afc49602f07aa1",
+  "package_code_commit": "51d53a2fbc5ebaf2f3695438bcc49479e5bbe819",
+  "reference_chat": "01a1a42d-e515-7920-888e-19704ae2bbef",
+  "reference_library_commit": "3da2a935aa621e8060605063b50ca3756f976224",
+  "passed_within_scope": true,
+  "scope": {
+    "templates": 3,
+    "native_mounted_CAD_parts_audited": 15,
+    "S5_fin_slices_checked": 3,
+    "template_1080p_stills_reviewed": 18,
+    "encoded_preview_samples_reviewed": 18,
+    "preview_frames_decoded": 336,
+    "browser_both_ended": true,
+    "same_host_extracted_source_replay": true,
+    "replay_geometry_and_flight_comparisons": 20
+  },
+  "visual_findings": [
+    "Body silhouette stays connected in reviewed samples.",
+    "Actual source-CAD mouth and shoulder geometry replaces the generic envelope for 1.5/2 L.",
+    "Reference dimensions remain unmeasured on user hardware.",
+    "Cold replay geometry/scene hashes match; PNG bytes do not match (0/336), so pixel-identical replay is not claimed."
+  ],
+  "limitations": [
+    "No general photorealism gain or continuous visual review of every frame.",
+    "No three-pair full-resolution movie timing trial.",
+    "Initial geometry/dry mass/material values are editable starting assumptions.",
+    "No new physical print, pressure-vessel manufacture or flight qualification.",
+    "Existing five main-branch integration conflicts; PR60 initial-candidate definitions need later reconciliation."
+  ],
+  "checks": [
+    "45 focused native tests passed in 12.54 s",
+    "Ruff passed",
+    "TypeScript and isolated Next production build passed",
+    "251 source-package files verified"
+  ],
+  "paid_api_used": false,
+  "files": [
+    {
+      "file": "appearance-sources.json",
+      "bytes": 2135,
+      "sha256": "39d9938b636f28692f841246e7027fc911051c4ce51e4bede73b9df0abbc0eee"
+    },
+    {
+      "file": "design-explanation-timed.jpg",
+      "bytes": 307678,
+      "sha256": "240a1c7385c9420d08497e38fd2a4257508ce8d844f1c6bd91042a901b9f3e1c"
+    },
+    {
+      "file": "design-explanation.mp4",
+      "bytes": 364115,
+      "sha256": "6d74a330c46ae0b9eb367d889fe8a11c7ab474b9f135f58479844c3b4182d44e"
+    },
+    {
+      "file": "launch-cg-timed.jpg",
+      "bytes": 252928,
+      "sha256": "73b786ec95afbcc89f1d1611cb686f84462643691aa9a2736ff521bf5b1e9b29"
+    },
+    {
+      "file": "launch-cg.mp4",
+      "bytes": 1063348,
+      "sha256": "5cb2f84c7df49b4d95ed9111db1f4cb7df4f8d6f165b4b2d95ac4d0bd8a2dcac"
+    },
+    {
+      "file": "mesh-audits.json",
+      "bytes": 11493,
+      "sha256": "26e735cf5a6651020006d68078c755473bad16ad59984dfbbab5c4c01746bccd"
+    },
+    {
+      "file": "native-benchmark.json",
+      "bytes": 61443,
+      "sha256": "250cd7fd8bad035d9692074721eeefeee8885246cf9598d50fe9b82a0857f922"
+    },
+    {
+      "file": "pet-15l-six-stills.jpg",
+      "bytes": 215761,
+      "sha256": "c8191ec055df8d0e8022523816b1696fcce4ea036938392ac2669c7bde6bfb27"
+    },
+    {
+      "file": "pet-1l-six-stills.jpg",
+      "bytes": 211432,
+      "sha256": "e760ffb8e531e63ca313e54f29f77faaf33718a4cb5fb105983bcc58147a4c4c"
+    },
+    {
+      "file": "pet-2l-six-stills.jpg",
+      "bytes": 212956,
+      "sha256": "6e5acd1b33eac7ad3e5f8af27edf32dc23931fbe7694e7c883f974b3fe7edb69"
+    },
+    {
+      "file": "playback.json",
+      "bytes": 827,
+      "sha256": "2c77020db644fee841454d8a9b69ce2c420fc11c41404ebd37f386cdb6723fa1"
+    },
+    {
+      "file": "print-samples/pet-15l/fin-mm.stl",
+      "bytes": 44684,
+      "sha256": "16438e244704f32b8e0b1b7def99dc722df8528b2356f8c6eabcefc8b657be58"
+    },
+    {
+      "file": "print-samples/pet-15l/fin-preview.png",
+      "bytes": 76586,
+      "sha256": "c708d1d4d6de657425f5420e160833cd0944be6060a0da213a1174996ad51fcc"
+    },
+    {
+      "file": "print-samples/pet-15l/fin-S5.ufp",
+      "bytes": 487394,
+      "sha256": "e4412c12aea73ade282816c04d1d8397d70db8feba225b405a74ad434d8154c1"
+    },
+    {
+      "file": "print-samples/pet-15l/fin-slice-check.json",
+      "bytes": 3034,
+      "sha256": "60fe69af5e1a0572bd73fde176e313d0b26356ea2dd002d45a4b890c24966f1a"
+    },
+    {
+      "file": "print-samples/pet-1l/fin-mm.stl",
+      "bytes": 44684,
+      "sha256": "063391f458bd2a5c55bcd694f917d88518a907f0992797ae8cd500f5706d6d66"
+    },
+    {
+      "file": "print-samples/pet-1l/fin-preview.png",
+      "bytes": 77076,
+      "sha256": "a2cddfbb7fb2d607d2c5848ef6a1bc7e55273022f5fc353f2474a16b39f01043"
+    },
+    {
+      "file": "print-samples/pet-1l/fin-S5.ufp",
+      "bytes": 451296,
+      "sha256": "19294aa5d4bfc6effde20e7ede83a9c44732a55335de397eb46b9851aa37ea58"
+    },
+    {
+      "file": "print-samples/pet-1l/fin-slice-check.json",
+      "bytes": 3024,
+      "sha256": "0d1b138c31c660b3f88d767d8e92d99e123076565663b13079d0e0ae834fdced"
+    },
+    {
+      "file": "print-samples/pet-2l/fin-mm.stl",
+      "bytes": 45184,
+      "sha256": "0be3a920e128e89e015a2e576d0c2da1d10f380ed7bbee9ec3d05b0df081b117"
+    },
+    {
+      "file": "print-samples/pet-2l/fin-preview.png",
+      "bytes": 76550,
+      "sha256": "64004d831008258b0de2fba0d31cb4ceecf72cb4d21dcabc01fe9d5972ca9ed8"
+    },
+    {
+      "file": "print-samples/pet-2l/fin-S5.ufp",
+      "bytes": 523795,
+      "sha256": "0c06b4a5899d4fe09a790f035cc364e6266229802c90dfa6fa31771a7ef9869e"
+    },
+    {
+      "file": "print-samples/pet-2l/fin-slice-check.json",
+      "bytes": 3067,
+      "sha256": "51b3885ad02618bf8f03a99ea6182a463e9133d006797b5d19b8a95141946ee6"
+    },
+    {
+      "file": "production-ui.png",
+      "bytes": 95260,
+      "sha256": "532517e213b77f06eedf863732ade24fd18ce423a44e5821b089d7a082ea5297"
+    },
+    {
+      "file": "progress.json",
+      "bytes": 259,
+      "sha256": "bbe8bc05fce4ce15164161aa9507577f350af6690f244bdcfc2cca4f107a4ccc"
+    },
+    {
+      "file": "README.md",
+      "bytes": 1986,
+      "sha256": "f272c2ad7108569f7b423217730dde096d8b0f5b09dace7a738dda59ce2b797a"
+    },
+    {
+      "file": "reference-comparison.jpg",
+      "bytes": 107062,
+      "sha256": "8360aecca48b1b535d4d2aa4b02b3f49973f2d05b15e8e4fab2cab286b1ae8c1"
+    },
+    {
+      "file": "render-cache.json",
+      "bytes": 1950,
+      "sha256": "ec82527842b7e26289fc6246f45e303bf025fcf3cffff2db883cfdc9bf7a7849"
+    },
+    {
+      "file": "replay-audit.json",
+      "bytes": 3019,
+      "sha256": "39b4a9d6b5c018d39fd813f92fbf07c817b37c55df474c6ea63fbeb9436ac100"
+    },
+    {
+      "file": "replay-video-verification.json",
+      "bytes": 1065,
+      "sha256": "4c99094630c178d0b693c63a05309d2db2f9b44b16fc5bbca2dfda170ff8e787"
+    },
+    {
+      "file": "reproduction-check.json",
+      "bytes": 1461,
+      "sha256": "e7a6cb7bcee4b6ea45da3a74c3e19bfd540f5c1b3b736e073a8f2ae624af174f"
+    },
+    {
+      "file": "scene-source.json",
+      "bytes": 1736,
+      "sha256": "3ea18ca6fe0f10e448aade9bbbd63b0bf066d7c03c126e80df5fd24e44101e47"
+    },
+    {
+      "file": "selection.png",
+      "bytes": 102256,
+      "sha256": "13b0fee34c5a40279cbbefeef77e49588a97cf94625e81423f69a72ec46b660e"
+    },
+    {
+      "file": "slice-review.json",
+      "bytes": 12468,
+      "sha256": "4e553399962da647637a4dc3fda0e3893ca3b73ae5e635c7e7e994382e086e7a"
+    },
+    {
+      "file": "three-airframes.jpg",
+      "bytes": 174733,
+      "sha256": "e9b52b342d8e061ab656fb037f01f161f53c033e74aa69ac3ec7eda13e29d294"
+    },
+    {
+      "file": "ui-measurement.json",
+      "bytes": 1333,
+      "sha256": "eaf4afc5de05bfeccfb6493477221e03bacf211f709b7657a417972d21792320"
+    },
+    {
+      "file": "verification.json",
+      "bytes": 1065,
+      "sha256": "ed64b29d23d213701390db77a8384c1f1bfb916d2c6e22708f77730a756da48f"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "job_id": "bff447a94b8b49db85f7c3594a78643e",
+  "phase": "rendering",
+  "completed": 336,
+  "total": 336,
+  "reused": 0,
+  "elapsed_s": 227.81895852088928,
+  "eta_s": [
+    0.0,
+    0.0
+  ],
+  "eta_basis": "measured last frames; render only"
+}

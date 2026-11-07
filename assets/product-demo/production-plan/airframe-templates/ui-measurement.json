@@ -1,0 +1,37 @@
+{
+  "source_commit": "1ed3041f64149ad6e67f238bd2afc49602f07aa1",
+  "project_id": "f68dfdab0e6f4ca6b8e75b986c38bfe0",
+  "v": 1,
+  "input_sha256": "864a658fb38a8da1a38263b0afe739a358933fe3029a5c9e475276654478deeb",
+  "job": {
+    "id": "bff447a94b8b49db85f7c3594a78643e",
+    "name": "render_design_and_launch",
+    "style": "photographic",
+    "regenerate": false,
+    "quality": "preview",
+    "phase": "rendering",
+    "started_at": 1794011957.50618,
+    "owner": "90276614f2ea4fce959366e4ff6bb83f",
+    "input_sha256": "864a658fb38a8da1a38263b0afe739a358933fe3029a5c9e475276654478deeb",
+    "implementation_sha256": "0e106b0e62e67e940e83adf9959302ffefe97953eda842ab6ea339334445bf73",
+    "pid": 17148,
+    "progress": {
+      "phase": "queued",
+      "completed": 0,
+      "total": null,
+      "elapsed_s": 2.4421041011810303,
+      "eta_s": null
+    },
+    "video_directory": "video-photographic-preview",
+    "finished_at": 1794012194.1998167,
+    "error": null
+  },
+  "wall_s": 236.6936366558075,
+  "scope": "UI-triggered 540p/12fps preview pair, prewarmed stage/body, all 336 frames rendered",
+  "local_runtime": {
+    "url": "http://127.0.0.1:11436",
+    "model": "gemma4:12b",
+    "digest": "4eb23ef187e2c5462566d6a1d3bbbc2f1346d0b4327cbb66d58fffbcc9b2b05c"
+  },
+  "paid_api_used": false
+}
