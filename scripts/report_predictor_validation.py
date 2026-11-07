@@ -9,7 +9,7 @@ from rocketwright.analysis import predictor
 from rocketwright.analysis.worker import read
 
 
-def export(source, destination, live=None):
+def export(source, destination, live=None, *, plot=True):
     r = read(source)
     if set(r["training_ids"]) & set(r["evaluation_ids"]):
         raise ValueError("Training/evaluation transition overlap")
@@ -99,6 +99,8 @@ def export(source, destination, live=None):
             live_report_sha256=sha(live / "report.json"),
         )
     write_json(destination.with_suffix(".json"), result)
+    if not plot:
+        return result
     import matplotlib.pyplot as plt
     import numpy as np
 
@@ -145,7 +147,8 @@ if __name__ == "__main__":
     p.add_argument("destination", type=Path)
     p.add_argument("--plot-libraries", type=Path)
     p.add_argument("--live", type=Path)
+    p.add_argument("--no-plot", action="store_true")
     a = p.parse_args()
     if a.plot_libraries:
         sys.path.append(str(a.plot_libraries.resolve()))
-    export(a.source, a.destination, a.live)
+    export(a.source, a.destination, a.live, plot=not a.no_plot)

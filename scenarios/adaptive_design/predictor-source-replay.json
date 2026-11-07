@@ -1,0 +1,139 @@
+{
+  "original_source": "25e417a5da0cf7614924a5e41df621521ddc5e7af2e416a449811b42f4815b76",
+  "replay_source": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+  "original_report_sha256": "4456567b7e47b2ce15f1fc4cf5a27635eaeb89e6beccd26a94ab1e8afb6f41b4",
+  "replay_report_sha256": "b7e366007d11a07d1ca75914066167115327f3206182dc66fc3e431d342475d4",
+  "replay_protocol_hash": "765c47adda92586ce9da15b85a5dace4d4377e66dc3405eb27de75c138580c3d",
+  "independent_additional_conditions": 0,
+  "repeated_conditions": 14,
+  "comparisons": [
+    {
+      "split": "train",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "train",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "train",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "train",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "train",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "train",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "train",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "train",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "evaluate",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "evaluate",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "evaluate",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "evaluate",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "evaluate",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    },
+    {
+      "split": "evaluate",
+      "differences": {
+        "prediction_residual_m": 0.0,
+        "before_apogee_m": 0.0,
+        "after_apogee_m": 0.0
+      }
+    }
+  ],
+  "maximum_altitude_difference_m": 0.0,
+  "metrics": {
+    "raw_mae_m": 0.03206909621639623,
+    "corrected_mae_m": 0.0017231603940299708,
+    "legacy_ridge_mae_m": 0.009986570640803976,
+    "cost_mae_s": 1.752109770721785,
+    "elapsed_s": 693.75
+  },
+  "evidence": {
+    "manifests": 168,
+    "referenced_files": 798,
+    "verified_gpu_case_files": 0
+  },
+  "training_rows": 8,
+  "evaluation_rows": 6,
+  "scope": "Repeated native protocol on current source; not additional independent validation"
+}
