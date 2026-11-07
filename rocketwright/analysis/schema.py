@@ -34,6 +34,8 @@ MOUNTS = {
 
 
 class Assumptions(Strict):
+    # Included in other_dry_mass_g, not added on top. Zero preserves legacy input semantics.
+    fixed_bottle_mass_g: float = Field(default=0, ge=0, le=200)
     mount: Literal["standard", "reinforced"] = "standard"
     root_capture_mm: float = Field(default=10.5, gt=0, le=30)
     other_mass_station_fraction: float = Field(default=0.55, gt=0, lt=1)

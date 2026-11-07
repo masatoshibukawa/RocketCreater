@@ -32,7 +32,7 @@ class ControlledTrial(Harness):
         return choices, proposals, confirmation
 
 
-def collect(template, root, reuse_training=None):
+def collect(template, root, reuse_training=None, *, expanded=False):
     root.mkdir(parents=True, exist_ok=False)
     source, started = code_hash(), time.monotonic()
     precision = Precision(require_cfd=False, require_fem=False)
@@ -48,6 +48,15 @@ def collect(template, root, reuse_training=None):
     # are declared before observing outcomes; this is not a policy-efficiency ablation.
     definitions = [("train", f, 90.0) for f in (0.20, 0.25, 0.30, 0.35)]
     definitions += [("evaluate", 0.275, 92.0), ("evaluate", 0.325, 94.0)]
+    if expanded:
+        if reuse_training:
+            raise ValueError("Expanded protocol requires fresh controlled trials")
+        definitions = [
+            ("train", f, chord) for chord in (90.0, 105.0) for f in (0.16, 0.22, 0.28, 0.34)
+        ]
+        definitions += [
+            ("evaluate", f, chord) for chord in (95.0, 100.0) for f in (0.19, 0.25, 0.31)
+        ]
     write_json(
         root / "protocol.json",
         dict(
@@ -135,6 +144,21 @@ def collect(template, root, reuse_training=None):
             )
             if fit["status"] != "fitted":
                 raise RuntimeError("Held-out trial has no fitted model")
+            mean = experience.estimate(retrieved, spec.requirement.target_altitude_m)
+            legacy = (
+                predictor.ridge_estimate(
+                    retrieved,
+                    dict(
+                        features=experience.features(spec),
+                        before=row["before"],
+                        step=-0.15,
+                        raw_delta=row["prediction"]["delta_height_m"],
+                    ),
+                    correction_limit_m=precision.altitude_error_m * precision.aero_allocation,
+                )
+                if expanded
+                else fit
+            )
             audits.append(
                 dict(
                     transition_id=row["transition_id"],
@@ -143,6 +167,9 @@ def collect(template, root, reuse_training=None):
                     corrected_error_m=row["prediction_residual_m"] - fit["height_correction_m"],
                     actual_cost_s=row["cost_s"],
                     cost_error_s=row["cost_s"] - fit["predicted_cost_s"],
+                    legacy_ridge_error_m=row["prediction_residual_m"]
+                    - legacy["height_correction_m"],
+                    mean_error_m=row["prediction_residual_m"] - mean["height_correction_m"],
                 )
             )
         write_json(root / "checkpoint.json", dict(source_hash=source, trials=trials, audits=audits))
@@ -155,6 +182,8 @@ def collect(template, root, reuse_training=None):
         evaluation_ids=[r["transition_id"] for r in audits],
         raw_mae_m=sum(abs(r["raw_error_m"]) for r in audits) / len(audits),
         corrected_mae_m=sum(abs(r["corrected_error_m"]) for r in audits) / len(audits),
+        legacy_ridge_mae_m=sum(abs(r["legacy_ridge_error_m"]) for r in audits) / len(audits),
+        mean_mae_m=sum(abs(r["mean_error_m"]) for r in audits) / len(audits),
         cost_mae_s=sum(abs(r["cost_error_s"]) for r in audits) / len(audits),
         evidence=verified_files(root),
         reused_training_evidence=verified_files(reuse_training) if reuse_training else None,
@@ -163,7 +192,7 @@ def collect(template, root, reuse_training=None):
         general_efficiency_improvement_proved=False,
         physical_qualification=False,
         live_llm_calls=0,
-        scope="Native prescribed transitions; two held-out geometries; simulation residuals only",
+        scope="Native prescribed transitions; held-out geometries; simulation residuals only",
     )
     write_json(root / "report.json", result)
     print(
@@ -180,11 +209,13 @@ def main():
     p.add_argument("spec", type=Path)
     p.add_argument("output", type=Path)
     p.add_argument("--reuse-training", type=Path)
+    p.add_argument("--expanded", action="store_true")
     a = p.parse_args()
     collect(
         DesignSpec.model_validate_json(a.spec.read_text(encoding="utf-8")),
         a.output.resolve(),
         a.reuse_training.resolve() if a.reuse_training else None,
+        expanded=a.expanded,
     )
 
 

@@ -85,6 +85,9 @@ def prompt_view(offered, context, max_chars=9000):
                     "model_hash",
                     "height_correction_m",
                     "predicted_cost_s",
+                    "selected_method",
+                    "validation_mae_m",
+                    "correction_supported",
                 )
             }
             if row.get("learned_prediction", {}).get("status") == "fitted"

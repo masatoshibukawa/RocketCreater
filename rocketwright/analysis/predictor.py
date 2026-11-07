@@ -8,6 +8,7 @@ import numpy as np
 
 from rocketwright.adaptive import digest
 from rocketwright.analysis import experience
+from rocketwright.analysis.predictor_selection import COST_MODELS, HEIGHT_MODELS, select
 
 FEATURES = ("raw_delta", "fill", "pressure", "mass", "thickness", "root", "span", "step")
 
@@ -42,7 +43,7 @@ def sealed(row):
         return False
 
 
-def estimate(rows, query, *, correction_limit_m):
+def ridge_estimate(rows, query, *, correction_limit_m):
     rows = [r for r in rows if r.get("prediction_residual_m") is not None and sealed(r)]
     seen, unique = set(), []
     for row in rows:
@@ -111,6 +112,96 @@ def estimate(rows, query, *, correction_limit_m):
         correction_limit_m=bound,
         scope="local simulated residual and cost; not a pass",
         uncertainty="not calibrated; compare on unseen initial families",
+    )
+
+
+def estimate(rows, query, *, correction_limit_m):
+    """Validate method choice on training groups; preserve the small-data fallback."""
+    baseline = ridge_estimate(rows, query, correction_limit_m=correction_limit_m)
+    if baseline.get("status") != "fitted" or baseline["samples"] < 6:
+        return baseline
+    unique = {
+        r["transition_id"]: r
+        for r in rows
+        if r.get("prediction_residual_m") is not None and sealed(r)
+    }
+    rows = list(unique.values())
+    cohorts = {
+        (r.get("code"), r.get("precision_hash"), r.get("signature"), r.get("screen_step_s", 0.02))
+        for r in rows
+    }
+    if len(cohorts) != 1:
+        return dict(status="incompatible_training_cohorts", samples=len(rows))
+    x = np.array(
+        [
+            vector(
+                r["features"],
+                r["before"],
+                (r["change_to"] - r["change_from"]) / max(abs(r["change_from"]), 1),
+                r["prediction"]["delta_height_m"],
+            )
+            for r in rows
+        ]
+    )
+    q = vector(**query)
+    weights = np.array([r["similarity"] for r in rows])
+    groups = [
+        digest(dict(features=r["features"], dry_mass_g=r["before"]["dry_mass_g"])) for r in rows
+    ]
+    if len(set(groups)) < 4:
+        baseline["selection_fallback"] = "fewer than four initial-state groups"
+        return baseline
+    bound = max(0.0, correction_limit_m)
+    height = select(
+        x,
+        [r["prediction_residual_m"] for r in rows],
+        weights,
+        q,
+        groups,
+        models=HEIGHT_MODELS,
+        bound=bound,
+    )
+    costs = np.array([r["cost_s"] for r in rows])
+    cost = select(x, np.log1p(costs), weights, q, groups, models=COST_MODELS)
+    correction = height["prediction"]
+    # Outside this normalized feature neighborhood, abstain from residual extrapolation.
+    supported = height["nearest_feature_distance"] <= 1.5
+    if not supported:
+        correction = 0.0
+    predicted_cost = float(
+        np.clip(
+            np.expm1(np.clip(cost["prediction"], 0, np.log1p(costs.max() * 2))),
+            costs.min() * 0.5,
+            costs.max() * 2,
+        )
+    )
+    model = dict(
+        features=list(FEATURES),
+        height_selection=height,
+        log_cost_selection=cost,
+        training_ids=[r["transition_id"] for r in rows],
+        training_hashes=[r["learning_evidence"]["sha256"] for r in rows],
+        training_vectors=x.tolist(),
+        height_targets=[r["prediction_residual_m"] for r in rows],
+        log_cost_targets=np.log1p(costs).tolist(),
+        weights=weights.tolist(),
+        query_vector=q.tolist(),
+        support_distance_limit=1.5,
+    )
+    return dict(
+        status="fitted",
+        samples=len(rows),
+        model=model,
+        model_hash=digest(model),
+        height_correction_m=correction,
+        predicted_cost_s=predicted_cost,
+        correction_limit_m=bound,
+        selected_method=height["selected"],
+        validation_mae_m=height["selected_validation_mae"],
+        nearest_feature_distance=height["nearest_feature_distance"],
+        correction_supported=supported,
+        uncertainty="Training-only grouped errors; no calibrated confidence interval",
+        scope="Predict simulated residual/cost only; acceptance and budgets unchanged",
     )
 
 
