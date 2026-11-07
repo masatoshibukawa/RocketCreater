@@ -18,8 +18,13 @@
 
 - [基礎と構成の選び方](01_fundamentals.md): API、BaaS、DB、認証・認可、workerの役割
 - [実行基盤とデータサービスの比較](02_platform-comparison.md): 無料枠と用途の適合
+- [認証・データ・ファイル](03_auth-data-and-storage.md): RLS、Security Rules、メール枠、DB接続、ファイルの権限
+- [長時間ジョブと進行表示](04_durable-jobs.md): 受付、状態保存、再試行、SSEとworker
+- [作り方と費用の試算](05_build-and-budget.md): 小さな実装順、無料枠の計算、公開前の動作確認
+- [RocketWrightへの適用案](06_rocketwright-application.md): 既存APIと版管理、公開の段階、永続化の検討
 - [無料枠の数値表](free-tier-quotas.csv): 単位、集計範囲、上限で起こること
-- [出典台帳](sources.csv): 公式資料と、実際に確認した範囲
+- [出典台帳](sources.csv): 36件の公式資料と、実際に確認した範囲
+- [バックエンド用スキル](../../web-design-skills/categories/web-design-backend/SKILL.md): 構成を選ぶ判断と確認のメモ
 
 ## 調査の範囲
 

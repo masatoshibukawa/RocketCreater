@@ -1,6 +1,6 @@
 ---
 name: web-design-skills
-description: "Webデザインの総合依頼を整理し、基礎・参考探索・配色・文字組み・コピー・実装・SF表現・AIと独自性・実践検証へ案内する。複数領域の制作や改善、どこから進めるか迷う場合に使う。単一領域の依頼は該当カテゴリを直接使える。"
+description: "Webデザインの総合依頼を整理し、基礎・参考探索・配色・文字組み・コピー・実装と公開・バックエンド・SF表現・AIと独自性・実践検証へ案内する。複数領域の制作や改善、どこから進めるか迷う場合に使う。単一領域の依頼は該当カテゴリを直接使える。"
 ---
 
 # Webデザインの索引
@@ -18,6 +18,7 @@ description: "Webデザインの総合依頼を整理し、基礎・参考探索
 | 文言、不要な括弧、詩的コピー、未完成事項の強調を直したい | [文章とコピー](categories/web-design-copy/SKILL.md) | 具体的な見出し・説明・操作文と条件の配置 |
 | サイトを作る、既存画面を実装・修正したい | [制作と実装](categories/web-design-implementation/SKILL.md) | 動く画面と状態・端末の確認 |
 | デプロイ、サイト公開、無料ホストの選定をしたい | [制作と実装](categories/web-design-implementation/SKILL.md) | 公開構成、無料枠の見積り、公開URLの確認 |
+| API、認証、DB、ファイル保存、長い処理を設計・比較したい | [バックエンド](categories/web-design-backend/SKILL.md) | 操作とデータの契約、実行構成、費用と確認方法 |
 | CDPで画面確認を速くしたい、サイト性能を測って改善したい | [制作と実装](categories/web-design-implementation/SKILL.md) | 目的別の観測と同条件の比較 |
 | SF映画のようなシステムにしたい | [SF・未来的UI](categories/web-design-scifi/SKILL.md) | 世界観と機能を結ぶ画面・動き |
 | AI生成の定型感を改善したい | [AI活用と独自性](categories/web-design-ai-originality/SKILL.md) | 固有の内容、構成案、改善実装 |
