@@ -25,6 +25,7 @@ Built with Claude: Japan 2026の提出に向け、専門分野間の設計の往
 - [SFの見た目・チーム紹介・音の方針](visual-direction.md)
 - [背景の一次資料と、確認した実装の範囲](background-sources.md)
 - [指定された解析チャットの分析と、動画で伝える技術](analysis-story.md)：階層・適応・履歴と学習予測器、実証と未達の区別
+- [5者の役割分担と一巡の流れ](roles.md)：利用者・ハーネス・スクリプト・LLM・学習予測器の入力・責任・出力
 
 製品の目標構成は、現在ローカルLLMが担当する全判断箇所をClaude APIへ移行するもの。今回の開発の主力はClaude Code。実行時と開発時の役割を分けて示し、現在のGemma検証を移行後のClaude実行とは扱わない。
 
