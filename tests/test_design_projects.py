@@ -84,6 +84,9 @@ def test_manual_archive_integrity_and_tampering(store, tmp_path):
     s = store.manual(s["id"], s["revision"])
     pdf = store.file(s["id"], "manual/assembly.pdf")
     assert pdf.read_bytes().startswith(b"%PDF-")
+    assert store.file(s["id"], "manual/design-drawing.pdf").read_bytes().startswith(b"%PDF-")
+    svg = store.file(s["id"], "manual/side-view.svg").read_text(encoding="utf-8")
+    assert "ノズル端を 0 mm" in svg and "翼後端 100" in svg and "4 枚 / 90° 等配" in svg
     s = store.archive(s["id"], s["revision"])
     archive = store.file(s["id"], "package/design-package.zip")
     with zipfile.ZipFile(archive) as z:
@@ -91,6 +94,8 @@ def test_manual_archive_integrity_and_tampering(store, tmp_path):
         assert "source/rocketwright/agent/project_package.py" in z.namelist()
         assert "reproduction/requirements.txt" in z.namelist()
         assert "scripts/reproduce_package.py" in z.namelist()
+        assert "manual/design-drawing.pdf" in z.namelist()
+        assert "manual/side-view.svg" in z.namelist()
         assert not any("node_modules" in name or "/.env" in name for name in z.namelist())
         expected = json.loads(z.read("reproduction/input.json"))
         assert expected["source_version"] == s["version"] and not expected["adaptive_required"]
