@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from render_checkpoint import Checkpoint  # noqa: E402 -- Blender does not add the script directory.
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from airframe_visuals import body  # noqa: E402
 from video_scene_templates import stage  # noqa: E402
 
 from rocketwright.agent.video_cache import MediaCache, file_sha, pixel_key, template_for  # noqa: E402
@@ -42,6 +43,7 @@ code = {
     for p in (
         "scripts/render_workbench_scene.py",
         "scripts/video_scene_templates.py",
+        "scripts/airframe_visuals.py",
         "AIvideo/pet-rocket/realism/appearance.py",
         "rocketwright/agent/video_cache.py",
     )
@@ -127,44 +129,7 @@ def cylinder(name, radius, depth, z, mat):
 
 bottle_top = length - g["nose_length"] - g["egg_bay_length"] - g["canopy_bay_length"]
 if photographic:
-    # Envelope dimensions are from this design. Small neck/rib details are illustrative.
-    profile = [(r * 0.3, 0), (r * 0.3, bottle_top * 0.1)]
-    for i in range(1, 25):
-        u = i / 24
-        profile.append(
-            (r * (0.3 + 0.7 * (0.5 - 0.5 * math.cos(u * math.pi))), bottle_top * (0.1 + 0.25 * u))
-        )
-    for i in range(1, 65):
-        u = i / 64
-        profile.append((r - 0.00015 * math.sin(u * 35) ** 8, bottle_top * (0.35 + 0.65 * u)))
-    profile.append((0, bottle_top))
-    segments = 128
-    vertices = [
-        (radius * math.cos(i * math.tau / segments), radius * math.sin(i * math.tau / segments), z)
-        for radius, z in profile
-        for i in range(segments)
-    ]
-    faces = [
-        (
-            j * segments + i,
-            j * segments + (i + 1) % segments,
-            (j + 1) * segments + (i + 1) % segments,
-            (j + 1) * segments + i,
-        )
-        for j in range(len(profile) - 1)
-        for i in range(segments)
-    ]
-    mesh = bpy.data.meshes.new("Assumed PET envelope")
-    mesh.from_pydata(vertices, [], faces)
-    bottle = bpy.data.objects.new("Bottle", mesh)
-    scene.collection.objects.link(bottle)
-    bottle.parent = root
-    bottle.data.materials.append(shell)
-    for polygon in mesh.polygons:
-        polygon.use_smooth = True
-    wall = bottle.modifiers.new("Assumed PET thickness", "SOLIDIFY")
-    wall.thickness = 0.00035
-    wall.offset = -1
+    profile, body_report = body(job, r, bottle_top, root, shell, cache_root)
 else:
     cylinder("Bottle", r, bottle_top, bottle_top / 2, shell)
 cylinder("Recovery bay", r, g["canopy_bay_length"], bottle_top + g["canopy_bay_length"] / 2, white)
@@ -310,7 +275,12 @@ mesh_hashes = {
     for obj in root.children
     if obj.type == "MESH"
 }
-cache_report = {"stage": stage_report, "clips": {}, "quality": plan.get("quality", "final")}
+cache_report = {
+    "stage": stage_report,
+    "body": body_report if photographic else None,
+    "clips": {},
+    "quality": plan.get("quality", "final"),
+}
 for mode in ("design", "launch"):
     clip_identity = job["clip_identities"][mode]
     restored, rendered, resumed = 0, 0, 0
@@ -433,6 +403,7 @@ for mode in ("design", "launch"):
             "dimensions_sha256": geometry_source,
             "mesh_vertex_hashes": mesh_hashes,
             "template": template,
+            "body_reference": job.get("airframe"),
             "source_id": job["source_id"],
             "bottle_detail": "unmeasured illustrative PET envelope",
             "camera": "fixed elevated CG viewpoint, not filmed observation"

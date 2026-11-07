@@ -1,0 +1,12 @@
+{
+  "revision": "airframes-v1",
+  "geometry_basis": "Editable unmeasured envelopes. Reference models are fitted for visualization; not pressure-vessel manufacturing data.",
+  "templates": [
+    {"id":"pet-1l","label":"1 L・コンパクト機体","litres":1,
+     "visual":{"kind":"schlatter-profile","source":"Adrian Schlatter / RocketFins","license":"BSD-2-Clause","source_file":"reference/schlatter-bottle.scad"}},
+    {"id":"pet-15l","label":"1.5 L・回収付き機体","litres":1.5,
+     "visual":{"kind":"reference-mesh","source":"castetsb / waterRocketToolbox / Kirin Lemon","license":"MIT","mesh":"reference/kirin-lemon-15l-visual.stl","profile":"reference/kirin-lemon-15l-visual.json"}},
+    {"id":"pet-2l","label":"2 L・標準機体","litres":2,
+     "visual":{"kind":"reference-mesh","source":"castetsb / waterRocketToolbox / Soda 2L","license":"MIT","mesh":"reference/soda-2l-visual.stl","profile":"reference/soda-2l-visual.json"}}
+  ]
+}

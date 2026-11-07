@@ -39,6 +39,7 @@ def pixel_key(job, mode, code, runtime):
         template=template_for(dimensions),
         cad={k: file_sha(p) for k, p in job.get("cad_files", {}).items()},
         assets=job.get("appearance_sha256"),
+        airframe=job.get("airframe"),
         design={k: job["design"][k] for k in ("has_fins", "bottle_volume_m3", "water_fill_frac")},
     )
     if mode == "design":

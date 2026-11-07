@@ -254,7 +254,14 @@ def main():
                 quality=active.get("quality", "final"),
             )
         else:
-            getattr(store, operation)(project_id, int(revision))
+            completed = getattr(store, operation)(project_id, int(revision))
+            if operation == "analyse" and completed.get("airframe_template"):
+                from rocketwright.agent.airframe_parts import publish_parts
+
+                try:
+                    publish_parts(store, completed)
+                except (OSError, ValueError) as exc:
+                    print("Optional airframe cache publication failed; analysis retained:", exc)
     except Exception as exc:
         with file_lock(store.base(project_id) / "operation.lock"):
             state = store.load(project_id)

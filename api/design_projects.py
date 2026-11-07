@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from api.workbench import PlanRequest, RenderRequest, Revision, call
+from rocketwright.agent.airframe_templates import TemplateRequest
 from rocketwright.agent.design_projects import DEFAULT_PROJECTS, DesignSpec, queue_operation
 from rocketwright.agent.production import plan_video
 from rocketwright.agent.project_assembly import Observation
@@ -63,6 +64,32 @@ class AcceptIntent(BaseModel):
     model_config = ConfigDict(extra="forbid")
     ticket_id: str
     candidate_id: str
+
+
+@router.get("/airframe-templates")
+def airframe_templates():
+    from rocketwright.agent.airframe_templates import catalog
+
+    return call(catalog)
+
+
+@router.post("/from-airframe-template")
+def from_airframe_template(request: TemplateRequest):
+    from rocketwright.agent.airframe_templates import create
+
+    return call(create, DEFAULT_PROJECTS, request)
+
+
+class TemplateRecommendation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    text: str = Field(min_length=1, max_length=4000)
+
+
+@router.post("/airframe-templates/recommend")
+def recommend_airframe_template(request: TemplateRecommendation):
+    from rocketwright.agent.airframe_templates import recommend
+
+    return call(recommend, request.text)
 
 
 @router.post("/intent")

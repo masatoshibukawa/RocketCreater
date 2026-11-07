@@ -207,6 +207,9 @@ def render_video(
                 bench.file(project_id, "production/trace.json").read_text(encoding="utf-8")
             ),
         }
+        from rocketwright.agent.airframe_templates import visual_recipe
+
+        job["airframe"] = visual_recipe(state)
         if report["design"].get("geometry"):
             # Registered, hash-checked CAD paths only. Never a path chosen by the model.
             job["cad_files"] = {
