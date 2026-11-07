@@ -25,11 +25,17 @@ SEEDS = (9021, 9022, 9023)
 
 def scores(y, estimate):
     error = np.abs(estimate - y)
+    boundary = np.abs(y[:, 1] - 1.12) <= 0.25
     return dict(
         count=len(y),
         mae=error.mean(0).tolist(),
         maximum_error=error.max(0).tolist(),
         false_static_headroom=int(np.sum((estimate[:, 1] >= 1.12) & (y[:, 1] < 1.12))),
+        true_static_headroom=int(np.sum(y[:, 1] >= 1.12)),
+        predicted_static_headroom=int(np.sum(estimate[:, 1] >= 1.12)),
+        missed_static_headroom=int(np.sum((estimate[:, 1] < 1.12) & (y[:, 1] >= 1.12))),
+        boundary_count=int(boundary.sum()),
+        boundary_mae=error[boundary].mean(0).tolist() if boundary.any() else None,
     )
 
 
