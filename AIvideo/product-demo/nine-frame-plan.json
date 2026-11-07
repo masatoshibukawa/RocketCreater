@@ -23,7 +23,7 @@
     },
     {
       "id": "03-why-tradeoffs",
-      "title": "変更が他の性能へ波及する",
+      "title": "フィンの変更が質量・高度へ波及する",
       "start_s": 32,
       "end_s": 50,
       "image": "output/media/product-demo/generated/storyboard-v1/03-why-tradeoffs.png",
@@ -50,7 +50,7 @@
     },
     {
       "id": "06-adaptive-feedback",
-      "title": "結果を使って次の一手を選ぶ",
+      "title": "部品・機体・ミッションの結果から次の一手を選ぶ",
       "start_s": 88,
       "end_s": 126,
       "image": "output/media/product-demo/generated/storyboard-v1/06-adaptive-feedback.png",
@@ -84,5 +84,6 @@
       "kind": "ai_storyboard_concept",
       "note": "構図・雰囲気の案。本編の実画面・計測結果ではない。"
     }
-  ]
+  ],
+  "analysis_reference": "analysis-story.md"
 }

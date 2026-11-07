@@ -16,9 +16,11 @@
 | 対象 | 参照版と位置付け |
 | --- | --- |
 | 既存の階層解析と履歴参照 | main `7f2183c262b56dd0d90b81b31d48ea0464995174` の `docs/hierarchical-design-loop.md`、`docs/adaptive-search-feedback.md`。ローカルLLMの判断、専用解析、ハーネスの制約と判定を確認 |
-| 反復評価・残差補正 | [PR #60の確認版](https://github.com/masatoshibukawa/RocketCreater/blob/a431e37c4f08344cf1c2767a88efda3120c953f9/docs/adaptive-search-results.md)。実Gemmaの履歴参照と未達の記録。一般的な探索効率や実飛行精度の向上とは分ける |
+| 反復評価・残差補正 | [PR #60の段階5〜7の確認版](https://github.com/masatoshibukawa/RocketCreater/blob/cd5ea92fe3b7c58a4ea1279edb6701f430c83a49/docs/local-learning-stage-results.md)。数値ソースは`a431e37`。実Gemmaの履歴・外部予測器・再設計と未達を確認。一般的な探索効率や実飛行精度の向上とは分ける |
 | 今後のモデル構成 | 2026-11-07の本人説明：全ローカルLLM箇所をClaude APIへ移行予定、開発の主力はClaude Code。移行後の実行・収録は未確認 |
 | チームとヒアリング | 本人から提供された経歴・経験。2人の氏名と写真の組み合わせは本人確認済み。資格・受賞・担当、開発の具体例は今後対応付ける |
 | 実写の印刷 | [切り出しと検証](print-progress.md)。既存2L案のフィン試作。6秒マスターの先頭1秒を除き5秒に編集済み。完成部品・飛行性能の実証には用いない |
 
 背景の一次資料とコードの参照版を維持し、映像で見せる数値・判断・成果物は収録する版の記録に合わせる。
+
+指定された解析チャット57ターンから読み取った階層・適応性と、現在の実証範囲は[解析の分析メモ](analysis-story.md)を参照。過去の簡易モデルの結果と、最新の詳細確認を一つの改善列にしない。
