@@ -1022,6 +1022,10 @@ def _tool_design_stage(inp: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"k must be between 1 and {DESIGN_STAGE_MAX_K}, got {k}")
     res = design_stage(req, env, chosen, inp["stage"], _parts_catalog(), tier=tier, k=k)
     out = res.as_dict()
+    only = inp.get("only_option")  # set by the loop, never by the model: the user named it
+    if only is not None:
+        out["candidates"] = [c for c in out["candidates"] if c.get("option") == only]
+        out["note_user"] = f"only {only} is offered: the user asked for that bottle"
     out["note"] = (
         "pass a candidate's `option` back in `chosen` and continue with next_stage; every "
         "number is from the bill and the simulation of that candidate's full build"
@@ -1034,7 +1038,8 @@ def _tool_auto_design(inp: dict[str, Any]) -> dict[str, Any]:
     """rocketwright.design_chain.auto_design, with the final build judged through the same
     `_simulate_dispatch` as design_from_parts (trace dropped, buildability warnings appended)."""
     tier, req, env = _chain_inputs(inp)
-    res = auto_design(req, env, _parts_catalog(), tier=tier)
+    # `fixed` is never in the model's schema: the loop sets it for what the user stated.
+    res = auto_design(req, env, _parts_catalog(), tier=tier, fixed=inp.get("fixed"))
     sim = _simulate_dispatch(res.design, env, None, req, cost_jpy=res.bill.cost_jpy)
     sim = _with_stability(sim, res.design, _build_fin_set(res.build, _parts_catalog()))
     sim = sim.model_copy(

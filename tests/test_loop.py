@@ -867,3 +867,55 @@ async def test_a_bare_line_break_in_a_string_does_not_break_the_final():
 
     assert events[-1].payload["result"]["summary"] == "1 行目\n2 行目"
     assert len(client.calls) == 1
+
+
+# --- the bottle the user named ------------------------------------------------------------
+
+SIZED_TEXT = "卵を割らずに 20 m まで上げて回収したい。1.5 L のボトルで、予算は 3000 円"
+SIZED_REQUIREMENT = {**CLASSIFY_INPUT["requirement"], "target_altitude_m": 20.0}
+
+
+@pytest.mark.anyio
+async def test_auto_design_keeps_the_bottle_the_user_named():
+    client = FakeAnthropicClient(
+        [
+            make_message(
+                [
+                    tool_use_block(
+                        "toolu_auto",
+                        "auto_design",
+                        {"tier": "bottle", "requirement": SIZED_REQUIREMENT, "env": None},
+                    )
+                ],
+                stop_reason="tool_use",
+            ),
+            make_message([text_block("どこまで上げますか？")]),
+        ]
+    )
+
+    events = [ev async for ev in run_design_loop(SIZED_TEXT, client=client)]
+
+    result = next(e for e in events if e.type == "tool_result").payload["result"]
+    assert result["build"]["bottle_id"] == "pet_bottle_1p5l"
+    assert "1.5 L" in client.calls[0]["messages"][0]["content"]
+
+
+@pytest.mark.anyio
+async def test_another_bottle_is_turned_away_without_spending_an_attempt():
+    build = {"tier": "bottle", "bottle_id": "pet_bottle_500ml"}
+    client = FakeAnthropicClient(
+        [
+            make_message(
+                [tool_use_block("toolu_parts", "design_from_parts", {"build": build})],
+                stop_reason="tool_use",
+            ),
+            make_message([text_block("どこまで上げますか？")]),
+        ]
+    )
+
+    events = [ev async for ev in run_design_loop(SIZED_TEXT, client=client)]
+
+    result = next(e for e in events if e.type == "tool_result").payload
+    assert result["is_error"] is True
+    assert "pet_bottle_1p5l" in result["result"]["error"]
+    assert events[-1].attempt == 0

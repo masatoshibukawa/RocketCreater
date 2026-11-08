@@ -564,7 +564,9 @@ function upsertCandidate(list: Candidate[], candidate: Candidate): Candidate[] {
 
 /** Claude cites tool call ids in prose; they mean nothing to the reader. */
 function withoutSourceIds(text: string): string {
-  return text.replace(/\s*[\[(（【]?\s*toolu_[A-Za-z0-9_]+\s*[\])）】]?/g, "");
+  return text
+    .replace(/\s*[(（[【][^()（）[\]【】]*toolu_[^()（）[\]【】]*[)）\]】]/g, "")
+    .replace(/\s*toolu_[A-Za-z0-9_]+/g, "");
 }
 
 function looksLikeJson(text: string): boolean {

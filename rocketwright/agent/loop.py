@@ -47,6 +47,7 @@ import anthropic
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
+from rocketwright.agent.constraints import UserConstraints, constrain, read_constraints
 from rocketwright.agent.events import AgentEvent
 from rocketwright.agent.final_check import split_checked_designs
 from rocketwright.agent.prompts import system_prompt
@@ -280,7 +281,11 @@ _REPLY_IN_JAPANESE = (
 
 
 def _initial_user_message(
-    text: str, env: Env | None, seed: int | None, legal_note: str | None
+    text: str,
+    env: Env | None,
+    seed: int | None,
+    legal_note: str | None,
+    held: UserConstraints,
 ) -> str:
     lines = [text.strip()]
     if env is not None:
@@ -292,6 +297,11 @@ def _initial_user_message(
         lines.append(f"Use seed {seed} for every simulate_design and run_dispersion call.")
     if legal_note:
         lines.append(f"Note from the scope guard: {legal_note}")
+    if held.bottle_id:
+        lines.append(
+            f"The user asked for a {held.said} bottle: the tools keep {held.bottle_id} for "
+            "every design and turn away any other bottle."
+        )
     if _JAPANESE.search(text):
         lines.append(_REPLY_IN_JAPANESE)
     return "\n\n".join(lines)
@@ -376,10 +386,13 @@ async def run_design_loop(
     legal_note = guard.suggestion if guard.category == "legal_approval" else None
 
     env_model = Env.model_validate(env) if isinstance(env, dict) else env
+    held = read_constraints(requirement_text)
     messages: list[dict[str, Any]] = [
         {
             "role": "user",
-            "content": _initial_user_message(requirement_text, env_model, seed, legal_note),
+            "content": _initial_user_message(
+                requirement_text, env_model, seed, legal_note, held
+            ),
         }
     ]
     tools = get_tool_definitions(cfg.allowed_tiers)
@@ -527,9 +540,13 @@ async def run_design_loop(
         feedback_texts: list[str] = []
         for tu in tool_uses:
             tool_input = tu.input if isinstance(tu.input, dict) else {}
-            if tu.name in ATTEMPT_TOOLS:
+            tool_input, broken = constrain(tu.name, tool_input, held)
+            result: dict[str, Any]
+            if broken is not None:
+                result = {"error": broken, "source_id": tu.id}
+            elif tu.name in ATTEMPT_TOOLS:
                 if attempts >= cfg.max_attempts:
-                    result: dict[str, Any] = {
+                    result = {
                         "error": f"attempt budget exhausted ({cfg.max_attempts} "
                         f"{_ATTEMPT_NAMES}); produce the final answer now",
                         "source_id": tu.id,

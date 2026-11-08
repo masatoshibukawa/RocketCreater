@@ -356,15 +356,17 @@ async def test_scenario_runs_end_to_end_with_fake_client(path: Path) -> None:
                 assert 450 <= d["metrics"]["apogee_m"] <= 550
                 assert d["cost_jpy"] <= 20_000
         else:
-            # the user's 1.5 L bottle first (the most upstream stage), then the lowest
-            # passing pressure for headroom below the cap
-            assert stages == ["bottle", "pressure"]
-            assert story["stage_inputs"][1]["chosen"] == [
-                {"stage": "bottle", "value": "pet_bottle_1p5l"}
-            ]
+            # the loop keeps the user's 1.5 L bottle from the baseline on, so only the pressure
+            # is revisited: the lowest passing one, for headroom below the cap
+            assert auto["build"]["bottle_id"] == "pet_bottle_1p5l"
+            assert stages == ["pressure"]
+            assert story["stage_inputs"][0]["chosen"][0] == {
+                "stage": "bottle",
+                "value": "pet_bottle_1p5l",
+            }
             assert parts["build"]["bottle_id"] == "pet_bottle_1p5l"
             pressures = [
-                float(c["option"]) for c in story["stage_results"][1]["candidates"] if c["passed"]
+                float(c["option"]) for c in story["stage_results"][0]["candidates"] if c["passed"]
             ]
             assert parts["build"]["initial_gauge_pressure_pa"] == min(pressures)
             assert (
