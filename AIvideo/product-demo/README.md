@@ -1,6 +1,6 @@
 # RocketWright アプリ全体のデモ
 
-Built with Claude: Japan 2026の提出に向け、専門分野間の設計の往復を、Claude API・検証ハーネス・専用解析でつなぐ仕組みを見せる。現在は**構成と流れの検討段階**で、完成動画はまだ採用していない。
+Built with Claude: Japan 2026の提出に向け、専門分野間の設計の往復を、Claude API・検証ハーネス・専用解析でつなぐ仕組みを見せる。現在は**仮v1で構成と流れを確認する段階**で、完成動画はまだ採用していない。
 
 | 保存先 | 内容 | Git |
 | --- | --- | --- |
@@ -35,6 +35,8 @@ Built with Claude: Japan 2026の提出に向け、専門分野間の設計の往
 
 ## 参考原稿と制作記録
 
+- [仮v1動画の確認・再書き出し](preview-v1.md)：175秒、仮ナレーション・字幕・印刷実写入り
+- [AIナレーションの4案比較と差し替え版](narration-v1.md)：ローカル合成と読み戻し、同じ映像への音声差し替え
 - [狙いと5行のメッセージ](brief.md)
 - [旧175秒・10場面の構成データ](plan.json) / [日本語台本](script.ja.md) / [絵コンテ](storyboard.md)：保留中の未採用原稿
 - [旧仮字幕SRT](captions/overview.ja.srt)：旧台本と同じ文。録音前の仮時刻
@@ -43,7 +45,7 @@ Built with Claude: Japan 2026の提出に向け、専門分野間の設計の往
 - [今回選んだ既存スキル](selected-skills.md)
 - [3Dプリンター実写の5秒クリップ](print-progress.md)：6秒版の先頭1秒を除いた素材候補
 
-現在の構成検討は`structure.md`を参照する。以下の補助コードは**旧`plan.json`だけ**を扱うため、9章案の台本・絵コンテ・字幕を生成・検証するものではない。構成の合意前に旧原稿を更新しない。
+現在の構成は`structure.md`、仮v1の実際の編集は`preview-v1.json`を参照する。以下の補助コードは**旧`plan.json`だけ**を扱う。
 
 ```powershell
 python -X utf8 AIvideo/product-demo/tools/prepare.py
@@ -52,4 +54,4 @@ python -X utf8 AIvideo/product-demo/tools/prepare.py --check
 
 最初のコマンドは、Git対象外の作業用フォルダー、収録ログの空テンプレート、`output/media/product-demo/planning/storyboard.html`の構成ラフも作る。実アプリの収録・モデル呼出・音声生成・動画書出し・公開は行わない。2つ目は計画の時刻、参照、字幕、保存先、未採用状態を確認する。
 
-次は9章の順序・配分と代表的な3場面の見た目を検討する。その後、B06の「検査→判断→変更→再検査」をClaude API移行後の実行で確かめ、台本を具体化する。完成動画を採用する前に、実行・視聴・権限を別途確認する。
+仮v1を見て章の配分と見た目を確認する。次の収録では、B06の「検査→判断→変更→再検査」をClaude API移行後の実行で確かめる。完成動画を採用する前に、実行・視聴・権限を別途確認する。

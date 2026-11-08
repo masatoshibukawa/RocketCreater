@@ -1,0 +1,55 @@
+{
+  "sample_text": "一つの部品を変えると、ロケット全体が変わる。部品と機体、そしてミッションをつなぐ。詳細解析の高度は、約十八点九メートル。目標の三十メートルには、未達です。設計、解析、試作を、一つの流れに。ロケットライト。",
+  "candidates": [
+    {
+      "id": "qwen-cinematic",
+      "engine": "qwen-design",
+      "seed": 7141,
+      "instruct": "A mature Japanese male narrator with a low, smooth, resonant baritone. Confident cinematic science documentary delivery. Calm authority, precise natural Japanese articulation, subtle momentum and measured pauses. No shouting, no growling, no whispering, no music. Emphasize the distinction between predictions and unmet requirements."
+    },
+    {
+      "id": "qwen-clear",
+      "engine": "qwen-design",
+      "seed": 7142,
+      "instruct": "A Japanese adult male narrator with a warm clear mid-low voice. A modern science and technology documentary, natural conversational Japanese, confident and intelligent, slightly brisk and engaging. Crisp consonants, relaxed breath, restrained emotion and short meaningful pauses. No music, no sound effects."
+    },
+    {
+      "id": "aivis-calm",
+      "engine": "aivis",
+      "speaker_name": "阿井田 茂",
+      "style_name": "Calm",
+      "parameters": {
+        "speedScale": 1.06,
+        "intonationScale": 0.85,
+        "tempoDynamicsScale": 1,
+        "prePhonemeLength": 0.08,
+        "postPhonemeLength": 0.12,
+        "outputSamplingRate": 48000
+      }
+    },
+    {
+      "id": "aivis-normal",
+      "engine": "aivis",
+      "speaker_name": "阿井田 茂",
+      "style_name": "ノーマル",
+      "parameters": {
+        "speedScale": 1.06,
+        "intonationScale": 1,
+        "tempoDynamicsScale": 1,
+        "prePhonemeLength": 0.08,
+        "postPhonemeLength": 0.12,
+        "outputSamplingRate": 48000
+      }
+    }
+  ],
+  "qwen_generation": {
+    "temperature": 0.75,
+    "top_p": 0.9,
+    "max_new_tokens": 1000
+  },
+  "urls": {
+    "qwen": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+    "aivis_model": "https://hub.aivis-project.com/aivm-models/47e53151-a378-46f3-abee-ce13aa07feb1"
+  },
+  "selection": null
+}

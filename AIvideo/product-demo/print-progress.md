@@ -2,7 +2,7 @@
 
 最新の編集指定により、6秒版の**先頭1秒を除いた5秒版**を作成した。追加の早送りはしていない。6秒版のフレーム30〜179を30fpsで使い、出力は150フレーム・5.0秒。全150フレームを元の6秒版と比較し、6秒版のハッシュが変わらないことも確認した。[5秒版の検証](print-insert-5s-verification.json)を参照。
 
-出力：`output/media/product-demo/generated/print-progress/printing-progress-5s.mp4`。
+ローカルの出力は `output/media/product-demo/generated/print-progress/printing-progress-5s.mp4`。共有用の[5秒版](../../assets/product-demo/previews/v1/printing-progress-5s.mp4)、[6秒版](../../assets/product-demo/previews/v1/printing-progress-6s.mp4)、[200倍速版](../../assets/product-demo/previews/v1/printing-progress-200x.mp4)も用意した。
 
 ```powershell
 output/media-venv/Scripts/python.exe -X utf8 AIvideo/product-demo/tools/trim_print_insert.py

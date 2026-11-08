@@ -1,0 +1,192 @@
+{
+  "review": "automatic_only",
+  "asr": "Systran/faster-whisper-small",
+  "pitch": "librosa.pyin (estimated)",
+  "records": [
+    {
+      "candidate": "aivis-calm",
+      "case": "comparison",
+      "duration_s": 15.792,
+      "synthesis_s": 6.361,
+      "rtf": 0.403,
+      "asr_text": "一つの部品を変えるとロケット全体が変わる 部品と期待そして認証もつなぐ詳細解析の高度は約18.9メートル目標の30メートルには羊たちです 設計解析施策を一つの名なれにロケットライト",
+      "normalized_cer": 0.1807,
+      "critical_terms_read_back": {
+        "18.9m": true,
+        "30m": true,
+        "未達": false
+      },
+      "pitch_median_hz": 138.5,
+      "pitch_p10_p90_hz": [
+        93.6,
+        161.0
+      ],
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 9.0,
+          "text": "一つの部品を変えるとロケット全体が変わる 部品と期待そして認証もつなぐ詳細解析の高度は約18.9メートル"
+        },
+        {
+          "start_s": 9.0,
+          "end_s": 17.36,
+          "text": "目標の30メートルには羊たちです 設計解析施策を一つの名なれにロケットライト"
+        }
+      ],
+      "wav_path": "output/media/product-demo/audio/narration-trials/aivis/aivis-calm/comparison.wav",
+      "wav_sha256": "0f1f39dcd39b431a96f654e390112f86954911d958f05eacad2b253ef432b698"
+    },
+    {
+      "candidate": "aivis-normal",
+      "case": "comparison",
+      "duration_s": 15.769,
+      "synthesis_s": 3.11,
+      "rtf": 0.197,
+      "asr_text": "一つの部品を変えるとロケット全体が変わる 部品と機体そして日照もつなぐ詳細解析の高度は約18.9メートル 目標の30メートルには羊立ちです設計解析施策を一つの名なれにロケットライト",
+      "normalized_cer": 0.1566,
+      "critical_terms_read_back": {
+        "18.9m": true,
+        "30m": true,
+        "未達": false
+      },
+      "pitch_median_hz": 145.9,
+      "pitch_p10_p90_hz": [
+        104.4,
+        172.5
+      ],
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 5.7,
+          "text": "一つの部品を変えるとロケット全体が変わる 部品と機体そして日照もつなぐ"
+        },
+        {
+          "start_s": 5.7,
+          "end_s": 11.6,
+          "text": "詳細解析の高度は約18.9メートル 目標の30メートルには羊立ちです"
+        },
+        {
+          "start_s": 11.6,
+          "end_s": 17.3,
+          "text": "設計解析施策を一つの名なれにロケットライト"
+        }
+      ],
+      "wav_path": "output/media/product-demo/audio/narration-trials/aivis/aivis-normal/comparison.wav",
+      "wav_sha256": "94bced104c167e5f2c190c3951cff1e62a15ed7c3d522c187332d87f9a7cfad1"
+    },
+    {
+      "candidate": "qwen-cinematic",
+      "case": "comparison",
+      "duration_s": 23.2,
+      "synthesis_s": 40.38,
+      "rtf": 1.741,
+      "asr_text": "一つの部品を変えるとロケット全体が変わる部品と機体、そしてミッションをつなぐ詳細解析の高度は約18.9メートル目標の30メートルには見立つです設計、解析、施策を一つの流れにロケットライト",
+      "normalized_cer": 0.0602,
+      "critical_terms_read_back": {
+        "18.9m": true,
+        "30m": true,
+        "未達": false
+      },
+      "pitch_median_hz": 125.6,
+      "pitch_p10_p90_hz": [
+        87.6,
+        172.5
+      ],
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 5.0,
+          "text": "一つの部品を変えるとロケット全体が変わる"
+        },
+        {
+          "start_s": 5.0,
+          "end_s": 8.0,
+          "text": "部品と機体、そしてミッションをつなぐ"
+        },
+        {
+          "start_s": 8.0,
+          "end_s": 13.0,
+          "text": "詳細解析の高度は約18.9メートル"
+        },
+        {
+          "start_s": 13.0,
+          "end_s": 17.0,
+          "text": "目標の30メートルには見立つです"
+        },
+        {
+          "start_s": 17.0,
+          "end_s": 22.0,
+          "text": "設計、解析、施策を一つの流れに"
+        },
+        {
+          "start_s": 22.0,
+          "end_s": 24.0,
+          "text": "ロケットライト"
+        }
+      ],
+      "wav_path": "output/media/product-demo/audio/narration-trials/qwen/qwen-cinematic/comparison.wav",
+      "wav_sha256": "47b65a39f1c54a068d077121eed9d49c0263e98d4355c069029bf1131bfebc76"
+    },
+    {
+      "candidate": "qwen-clear",
+      "case": "comparison",
+      "duration_s": 19.92,
+      "synthesis_s": 36.412,
+      "rtf": 1.828,
+      "asr_text": "一つの部品を変えると、ロケット全体が変わる。部品と機体、そしてミッションをつなぐ。詳細解析の高度は約18.9メートル。目標の30メートルには見立つです。設計、解析、試作を、一つの流れに、ロケットライト。",
+      "normalized_cer": 0.0361,
+      "critical_terms_read_back": {
+        "18.9m": true,
+        "30m": true,
+        "未達": false
+      },
+      "pitch_median_hz": 147.6,
+      "pitch_p10_p90_hz": [
+        97.4,
+        194.8
+      ],
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 4.0,
+          "text": "一つの部品を変えると、ロケット全体が変わる。"
+        },
+        {
+          "start_s": 4.0,
+          "end_s": 7.0,
+          "text": "部品と機体、そしてミッションをつなぐ。"
+        },
+        {
+          "start_s": 7.0,
+          "end_s": 11.0,
+          "text": "詳細解析の高度は約18.9メートル。"
+        },
+        {
+          "start_s": 11.0,
+          "end_s": 14.0,
+          "text": "目標の30メートルには見立つです。"
+        },
+        {
+          "start_s": 14.0,
+          "end_s": 20.0,
+          "text": "設計、解析、試作を、一つの流れに、ロケットライト。"
+        }
+      ],
+      "wav_path": "output/media/product-demo/audio/narration-trials/qwen/qwen-clear/comparison.wav",
+      "wav_sha256": "8b8171ae077805cde0ca854bc03c6bb6c173be4a3aa5fc292fb1106b985879cb"
+    }
+  ],
+  "checked_on": "2026-11-07",
+  "speaker_comparison": "Matched text. ASR character errors include possible homophones; this is not a listening score.",
+  "selected_trial": "qwen-clear",
+  "selection_basis": "Lowest normalized ASR CER in these four takes; both altitude and target were recognized.",
+  "manual_listening": "not_performed_audio_input_unavailable",
+  "aivis_voice_model": {
+    "name": "阿井田 茂",
+    "version": "1.0.0",
+    "license": "ACML 1.0",
+    "aivmx_sha256": "6dabe29de5ec2c1715e12a430805e1bff6ec64a315cccec2d26fad029df83243"
+  },
+  "qwen_voice_design_revision": "5ecdb67327fd37bb2e042aab12ff7391903235d3",
+  "provenance_notes": "Both Qwen voices were generated from style descriptions. No human voice recording supplied. All TTS and ASR were local."
+}
