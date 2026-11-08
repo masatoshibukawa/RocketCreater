@@ -48,3 +48,15 @@ output/media-venv/Scripts/python.exe -X utf8 AIvideo/product-demo/tools/apply_de
 ```
 
 赤枠版は167秒・5,010フレーム。全編デコードと、26箇所の枠の座標、移した6箇所の音声の自動読み戻しを確認した。音量は −16.26 LUFS、最大トゥルーピークは −1.37 dBTP。書き出したMP4のSHA-256は `5b0658e7946aa33f7a177488843e216f4623dc5cddced772f1e8da37622d1ced`。
+
+## 締めの改稿
+
+[締めの台本](hybrid-v2-closing.json)では、2:40から専門チームをまたぐ設計と検証をAIでつなぎ、解析結果を次の設計へ返す流れを説明する。2:49から「設計、解析、試作を、一つの流れに。RocketWright。」と結ぶ。「効率化」は工程の受け渡しをまとめる意味で使い、時間や工数の削減率は示さない。
+
+```powershell
+$out = 'output/media/product-demo/generated/hybrid-v2'
+output/narration-runtime/qwen-venv/Scripts/python.exe -X utf8 AIvideo/product-demo/tools/synthesize_fixed_narration.py --model output/narration-runtime/models/qwen-base --plan AIvideo/product-demo/hybrid-v2-closing.json --out "$out/closing-ai-takes"
+output/media-venv/Scripts/python.exe -X utf8 AIvideo/product-demo/tools/replace_demo_closing.py --source "$out/rocketwright-demo-hybrid-v2-focus.mp4" --artwork output/media/product-demo/generated/storyboard-v1/09-development-future.png --takes "$out/closing-ai-takes" --output "$out/rocketwright-demo-hybrid-v2-ai-closing.mp4"
+```
+
+締めを差し替えた版は176秒・5,280フレーム。全編デコード、二つの字幕、締めの音声の自動読み戻しを確認した。音量は −16.56 LUFS、最大トゥルーピークは −1.38 dBTP。MP4のSHA-256は `0128230d16a6f0972cc95c2b7ef059f8ab44bbf30cbf024fd447b866471d1cd7`。
