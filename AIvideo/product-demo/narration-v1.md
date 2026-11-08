@@ -15,7 +15,7 @@
 
 ## 成果物
 
-すべてGit対象外の `output/media/product-demo/generated/preview-v1/` に保存。
+書き出し先は `output/media/product-demo/generated/preview-v1/`。[試写素材](../../assets/product-demo/previews/v1/README.md)から共有用のMP4、SRT、比較用MP3を取得できる。
 
 - `rocketwright-preview-v1-narrated.mp4`：新しいナレーションを載せた2分55秒の動画。
 - `narration-comparison/`：A〜Dの比較用MP3と音量計測。原音のWAVは `output/media/product-demo/audio/narration-trials/` に保存。

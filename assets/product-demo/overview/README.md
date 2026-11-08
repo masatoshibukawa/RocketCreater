@@ -1,6 +1,6 @@
 # アプリ全体の紹介動画：採用先
 
-現在は計画段階で、採用した完成動画はない。[制作計画](../../../AIvideo/product-demo/README.md)と[採用状態](manifest.json)を参照。
+仮v1の共有用ファイルは[試写素材](../previews/v1/README.md)に保存した。完成版の採用状態は[マニフェスト](manifest.json)を参照。[制作計画](../../../AIvideo/product-demo/README.md)。
 
 ここには確認を通った完成MP4、サムネイル、出典、検証記録だけを置く。収録素材・試作・中間ファイルは`output/media/product-demo/`へ保存する。設計別CGの`current-design/`と`design-revisions/`は移動・上書きしない。
 
