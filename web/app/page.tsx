@@ -241,7 +241,7 @@ function DesignScreen() {
 
   return <main className={`workshop-app${expanded ? " is-expanded" : ""}`}>
     <header className="workshop-identity">
-      <a className="workshop-brand" href="/" aria-label="RocketWright ホーム" onClick={e => { e.preventDefault(); chooseStage("design"); }}><span className="rw-mark">RW</span><strong>RocketWright</strong></a>
+      <a className="workshop-brand" href="/" aria-label="RocketCreator ホーム" onClick={e => { e.preventDefault(); chooseStage("design"); }}><span className="rw-mark">RC</span><strong>RocketCreator</strong></a>
       <span className="identity-divider"/>
       <span className="project-path">{TIER_LABEL[tier ?? "bottle"]}<span>/</span><b>{displayedLabel ?? "条件の確認"}</b></span>
       <span className="session-state">{productionProject ? `保存済み / v${productionProject.version}` : "セッション内の下書き"}</span>

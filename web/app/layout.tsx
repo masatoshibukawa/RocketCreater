@@ -7,8 +7,8 @@ import "./workshop-scene.css";
 import "./workshop-shell.css";
 
 export const metadata: Metadata = {
-  title: "RocketWright",
-  description: "Tiered rocket design, simulated and verified before anything is shown.",
+  title: "RocketCreator",
+  description: "Bottle-rocket design, simulated and verified before anything is shown.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
