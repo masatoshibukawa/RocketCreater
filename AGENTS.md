@@ -7,3 +7,7 @@ During active work, check for remote changes at the start, between work units, a
 For file-changing tasks, small, frequent commits, an immediate push after each commit, and an updated pull request after each push are mandatory throughout the task and before handoff. Do not defer all Git synchronization until the end.
 
 Include only changes belonging to the current task. Preserve pre-existing changes and other contributors' work. Do not automatically stash, rebase, merge, or discard work to make a pull succeed. Explicit user restrictions on repository writes or Git synchronization take precedence.
+
+## Local workspace layout
+
+Keep the primary checkout on `main` when it is safe and clean. Create task worktrees under `.worktrees/`, shared caches under `.cache/`, and local tools/environments under `.local/`. Use categorized `output/` folders for generated artifacts, rather than creating new worktrees or environments there. Follow [docs/workspace-layout.md](docs/workspace-layout.md) and preserve existing compatibility paths used by active tasks.

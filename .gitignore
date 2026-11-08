@@ -30,3 +30,8 @@ npm-debug.log*
 # generated outputs
 output/
 *.log
+
+# Local development workspaces, shared caches and installed tools
+/.worktrees/
+/.cache/
+/.local/
