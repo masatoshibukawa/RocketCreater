@@ -18,13 +18,9 @@ from urllib.parse import urlencode
 from pydantic import BaseModel, ConfigDict, Field
 
 from rocketwright.agent.local_runtime import LocalDirector, LocalJSON, LocalRuntimeError
-<<<<<<< HEAD
 from rocketwright.agent.project_jobs import cancel_path, cancelled, resource
 from rocketwright.agent.video_appearance import freeze_assets, plan_key, recipe
 from rocketwright.agent.video_cache import digest
-=======
-from rocketwright.agent.video_appearance import freeze_assets, plan_key, recipe
->>>>>>> origin/checkpoint/video-worktree-20261106
 from rocketwright.agent.workbench import ROOT, SKILLS, Conflict
 
 
@@ -148,7 +144,6 @@ def plan_video(bench, project_id, revision, local=True, director=None, style="en
     return bench._run(project_id, revision, "video_direction", worker)
 
 
-<<<<<<< HEAD
 def render_video(
     bench,
     project_id,
@@ -164,17 +159,11 @@ def render_video(
     kind = "photographic_video" if style == "photographic" else "video"
     if quality == "preview":
         kind = "photographic_preview"
-=======
-def render_video(bench, project_id, revision, style="engineering"):
-    key = plan_key(style)
-    kind = "photographic_video" if style == "photographic" else "video"
->>>>>>> origin/checkpoint/video-worktree-20261106
 
     def worker(state):
         settings = media_settings()
         if not settings["blender"].is_file() or not settings["python"].is_file():
             raise LocalRuntimeError("Configure the installed Blender and video Python executables")
-<<<<<<< HEAD
         approved_plan = state.get(key, {})
         if approved_plan.get("status") != "planned" and not (
             (regenerate or quality == "preview") and approved_plan.get("status") == "rendered"
@@ -200,20 +189,6 @@ def render_video(bench, project_id, revision, style="engineering"):
             approved_plan[pending_key] = directory_name
         directory = bench.directory(project_id) / directory_name
         state["active"].update(style=style, quality=quality, video_directory=directory_name)
-=======
-        plan = state.get(key, {})
-        if plan.get("status") != "planned":
-            raise Conflict("Approve a shot plan before rendering")
-        validate_bound_direction(plan)
-        expected_recipe = recipe(style)
-        if any(plan.get(k, v) != v for k, v in expected_recipe.items()):
-            raise Conflict("Render settings changed; review a new plan")
-        if any(f["kind"] == kind for f in state["files"]):
-            raise Conflict("Videos already exist for this design")
-        directory = bench.directory(project_id) / (
-            "video-photographic" if style == "photographic" else "video"
-        )
->>>>>>> origin/checkpoint/video-worktree-20261106
         directory.mkdir(exist_ok=True)
         # Bind the same frozen production snapshot as the print exports.
         assembly = json.loads(
@@ -232,7 +207,6 @@ def render_video(bench, project_id, revision, style="engineering"):
                 bench.file(project_id, "production/trace.json").read_text(encoding="utf-8")
             ),
         }
-<<<<<<< HEAD
         from rocketwright.agent.airframe_templates import visual_recipe
 
         job["airframe"] = visual_recipe(state)
@@ -271,10 +245,6 @@ def render_video(bench, project_id, revision, style="engineering"):
         if state.get("active", {}).get("id"):
             job["job_id"] = state["active"]["id"]
             job["cancel_file"] = str(cancel_path(bench, project_id, job["job_id"]).resolve())
-=======
-        if style == "photographic":
-            freeze_assets(directory)
->>>>>>> origin/checkpoint/video-worktree-20261106
         job_path = directory / "job.json"
         job_path.write_text(json.dumps(job, ensure_ascii=False, indent=2), encoding="utf-8")
         env = os.environ.copy()
@@ -299,7 +269,6 @@ def render_video(bench, project_id, revision, style="engineering"):
                 str(settings["libs"]),
             ],
         ]
-<<<<<<< HEAD
         lease = resource(bench, state, "renderer")
         try:
             state["active"]["phase"] = "rendering"
@@ -327,25 +296,6 @@ def render_video(bench, project_id, revision, style="engineering"):
                         ) from exc
         finally:
             lease.__exit__(None, None, None)
-=======
-        with (directory / "render.log").open("w", encoding="utf-8") as log:
-            for command in commands:
-                try:
-                    subprocess.run(
-                        command,
-                        cwd=ROOT,
-                        env=env,
-                        check=True,
-                        timeout=3600 if style == "photographic" else 900,
-                        stdout=log,
-                        stderr=subprocess.STDOUT,
-                        creationflags=flags,
-                    )
-                except (OSError, subprocess.SubprocessError) as exc:
-                    raise LocalRuntimeError(
-                        "Video render failed; inspect the project render.log"
-                    ) from exc
->>>>>>> origin/checkpoint/video-worktree-20261106
         verification = json.loads((directory / "verification.json").read_text())
         if not verification["passed"]:
             raise LocalRuntimeError("Video verification did not pass")
@@ -353,7 +303,6 @@ def render_video(bench, project_id, revision, style="engineering"):
             encoding="utf-8"
         ):
             raise LocalRuntimeError("Video render log contains an exception")
-<<<<<<< HEAD
         if quality == "final":
             state[key]["status"] = "rendered"
             state[key]["output_directory"] = directory_name
@@ -364,9 +313,6 @@ def render_video(bench, project_id, revision, style="engineering"):
         for row in state["files"]:
             if row["kind"] == kind:
                 row["kind"] = kind + "_history"
-=======
-        state[key]["status"] = "rendered"
->>>>>>> origin/checkpoint/video-worktree-20261106
         bench.register_files(state, directory, kind)
         # Logs and executable scene files are local implementation details.
         state["files"] = [f for f in state["files"] if f["name"] not in {"render.log", "job.json"}]

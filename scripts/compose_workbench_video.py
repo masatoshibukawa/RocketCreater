@@ -32,14 +32,9 @@ font = (
 small = ImageFont.truetype(str(font_path), 15) if font_path.is_file() else font
 records = []
 photographic = plan.get("style") == "photographic"
-<<<<<<< HEAD
 
 
 def encode(mode, path, frame_count):
-=======
-for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-cg.mp4")):
-    path = directory / filename
->>>>>>> origin/checkpoint/video-worktree-20261106
     writer = imageio_ffmpeg.write_frames(
         str(path),
         (plan["width"], plan["height"]),
@@ -50,15 +45,10 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
         output_params=["-movflags", "+faststart", "-map_metadata", "-1"],
     )
     writer.send(None)
-<<<<<<< HEAD
     for i in range(frame_count):
         if job.get("cancel_file") and Path(job["cancel_file"]).exists():
             writer.close()
             raise RuntimeError("Composition cancelled; source frames retained")
-=======
-    frame_count = plan.get(mode + "_frames", plan["frames_per_clip"])
-    for i in range(frame_count):
->>>>>>> origin/checkpoint/video-worktree-20261106
         with Image.open(directory / f"{mode}-frames/{i:04d}.png") as source:
             image = source.convert("RGB")
         draw = ImageDraw.Draw(image)
@@ -102,14 +92,11 @@ for mode, filename in (("design", "design-explanation.mp4"), ("launch", "launch-
                 font=small,
                 fill=(150, 165, 168),
             )
-<<<<<<< HEAD
         if photographic:
             draw.rounded_rectangle(
                 (18, 16, min(image.width - 18, 650), 55), radius=6, fill=(10, 13, 16)
             )
             draw.text((30, 23), plan[mode + "_caption"], font=font, fill=(225, 235, 237))
-=======
->>>>>>> origin/checkpoint/video-worktree-20261106
         writer.send(image.tobytes())
     writer.close()
 
@@ -168,7 +155,6 @@ for row in states:
         errors.append(abs(float(row[axis]) - (a[axis] + (b[axis] - a[axis]) * mix)))
 expected_count = plan.get("launch_frames", plan["frames_per_clip"])
 trajectory_check = {
-<<<<<<< HEAD
     "passed": len(states) == expected_count and max(errors, default=1) < 1e-5,
     "frames": len(states),
     "max_position_error_m": max(errors, default=None),
@@ -177,12 +163,6 @@ trajectory_check = {
     if states
     else None,
     "scope": "Position records against solver interpolation; not independent image tracking",
-=======
-    "passed": len(states) == expected_count and max(errors, default=1) < 1e-8,
-    "frames": len(states),
-    "max_position_error_m": max(errors, default=None),
-    "attitude": "illustrative, not integrated attitude dynamics",
->>>>>>> origin/checkpoint/video-worktree-20261106
 }
 (directory / "verification.json").write_text(
     json.dumps(
