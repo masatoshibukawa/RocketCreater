@@ -1,0 +1,259 @@
+{
+  "source_hash": "0fee03585c1fb25724063e4bd600172eae7df9e95660bf322b48eaf7a38729f5",
+  "status": "completed diagnostic",
+  "manifest_sha256": "18e375b1801a63469e4875815b4f0077018886934c17ea2b1bbd0eb8fd10eb69",
+  "report_sha256": "5307334c206ef240c8c5494d5a9b02fb1e73e33217bd94a92020fffb122d8ac8",
+  "partial_artifact_hashes": null,
+  "verified_files": 32,
+  "precision": {
+    "altitude_error_m": 1.5,
+    "attitude_error_deg": 1.0,
+    "aero_allocation": 0.5,
+    "grid_relative_limit": 0.05,
+    "temporal_relative_limit": 0.03,
+    "structure_relative_limit": 0.05,
+    "deflection_span_limit": 0.05,
+    "maximum_incidence_deg": 15.0,
+    "minimum_static_margin_cal": 1.0,
+    "require_cfd": true,
+    "require_aero_audit": true,
+    "require_fem": true,
+    "require_benchmarks": true
+  },
+  "scope": "Single-grid, single-speed diagnostics; never full-design acceptance",
+  "elapsed_s": 3524.469000000041,
+  "acceptance_performed": false,
+  "physical_qualification": false,
+  "results": [
+    {
+      "label": "axial-80",
+      "status": "completed",
+      "angle_deg": 0,
+      "duration_D_U": 80,
+      "averaging": 0.47234844849385005,
+      "duration_change": null,
+      "point_time_checks_pass": false,
+      "elapsed_s": 220.98500000033528,
+      "components": {
+        "Cd": {
+          "mean": 1.214313739058837,
+          "split_difference": 0.04036678227153123,
+          "relative_difference": 0.033242465248575555
+        },
+        "Cl": {
+          "mean": -0.010159301448039344,
+          "split_difference": -0.008706673417997513,
+          "relative_difference": 0.17413346835995025
+        },
+        "Cx": {
+          "mean": 1.214313739058837,
+          "split_difference": 0.04036678227153123,
+          "relative_difference": 0.033242465248575555
+        },
+        "Cy": {
+          "mean": -0.010159301448039344,
+          "split_difference": -0.008706673417997513,
+          "relative_difference": 0.17413346835995025
+        },
+        "Cz": {
+          "mean": -0.009211905917660305,
+          "split_difference": -0.002444390629246255,
+          "relative_difference": 0.048887812584925104
+        },
+        "Croll": {
+          "mean": 0.006605638445865246,
+          "split_difference": -0.014210570458180782,
+          "relative_difference": 0.28421140916361565
+        },
+        "Cpitch_y": {
+          "mean": 0.03090832373074389,
+          "split_difference": 0.006191995221876509,
+          "relative_difference": 0.12383990443753018
+        },
+        "Cm_z": {
+          "mean": -0.021821409233246505,
+          "split_difference": -0.023617422424692516,
+          "relative_difference": 0.4723484484938503
+        }
+      },
+      "worst_component": "Cm_z",
+      "case_sha256": "c91eadf86509679daed4a2058e50480442c26573b91882720f946fd63ee7d776",
+      "history_sha256": "efd187b95977bbcd958495ccf2d9f742ec0f40061b64827f925bfbda139a8a81",
+      "simulated_duration_s": 0.4
+    },
+    {
+      "label": "ascent-80",
+      "status": "completed",
+      "angle_deg": 10,
+      "duration_D_U": 80,
+      "averaging": 1.0077700386303372,
+      "duration_change": null,
+      "point_time_checks_pass": false,
+      "elapsed_s": 221.46900000004098,
+      "components": {
+        "Cd": {
+          "mean": 1.5460762102553536,
+          "split_difference": -0.017692100885480233,
+          "relative_difference": 0.01144322690442159
+        },
+        "Cl": {
+          "mean": 0.9675793421154221,
+          "split_difference": -0.013402150516439448,
+          "relative_difference": 0.013851216053391839
+        },
+        "Cx": {
+          "mean": 1.3545694491006948,
+          "split_difference": -0.015096059105097703,
+          "relative_difference": 0.01114454420562936
+        },
+        "Cy": {
+          "mean": 1.2213529542147554,
+          "split_difference": -0.01627074281348939,
+          "relative_difference": 0.013321900730940093
+        },
+        "Cz": {
+          "mean": 3.0766480394616715e-05,
+          "split_difference": -0.009280975894555699,
+          "relative_difference": 0.18561951789111397
+        },
+        "Croll": {
+          "mean": 0.006060083380829735,
+          "split_difference": 0.012436309191091732,
+          "relative_difference": 0.24872618382183465
+        },
+        "Cpitch_y": {
+          "mean": 0.007519658944991926,
+          "split_difference": 0.050388501931516866,
+          "relative_difference": 1.0077700386303372
+        },
+        "Cm_z": {
+          "mean": 3.0252441097618656,
+          "split_difference": -0.04614934336626808,
+          "relative_difference": 0.015254750258781848
+        }
+      },
+      "worst_component": "Cpitch_y",
+      "case_sha256": "fef03373ec24fa305fc5963ad499e94e8c837fae8db8f4e931dcad7acc499222",
+      "history_sha256": "96dd3615855f71e531aa4cfddef24cd855ac534c664a5b6509ee349a64b06723",
+      "simulated_duration_s": 0.4,
+      "equivalent_normal_force_station_mm": 445.34074936913197,
+      "station_scope": "Centerline-equivalent resultant at fixed incidence; not a CP derivative or a static-stability acceptance test"
+    },
+    {
+      "label": "ascent-320",
+      "status": "completed",
+      "angle_deg": 10,
+      "duration_D_U": 320,
+      "averaging": 0.2523575062170411,
+      "duration_change": 0.00642210631625444,
+      "point_time_checks_pass": false,
+      "elapsed_s": 885.3600000003353,
+      "components": {
+        "Cd": {
+          "mean": 1.5514459634441198,
+          "split_difference": 0.00033716242254855366,
+          "relative_difference": 0.00021732140886175159
+        },
+        "Cl": {
+          "mean": 0.9741131215660238,
+          "split_difference": 0.012985651652131613,
+          "relative_difference": 0.013330742974958959
+        },
+        "Cx": {
+          "mean": 1.358723044777879,
+          "split_difference": -0.001922894577459422,
+          "relative_difference": 0.001415221876783412
+        },
+        "Cy": {
+          "mean": 1.2287199187299302,
+          "split_difference": 0.012846918065188229,
+          "relative_difference": 0.010455530075940725
+        },
+        "Cz": {
+          "mean": -0.003773641148102849,
+          "split_difference": 0.011376168654774584,
+          "relative_difference": 0.22752337309549167
+        },
+        "Croll": {
+          "mean": -0.0019826563520482384,
+          "split_difference": -0.005439506769939349,
+          "relative_difference": 0.10879013539878697
+        },
+        "Cpitch_y": {
+          "mean": 0.011708600529601569,
+          "split_difference": -0.01261787531085208,
+          "relative_difference": 0.2523575062170416
+        },
+        "Cm_z": {
+          "mean": 3.044798127045281,
+          "split_difference": 0.01529153224339197,
+          "relative_difference": 0.005022182622737984
+        }
+      },
+      "worst_component": "Cpitch_y",
+      "case_sha256": "abfadcf4e1a04176161819d8946ac74d8cb0f442e678334ffaf337a044a017d9",
+      "history_sha256": "bae346a05898b13546155d372779c0a225136c3f943d769f3ed742627499d394",
+      "simulated_duration_s": 1.6,
+      "equivalent_normal_force_station_mm": 445.43643411759837,
+      "station_scope": "Centerline-equivalent resultant at fixed incidence; not a CP derivative or a static-stability acceptance test"
+    },
+    {
+      "label": "ascent-800",
+      "status": "completed",
+      "angle_deg": 10,
+      "duration_D_U": 800,
+      "averaging": 0.04363618693595056,
+      "duration_change": 0.007105870219828378,
+      "point_time_checks_pass": false,
+      "elapsed_s": 2196.532000000123,
+      "components": {
+        "Cd": {
+          "mean": 1.554574417832849,
+          "split_difference": -0.002058013405735526,
+          "relative_difference": 0.0013238436076958573
+        },
+        "Cl": {
+          "mean": 0.9791124309453633,
+          "split_difference": 0.01091123698903318,
+          "relative_difference": 0.011144008230493043
+        },
+        "Cx": {
+          "mean": 1.3609358499515292,
+          "split_difference": -0.003921463977008877,
+          "relative_difference": 0.0028814465995208685
+        },
+        "Cy": {
+          "mean": 1.2341865277699273,
+          "split_difference": 0.010388100504233666,
+          "relative_difference": 0.00841696151310621
+        },
+        "Cz": {
+          "mean": 0.00882777888575125,
+          "split_difference": 0.0010646429865778604,
+          "relative_difference": 0.021292859731557208
+        },
+        "Croll": {
+          "mean": -0.00016836908959660623,
+          "split_difference": 0.0004512226200177751,
+          "relative_difference": 0.009024452400355501
+        },
+        "Cpitch_y": {
+          "mean": -0.03233091470598749,
+          "split_difference": -0.002181809346797535,
+          "relative_difference": 0.0436361869359507
+        },
+        "Cm_z": {
+          "mean": 3.06658890985629,
+          "split_difference": 0.037080250971233575,
+          "relative_difference": 0.012091692776966076
+        }
+      },
+      "worst_component": "Cpitch_y",
+      "case_sha256": "8176bf7fb8e992930a041aadc41d48338b35f2c6a53d8bc68ffbc0e4b711de77",
+      "history_sha256": "12f3167d2eeb53d1831c9aae56937bba61893a70e717b7dec5f4f86c946b2f9b",
+      "simulated_duration_s": 4.0,
+      "equivalent_normal_force_station_mm": 446.037635968678,
+      "station_scope": "Centerline-equivalent resultant at fixed incidence; not a CP derivative or a static-stability acceptance test"
+    }
+  ]
+}

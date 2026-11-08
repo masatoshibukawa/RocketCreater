@@ -1,0 +1,126 @@
+{
+  "production_source_hash": "0fee03585c1fb25724063e4bd600172eae7df9e95660bf322b48eaf7a38729f5",
+  "diagnostic_source_sha256": "9c1adb9470b96c4007222e660d5688fa8cc12ebe5b294ce5127e1682f614f790",
+  "inputs": {
+    "manifest.json": "1effb1b1b5fa8d5a5ff5b87027f20699389ca8883ef5f3a2fd3c84765e5007df",
+    "fin-assembly-mm.stl": "03553c6dbd248605c38620f7a0292d62d09288f181fca8af7ace7797056c908d",
+    "nose-mm.stl": "0f5a86b07eb96f6545be9b208d7e178e4acebd116e62347f7e31def4560001d0"
+  },
+  "verified_parent_files": 34,
+  "cad_properties": {
+    "fin": {
+      "volume": 11774.803098098708,
+      "centroid": [
+        92.57291275244165,
+        -2.0989670919857768e-10,
+        17.787001659079134
+      ],
+      "inertia_per_mass": [
+        [
+          143.77896729035206,
+          -1.0788198472576338e-09,
+          202.99555815859816
+        ],
+        [
+          -1.0788214384327421e-09,
+          1737.4871618715267,
+          -3.612581432512873e-09
+        ],
+        [
+          202.99555815859816,
+          -3.61258235939731e-09,
+          1605.1649399605576
+        ]
+      ]
+    },
+    "nose": {
+      "volume": 55929.9988925326,
+      "centroid": [
+        8.12252123245137e-15,
+        -2.2660762008822074e-14,
+        114.66490391216459
+      ],
+      "inertia_per_mass": [
+        [
+          6461.169782830394,
+          2.115388288681098e-13,
+          -1.0544303272994413e-12
+        ],
+        [
+          1.7978985285756154e-13,
+          6461.169782830395,
+          2.2463435249685675e-12
+        ],
+        [
+          -1.3108645832098818e-12,
+          2.772975604299252e-12,
+          1287.7004972068244
+        ]
+      ]
+    }
+  },
+  "station_comparison": [
+    {
+      "id": "printed_nose",
+      "prior_station_mm": 181.7361,
+      "cad_station_mm": 164.9290960878354
+    },
+    {
+      "id": "printed_fins",
+      "prior_station_mm": 605.0238633424262,
+      "cad_station_mm": 603.8069983409209
+    }
+  ],
+  "results": [
+    {
+      "label": "legacy",
+      "apogee_m": 22.835663736866447,
+      "incidence_deg": 7.676971114984827,
+      "static_margin_cal": 1.0472610017374893,
+      "beam_ratio": 0.041303293485373496,
+      "initial_inertia_kg_m2": [
+        0.03786757353127615,
+        0.03786757353127615,
+        0.0007316378815646831
+      ],
+      "dry_inertia_kg_m2": [
+        0.01631429376496187,
+        0.01631429376496187,
+        0.00035545267591524876
+      ],
+      "elapsed_s": 2.655999999959022
+    },
+    {
+      "label": "cad_mass_properties",
+      "apogee_m": 22.834765583203485,
+      "incidence_deg": 7.717882530757303,
+      "static_margin_cal": 1.0650180815862584,
+      "beam_ratio": 0.04152340323793648,
+      "initial_inertia_kg_m2": [
+        0.038930403143634044,
+        0.038930403143634044,
+        0.0012098574371313647
+      ],
+      "dry_inertia_kg_m2": [
+        0.016956274631943755,
+        0.016956274631943755,
+        0.0008336722314819303
+      ],
+      "elapsed_s": 2.640000000130385
+    }
+  ],
+  "source_unchanged": true,
+  "acceptance_performed": false,
+  "physical_qualification": false,
+  "scope": "Diagnostic assembly override from solid CAD; production compiler unchanged",
+  "limitations": [
+    "Uniform material density",
+    "Other components retain assumed inertias",
+    "Analytic aerodynamics; no full nonlinear-flight stability proof"
+  ],
+  "report_sha256": "8bf09c4ccf52eb39ba1efdd3f1703127e6c5a59b96d4eadb00cee1e4ac32c001",
+  "flight_hashes": {
+    "cad_mass_properties-flight.json": "9ba422d81dc8cd853e1ba175886b1f29761563e95e8021487721427fa2715bae",
+    "legacy-flight.json": "d298dc7b67506e8340c6e726836ff5bdf50e4b74b615337a3b74d123320a4527"
+  }
+}
