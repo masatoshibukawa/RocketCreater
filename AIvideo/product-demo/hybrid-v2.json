@@ -1,0 +1,18 @@
+{
+  "opening_seconds": 7,
+  "opening_start_s": 86.8,
+  "opening_title": "卵を割らずに20 mへ",
+  "opening_caption": "RocketWrightは、要求を設計に変えます。",
+  "opening_speech": "卵を割らずに、二十メートルへ。ロケットライトは、要求を設計に変えます。",
+  "tradeoff_source_s": [32, 41],
+  "hybrid_source_s": [20, 171],
+  "role_diagram_source_s": [68, 80],
+  "role_demo_excerpt_start_s": 92,
+  "app_steps": [
+    {"start_s": 80, "end_s": 94, "title": "要求と範囲を確認"},
+    {"start_s": 94, "end_s": 104.8, "title": "Claudeが候補を選ぶ"},
+    {"start_s": 104.8, "end_s": 115, "title": "ハーネスが根拠を検査"},
+    {"start_s": 115, "end_s": 138, "title": "飛行・流体を計算"},
+    {"start_s": 138, "end_s": 146, "title": "製作資料を出力"}
+  ]
+}
