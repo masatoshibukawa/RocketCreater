@@ -17,7 +17,7 @@ def main():
     parser.add_argument("--runtime", type=Path)
     parser.add_argument("--limits", type=Path)
     parser.add_argument("--precision", type=Path)
-    parser.add_argument("--max-starts", type=int, default=5, choices=range(1, 6))
+    parser.add_argument("--max-starts", type=int, help="Default: all registered starts")
     args = parser.parse_args()
 
     def read(cls, path):

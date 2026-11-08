@@ -1,0 +1,549 @@
+{
+  "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+  "fixed_report_sha256": "f727433cf69013116a2c6bad72ce7ce1a17ac2037083fe5c62bae00ebe2c1ba1",
+  "variable_report_sha256": "17427b88822d962930b29a2d541eee60db4f4c8483aad45571475b7ef263b353",
+  "methods": [
+    {
+      "method": "ga",
+      "wins_of_9": 6,
+      "fixed_median_loss": 1.5828272391876759,
+      "variable_median_loss": 1.5571804863909424,
+      "fixed_native_height_m": 16.52633923570584,
+      "variable_native_height_m": 16.308596689405313
+    },
+    {
+      "method": "de",
+      "wins_of_9": 2,
+      "fixed_median_loss": 1.5325449377491704,
+      "variable_median_loss": 1.5754055532283022,
+      "fixed_native_height_m": 17.526523330287787,
+      "variable_native_height_m": 17.296022065326515
+    },
+    {
+      "method": "ga-nn",
+      "wins_of_9": 6,
+      "fixed_median_loss": 1.5315340585508648,
+      "variable_median_loss": 1.5333354981528249,
+      "fixed_native_height_m": 17.772939647511937,
+      "variable_native_height_m": 17.4309927552012
+    },
+    {
+      "method": "de-nn",
+      "wins_of_9": 4,
+      "fixed_median_loss": 1.4780662254014307,
+      "variable_median_loss": 1.4866414520216034,
+      "fixed_native_height_m": 17.72101487326497,
+      "variable_native_height_m": 18.490544279701787
+    },
+    {
+      "method": "sac",
+      "wins_of_9": 5,
+      "fixed_median_loss": 1.5076026639102507,
+      "variable_median_loss": 1.5006803273251417,
+      "fixed_native_height_m": 18.20411531172553,
+      "variable_native_height_m": 17.863504994229835
+    },
+    {
+      "method": "ppo",
+      "wins_of_9": 4,
+      "fixed_median_loss": 1.582328618878579,
+      "variable_median_loss": 1.5838104373547406,
+      "fixed_native_height_m": 16.39653216469278,
+      "variable_native_height_m": 15.459813911765698
+    }
+  ],
+  "pairs": [
+    {
+      "method": "ga",
+      "seed": 118213,
+      "anchor": 0,
+      "fixed_loss": 1.494900956739618,
+      "variable_loss": 1.5063094671071522,
+      "variable_better": false,
+      "selected_pressure_kpa": 396.42440000000005
+    },
+    {
+      "method": "de",
+      "seed": 118213,
+      "anchor": 0,
+      "fixed_loss": 1.5315618668352873,
+      "variable_loss": 1.5465464631269645,
+      "variable_better": false,
+      "selected_pressure_kpa": 395.76719099999997
+    },
+    {
+      "method": "ga-nn",
+      "seed": 118213,
+      "anchor": 0,
+      "fixed_loss": 1.462254229740503,
+      "variable_loss": 1.4725615903767366,
+      "variable_better": false,
+      "selected_pressure_kpa": 399.144994
+    },
+    {
+      "method": "de-nn",
+      "seed": 118213,
+      "anchor": 0,
+      "fixed_loss": 1.4780662254014307,
+      "variable_loss": 1.4636120898481624,
+      "variable_better": true,
+      "selected_pressure_kpa": 394.8083
+    },
+    {
+      "method": "sac",
+      "seed": 118213,
+      "anchor": 0,
+      "fixed_loss": 1.5076026639102507,
+      "variable_loss": 1.4943851607460472,
+      "variable_better": true,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 118213,
+      "anchor": 0,
+      "fixed_loss": 1.6253644083900567,
+      "variable_loss": 1.549739316524609,
+      "variable_better": true,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ga",
+      "seed": 118213,
+      "anchor": 1,
+      "fixed_loss": 1.687906571610461,
+      "variable_loss": 1.7424236531937467,
+      "variable_better": false,
+      "selected_pressure_kpa": 399.847132
+    },
+    {
+      "method": "de",
+      "seed": 118213,
+      "anchor": 1,
+      "fixed_loss": 1.5417305824020215,
+      "variable_loss": 1.6196270256135248,
+      "variable_better": false,
+      "selected_pressure_kpa": 363.481237
+    },
+    {
+      "method": "ga-nn",
+      "seed": 118213,
+      "anchor": 1,
+      "fixed_loss": 1.5790918905249756,
+      "variable_loss": 1.5737808132368118,
+      "variable_better": true,
+      "selected_pressure_kpa": 389.866263
+    },
+    {
+      "method": "de-nn",
+      "seed": 118213,
+      "anchor": 1,
+      "fixed_loss": 1.4772310840103755,
+      "variable_loss": 1.5041433981708772,
+      "variable_better": false,
+      "selected_pressure_kpa": 391.43505300000004
+    },
+    {
+      "method": "sac",
+      "seed": 118213,
+      "anchor": 1,
+      "fixed_loss": 1.519987585257573,
+      "variable_loss": 1.5023682830970557,
+      "variable_better": true,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 118213,
+      "anchor": 1,
+      "fixed_loss": 1.6531563634748827,
+      "variable_loss": 1.5838104373547406,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.383983
+    },
+    {
+      "method": "ga",
+      "seed": 118213,
+      "anchor": 2,
+      "fixed_loss": 1.7540800341333553,
+      "variable_loss": 1.6193357860964324,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.5749
+    },
+    {
+      "method": "de",
+      "seed": 118213,
+      "anchor": 2,
+      "fixed_loss": 1.5690534722099947,
+      "variable_loss": 1.558159614489865,
+      "variable_better": true,
+      "selected_pressure_kpa": 387.345749
+    },
+    {
+      "method": "ga-nn",
+      "seed": 118213,
+      "anchor": 2,
+      "fixed_loss": 1.57098389821462,
+      "variable_loss": 1.59922787735528,
+      "variable_better": false,
+      "selected_pressure_kpa": 399.793392
+    },
+    {
+      "method": "de-nn",
+      "seed": 118213,
+      "anchor": 2,
+      "fixed_loss": 1.5147643080224844,
+      "variable_loss": 1.4887087617269374,
+      "variable_better": true,
+      "selected_pressure_kpa": 392.606265
+    },
+    {
+      "method": "sac",
+      "seed": 118213,
+      "anchor": 2,
+      "fixed_loss": 1.5087223712781812,
+      "variable_loss": 1.5071362591717252,
+      "variable_better": true,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 118213,
+      "anchor": 2,
+      "fixed_loss": 1.582328618878579,
+      "variable_loss": 1.575475086053526,
+      "variable_better": true,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ga",
+      "seed": 119233,
+      "anchor": 0,
+      "fixed_loss": 1.6195079993600556,
+      "variable_loss": 1.5401700523305144,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.96395
+    },
+    {
+      "method": "de",
+      "seed": 119233,
+      "anchor": 0,
+      "fixed_loss": 1.5037520800158308,
+      "variable_loss": 1.5754055532283022,
+      "variable_better": false,
+      "selected_pressure_kpa": 386.583866
+    },
+    {
+      "method": "ga-nn",
+      "seed": 119233,
+      "anchor": 0,
+      "fixed_loss": 1.5183051025756238,
+      "variable_loss": 1.5023874389006728,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.543458
+    },
+    {
+      "method": "de-nn",
+      "seed": 119233,
+      "anchor": 0,
+      "fixed_loss": 1.4696412771452831,
+      "variable_loss": 1.472662012773895,
+      "variable_better": false,
+      "selected_pressure_kpa": 396.339673
+    },
+    {
+      "method": "sac",
+      "seed": 119233,
+      "anchor": 0,
+      "fixed_loss": 1.4719335531924471,
+      "variable_loss": 1.4762112728384178,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 119233,
+      "anchor": 0,
+      "fixed_loss": 1.5572876560987239,
+      "variable_loss": 1.5659278871180606,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ga",
+      "seed": 119233,
+      "anchor": 1,
+      "fixed_loss": 1.5655718075388294,
+      "variable_loss": 1.6698959208182136,
+      "variable_better": false,
+      "selected_pressure_kpa": 399.725068
+    },
+    {
+      "method": "de",
+      "seed": 119233,
+      "anchor": 1,
+      "fixed_loss": 1.5294335139698827,
+      "variable_loss": 1.5900575462955593,
+      "variable_better": false,
+      "selected_pressure_kpa": 390.621802
+    },
+    {
+      "method": "ga-nn",
+      "seed": 119233,
+      "anchor": 1,
+      "fixed_loss": 1.5570069916925626,
+      "variable_loss": 1.545299601044847,
+      "variable_better": true,
+      "selected_pressure_kpa": 398.44703499999997
+    },
+    {
+      "method": "de-nn",
+      "seed": 119233,
+      "anchor": 1,
+      "fixed_loss": 1.4852433195362647,
+      "variable_loss": 1.4597127865472994,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.340906
+    },
+    {
+      "method": "sac",
+      "seed": 119233,
+      "anchor": 1,
+      "fixed_loss": 1.4903703464624587,
+      "variable_loss": 1.4998831026795294,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 119233,
+      "anchor": 1,
+      "fixed_loss": 1.578317972023681,
+      "variable_loss": 1.6046689723987089,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ga",
+      "seed": 119233,
+      "anchor": 2,
+      "fixed_loss": 1.5625226531781164,
+      "variable_loss": 1.534433334777962,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.949909
+    },
+    {
+      "method": "de",
+      "seed": 119233,
+      "anchor": 2,
+      "fixed_loss": 1.5517663567390185,
+      "variable_loss": 1.6342786014251303,
+      "variable_better": false,
+      "selected_pressure_kpa": 397.487586
+    },
+    {
+      "method": "ga-nn",
+      "seed": 119233,
+      "anchor": 2,
+      "fixed_loss": 1.5274400723488366,
+      "variable_loss": 1.5166224270764093,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.903385
+    },
+    {
+      "method": "de-nn",
+      "seed": 119233,
+      "anchor": 2,
+      "fixed_loss": 1.5189046724484354,
+      "variable_loss": 1.5187477860760212,
+      "variable_better": true,
+      "selected_pressure_kpa": 386.45103
+    },
+    {
+      "method": "sac",
+      "seed": 119233,
+      "anchor": 2,
+      "fixed_loss": 1.4765588904914284,
+      "variable_loss": 1.4966086357622022,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 119233,
+      "anchor": 2,
+      "fixed_loss": 1.5694917594006506,
+      "variable_loss": 1.726029233664587,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ga",
+      "seed": 120247,
+      "anchor": 0,
+      "fixed_loss": 1.5769416486813768,
+      "variable_loss": 1.5571804863909424,
+      "variable_better": true,
+      "selected_pressure_kpa": 397.70250599999997
+    },
+    {
+      "method": "de",
+      "seed": 120247,
+      "anchor": 0,
+      "fixed_loss": 1.5763730644120972,
+      "variable_loss": 1.4886737670559584,
+      "variable_better": true,
+      "selected_pressure_kpa": 395.791466
+    },
+    {
+      "method": "ga-nn",
+      "seed": 120247,
+      "anchor": 0,
+      "fixed_loss": 1.4889643695541814,
+      "variable_loss": 1.4833809031420828,
+      "variable_better": true,
+      "selected_pressure_kpa": 396.214847
+    },
+    {
+      "method": "de-nn",
+      "seed": 120247,
+      "anchor": 0,
+      "fixed_loss": 1.4439817238721193,
+      "variable_loss": 1.4715698956223204,
+      "variable_better": false,
+      "selected_pressure_kpa": 394.357016
+    },
+    {
+      "method": "sac",
+      "seed": 120247,
+      "anchor": 0,
+      "fixed_loss": 1.476112334482396,
+      "variable_loss": 1.5056325579902725,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 120247,
+      "anchor": 0,
+      "fixed_loss": 1.6011927553820677,
+      "variable_loss": 1.5785295398614592,
+      "variable_better": true,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ga",
+      "seed": 120247,
+      "anchor": 1,
+      "fixed_loss": 1.5828272391876759,
+      "variable_loss": 1.5396237385013962,
+      "variable_better": true,
+      "selected_pressure_kpa": 392.505827
+    },
+    {
+      "method": "de",
+      "seed": 120247,
+      "anchor": 1,
+      "fixed_loss": 1.4981442126424525,
+      "variable_loss": 1.5306926865142736,
+      "variable_better": false,
+      "selected_pressure_kpa": 390.61546999999996
+    },
+    {
+      "method": "ga-nn",
+      "seed": 120247,
+      "anchor": 1,
+      "fixed_loss": 1.5315340585508648,
+      "variable_loss": 1.5333354981528249,
+      "variable_better": false,
+      "selected_pressure_kpa": 399.77085700000003
+    },
+    {
+      "method": "de-nn",
+      "seed": 120247,
+      "anchor": 1,
+      "fixed_loss": 1.476670483201216,
+      "variable_loss": 1.4866414520216034,
+      "variable_better": false,
+      "selected_pressure_kpa": 399.41119699999996
+    },
+    {
+      "method": "sac",
+      "seed": 120247,
+      "anchor": 1,
+      "fixed_loss": 1.5153383499459343,
+      "variable_loss": 1.5135111376652441,
+      "variable_better": true,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 120247,
+      "anchor": 1,
+      "fixed_loss": 1.6343973354119088,
+      "variable_loss": 1.7157233939283585,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ga",
+      "seed": 120247,
+      "anchor": 2,
+      "fixed_loss": 1.6344234061995406,
+      "variable_loss": 1.6164160576848823,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.79578999999995
+    },
+    {
+      "method": "de",
+      "seed": 120247,
+      "anchor": 2,
+      "fixed_loss": 1.5325449377491704,
+      "variable_loss": 1.591897325629262,
+      "variable_better": false,
+      "selected_pressure_kpa": 397.41805200000005
+    },
+    {
+      "method": "ga-nn",
+      "seed": 120247,
+      "anchor": 2,
+      "fixed_loss": 1.6495927619811201,
+      "variable_loss": 1.540462203816947,
+      "variable_better": true,
+      "selected_pressure_kpa": 399.69314299999996
+    },
+    {
+      "method": "de-nn",
+      "seed": 120247,
+      "anchor": 2,
+      "fixed_loss": 1.5055261228310846,
+      "variable_loss": 1.5296562859158684,
+      "variable_better": false,
+      "selected_pressure_kpa": 393.11217
+    },
+    {
+      "method": "sac",
+      "seed": 120247,
+      "anchor": 2,
+      "fixed_loss": 1.5811397536230678,
+      "variable_loss": 1.5006803273251417,
+      "variable_better": true,
+      "selected_pressure_kpa": 400.0
+    },
+    {
+      "method": "ppo",
+      "seed": 120247,
+      "anchor": 2,
+      "fixed_loss": 1.5707062119624848,
+      "variable_loss": 1.6004665831791631,
+      "variable_better": false,
+      "selected_pressure_kpa": 400.0
+    }
+  ],
+  "fixed_evaluations": 27648,
+  "variable_evaluations": 27648,
+  "projected_starts_match": true,
+  "training_models_match": true,
+  "limitation": "Fourteen vs thirteen dimensions under finite equal budgets; pressure starts differ for half the population. Not an isolated causal estimate or proof of optimality.",
+  "physical_qualification": false
+}

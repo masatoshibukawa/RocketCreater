@@ -10,11 +10,11 @@ from pathlib import Path
 from rocketwright.adaptive import Campaign, Requirements, digest
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.agent.workbench import Conflict
-from rocketwright.analysis import catalog, experience, planner, policy
-from rocketwright.analysis.aero_accuracy import holdout
+from rocketwright.analysis import catalog, experience, planner, policy, predictor, refinement
 from rocketwright.analysis.record import scopes
-from rocketwright.analysis.runtime import Runtime, run
+from rocketwright.analysis.runtime import MAX_CFD_DURATION, Runtime, run
 from rocketwright.analysis.schema import Precision, SearchLimits
+from rocketwright.analysis.screening import violation
 from rocketwright.analysis.worker import read
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,6 +45,10 @@ class Harness:
         precision, limits = precision or Precision(), limits or SearchLimits()
         precision = Precision.model_validate(precision.model_dump())
         limits = SearchLimits.model_validate(limits.model_dump())
+        if limits.planner == "claude" and self.director is None:
+            from rocketwright.analysis.claude import ClaudeDirector
+
+            self.director = ClaudeDirector()
 
         def work(state):
             if state["adopted"] or state.get("adaptive"):
@@ -149,22 +153,7 @@ class Harness:
                 action.uses.append("flight_numerics")
             if key.startswith("cfd_"):
                 action.uses.append("cfd_numerics")
-                cells = runtime.cfd_cells_coarse if key == "cfd_coarse" else runtime.cfd_cells_fine
-                if key == "cfd_audit":
-                    cells += 4
-                # Conservative arrays/workspace estimate, recomputed for size and numerical level.
-                width = runtime.cfd_width + (2 if key == "cfd_audit" else 0)
-                action.memory_gib = cells**3 * width**2 * 18 * 512 / 1024**3
-                action.cost_s *= (
-                    (cells / 12) ** 4
-                    * runtime.cfd_times
-                    / 40
-                    * (width / 10) ** 2
-                    * 0.075
-                    / runtime.cfd_lattice_speed
-                )
-                if key != "cfd_audit":
-                    action.cost_s *= len(runtime.cfd_speeds) * len(runtime.cfd_angles) / 14
+                refinement.scale_cfd_action(key, action, runtime)
                 action.bounds["air_speed_mps"] = (0, 35)
                 action.uses.append("air_speed_mps")
                 action.bounds.update(body_length_diameters=(0, 12), fin_radius_diameters=(0, 4.25))
@@ -325,19 +314,57 @@ class Harness:
                     proposal["change"],
                     code=code_hash(),
                     precision=precision.model_dump(),
+                    screen_step_s=a["runtime"]["flight_step_s"],
+                    limit=24 if limits.learned_predictor else 6,
                 )
                 if limits.use_experience
                 else []
             )
-            learned = experience.estimate(retrieved, spec.requirement.target_altitude_m)
-            gain = prediction["violation_reduction"] if prediction else 0
-            # Explicit estimate, with shrinkage for sparse measured feedback.
-            score = (
-                60
-                + 80 * math.tanh(gain)
-                + learned["score_adjustment"]
-                - math.log1p(learned["mean_cost_s"] or cycle_s) / 3
+            learned = experience.estimate(
+                retrieved,
+                spec.requirement.target_altitude_m,
+                correction_limit_m=precision.altitude_error_m * precision.aero_allocation,
             )
+            fitted = {}
+            if limits.learned_predictor and prediction and survey:
+                change = proposal["change"]
+                before_value = (
+                    getattr(getattr(spec, change["section"]), change["field"])
+                    if change["section"]
+                    else getattr(spec, change["field"])
+                )
+                if isinstance(change["value"], (int, float)):
+                    fitted = predictor.estimate(
+                        retrieved,
+                        dict(
+                            features=experience.features(spec),
+                            before=self._snapshot(c),
+                            step=(change["value"] - before_value) / max(abs(before_value), 1),
+                            raw_delta=prediction["delta_height_m"],
+                        ),
+                        correction_limit_m=precision.altitude_error_m * precision.aero_allocation,
+                    )
+                    if fitted.get("status") == "fitted":
+                        learned["height_correction_m"] = fitted["height_correction_m"]
+                        learned["mean_cost_s"] = fitted["predicted_cost_s"]
+            gain = prediction["violation_reduction"] if prediction else 0
+            if prediction and learned["residual_samples"]:
+                prediction = copy.deepcopy(prediction)
+                correction = learned["height_correction_m"]
+                prediction["raw_delta_height_m"] = prediction["delta_height_m"]
+                prediction["delta_height_m"] += correction
+                prediction["predicted"]["apogee_m"] += correction
+                gain = violation(
+                    survey["baseline"],
+                    spec.requirement.target_altitude_m,
+                    precision.minimum_static_margin_cal,
+                ) - violation(
+                    prediction["predicted"],
+                    spec.requirement.target_altitude_m,
+                    precision.minimum_static_margin_cal,
+                )
+                prediction["violation_reduction"] = gain
+            score = 60 + 80 * math.tanh(gain) - math.log1p(learned["mean_cost_s"] or cycle_s) / 3
             choices["offered"][key] = dict(
                 target=proposal["change"],
                 method="new_design_revision",
@@ -352,6 +379,8 @@ class Harness:
                 prediction=prediction,
                 experience=learned,
                 retrieved_outcomes=retrieved,
+                retrieved_cases=predictor.snippets(retrieved),
+                learned_prediction=fitted,
                 estimated_followup_cost_s=cycle_s,
             )
         runtime = Runtime.model_validate(a["runtime"])
@@ -384,7 +413,7 @@ class Harness:
         if (
             confirmation
             and numerical & {"aero_averaging", "aero_duration"}
-            and runtime.cfd_times < 100
+            and runtime.cfd_times < MAX_CFD_DURATION
         ):
             choices["offered"]["refine/averaging"] = dict(
                 target="unsteady flow",
@@ -433,8 +462,24 @@ class Harness:
                     addresses=[failure],
                     scope="Bounded host numerical refinement",
                 )
-        for key, row in choices["offered"].items():
+        for key, row in list(choices["offered"].items()):
             if not key.startswith("refine/"):
+                continue
+            followup = refinement.followup(
+                catalog.pool(precision), runtime, key, available=set(c.pool.actions)
+            )
+            row.update(followup)
+            rejected = []
+            if 1 + followup["estimated_followup_cost_s"] > c.remaining_s:
+                rejected.append("refinement_completion_budget")
+            if followup["required_memory_gib"] > limits.memory_gib:
+                rejected.append("refinement_completion_memory")
+            if followup["required_actions"] > limits.max_actions - len(a["decisions"]):
+                rejected.append("refinement_completion_actions")
+            if rejected:
+                choices["rejected"][key] = rejected
+                choices.setdefault("refinement_plans", {})[key] = followup
+                del choices["offered"][key]
                 continue
             history = [
                 r
@@ -597,11 +642,32 @@ class Harness:
             ),
             scope="same analytic 6DOF metric before and after; no physical validation",
         )
+        if pending.get("prediction") and pending.get("before_evidence"):
+            row["prediction_residual_m"] = (
+                row["delta"]["apogee_m"] - pending["prediction"]["delta_height_m"]
+            )
+            if not experience.verified(row):
+                row["status"] = "invalid_feedback_evidence"
         a.setdefault("observations", []).append(row)
         a["outcome_pending"] = None
 
     def _persist(self, c):
         a = self.state["adaptive"]
+        for row in a.get("observations", []):
+            if (
+                row.get("status") == "measured"
+                and "learning_evidence" not in row
+                and experience.verified(row)
+            ):
+                folder = self.store.base(self.state["id"]) / "feedback" / uuid.uuid4().hex
+                path = folder / "observation.json"
+                write_json(path, row)
+                write_json(folder / "manifest.json", {path.name: sha(path)})
+                row["learning_evidence"] = dict(
+                    artifact=str(path.resolve()),
+                    sha256=sha(path),
+                    manifest_sha256=sha(folder / "manifest.json"),
+                )
         a.update(results=c.results, history=c.history, remaining_s=c.remaining_s, pending=None)
         self.store._write(self.state)
 
@@ -611,8 +677,31 @@ class Harness:
         before = self._snapshot(c)
         old_spec = DesignSpec.model_validate(state["spec"])
         if before:
+            survey = self.data(c, "survey") or {}
+            prediction = survey.get("candidates", {}).get(decision["action"])
+            if prediction and prediction["spec_hash"] != policy.identity(
+                DesignSpec.model_validate(proposal["spec"])
+            ):
+                prediction = None
             a["outcome_pending"] = dict(
                 before=before,
+                before_evidence=copy.deepcopy(c.results["screen"]["value"]),
+                screen_step_s=a["runtime"]["flight_step_s"],
+                prediction=copy.deepcopy(prediction),
+                prediction_action=decision["action"],
+                prediction_evidence=(
+                    copy.deepcopy(c.results["survey"]["value"]) if prediction else None
+                ),
+                transition_id=experience.transition_id(old_spec, proposal["change"], before),
+                change_from=(
+                    getattr(
+                        getattr(old_spec, proposal["change"]["section"]),
+                        proposal["change"]["field"],
+                    )
+                    if proposal["change"]["section"]
+                    else getattr(old_spec, proposal["change"]["field"])
+                ),
+                change_to=proposal["change"]["value"],
                 features=experience.features(old_spec),
                 signature=experience.signature(proposal["change"], old_spec),
                 remaining_s=c.remaining_s,
@@ -681,6 +770,7 @@ class Harness:
             return
         selection_context = dict(
             version=state["version"],
+            remaining_s=c.remaining_s,
             metrics=c.metrics,
             current_screen_metrics=self._snapshot(c),
             unmet=choices["unmet"],
@@ -715,7 +805,9 @@ class Harness:
             a["status"] = "planner_failed"
             self._persist(c)
             return
-        if c.remaining_s < choices["offered"][key]["cost_s"]:
+        chosen = choices["offered"][key]
+        if c.remaining_s < chosen["cost_s"] + chosen.get("estimated_followup_cost_s", 0):
+            decision["errors"].append("followup_budget_after_selection")
             a["status"] = "budget_exhausted"
             self._persist(c)
             return
@@ -734,26 +826,9 @@ class Harness:
                     remaining_s=c.remaining_s,
                     history_index=len(c.history),
                 )
-            r = a["runtime"]
-            if key == "refine/cfd":
-                r["cfd_cells_coarse"], r["cfd_cells_fine"] = (
-                    r["cfd_cells_fine"],
-                    r["cfd_cells_fine"] + 4,
-                )
-            elif key == "refine/fem":
-                r["fem_level"] += 1
-            elif key == "refine/averaging":
-                r["cfd_times"] = min(100, r["cfd_times"] * 1.5)
-            elif key == "refine/time":
-                r["flight_step_s"] /= 2
-            elif key == "refine/table":
-                speed, angle = holdout(r["cfd_speeds"], r["cfd_angles"])
-                r["cfd_speeds"] = sorted(set(r["cfd_speeds"]) | {speed})
-                r["cfd_angles"] = sorted(set(r["cfd_angles"]) | {angle})
-            elif key == "refine/domain":
-                r["cfd_width"] = min(14, r["cfd_width"] + 2)
-            elif key == "refine/lattice":
-                r["cfd_lattice_speed"] = max(0.025, r["cfd_lattice_speed"] / 2)
+            a["runtime"] = refinement.updated(
+                Runtime.model_validate(a["runtime"]), key
+            ).model_dump()
             c.remaining_s -= 1
             self._persist(c)
         else:

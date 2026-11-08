@@ -12,10 +12,11 @@ from rocketwright.analysis.record import compile_record
 from rocketwright.analysis.schema import SearchLimits
 from rocketwright.physics.bottle_integrity import loads, thermal
 from rocketwright.physics.bottle_integrity.schema import AnalysisConfig
+from rocketwright.physics.flight_loads import MassDistribution
 from rocketwright.schema import BottleDesign
 
 
-def axial_flight(design, propulsion, *, area, cd, density=1.225, max_step=0.02):
+def axial_flight(design, propulsion, *, area, cd, density=1.225, max_step=0.02, rail_m=None):
     """Vertical rigid trajectory using the production discharge model's time history.
 
     Omits attitude, wind, launch-tube impulse and rail friction. Not a 6DOF replacement.
@@ -38,8 +39,14 @@ def axial_flight(design, propulsion, *, area, cd, density=1.225, max_step=0.02):
         return y[1] if t > start + 1e-7 else 1e-9
 
     apex.terminal, apex.direction = True, -1
+
+    def departure(t, y):
+        return y[0] - rail_m
+
+    departure.direction = 1
+    events = [apex, departure] if rail_m is not None else apex
     sol = solve_ivp(
-        rhs, (start, 60), [0, 1e-9], events=apex, rtol=2e-7, atol=1e-9, max_step=max_step
+        rhs, (start, 60), [0, 1e-9], events=events, rtol=2e-7, atol=1e-9, max_step=max_step
     )
     if not sol.success or not len(sol.t_events[0]):
         raise RuntimeError("Axial screening did not reach apogee")
@@ -47,6 +54,9 @@ def axial_flight(design, propulsion, *, area, cd, density=1.225, max_step=0.02):
         apogee_m=float(sol.y[0, -1]),
         max_q_pa=float(0.5 * density * np.max(sol.y[1] ** 2)),
         lifted=True,
+        rail_exit_s=float(sol.t_events[1][0])
+        if rail_m is not None and len(sol.t_events[1])
+        else None,
     )
 
 
@@ -95,7 +105,22 @@ def evaluate(spec, cad):
     a, g = record["assembly"], spec.geometry
     area = math.pi * (g.body_diameter_mm / 2000) ** 2
     cd = d.axial_drag_coefficient or 0.55
-    nominal = axial_flight(d, p, area=area, cd=cd, density=cfg.flight.air_density_kg_m3)
+    nominal = axial_flight(
+        d,
+        p,
+        area=area,
+        cd=cd,
+        density=cfg.flight.air_density_kg_m3,
+        rail_m=spec.env.rail_length_m,
+    )
+    departure = nominal.get("rail_exit_s")
+    free_margin = None
+    if departure is not None:
+        mass_model = MassDistribution(d, a, p)
+        times = np.asarray(p["trace"]["time_s"])
+        samples = np.r_[departure, times[times > departure], max(departure, times[-1])]
+        aft_cg = max(mass_model.properties(float(t))[1] for t in samples)
+        free_margin = (a["cp_mm"] - aft_cg * 1000) / g.body_diameter_mm
     variants = []
     for mass_factor, drag_factor in ((0.9, 0.75), (1.1, 1.25)):
         altered = copy.deepcopy(p)
@@ -112,6 +137,7 @@ def evaluate(spec, cad):
         **nominal,
         dry_mass_g=a["dry_mass_g"],
         static_margin_cal=static,
+        axial_free_margin_cal=free_margin,
         scenario_height_m=[min(variants), max(variants)],
         impulse_ns=p["impulse_ns"],
         mass_basis="CAD-scaled estimate; selected geometry must be regenerated",

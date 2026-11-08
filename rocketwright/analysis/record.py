@@ -19,6 +19,8 @@ def compile_record(spec, cad_metrics):
     if spec.env.earth_rotation:
         raise ValueError("Earth rotation is not supported by this local 6DOF adapter")
     stock, mount = STOCKS[spec.material], MOUNTS[a.mount]
+    if a.fixed_bottle_mass_g > spec.other_dry_mass_g:
+        raise ValueError("Fixed bottle mass cannot exceed the other-dry mass budget")
     length, diameter = g.overall_mm / 1000, g.body_diameter_mm / 1000
     area = math.pi * diameter**2 / 4
     if spec.design.bottle_volume_m3 / area >= length - g.nose_length_mm / 1000 - 0.01:
@@ -54,12 +56,26 @@ def compile_record(spec, cad_metrics):
     bill = [
         dict(
             id="other_dry",
-            mass_g=spec.other_dry_mass_g,
+            mass_g=spec.other_dry_mass_g - a.fixed_bottle_mass_g,
             station_mm=1000 * length * a.other_mass_station_fraction,
         ),
         dict(id="printed_nose", mass_g=nose_g, station_mm=g.nose_length_mm * 0.65),
         dict(id="printed_fins", mass_g=fin_g, station_mm=fin_station * 1000),
     ]
+    if a.fixed_bottle_mass_g:
+        shell_length = length - g.nose_length_mm / 1000
+        mass = a.fixed_bottle_mass_g / 1000
+        radius = diameter / 2
+        # Thin cylindrical-shell surrogate, explicitly distinct from movable equipment.
+        bill.append(
+            dict(
+                id="fixed_bottle_shell",
+                mass_g=a.fixed_bottle_mass_g,
+                station_mm=(g.nose_length_mm + g.overall_mm) / 2,
+                local_inertia_kg_m2=[mass * (shell_length**2 / 12 + radius**2 / 2)] * 2
+                + [mass * radius**2],
+            )
+        )
     if mount["additional_mass_g"]:
         bill.append(
             dict(

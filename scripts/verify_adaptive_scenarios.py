@@ -62,9 +62,9 @@ def cpu_fixture(spec, folder):
     )
 
 
-def run_design(spec, folder, *, mode, pressures, versions):
+def run_design(spec, folder, *, mode, pressures, versions, prior_experience=()):
     store = DesignProjects(folder.resolve())
-    h = Harness(store, runtime=Runtime())
+    h = Harness(store, runtime=Runtime(), prior_experience=prior_experience)
     state = store.create(spec)
     limits = SearchLimits(
         planner=mode,
@@ -113,7 +113,18 @@ def run_design(spec, folder, *, mode, pressures, versions):
         status=a["status"],
         revisions=a["revisions"],
         decisions=[
-            {k: d.get(k) for k in ("action", "planner", "model", "reason", "errors")}
+            {
+                k: d.get(k)
+                for k in (
+                    "action",
+                    "planner",
+                    "model",
+                    "reason",
+                    "errors",
+                    "offered",
+                    "api_requests",
+                )
+            }
             for d in a["decisions"]
         ],
         executions=[{k: r.get(k) for k in ("action", "execution_status")} for r in a["history"]],
@@ -127,31 +138,41 @@ def stage6_checks(project):
     state, data, locations, manifests = evidence(project.resolve())
     a = state["adaptive"]
     final = data["confirm"]
-    last = a["decisions"][-1]
+    h = Harness(DesignProjects(project.parent.resolve()))
+    choices = h.options(state["id"])
+    numerical = set(final["unmet"]) & {
+        "aero_grid",
+        "aero_averaging",
+        "aero_lattice",
+        "aero_duration",
+        "aero_third_grid",
+    }
+    refinements = [k for k in choices["offered"] if k.startswith("refine/")]
+    blocked = {k: v for k, v in choices["rejected"].items() if k.startswith("refine/")}
     precision = dict(
-        passed=bool(set(final["unmet"]) & {"aero_grid", "aero_averaging", "aero_lattice"})
-        and last.get("action", "").startswith("refine/")
-        and not any(k.startswith("redesign/") for k in last["offered"])
-        and bool(a["quality_pending"])
+        passed=bool(numerical)
+        and bool(refinements or blocked)
+        and not final["metrics"]["criteria_met"]
         and a["accepted_spec_hash"] is None,
         unmet=final["unmet"],
-        chosen=last["action"],
-        offered=last["offered"],
-        pending=a["quality_pending"],
+        offered=refinements,
+        blocked_refinements=blocked,
+        pending=choices["precision_pending"],
         selected_full_table_runtime_executed=False,
         scope=(
-            "Actual stage-6 precision rejection and refinement selection; "
-            "action limit precedes recalculation"
+            "Completed current-source stage-6 rejection and feasible/refused follow-up; "
+            "no budget expansion or relaxed acceptance"
         ),
     )
     # Restore the completed numerical settings only in a detached in-memory state.
     # No saved project input, result, precision or execution limit is changed.
     original = copy.deepcopy(state)
     original["adaptive"]["runtime"] = read(locations["confirm"] / "input.json")["runtime"]
-    h = Harness(DesignProjects(project.parent.resolve()))
     before, _, _, _ = h._campaign(original)
     watched = ("geometry", "fem_fine", "modes", "stability", "confirm")
     valid_before = {k: before.current(k) for k in watched}
+    if not all(valid_before.values()):
+        raise ValueError("Stage 6 evidence is not current for this source; regenerate it")
     changes = {}
     for kind in ("material", "mount"):
         changed = copy.deepcopy(original)
@@ -320,20 +341,31 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("stage6_project", type=Path)
     p.add_argument("output", type=Path)
-    p.add_argument("--planner", choices=("local_llm", "baseline"), default="local_llm")
+    p.add_argument("--planner", choices=("local_llm", "claude", "baseline"), default="local_llm")
+    p.add_argument("--experience", type=Path, help="Verified training report from current source")
     p.add_argument(
         "--refinement-case",
         type=Path,
         help="Optional completed independent point using the selected averaging duration",
     )
     args = p.parse_args()
+    if args.planner == "claude":
+        from rocketwright.analysis.claude import ClaudeDirector
+
+        ClaudeDirector()  # Fail before native work when credentials are absent.
+    memory = read(args.experience)["training_rows"] if args.experience else []
     args.output.mkdir(parents=True, exist_ok=False)
     source = DesignSpec.model_validate(read(args.stage6_project / "state.json")["spec"])
     baseline, thick = isolated_spec(source, 2.4), isolated_spec(source, 3.6)
+    # A stage-5 candidate may already exhaust the pressure pool. Declare a separate
+    # branch-test fixture at 300 kPa without changing the stage-6 project or mission.
+    for fixture in (baseline, thick):
+        fixture.design = fixture.design.model_copy(update={"initial_gauge_pressure_pa": 300000})
     precision, invalidation = stage6_checks(args.stage6_project)
     report = dict(
         planner=args.planner,
         screening_precision=screening_profile().model_dump(),
+        branch_fixture_pressure_pa=300000,
         cases={"3_accuracy_before_design": precision, "4_invalidate_old_verdicts": invalidation},
         physical_qualification=False,
     )
@@ -346,6 +378,7 @@ def main():
         mode=args.planner,
         pressures=(300, 350),
         versions=3,
+        prior_experience=memory,
     )
     changes = [r["change"] for r in switching["revisions"]]
     report["cases"]["1_operating_then_shape"] = dict(
@@ -358,7 +391,12 @@ def main():
     )
     write_json(args.output / "report.json", report)
     return_to_design = run_design(
-        thick, args.output / "thickness-tradeoff", mode=args.planner, pressures=(300,), versions=2
+        thick,
+        args.output / "thickness-tradeoff",
+        mode=args.planner,
+        pressures=(300,),
+        versions=2,
+        prior_experience=memory,
     )
     changes = [r["change"] for r in return_to_design["revisions"]]
     report["cases"]["2_thickness_mass_tradeoff"] = dict(

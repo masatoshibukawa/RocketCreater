@@ -1,0 +1,296 @@
+{
+  "methods": [
+    {
+      "method": "wide-old",
+      "verified_files": 4,
+      "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+      "protocol_sha256": "9e633d8b341853c058397b0f584756134837e16f22132ea46af13abb5619bb5f",
+      "spec": {
+        "name": "階層型解析の接続確認用・未製作案",
+        "design": {
+          "tier": "bottle",
+          "bottle_volume_m3": 0.0015,
+          "water_fill_frac": 0.3262,
+          "initial_gauge_pressure_pa": 400000.0,
+          "nozzle_diameter_m": 0.032142000000000004,
+          "dry_mass_kg": 0.15,
+          "payload_mass_kg": 0.06,
+          "has_fins": true,
+          "axial_drag_coefficient": null,
+          "has_parachute": true,
+          "parachute_diameter_m": 0.7,
+          "geometry": {
+            "body_diameter_mm": 90.0,
+            "body_height_mm": 400.0,
+            "nose_length_mm": 267.051,
+            "fin_root_mm": 40.227,
+            "fin_tip_mm": 34.436,
+            "fin_span_mm": 144.907,
+            "fin_sweep_mm": 1.158,
+            "fin_count": 4,
+            "fin_thickness_mm": 1.202,
+            "nose_wall_mm": 1.672,
+            "fin_tail_inset_mm": 0.0,
+            "dimensions_measured": false
+          }
+        },
+        "geometry": {
+          "body_diameter_mm": 90.0,
+          "body_height_mm": 400.0,
+          "nose_length_mm": 267.051,
+          "fin_root_mm": 40.227,
+          "fin_tip_mm": 34.436,
+          "fin_span_mm": 144.907,
+          "fin_sweep_mm": 1.158,
+          "fin_count": 4,
+          "fin_thickness_mm": 1.202,
+          "nose_wall_mm": 1.672,
+          "fin_tail_inset_mm": 0.0,
+          "dimensions_measured": false
+        },
+        "requirement": {
+          "goal_kind": "altitude",
+          "target_altitude_m": 30.0,
+          "target_apogee_m": null,
+          "payload_mass_kg": 0.06,
+          "budget_jpy": null,
+          "recovery_required": false,
+          "tier_override": null,
+          "text": ""
+        },
+        "env": {
+          "launch_latitude_deg": 0.0,
+          "launch_altitude_m": 0.0,
+          "wind_speed_mps": 1.5,
+          "wind_direction_deg": 270.0,
+          "temperature_offset_k": 0.0,
+          "rail_length_m": 1.5,
+          "earth_rotation": false
+        },
+        "other_dry_mass_g": 150.0,
+        "measured_printed_mass_g": null,
+        "material": "Prusament ASA",
+        "assumptions": {
+          "fixed_bottle_mass_g": 48.0,
+          "mount": "standard",
+          "root_capture_mm": 10.5,
+          "other_mass_station_fraction": 0.0925,
+          "payload_station_fraction": 0.0464,
+          "solar_w_m2": 800.0,
+          "warm_wait_s": 120.0,
+          "pitch_damping": 10.0,
+          "initial_tilt_deg": 1.0,
+          "gust_mps": 0.5,
+          "opening_s": 0.15,
+          "evidence": {
+            "bottle_mass": "Fixed 48 g shell scenario shared by GA and DE; unweighed",
+            "initial_source_scope": "independent host geometry scenario"
+          }
+        }
+      },
+      "input_hashes": {
+        "geometry": "8a9f8207fc45487edf20b05e92552398c0cbb5644aebb7306a8a314154628527",
+        "thermal": "cf520d0ad4613fb2a00d3ed25de5fbb405498825c349cff9033901afebef4210",
+        "propulsion": "7aa3b515e0e9cc3a0696b9e5b991a36d61f9ce3124818ffa418f61289fd1deb5",
+        "screen": "7a6c4925eef9300fa682dede3b653d2671d6e747fa7bcb788baa87a7f86b705f",
+        "cfd_fine": "825a65355c82ef434ec5f15a3559e0e2167f0b72a31a849813cbc387f3d7eb56"
+      },
+      "dependency_manifests": {
+        "geometry": "eba3731ca0344964f039f8a11a0a58c0d786cb533523122eb233a30e75fadc2f",
+        "thermal": "16989976c051e7bfa2518dcf837e1a196b2d1e03a3adbf24858721c9a9f58718",
+        "propulsion": "5707489cbbc13ba4d3e1bcec546ca8341bdc248c3514048f96d38c80aba3aa42",
+        "screen": "628f0b7e3cc68b1e3000e0bd198b2245f16b60da5d4321dbd807919916a2a297",
+        "cfd_fine": "0210f58873a96a33679c722d2d0fe95f9a1e62326cca5e722081cc564c2d5ae9"
+      },
+      "verified_dependency_files": 132,
+      "source_unchanged": true,
+      "fidelity": "cfd_fine standalone; grid/time/holdout precision checks pending",
+      "table_method": "cfd_fine",
+      "cells": 20,
+      "width_d": 12.5,
+      "apogee_m": 19.79098695017709,
+      "incidence_deg": 9.694149375680073,
+      "maximum_q_pa": 307.2683492796706,
+      "domain_pass": true,
+      "concurrent_fin_envelope": [
+        {
+          "time_s": 0.08411117701150664,
+          "blade": 3,
+          "speed_mps": 21.657249033290064,
+          "angle_deg": 4.460606280666012,
+          "q_pa": 287.28461890038096,
+          "local_resultant": [
+            0.3350315662269182,
+            0.0070145605681418075,
+            0.36880631587453677,
+            0.025403500883385163,
+            -0.0030498797598866364,
+            -0.026369146262388742
+          ],
+          "speed_clamped": false
+        }
+      ],
+      "max_abs_fin_normal_force_n": 0.36880631587453677,
+      "analytic_envelope_fin_force_n": 1.1083567000604528,
+      "flight_sha256": "26333d904f7ea94e967c5229718b5ad97b9796598507447b8f01f924e7c01a88",
+      "elapsed_s": 3.9840000001713634,
+      "physical_qualification": false,
+      "precision_checked": false,
+      "acceptance_performed": false
+    },
+    {
+      "method": "wide-new",
+      "verified_files": 4,
+      "source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+      "protocol_sha256": "6018bd1a76a50c959c71994232eb770daafc9107071738ab3ebc7eedcc04d429",
+      "spec": {
+        "name": "階層型解析の接続確認用・未製作案",
+        "design": {
+          "tier": "bottle",
+          "bottle_volume_m3": 0.0015,
+          "water_fill_frac": 0.3,
+          "initial_gauge_pressure_pa": 400000.0,
+          "nozzle_diameter_m": 0.023627,
+          "dry_mass_kg": 0.15,
+          "payload_mass_kg": 0.06,
+          "has_fins": true,
+          "axial_drag_coefficient": null,
+          "has_parachute": true,
+          "parachute_diameter_m": 0.7,
+          "geometry": {
+            "body_diameter_mm": 90.0,
+            "body_height_mm": 400.0,
+            "nose_length_mm": 276.696,
+            "fin_root_mm": 38.863,
+            "fin_tip_mm": 22.82,
+            "fin_span_mm": 144.739,
+            "fin_sweep_mm": 13.923,
+            "fin_count": 4,
+            "fin_thickness_mm": 1.246,
+            "nose_wall_mm": 1.013,
+            "fin_tail_inset_mm": 0.0,
+            "dimensions_measured": false
+          }
+        },
+        "geometry": {
+          "body_diameter_mm": 90.0,
+          "body_height_mm": 400.0,
+          "nose_length_mm": 276.696,
+          "fin_root_mm": 38.863,
+          "fin_tip_mm": 22.82,
+          "fin_span_mm": 144.739,
+          "fin_sweep_mm": 13.923,
+          "fin_count": 4,
+          "fin_thickness_mm": 1.246,
+          "nose_wall_mm": 1.013,
+          "fin_tail_inset_mm": 0.0,
+          "dimensions_measured": false
+        },
+        "requirement": {
+          "goal_kind": "altitude",
+          "target_altitude_m": 30.0,
+          "target_apogee_m": null,
+          "payload_mass_kg": 0.06,
+          "budget_jpy": null,
+          "recovery_required": false,
+          "tier_override": null,
+          "text": ""
+        },
+        "env": {
+          "launch_latitude_deg": 0.0,
+          "launch_altitude_m": 0.0,
+          "wind_speed_mps": 1.5,
+          "wind_direction_deg": 270.0,
+          "temperature_offset_k": 0.0,
+          "rail_length_m": 1.5,
+          "earth_rotation": false
+        },
+        "other_dry_mass_g": 150.0,
+        "measured_printed_mass_g": null,
+        "material": "Prusament ASA",
+        "assumptions": {
+          "fixed_bottle_mass_g": 48.0,
+          "mount": "standard",
+          "root_capture_mm": 10.5,
+          "other_mass_station_fraction": 0.0564,
+          "payload_station_fraction": 0.0325,
+          "solar_w_m2": 800.0,
+          "warm_wait_s": 120.0,
+          "pitch_damping": 10.0,
+          "initial_tilt_deg": 1.0,
+          "gust_mps": 0.5,
+          "opening_s": 0.15,
+          "evidence": {
+            "bottle_mass": "Fixed 48 g shell scenario shared by GA and DE; unweighed"
+          }
+        }
+      },
+      "input_hashes": {
+        "geometry": "96694f966282ec8601b52d0b3278cdc984b9d3e18bbccb474eb4cda1b52f2030",
+        "thermal": "769822de92f81802049532a4f3f9454e8835a5c3d832a58bc764b7b5a35bc330",
+        "propulsion": "7d508684f8dcd0d988368c3d6ac56569981f483db51b12e54a4b6d95acc36ab0",
+        "screen": "65cc0f2c2016a2cae884ddba1263f2c7309201f59da88c8d1c62e03787009adb",
+        "cfd_fine": "68754252998cfa877ab45505563fd81d219a498f5952e8c5196fcc44c2c0f4e2"
+      },
+      "dependency_manifests": {
+        "geometry": "4978c272b47e63145b234fdc895a24c61e76bc1a9ba23511338f95cc0393ba51",
+        "thermal": "3659df4db889d25331bd1eefa842c5cf5472842a675617651de161cd5872b65a",
+        "propulsion": "eddcb0c0b8b8f4196febb7c8179da4cdbbb106c5bff1120cb2ea645d2997728e",
+        "screen": "2bb8efdcf2df214e939e02be575fe06e2deffdd57518ab832302d3f4e664ed89",
+        "cfd_fine": "05c63caef55487879f69069cecfe528b2e4b1200ae9e1b2077355c9d274e6841"
+      },
+      "verified_dependency_files": 132,
+      "source_unchanged": true,
+      "fidelity": "cfd_fine standalone; grid/time/holdout precision checks pending",
+      "table_method": "cfd_fine",
+      "cells": 20,
+      "width_d": 12.5,
+      "apogee_m": 21.25494015359475,
+      "incidence_deg": 8.416426833431577,
+      "maximum_q_pa": 340.981125627057,
+      "domain_pass": true,
+      "concurrent_fin_envelope": [
+        {
+          "time_s": 0.09171331330395906,
+          "blade": 1,
+          "speed_mps": 23.155080564061876,
+          "angle_deg": 4.2113046426361205,
+          "q_pa": 328.3963992173451,
+          "local_resultant": [
+            0.3569941441058186,
+            0.0019893873251483427,
+            -0.4349751782586266,
+            -0.0282640531459697,
+            0.00686621110051325,
+            -0.02707679687044033
+          ],
+          "speed_clamped": false
+        },
+        {
+          "time_s": 0.09171331330395906,
+          "blade": 3,
+          "speed_mps": 23.155080564061876,
+          "angle_deg": 4.2113046426361205,
+          "q_pa": 328.3963992173451,
+          "local_resultant": [
+            0.3568762468402901,
+            0.0017955188588598438,
+            0.43573952059895027,
+            0.02820951377549311,
+            -0.0068684697573261864,
+            -0.027024788271356247
+          ],
+          "speed_clamped": false
+        }
+      ],
+      "max_abs_fin_normal_force_n": 0.43573952059895027,
+      "analytic_envelope_fin_force_n": 1.0186870063329598,
+      "flight_sha256": "0e4273029905cc7f7b499a5d552ef4383b134e3c390dfe9ae42bd5f2cc183dfa",
+      "elapsed_s": 5.077999999979511,
+      "physical_qualification": false,
+      "precision_checked": false,
+      "acceptance_performed": false
+    }
+  ],
+  "physical_qualification": false
+}

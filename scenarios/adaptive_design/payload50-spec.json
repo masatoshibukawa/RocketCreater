@@ -1,0 +1,82 @@
+{
+  "name": "階層型解析の接続確認用・未製作案",
+  "design": {
+    "tier": "bottle",
+    "bottle_volume_m3": 0.0015,
+    "water_fill_frac": 0.3,
+    "initial_gauge_pressure_pa": 400000.0,
+    "nozzle_diameter_m": 0.023627,
+    "dry_mass_kg": 0.15,
+    "payload_mass_kg": 0.05,
+    "has_fins": true,
+    "axial_drag_coefficient": null,
+    "has_parachute": true,
+    "parachute_diameter_m": 0.7,
+    "geometry": {
+      "body_diameter_mm": 90.0,
+      "body_height_mm": 400.0,
+      "nose_length_mm": 276.696,
+      "fin_root_mm": 38.863,
+      "fin_tip_mm": 22.82,
+      "fin_span_mm": 144.739,
+      "fin_sweep_mm": 13.923,
+      "fin_count": 4,
+      "fin_thickness_mm": 1.246,
+      "nose_wall_mm": 1.013,
+      "fin_tail_inset_mm": 0.0,
+      "dimensions_measured": false
+    }
+  },
+  "geometry": {
+    "body_diameter_mm": 90.0,
+    "body_height_mm": 400.0,
+    "nose_length_mm": 276.696,
+    "fin_root_mm": 38.863,
+    "fin_tip_mm": 22.82,
+    "fin_span_mm": 144.739,
+    "fin_sweep_mm": 13.923,
+    "fin_count": 4,
+    "fin_thickness_mm": 1.246,
+    "nose_wall_mm": 1.013,
+    "fin_tail_inset_mm": 0.0,
+    "dimensions_measured": false
+  },
+  "requirement": {
+    "goal_kind": "altitude",
+    "target_altitude_m": 30.0,
+    "target_apogee_m": null,
+    "payload_mass_kg": 0.05,
+    "budget_jpy": null,
+    "recovery_required": false,
+    "tier_override": null,
+    "text": ""
+  },
+  "env": {
+    "launch_latitude_deg": 0.0,
+    "launch_altitude_m": 0.0,
+    "wind_speed_mps": 1.5,
+    "wind_direction_deg": 270.0,
+    "temperature_offset_k": 0.0,
+    "rail_length_m": 1.5,
+    "earth_rotation": false
+  },
+  "other_dry_mass_g": 150.0,
+  "measured_printed_mass_g": null,
+  "material": "Prusament ASA",
+  "assumptions": {
+    "fixed_bottle_mass_g": 48.0,
+    "mount": "standard",
+    "root_capture_mm": 10.5,
+    "other_mass_station_fraction": 0.0564,
+    "payload_station_fraction": 0.0325,
+    "solar_w_m2": 800.0,
+    "warm_wait_s": 120.0,
+    "pitch_damping": 10.0,
+    "initial_tilt_deg": 1.0,
+    "gust_mps": 0.5,
+    "opening_s": 0.15,
+    "evidence": {
+      "bottle_mass": "Fixed 48 g shell scenario shared by GA and DE; unweighed"
+    }
+  }
+}

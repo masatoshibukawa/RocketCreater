@@ -397,6 +397,8 @@ def prepare_geometry(request: PrintRequest, directory: Path) -> tuple[dict, dict
             str(paths["blender"]),
             "--background",
             "--factory-startup",
+            "--python-exit-code",
+            "1",
             "--python",
             str(ROOT / "scripts/build_print_parts.py"),
             "--",

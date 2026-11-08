@@ -1,0 +1,13 @@
+{
+  "inputs": {
+    "case.json": "0e3fa0d1ad42634cd7b7a7ff76c12a7aaa852387c971e8d945cb9672fbcbb378",
+    "volume.npz": "499d4f50f0e2cfe4ca0279fdf5237e4dd49407685d80d9165ce8cbce30d92ac9",
+    "slice.npz": "c20c64dc70770ed1e756cb9f6f32de5331f7d471eb5f55d865891bc3b07d8db6",
+    "history.csv": "7b916788ca3e49751dc2b6ff4510a7eee5be9cd0644cc23c995adbe5c30c596d"
+  },
+  "script_sha256": "73525d7f14b0017975e7b2ca64ad1c8e0560ab33bd5d0eefa1909860401932ec",
+  "image_sha256": "bbccbdd228997191bbe665dfc6685a849f7fe1de47fab7ff7e14467427211a94",
+  "computational_frame": true,
+  "acceptance_performed": false,
+  "scope": "Instantaneous speed isosurface and recorded drag; not experimental validation"
+}

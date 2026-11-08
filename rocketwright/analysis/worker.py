@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from rocketwright.agent.design_projects import DesignSpec, sha, write_json
-from rocketwright.analysis import aero_accuracy
+from rocketwright.analysis import aero_accuracy, flight_phases
 from rocketwright.analysis.record import compile_record
 from rocketwright.analysis.schema import Precision
 from rocketwright.manufacturing import PrintRequest, prepare_geometry
@@ -21,6 +21,7 @@ from rocketwright.physics.bottle_integrity.schema import AnalysisConfig
 from rocketwright.physics.concrete_fin import polygon_moments
 from rocketwright.physics.flight_loads import MassDistribution, TunnelDatabase, recover
 from rocketwright.schema import BottleDesign
+from scenarios.cfd.domain_geometry import upstream_for
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -219,6 +220,13 @@ class Worker:
 
     def run_case(self, assembly, out, speed, angle, cells, **changes):
         r = dict(self.ctx["runtime"], **changes)
+        geometry = read(assembly)
+        upstream = upstream_for(
+            geometry["dimensions_mm"],
+            geometry["loaded_cg_mm"],
+            angle,
+            self.spec.geometry.fin_thickness_mm,
+        )
         command = [
             sys.executable,
             str(ROOT / "scenarios/cfd/run_flow.py"),
@@ -235,7 +243,7 @@ class Worker:
             "--width",
             str(r.get("cfd_width", 10)),
             "--upstream",
-            "3",
+            str(upstream),
             "--times",
             str(r["cfd_times"]),
             "--speed",
@@ -550,6 +558,7 @@ class Worker:
         result = stability_theorems.flight_screen(
             self.assembly, self.base_flight(), aero, mass, self.cfg.flight
         )
+        result["phase_diagnostics"] = flight_phases.diagnose(self.assembly, self.base_flight())
         perturbed = self.trajectory(tilt=min(10, self.spec.assumptions.initial_tilt_deg + 1))
         result["perturbed_flight"] = perturbed
         result["metrics"] = dict(

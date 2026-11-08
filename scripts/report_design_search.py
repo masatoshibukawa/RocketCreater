@@ -4,11 +4,12 @@ import argparse
 import json
 from pathlib import Path
 
+from rocketwright.adaptive import digest
 from rocketwright.agent.design_projects import sha, write_json
 
 
 def verified_files(root):
-    count, manifests = 0, 0
+    count, manifests, gpu_cases = 0, 0, set()
     for path in (root / "projects").rglob("manifest.json"):
         manifest = json.loads(path.read_text(encoding="utf-8"))
         for name, expected in manifest.items():
@@ -21,8 +22,38 @@ def verified_files(root):
             ):
                 raise ValueError(f"Invalid evidence: {path.parent.name}/{name}")
             count += 1
+            if child.name == "case.json":
+                gpu_cases.add(child)
         manifests += 1
-    return dict(manifests=manifests, referenced_files=count)
+    return dict(manifests=manifests, referenced_files=count, verified_gpu_case_files=len(gpu_cases))
+
+
+def last_completed_results(project, state):
+    """A failed retry must not erase the last completed, explicitly historical result."""
+    latest = dict(state["adaptive"]["results"])
+    archived = {}
+    for path in project.rglob("result.json"):
+        result = json.loads(path.read_text(encoding="utf-8"))
+        key = result.get("artifact_hash")
+        if key:
+            if digest({k: v for k, v in result.items() if k != "artifact_hash"}) != key:
+                raise ValueError("Invalid archived action result")
+            archived[key] = result
+    for item in state["adaptive"]["history"]:
+        if item["execution_status"] != "completed" or "artifact_hash" not in item:
+            continue
+        result = archived.get(item["artifact_hash"])
+        if not result or result["execution_status"] != "completed":
+            raise ValueError("Missing completed action evidence")
+        artifact = Path(result["value"]["artifact"])
+        if sha(artifact) != result["value"]["sha256"]:
+            raise ValueError("Changed completed action artifact")
+        latest[item["action"]] = result
+    return latest
+
+
+def runtime_view(runtime):
+    return {k: v for k, v in runtime.items() if k != "calculix"}
 
 
 def summary(root):
@@ -75,6 +106,29 @@ def summary(root):
     confirmation = final.get("confirmation") if final else None
     final_summary = None
     if final:
+        state = json.loads(
+            (root / "projects" / final["project_id"] / "state.json").read_text(encoding="utf-8")
+        )
+        completed = {}
+        project = root / "projects" / final["project_id"]
+        for key, result in last_completed_results(project, state).items():
+            if result["execution_status"] != "completed":
+                continue
+            artifact = Path(result["value"]["artifact"])
+            inputs = json.loads((artifact.parent / "input.json").read_text(encoding="utf-8"))
+            completed[key] = dict(
+                data_sha256=result["value"]["sha256"],
+                runtime=runtime_view(inputs["runtime"]),
+                metrics=result["value"].get("metrics", {}),
+            )
+            if key == "confirm":
+                data = json.loads(artifact.read_text(encoding="utf-8"))
+                completed[key].update(
+                    checks=data["checks"],
+                    unmet=data["unmet"],
+                    apogee_m=data["flight"]["apogee_m"],
+                    static_margin_cal=data["static_margin_cal"],
+                )
         final_summary = dict(
             status=final["status"],
             project_id=final["project_id"],
@@ -84,6 +138,20 @@ def summary(root):
             unmet=(confirmation or {}).get("unmet"),
             apogee_m=(confirmation or {}).get("flight", {}).get("apogee_m"),
             static_margin_cal=(confirmation or {}).get("static_margin_cal"),
+            latest_requested_runtime=runtime_view(state["adaptive"]["runtime"]),
+            last_completed_artifacts=completed,
+            artifact_scope=(
+                "Completed artifacts may be superseded by requested settings; "
+                "only current confirmation can pass"
+            ),
+            completed_gpu_case_files=evidence["verified_gpu_case_files"],
+            gpu_case_files_saved=len(
+                list((root / "projects" / final["project_id"]).rglob("case.json"))
+            ),
+            gpu_case_scope=(
+                "Only manifest-verified cases count as completed evidence; "
+                "partial attempts are separate"
+            ),
         )
     return dict(
         source_hash=report["source_hash"],

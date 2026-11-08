@@ -1,0 +1,59 @@
+{
+  "input_hashes": {
+    "expanded_examples": "e7ac86f9fd435e8ea8c5ea4bc64cf7376167c4623186fe101a7e9f8c87750e1b",
+    "historical_examples": "ff73a8583b90eb8474c5742cd188ebb4b2910631d31229b79ab7257d6126ad4c",
+    "baseline_model": "8abbef174f000bf9e40cf788212f68e54db7a508472bacb06afd70eba9037180"
+  },
+  "steps": 100,
+  "warmup_steps": 5,
+  "batch_size": 2048,
+  "ensemble_members": 3,
+  "device": "NVIDIA GeForce RTX 4090",
+  "dtype": "float32",
+  "trials": [
+    {
+      "repeat": 0,
+      "device": "cpu",
+      "cpu_threads": 8,
+      "seconds": 0.2940573003143072
+    },
+    {
+      "repeat": 0,
+      "device": "cuda",
+      "cpu_threads": 1,
+      "seconds": 0.1812005997635424
+    },
+    {
+      "repeat": 1,
+      "device": "cuda",
+      "cpu_threads": 1,
+      "seconds": 0.20329289976507425
+    },
+    {
+      "repeat": 1,
+      "device": "cpu",
+      "cpu_threads": 8,
+      "seconds": 0.3778706998564303
+    },
+    {
+      "repeat": 2,
+      "device": "cpu",
+      "cpu_threads": 8,
+      "seconds": 0.34873460000380874
+    },
+    {
+      "repeat": 2,
+      "device": "cuda",
+      "cpu_threads": 1,
+      "seconds": 0.14733049971982837
+    }
+  ],
+  "cpu_median_s": 0.34873460000380874,
+  "gpu_median_s": 0.1812005997635424,
+  "kernel_speedup": 1.9245775149689885,
+  "transformed_prediction_max_difference": 3.1948089599609375e-05,
+  "transformed_prediction_mean_difference": 8.380104645766551e-07,
+  "scope": "Same warm-start network/batch/optimizer; forward/backward/update only, excludes I/O and whole training/search",
+  "source_model_sha256": "8abbef174f000bf9e40cf788212f68e54db7a508472bacb06afd70eba9037180",
+  "script_sha256": "ef323c88d7948400d8d4bd63cf8ac8cbb0c28741f161bf32c6188978062ffc69"
+}

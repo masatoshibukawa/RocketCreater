@@ -1,0 +1,302 @@
+{
+  "schema": "rotated-cfd-boundary-correction-v1",
+  "source_hash": "0fee03585c1fb25724063e4bd600172eae7df9e95660bf322b48eaf7a38729f5",
+  "previous_source_hash": "b7c3d1e2db4dbbc0eca00cb9300061b7895e14db242309189089848d19a5b50a",
+  "before": {
+    "shape": "flat",
+    "wall_scheme": "interpolated",
+    "fin_thickness_mm": 1.246,
+    "assembly": "design-4d7ec6865ed8e0db",
+    "dimensions_mm": {
+      "overall": 618.696,
+      "body_diameter": 90.0,
+      "nose_length": 276.696,
+      "bottle_length": 400.0,
+      "fin_root": 38.863,
+      "fin_tip": 22.82,
+      "fin_span": 144.739,
+      "fin_sweep": 13.923,
+      "fin_tail_inset": 0.0,
+      "fin_count": 4,
+      "fin_thickness": 1.246,
+      "fin_tab": 10.5,
+      "fin_root_offset": 0,
+      "fin_shoe_width": 0,
+      "skirt_length": 0
+    },
+    "cg_mm": 185.08985792889186,
+    "prior_cd": 0.55,
+    "d": 20,
+    "grid": [
+      360,
+      250,
+      250
+    ],
+    "width_D": 12.5,
+    "upstream_D": 3.0,
+    "Re": 210000.0,
+    "lattice_Ma": 0.12990381056766578,
+    "Cs": 0.16,
+    "tau": 0.5000214285714286,
+    "speed_mps": 35.0,
+    "angle_deg": 180.0,
+    "rotated_geometry": true,
+    "surface_loads": {
+      "samples": 202,
+      "points": 11588,
+      "integration_relative_residual": 2.5122937991587193e-07
+    },
+    "fin_coefficients": [
+      [
+        -0.31126895546913147,
+        0.023943157866597176,
+        -0.004902031738311052,
+        -0.0015665114624425769,
+        0.001278543146327138,
+        0.21436022222042084
+      ],
+      [
+        -0.31170129776000977,
+        0.00019266530580352992,
+        0.02414727583527565,
+        -0.0004150752502027899,
+        -0.21466267108917236,
+        9.592487185727805e-05
+      ],
+      [
+        -0.3116587698459625,
+        -0.02422329969704151,
+        -0.005471791606396437,
+        0.001718945917673409,
+        0.0013737097615376115,
+        -0.21473191678524017
+      ],
+      [
+        -0.311836838722229,
+        0.0026751018594950438,
+        -0.024015437811613083,
+        0.00028256376390345395,
+        0.21453402936458588,
+        0.0006152224377728999
+      ]
+    ],
+    "fin_load_scope": "free plates; body-axis force and moment about each root leading edge",
+    "geometry_sha256": "62627151aea74fc5bf948e411bbec299dac28a122348dc693c2abdc2d8865486",
+    "source_sha256": {
+      "run_flow.py": "da9504c47feb373add9655e9ebf1aa1ffe5f73150fcdf67d5cbf568a9c0cd5be",
+      "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+      "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb"
+    },
+    "cant_deg": 0,
+    "steps": 10706,
+    "paired_samples": true,
+    "averaging_tU_D": [
+      20.073749999999997,
+      40.147499999999994
+    ],
+    "mean": {
+      "Cd": 6.789313342633898,
+      "Cl": -0.002661006490366326,
+      "Cx": -6.789313342633898,
+      "Cy": 0.002661006490367157,
+      "Cz": 0.01426782581368221,
+      "Croll": 0.003830777652315251,
+      "Cpitch_y": -0.0045220853393413,
+      "Cm_z": 0.01217761495983318
+    },
+    "split_window_difference": {
+      "Cd": -0.02131591980498193,
+      "Cl": -0.0005461056656360717,
+      "Cx": 0.02131591980498193,
+      "Cy": 0.0005461056656360696,
+      "Cz": 0.0033356206136122522,
+      "Croll": 0.005428992424445692,
+      "Cpitch_y": 0.06372017607169489,
+      "Cm_z": -0.012945793700364885
+    },
+    "max_abs_density_departure": 0.05585712566971779,
+    "seconds": 203.0470000000205
+  },
+  "after": {
+    "shape": "flat",
+    "wall_scheme": "interpolated",
+    "fin_thickness_mm": 1.246,
+    "assembly": "design-4d7ec6865ed8e0db",
+    "dimensions_mm": {
+      "overall": 618.696,
+      "body_diameter": 90.0,
+      "nose_length": 276.696,
+      "bottle_length": 400.0,
+      "fin_root": 38.863,
+      "fin_tip": 22.82,
+      "fin_span": 144.739,
+      "fin_sweep": 13.923,
+      "fin_tail_inset": 0.0,
+      "fin_count": 4,
+      "fin_thickness": 1.246,
+      "fin_tab": 10.5,
+      "fin_root_offset": 0,
+      "fin_shoe_width": 0,
+      "skirt_length": 0
+    },
+    "cg_mm": 185.08985792889186,
+    "prior_cd": 0.55,
+    "d": 20,
+    "grid": [
+      420,
+      250,
+      250
+    ],
+    "width_D": 12.5,
+    "upstream_D": 6.0,
+    "domain_clearance": {
+      "bounds_min_D": [
+        -2.7612920460246264,
+        -2.1082111111111117,
+        -2.1082111111111113
+      ],
+      "bounds_max_D": [
+        4.1131079539753745,
+        2.1082111111111104,
+        2.1082111111111113
+      ],
+      "inlet_D": 3.2387079539753736,
+      "outlet_D": 10.886892046024625,
+      "transverse_D": 4.141788888888888
+    },
+    "Re": 210000.0,
+    "lattice_Ma": 0.12990381056766578,
+    "Cs": 0.16,
+    "tau": 0.5000214285714286,
+    "speed_mps": 35.0,
+    "angle_deg": 180.0,
+    "rotated_geometry": true,
+    "surface_loads": {
+      "samples": 202,
+      "points": 11588,
+      "integration_relative_residual": 4.361704204890747e-07
+    },
+    "fin_coefficients": [
+      [
+        -0.18974100053310394,
+        0.01725289411842823,
+        0.0032165958546102047,
+        0.0023745521903038025,
+        -0.0009191358112730086,
+        0.163801908493042
+      ],
+      [
+        -0.19000767171382904,
+        -0.00015354355855379254,
+        0.017215870320796967,
+        -0.0004229005426168442,
+        -0.164070263504982,
+        3.965288669860456e-06
+      ],
+      [
+        -0.18966084718704224,
+        -0.01723112352192402,
+        -0.0003783928113989532,
+        0.0005302531644701958,
+        7.037799514364451e-05,
+        -0.1637399047613144
+      ],
+      [
+        -0.19004960358142853,
+        0.0002616554847918451,
+        -0.017355285584926605,
+        0.0011245253263041377,
+        0.16411520540714264,
+        8.130737842293456e-05
+      ]
+    ],
+    "fin_load_scope": "free plates; body-axis force and moment about each root leading edge",
+    "geometry_sha256": "62627151aea74fc5bf948e411bbec299dac28a122348dc693c2abdc2d8865486",
+    "source_sha256": {
+      "run_flow.py": "2b071ccd9cda335df329fd2eb31a1e545488936220c4974ba82720fc945896dc",
+      "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+      "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb",
+      "domain_geometry.py": "3a9f7998df2c0b172b93f80b70d98d10c66a004fd7abcbe3aff2f7c76d511d41"
+    },
+    "cant_deg": 0,
+    "steps": 10706,
+    "paired_samples": true,
+    "averaging_tU_D": [
+      20.073749999999997,
+      40.147499999999994
+    ],
+    "mean": {
+      "Cd": 1.6509523714228096,
+      "Cl": -0.012752297749080526,
+      "Cx": -1.6509523714228096,
+      "Cy": 0.01275229774908073,
+      "Cz": 0.01439317037330795,
+      "Croll": 0.00484998663238879,
+      "Cpitch_y": -0.024699994138423498,
+      "Cm_z": 0.01266462206367601
+    },
+    "split_window_difference": {
+      "Cd": 0.02988822554962134,
+      "Cl": -0.016853285403384773,
+      "Cx": -0.02988822554962134,
+      "Cy": 0.016853285403384776,
+      "Cz": 0.013119273679266278,
+      "Croll": 0.00011811253159430945,
+      "Cpitch_y": -0.03229991333036042,
+      "Cm_z": 0.007896289769345961
+    },
+    "max_abs_density_departure": 0.00983296986669302,
+    "seconds": 84.1089999997057
+  },
+  "matched_fields": [
+    "shape",
+    "wall_scheme",
+    "fin_thickness_mm",
+    "dimensions_mm",
+    "cg_mm",
+    "d",
+    "width_D",
+    "Re",
+    "lattice_Ma",
+    "Cs",
+    "tau",
+    "speed_mps",
+    "angle_deg",
+    "rotated_geometry",
+    "cant_deg",
+    "steps",
+    "paired_samples",
+    "averaging_tU_D",
+    "geometry_sha256"
+  ],
+  "cuda_equations_unchanged": true,
+  "verified_old_cfd_files": 104,
+  "verified_native_replay_files": 68,
+  "before_case_sha256": "214b85150d37fe690f74862078638819741f5ab89ec14831e1667952f568f30b",
+  "after_artifacts": {
+    "case.json": "2682cef56301b9f04a1d6625bea76252f7d2820ea8742f6c9153082bb78ace24",
+    "history.csv": "3cb2fd8e0a068177dd37998693152ae408fbc8c95fd5b3ccdaef9fd6aebd00e2",
+    "line-loads.json": "d3701d71abf7cb1d72c1c35dff568f0b88e39769ebaf71d25c25a4fa8317b032",
+    "slice.npz": "ec5f1a7ff629acb3b3960df09b4d88fa2d6c32c6871f57248e1ec9e2b6bdc0f2",
+    "surface-loads.npz": "ffa061e03d7fdd55d36559d0f8aae3c2d761a5e319c96c68473b0bc2f7d9802d",
+    "volume.npz": "cfa2623cca3415c3afde14b38af884cf29a8d16c6697d1986056022c70aae7ce"
+  },
+  "rejection_log_sha256": "70cea0c93aeb4f62f9ed4b9551cd21a9c83bf1e86baf5023eda72a48b49a1aeb",
+  "native_replay": {
+    "metrics": {
+      "apogee_m": 22.835663736866447,
+      "incidence_deg": 7.676971114984827,
+      "static_margin_cal": 1.0472610017374893,
+      "dry_mass_g": 260.2412499582247,
+      "cg_mm": 420.707825435813,
+      "cp_mm": 514.961315592187
+    },
+    "spec_sha256": "c754470d0b61a41f6293b5b77b813f4ec315d83b558ed7968f23e560663ea4b1",
+    "old_manifest_sha256": "d38c61ff2f7ea21be7726055203eff10d01d18ec4c43a5a0e189832eb8d6432d",
+    "new_manifest_sha256": "1effb1b1b5fa8d5a5ff5b87027f20699389ca8883ef5f3a2fd3c84765e5007df"
+  },
+  "criteria_met": false,
+  "acceptance_performed": false,
+  "physical_qualification": false,
+  "scope": "Old-geometry boundary control and identical current-candidate analytic replay; no completed corrected tunnel table"
+}

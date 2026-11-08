@@ -1,0 +1,28 @@
+{
+  "recorded_search_source_hash": "d6e332d6faae575eff3d72baa9746d84cd63962e7fa2dbe62becb75255cde84c",
+  "guard_source_sha256": "fde55d4b09016f65149c4a5750c11b08394b719a5fcdd9459acf605527ba2b37",
+  "action": "refine/cfd",
+  "remaining_immediately_after_setting_change_s": 4721.278851851108,
+  "memory_limit_gib": 24,
+  "plan": {
+    "estimated_followup_cost_s": 9108.05925925926,
+    "required_memory_gib": 27.1318359375,
+    "affected_actions": [
+      "cfd_audit",
+      "cfd_coarse",
+      "cfd_fine",
+      "confirm",
+      "fem_coarse",
+      "fem_fine",
+      "flight",
+      "modes",
+      "refine",
+      "stability"
+    ],
+    "required_actions": 11,
+    "basis": "Conservative campaign reservations through reconfirmation; not measured duration"
+  },
+  "budget_fits": false,
+  "memory_fits": false,
+  "scope": "Replay of the recorded resource boundary using the new planning guard; no GPU launch"
+}

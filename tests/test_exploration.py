@@ -59,7 +59,9 @@ def test_feedback_preserves_losses_and_rejects_other_code_or_precision(tmp_path)
     )
     found = experience.retrieve([row, row], s, change, code="solver1", precision=p)
     assert len(found) == 1
-    assert experience.estimate(found, 30)["score_adjustment"] < 0
+    learned = experience.estimate(found, 30)
+    assert learned["mean_delta_height_m"] < 0
+    assert learned["score_adjustment"] == 0  # No bound prediction error in legacy evidence.
     assert not experience.retrieve([row], s, change, code="solver2", precision=p)
     assert not experience.retrieve(
         [row], s, change, code="solver1", precision={**p, "altitude_error_m": 2}
@@ -115,8 +117,8 @@ def test_multi_start_inputs_preserve_mission_and_have_independent_geometry():
 
     template = spec()
     options = starts(template)
-    assert len(options) == 5
-    assert len({digest(s.geometry.model_dump()) for s in options.values()}) >= 2
+    assert len(options) == 11
+    assert len({digest(s.geometry.model_dump()) for s in options.values()}) == 8
     assert all(s.requirement == template.requirement for s in options.values())
     assert all(
         s.design.payload_mass_kg == template.design.payload_mass_kg for s in options.values()

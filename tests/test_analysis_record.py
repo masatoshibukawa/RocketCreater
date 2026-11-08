@@ -34,6 +34,25 @@ def spec():
 VOLUMES = {"fin": {"volume_mm3": 5000}, "nose": {"volume_mm3": 9000}}
 
 
+def test_fixed_bottle_shell_preserves_total_mass_and_cannot_follow_equipment():
+    s = spec()
+    s.assumptions.fixed_bottle_mass_g = 48
+    s.assumptions.other_mass_station_fraction = 0.15
+    a = compile_record(s, VOLUMES)["assembly"]
+    s.assumptions.other_mass_station_fraction = 0.35
+    b = compile_record(s, VOLUMES)["assembly"]
+    shell_a = next(r for r in a["bill"] if r["id"] == "fixed_bottle_shell")
+    shell_b = next(r for r in b["bill"] if r["id"] == "fixed_bottle_shell")
+    assert shell_a == shell_b
+    assert a["dry_mass_g"] == pytest.approx(b["dry_mass_g"])
+    assert (
+        sum(r["mass_g"] for r in a["bill"] if r["id"] in {"fixed_bottle_shell", "other_dry"}) == 100
+    )
+    s.assumptions.fixed_bottle_mass_g = 101
+    with pytest.raises(ValueError, match="mass budget"):
+        compile_record(s, VOLUMES)
+
+
 def test_common_record_mass_closes_and_material_changes_inertia_inputs():
     s = spec()
     p = compile_record(s, VOLUMES)
