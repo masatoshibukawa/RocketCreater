@@ -15,6 +15,8 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 [CFD・構造・飛行の確認結果](docs/joint-candidate-confirmation.md)で追えます。
 後続の[学習データの範囲拡張](docs/expanded-training-distribution.md)と
 [同じ評価枠での探索比較・詳細解析](docs/expanded-search-comparison.md)には、今回の結果と途中経過を記録しています。
+搭載量を変えた[GPU学習と6方式の探索比較](docs/payload-search-gpu.md)、
+さらに[初期圧力と搭載量の同時探索](docs/pressure-payload-search.md)で運用条件のトレードオフを調べています。
 確認済みの数値条件と未達項目を分けて記録しており、現時点で実機安全性を認定した設計はありません。
 
 1.5 L ペットボトル機の[試作手順](scenarios/bottle_prototype.md)では、手持ちゼロからの購入表、等倍フィン型紙、3Dプリント用ホルダーと治具を生成できます。

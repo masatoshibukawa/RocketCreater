@@ -1,6 +1,7 @@
 """Audit actual variable-payload outcomes, transition archives and native promotions."""
 
 import argparse
+import ast
 import json
 import sys
 from pathlib import Path
@@ -136,6 +137,16 @@ def export(training, root, destination):
         )
         if row["status"] != "completed":
             native[-1]["failure_scope"] = "Native stage failed; consult local worker logs"
+            cad_log = folder / "geometry" / "cad" / "cad.log"
+            if cad_log.is_file():
+                marker = "RuntimeError: Invalid solid fin: "
+                for line in cad_log.read_text(encoding="utf-8").splitlines():
+                    if line.startswith(marker):
+                        native[-1].update(
+                            failure_scope="Invalid generated fin solid; no flight result",
+                            cad_diagnostics=ast.literal_eval(line.removeprefix(marker)),
+                            cad_log_sha256=sha(cad_log),
+                        )
     summary, fronts = [], {}
     for method in METHODS:
         runs = [r for r in report["runs"] if r["method"] == method]
@@ -264,15 +275,20 @@ def plot(result, destination):
         title="Measured Pareto fronts: static + beam filter",
     )
     axes[0, 0].legend(fontsize=8)
-    for color, row in zip(colors, result["methods"], strict=True):
-        for native in result["native"]:
-            if (
-                native["label"].rsplit("-", 1)[0] == row["method"]
-                and native["status"] == "completed"
-            ):
-                axes[0, 1].scatter(
-                    native["payload_g"], native["metrics"]["apogee_m"], color=color, s=35
-                )
+    completed = [r for r in result["native"] if r["status"] == "completed"]
+    if completed:
+        points = axes[0, 1].scatter(
+            [r["payload_g"] for r in completed],
+            [r["metrics"]["apogee_m"] for r in completed],
+            c=[r["pressure_kpa"] for r in completed],
+            cmap="viridis",
+            vmin=50,
+            vmax=400,
+            s=45,
+            edgecolors="#333333",
+            linewidths=0.5,
+        )
+        fig.colorbar(points, ax=axes[0, 1], label="Initial gauge pressure (kPa)")
     axes[0, 1].axhline(30, color="#b64f45", ls="--")
     axes[0, 1].axvline(50, color="#a1a1a1", ls=":")
     axes[0, 1].set(

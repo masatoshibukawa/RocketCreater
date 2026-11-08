@@ -28,7 +28,7 @@
 ![GPU学習と搭載量可変探索の比較](../scenarios/adaptive_design/payload-search-gpu.png)
 
 [全方式の集計・条件・検証ハッシュ](../scenarios/adaptive_design/payload-search-gpu.json)。
-圧力も探索変数にする比較は、この400 kPa固定試験と区別して追加する。
+圧力も探索変数にする[追加比較](pressure-payload-search.md)は、この400 kPa固定試験と区別する。
 
 ## 同じ評価条件で比較する6方式
 
