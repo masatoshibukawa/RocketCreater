@@ -201,7 +201,13 @@ def load_data(data, history, original, index):
         np.r_[old_x, x],
         np.r_[old_y, y],
         groups,
-        dict(zip((p.name for p in paths), expected, strict=True)),
+        dict(
+            zip(
+                ("expanded_examples", "historical_examples", "baseline_model"),
+                expected,
+                strict=True,
+            )
+        ),
     )
 
 
