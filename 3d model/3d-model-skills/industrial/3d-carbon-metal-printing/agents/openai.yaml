@@ -1,0 +1,4 @@
+interface:
+  display_name: "カーボン・金属3Dプリントの索引"
+  short_description: "カーボンと金属の造形方式・材料・機器・後処理を見分けて選ぶ"
+  default_prompt: "$3d-carbon-metal-printing を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

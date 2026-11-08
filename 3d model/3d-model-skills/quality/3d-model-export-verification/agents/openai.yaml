@@ -1,0 +1,4 @@
+interface:
+  display_name: "出力の寸法・形状検証"
+  short_description: "最終STLの単位・軸別寸法と修正差分を確認し、未検査項目を明示する"
+  default_prompt: "$3d-model-export-verification を使って、対象ファイルと条件に合う検証を行い、確認結果と未実施項目を示してください。"

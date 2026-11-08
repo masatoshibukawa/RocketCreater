@@ -1,0 +1,4 @@
+interface:
+  display_name: "フィギュアの表面・組立・塗装"
+  short_description: "支持除去・表面・仮組みと塗装の順を決め、細部と嵌合を保つ"
+  default_prompt: "$3d-figurine-finishing を使い、参照・最終サイズ・実機に合うフィギュアの工程と確認箇所を具体化してください。"

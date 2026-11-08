@@ -1,0 +1,4 @@
+interface:
+  display_name: "金属電子ビーム粉末床溶融・EB-PBF"
+  short_description: "EB-PBFの真空・予熱・粉末回収と、機種別の材料条件を確認する"
+  default_prompt: "$3d-print-metal-eb-pbf を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

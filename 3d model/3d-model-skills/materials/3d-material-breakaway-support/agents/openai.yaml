@@ -1,0 +1,4 @@
+interface:
+  display_name: "Breakaway・剥離用支持材の3Dプリント"
+  short_description: "剥離用支持材の製品別対応と、界面・取り外し経路を確かめる"
+  default_prompt: "$3d-material-breakaway-support を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

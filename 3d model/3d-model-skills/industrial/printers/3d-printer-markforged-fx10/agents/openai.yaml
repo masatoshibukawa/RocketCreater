@@ -1,0 +1,4 @@
+interface:
+  display_name: "Markforged FX10"
+  short_description: "FX10の複合材・金属構成切替と、製品世代・脱脂焼結を照合する"
+  default_prompt: "$3d-printer-markforged-fx10 を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

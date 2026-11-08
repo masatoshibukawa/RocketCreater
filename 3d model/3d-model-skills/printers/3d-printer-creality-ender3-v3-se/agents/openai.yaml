@@ -1,0 +1,4 @@
+interface:
+  display_name: "Creality Ender-3 V3 SE"
+  short_description: "Creality Ender-3 V3 SEの校正・接地・速度・接続を確認し、機種に合う試作を準備する"
+  default_prompt: "$3d-printer-creality-ender3-v3-se を使い、この機種の構成・印刷条件・接続方法を確認し、失敗箇所に合う比較試行を準備してください。"

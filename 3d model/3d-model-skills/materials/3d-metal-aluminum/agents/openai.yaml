@@ -1,0 +1,4 @@
+interface:
+  display_name: "アルミニウム・AlSi10Mg等"
+  short_description: "アルミ合金の方式・熱処理・疲労と、加工後の寸法を確認する"
+  default_prompt: "$3d-metal-aluminum を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

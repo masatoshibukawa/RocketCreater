@@ -1,0 +1,4 @@
+interface:
+  display_name: "DMG MORI LASERTEC 65 DED hybrid 2nd Generation"
+  short_description: "粉末DEDと5軸切削の順序、母材との適合・到達と加工代を詰める"
+  default_prompt: "$3d-printer-dmg-lasertec-65-ded を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

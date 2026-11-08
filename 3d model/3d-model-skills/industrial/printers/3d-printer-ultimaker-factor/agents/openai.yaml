@@ -1,0 +1,4 @@
+interface:
+  display_name: "UltiMaker Factor 4 / Factor 4+"
+  short_description: "Factorの世代とPPS/PET CF用コア、熱環境・支持を照合する"
+  default_prompt: "$3d-printer-ultimaker-factor を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

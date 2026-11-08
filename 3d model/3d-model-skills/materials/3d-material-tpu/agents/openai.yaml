@@ -1,0 +1,4 @@
+interface:
+  display_name: "TPU・TPEの柔軟材の3Dプリント"
+  short_description: "柔軟材の硬度と給材経路を照合し、座屈・糸引き・過剰密着を抑える"
+  default_prompt: "$3d-material-tpu を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

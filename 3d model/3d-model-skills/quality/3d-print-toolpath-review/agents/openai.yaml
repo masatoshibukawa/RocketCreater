@@ -1,0 +1,4 @@
+interface:
+  display_name: "印刷経路と設定の照合"
+  short_description: "スライス後の接地・支持・速度指令と有効プロファイルを照合する"
+  default_prompt: "$3d-print-toolpath-review を使って、対象ファイルと条件に合う検証を行い、確認結果と未実施項目を示してください。"

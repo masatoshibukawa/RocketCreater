@@ -1,0 +1,4 @@
+interface:
+  display_name: "Anisoprint Composer A4/A3"
+  short_description: "ComposerのCFC材料・繊維カッター・Z調整と経路を確認する"
+  default_prompt: "$3d-printer-anisoprint-composer を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

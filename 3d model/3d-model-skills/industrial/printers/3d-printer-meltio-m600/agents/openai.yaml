@@ -1,0 +1,4 @@
+interface:
+  display_name: "Meltio M600"
+  short_description: "M600のワイヤー・パラメーター成熟度と、基板・加工代を詰める"
+  default_prompt: "$3d-printer-meltio-m600 を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

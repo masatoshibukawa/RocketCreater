@@ -1,0 +1,84 @@
+{
+  "record_type": "material-trial-template",
+  "status": "template-not-tested",
+  "date": null,
+  "purpose": {
+    "part": null,
+    "loads_and_direction": null,
+    "service_temperature_c": null,
+    "humidity_and_uv": null,
+    "acceptance_limits": []
+  },
+  "materials": [
+    {
+      "role": "build",
+      "manufacturer": null,
+      "product_and_revision": null,
+      "base_polymer": null,
+      "modifier_or_filler": null,
+      "color": null,
+      "lot": null,
+      "diameter_mm": null,
+      "density_g_cm3": null,
+      "density_source": null,
+      "density_basis_solid_or_effective_printed": null,
+      "density_test_conditions": null,
+      "opened_at": null,
+      "drying": {
+        "equipment": null,
+        "temperature_c": null,
+        "duration_h": null,
+        "spool_limit_checked": null
+      },
+      "storage_and_feed": null
+    }
+  ],
+  "machine": {
+    "model_and_generation": null,
+    "firmware": null,
+    "core_or_nozzle": null,
+    "nozzle_material": null,
+    "nozzle_diameter_mm": null,
+    "feed_device_and_route": null,
+    "build_plate_product": null,
+    "adhesive_product_and_purpose": null,
+    "chamber_and_ventilation": null
+  },
+  "compatibility": {
+    "decision": "unknown",
+    "applies_to": null,
+    "sources": [],
+    "unresolved": []
+  },
+  "process": {
+    "slicer_and_version": null,
+    "profile_and_version": null,
+    "orientation": null,
+    "layer_height_mm": null,
+    "changed_settings": {},
+    "support_and_interface": null,
+    "purge_or_idle_settings": null,
+    "resin_temperature_c": null,
+    "exposure_and_release_profile": null,
+    "wash_and_cure_product_specific": null
+  },
+  "pairing": {
+    "purpose": null,
+    "manufacturer_approved_recipe": null,
+    "ratio_value": null,
+    "ratio_basis_mass_or_volume": null,
+    "interface_strength_requirement": null,
+    "residual_material_control": null
+  },
+  "verification": {
+    "slice_review": null,
+    "small_trial": null,
+    "full_part_trial": null,
+    "dimensions_mm": null,
+    "mass_g": null,
+    "assembly_center_of_gravity_mm": null,
+    "mechanical_result": null,
+    "photos": [],
+    "remaining_limits": []
+  }
+}

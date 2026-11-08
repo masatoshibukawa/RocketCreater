@@ -1,0 +1,4 @@
+interface:
+  display_name: "Markforged Mark Two"
+  short_description: "Mark Twoの世代・樹脂と繊維の組、実際の繊維経路を確認する"
+  default_prompt: "$3d-printer-markforged-mark-two を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

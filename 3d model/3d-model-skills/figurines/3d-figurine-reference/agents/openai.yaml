@@ -1,0 +1,4 @@
+interface:
+  display_name: "フィギュアの参照と形状の再現"
+  short_description: "同じ姿勢の参照を揃え、顔・輪郭とテクスチャだけの細部を見分ける"
+  default_prompt: "$3d-figurine-reference を使い、参照・最終サイズ・実機に合うフィギュアの工程と確認箇所を具体化してください。"

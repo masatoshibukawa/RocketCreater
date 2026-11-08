@@ -1,0 +1,4 @@
+interface:
+  display_name: "金属バインダージェット"
+  short_description: "金属バインダージェットの粉抜き・焼結支持・収縮と密度を評価する"
+  default_prompt: "$3d-print-metal-binder-jet を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

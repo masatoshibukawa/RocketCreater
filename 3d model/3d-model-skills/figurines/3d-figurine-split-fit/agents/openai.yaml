@@ -1,0 +1,4 @@
+interface:
+  display_name: "フィギュアの分割・接合・台座"
+  short_description: "細い突起・切断面・ダボの嵌合と、展示台座・印刷接地を設計する"
+  default_prompt: "$3d-figurine-split-fit を使い、参照・最終サイズ・実機に合うフィギュアの工程と確認箇所を具体化してください。"

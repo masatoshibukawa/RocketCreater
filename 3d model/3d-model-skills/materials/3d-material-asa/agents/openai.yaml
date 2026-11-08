@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASAの3Dプリント"
+  short_description: "ASAの耐候用途と反り・層割れを、実機の熱条件と用途へ照合する"
+  default_prompt: "$3d-material-asa を使い、対象の材料製品と実機・用途に合わせて条件を確認し、必要な比較試作を準備してください。"

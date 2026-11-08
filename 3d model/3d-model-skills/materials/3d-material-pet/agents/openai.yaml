@@ -1,0 +1,4 @@
+interface:
+  display_name: "PET・PET CFの3Dプリント"
+  short_description: "PETをPETGと区別し、PET CFのコア・乾燥・熱処理条件を確認する"
+  default_prompt: "$3d-material-pet を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"

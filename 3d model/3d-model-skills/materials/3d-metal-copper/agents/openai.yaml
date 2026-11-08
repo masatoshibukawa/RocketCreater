@@ -1,0 +1,4 @@
+interface:
+  display_name: "銅・Cu/CuCrZr等"
+  short_description: "銅系の機械適合・熱処理と、密度や熱・電気伝導性を評価する"
+  default_prompt: "$3d-metal-copper を使い、用途と機器・材料製品に合う工程を確認し、設計・後処理・検証の条件をまとめてください。"
