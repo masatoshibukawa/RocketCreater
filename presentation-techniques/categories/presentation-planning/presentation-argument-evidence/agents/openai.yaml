@@ -1,0 +1,4 @@
+interface:
+  display_name: "構成・物語・根拠"
+  short_description: "構成・物語・根拠の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-argument-evidence to prepare or improve a presentation for my audience, purpose and time limit."

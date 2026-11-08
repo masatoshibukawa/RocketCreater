@@ -1,0 +1,4 @@
+interface:
+  display_name: "進捗報告・論文紹介"
+  short_description: "進捗報告・論文紹介の構成と根拠を整理し、目的に合う台本・資料へ改善する"
+  default_prompt: "Use $presentation-lab-journal to prepare or improve a presentation for my audience, purpose and time limit."
