@@ -255,7 +255,7 @@ function DesignScreen() {
     <div className={`workshop-body${stage === "design" ? "" : " without-results"}`} style={docks.style}>
       <aside id="workshop-targets" tabIndex={-1} className={`workshop-left${leftOpen ? " is-open" : ""}`} aria-label="設計の相談" onKeyDown={e => { if (e.key === "Escape") { e.stopPropagation(); closeTargets(); } }}>
         <div className="dock-heading"><h1>設計の相談</h1><button className="mobile-close icon-button" type="button" aria-label="相談を閉じる" onClick={closeTargets}><WorkshopIcon name="close" size={18}/></button></div>
-        <div className="consultation"><LocalDesignChat project={productionProject} onProject={setProductionProject}/><details><summary>既存の構想設計フロー（課金接続は無効）</summary><ChatPanel messages={stream.messages} status={stream.status} pendingQuestion={stream.pendingQuestion} onStart={handleStart} onAnswer={handleAnswer} onStop={stop} onReset={handleReset}/></details></div>
+        <div className="consultation"><LocalDesignChat project={productionProject} onProject={setProductionProject}/><details><summary>Claude の設計エージェントで設計する</summary><ChatPanel messages={stream.messages} status={stream.status} pendingQuestion={stream.pendingQuestion} onStart={handleStart} onAnswer={handleAnswer} onStop={stop} onReset={handleReset}/></details></div>
         <DockHandle side="left" label="相談の幅を変える" width={docks.left} onResize={docks.setLeft}/>
       </aside>
       <section className={`workshop-center${showCrew ? " has-crew" : ""}`} aria-label={`${stageLabel(stage)}の表示`}>

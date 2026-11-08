@@ -10,8 +10,8 @@ from typing import Literal
 
 from pydantic import Field
 
+from rocketwright.agent.claude_director import intake_director
 from rocketwright.agent.design_projects import DesignSpec, write_json
-from rocketwright.agent.local_runtime import LocalDirector
 from rocketwright.agent.project_equipment import Strict
 from rocketwright.agent.project_jobs import file_lock
 from rocketwright.agent.workbench import Conflict
@@ -72,7 +72,7 @@ def grounded_fields(data, text):
 
 def propose(store, text, project_id=None, director=None):
     current = store.get(project_id) if project_id else None
-    director = director or LocalDirector()
+    director = director or intake_director()
     director.api.timeout = 90
     schema = Intent.model_json_schema()
     for row in schema["properties"].values():

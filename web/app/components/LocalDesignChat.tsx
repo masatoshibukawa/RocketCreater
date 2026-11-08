@@ -11,7 +11,7 @@ export default function LocalDesignChat({project,onProject}:{project:DesignProje
   const [busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null);
   const [history,setHistory]=useState<string[]>([]);
   useCrewTask("local-intake",{id:proposal?.id??"intake",status:busy?"working":error?"attention":"idle",
-    label:busy?"ローカルGemmaが要求と候補を整理しています":"保存した設計の条件を相談できます"});
+    label:busy?"Claude が要求と候補を整理しています":"保存した設計の条件を相談できます"});
   async function propose(){
     setBusy(true);setError(null);
     const request=proposal?.questions.length?`${proposal.text}\n補足：${text}`:text;
@@ -26,7 +26,7 @@ export default function LocalDesignChat({project,onProject}:{project:DesignProje
     catch(e){setError(e instanceof Error?e.message:String(e));} finally{setBusy(false);}
   }
   return <div className="chat-panel local-design-chat">
-    <p>既存のローカルGemmaでペットボトルロケットの要求と候補を整理します。</p>
+    <p>Claude がペットボトルロケットの要求と候補を整理します。</p>
     <p className="wb-note">{project?`${project.name} / v${project.version} への変更を相談できます。`:"目標高度、搭載質量、容量、回収方法を入力してください。"}</p>
     {history.map((line,i)=><p key={i} className="chat-message">{line}</p>)}
     {proposal?<><p>{proposal.intent.reason}</p>{proposal.questions.map(q=><p key={q}>{q}</p>)}
@@ -36,7 +36,7 @@ export default function LocalDesignChat({project,onProject}:{project:DesignProje
         <button className="btn" disabled={busy||!!project?.active} onClick={()=>void accept(c.id)}>この候補を保存してCAD・飛行を計算</button></article>)}
     </>:null}
     <form onSubmit={e=>{e.preventDefault();void propose();}}><label>設計の依頼<textarea value={text} maxLength={3000} disabled={busy} placeholder="2 L、60 gを20 m程度へ。パラシュートで回収したい。" onChange={e=>setText(e.target.value)}/></label>
-      <button className="btn btn-primary" disabled={busy||!text.trim()||!!project?.active}>{busy?"要求を整理中":"Gemmaに相談"}</button></form>
+      <button className="btn btn-primary" disabled={busy||!text.trim()||!!project?.active}>{busy?"要求を整理中":"Claude に相談"}</button></form>
     {error?<p role="alert">{error}</p>:null}
   </div>;
 }
