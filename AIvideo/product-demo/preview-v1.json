@@ -416,12 +416,12 @@
           "Claude Code"
         ],
         [
-          "実行時の目標",
-          "Claude API に移行予定"
+          "設計判断",
+          "Claude API"
         ]
       ],
-      "caption": "開発はClaude Code。実行時はClaude APIへ移行予定です。",
-      "speech": "開発は、クロードコード。実行時は、クロードエーピーアイへ移行予定。"
+      "caption": "開発はClaude Code。設計判断はClaude API。",
+      "speech": "開発は、クロードコード。設計判断は、クロードエーピーアイ。"
     },
     {
       "start_s": 168,
