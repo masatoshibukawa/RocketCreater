@@ -53,6 +53,36 @@ def test_config_loads_from_yaml():
 
 
 @pytest.mark.anyio
+async def test_bottle_capacity_cannot_be_dropped_between_classification_and_simulation():
+    from rocketwright.agent.fake_client import DEMO_DESIGNS, DEMO_REQUIREMENTS
+
+    req = DEMO_REQUIREMENTS["bottle"]
+    client = FakeAnthropicClient(
+        [
+            make_message(
+                [
+                    tool_use_block("classify", "classify_requirement", {"requirement": req}),
+                    tool_use_block(
+                        "sim",
+                        "simulate_design",
+                        {
+                            "requirement": {**req, "bottle_volume_m3": None},
+                            "design": {**DEMO_DESIGNS["bottle"][1], "bottle_volume_m3": 0.002},
+                        },
+                    ),
+                ],
+                stop_reason="tool_use",
+            ),
+            make_message([text_block('{"designs": [], "summary": "", "open_questions": []}')]),
+        ]
+    )
+    events = await _collect(client, text=req["text"] or "1.5 L bottle", seed=7)
+    result = next(e.payload for e in events if e.type == "tool_result" and e.payload["id"] == "sim")
+    assert result["is_error"] and "bottle_volume_m3" in result["result"]["error"]
+    assert not any(e.type == "candidate" for e in events)
+
+
+@pytest.mark.anyio
 async def test_scripted_amateur_run_event_sequence():
     client = FakeAnthropicClient(
         build_demo_script("amateur", AMATEUR_TEXT, ENV, seed=1, dispersion=False)

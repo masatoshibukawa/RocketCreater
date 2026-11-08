@@ -510,15 +510,21 @@ def simulate(
         if bd.payload_mass_kg > 0.0
         else th["max_descent_speed_mps"]
     )
-    if flight.left_rail and descent_speed > limit:
+    descent_excess = max(0.0, descent_speed - limit)
+    if flight.left_rail and descent_excess > 0:
         what = "the payload" if bd.payload_mass_kg > 0.0 else "the bottle"
         failures.append(
             f"descent speed {descent_speed:.1f} m/s above {limit:.0f} m/s for {what} "
             f"({'larger parachute' if bd.has_parachute else 'add a parachute'})"
         )
+    scores: dict[str, float] = {}
+    if flight.left_rail:
+        scores["descent_speed_excess_mps"] = descent_excess
     if target_apogee_m is not None:
         tol = target_apogee_m * th["apogee_tolerance_frac"]
-        if abs(flight.apogee_m - target_apogee_m) > tol:
+        excess = max(0.0, abs(flight.apogee_m - target_apogee_m) - tol)
+        scores["apogee_band_excess_m"] = excess
+        if excess > 0:
             failures.append(
                 f"apogee {flight.apogee_m:.1f} m not within +/-{th['apogee_tolerance_frac']:.0%} "
                 f"of target {target_apogee_m:.0f} m"
@@ -543,6 +549,7 @@ def simulate(
         "flight_time_s": flight_time,
         "liftoff_mass_kg": flight.liftoff_mass_kg,
         "water_mass_kg": flight.water_mass_kg,
+        **scores,
     }
     return SimResult(
         tier=Tier.BOTTLE,

@@ -70,6 +70,9 @@ export const BOTTLE_MARGINS: readonly MetricSpec[] = [
 const METRIC_LABELS: Record<string, string> = {
   perigee_m: "近地点",
   apogee_m: "到達高度 / 遠地点",
+  apogee_band_excess_m: "目標高度の許容範囲からの逸脱",
+  descent_speed_excess_mps: "降下速度の上限超過",
+  budget_excess_jpy: "予算超過額",
   max_q_pa: "最大動圧",
   payload_margin_kg: "積載余裕",
   dv_ideal_mps: "理想増速量",

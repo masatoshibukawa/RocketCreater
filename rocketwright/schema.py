@@ -102,6 +102,9 @@ class Requirement(_Frozen):
     payload_mass_kg: float = Field(default=0.0, ge=0)
     budget_jpy: float | None = Field(default=None, gt=0)  # None = unconstrained
     recovery_required: bool = False
+    bottle_volume_m3: float | None = Field(
+        default=None, gt=0, description="Fixed bottle capacity if specified by the user, else null."
+    )
     tier_override: Tier | None = None  # explicit user choice; classify warns on conflict
     text: str = ""  # original free-text request (for guard.py and audit)
 
