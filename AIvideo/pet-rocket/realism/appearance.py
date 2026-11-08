@@ -43,7 +43,7 @@ def photo_world(film, cache):
     bpy.context.scene.world = world
 
 
-def surface_detail(mat, layered=False):
+def surface_detail(mat, layered=False, roughness_range=None):
     nodes, links = mat.node_tree.nodes, mat.node_tree.links
     shader = nodes.get("Principled BSDF")
     tex = nodes.new("ShaderNodeTexCoord")
@@ -53,8 +53,9 @@ def surface_detail(mat, layered=False):
     ramp = nodes.new("ShaderNodeMapRange")
     ramp.inputs["From Min"].default_value = 0
     ramp.inputs["From Max"].default_value = 1
-    ramp.inputs["To Min"].default_value = 0.23 if layered else 0.022
-    ramp.inputs["To Max"].default_value = 0.38 if layered else 0.075
+    low, high = roughness_range or ((0.23, 0.38) if layered else (0.022, 0.075))
+    ramp.inputs["To Min"].default_value = low
+    ramp.inputs["To Max"].default_value = high
     links.new(noise.outputs["Fac"], ramp.inputs["Value"])
     links.new(ramp.outputs["Result"], shader.inputs["Roughness"])
     bump = nodes.new("ShaderNodeBump")
@@ -70,6 +71,23 @@ def surface_detail(mat, layered=False):
     else:
         links.new(noise.outputs["Fac"], bump.inputs["Height"])
     links.new(bump.outputs["Normal"], shader.inputs["Normal"])
+
+
+def readable_pet():
+    """Illustrative cool PET tint and broad highlights; transmission stays fully enabled."""
+    mat = material(
+        "Unmeasured clear PET wall", (0.82, 0.90, 0.94), 0.08, transmission=1, ior=1.575
+    )
+    surface_detail(mat, roughness_range=(0.06, 0.12))
+    # An assumed absorption coefficient gives long paths through the thin wall
+    # a readable edge while leaving the centre transmissive, rather than opaque.
+    absorption = mat.node_tree.nodes.new("ShaderNodeVolumeAbsorption")
+    absorption.inputs["Color"].default_value = (0.45, 0.70, 0.78, 1)
+    absorption.inputs["Density"].default_value = 250
+    mat.node_tree.links.new(
+        absorption.outputs["Volume"], mat.node_tree.nodes.get("Material Output").inputs["Volume"]
+    )
+    return mat
 
 
 def asphalt(cache):

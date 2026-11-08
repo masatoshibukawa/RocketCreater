@@ -1,0 +1,12 @@
+{
+  "started_at_utc": "2026-11-06T21:54:07.264286+00:00",
+  "finished_at_utc": "2026-11-06T22:40:20.532309+00:00",
+  "total_wall_s": 2773.268023,
+  "job_processing_s": 2463.2994611000177,
+  "repair_and_restart_gap_s": 309.957761,
+  "reused_verified_frames": 559,
+  "final_frames": 672,
+  "paid_api_used": false,
+  "saved_gemma_plan_reused": true,
+  "passed": true
+}

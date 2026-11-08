@@ -1,0 +1,5 @@
+# Preserve the exact bytes referenced by this experiment's artifact manifest.
+/assets/product-demo/production-plan/video-reuse/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/rocketwright/catalog/airframes/reference/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/rocketwright/catalog/airframes/reference/*.step -diff
+/assets/product-demo/production-plan/airframe-templates/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

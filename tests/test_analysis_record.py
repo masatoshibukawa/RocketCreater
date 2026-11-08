@@ -27,7 +27,7 @@ def spec():
         design=d,
         geometry=geometry,
         other_dry_mass_g=100,
-        requirement=Requirement(goal_kind="altitude", target_altitude_m=30),
+        requirement=Requirement(goal_kind="altitude", target_altitude_m=30, payload_mass_kg=0.06),
     )
 
 
@@ -110,3 +110,16 @@ def test_cfd_grid_comparison_includes_the_force_arm_moment():
     after = integrated_coefficients(second, [0.2, 0.8], 0.1, 0.5)
     np.testing.assert_allclose(before[..., :3], after[..., :3])
     assert abs(after[0, 0, 5] - before[0, 0, 5]) == pytest.approx(6)
+
+
+def test_default_profiles_stay_inside_the_documented_reservoir_adapter():
+    import math
+
+    for capacity in (0.0005, 0.0015, 0.002, 0.003):
+        s = spec()
+        s.design = s.design.model_copy(update={"bottle_volume_m3": capacity})
+        s.geometry = PrintGeometry.from_design(s.design)
+        area = math.pi * (s.geometry.body_diameter_mm / 2000) ** 2
+        assert capacity < area * (s.geometry.nose_base_mm / 1000 - 0.01)
+        assert not s.geometry.dimensions_measured
+        compile_record(s, VOLUMES)

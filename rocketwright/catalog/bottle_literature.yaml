@@ -1,0 +1,142 @@
+# Proposed simulator contracts. Observations are from the cited sources. Outputs and
+# evaluation functions describe project proposals; none of these ids is a callable tool.
+references:
+  R02:
+    title: Watanabe et al. (2003), Thrust Characteristics of Water Rocket and Their Improvement
+    url: https://doi.org/10.2322/jjsass.51.314
+    locator: Sections 3–5, Figs. 5–14. Corrected thrust, internal pressure, precursor air, ordinary and regulated nozzles.
+  R03:
+    title: Watanabe et al. (2004), 水ロケットの空力特性と飛行安定化について
+    url: https://doi.org/10.2322/jjsass.52.449
+    locator: Tables 1–2 and Figs. 9–13 for tunnel coefficients. Fig. 14 and Table 4 for fin mounting and flight tests.
+  R04:
+    title: Toma et al. (2020), 水ロケット飛行安定性能の最適化
+    url: https://doi.org/10.12792/jjiiae.8.1.28
+    locator: Tables 3–6 for controls, wind conditions and L9 design. Tables 12–13 for confirmation.
+  R13:
+    title: Romanelli et al., Air expansion in the water rocket
+    url: https://arxiv.org/abs/1211.1923
+    locator: Sections III–IV, Fig. 3 and Table I. Stationary acrylic vessel, recorded pressure and gas volume, measured and theoretical polytropic exponents.
+  R14:
+    title: Fischer et al., On the approximation of D.I.Y. water rocket dynamics including air drag
+    url: https://arxiv.org/abs/2001.08828
+    locator: Sections 8–10, Table 1 (wind tunnel), Table 2 (measured apogees), Table 3 (authors' calculations).
+  D09:
+    title: Adrian Schlatter, RocketFins CAD
+    url: https://github.com/adrianschlatter/RocketFins/tree/57f2c9fd475be499aafb2655b12f20a75f135e60
+    locator: PN1_3_narrow_fins.scad, PN2_3_broad_fins.scad, PN3_5_narrow_fins.scad and the rocket_fins module.
+  P09:
+    title: StratoChute Water Rocket Parachute Instructions
+    url: https://stratofins.com/content/pdf/StratoChute_Manual.pdf
+    locator: Kit contents and steps 4–6 on attachment, packing and nose-cone release. No deployment timing or failure-rate measurements.
+
+analysis_methods:
+  humid_air_expansion:
+    references: [R13]
+    variables: [bottle_volume_m3, water_fill_frac, initial_gauge_pressure_pa, initial_gas_temperature_k, initial_gas_relative_humidity_frac]
+    context: Ambient absolute pressure, initial gas volume and synchronized gas-volume and pressure measurements from a fixed vessel.
+    method: Compare dry adiabatic expansion with a moist-gas model. Compute the effective exponent from the negative slope of predicted log absolute pressure against log gas volume over the measured volume interval.
+    outputs: {gas_volume_m3: series, chamber_absolute_pressure_pa: series, predicted_polytropic_exponent: scalar}
+    validation: Compare the prediction with experimental beta in R13 Table I. If fitting model parameters, reserve separate initial conditions for validation. The stationary vessel and longer ejection time limit transfer to a flying PET bottle.
+  transient_nozzle_flow:
+    references: [R02]
+    variables: [nozzle_diameter_m, nozzle.has_flow_regulator, nozzle.regulator_open_area_ratio, nozzle.regulator_orifice_count, initial_gauge_pressure_pa, water_fill_frac]
+    context: Bottle geometry, ambient pressure, synchronized thrust and internal pressure measurements with time origin and pressure basis.
+    method: Resolve the water-to-air transition and regulator losses. Compare ordinary and regulated nozzles with other fixture conditions held fixed.
+    outputs: {time_s: sample_times, thrust_n: series, chamber_gauge_pressure_pa: series}
+    coupling: A pressure-volume closure may be supplied by humid_air_expansion. Subtract ambient pressure when converting its absolute pressure to gauge pressure.
+    validation: Align the corrected force and pressure histories in R02 Figs. 5–6 and 10–11. Figs. 13–14 isolate regulator area ratio and hole count. Digitize traces and record resolution first.
+    reported_comparisons:
+      - {fixed_orifice_count: 6, open_area_ratios: [0.99, 1.75, 2.74, 3.32, 3.95, 4.63]}
+      - {fixed_open_area_ratio: 3.95, orifice_counts: [6, 24]}
+  aerodynamic_polars:
+    references: [R03, D09]
+    variables: [measured_body_diameter_m, nose_profile, surface_treatment, fins.planform_variant, fins.count, fins.root_chord_m, fins.tip_chord_m, fins.span_m, fins.sweep_m, fins.root_le_from_nose_m, fins.mount_type]
+    context: Assembled shape, test speed, angle of attack, reference area and length, moment reference point and center of gravity. Mount compliance requires stiffness measurements.
+    method: Predict drag, lift and pitching moment across a matched angle-of-attack and Reynolds-number sweep.
+    outputs: {angle_of_attack_rad: series, drag_coefficient: series, lift_coefficient: series, pitching_moment_coefficient: series}
+    validation: Reproduce the R03 test articles and tunnel conditions before evaluating D09 geometries. D09 provides CAD geometry only. Keep the moment reference and sign convention fixed.
+  canopy_deployment:
+    references: [P09]
+    variables: [has_parachute, parachute_diameter_m, recovery.release_mechanism, recovery.inflation_time_s, dry_mass_kg, payload_mass_kg]
+    context: Apogee state, release condition during tip-over, packing configuration, canopy drag-area history and wind.
+    method: Model separate release and inflation events followed by canopy descent. Carry an explicit outcome for a canopy that never fully opens.
+    outputs: {apogee_time_s: scalar, release_time_s: optional_event, fully_open_time_s: optional_event, altitude_at_full_open_m: optional_event}
+    validation: P09 establishes the mechanism. Obtain timestamped deployment observations for this assembly to validate event times before ranking candidates.
+  robust_factor_screen:
+    references: [R04]
+    variables: [bottle_volume_m3, env.rail_length_m, launch_elevation_deg, water_fill_frac, initial_gauge_pressure_pa]
+    context: Factor levels, fixed mission values, rail length, launch inclination, matched wind cases and a held-out confirmation run.
+    method: Screen discrete factor levels with an orthogonal array and confirm the selected combination separately. For a vertical altitude mission, keep inclination fixed and redesign the array for the remaining factors.
+    outputs: {case_apogee_m: vector_by_wind_and_design, confirmation_apogee_m: scalar}
+    validation: R04 Tables 3–6 vary capacity, guide length, launch angle and fill with pressure as a signal and wind as noise. Its flight-distance optimum is specific to that response. The proposed altitude comparison needs its own confirmation.
+    reported_factor_levels:
+      bottle_volume_m3: [0.0005, 0.001, 0.0015]
+      env.rail_length_m: [0.18, 0.28, 0.38]
+      launch_elevation_deg: [35, 45, 55]
+      water_fill_frac: [0.30, 0.50, 0.70]
+  vertical_flight_replay:
+    references: [R14]
+    variables: [bottle_volume_m3, measured_body_diameter_m, nozzle_diameter_m, dry_mass_kg, initial_gauge_pressure_pa, water_fill_frac]
+    context: Replicate the test article, launcher and atmospheric assumptions. Distinguish water temperature from ambient temperature and absolute from gauge pressure.
+    method: Replay matched runs and pair each predicted apogee with its video measurement by run id.
+    outputs: {run_id: vector, predicted_apogee_m: vector, observed_apogee_m: vector}
+    validation: Use Table 2 runs 1–4. Runs 1–2 vary fill at fixed pressure, runs 3–4 vary pressure at fixed fill. Run 5 was ceiling-limited and run 6 had launch-quality issues. Keep these separate.
+    benchmark:
+      bottle_volume_m3: 0.001
+      airframe_mass_kg: 0.143
+      body_radius_m: 0.04
+      approximate_nozzle_diameter_m: 0.009
+      water_temperature_deg_c: 17
+      approx_ambient_pressure_pa: 100000
+      gauge_conversion: Subtract the ambient pressure from the tabulated absolute pressure.
+      reported_uncertainties: {water_volume_m3: 0.000010, pressure_pa: 5000, apogee_m: 0.5}
+      observations:
+        - {run: 1, water_fill_frac: 0.350, absolute_pressure_pa: 350000, apogee_m: 17.5}
+        - {run: 2, water_fill_frac: 0.325, absolute_pressure_pa: 350000, apogee_m: 17.1}
+        - {run: 3, water_fill_frac: 0.255, absolute_pressure_pa: 300000, apogee_m: 14.1}
+        - {run: 4, water_fill_frac: 0.255, absolute_pressure_pa: 350000, apogee_m: 17.4}
+
+evaluation_functions:
+  polytropic_exponent_error:
+    method: humid_air_expansion
+    uses: [predicted_polytropic_exponent]
+    role: model_validation
+    direction: minimize
+    unit: dimensionless
+    definition: Absolute deviation from the experimental exponent at matching initial conditions. Keep the theoretical column separate for model comparison.
+  thrust_curve_rmse_n:
+    method: transient_nozzle_flow
+    uses: [time_s, thrust_n]
+    role: model_validation
+    direction: minimize
+    unit: N
+    definition: Root mean square predicted-minus-measured thrust on a common uniform time grid over the same discharge window.
+  moment_slope_per_rad:
+    method: aerodynamic_polars
+    uses: [angle_of_attack_rad, pitching_moment_coefficient]
+    role: stability_diagnostic
+    direction: inspect_sign
+    unit: 1/rad
+    definition: Fit the slope near zero angle about the flight CG. With nose-up moment positive, a negative slope is restoring. Declare the fitted angular interval.
+  full_open_altitude_m:
+    method: canopy_deployment
+    uses: [fully_open_time_s, altitude_at_full_open_m]
+    role: recovery_diagnostic
+    direction: compare_to_mission_minimum
+    unit: m
+    definition: Height above ground at confirmed full inflation. Report non-opening separately as a failure. An acceptance threshold requires a mission specification.
+  worst_case_apogee_error_m:
+    method: robust_factor_screen
+    uses: [case_apogee_m]
+    role: robustness_comparison
+    direction: minimize
+    unit: m
+    definition: Maximum absolute apogee error from the common mission target across the declared wind cases for each design.
+  reference_apogee_mae_m:
+    method: vertical_flight_replay
+    uses: [run_id, predicted_apogee_m, observed_apogee_m]
+    role: model_validation
+    direction: minimize
+    unit: m
+    definition: Mean absolute apogee residual across the same matched runs. Report per-run residuals and measurement uncertainty alongside the aggregate.

@@ -186,12 +186,25 @@ def _tail(path: Path, n: int = 15) -> str:
         return ""
 
 
+def docker_user() -> str:
+    """Docker Desktop has no host POSIX UID. Use a numeric unprivileged container user."""
+    explicit = os.getenv("ROCKETWRIGHT_OPENFOAM_USER")
+    if explicit:
+        parts = explicit.split(":")
+        if len(parts) != 2 or any(not p.isdecimal() or not 0 < int(p) < 2**31 for p in parts):
+            raise ValueError("ROCKETWRIGHT_OPENFOAM_USER must be a non-root numeric UID:GID")
+        return explicit
+    if hasattr(os, "getuid") and hasattr(os, "getgid"):
+        return f"{os.getuid()}:{os.getgid()}"
+    return "1000:1000"
+
+
 def docker_command(image: str, case_dir: Path, container: str, cpus: int) -> list[str]:
     """CPU-limited, network-less run as the calling user, so outputs stay deletable."""
     return [
         "docker", "run", "--rm", "--name", container,
         f"--cpus={cpus}", "--network=none",
-        f"--user={os.getuid()}:{os.getgid()}",
+        f"--user={docker_user()}",
         "-e", "HOME=/case", "-e", "MPLCONFIGDIR=/tmp",
         "-v", f"{case_dir}:/case", "-w", "/case",
         image, "rocketcfd", "run", "/case/config.yaml",
@@ -211,6 +224,10 @@ class OpenFoamPipelineBackend:
         return self._image or os.environ.get("ROCKETWRIGHT_OPENFOAM_IMAGE", DEFAULT_IMAGE)
 
     def available(self) -> tuple[bool, str]:
+        try:
+            docker_user()
+        except ValueError as exc:
+            return False, str(exc)
         docker = shutil.which("docker")
         if docker is None:
             return False, "docker not found on PATH"

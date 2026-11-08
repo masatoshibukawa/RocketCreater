@@ -1,0 +1,112 @@
+{
+  "id": "2dba5b7f4fc94d2dbb676bf0901c2dd5",
+  "quality": "preview",
+  "started_at": 1794008759.7456357,
+  "finished_at": 1794008771.1288905,
+  "error": null,
+  "video_directory": "video-photographic-preview-118aaf2347b548f59f0537d553a2b114",
+  "total_s": 11.383254766464233,
+  "trigger": "actual browser button -> API -> detached worker",
+  "source_commit": "6cdae027595132b90bfef761399cdb375581be3f",
+  "cache": {
+    "stage": {
+      "template": {
+        "id": "compact",
+        "camera_distance_m": 1.466505324870671,
+        "fstop": 11
+      },
+      "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+      "reused": true,
+      "stage_sha256": "83dd37a9ed48fad7456584f81ac1ef6120df9c98efd2087782c98d49d8e96948"
+    },
+    "clips": {
+      "design": {
+        "identity": "e4402b8b110660a0031f4f71e9723c1bcde0b2a7bdfb57054188a6a5c6af98bd",
+        "restored": 192,
+        "resumed": 0,
+        "rendered": 0,
+        "frames": 192,
+        "composition_reused": true
+      },
+      "launch": {
+        "identity": "98edb896cd23068e052f65355d03fd8e6a9a1ab032d740c73096adf81968ea3f",
+        "restored": 144,
+        "resumed": 0,
+        "rendered": 0,
+        "frames": 144,
+        "composition_reused": true
+      }
+    },
+    "quality": "preview"
+  },
+  "verification": {
+    "passed": true,
+    "files": [
+      {
+        "file": "design-explanation.mp4",
+        "fps": 12.0,
+        "size": [
+          960,
+          540
+        ],
+        "duration": 16.0,
+        "changing_frames": true,
+        "full_decode": true,
+        "decoded_frames": 192,
+        "audio": "none"
+      },
+      {
+        "file": "launch-cg.mp4",
+        "fps": 12.0,
+        "size": [
+          960,
+          540
+        ],
+        "duration": 12.0,
+        "changing_frames": true,
+        "full_decode": true,
+        "decoded_frames": 144,
+        "audio": "none"
+      }
+    ],
+    "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+    "style": "photographic",
+    "rendered_trajectory": {
+      "passed": true,
+      "frames": 144,
+      "max_position_error_m": 8.913801856635928e-07,
+      "attitude": "illustrative, not integrated attitude dynamics",
+      "position_basis": "object_transform_readback",
+      "scope": "Position records against solver interpolation; not independent image tracking"
+    },
+    "visual_review": "pending",
+    "physical_validation": "not_performed"
+  },
+  "delivery": [
+    {
+      "kind": "photographic_video",
+      "key": "video-photographic-3e8dd0d88e15407bba6b5be36639ed77/design-explanation.mp4",
+      "sha256": "91740c9e7a03290cce56c04818a4976bbb4048911104df24470c38e54216599d",
+      "matches": true
+    },
+    {
+      "kind": "photographic_video",
+      "key": "video-photographic-3e8dd0d88e15407bba6b5be36639ed77/launch-cg.mp4",
+      "sha256": "3d45a4fbb327892e75bb9a8e19b3e9aebcb63109e220b1c23735c766aadb5be3",
+      "matches": true
+    },
+    {
+      "kind": "photographic_preview",
+      "key": "video-photographic-preview-118aaf2347b548f59f0537d553a2b114/design-explanation.mp4",
+      "sha256": "7a1e2c8f30a309a6865ae8db452fad6c7db236a0c91646486625c9638f4d7b7c",
+      "matches": true
+    },
+    {
+      "kind": "photographic_preview",
+      "key": "video-photographic-preview-118aaf2347b548f59f0537d553a2b114/launch-cg.mp4",
+      "sha256": "398c20230316625d4e7bcd52bd61ef45e9cdfae9d064ce249f0fb8f7abebde6d",
+      "matches": true
+    }
+  ],
+  "passed": true
+}

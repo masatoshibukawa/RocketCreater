@@ -1,0 +1,25 @@
+{
+  "videos": [
+    {
+      "currentTime": 16,
+      "duration": 16,
+      "ended": true,
+      "error": null,
+      "height": 540,
+      "src": "/backend/design-projects/0bcc8b763a464e42b031011401bb1269/v4/files/video-photographic-preview-118aaf2347b548f59f0537d553a2b114/design-explanation.mp4",
+      "width": 960
+    },
+    {
+      "currentTime": 12,
+      "duration": 12,
+      "ended": true,
+      "error": null,
+      "height": 540,
+      "src": "/backend/design-projects/0bcc8b763a464e42b031011401bb1269/v4/files/video-photographic-preview-118aaf2347b548f59f0537d553a2b114/launch-cg.mp4",
+      "width": 960
+    }
+  ],
+  "console_errors": [],
+  "preview_button_ready": true,
+  "url": "http://127.0.0.1:3020/"
+}

@@ -1,0 +1,143 @@
+{
+  "source_commit": "8d15fead462cd73fd739890cf4ccfbb992115798",
+  "measurement_script_sha256": "b934ebf99de212c04492fda4408fdc85bfb43ff0114c927c2c3ef668ddb56b64",
+  "project_id": "0bcc8b763a464e42b031011401bb1269",
+  "version": 4,
+  "input_sha256": "7879e8945865636f3264e3936f8d0d65155b68214e512d0bbf267e8fb4c00010",
+  "input_artifact_sha256": {
+    "cad/analysis-envelope-m.stl": "3b0a5dd51a3e4c433b31bfa01dbdea79ae6c7135ac6c25527e2cbc1bd206e5df",
+    "cad/fin-assembly-mm.stl": "e9d96d4fe12e43539a7e97d61832dc7c86daa46ab5d5e0771f9b352704f80938",
+    "cad/fin-mm.3mf": "7979d28f6b7d4046ba9e35bf756590a4b0f7cfd949bf856925b67a19c95e4b25",
+    "cad/fin-mm.stl": "f7fdc517ceda7c279075798ed8fbca48259f7186fe4578713026818d8164b960",
+    "cad/fin-preview.png": "ae0d5968fb6025b535084a4357e9fc37cf35b5a1d8aeb04e82fa74123edb9f32",
+    "cad/fit-ring-mm.3mf": "c2257da7a668196142d2239f7c50dc57c7fd90ab55a09a7d5959b20ff9f89df3",
+    "cad/fit-ring-mm.stl": "8baed57ca9f1b364659e64b76502ab69cc3d0950da317b386eedfb71cc59ffe3",
+    "cad/fit-ring-preview.png": "d065e57ea65da43362b88bff124d59dfec93d9c6730bdea18b346743b1179954",
+    "cad/geometry-check.json": "e8f3f0f5f3040a2ee4f42c691f011428da8d1fc9dd4548ab0b8c0eab826dddff",
+    "cad/nose-mm.3mf": "76a8d999d483156887b9f8f5d1837958de283041d893d6afdb3e8dd811d62290",
+    "cad/nose-mm.stl": "6d5dc4926161da8aebe7bc10e2872ecb6568780d0817c025e489bbfeab282153",
+    "cad/nose-preview.png": "f8a0c3387d04e7532dddc71b148d61e05e66c287784fa322c74d3fa0ba5109a5",
+    "cad/parameters.json": "16584aae8a6d106c6e18d0c6bf08c555b507251e308049c67d4b91dd73fae0fc",
+    "production/assembly-access.json": "7630165d3f339f8e55e3f92a1d9bc5351de923c462f2ecb4374e03a29ca0630d",
+    "production/assembly.json": "a4a1a33d6d9d7222ed76f6a211ee70907e6149d3ba5a654d1fdf511a45cb58fd",
+    "production/bom.csv": "0b8ed4cea8ca68ae62e4d4e69efbe6bfb702d7b66df37487a21d67bde6c2a3a5",
+    "production/design.json": "7ce48812071767a2f7a087a0924b5373f5c162e3518458a7b1bb6a47de024be2",
+    "production/equipment.json": "947f7dcc9c8f6d9eab2437dd5b7967a5f6023e41b0290c85916ab500be2b29b0",
+    "production/instructions.md": "ec6ed472c9aebe19801442ee3afd566c4fe126efc8a1e10a3036d3256541c090",
+    "production/procurement.json": "2fa0aeec4744fc22003c73c4089c783e0cf7384f1828bfb212bd12d1b9097ff6",
+    "production/report.json": "6afa4cc8fc16f4bc65fe34d3b29555830fdbcc50ab9a1c6632bdd09ecaf6ef35",
+    "production/steps.json": "6eb2388f78ec3618021e6b489dcf5332086dda4c602c1805598f16c24261a4c2",
+    "production/trace.json": "0fa849ba0d8d62df74898e0232111c5fbd2d88e868b9ce563c1435c041c63698"
+  },
+  "previous_video_sha256": {
+    "video-photographic/design-explanation.mp4": "769e29ea78a8bbe7dccc6fd13a5beea8911558bcbc1cbb5050a8ace5117aa80c",
+    "video-photographic/launch-cg.mp4": "0a446232a5387d23270304bd4c63ce0eb116ca6b86683b8cd784e8c5036fe9d4"
+  },
+  "python": "3.11.6",
+  "platform": "Windows",
+  "gpu": "NVIDIA GeForce RTX 4090, 610.88, 24564 MiB",
+  "style": "photographic",
+  "started_at_utc": "2026-11-06T22:34:27.861240+00:00",
+  "timing_scope": "direction request through verified and registered videos",
+  "stages": [
+    {
+      "name": "blender_render",
+      "started_at_utc": "2026-11-06T22:34:28.161981+00:00",
+      "completed": true,
+      "returncode": 0,
+      "elapsed_s": 326.439420199953,
+      "finished_at_utc": "2026-11-06T22:39:54.596474+00:00"
+    },
+    {
+      "name": "compose_and_verify",
+      "started_at_utc": "2026-11-06T22:39:54.596474+00:00",
+      "completed": true,
+      "returncode": 0,
+      "elapsed_s": 25.60336620011367,
+      "finished_at_utc": "2026-11-06T22:40:20.198630+00:00"
+    }
+  ],
+  "cold_frames": false,
+  "plan_reused": true,
+  "passed": true,
+  "visual_review": "pending",
+  "paid_api_used": false,
+  "direction_s": 8.998904377222061e-07,
+  "direction_model": "gemma4:12b",
+  "resource_wait_s": 0.0004235000815242529,
+  "output_directory": "video-photographic-3e8dd0d88e15407bba6b5be36639ed77",
+  "verification": {
+    "passed": true,
+    "files": [
+      {
+        "file": "design-explanation.mp4",
+        "fps": 24.0,
+        "size": [
+          1920,
+          1080
+        ],
+        "duration": 16.0,
+        "changing_frames": true,
+        "full_decode": true,
+        "decoded_frames": 384,
+        "audio": "none"
+      },
+      {
+        "file": "launch-cg.mp4",
+        "fps": 24.0,
+        "size": [
+          1920,
+          1080
+        ],
+        "duration": 12.0,
+        "changing_frames": true,
+        "full_decode": true,
+        "decoded_frames": 288,
+        "audio": "none"
+      }
+    ],
+    "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+    "style": "photographic",
+    "rendered_trajectory": {
+      "passed": true,
+      "frames": 288,
+      "max_position_error_m": 9.177030335649761e-07,
+      "attitude": "illustrative, not integrated attitude dynamics",
+      "position_basis": "object_transform_readback",
+      "scope": "Position records against solver interpolation; not independent image tracking"
+    },
+    "visual_review": "pending",
+    "physical_validation": "not_performed"
+  },
+  "frame_render_s_by_clip": {
+    "design": 1396.9761333465576,
+    "launch": 1006.9478814601898
+  },
+  "progress": {
+    "job_id": "f905fcbe5045431f811b7da13855f2e3",
+    "phase": "rendering",
+    "completed": 672,
+    "total": 672,
+    "reused": 559,
+    "elapsed_s": 323.788649559021,
+    "eta_s": [
+      0.0,
+      0.0
+    ],
+    "eta_basis": "measured last frames; render only"
+  },
+  "outputs": [
+    {
+      "name": "design-explanation.mp4",
+      "bytes": 1449560,
+      "sha256": "91740c9e7a03290cce56c04818a4976bbb4048911104df24470c38e54216599d"
+    },
+    {
+      "name": "launch-cg.mp4",
+      "bytes": 3923782,
+      "sha256": "3d45a4fbb327892e75bb9a8e19b3e9aebcb63109e220b1c23735c766aadb5be3"
+    }
+  ],
+  "total_s": 352.6749801998958,
+  "finished_at_utc": "2026-11-06T22:40:20.532309+00:00"
+}

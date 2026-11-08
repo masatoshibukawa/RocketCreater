@@ -134,6 +134,9 @@ button:disabled { cursor:default; opacity:.45; }
 .production-workspace { padding:26px 32px; }
 /* The quick files and the saved-design flow share one scroll, above the crew. */
 .production-stack { height:100%; overflow:auto; padding-bottom:min(19cqw,150px); }
+.workshop-canvas:has(> .production-stack:not([hidden])) { display:flex; flex-direction:column; }
+.workshop-canvas:has(> .production-stack:not([hidden])) > .production-stack { flex:1; min-height:0; height:auto; padding-bottom:24px; }
+.workshop-app .workshop-canvas:has(> .production-stack:not([hidden])) > .crew-embedded { position:relative; flex:none; min-height:28px; }
 .production-stack .production-workspace { height:auto; overflow:visible; }
 .production-workspace h2 { font-size:20px; }
 .workshop-app .wb-file-list a { background:#282e37; border-color:#4f5e70; border-radius:4px; color:#cfe3ff; }

@@ -1,0 +1,25 @@
+{
+  "project_id": "f68dfdab0e6f4ca6b8e75b986c38bfe0",
+  "template_recommendation": "1.5 Lの容量に適合しており、かつ「回収付き」という仕様がパラシュート回収の用途に合致するため。（出発案・未解析）",
+  "movies": [
+    {
+      "currentTime": 16,
+      "duration": 16,
+      "ended": true,
+      "error": null,
+      "height": 540,
+      "src": "/backend/design-projects/f68dfdab0e6f4ca6b8e75b986c38bfe0/v1/files/video-photographic-preview/design-explanation.mp4",
+      "width": 960
+    },
+    {
+      "currentTime": 12,
+      "duration": 12,
+      "ended": true,
+      "error": null,
+      "height": 540,
+      "src": "/backend/design-projects/f68dfdab0e6f4ca6b8e75b986c38bfe0/v1/files/video-photographic-preview/launch-cg.mp4",
+      "width": 960
+    }
+  ],
+  "console": []
+}

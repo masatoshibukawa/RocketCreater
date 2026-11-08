@@ -1,0 +1,31 @@
+{
+  "reference_chat": "01a1a42d-e515-7920-888e-19704ae2bbef",
+  "library_commit": "3da2a93",
+  "files": [
+    {
+      "file": "kirin-lemon-15l.step",
+      "sha256": "7f153d5904b092f8558637695b0adbdc59b140136b1742d4321d6477182b4558",
+      "repository": "https://github.com/castetsb/waterRocketToolbox",
+      "credit": "castetsb / OpenSource Engineer",
+      "license": "MIT",
+      "commit": "d87fd7d0cd3d4465272dbdb49eec49352ca4dd55"
+    },
+    {
+      "file": "soda-2l.step",
+      "sha256": "d60bbf064d9af1da8c3726de770590a738154c38b43aa35e931725cea93daa99",
+      "repository": "https://github.com/castetsb/waterRocketToolbox",
+      "credit": "castetsb / OpenSource Engineer",
+      "license": "MIT",
+      "commit": "d87fd7d0cd3d4465272dbdb49eec49352ca4dd55"
+    },
+    {
+      "file": "schlatter-bottle.scad",
+      "sha256": "cac010559d0a108ca675d8da6a65c7fdf48add17605c3ac0bcf7f224e63df1a2",
+      "repository": "https://github.com/adrianschlatter/RocketFins",
+      "credit": "Adrian Schlatter",
+      "license": "BSD-2-Clause",
+      "commit": "57f2c9fd475be499aafb2655b12f20a75f135e60"
+    }
+  ],
+  "notes": "Original STEP/SCAD retained; normalized meshes and visual clipping are derivative visualization assets; dimensions not measured on the user equipment."
+}

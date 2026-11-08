@@ -1,0 +1,23 @@
+{
+  "source_commit": "3ea84b2",
+  "project_id": "7c91ad0674784228a2cc77d0e77d0976",
+  "model": "gemma4:12b",
+  "intent": {
+    "name": "比較用条件抽出",
+    "target_altitude_m": 20.0,
+    "payload_g": 60.0,
+    "bottle_l": null,
+    "budget_jpy": null,
+    "recovery_required": true,
+    "pressure_kpa": 300.0,
+    "water_fill_pct": null,
+    "nozzle_mm": null,
+    "fin_span_mm": null,
+    "fin_thickness_mm": null,
+    "altitude_rule": "band_10pct",
+    "reason": "依頼された高度、搭載重量、圧力、回収条件を抽出"
+  },
+  "candidate_count": 2,
+  "legacy_input_preserved": true,
+  "rail_migrated": true
+}

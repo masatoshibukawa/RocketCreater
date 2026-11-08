@@ -1,0 +1,274 @@
+{
+  "source_commit": "6cdae027595132b90bfef761399cdb375581be3f",
+  "source_job_sha256": "37a61a8f299dad922d206642b7884aec0445ae8a644973f525216add51fe3ed5",
+  "paid_api_used": false,
+  "variants": {
+    "caption": {
+      "total_s": 10.461959199979901,
+      "stages_s": [
+        7.538858100073412,
+        2.922852799994871
+      ],
+      "cache": {
+        "stage": {
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.466505324870671,
+            "fstop": 11
+          },
+          "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+          "reused": true,
+          "stage_sha256": "83dd37a9ed48fad7456584f81ac1ef6120df9c98efd2087782c98d49d8e96948"
+        },
+        "clips": {
+          "design": {
+            "identity": "e4402b8b110660a0031f4f71e9723c1bcde0b2a7bdfb57054188a6a5c6af98bd",
+            "restored": 192,
+            "resumed": 0,
+            "rendered": 0,
+            "frames": 192,
+            "composition_reused": false
+          },
+          "launch": {
+            "identity": "98edb896cd23068e052f65355d03fd8e6a9a1ab032d740c73096adf81968ea3f",
+            "restored": 144,
+            "resumed": 0,
+            "rendered": 0,
+            "frames": 144,
+            "composition_reused": true
+          }
+        },
+        "quality": "preview"
+      },
+      "scene": {
+        "style": "photographic",
+        "dimensions_sha256": "a12e6649f21789134369e2f206602a7668ea0f663cc939c9dec70a1aa9cbe0fc",
+        "mesh_vertex_hashes": {
+          "Adopted CAD fin0": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin1": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin2": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin3": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD nose0": "82de43da5f2eec8a9d10ed2c1d767a5a9334efac563fbe207d25c067315c8774",
+          "Bottle": "b4962bbf01b8a0a6d226ae7bd2c65723a80282c493a5deda6dc5b47a21a92d72",
+          "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "template": {
+          "id": "compact",
+          "camera_distance_m": 1.466505324870671,
+          "fstop": 11
+        },
+        "source_id": "isolated-cache-probe:caption",
+        "bottle_detail": "unmeasured illustrative PET envelope",
+        "camera": "fixed elevated CG viewpoint, not filmed observation",
+        "physical_validation": "not_performed"
+      },
+      "isolated_fixture": true,
+      "verification": {
+        "passed": true,
+        "files": [
+          {
+            "file": "design-explanation.mp4",
+            "fps": 12.0,
+            "size": [
+              960,
+              540
+            ],
+            "duration": 16.0,
+            "changing_frames": true,
+            "full_decode": true,
+            "decoded_frames": 192,
+            "audio": "none"
+          },
+          {
+            "file": "launch-cg.mp4",
+            "fps": 12.0,
+            "size": [
+              960,
+              540
+            ],
+            "duration": 12.0,
+            "changing_frames": true,
+            "full_decode": true,
+            "decoded_frames": 144,
+            "audio": "none"
+          }
+        ],
+        "source_id": "isolated-cache-probe:caption",
+        "style": "photographic",
+        "rendered_trajectory": {
+          "passed": true,
+          "frames": 144,
+          "max_position_error_m": 8.913801856635928e-07,
+          "attitude": "illustrative, not integrated attitude dynamics",
+          "position_basis": "object_transform_readback",
+          "scope": "Position records against solver interpolation; not independent image tracking"
+        },
+        "visual_review": "pending",
+        "physical_validation": "not_performed"
+      }
+    },
+    "trajectory": {
+      "total_s": 167.48475649999455,
+      "stages_s": [
+        165.32292400021106,
+        2.161517000058666
+      ],
+      "cache": {
+        "stage": {
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.466505324870671,
+            "fstop": 11
+          },
+          "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+          "reused": true,
+          "stage_sha256": "83dd37a9ed48fad7456584f81ac1ef6120df9c98efd2087782c98d49d8e96948"
+        },
+        "clips": {
+          "design": {
+            "identity": "e4402b8b110660a0031f4f71e9723c1bcde0b2a7bdfb57054188a6a5c6af98bd",
+            "restored": 192,
+            "resumed": 0,
+            "rendered": 0,
+            "frames": 192,
+            "composition_reused": true
+          },
+          "launch": {
+            "identity": "ebbf1ae8a2f4864b6e3f0a784c21685b233efd1a3876d9e422d576437d5fb5aa",
+            "restored": 0,
+            "resumed": 0,
+            "rendered": 144,
+            "frames": 144,
+            "composition_reused": false
+          }
+        },
+        "quality": "preview"
+      },
+      "scene": {
+        "style": "photographic",
+        "dimensions_sha256": "a12e6649f21789134369e2f206602a7668ea0f663cc939c9dec70a1aa9cbe0fc",
+        "mesh_vertex_hashes": {
+          "Adopted CAD fin0": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin1": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin2": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin3": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD nose0": "82de43da5f2eec8a9d10ed2c1d767a5a9334efac563fbe207d25c067315c8774",
+          "Bottle": "b4962bbf01b8a0a6d226ae7bd2c65723a80282c493a5deda6dc5b47a21a92d72",
+          "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "template": {
+          "id": "compact",
+          "camera_distance_m": 1.466505324870671,
+          "fstop": 11
+        },
+        "source_id": "isolated-cache-probe:synthetic-trajectory-not-a-design",
+        "bottle_detail": "unmeasured illustrative PET envelope",
+        "camera": "fixed elevated CG viewpoint, not filmed observation",
+        "physical_validation": "not_performed"
+      },
+      "isolated_fixture": true,
+      "verification": {
+        "passed": true,
+        "files": [
+          {
+            "file": "design-explanation.mp4",
+            "fps": 12.0,
+            "size": [
+              960,
+              540
+            ],
+            "duration": 16.0,
+            "changing_frames": true,
+            "full_decode": true,
+            "decoded_frames": 192,
+            "audio": "none"
+          },
+          {
+            "file": "launch-cg.mp4",
+            "fps": 12.0,
+            "size": [
+              960,
+              540
+            ],
+            "duration": 12.0,
+            "changing_frames": true,
+            "full_decode": true,
+            "decoded_frames": 144,
+            "audio": "none"
+          }
+        ],
+        "source_id": "isolated-cache-probe:synthetic-trajectory-not-a-design",
+        "style": "photographic",
+        "rendered_trajectory": {
+          "passed": true,
+          "frames": 144,
+          "max_position_error_m": 8.752513807053219e-07,
+          "attitude": "illustrative, not integrated attitude dynamics",
+          "position_basis": "object_transform_readback",
+          "scope": "Position records against solver interpolation; not independent image tracking"
+        },
+        "visual_review": "pending",
+        "physical_validation": "not_performed"
+      }
+    },
+    "full_resolution_stills": {
+      "total_s": 23.300450999988243,
+      "stages_s": [
+        23.300146399997175
+      ],
+      "cache": {
+        "stage": {
+          "template": {
+            "id": "compact",
+            "camera_distance_m": 1.466505324870671,
+            "fstop": 11
+          },
+          "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+          "reused": true,
+          "stage_sha256": "83dd37a9ed48fad7456584f81ac1ef6120df9c98efd2087782c98d49d8e96948"
+        },
+        "clips": {
+          "design": {
+            "identity": "1038a778d793a962b4a3c5bab9c311c20cee6a6096f28dfffe686baf5484d721",
+            "restored": 0,
+            "resumed": 0,
+            "rendered": 3,
+            "frames": 384
+          },
+          "launch": {
+            "identity": "839ffbced86b1e1d3b7d67ab1212df217f0d68ce5bf3c640db81ac263e227d0c",
+            "restored": 0,
+            "resumed": 0,
+            "rendered": 3,
+            "frames": 288
+          }
+        },
+        "quality": "final"
+      },
+      "scene": {
+        "style": "photographic",
+        "dimensions_sha256": "a12e6649f21789134369e2f206602a7668ea0f663cc939c9dec70a1aa9cbe0fc",
+        "mesh_vertex_hashes": {
+          "Adopted CAD fin0": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin1": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin2": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD fin3": "7ed81c5508ed7d58c3b657b797313cdf9af1224943644359e37f9f5f88ad83e4",
+          "Adopted CAD nose0": "82de43da5f2eec8a9d10ed2c1d767a5a9334efac563fbe207d25c067315c8774",
+          "Bottle": "b4962bbf01b8a0a6d226ae7bd2c65723a80282c493a5deda6dc5b47a21a92d72",
+          "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "template": {
+          "id": "compact",
+          "camera_distance_m": 1.466505324870671,
+          "fstop": 11
+        },
+        "source_id": "0bcc8b763a464e42b031011401bb1269:v4",
+        "bottle_detail": "unmeasured illustrative PET envelope",
+        "camera": "fixed elevated CG viewpoint, not filmed observation",
+        "physical_validation": "not_performed"
+      },
+      "isolated_fixture": true
+    }
+  },
+  "passed": true
+}

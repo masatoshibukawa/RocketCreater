@@ -1,0 +1,25 @@
+{
+  "videos": [
+    {
+      "current": 16,
+      "duration": 16,
+      "ended": true,
+      "error": null,
+      "height": 1080,
+      "paused": true,
+      "src": "http://127.0.0.1:3019/backend/design-projects/0bcc8b763a464e42b031011401bb1269/v4/files/video-photographic-3e8dd0d88e15407bba6b5be36639ed77/design-explanation.mp4",
+      "width": 1920
+    },
+    {
+      "current": 12,
+      "duration": 12,
+      "ended": true,
+      "error": null,
+      "height": 1080,
+      "paused": true,
+      "src": "http://127.0.0.1:3019/backend/design-projects/0bcc8b763a464e42b031011401bb1269/v4/files/video-photographic-3e8dd0d88e15407bba6b5be36639ed77/launch-cg.mp4",
+      "width": 1920
+    }
+  ],
+  "console_errors": []
+}

@@ -1,0 +1,35 @@
+{
+  "style": "photographic",
+  "dimensions_sha256": "7ef79806b4506be9569dae2b249f999535ddde41e60457bcdae9045aa1ce22c6",
+  "mesh_vertex_hashes": {
+    "Adopted CAD fin0": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+    "Adopted CAD fin1": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+    "Adopted CAD fin2": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+    "Adopted CAD fin3": "8f51589e6e6df55a169d78eb384fe453f5950c240aeabb01d0e4eba0d5006843",
+    "Adopted CAD nose0": "7e0619c58c12c2cb72a8b44cb42c5ce195ec845b8bb01cdd0b92393908ce71fb",
+    "Bottle": "9352ef7c6329a74c3d1c5197f4bec98553047df5ae80c62afa5eba1fab2f89ad",
+    "Remaining water": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "template": {
+    "id": "compact",
+    "camera_distance_m": 1.55043165086787,
+    "fstop": 11
+  },
+  "body_reference": {
+    "kind": "reference-mesh",
+    "source": "castetsb / waterRocketToolbox / Kirin Lemon",
+    "license": "MIT",
+    "mesh": "reference/kirin-lemon-15l-visual.stl",
+    "profile": "reference/kirin-lemon-15l-visual.json",
+    "asset_sha256": {
+      "reference/kirin-lemon-15l-visual.stl": "10c0ef086dfa06d1a691014c3bd43d537de5159b0d56f08456bcabfe14a23524",
+      "reference/kirin-lemon-15l-visual.json": "0c201df3ac9074ab28021ab189ca91b28d295eac1eda6547399179b068c7fde1"
+    },
+    "id": "pet-15l",
+    "basis": "reference CAD fitted to editable envelope; unmeasured"
+  },
+  "source_id": "f68dfdab0e6f4ca6b8e75b986c38bfe0:v1",
+  "bottle_detail": "unmeasured illustrative PET envelope",
+  "camera": "fixed elevated CG viewpoint, not filmed observation",
+  "physical_validation": "not_performed"
+}

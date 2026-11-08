@@ -1,0 +1,18 @@
+{
+  "reason": "Only JSON publication retry changed; pixel recipe and complete job inputs unchanged",
+  "old_identity": "cae64239adf47bfc47e5834efa01239f4752f46bc6a82a2add1e61549474833d",
+  "new_identity": "043cfb68f459e0116d10bda6efd0efe5917da915e3abb78e8e5c8a67680180ff",
+  "validated_frames": 559,
+  "unchanged_code": {
+    "scripts/render_workbench_scene.py": "eef5d880e0237239ef515296b603c8e7b2c59c5b2834d0a3226e36e45e429ef1",
+    "scripts/compose_workbench_video.py": "2a8e09421360989d66bf98f9bf8467a57e0ec5755440eb473aca7e6a225b7c21",
+    "AIvideo/pet-rocket/realism/appearance.py": "73c9734cd613a44e11ea4973be2df0e7e909a00f8a27ddc3be6c4bfd323cbb5e",
+    "rocketwright/agent/production.py": "144773d7f43370fb83cd890317d9cd0c6dc31405911ac6a7dcde9384b79416a6"
+  },
+  "checkpoint_code_before": "48329dcc4849a0253bb6e900b522e3810e3564af4bc794b40058104d70801456",
+  "checkpoint_code_after": "c8b0fc951afc2f98ee935a27d7f9b042f4e7362a576cebbbfb1ad4307fc85a04",
+  "failed_measurement_sha256": "358d5b4b377d6052f254f866fd27c365879c3692deff355bf64e919ea4eb14c1",
+  "current_source_commit": "8d15fead462cd73fd739890cf4ccfbb992115798",
+  "at": 1794004469.1742945,
+  "inputs_equal_except_job_id_and_cancel_path": true
+}

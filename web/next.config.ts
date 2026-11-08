@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  distDir: process.env.ROCKETWRIGHT_NEXT_DIST ?? ".next",
   reactStrictMode: true,
   experimental: { proxyTimeout: 900000 },
   async rewrites() {

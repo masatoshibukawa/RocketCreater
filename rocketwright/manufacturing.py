@@ -46,16 +46,16 @@ class PrintGeometry(BottleGeometry):
         if design.geometry is not None:
             return cls.model_validate(design.geometry.model_dump())
         # Explicitly unmeasured defaults; editing saves these in the design.
-        d = (4 * design.bottle_volume_m3 / (math.pi * 3.5)) ** (1 / 3) * 1000
+        scale = (design.bottle_volume_m3 / 0.002) ** (1 / 3)
         return cls(
-            body_diameter_mm=d,
-            body_height_mm=3.5 * d,
-            nose_length_mm=0.8 * d,
-            fin_root_mm=d,
-            fin_tip_mm=0.35 * d,
-            fin_span_mm=0.8 * d,
-            fin_tail_inset_mm=0.25 * 3.5 * d,
-            fin_sweep_mm=0.35 * d,
+            body_diameter_mm=110 * scale,
+            body_height_mm=315 * scale,
+            nose_length_mm=95 * scale,
+            fin_root_mm=100 * scale,
+            fin_tip_mm=36 * scale,
+            fin_span_mm=50 * scale,
+            fin_tail_inset_mm=100 * scale,
+            fin_sweep_mm=14 * scale,
         )
 
     @classmethod
@@ -120,6 +120,7 @@ def parameters(request: PrintRequest) -> dict:
     c["include_fins"] = request.design.has_fins
     c["bottle"]["description"] = "Design-derived envelope; dimensions are not physically measured"
     c["bottle"].update(
+        radial_clearance=g.radial_clearance_mm,
         body_diameter=g.body_diameter_mm,
         height=g.body_height_mm,
         cylinder_start_z=0.25 * g.body_height_mm,
@@ -142,6 +143,7 @@ def parameters(request: PrintRequest) -> dict:
             high = slope
     n["slope"] = (low + high) / 2
     c["fin"].update(
+        slot_width=g.fin_slot_width_mm,
         count=g.fin_count,
         thickness=g.fin_thickness_mm,
         mount_tail_z=g.fin_tail_inset_mm,

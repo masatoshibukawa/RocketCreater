@@ -1,0 +1,362 @@
+[
+  {
+    "id": "pet-1l",
+    "report": {
+      "passed": true,
+      "source_id": "35af2f25063440b895a9e886908988b6:v1",
+      "video_directory": "preview",
+      "scope": "saved design scene; exact CAD vertices/faces, bounds, scale and placement",
+      "blender_version": "5.2.2 LTS",
+      "render_engine": "CYCLES",
+      "cycles_device": "GPU",
+      "samples": 32,
+      "objects": [
+        {
+          "object": "Adopted CAD fin0",
+          "mesh_sha256": "fc461b1343091262b99159a4ff4bb4945460595d2f1712c42b6b1f736549ff20",
+          "source_stl_sha256": "a4bd993398aae6db4edc8f53dc915054c423685d55e5a2b78075e7e0792e8a96",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.07937005162239075
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            0.0
+          ]
+        },
+        {
+          "object": "Adopted CAD fin1",
+          "mesh_sha256": "fc461b1343091262b99159a4ff4bb4945460595d2f1712c42b6b1f736549ff20",
+          "source_stl_sha256": "a4bd993398aae6db4edc8f53dc915054c423685d55e5a2b78075e7e0792e8a96",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.07937005162239075
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            1.5707963705062866
+          ]
+        },
+        {
+          "object": "Adopted CAD fin2",
+          "mesh_sha256": "fc461b1343091262b99159a4ff4bb4945460595d2f1712c42b6b1f736549ff20",
+          "source_stl_sha256": "a4bd993398aae6db4edc8f53dc915054c423685d55e5a2b78075e7e0792e8a96",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.07937005162239075
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            3.1415927410125732
+          ]
+        },
+        {
+          "object": "Adopted CAD fin3",
+          "mesh_sha256": "fc461b1343091262b99159a4ff4bb4945460595d2f1712c42b6b1f736549ff20",
+          "source_stl_sha256": "a4bd993398aae6db4edc8f53dc915054c423685d55e5a2b78075e7e0792e8a96",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.07937005162239075
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            4.71238899230957
+          ]
+        },
+        {
+          "object": "Adopted CAD nose0",
+          "mesh_sha256": "d6037144023c11a0eb571421a9b48fe5ece00dab5b7bac52a1b20f555744bf22",
+          "source_stl_sha256": "083a796d5b04054ec684ce0e383e5250e06fce99df160cb2920b2a4035094a38",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.20701409876346588
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            0.0
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "pet-15l",
+    "report": {
+      "passed": true,
+      "source_id": "59a10cf6aa0a48529b1c2d56bf91ed24:v1",
+      "video_directory": "preview",
+      "scope": "saved design scene; exact CAD vertices/faces, bounds, scale and placement",
+      "blender_version": "5.2.2 LTS",
+      "render_engine": "CYCLES",
+      "cycles_device": "GPU",
+      "samples": 32,
+      "objects": [
+        {
+          "object": "Adopted CAD fin0",
+          "mesh_sha256": "f71658751ed8d536c5bfab3d3848b350f5c9884100a1b4c72fc660e8a378e218",
+          "source_stl_sha256": "59c517ad58f14cd4f6095f941a9e6add048ea9f54dd8dcf32c2105023977295b",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.09085603058338165
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            0.0
+          ]
+        },
+        {
+          "object": "Adopted CAD fin1",
+          "mesh_sha256": "f71658751ed8d536c5bfab3d3848b350f5c9884100a1b4c72fc660e8a378e218",
+          "source_stl_sha256": "59c517ad58f14cd4f6095f941a9e6add048ea9f54dd8dcf32c2105023977295b",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.09085603058338165
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            1.5707963705062866
+          ]
+        },
+        {
+          "object": "Adopted CAD fin2",
+          "mesh_sha256": "f71658751ed8d536c5bfab3d3848b350f5c9884100a1b4c72fc660e8a378e218",
+          "source_stl_sha256": "59c517ad58f14cd4f6095f941a9e6add048ea9f54dd8dcf32c2105023977295b",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.09085603058338165
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            3.1415927410125732
+          ]
+        },
+        {
+          "object": "Adopted CAD fin3",
+          "mesh_sha256": "f71658751ed8d536c5bfab3d3848b350f5c9884100a1b4c72fc660e8a378e218",
+          "source_stl_sha256": "59c517ad58f14cd4f6095f941a9e6add048ea9f54dd8dcf32c2105023977295b",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.09085603058338165
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            4.71238899230957
+          ]
+        },
+        {
+          "object": "Adopted CAD nose0",
+          "mesh_sha256": "5870e464e4a18b1fd52fc8c623047e2ec32b98d8a7c6d412a561b09718023722",
+          "source_stl_sha256": "8af05ff3e302f383f20987aa264865713ff4e4f1e6e51c2acb9dfd3b0cd9dd07",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.25822713971138
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            0.0
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "pet-2l",
+    "report": {
+      "passed": true,
+      "source_id": "9b430fd4c38d48a1a96f05be8f824ad7:v1",
+      "video_directory": "preview",
+      "scope": "saved design scene; exact CAD vertices/faces, bounds, scale and placement",
+      "blender_version": "5.2.2 LTS",
+      "render_engine": "CYCLES",
+      "cycles_device": "GPU",
+      "samples": 32,
+      "objects": [
+        {
+          "object": "Adopted CAD fin0",
+          "mesh_sha256": "91e4fe08faa7f771deb1a87cc1277426597c6750efcf3f24eb987fa5d5a7b6d5",
+          "source_stl_sha256": "9a9e942ff92fefbf95fbe62d0306f0e6eba895b3e99092eca5c99c01e2baeaac",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.10000000149011612
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            0.0
+          ]
+        },
+        {
+          "object": "Adopted CAD fin1",
+          "mesh_sha256": "91e4fe08faa7f771deb1a87cc1277426597c6750efcf3f24eb987fa5d5a7b6d5",
+          "source_stl_sha256": "9a9e942ff92fefbf95fbe62d0306f0e6eba895b3e99092eca5c99c01e2baeaac",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.10000000149011612
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            1.5707963705062866
+          ]
+        },
+        {
+          "object": "Adopted CAD fin2",
+          "mesh_sha256": "91e4fe08faa7f771deb1a87cc1277426597c6750efcf3f24eb987fa5d5a7b6d5",
+          "source_stl_sha256": "9a9e942ff92fefbf95fbe62d0306f0e6eba895b3e99092eca5c99c01e2baeaac",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.10000000149011612
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            3.1415927410125732
+          ]
+        },
+        {
+          "object": "Adopted CAD fin3",
+          "mesh_sha256": "91e4fe08faa7f771deb1a87cc1277426597c6750efcf3f24eb987fa5d5a7b6d5",
+          "source_stl_sha256": "9a9e942ff92fefbf95fbe62d0306f0e6eba895b3e99092eca5c99c01e2baeaac",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.10000000149011612
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            4.71238899230957
+          ]
+        },
+        {
+          "object": "Adopted CAD nose0",
+          "mesh_sha256": "f8ff12e4b864b019544aafe05906b4127936d46e31e961cd7d341127e2c92733",
+          "source_stl_sha256": "3a49ab2e924d9e3960279c1b41850ed8ccf5e05ab01ef8763c99eda9167ef994",
+          "maximum_print_pose_bounds_error_mm": 0.0,
+          "scale": [
+            0.0010000000474974513,
+            0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "local_position_m": [
+            0.0,
+            0.0,
+            0.2493000030517578
+          ],
+          "local_rotation_rad": [
+            0.0,
+            -0.0,
+            0.0
+          ]
+        }
+      ]
+    }
+  }
+]

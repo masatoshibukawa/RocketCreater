@@ -23,7 +23,17 @@
     "fin_thickness_mm": 2.4
   },
   "other_dry_mass_g": 150,
-  "requirement": {"goal_kind": "altitude", "target_altitude_m": 30},
-  "env": {"wind_speed_mps": 1.5, "wind_direction_deg": 270},
-  "assumptions": {"gust_mps": 0.5, "warm_wait_s": 120}
+  "requirement": {
+    "goal_kind": "altitude",
+    "target_altitude_m": 30,
+    "payload_mass_kg": 0.06
+  },
+  "env": {
+    "wind_speed_mps": 1.5,
+    "wind_direction_deg": 270
+  },
+  "assumptions": {
+    "gust_mps": 0.5,
+    "warm_wait_s": 120
+  }
 }

@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "version": 4,
+  "adopted": true,
+  "active": null,
+  "error": null,
+  "files": [
+    {
+      "key": "video-photographic/design-explanation.mp4",
+      "kind": "photographic_video_history",
+      "bytes": 1525122,
+      "sha256": "769e29ea78a8bbe7dccc6fd13a5beea8911558bcbc1cbb5050a8ace5117aa80c"
+    },
+    {
+      "key": "video-photographic/launch-cg.mp4",
+      "kind": "photographic_video_history",
+      "bytes": 1071506,
+      "sha256": "0a446232a5387d23270304bd4c63ce0eb116ca6b86683b8cd784e8c5036fe9d4"
+    },
+    {
+      "key": "video-photographic-3e8dd0d88e15407bba6b5be36639ed77/design-explanation.mp4",
+      "kind": "photographic_video",
+      "bytes": 1449560,
+      "sha256": "91740c9e7a03290cce56c04818a4976bbb4048911104df24470c38e54216599d"
+    },
+    {
+      "key": "video-photographic-3e8dd0d88e15407bba6b5be36639ed77/launch-cg.mp4",
+      "kind": "photographic_video",
+      "bytes": 3923782,
+      "sha256": "3d45a4fbb327892e75bb9a8e19b3e9aebcb63109e220b1c23735c766aadb5be3"
+    }
+  ]
+}

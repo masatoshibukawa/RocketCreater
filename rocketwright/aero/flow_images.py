@@ -21,11 +21,11 @@ def _flow_directory(artifacts_dir: str | None) -> Path | None:
 def flow_images(artifacts_dir: str | None) -> list[dict]:
     """Name, speed and angle of each picture; the analytic backends leave none."""
     flow = _flow_directory(artifacts_dir)
-    if flow is None or not flow.is_dir():
+    if flow is None or flow.is_symlink() or not flow.is_dir():
         return []
     images = []
     for path in sorted(flow.glob("*.png")):
-        if not FLOW_IMAGE_NAME.fullmatch(path.name):
+        if not FLOW_IMAGE_NAME.fullmatch(path.name) or path.is_symlink() or not path.is_file():
             continue
         case = FLOW_IMAGE_CASE.fullmatch(path.name)
         images.append(
@@ -50,7 +50,7 @@ def flow_image_path(artifacts_dir: str | None, name: str) -> Path:
     if ".." in name or not FLOW_IMAGE_NAME.fullmatch(name):
         raise KeyError("Unknown image")
     flow = _flow_directory(artifacts_dir)
-    if flow is None:
+    if flow is None or flow.is_symlink() or (flow / name).is_symlink():
         raise KeyError("Unknown image")
     path = (flow / name).resolve()
     if path.parent != flow or not path.is_file():

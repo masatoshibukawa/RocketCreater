@@ -1,14 +1,19 @@
-"""Assembly trial instructions from the current adopted geometry and step records."""
+"""Versioned assembly instructions, vector design sheet and calculation record."""
 
 import csv
 import json
+from math import cos, pi, sin
 from xml.sax.saxutils import escape
 
-from reportlab.graphics.shapes import Drawing, Polygon, String
+from reportlab.graphics import renderPDF
+from reportlab.graphics.shapes import Circle, Drawing, Polygon
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle
+from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import (
+    Image,
+    KeepTogether,
     PageBreak,
     Paragraph,
     SimpleDocTemplate,
@@ -18,199 +23,500 @@ from reportlab.platypus import (
 )
 
 from rocketwright.agent.manual import japanese_font
-from rocketwright.drawing import render_side_view_svg
-from rocketwright.schema import BottleDesign
+from rocketwright.agent.project_assembly import assembly_assessment
+from rocketwright.agent.project_assembly_guide import assembly_procedures
+from rocketwright.agent.project_detail_drawing import fin_detail, nose_detail
+from rocketwright.agent.project_drawing import (
+    ACCENT,
+    BODY,
+    INK,
+    MUTED,
+    PAPER,
+    PART,
+    RULE,
+    design_plate,
+    dimension,
+    end_view,
+    fin_projection,
+    fit_labels,
+    label,
+    line,
+    mm,
+    panel,
+    plate_svg,
+    side_view,
+)
+from rocketwright.agent.project_equipment import procurement_summary
+
+WIDTH = 490
+ACCESS_STATUS = {
+    "not_evaluated": "未評価",
+    "screen_pass": "公称寸法を比較済み",
+    "interference": "干渉候補",
+}
+OBS_STATUS = {"unconfirmed": "未確認", "needs_change": "要修正", "observed": "現物確認"}
+PART_NAMES = {
+    "bottle": "ボトル",
+    "nose": "ノーズ",
+    "soft_cap": "軟質キャップ",
+    "fixing": "固定材",
+    "other": "その他",
+    "fin": "フィン",
+    "payload": "搭載物",
+    "recovery": "回収部",
+}
+REQUIREMENT_STATUS = {
+    "pass": "計算・入力確認済み",
+    "fail": "未達",
+    "not_required": "要求なし",
+    "not_evaluated": "未評価",
+}
+
+
+def step_figure(g, cad, step, font):
+    d = Drawing(WIDTH, 166)
+    captions = {
+        "parts": "基準をそろえる",
+        "finish": "仕上げ後の外周を確認",
+        "fin_mount": "後端位置と等配角",
+        "nose_fit": "ノーズを先端側から合わせる",
+        "recovery": "搭載物・回収部の取付は現物で決定",
+        "measure": "ノズル端を基準に測定",
+    }
+    panel(d, 0, 0, WIDTH, 166, captions[step], font)
+    if step == "fin_mount" and not cad["include_fins"]:
+        label(d, 17, 88, "この版はフィンなし。この工程を飛ばします。", font, 12)
+        return d
+    fins = step == "fin_mount"
+    nose = step == "nose_fit"
+    gap = 0.21 * g.overall_mm if nose else 0
+    x, cy = 32, 85
+    scale = side_view(d, g, cad, (x, cy, 289 if fins else 416, 50), focus=step, gap_mm=gap)
+    if fins:
+        end_view(d, g, cad, 405, 87, 33)
+        for i in range(g.fin_count):
+            theta = pi / 2 + i * 2 * pi / g.fin_count
+            label(
+                d, 405 + 46 * cos(theta), 84 + 46 * sin(theta), str(i + 1), font, 8, INK, "middle"
+            )
+        label(d, 405, 27, f"{g.fin_count} 枚 / {mm(360 / g.fin_count)}°", font, 10, INK, "middle")
+        label(d, 405, 12, "ノズル側から見る", font, 8, MUTED, "middle")
+        tail = x + g.fin_tail_inset_mm * scale
+        dimension(d, x, tail, 30, cy, f"翼後端 {mm(g.fin_tail_inset_mm)} mm", font)
+        if g.fin_tail_inset_mm == 0:
+            label(d, x, 31, "翼後端はノズル基準と同じ位置", font, 9, ACCENT)
+    elif nose:
+        left = x + g.nose_base_mm * scale
+        right = left + gap * scale
+        line(d, right - 3, cy, left + 3, cy, ACCENT)
+        d.add(
+            Polygon(
+                [left + 3, cy, left + 9, cy + 4, left + 9, cy - 4],
+                fillColor=ACCENT,
+                strokeColor=None,
+            )
+        )
+        for pos, text in zip((18, 180, 350), fit_labels(g), strict=True):
+            label(d, pos, 19, text, font, 8.6)
+    elif step == "measure":
+        dimension(d, x, x + g.overall_mm * scale, 29, cy, f"全長 {mm(g.overall_mm)} mm", font)
+    else:
+        label(d, 17, 17, "ノズル側  0 mm", font, 9, MUTED)
+        label(d, 473, 17, "先端側", font, 9, MUTED, "end")
+    return d
+
+
+def ring_fit_figure(g, cad, font):
+    d = Drawing(WIDTH, 166)
+    panel(d, 0, 0, WIDTH, 166, "J01 を円筒部に通すときの断面", font)
+    body = g.body_diameter_mm / 2
+    inner = body + g.radial_clearance_mm
+    outer = inner + cad["fit_ring"]["wall"]
+    scale = 49 / outer
+    cx, cy = 96, 81
+    for radius, fill in ((outer, PART), (inner, colors.white), (body, BODY)):
+        d.add(Circle(cx, cy, radius * scale, fillColor=fill, strokeColor=INK, strokeWidth=0.5))
+    label(d, cx, cy - 4, "B01", font, 12, INK, "middle")
+    label(d, cx, 17, "ボトルとリングの公称断面", font, 8, MUTED, "middle")
+    label(d, 191, 110, f"J01 リング内径  {mm(2 * inner)} mm", font, 12)
+    label(d, 191, 84, f"B01 ボトル胴径  {mm(2 * body)} mm", font, 12)
+    label(d, 191, 58, f"設計上の片側の余裕  {mm(g.radial_clearance_mm)} mm", font, 10, ACCENT)
+    label(d, 191, 26, "口側から通し、取外しも同じ経路で確認", font, 9, MUTED)
+    return d
 
 
 def write_project_manual(state, steps, output):
+    from rocketwright.agent.design_projects import DesignSpec, sha
+    from rocketwright.agent.workbench import Conflict
+
     font = japanese_font()
     body = ParagraphStyle(
-        "body", fontName=font, fontSize=10, leading=18, wordWrap="CJK", spaceAfter=10
+        "body",
+        fontName=font,
+        fontSize=10.5,
+        leading=16,
+        wordWrap="CJK",
+        textColor=INK,
+        spaceAfter=8,
     )
-    heading = ParagraphStyle("heading", parent=body, fontSize=20, leading=28, spaceAfter=18)
-    sub = ParagraphStyle("sub", parent=body, fontSize=13, leading=22, spaceBefore=12)
+    title = ParagraphStyle("title", parent=body, fontSize=23, leading=31, spaceAfter=11)
+    sub = ParagraphStyle(
+        "sub", parent=body, fontSize=13, leading=19, textColor=ACCENT, spaceBefore=8
+    )
+    small = ParagraphStyle("small", parent=body, fontSize=9, leading=14, spaceAfter=0)
 
     def p(text, style=body):
         return Paragraph(escape(str(text)).replace("\n", "<br/>"), style)
 
+    def grid(rows, widths, *, header=True, style=small, padding=6):
+        table = Table(
+            [[p(value, style) for value in row] for row in rows],
+            colWidths=widths,
+            hAlign="LEFT",
+            repeatRows=int(header),
+        )
+        rules = [
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("ROWBACKGROUNDS", (0, 0), (-1, -1), [colors.white, PAPER]),
+            ("TOPPADDING", (0, 0), (-1, -1), padding),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), padding),
+            ("LINEBELOW", (0, 0), (-1, -1), 0.35, RULE),
+        ]
+        if header:
+            rules.append(("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#deeeeb")))
+        table.setStyle(TableStyle(rules))
+        return table
+
     spec, analysis = state["spec"], state["analysis"]
-    g = spec["geometry"]
-    story = [
-        p("RocketWright / 組立手順書", heading),
-        p(spec["name"], sub),
-        p(f"採用版 v{state['version']} / 設計ID {state['id']}"),
-        p(
-            "試作・仮組み用。嵌合・固定・回収機構・強度・"
-            "実飛行の確認は未完了です。加圧や打上げの手順書ではありません。"
+    current = DesignSpec.model_validate(spec)
+    g = current.geometry
+    access = assembly_assessment(current)
+    cad = access["cad_parameters"]
+    procedures = assembly_procedures(current, cad)
+    identity = f"v{state['version']}   /   入力 {analysis['input_sha256'][:12]}"
+    basis = "実測入力" if g.dimensions_measured else "公称値。現物を測って照合する。"
+    parts = [
+        ("B01", "市販PETボトル", 1, "無加工で使用", None),
+        (
+            "N01",
+            "ノーズ",
+            1,
+            f"{spec['material']} / 長さ {mm(g.nose_length_mm)} mm",
+            "nose-preview.png",
         ),
-        p("寸法と材料", sub),
     ]
-    rows = [[p("部位"), p("採用寸法 mm / 条件")]]
-    for label, value in [
-        (
-            "ボトル",
-            f"径{g['body_diameter_mm']:g} / 高さ{g['body_height_mm']:g}・市販品を無加工で使用",
-        ),
-        ("ノーズ", f"長さ{g['nose_length_mm']:g} / 肉厚{g['nose_wall_mm']:g}"),
-        (
-            "フィン",
+    if cad["include_fins"]:
+        parts.append(
             (
-                f"{g['fin_count']}枚・"
-                f"翼根{g['fin_root_mm']:g} / 翼端{g['fin_tip_mm']:g} / "
-                f"張出し{g['fin_span_mm']:g} / 後退{g['fin_sweep_mm']:g} / "
-                f"厚さ{g['fin_thickness_mm']:g}"
+                "F01",
+                "フィン",
+                g.fin_count,
+                f"{spec['material']} / 板厚 {mm(g.fin_thickness_mm)} mm",
+                "fin-preview.png",
             )
-            if spec["design"]["has_fins"]
-            else "この版では未使用",
-        ),
-        ("材料", spec["material"]),
-        ("寸法の根拠", "実測入力" if g["dimensions_measured"] else "仮定入力・実物照合が必要"),
-        (
-            "計算した乾燥質量",
-            f"{analysis['design']['dry_mass_kg'] * 1000:.2f} g / {analysis['mass_basis']}",
-        ),
-    ]:
-        rows.append([p(label), p(value)])
-    table = Table(rows, colWidths=[100, 390], hAlign="LEFT")
-    table.setStyle(
-        TableStyle(
+        )
+    parts.append(("J01", "試着リング", 1, "嵌合確認用の治具", "fit-ring-preview.png"))
+    previews = []
+    files = {row["key"]: row for row in state["files"]}
+    cad_directory = output.parent.parent / "cad"
+
+    def registered_cad(filename):
+        row = files.get(f"cad/{filename}")
+        if row is None:
+            return None
+        path = cad_directory / filename
+        if not path.is_file() or sha(path) != row["sha256"]:
+            raise Conflict("CAD成果物が採用版と一致しません。再解析が必要です。")
+        return path
+
+    # Older or imported records can still export the nominal overview.
+    cad_inputs = registered_cad("parameters.json")
+    fin_mesh = None
+    nose_mesh = None
+    if cad_inputs is not None:
+        if json.loads(cad_inputs.read_text(encoding="utf-8")) != cad:
+            raise Conflict("採用CADの寸法設定が保存した設計と一致しません。")
+        nose_mesh = registered_cad("nose-mm.stl")
+        if cad["include_fins"]:
+            fin_mesh = registered_cad("fin-assembly-mm.stl")
+    sheet_count = 1 + int(fin_mesh is not None) + int(nose_mesh is not None)
+    plate = design_plate(state, g, cad, font, sheet_count=sheet_count)
+    detail_plates = []
+    drawing_sources = []
+    if fin_mesh is not None:
+        detail_plates.append(fin_detail(state, g, cad, fin_mesh, sheet_count, font))
+        drawing_sources.append(files["cad/fin-assembly-mm.stl"])
+    if nose_mesh is not None:
+        detail_plates.append(nose_detail(state, g, cad, nose_mesh, sheet_count, sheet_count, font))
+        drawing_sources.append(files["cad/nose-mm.stl"])
+
+    for ident, name, _, _, filename in parts:
+        path = registered_cad(filename) if filename else None
+        if path is None:
+            continue
+        if ident == "F01":
+            mesh = fin_mesh or registered_cad("fin-assembly-mm.stl")
+            if mesh is not None:
+                previews.append([p(f"{ident}  {name}・側面投影", small), fin_projection(mesh)])
+                continue
+        preview = Image(str(path))
+        scale = min(145 / preview.imageWidth, 126 / preview.imageHeight)
+        preview.drawWidth = preview.imageWidth * scale
+        preview.drawHeight = preview.imageHeight * scale
+        previews.append([p(f"{ident}  {name}", small), preview])
+    preview_table = (
+        Table([previews], colWidths=[WIDTH / len(previews)] * len(previews)) if previews else None
+    )
+    if preview_table is not None:
+        preview_table.setStyle(
+            TableStyle(
+                [("BACKGROUND", (0, 0), (-1, -1), PAPER), ("VALIGN", (0, 0), (-1, -1), "TOP")]
+            )
+        )
+    part_table = [["ID", "部品", "数", "材料・用途"], *[row[:4] for row in parts]]
+    story = [
+        p("組立手順書", title),
+        p(spec["name"]),
+        p(identity, small),
+        Spacer(1, 12),
+        grid(
             [
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#edf3f1")),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
-                ("LINEBELOW", (0, 0), (-1, -1), 0.4, colors.lightgrey),
+                ["用途", "空のボトルを使った無加圧の机上仮組み"],
+                ["確認範囲", "取付保持・回収・実飛行は現物検証待ち。加圧・打上げ手順は別途確定。"],
+            ],
+            [96, 394],
+            header=False,
+        ),
+        Spacer(1, 14),
+        step_figure(g, cad, "parts", font),
+        p("部品と治具", sub),
+        grid(part_table, [54, 106, 36, 294]),
+        p("作業前に", sub),
+        p(f"胴径 {mm(g.body_diameter_mm)} mm / ボトル全高 {mm(g.body_height_mm)} mm。{basis}"),
+        p(
+            "定規・ノギス・はかりを用意する。固定材と軟質キャップは現物に合わせて選ぶ。位置と寸法は同じ版の組立設計図を参照。"
+        ),
+        p("進め方", sub),
+        p("部品照合 → 仕上げ → リング試着 → 取付 → 搭載物確認 → 実測記録"),
+    ]
+
+    def procedure_content(procedure):
+        actions = [
+            (f"{i:02d}", name, instruction)
+            for i, (name, instruction) in enumerate(procedure.actions, 1)
+        ]
+        return [
+            Spacer(1, 8),
+            p("手順", sub),
+            grid([["順", "作業", "やり方"], *actions], [34, 118, 338], style=body, padding=4),
+            Spacer(1, 9),
+            grid(
+                [["進む目安", procedure.proceed], ["止める目安", procedure.stop]],
+                [96, 394],
+                header=False,
+                padding=4,
+            ),
+        ]
+
+    def record_fields(procedure):
+        return KeepTogether(
+            [
+                p("現物記録", sub),
+                p("□ 未確認　 □ 要修正　 □ 現物確認", small),
+                Spacer(1, 5),
+                grid(
+                    [
+                        ["担当・日付", "__________________  /  __________________"],
+                        ["記録する項目", procedure.record],
+                        ["記録・修正点", "　"],
+                    ],
+                    [96, 394],
+                    header=False,
+                    padding=4,
+                ),
             ]
         )
-    )
-    figure = Drawing(490, 200)
-    overall = 0.9 * g["body_height_mm"] - min(18, g["nose_length_mm"] / 4) + g["nose_length_mm"]
-    scale = min(440 / overall, 140 / (g["body_diameter_mm"] + 2 * g["fin_span_mm"]))
-    length = overall * scale
-    nose_length = g["nose_length_mm"] * scale
-    radius = g["body_diameter_mm"] * scale / 2
-    figure.add(
-        Polygon(
-            [
-                25,
-                100,
-                25 + nose_length,
-                100 + radius,
-                25 + length,
-                100 + radius,
-                25 + length,
-                100 - radius,
-                25 + nose_length,
-                100 - radius,
-            ],
-            fillColor=colors.HexColor("#eaf2ef"),
-            strokeColor=colors.darkslategray,
-        )
-    )
-    tail = 25 + length - g["fin_tail_inset_mm"] * scale
-    root = g["fin_root_mm"] * scale
-    for sign in (-1, 1) if spec["design"]["has_fins"] else ():
-        y = 100 + sign * radius
-        figure.add(
-            Polygon(
-                [
-                    tail - root,
-                    y,
-                    tail - root + g["fin_sweep_mm"] * scale,
-                    y + sign * g["fin_span_mm"] * scale,
-                    tail - root + (g["fin_sweep_mm"] + g["fin_tip_mm"]) * scale,
-                    y + sign * g["fin_span_mm"] * scale,
-                    tail,
-                    y,
-                ],
-                fillColor=colors.lightgrey,
-                strokeColor=colors.darkslategray,
-            )
-        )
-    figure.add(
-        String(
-            25,
-            12,
-            f"v{state['version']} / 同じ採用寸法の側面模式図・原寸ではありません",
-            fontName=font,
-            fontSize=8,
-        )
-    )
-    story += [figure]
-    story += [
-        table,
-        p(
-            "準備：平らな作業台、定規・ノギス、はかり、部品に適合する固定材。"
-            "固定材の寸法・許容値、先端キャップ、"
-            "搭載物と回収部の取付方法は現物で確定してください。"
-        ),
-        PageBreak(),
-    ]
-    for i, step in enumerate(steps):
-        if i == 3:
-            story.append(PageBreak())
+
+    for number, step in enumerate(steps, 1):
+        key = step["id"]
+        procedure = procedures[key]
         story += [
-            p(f"{i + 1}. {step['title']}", sub),
-            p(step["instruction"]),
-            p(
-                "確認記録： □ 未確認　□ 要修正　□ "
-                "現物確認済み\n担当：　　　　　　　　日付：　　　　　　　　測定・"
-                "観察："
+            PageBreak(),
+            p(f"工程 {number:02d} / {len(steps):02d}", sub),
+            p(step["title"], title),
+            preview_table
+            if key == "finish" and preview_table is not None
+            else step_figure(g, cad, key, font),
+            *procedure_content(procedure),
+            Spacer(1, 7),
+            grid(
+                [
+                    ["準備", "、".join(step.get("tools", [])) or "作業に必要な工具を確認"],
+                    ["担当・手袋", f"{current.equipment.operator} / {current.equipment.glove}"],
+                    ["戻し方", step.get("reverse") or "仮固定を逆順に外す"],
+                ],
+                [96, 394],
+                header=False,
+                padding=4,
             ),
-            Spacer(1, 18),
+            record_fields(procedure),
         ]
+        observations = [row for row in state.get("observations", []) if row["step"] == key]
+        for row in observations[-3:]:
+            story += [
+                p(
+                    f"保存済み / {OBS_STATUS.get(row['status'], row['status'])} / "
+                    f"{row['operator']} / {row['observed_on']}",
+                    sub,
+                ),
+                p(row["note"]),
+            ]
+            if row.get("measured_values"):
+                story.append(
+                    grid([["測定項目", "値"], *row["measured_values"].items()], [340, 150])
+                )
+        if key == "finish":
+            trial = procedures["ring_fit"]
+            story += [
+                PageBreak(),
+                p(f"工程 {number:02d} / 補足", sub),
+                p("試着リングで胴径を確認", title),
+                ring_fit_figure(g, cad, font),
+                *procedure_content(trial),
+                record_fields(trial),
+            ]
+
+    story += [PageBreak(), p("仮組みの確認票", title), p(identity, small), Spacer(1, 12)]
+    story.append(
+        grid(
+            [
+                ["確認箇所", "公称・上限", "入力値", "比較結果"],
+                *[
+                    (
+                        check["label"],
+                        "未入力"
+                        if check["available"] == 0 and check["required"] is None
+                        else f"{check['available']:.2f} {check['unit']}",
+                        "未入力"
+                        if check["required"] is None
+                        else f"{check['required']:.2f} {check['unit']}",
+                        ACCESS_STATUS[check["status"]],
+                    )
+                    for check in access["checks"]
+                    if cad["include_fins"] or check["id"] == "force"
+                ],
+            ],
+            [192, 92, 86, 120],
+        )
+    )
+    story += [
+        p("判定の範囲", sub),
+        p("直線での出し入れと公称寸法の比較。手の動き、摩擦、印刷誤差、保持強度は現物で確認。"),
+        p("機材と材料", sub),
+        p(f"{current.equipment.printer_label} / {current.equipment.printer_profile}"),
+        p(f"{spec['material']} / ロット {current.equipment.material_lot or '未記入'}"),
+    ]
+    cost = procurement_summary(current)
+    story += [
+        p("調達記録", sub),
+        grid(
+            [
+                ["部品", "必要数", "小計", "根拠・確認日"],
+                *[
+                    (
+                        PART_NAMES.get(row["part"], row["part"]),
+                        row["required_quantity"],
+                        "未確認" if row["subtotal_jpy"] is None else f"{row['subtotal_jpy']} 円",
+                        " / ".join(
+                            str(purchase[k])
+                            for k in ("basis", "source", "checked_on")
+                            if purchase.get(k)
+                        )
+                        or "未入力",
+                    )
+                    for row in cost["rows"]
+                    for purchase in [row["supplied"] or {}]
+                ],
+            ],
+            [100, 60, 85, 245],
+        ),
+        p(
+            f"確認済み合計 {cost['total_jpy']} 円"
+            if cost["total_jpy"] is not None
+            else "合計は未評価"
+        ),
+    ]
 
     def footer(canvas, doc):
         canvas.saveState()
+        canvas.setStrokeColor(RULE)
+        canvas.line(47, 39, A4[0] - 47, 39)
+        canvas.setFillColor(MUTED)
         canvas.setFont(font, 8)
-        canvas.drawString(42, 25, f"v{state['version']} / 試作手順・実機未検証")
-        canvas.drawRightString(A4[0] - 42, 25, str(doc.page))
+        canvas.drawString(47, 25, f"RocketWright   /   {identity}")
+        canvas.drawRightString(A4[0] - 47, 25, f"{doc.page:02d}")
         canvas.restoreState()
 
-    SimpleDocTemplate(
-        str(output),
-        pagesize=A4,
-        rightMargin=42,
-        leftMargin=42,
-        topMargin=40,
-        bottomMargin=44,
-        title=spec["name"] + " 組立手順",
-        author="RocketWright",
-    ).build(story, onFirstPage=footer, onLaterPages=footer)
+    def build(path, content, name):
+        SimpleDocTemplate(
+            str(path),
+            pagesize=A4,
+            leftMargin=46,
+            rightMargin=46,
+            topMargin=39,
+            bottomMargin=52,
+            title=spec["name"] + " " + name,
+            author="RocketWright",
+        ).build(content, onFirstPage=footer, onLaterPages=footer)
 
-    # A calculation sheet and portable data accompany the assembly instructions.
+    build(output, story, "組立手順書")
+    width, height = landscape(A4)
+    drawing = Canvas(str(output.parent / "design-drawing.pdf"), pagesize=(width, height))
+    drawing.setTitle(spec["name"] + " 組立設計図")
+    drawing.setAuthor("RocketWright")
+    for sheet in (plate, *detail_plates):
+        renderPDF.draw(sheet, drawing, (width - sheet.width) / 2, (height - sheet.height) / 2)
+        drawing.showPage()
+    drawing.save()
+    (output.parent / "side-view.svg").write_text(plate_svg(plate, font), encoding="utf-8")
+
     metrics = analysis["result"]["metrics"]
+    mass_basis = {
+        "measured": "印刷部品は実測入力",
+        "solid_CAD_estimate": "印刷部品はCADの一様固体推定",
+    }
+    basis_label = mass_basis.get(analysis["mass_basis"], analysis["mass_basis"])
     summary = [
-        p("設計・計算の確認票", heading),
-        p(f"{spec['name']} / v{state['version']}"),
-        p(
-            f"到達高度 {metrics['apogee_m']:.2f} m / "
-            f"降下速度 {metrics['descent_speed_mps']:.2f} m/s"
+        p("設計・計算の確認票", title),
+        p(spec["name"]),
+        p(identity, small),
+        Spacer(1, 12),
+        grid(
+            [
+                ["計算項目", "値と根拠"],
+                ["到達高度", f"{metrics['apogee_m']:.2f} m"],
+                ["降下速度", f"{metrics['descent_speed_mps']:.2f} m/s"],
+                [
+                    "乾燥質量",
+                    f"{analysis['design']['dry_mass_kg'] * 1000:.2f} g / {basis_label}",
+                ],
+                ["寸法の根拠", basis],
+            ],
+            [128, 362],
         ),
-        p(f"乾燥質量 {analysis['design']['dry_mass_kg'] * 1000:.2f} g / {analysis['mass_basis']}"),
-        p("計算条件の確認", sub),
-        table,
-        p("未確認事項", sub),
+        p("要求ごとの確認", sub),
     ]
-    summary += [p(text) for text in analysis["limitations"]]
-    SimpleDocTemplate(
-        str(output.parent / "design-sheet.pdf"),
-        pagesize=A4,
-        leftMargin=42,
-        rightMargin=42,
-        topMargin=40,
-        bottomMargin=44,
-        title=spec["name"] + " 計算確認票",
-        author="RocketWright",
-    ).build(summary, onFirstPage=footer, onLaterPages=footer)
+    for check in analysis.get("requirements", {}).get("checks", []):
+        status = REQUIREMENT_STATUS.get(check["status"], check["status"])
+        summary.append(p(f"{check['label']} / {status} / {check['reason']}"))
+    summary += [p("計算の適用範囲", sub), *[p(text) for text in analysis["limitations"]]]
+    build(output.parent / "design-sheet.pdf", summary, "計算確認票")
     (output.parent / "calculation-report.md").write_text(
         f"# {spec['name']} / v{state['version']}\n\n"
         + "\n".join(f"- {k}: {v}" for k, v in metrics.items())
         + "\n\n"
         + "\n".join(analysis["limitations"]),
         encoding="utf-8",
-    )
-    (output.parent / "side-view.svg").write_text(
-        render_side_view_svg(BottleDesign.model_validate(analysis["design"])), encoding="utf-8"
     )
     trace = analysis["result"]["trace"]
     if trace:
@@ -226,6 +532,10 @@ def write_project_manual(state, steps, output):
                 "input_sha256": analysis["input_sha256"],
                 "geometry_sha256": analysis["geometry_sha256"],
                 "implementation_sha256": analysis["implementation_sha256"],
+                "drawing_page_count": sheet_count,
+                "drawing_cad_sources": [
+                    {"key": row["key"], "sha256": row["sha256"]} for row in drawing_sources
+                ],
                 "physical_print_verified": False,
             },
             ensure_ascii=False,

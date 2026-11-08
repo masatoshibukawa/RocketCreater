@@ -1,0 +1,63 @@
+{
+  "stage": {
+    "template": {
+      "id": "compact",
+      "camera_distance_m": 1.55043165086787,
+      "fstop": 11
+    },
+    "identity": "234335169ac83a640640814b6c0bc54d6df8aef80028a11b7d7e5b990373a65b",
+    "reused": true,
+    "stage_sha256": "42abb8cdb35ce980a56f6b533513415ba347ebb38b24303e42b3bf9c33f63f9f"
+  },
+  "body": {
+    "identity": "ef21eedf4439594eb8539c055049c74bdeccbe00874a451a883547d444679df5",
+    "reused": true,
+    "template": {
+      "kind": "reference-mesh",
+      "source": "castetsb / waterRocketToolbox / Kirin Lemon",
+      "license": "MIT",
+      "mesh": "reference/kirin-lemon-15l-visual.stl",
+      "profile": "reference/kirin-lemon-15l-visual.json",
+      "asset_sha256": {
+        "reference/kirin-lemon-15l-visual.stl": "10c0ef086dfa06d1a691014c3bd43d537de5159b0d56f08456bcabfe14a23524",
+        "reference/kirin-lemon-15l-visual.json": "0c201df3ac9074ab28021ab189ca91b28d295eac1eda6547399179b068c7fde1"
+      },
+      "id": "pet-15l",
+      "basis": "reference CAD fitted to editable envelope; unmeasured"
+    },
+    "vertices": 44804,
+    "bounds_m": [
+      [
+        -0.04439999908208847,
+        -0.04439999908208847,
+        0.0
+      ],
+      [
+        0.04439999908208847,
+        0.04439999908208847,
+        0.25822713971138
+      ]
+    ],
+    "maximum_radius_m": 0.044400003665956804,
+    "wall_basis": "reference CAD wall; unmeasured"
+  },
+  "clips": {
+    "design": {
+      "identity": "e6754bada574551b88c1d2918c4dd268f5f94197846c0d65b8b0ff5393abfbe8",
+      "restored": 0,
+      "resumed": 0,
+      "rendered": 192,
+      "frames": 192,
+      "composition_reused": false
+    },
+    "launch": {
+      "identity": "1666dafff91b7ddbe75b3589a21d7093fbbfc845519b7ba6bed5a4f5e937d19e",
+      "restored": 0,
+      "resumed": 0,
+      "rendered": 144,
+      "frames": 144,
+      "composition_reused": false
+    }
+  },
+  "quality": "preview"
+}

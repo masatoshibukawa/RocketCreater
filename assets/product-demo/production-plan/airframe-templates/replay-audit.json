@@ -1,0 +1,84 @@
+{
+  "source_bundle_commit": "51d53a2fbc5ebaf2f3695438bcc49479e5bbe819",
+  "source_archive_sha256": "12135000ceda28ce42402405c50a9dfa3f6a48f8b48589119c9652a5658267e3",
+  "source_archive_verified_files": 251,
+  "source_archive_missing": [
+    "manual",
+    "print",
+    "video",
+    "photographic_video"
+  ],
+  "scene_mesh_hashes_equal": true,
+  "reference_descriptor_equal": true,
+  "render_frames": 336,
+  "identical_png_bytes": 0,
+  "original_mp4": {
+    "design-explanation.mp4": "6d74a330c46ae0b9eb367d889fe8a11c7ab474b9f135f58479844c3b4182d44e",
+    "launch-cg.mp4": "5cb2f84c7df49b4d95ed9111db1f4cb7df4f8d6f165b4b2d95ac4d0bd8a2dcac"
+  },
+  "replay_mp4": {
+    "design-explanation.mp4": "4b97dadecc9054b2e9fb6f93d705608ca96d6fa82e226468e04a792c3831599e",
+    "launch-cg.mp4": "28953599e074241c4f40acf176c759eccd6fb76718194fb879ef3a8527c0ed9e"
+  },
+  "jobs": [
+    {
+      "id": "fd75ecd6f2374324a6882d306c5e7756",
+      "name": "analyse",
+      "phase": "running_renderer",
+      "started_at": 1794012707.390339,
+      "owner": "cbd93f175fc746a5977fc375e067de2a",
+      "finished_at": 1794012710.0601888,
+      "error": null
+    },
+    {
+      "id": "52254d4eeff4491f8f6bb92f414d2d27",
+      "name": "adopt",
+      "phase": "running",
+      "started_at": 1794012710.0721724,
+      "owner": "cbd93f175fc746a5977fc375e067de2a",
+      "finished_at": 1794012710.172365,
+      "error": null
+    },
+    {
+      "id": "b4d4d3b32cbf46ef99b7a82cb158273d",
+      "name": "assembly_pdf",
+      "phase": "running",
+      "started_at": 1794012710.191425,
+      "owner": "cbd93f175fc746a5977fc375e067de2a",
+      "finished_at": 1794012710.5721686,
+      "error": null
+    },
+    {
+      "id": "98a5dd7254834b22a853d6648003a788",
+      "name": "video_direction",
+      "phase": "running",
+      "started_at": 1794012710.59646,
+      "owner": "cbd93f175fc746a5977fc375e067de2a",
+      "finished_at": 1794012710.6265485,
+      "error": null
+    },
+    {
+      "id": "6cf987e06f714a85ab5cfb6cad02df9f",
+      "name": "render_design_and_launch",
+      "phase": "rendering",
+      "started_at": 1794012710.644543,
+      "owner": "cbd93f175fc746a5977fc375e067de2a",
+      "style": "photographic",
+      "quality": "preview",
+      "video_directory": "video-photographic-preview",
+      "finished_at": 1794012945.287102,
+      "error": null
+    },
+    {
+      "id": "11c6ce3f632344ab8897727770c7e76e",
+      "name": "archive",
+      "phase": "running",
+      "started_at": 1794012945.3037477,
+      "owner": "cbd93f175fc746a5977fc375e067de2a",
+      "finished_at": 1794012947.6378572,
+      "error": null
+    }
+  ],
+  "scope": "same installed Python/media dependencies, extracted source/assets, fresh output and empty render cache; preview scope, no printing, no separate-PC claim",
+  "dependency_setup_note": "The first check lacked imageio-ffmpeg metadata; existing isolated media libraries were added to PYTHONPATH, then check and replay succeeded."
+}

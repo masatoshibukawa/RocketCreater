@@ -5,6 +5,8 @@ import AeroLoopPanel from "./components/AeroLoopPanel";
 import FlightPlayer from "./components/FlightPlayer";
 import BomPanel from "./components/BomPanel";
 import ChatPanel from "./components/ChatPanel";
+import LocalDesignChat from "./components/LocalDesignChat";
+import ProjectAnalysis from "./components/ProjectAnalysis";
 import DockHandle from "./components/DockHandle";
 import CostPanel from "./components/CostPanel";
 import DrawingPanel from "./components/DrawingPanel";
@@ -33,7 +35,7 @@ import type { AeroRequest } from "./lib/useAeroLoop";
 import { isOrbital, TIER_LABEL, type DispersionResult, type DisplayedDesign, type TracePoint } from "./lib/types";
 
 const ANALYSIS_VIEWS = [["aero", "流体解析"], ["flight", "飛行と回収"], ["chart", "高度の推移"]] as const;
-const OUTPUT_VIEWS = [["production", "製作票・印刷データ"], ["drawing", "設計図 SVG"], ["video", "設計解説・打ち上げ CG"]] as const;
+const OUTPUT_VIEWS = [["production", "製作票・印刷データ"], ["drawing", "設計図"], ["video", "設計解説・打ち上げ CG"]] as const;
 const NO_TRACE: TracePoint[] = [];
 const NO_METRICS: Record<string, number> = {};
 
@@ -161,7 +163,7 @@ function DesignScreen() {
   // A failing attempt or a reference seed gets no production data (CLAUDE.md section 1). A seed
   // flew in the reference's own conditions, which the tool inputs do not hold.
   const passed: boolean = useMemo(() => {
-    if (productionProject) return productionProject.adopted && !!productionProject.analysis?.result.success;
+    if (productionProject) return productionProject.adopted && !productionProject.analysis_stale && !!productionProject.analysis?.result.success;
     const candidate = stream.candidates.find((c) => c.source_id === displayedId);
     if (candidate?.seededFrom || displayed?.origin === "seed") return false;
     return candidate?.passed ?? displayedAttempt?.result?.success ?? false;
@@ -253,7 +255,7 @@ function DesignScreen() {
     <div className={`workshop-body${stage === "design" ? "" : " without-results"}`} style={docks.style}>
       <aside id="workshop-targets" tabIndex={-1} className={`workshop-left${leftOpen ? " is-open" : ""}`} aria-label="設計の相談" onKeyDown={e => { if (e.key === "Escape") { e.stopPropagation(); closeTargets(); } }}>
         <div className="dock-heading"><h1>設計の相談</h1><button className="mobile-close icon-button" type="button" aria-label="相談を閉じる" onClick={closeTargets}><WorkshopIcon name="close" size={18}/></button></div>
-        <div className="consultation"><ChatPanel messages={stream.messages} status={stream.status} pendingQuestion={stream.pendingQuestion} onStart={handleStart} onAnswer={handleAnswer} onStop={stop} onReset={handleReset}/></div>
+        <div className="consultation"><LocalDesignChat project={productionProject} onProject={setProductionProject}/><details><summary>既存の構想設計フロー（課金接続は無効）</summary><ChatPanel messages={stream.messages} status={stream.status} pendingQuestion={stream.pendingQuestion} onStart={handleStart} onAnswer={handleAnswer} onStop={stop} onReset={handleReset}/></details></div>
         <DockHandle side="left" label="相談の幅を変える" width={docks.left} onResize={docks.setLeft}/>
       </aside>
       <section className={`workshop-center${showCrew ? " has-crew" : ""}`} aria-label={`${stageLabel(stage)}の表示`}>
@@ -274,18 +276,17 @@ function DesignScreen() {
             <ModelViewer design={displayed?.design ?? null} tier={tier} origin={displayed?.origin ?? null} statusLabel={displayed?.origin === "seed" ? "参照の初期案" : passed ? "条件を満たす案" : "検討中の案"} reference={stream.reference} dimensions={summary?.dimensions ?? null} notes={notes} frameRequest={frameRequest} active={hasModel && modelView === "model"}/>
             {!displayed ? <span className="scene-image-label">工房のイメージ · 設計データはまだありません</span> : null}
           </div>
-          <div className="drawing-workspace" hidden={!((hasModel && modelView === "drawing") || (stage === "exports" && outputView === "drawing"))}><DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading}/></div>
+          <div className="drawing-workspace" hidden={!((hasModel && modelView === "drawing") || (stage === "exports" && outputView === "drawing" && !productionProject))}><DrawingPanel svg={summaryState.svg} url={summary?.drawing?.url ?? null} loading={summaryState.loading}/></div>
           <div className="analysis-workspace" hidden={stage !== "analysis"}>
-            <div className="analysis-screen" hidden={analysisView !== "aero" || isOrbital(tier)}><AeroLoopPanel request={isOrbital(tier) ? null : aeroRequest} hasDesign={displayed !== null}/></div>
+            <div className="analysis-screen" hidden={analysisView !== "aero" || isOrbital(tier)}>{productionProject ? <ProjectAnalysis project={productionProject} onProject={setProductionProject}/> : <AeroLoopPanel request={isOrbital(tier) ? null : aeroRequest} hasDesign={displayed !== null}/>}</div>
             {analysisView === "aero" && isOrbital(tier) ? <div className="workspace-empty"><h2>この規模は構想設計の対象です</h2><p>飛行の結果と軌道を確認できます。</p><button className="btn" type="button" onClick={() => setAnalysisView("flight")}>飛行と回収を見る</button></div> : null}
             {analysisView === "flight" ? <div className="flight-workspace"><FlightPlayer key={displayedId ?? "none"} trace={trace} metrics={flight?.metrics ?? NO_METRICS} warnings={flight?.warnings ?? []} parachute={carriesParachute(displayed?.design)} emptyMessage="計算した飛行の時系列が届くと再生できます"/></div> : null}
             <div className="chart-workspace" hidden={analysisView !== "chart"}><FlightChart tier={tier} trace={trace} sourceId={displayedLabel}/></div>
           </div>
-          {stage === "exports" && outputView !== "drawing" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
-          <div className="production-stack" hidden={stage !== "exports" || outputView === "drawing" || isOrbital(tier)}>
+          {stage === "exports" && outputView === "production" && isOrbital(tier) ? <div className="workspace-empty"><h2>構想設計の結果を保存</h2><p>詳細な製作データはこの規模では作成しません。</p><button className="btn" type="button" onClick={saveDesign}>設計 JSON を保存</button></div> : null}
+          <div className="production-stack" hidden={stage !== "exports" || (outputView === "drawing" && !productionProject) || isOrbital(tier)}>
           <div className="production-workspace" hidden={stage !== "exports" || outputView !== "production" || isOrbital(tier)}><ProductionPanel request={packageRequest} passed={passed && !isOrbital(tier)} onGenerated={handleGenerated} onPrintGenerated={handlePrintGenerated}/></div>
-          {tier === "amateur" ? <p className="wb-note production-note">寸法を保存して版を管理する機能は、ペットボトルロケットだけです。</p> : null}
-          <div className="production-workspace" hidden={stage !== "exports" || (tier !== null && tier !== "bottle")}><DesignProduction source={packageRequest} mode={outputView === "video" ? "video" : "files"} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} active={stage === "exports"}/></div>
+          <div className="production-workspace" hidden={stage !== "exports" || isOrbital(tier)}><DesignProduction source={packageRequest} mode={outputView === "production" ? "files" : outputView} onProjectChange={setProductionProject} projectId={productionProject?.id ?? null} externalProject={productionProject} active={stage === "exports"}/></div>
           </div>
           <WorkshopCrew embedded hideScene={!showCrew}/>
         </div>

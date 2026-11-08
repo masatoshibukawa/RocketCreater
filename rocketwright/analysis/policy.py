@@ -39,7 +39,11 @@ def proposals(spec, limits, unmet, visited):
 
     if "altitude" in unmet:
         for p in limits.pressure_kpa:
-            if p * 1000 > spec.design.initial_gauge_pressure_pa:
+            if (
+                (p * 1000 < spec.design.initial_gauge_pressure_pa)
+                if "altitude_high" in unmet
+                else (p * 1000 > spec.design.initial_gauge_pressure_pa)
+            ):
                 add(
                     f"redesign/pressure-{p:g}",
                     "design",
