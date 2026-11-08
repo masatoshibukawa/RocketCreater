@@ -1299,5 +1299,406 @@
   "acceptance_performed": false,
   "criteria_met": false,
   "physical_qualification": false,
-  "scope": "Native analytic-flight redesign and CFD convergence probes; no complete new tunnel table"
+  "scope": "Native analytic-flight redesign and CFD convergence probes; no complete new tunnel table",
+  "refined_cfd": {
+    "results": [
+      {
+        "cells": 20,
+        "status": "completed",
+        "case": {
+          "shape": "flat",
+          "wall_scheme": "interpolated",
+          "fin_thickness_mm": 2.4,
+          "assembly": "design-f856fea3850c8f20",
+          "dimensions_mm": {
+            "overall": 621.594,
+            "body_diameter": 90.0,
+            "nose_length": 279.594,
+            "bottle_length": 400.0,
+            "fin_root": 47.196,
+            "fin_tip": 11.825,
+            "fin_span": 137.661,
+            "fin_sweep": 35.25,
+            "fin_tail_inset": 0.0,
+            "fin_count": 4,
+            "fin_thickness": 2.4,
+            "fin_tab": 10.5,
+            "fin_root_offset": 0,
+            "fin_shoe_width": 0,
+            "skirt_length": 0
+          },
+          "cg_mm": 222.41422437159756,
+          "prior_cd": 0.55,
+          "d": 20,
+          "grid": [
+            360,
+            250,
+            250
+          ],
+          "width_D": 12.5,
+          "upstream_D": 3.0,
+          "Re": 107999.99999999999,
+          "lattice_Ma": 0.08660254037844387,
+          "Cs": 0.16,
+          "tau": 0.5000277777777777,
+          "speed_mps": 18.0,
+          "angle_deg": 10.0,
+          "rotated_geometry": true,
+          "surface_loads": {
+            "samples": 400,
+            "points": 11804,
+            "integration_relative_residual": 6.153022234521726e-08
+          },
+          "fin_coefficients": [
+            [
+              0.1669156551361084,
+              0.006455617491155863,
+              0.0005216134013608098,
+              0.0011116453679278493,
+              -0.00024925527395680547,
+              -0.13112296164035797
+            ],
+            [
+              0.18953120708465576,
+              0.2536611258983612,
+              -0.002715257927775383,
+              -0.14790324866771698,
+              0.15416784584522247,
+              0.05975085869431496
+            ],
+            [
+              0.18383346498012543,
+              0.023548176512122154,
+              0.0007459440384991467,
+              -0.0008703388157300651,
+              -0.0003424551978241652,
+              0.14629197120666504
+            ],
+            [
+              0.1910027712583542,
+              0.25791096687316895,
+              0.002259946661069989,
+              0.15152281522750854,
+              -0.15513160824775696,
+              0.061097875237464905
+            ]
+          ],
+          "fin_load_scope": "free plates; body-axis force and moment about each root leading edge",
+          "geometry_sha256": "0112db66d381b7c874f0263db7c1f539c19787d4121a6b23b27741d2591f7429",
+          "source_sha256": {
+            "run_flow.py": "da9504c47feb373add9655e9ebf1aa1ffe5f73150fcdf67d5cbf568a9c0cd5be",
+            "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+            "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb"
+          },
+          "cant_deg": 0,
+          "steps": 32000,
+          "paired_samples": true,
+          "averaging_tU_D": [
+            40.0,
+            80.0
+          ],
+          "mean": {
+            "Cd": 1.5460762094964442,
+            "Cl": 0.9675793324393206,
+            "Cx": 1.3545694500335521,
+            "Cy": 1.221352944553872,
+            "Cz": 3.076910952830553e-05,
+            "Croll": 0.006060097346619026,
+            "Cpitch_y": 0.007519658008994611,
+            "Cm_z": 3.025244002755572
+          },
+          "split_window_difference": {
+            "Cd": -0.017692150973535492,
+            "Cl": -0.013402143306795566,
+            "Cx": -0.015096109684143988,
+            "Cy": -0.016270744411075233,
+            "Cz": -0.009280944944519896,
+            "Croll": 0.012436276520743658,
+            "Cpitch_y": 0.05038854996957444,
+            "Cm_z": -0.04614942988199866
+          },
+          "max_abs_density_departure": 0.008124425075948238,
+          "seconds": 220.45299999974668
+        },
+        "averaging": 1.0077709993914887,
+        "elapsed_s": 221.46900000004098
+      },
+      {
+        "cells": 24,
+        "status": "completed",
+        "case": {
+          "shape": "flat",
+          "wall_scheme": "interpolated",
+          "fin_thickness_mm": 2.4,
+          "assembly": "design-f856fea3850c8f20",
+          "dimensions_mm": {
+            "overall": 621.594,
+            "body_diameter": 90.0,
+            "nose_length": 279.594,
+            "bottle_length": 400.0,
+            "fin_root": 47.196,
+            "fin_tip": 11.825,
+            "fin_span": 137.661,
+            "fin_sweep": 35.25,
+            "fin_tail_inset": 0.0,
+            "fin_count": 4,
+            "fin_thickness": 2.4,
+            "fin_tab": 10.5,
+            "fin_root_offset": 0,
+            "fin_shoe_width": 0,
+            "skirt_length": 0
+          },
+          "cg_mm": 222.41422437159756,
+          "prior_cd": 0.55,
+          "d": 24,
+          "grid": [
+            432,
+            300,
+            300
+          ],
+          "width_D": 12.5,
+          "upstream_D": 3.0,
+          "Re": 107999.99999999999,
+          "lattice_Ma": 0.08660254037844387,
+          "Cs": 0.16,
+          "tau": 0.5000333333333333,
+          "speed_mps": 18.0,
+          "angle_deg": 10.0,
+          "rotated_geometry": true,
+          "surface_loads": {
+            "samples": 400,
+            "points": 16718,
+            "integration_relative_residual": 1.2047057479647968e-07
+          },
+          "fin_coefficients": [
+            [
+              0.1445743590593338,
+              0.005971361417323351,
+              -0.0007515520555898547,
+              0.00047764042392373085,
+              4.555672421702184e-05,
+              -0.11386557668447495
+            ],
+            [
+              0.16611427068710327,
+              0.2448200136423111,
+              -0.0022864551283419132,
+              -0.14732931554317474,
+              0.13086342811584473,
+              0.060389332473278046
+            ],
+            [
+              0.16382582485675812,
+              0.01993614248931408,
+              -0.002886020578444004,
+              0.003484028624370694,
+              0.0011042313417419791,
+              0.13008250296115875
+            ],
+            [
+              0.16688090562820435,
+              0.24783648550510406,
+              0.0020294298883527517,
+              0.14958161115646362,
+              -0.131678968667984,
+              0.06134365499019623
+            ]
+          ],
+          "fin_load_scope": "free plates; body-axis force and moment about each root leading edge",
+          "geometry_sha256": "0112db66d381b7c874f0263db7c1f539c19787d4121a6b23b27741d2591f7429",
+          "source_sha256": {
+            "run_flow.py": "da9504c47feb373add9655e9ebf1aa1ffe5f73150fcdf67d5cbf568a9c0cd5be",
+            "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+            "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb"
+          },
+          "cant_deg": 0,
+          "steps": 38400,
+          "paired_samples": true,
+          "averaging_tU_D": [
+            40.0,
+            80.0
+          ],
+          "mean": {
+            "Cd": 1.4055140311757315,
+            "Cl": 0.9352727406630205,
+            "Cx": 1.2217527078316142,
+            "Cy": 1.1651287963848855,
+            "Cz": -0.005455681033888064,
+            "Croll": 0.00907296051177736,
+            "Cpitch_y": 0.02655463201539053,
+            "Cm_z": 2.8958864601387315
+          },
+          "split_window_difference": {
+            "Cd": 0.023306647126544844,
+            "Cl": 0.0027108087989018426,
+            "Cx": 0.022481839779006974,
+            "Cy": 0.00671678232314199,
+            "Cz": 0.016856303876712404,
+            "Croll": 0.011323431848538222,
+            "Cpitch_y": -0.07373591083326736,
+            "Cm_z": 0.025270763940161256
+          },
+          "max_abs_density_departure": 0.008016380481421947,
+          "seconds": 441.625
+        },
+        "averaging": 1.4747182166653472,
+        "elapsed_s": 442.7339999997057
+      },
+      {
+        "cells": 28,
+        "status": "completed",
+        "case": {
+          "shape": "flat",
+          "wall_scheme": "interpolated",
+          "fin_thickness_mm": 2.4,
+          "assembly": "design-f856fea3850c8f20",
+          "dimensions_mm": {
+            "overall": 621.594,
+            "body_diameter": 90.0,
+            "nose_length": 279.594,
+            "bottle_length": 400.0,
+            "fin_root": 47.196,
+            "fin_tip": 11.825,
+            "fin_span": 137.661,
+            "fin_sweep": 35.25,
+            "fin_tail_inset": 0.0,
+            "fin_count": 4,
+            "fin_thickness": 2.4,
+            "fin_tab": 10.5,
+            "fin_root_offset": 0,
+            "fin_shoe_width": 0,
+            "skirt_length": 0
+          },
+          "cg_mm": 222.41422437159756,
+          "prior_cd": 0.55,
+          "d": 28,
+          "grid": [
+            504,
+            350,
+            350
+          ],
+          "width_D": 12.5,
+          "upstream_D": 3.0,
+          "Re": 107999.99999999999,
+          "lattice_Ma": 0.08660254037844387,
+          "Cs": 0.16,
+          "tau": 0.5000388888888889,
+          "speed_mps": 18.0,
+          "angle_deg": 10.0,
+          "rotated_geometry": true,
+          "surface_loads": {
+            "samples": 400,
+            "points": 22516,
+            "integration_relative_residual": 1.4836874319073548e-07
+          },
+          "fin_coefficients": [
+            [
+              0.13298535346984863,
+              0.0035161518026143312,
+              0.0011820070212706923,
+              0.002244016621261835,
+              -0.0005564161692745984,
+              -0.10219182074069977
+            ],
+            [
+              0.14465971291065216,
+              0.27778321504592896,
+              -0.003196295350790024,
+              -0.16196858882904053,
+              0.11516418308019638,
+              0.07053511589765549
+            ],
+            [
+              0.1457711011171341,
+              0.01825595088303089,
+              -0.0036449991166591644,
+              0.000895041273906827,
+              0.0007125318516045809,
+              0.11484981328248978
+            ],
+            [
+              0.1461847871541977,
+              0.28148865699768066,
+              0.0028970299754291773,
+              0.1634434163570404,
+              -0.11659564077854156,
+              0.07150111347436905
+            ]
+          ],
+          "fin_load_scope": "free plates; body-axis force and moment about each root leading edge",
+          "geometry_sha256": "0112db66d381b7c874f0263db7c1f539c19787d4121a6b23b27741d2591f7429",
+          "source_sha256": {
+            "run_flow.py": "da9504c47feb373add9655e9ebf1aa1ffe5f73150fcdf67d5cbf568a9c0cd5be",
+            "bottle_flow.cu": "642e438f1bbffdf5444856521af686f60b3a8d408286ab10e556d41f3a5d4272",
+            "interpolated_wall.cuh": "8f57325e33e1bdbbb5787a27977413d88f4777e265c99e88e03aca31a16e22fb"
+          },
+          "cant_deg": 0,
+          "steps": 44800,
+          "paired_samples": true,
+          "averaging_tU_D": [
+            40.0,
+            80.0
+          ],
+          "mean": {
+            "Cd": 1.3096580336266914,
+            "Cl": 1.0136079292898332,
+            "Cx": 1.1137502155203578,
+            "Cy": 1.2256286781854078,
+            "Cz": -0.010818903212236816,
+            "Croll": 0.008911133763632416,
+            "Cpitch_y": 0.02724806120164367,
+            "Cm_z": 3.208545993084911
+          },
+          "split_window_difference": {
+            "Cd": 0.011430948838287103,
+            "Cl": 0.020085896225667366,
+            "Cx": 0.007769407763836611,
+            "Cy": 0.021765709764006713,
+            "Cz": -0.007995382805986674,
+            "Croll": 0.018233233816419187,
+            "Cpitch_y": 0.016785118972729437,
+            "Cm_z": 0.06796325835529915
+          },
+          "max_abs_density_departure": 0.007514328695833683,
+          "seconds": 813.6090000001714
+        },
+        "averaging": 0.36466467632838373,
+        "elapsed_s": 814.7969999997877
+      }
+    ],
+    "grid_differences": [
+      0.09805089152028945,
+      0.09744586289865455
+    ],
+    "elapsed_s": 1479.125,
+    "verified_files": 25,
+    "report_sha256": "e5fe191fcf43aa2c3fa7e01067f06c861e9c587f8a8b4c11ae0f6b255cfb44d4"
+  },
+  "drag_sensitivity": {
+    "results": [
+      {
+        "assumed_cd": 0.8,
+        "altitude_m": 21.463878946169622,
+        "incidence_deg": 8.568526547892791,
+        "domain_pass": true,
+        "flight_sha256": "97795a7bf6344ff3347a9d3a94cef44f60be3708955d4cd18cc00732784554a8"
+      },
+      {
+        "assumed_cd": 1.1,
+        "altitude_m": 20.072970911879096,
+        "incidence_deg": 8.792026884445413,
+        "domain_pass": true,
+        "flight_sha256": "38ac53691756a0a9717dc5e5eb29716073ed318c0d829754575991286a627695"
+      },
+      {
+        "assumed_cd": 1.4,
+        "altitude_m": 18.894272164919574,
+        "incidence_deg": 8.474383665352601,
+        "domain_pass": true,
+        "flight_sha256": "dacd56c9ed5dd2f43a1b4b2627193a7227c940aa880da7d7d7e88484a57fef93"
+      }
+    ],
+    "scope": "Assumed constant axial drag, unchanged analytic normal force; not CFD predictions",
+    "report_sha256": "6ebf7ca2aecb1db76f3dd0f5d8ec678caffee6f6627493f0083f099c2a0e92dd"
+  }
 }

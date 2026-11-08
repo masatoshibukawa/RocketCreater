@@ -136,6 +136,16 @@ def run(root, destination):
             verified_files=verify_folder(probe_folder),
             report_sha256=sha(probe_folder / "report.json"),
         )
+    sensitivity_folder = root / "m40-cd-sensitivity1"
+    sensitivity = audit_run(sensitivity_folder)
+    for row in sensitivity["results"]:
+        if sha(sensitivity_folder / f"cd-{row['assumed_cd']:g}.json") != row["flight_sha256"]:
+            raise ValueError("Changed drag sensitivity flight")
+    public["drag_sensitivity"] = dict(
+        results=sensitivity["results"],
+        scope=sensitivity["scope"],
+        report_sha256=sha(sensitivity_folder / "report.json"),
+    )
     write_json(destination, public)
     print(
         dict(
