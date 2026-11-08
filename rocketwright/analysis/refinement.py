@@ -1,7 +1,7 @@
 """Price the complete invalidated analysis chain before changing numerical settings."""
 
 from rocketwright.analysis.aero_accuracy import holdout
-from rocketwright.analysis.runtime import Runtime
+from rocketwright.analysis.runtime import MAX_CFD_DURATION, Runtime
 
 
 def updated(runtime, action):
@@ -14,7 +14,7 @@ def updated(runtime, action):
     elif action == "refine/fem":
         r["fem_level"] += 1
     elif action == "refine/averaging":
-        r["cfd_times"] = min(100, r["cfd_times"] * 1.5)
+        r["cfd_times"] = min(MAX_CFD_DURATION, r["cfd_times"] * 1.5)
     elif action == "refine/time":
         r["flight_step_s"] = max(0.0025, r["flight_step_s"] / 2)
     elif action == "refine/table":

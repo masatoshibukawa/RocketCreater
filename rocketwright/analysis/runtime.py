@@ -9,13 +9,15 @@ from pydantic import Field, model_validator
 
 from rocketwright.analysis.schema import Strict
 
+MAX_CFD_DURATION = 800.0
+
 
 class Runtime(Strict):
     calculix: str | None = None
     cfd_enabled: bool = False
     cfd_cells_coarse: int = Field(default=12, ge=6, le=40)
     cfd_cells_fine: int = Field(default=16, ge=8, le=48)
-    cfd_times: float = Field(default=40, ge=2, le=100)
+    cfd_times: float = Field(default=40, ge=2, le=MAX_CFD_DURATION)
     cfd_width: float = Field(default=10, ge=10, le=14)
     cfd_lattice_speed: float = Field(default=0.075, ge=0.025, le=0.075)
     cfd_speeds: tuple[int, ...] = (1, 35)

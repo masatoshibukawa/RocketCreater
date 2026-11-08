@@ -21,6 +21,7 @@ from rocketwright.physics.bottle_integrity.schema import AnalysisConfig
 from rocketwright.physics.concrete_fin import polygon_moments
 from rocketwright.physics.flight_loads import MassDistribution, TunnelDatabase, recover
 from rocketwright.schema import BottleDesign
+from scenarios.cfd.domain_geometry import upstream_for
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -219,6 +220,13 @@ class Worker:
 
     def run_case(self, assembly, out, speed, angle, cells, **changes):
         r = dict(self.ctx["runtime"], **changes)
+        geometry = read(assembly)
+        upstream = upstream_for(
+            geometry["dimensions_mm"],
+            geometry["loaded_cg_mm"],
+            angle,
+            self.spec.geometry.fin_thickness_mm,
+        )
         command = [
             sys.executable,
             str(ROOT / "scenarios/cfd/run_flow.py"),
@@ -235,7 +243,7 @@ class Worker:
             "--width",
             str(r.get("cfd_width", 10)),
             "--upstream",
-            "3",
+            str(upstream),
             "--times",
             str(r["cfd_times"]),
             "--speed",

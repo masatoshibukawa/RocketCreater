@@ -12,7 +12,7 @@ from rocketwright.agent.design_projects import DesignSpec, sha, write_json
 from rocketwright.agent.workbench import Conflict
 from rocketwright.analysis import catalog, experience, planner, policy, predictor, refinement
 from rocketwright.analysis.record import scopes
-from rocketwright.analysis.runtime import Runtime, run
+from rocketwright.analysis.runtime import MAX_CFD_DURATION, Runtime, run
 from rocketwright.analysis.schema import Precision, SearchLimits
 from rocketwright.analysis.screening import violation
 from rocketwright.analysis.worker import read
@@ -413,7 +413,7 @@ class Harness:
         if (
             confirmation
             and numerical & {"aero_averaging", "aero_duration"}
-            and runtime.cfd_times < 100
+            and runtime.cfd_times < MAX_CFD_DURATION
         ):
             choices["offered"]["refine/averaging"] = dict(
                 target="unsteady flow",

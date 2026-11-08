@@ -11,6 +11,11 @@ from pathlib import Path
 
 import numpy as np
 
+if __package__:
+    from .domain_geometry import clearance
+else:
+    from domain_geometry import clearance
+
 
 def sample_volume(cp, module, src, mask, sizes, stride):
     nx, ny, nz = map(int, sizes[:3])
@@ -143,6 +148,23 @@ def main():
     ) * abs(math.cos(rotation_angle))
     if args.rotate_geometry and transverse_extent > args.width / 2 - 0.75:
         p.error("rotated body is too close to the periodic transverse boundaries")
+    domain_clearance = None
+    if args.shape == "flat":
+        domain_clearance = clearance(
+            dims,
+            model["loaded_cg_mm"],
+            args.angle if args.rotate_geometry else 0,
+            upstream=args.upstream,
+            width=ny / d,
+            thickness_mm=args.fin_thickness_mm,
+            cant_deg=args.cant,
+            outlet_x=nx / d - args.upstream,
+        )
+        if min(domain_clearance[k] for k in ("inlet_D", "outlet_D", "transverse_D")) < 0.75:
+            p.error(
+                "rotated solid envelope is too close to a domain boundary: "
+                + json.dumps(domain_clearance)
+            )
     code = Path(__file__).with_name("bottle_flow.cu").read_text(encoding="utf-8")
     wall_source = Path(__file__).with_name("interpolated_wall.cuh")
     code = code.replace("// WALL_HELPERS", wall_source.read_text(encoding="utf-8"))
@@ -412,6 +434,7 @@ def main():
         grid=[nx, ny, nz],
         width_D=ny / d,
         upstream_D=args.upstream,
+        domain_clearance=domain_clearance,
         Re=reynolds,
         lattice_Ma=speed * math.sqrt(3),
         Cs=cs,
@@ -429,7 +452,12 @@ def main():
         geometry_sha256=hashlib.sha256(args.assembly.read_bytes()).hexdigest(),
         source_sha256={
             p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in (Path(__file__), Path(__file__).with_name("bottle_flow.cu"), wall_source)
+            for p in (
+                Path(__file__),
+                Path(__file__).with_name("bottle_flow.cu"),
+                wall_source,
+                Path(__file__).with_name("domain_geometry.py"),
+            )
         },
         cant_deg=args.cant,
         steps=steps,
