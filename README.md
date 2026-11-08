@@ -18,6 +18,7 @@ RocketWright は要求を 4 つの規模に分類し、その規模の物理モ�
 搭載量を変えた[GPU学習と6方式の探索比較](docs/payload-search-gpu.md)、
 さらに[初期圧力と搭載量の同時探索](docs/pressure-payload-search.md)で運用条件のトレードオフを調べています。
 [初期400 kPa・40 g・目標20 mの再評価](docs/payload40-mission.md)では、高度達成と残る変形・安定性・空力精度の課題を分けて確認しています。
+[同条件の再設計](docs/fixed-mission-redesign.md)では、GA/DEの候補を実際のCAD・飛行・FEMへ渡し、不合格となった変形を厚さと水量の再探索へ戻しています。
 確認済みの数値条件と未達項目を分けて記録しており、現時点で実機安全性を認定した設計はありません。
 
 1.5 L ペットボトル機の[試作手順](scenarios/bottle_prototype.md)では、手持ちゼロからの購入表、等倍フィン型紙、3Dプリント用ホルダーと治具を生成できます。
