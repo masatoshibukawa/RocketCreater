@@ -1,24 +1,50 @@
 {
-  "date_jst": "2026-11-07",
-  "artifact": "output/media/product-demo/generated/preview-v1/rocketwright-preview-v1-narrated.mp4",
-  "status": "local_preview",
-  "source_sha256": "c6f5584dc3c18d62c5bc9c9ee98127950deb5e0207f8fe7c9c6f28f36463c2d9",
-  "output_sha256": "eb272c147107a8ae629955f754cc3b4878c29d61fa53ca92c7ade151961ecc87",
-  "video_stream_sha256": "f26f29fca6897399aaf96ddbb625ed49475a8197351e824defb271afe7190c47",
+  "date_jst": "2026-11-08",
+  "artifact": "assets/product-demo/previews/v1/rocketwright-preview-v1-narrated.mp4",
+  "status": "shared_preview",
+  "source_sha256": "f5e390ce7594a1603d7068482e8faeaeb36b66818baa3cb857780c1d696754a2",
+  "output_sha256": "178e5c5166ba3fccb9bc0a1284a7c64582f856556f45d72f1388f0c20a381fcf",
+  "video_stream_sha256": "69082b4fb59245ffe21055e171d593f23e3f4ba6bb3db2ef9c02bf87aac5ebba",
   "same_video_stream": true,
   "full_ffmpeg_decode": "passed",
   "duration_s": 175,
-  "resolution": [1920, 1080],
+  "resolution": [
+    1920,
+    1080
+  ],
   "fps": 30,
   "audio_sample_rate_hz": 48000,
-  "integrated_lufs": -16.38,
+  "integrated_lufs": -16.37,
   "true_peak_dbtp": -1.4,
   "speech_take_count": 23,
   "sidecar_subtitle_cue_count": 23,
-  "printer_clip_s": [153, 158],
+  "printer_clip_s": [
+    153,
+    158
+  ],
   "voice_id": "qwen-clear-fixed",
-  "retake_shots_zero_based": [8, 9, 15],
-  "automatic_readback_confirmed": ["適応型", "目標には届いていません", "約18.9 m"],
-  "automatic_readback_homophone": {"expected": "階層型", "recognized": "改装型"},
-  "manual_listening": "not_performed"
+  "retake_shots_zero_based": [
+    8,
+    9,
+    15,
+    22
+  ],
+  "automatic_readback_confirmed": [
+    "適応型",
+    "目標には届いていません",
+    "約18.9 m"
+  ],
+  "automatic_readback_homophone": {
+    "expected": "階層型",
+    "recognized": "改装型"
+  },
+  "manual_listening": "not_performed",
+  "visual_revision_s": [
+    162,
+    168
+  ],
+  "closing_readback": {
+    "windows_voice": "開発はクロードコード設計判断はクロードAPI",
+    "ai_narration": "開発はクロードコード、設計判断はクロードAPI"
+  }
 }

@@ -26,7 +26,7 @@
 
 [固定声と読み上げの設定](narration-v1-voice.json) で23カットを生成。字幕用と発音用の文を分け、「階層型」「適応型」「概算高度」を含む3カットを別テイクで更新した。読み戻しでは「適応型」「おおよその高度」「目標には届いていません」「約18.9 m」を確認。「階層型」は「改装型」と同音の表記に認識されたため、音声認識だけでアクセントは判定していない。BGMは元の和音構成を使い、声の前後で滑らかに音量を下げた。
 
-元の動画は残して別ファイルを書き出した。ビデオストリームのハッシュが一致したため、2:33–2:38の印刷実写も同一。解析値、Gemmaによる保存記録、Claude API移行予定の表示を維持している。出力した1080p・30fpsのMP4はFFmpegで全編デコードでき、AACの音量は −16.38 LUFS、最大トゥルーピークは −1.40 dBTPだった。[検証記録](narration-v1-verification.json)。
+Windows音声版とAIナレーション版は同じビデオストリームを使用する。2:42–2:48の場面では「開発はClaude Code。設計判断はClaude API。」と表示し、同じ文を読む。解析場面はGemmaの保存記録、2:33–2:38は別の2 L試作の印刷実写。出力した1080p・30fpsのMP4はFFmpegで全編デコードでき、AIナレーション版のAACは −16.37 LUFS、最大トゥルーピークは −1.40 dBTPだった。[検証記録](narration-v1-verification.json)。
 
 ## 実行環境と利用条件
 
@@ -45,4 +45,4 @@ output/narration-runtime/qwen-venv/Scripts/python.exe -X utf8 AIvideo/product-de
 output/media-venv/Scripts/python.exe -X utf8 AIvideo/product-demo/tools/replace_preview_narration.py --takes output/media/product-demo/audio/narration-trials/adopted
 ```
 
-上記は現在の設定で全カットを再生成する手順。今回の実ファイルでは、`--shot 8 --shot 9 --shot 15`（0始まり）の再生成分を初回テイクに合わせ、`final-takes/` にまとめてから差し替えた。音声は元の映像の各カットに収まるよう調整する。収まらない場合は処理を止めるため、末尾の語を切って合わせない。読み戻しは [review_narration.py](tools/review_narration.py)。最終的な声の好み、アクセント、BGMとの聴こえ方は試聴で確認する。
+上記は現在の設定で全カットを再生成する手順。最初の仮v1では `--shot 8 --shot 9 --shot 15`（0始まり）の再生成分を初回テイクに合わせた。今回の表記更新では `--shot 22` で2:42の一文を差し替えた。音声が各カットに収まるよう調整し、超過したテイクは再生成する。読み戻しは [review_narration.py](tools/review_narration.py)。最終的な声の好み、アクセント、BGMとの聴こえ方は試聴で確認する。
