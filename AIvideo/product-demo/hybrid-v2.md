@@ -35,3 +35,16 @@ output/media-venv/Scripts/python.exe -X utf8 AIvideo/product-demo/tools/render_h
 MP4は167秒、1920×1080、30 fps、全5,010フレーム。FFmpegで全編をデコードし、冒頭の要求、フィン試算、5者の表示、実演の各段階、締めの表示を確認した。印刷部分は約2:25からの150フレームを仮v1と照合した。音声は −16.25 LUFS、最大トゥルーピーク −1.40 dBTP。新規ナレーションの「20メートル」と前後の文は自動読み戻しで確認した。人による試聴は未実施。
 
 書き出したファイルのSHA-256は `a991a349a66edc8524051067292a61f60b6aedb5f65384ee641ca310ab15ff13`。提出URLと閲覧権限の確認は提出工程で行う。
+
+## ナレーションに合わせた赤枠版
+
+[赤枠のタイムライン](hybrid-v2-focus.json)は、表示時刻と1080p画面上の位置を管理する。冒頭の要求、フィンの試算、解析の階層と役割、実演の入力・判断・警告・結果・出力を一か所ずつ囲む。字幕と工程名は枠の外で読める。
+
+実演の一部で、収録に付いていたナレーションが対象の画面より先に流れていた。部品選択、再計算、計算値、警告、流体の可視化、資料の出力の6箇所は同じ音声を表示時刻へ移した。警告は1:44付近に現れる赤いカードを囲み、資料の出力は2:17付近に一覧が表示されてから囲む。
+
+```powershell
+$out = 'output/media/product-demo/generated/hybrid-v2'
+output/media-venv/Scripts/python.exe -X utf8 AIvideo/product-demo/tools/apply_demo_focus.py --source "$out/rocketwright-demo-hybrid-v2.mp4" --output "$out/rocketwright-demo-hybrid-v2-focus.mp4"
+```
+
+赤枠版は167秒・5,010フレーム。全編デコードと、26箇所の枠の座標、移した6箇所の音声の自動読み戻しを確認した。音量は −16.26 LUFS、最大トゥルーピークは −1.37 dBTP。書き出したMP4のSHA-256は `5b0658e7946aa33f7a177488843e216f4623dc5cddced772f1e8da37622d1ced`。
