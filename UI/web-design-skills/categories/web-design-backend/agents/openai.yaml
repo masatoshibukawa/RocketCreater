@@ -1,0 +1,3 @@
+interface:
+  display_name: "Webバックエンド"
+  short_description: "API・認証・DB・ジョブの構成と無料枠を整理し、運用まで設計する"
