@@ -1,0 +1,3 @@
+# Preserve upstream file bytes and checksums.
+原本/** -text -whitespace
+モデル/** -text -whitespace

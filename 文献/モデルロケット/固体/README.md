@@ -204,7 +204,9 @@ Orville H. Carlisle · 1958 登録・公開（1954年8月30日出願） · en ·
 
 [配布元・出典](https://patents.google.com/patent/US2841084A/en) · [原本取得先](https://kirkmcd.princeton.edu/Carlisle/carlisle_us2841084_54_rocket.pdf) · [保存ファイル](<原本/MS17.pdf>)（4ページ）
 
-利用条件：配布元の利用条件に従う。原本の再配布許可は未確認。
+利用条件：US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ms18"></a>
 
@@ -228,7 +230,9 @@ Jacob Schrum; Cody Crosby / Southwestern University · 2025 · en · 学会論�
 
 [配布元・出典](https://arxiv.org/abs/2504.02177) · [原本取得先](https://arxiv.org/pdf/2504.02177) · [保存ファイル](<原本/MS19.pdf>)（9ページ）
 
-利用条件：arXiv掲載のCC BY 4.0。原本の著作者表示を保持。
+利用条件：CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。
+
+原本をGitに収録。[再配布条件の確認記録](../../再配布について.md)。
 
 <a id="ms20"></a>
 
@@ -313,3 +317,38 @@ Jacob Schrum; Cody Crosby / OpenRocketQD contributors · 2025年4月2日のコ�
 [配布元・出典](https://github.com/schrum2/OpenRocketQD/tree/5f6d84cc34b72bc1881aab4410f2322babb3aaa9) · [保存ファイル](<モデル/MS26-OpenRocketQD>)
 
 利用条件：GPL-2.0（リポジトリLICENSE）。個別ソースの著作者表示・由来を保持。
+
+<a id="ms27"></a>
+
+## MS27 — Rocket A-1 — 3D printed flying model rocket
+
+- 発行元：Alicja Musiał (@alicjamusial)。年代：2021。本文言語：en。
+- 対象：市販Klima固体モーター用の模型機体。胴体・尾翼・ノーズの3 STL、編集用F3D、ORK 1機体を保存。著者の飛行報告と計算上の高度を区別。未改変のCC BY-SA 4.0資料で、改変配布には同条件が必要。
+- [配布元](https://github.com/alicjamusial/rocket-a-1) · [保存モデル](%E3%83%A2%E3%83%87%E3%83%AB/MS27-Rocket-A1/)
+- 12ファイル、4.50 MiB。ライセンス：CC-BY-SA-4.0。版：`b80102fde3fb13c61e3ca3f1d3574b88f5eceaa1`。原本は未改変。
+
+<a id="ms28"></a>
+
+## MS28 — PSAS Launch Vehicle 3 — selected airframe CAD and OpenRocket models
+
+- 発行元：Portland State Aerospace Society。年代：2014–2018。本文言語：en。
+- 対象：大学の高出力固体実験機。ノーズ・尾翼の選択CAD、過去案を含む14 ORK、設計メモ。購入部品CADや他リポジトリ依存品は未同梱。全機アセンブリの完全再現一式ではない。予測値は実測値と区別する。
+- [配布元](https://github.com/psas/lv3.0-airframe) · [保存モデル](%E3%83%A2%E3%83%87%E3%83%AB/MS28-PSAS-LV3/)
+- 66ファイル、26.02 MiB。ライセンス：BSD-2-Clause。版：`cabca568560ea2410fd4d29c69f59f0df3a2acd8`。原本は未改変。
+
+<a id="ms29"></a>
+
+## MS29 — ペイロード搭載型モデルロケットの製作
+
+- 著者・発行元：岐阜県立恵那高等学校 SSH。年・版：2015年度。言語：ja。
+- 種別：高校の実験報告。市販固体モーター、OpenRocketによる予測、回収失敗と改善を記録。計算と実飛行の差を読む資料。
+- [出典](https://school.gifu-net.ed.jp/ena-hs/ssh/H27ssh/sc3/31503.pdf)。原本未保存。取得状況と配布先は目録に記録。
+
+<a id="ms30"></a>
+
+## MS30 — ALBATROSS — Solid Recovery Test Rocket for Lamarr
+
+- 著者・発行元：TU Wien Space Team。年・版：不明。言語：en。
+- 種別：大学チームの回収試験機紹介。液体機Hedyの回収試験を目的とした固体試験機。目的機と推進方式を混同せず固体に分類する。
+- [出典](https://spaceteam.at/en/lamarr-en/albatross_en)。
+- このPCのみの原本（Gitには未収録）：[MS30.html](%E5%8E%9F%E6%9C%AC/MS30.html)。—頁、199,880 bytes。再配布許諾未確認。

@@ -1,5 +1,5 @@
 {
-  "checked_on": "2026-11-05",
+  "checked_on": "2026-11-07",
   "records": [
     {
       "id": "MS01",
@@ -356,13 +356,18 @@
       "note": "ケロシン・酸素の二段燃焼エンジン設計の初期検討。大規模エンジンの研究用設計で、模型用の既製品ではない。",
       "source": "https://oa.upm.es/1492/",
       "download": "https://oa.upm.es/1492/1/PFC_CARLOS_REDONDO_CALLE.pdf",
-      "license": "CC BY-NC-ND（所蔵ページ表示）。",
+      "license": "CC BY-NC-ND（UPM書誌表示、版番号未確認）。UPM書誌のReconocimiento - Sin obra derivada - No comercialを確認。非営利・無改変で共有し、版番号は推定しない。",
       "local": {
         "path": "液体/原本/ML03.pdf",
         "pages": 155,
         "sha256": "521e408257be8b684c972f97b507045ac38c9631305e81475b7bf8d680bf5853"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://oa.upm.es/1492/"
+      }
     },
     {
       "id": "ML04",
@@ -450,7 +455,14 @@
         "pages": 8,
         "sha256": "041ff99194d206e7a130431483e5297f3f80c054914f2f3d13bcbd9c7d377513"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://arxiv.org/abs/2401.07444",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "ML09",
@@ -471,7 +483,14 @@
         "pages": 9,
         "sha256": "3d6a598b71ece9ce8c019cadc501bafce2bd4ac7024cedfeb024a189d1172215"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://arxiv.org/abs/2102.07109",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "ML10",
@@ -675,7 +694,14 @@
         "pages": 40,
         "sha256": "4b9a0385dd88ccae791207b45611e05cc789d16d373455bd5c8fae698fc8c315"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "CC BY 4.0。PDF第1ページに著者・EDP SciencesとCC BY 4.0を明記。原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "文献/モデルロケット/ハイブリッド/原本/MH07.pdf",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "MH08",
@@ -762,7 +788,14 @@
         "pages": 95,
         "sha256": "3f44a737f9d087d211e776c40bc56d885ca5cc560e864bfa1d34071185410d1f"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://arxiv.org/abs/2302.06725",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "MH13",
@@ -866,7 +899,13 @@
         "pages": 9,
         "sha256": "86425f68c71c1288a920ec4eb4349d4a00a61ca95eb4f28a96699d5b0e3eba1c"
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "Creative Commons Attribution（PDFに版番号なし）。PDF第1ページが著作者・出典表示を条件とする使用・配布・複製を明示。版番号を推定せず、著作者表示を保持して原本を共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "文献/モデルロケット/共通/原本/MC02.pdf"
+      }
     },
     {
       "id": "MC03",
@@ -962,7 +1001,13 @@
         "format": "pdf",
         "pages": 4
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "US patent document facsimile。米国特許公報そのものの無改変複製。USPTOの公報本文・図面に関する方針を参照し、各PDFの著作権表示を検索して個別の制限表示がないことを確認。発明の実施許諾とは別。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://www.uspto.gov/terms-use-uspto-websites"
+      }
     },
     {
       "id": "MS18",
@@ -1003,7 +1048,7 @@
       "note": "OpenRocketによる多様な機体形状の探索と実機飛行の比較。機体形状の設計空間と、計算と実験の差を扱う。作者の公開リポジトリも本文に記載。",
       "source": "https://arxiv.org/abs/2504.02177",
       "download": "https://arxiv.org/pdf/2504.02177",
-      "license": "arXiv掲載のCC BY 4.0。原本の著作者表示を保持。",
+      "license": "CC BY 4.0。arXivの当該公開版のRights to this articleがCC BY 4.0。著作者・出典を表示し原本を無改変で共有。 PDF内に残る学会の刊行用著作権表示も削除しない。",
       "publication_year": 2025,
       "local": {
         "path": "固体/原本/MS19.pdf",
@@ -1012,7 +1057,13 @@
         "format": "pdf",
         "pages": 9
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://arxiv.org/abs/2504.02177",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     },
     {
       "id": "MS20",
@@ -1076,7 +1127,7 @@
       "note": "インドネシア語本文の試験報告。設計目標と測定された性能を分けて報告している。模型キットではなく、液体方式の研究資料。",
       "source": "https://ejournal.brin.go.id/ijoa/article/view/12423",
       "download": "https://karya.brin.go.id/id/eprint/11110/1/Jurnal%20TD_Arif_Pustekroket_2015.pdf",
-      "license": "掲載誌サイトはCC BY-SAを表示。原本の表示と配布元の条件を参照。",
+      "license": "CC BY-SA 4.0。BRINの記事単位のライセンスを確認。著作者・出典を表示し、無改変のPDFを共有。改変物の共有には同一条件が必要。",
       "publication_year": 2015,
       "local": {
         "path": "液体/原本/ML14.pdf",
@@ -1085,7 +1136,13 @@
         "format": "pdf",
         "pages": 16
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ejournal.brin.go.id/ijoa/article/view/12423",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
     },
     {
       "id": "ML15",
@@ -1235,7 +1292,7 @@
       "note": "NASA-CR-183954。1980年代の概念設計・解析の一次資料。飛行実績や模型用モーターの製品説明書とは区別する。",
       "source": "https://ntrs.nasa.gov/citations/19900012478",
       "download": "https://ntrs.nasa.gov/api/citations/19900012478/downloads/19900012478.pdf",
-      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
       "publication_year": 1989,
       "local": {
         "path": "ハイブリッド/原本/MH19.pdf",
@@ -1244,7 +1301,12 @@
         "format": "pdf",
         "pages": 118
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ntrs.nasa.gov/citations/19900012478"
+      }
     },
     {
       "id": "MH20",
@@ -1268,7 +1330,13 @@
         "format": "pdf",
         "pages": 49
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ntrs.nasa.gov/citations/19730003241"
+      }
     },
     {
       "id": "MH21",
@@ -1366,7 +1434,7 @@
       "note": "原学位論文は1967年3月。NASA/TM-2001-209983として公開された版を保存。亜音速・超音速の解析であり、遷音速領域を対象外とする原著の範囲を保持。",
       "source": "https://ntrs.nasa.gov/citations/20010047838",
       "download": "https://ntrs.nasa.gov/api/citations/20010047838/downloads/20010047838.pdf",
-      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
       "publication_year": 1967,
       "local": {
         "path": "共通/原本/MC09.pdf",
@@ -1375,7 +1443,12 @@
         "format": "pdf",
         "pages": 103
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ntrs.nasa.gov/citations/20010047838"
+      }
     },
     {
       "id": "MC10",
@@ -1606,7 +1679,7 @@
       "note": "469ページのNASA公開スキャン。NTRSの版名はSecond Editionだが、保存PDFの扉と書誌の刊行日は1967年のため、年は1967と記録。模型用キットの説明書ではない。",
       "source": "https://ntrs.nasa.gov/citations/19710019929",
       "download": "https://ntrs.nasa.gov/api/citations/19710019929/downloads/19710019929.pdf",
-      "license": "NTRS: Work of the US Gov. Public Use Permitted. 原本の表示も保持。",
+      "license": "NTRS: Work of the US Gov. Public Use Permitted。NTRSの当該資料のCopyrightとPublic distributionを確認。NASA・著作者・報告番号を保持して原本を共有。",
       "publication_year": 1967,
       "local": {
         "path": "液体/原本/ML17.pdf",
@@ -1615,7 +1688,12 @@
         "format": "pdf",
         "pages": 469
       },
-      "download_status": "保存済み"
+      "download_status": "保存済み",
+      "redistribution": {
+        "status": "published",
+        "checked_on": "2026-11-06",
+        "evidence": "https://ntrs.nasa.gov/citations/19710019929"
+      }
     },
     {
       "id": "ML18",
@@ -1690,6 +1768,465 @@
         "format": "html"
       },
       "download_status": "保存済み"
+    },
+    {
+      "id": "MS27",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "Rocket A-1 — 3D printed flying model rocket",
+      "author": "Alicja Musiał (@alicjamusial)",
+      "year": "2021",
+      "kind": "Fusion 360・STL・OpenRocket機体",
+      "scope": "市販Klima固体モーター用の模型機体",
+      "note": "胴体・尾翼・ノーズの3 STL、編集用F3D、ORK 1機体を保存。著者の飛行報告と計算上の高度を区別。未改変のCC BY-SA 4.0資料で、改変配布には同条件が必要。",
+      "source": "https://github.com/alicjamusial/rocket-a-1",
+      "download": "https://github.com/alicjamusial/rocket-a-1/tree/b80102fde3fb13c61e3ca3f1d3574b88f5eceaa1",
+      "local": null,
+      "models_directory": "固体/モデル/MS27-Rocket-A1",
+      "file_manifest": "../追加収集-20261107.json",
+      "redistribution": "CC-BY-SA-4.0",
+      "checked_on": "2026-11-07"
+    },
+    {
+      "id": "MS28",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "PSAS Launch Vehicle 3 — selected airframe CAD and OpenRocket models",
+      "author": "Portland State Aerospace Society",
+      "year": "2014–2018",
+      "kind": "SolidWorks・STL・IGES・OpenRocket機体",
+      "scope": "大学の高出力固体実験機",
+      "note": "ノーズ・尾翼の選択CAD、過去案を含む14 ORK、設計メモ。購入部品CADや他リポジトリ依存品は未同梱。全機アセンブリの完全再現一式ではない。予測値は実測値と区別する。",
+      "source": "https://github.com/psas/lv3.0-airframe",
+      "download": "https://github.com/psas/lv3.0-airframe/tree/cabca568560ea2410fd4d29c69f59f0df3a2acd8",
+      "local": null,
+      "models_directory": "固体/モデル/MS28-PSAS-LV3",
+      "file_manifest": "../追加収集-20261107.json",
+      "redistribution": "BSD-2-Clause",
+      "checked_on": "2026-11-07"
+    },
+    {
+      "id": "MC15",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "DBCook OpenRocket parts database",
+      "author": "David B. Cook (@DrRocketry)",
+      "year": "2022",
+      "kind": "部品データベース・ORK・データ生成ソース",
+      "scope": "機体部品と回収部品（推進方式共通）",
+      "note": "14 ORCデータベースと9 ORK部品見本を保存。ORKは完成した飛行機体9機ではない。メーカー図面原本とmfrdata資料は上流のApache-2.0だけで再配布判断しないため除外。",
+      "source": "https://github.com/DrRocketry/DBCook-OpenRocket-Database",
+      "download": "https://github.com/DrRocketry/DBCook-OpenRocket-Database/tree/1332e8659afff388476493b2c3c3e05361319268",
+      "local": null,
+      "models_directory": "共通/モデル/MC15-DBCook",
+      "file_manifest": "../追加収集-20261107.json",
+      "redistribution": "Apache-2.0",
+      "checked_on": "2026-11-07"
+    },
+    {
+      "id": "MS29",
+      "category": "固体",
+      "lang": [
+        "ja"
+      ],
+      "title": "ペイロード搭載型モデルロケットの製作",
+      "author": "岐阜県立恵那高等学校 SSH",
+      "year": "2015年度",
+      "kind": "高校の実験報告",
+      "source": "https://school.gifu-net.ed.jp/ena-hs/ssh/H27ssh/sc3/31503.pdf",
+      "note": "市販固体モーター、OpenRocketによる予測、回収失敗と改善を記録。計算と実飛行の差を読む資料。",
+      "checked_on": "2026-11-07",
+      "download": "https://school.gifu-net.ed.jp/ena-hs/ssh/H27ssh/sc3/31503.pdf",
+      "local": null,
+      "files": [],
+      "download_status": "未保存（取得先・書誌のみ）",
+      "download_attempts": [
+        {
+          "url": "https://school.gifu-net.ed.jp/ena-hs/ssh/H27ssh/sc3/31503.pdf",
+          "status": "failed",
+          "reason": "b'\\xef\\xbb\\xbf\\r\\n<head>\\r\\n  <meta charset=\"UTF-8\">\\r\\n  <style>\\r\\nbody {\\r\\n    font-family: -appl'"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "MS30",
+      "category": "固体",
+      "lang": [
+        "en"
+      ],
+      "title": "ALBATROSS — Solid Recovery Test Rocket for Lamarr",
+      "author": "TU Wien Space Team",
+      "year": null,
+      "kind": "大学チームの回収試験機紹介",
+      "source": "https://spaceteam.at/en/lamarr-en/albatross_en",
+      "note": "液体機Hedyの回収試験を目的とした固体試験機。目的機と推進方式を混同せず固体に分類する。",
+      "checked_on": "2026-11-07",
+      "download": "https://spaceteam.at/en/lamarr-en/albatross_en",
+      "local": {
+        "path": "固体/原本/MS30.html",
+        "bytes": 199880,
+        "sha256": "dd313d8710cdd9c3830d7929746a1e34af102e1486620f0305f84a8f8383aad7",
+        "format": "html"
+      },
+      "files": [
+        {
+          "path": "固体/原本/MS30.html",
+          "url": "https://spaceteam.at/en/lamarr-en/albatross_en",
+          "bytes": 199880,
+          "sha256": "dd313d8710cdd9c3830d7929746a1e34af102e1486620f0305f84a8f8383aad7",
+          "status": "local_only",
+          "license": "再配布許諾未確認"
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://spaceteam.at/en/lamarr-en/albatross_en",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "MC16",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "Cambridge Rocketry Simulator – A Stochastic Six-Degrees-of-Freedom Rocket Flight Simulator",
+      "author": "Willem J. Eerland; Simon Box; András Sóbester",
+      "year": "2017",
+      "kind": "公開ソフトウェア論文",
+      "source": "https://openresearchsoftware.metajnl.com/articles/10.5334/jors.137",
+      "note": "確率的な六自由度飛行シミュレータ。論文のCC BYとソフトウェアのGPLを区別する。DOI: 10.5334/jors.137。",
+      "checked_on": "2026-11-07",
+      "download": "https://openresearchsoftware.metajnl.com/articles/137/files/submission/proof/137-1-1684-1-10-20170221.pdf",
+      "local": {
+        "path": "共通/原本/MC16.pdf",
+        "bytes": 996374,
+        "sha256": "795ce138c85d46142a03c299033af179c5ecb3d1b6d2efbbee82bbec34c9639f",
+        "format": "pdf",
+        "pages": 6
+      },
+      "files": [
+        {
+          "path": "共通/原本/MC16.pdf",
+          "url": "https://openresearchsoftware.metajnl.com/articles/137/files/submission/proof/137-1-1684-1-10-20170221.pdf",
+          "bytes": 996374,
+          "sha256": "795ce138c85d46142a03c299033af179c5ecb3d1b6d2efbbee82bbec34c9639f",
+          "status": "publish",
+          "license": "CC-BY-4.0",
+          "pages": 6
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://openresearchsoftware.metajnl.com/articles/137/files/submission/proof/137-1-1684-1-10-20170221.pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "MC17",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "Cambridge Rocketry Simulator v3.1 — User Guide",
+      "author": "Willem Eerland（ガイド）; Simon Box・Willem Johannis Eerland（ソフトウェア登録）",
+      "year": "2016-10-04（ガイド改訂）",
+      "kind": "飛行シミュレータ利用ガイド",
+      "source": "https://zenodo.org/records/161850",
+      "note": "Zenodoの固定版利用ガイド。ソフトウェア名はv3.1、リポジトリ登録版ラベルはv1。インストーラーは保存・実行していない。",
+      "checked_on": "2026-11-07",
+      "download": "https://zenodo.org/records/161850/files/user_guide.pdf?download=1",
+      "local": {
+        "path": "共通/原本/MC17.pdf",
+        "bytes": 593058,
+        "sha256": "3a9868fea2a0cdbbf68f8302da60541ecd331d2fbff097b0fdda6b0c4ec59301",
+        "format": "pdf",
+        "pages": 20
+      },
+      "files": [
+        {
+          "path": "共通/原本/MC17.pdf",
+          "url": "https://zenodo.org/records/161850/files/user_guide.pdf?download=1",
+          "bytes": 593058,
+          "sha256": "3a9868fea2a0cdbbf68f8302da60541ecd331d2fbff097b0fdda6b0c4ec59301",
+          "status": "publish",
+          "license": "GPL-2.0-only",
+          "pages": 20
+        },
+        {
+          "path": "共通/原本/MC17-GPL-2.0.txt",
+          "url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
+          "bytes": 17984,
+          "sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+          "status": "publish",
+          "license": "GPL-2.0-only"
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://zenodo.org/records/161850/files/user_guide.pdf?download=1",
+          "status": "saved"
+        },
+        {
+          "url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "MC18",
+      "category": "共通",
+      "lang": [
+        "fr"
+      ],
+      "title": "Le Vol de la Fusée, Stabilité et Trajectographie",
+      "author": "Planète Sciences; Gil Denis; Xavier Millon ほか",
+      "year": "2008（第2版）",
+      "kind": "安定性・軌道解析の技術教材",
+      "source": "https://www.planete-sciences.org/espace/IMG/pdf/vol-de-la-fusee.pdf",
+      "note": "1999・2000年の旧資料を統合したフランス語技術教材。表紙は2008年7月、版説明は8月30日としており、同一PDF内の表記差を保持する。",
+      "checked_on": "2026-11-07",
+      "download": "https://www.planete-sciences.org/espace/IMG/pdf/vol-de-la-fusee.pdf",
+      "local": {
+        "path": "共通/原本/MC18.pdf",
+        "bytes": 3034227,
+        "sha256": "ab9e9e716c3cef6d958e872bd95c507874f2e4f07c70076f49fc3825d89ab70a",
+        "format": "pdf",
+        "pages": 96
+      },
+      "files": [
+        {
+          "path": "共通/原本/MC18.pdf",
+          "url": "https://www.planete-sciences.org/espace/IMG/pdf/vol-de-la-fusee.pdf",
+          "bytes": 3034227,
+          "sha256": "ab9e9e716c3cef6d958e872bd95c507874f2e4f07c70076f49fc3825d89ab70a",
+          "status": "local_only",
+          "license": "再配布許諾未確認",
+          "pages": 96
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://www.planete-sciences.org/espace/IMG/pdf/vol-de-la-fusee.pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "MC19",
+      "category": "共通",
+      "lang": [
+        "en"
+      ],
+      "title": "Model Rocketry in the High School. Grades 9–12. Course Guide.",
+      "author": "Roger Grossenbacher / Estes Industries",
+      "year": "1985",
+      "kind": "歴史的な高校授業ガイドの書誌・抄録",
+      "source": "https://eric.ed.gov/?id=ED281775",
+      "note": "1985年・27頁の授業ガイド。ERIC登録の書誌と抄録を確認。本文PDFのURLは404で取得できず、全文保存はしていない。",
+      "checked_on": "2026-11-07",
+      "download": "https://files.eric.ed.gov/fulltext/ED281775.pdf",
+      "local": null,
+      "files": [],
+      "download_status": "未保存（取得先・書誌のみ）",
+      "download_attempts": [
+        {
+          "url": "https://files.eric.ed.gov/fulltext/ED281775.pdf",
+          "status": "failed",
+          "reason": "HTTP Error 404: Not Found"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "MC20",
+      "category": "共通",
+      "lang": [
+        "pt"
+      ],
+      "title": "Desenvolvimento de um sistema de recuperação para um minifoguete",
+      "author": "Maíra Fernanda Oliveira de Miranda / Universidade Federal de Uberlândia",
+      "year": "2021",
+      "kind": "航空工学の卒業論文",
+      "source": "https://repositorio.ufu.br/handle/123456789/32169",
+      "note": "模型ロケットのパラシュート回収系を対象とするポルトガル語卒論。未改変・非商用条件で収録し、推進方式共通の資料に置く。",
+      "checked_on": "2026-11-07",
+      "download": "https://repositorio.ufu.br/bitstream/123456789/32169/1/DesenvolvimentoSistemaRecupera%c3%a7%c3%a3o.pdf",
+      "local": {
+        "path": "共通/原本/MC20.pdf",
+        "bytes": 21961412,
+        "sha256": "a61279b2772fc9ef0424a638ff26b0d9bee86c5e555ac0c1d0102e30b86876c8",
+        "format": "pdf",
+        "pages": 59
+      },
+      "files": [
+        {
+          "path": "共通/原本/MC20.pdf",
+          "url": "https://repositorio.ufu.br/bitstream/123456789/32169/1/DesenvolvimentoSistemaRecupera%c3%a7%c3%a3o.pdf",
+          "bytes": 21961412,
+          "sha256": "a61279b2772fc9ef0424a638ff26b0d9bee86c5e555ac0c1d0102e30b86876c8",
+          "status": "publish",
+          "license": "CC-BY-NC-ND-3.0-US",
+          "pages": 59
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://repositorio.ufu.br/bitstream/123456789/32169/1/DesenvolvimentoSistemaRecupera%c3%a7%c3%a3o.pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "MH24",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "A Record Flight of the Hybrid Sounding Rocket HEROS 3",
+      "author": "Mario Kobald; Christian Schmierer; Ulrich Fischer; Konstantin Tomilin; Anna Petrarolo",
+      "year": "2018",
+      "kind": "ハイブリッド実験機の飛行報告",
+      "source": "https://elib.dlr.de/119887/",
+      "note": "2016年のHEROS 3飛行を記録する2018年論文。DOI: 10.2322/tastj.16.312。計画段階の説明と実績報告を区別。公開閲覧だけでは再配布許諾としない。",
+      "checked_on": "2026-11-07",
+      "download": "https://elib.dlr.de/119887/1/Kobald2018A%20Record%20Flight%20of%20the%20Hybrid%20Sounding%20Rocket%20HEROS%203_JSASS.pdf",
+      "local": {
+        "path": "ハイブリッド/原本/MH24.pdf",
+        "bytes": 3332490,
+        "sha256": "cddd2b3b1a40b037346e1a729d1eccef3f6866af24667639d8afd660733bb36d",
+        "format": "pdf",
+        "pages": 6
+      },
+      "files": [
+        {
+          "path": "ハイブリッド/原本/MH24.pdf",
+          "url": "https://elib.dlr.de/119887/1/Kobald2018A%20Record%20Flight%20of%20the%20Hybrid%20Sounding%20Rocket%20HEROS%203_JSASS.pdf",
+          "bytes": 3332490,
+          "sha256": "cddd2b3b1a40b037346e1a729d1eccef3f6866af24667639d8afd660733bb36d",
+          "status": "local_only",
+          "license": "再配布許諾未確認",
+          "pages": 6
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://elib.dlr.de/119887/1/Kobald2018A%20Record%20Flight%20of%20the%20Hybrid%20Sounding%20Rocket%20HEROS%203_JSASS.pdf",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "MH25",
+      "category": "ハイブリッド",
+      "lang": [
+        "en"
+      ],
+      "title": "Systematic design of a parachute recovery system for the stratos III student built sounding rocket",
+      "author": "Lars Pepermans; Mark Rozemeijer; Esmée Menting; Noah Suard; Sayyam Khurana",
+      "year": "2018",
+      "kind": "会議論文の大学書誌・抄録",
+      "source": "https://research.tudelft.nl/en/publications/systematic-design-of-a-parachute-recovery-system-for-the-stratos-/",
+      "note": "Stratos IIIの回収設計。保存するのは大学書誌・抄録ページで論文全文ではない。DOIは10.2514/6.2018-3626だが、ページ内の論文番号表記に3625もあり不一致を保持。",
+      "checked_on": "2026-11-07",
+      "download": "https://research.tudelft.nl/en/publications/systematic-design-of-a-parachute-recovery-system-for-the-stratos-/",
+      "local": {
+        "path": "ハイブリッド/原本/MH25.html",
+        "bytes": 55545,
+        "sha256": "8ae4d48d29cb18435d7dc895649caeb103375ce700ee7d22f1b5623a87083c56",
+        "format": "html"
+      },
+      "files": [
+        {
+          "path": "ハイブリッド/原本/MH25.html",
+          "url": "https://research.tudelft.nl/en/publications/systematic-design-of-a-parachute-recovery-system-for-the-stratos-/",
+          "bytes": 55545,
+          "sha256": "8ae4d48d29cb18435d7dc895649caeb103375ce700ee7d22f1b5623a87083c56",
+          "status": "local_only",
+          "license": "再配布許諾未確認"
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://research.tudelft.nl/en/publications/systematic-design-of-a-parachute-recovery-system-for-the-stratos-/",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
+    },
+    {
+      "id": "ML19",
+      "category": "液体",
+      "lang": [
+        "de",
+        "en"
+      ],
+      "title": "Unser Raketenstart bei der EuRoC 2025 / Our Rocket Launch at EuRoC 2025",
+      "author": "TU Wien Space Team",
+      "year": "2026-01-15（2025年の飛行報告）",
+      "kind": "大学チームの液体機飛行報告",
+      "source": "https://spaceteam.at/2026/01/15/unser-raketenstart-bei-der-euroc25/",
+      "note": "Hedyの2025年飛行を2026年に公表した独英報告。既存ML11・ML12の計画・設計資料と対照できる。著者報告の実績であり独立した第三者検証とは区別する。",
+      "checked_on": "2026-11-07",
+      "download": "https://spaceteam.at/2026/01/15/unser-raketenstart-bei-der-euroc25/",
+      "local": {
+        "path": "液体/原本/ML19.html",
+        "bytes": 181258,
+        "sha256": "c1235916e464337f507cf71a68693d33819fd621781e64f08553aba7a4497bb3",
+        "format": "html"
+      },
+      "files": [
+        {
+          "path": "液体/原本/ML19.html",
+          "url": "https://spaceteam.at/2026/01/15/unser-raketenstart-bei-der-euroc25/",
+          "bytes": 181258,
+          "sha256": "c1235916e464337f507cf71a68693d33819fd621781e64f08553aba7a4497bb3",
+          "status": "local_only",
+          "license": "再配布許諾未確認"
+        },
+        {
+          "path": "液体/原本/ML19-en.html",
+          "url": "https://spaceteam.at/en/2026/01/15/our-rocket-launch-at-euroc-2025",
+          "bytes": 179177,
+          "sha256": "dab42d4966d813fea221b3c5bae88f13cf4c6eef5f13515c4fc82d9726457576",
+          "status": "local_only",
+          "license": "再配布許諾未確認"
+        }
+      ],
+      "download_status": "保存済み",
+      "download_attempts": [
+        {
+          "url": "https://spaceteam.at/2026/01/15/unser-raketenstart-bei-der-euroc25/",
+          "status": "saved"
+        },
+        {
+          "url": "https://spaceteam.at/en/2026/01/15/our-rocket-launch-at-euroc-2025",
+          "status": "saved"
+        }
+      ],
+      "file_manifest": "../追加収集-20261107.json"
     }
   ]
 }

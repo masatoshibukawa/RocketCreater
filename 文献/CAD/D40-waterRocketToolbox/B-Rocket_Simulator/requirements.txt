@@ -1,0 +1,5 @@
+# Requirements for B-Rocket_Simulator/waterRocketSim.py
+numpy
+matplotlib
+pandas
+pygame
