@@ -35,6 +35,7 @@ photographic = plan.get("style") == "photographic"
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "AIvideo/pet-rocket/realism"))
 import appearance  # noqa: E402 -- Shared photo-based recipes, no frozen CAD/physics.
 
+<<<<<<< HEAD
 cache_root = Path(job.get("cache_directory", output / "local-cache"))
 cache = MediaCache(cache_root)
 template = template_for(job["dimensions_mm"])
@@ -53,13 +54,18 @@ job["clip_identities"] = {
 }
 checkpoint = Checkpoint(output, job)
 
+=======
+>>>>>>> origin/checkpoint/video-worktree-20261106
 bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)
 scene = bpy.context.scene
 scene.render.engine = "CYCLES"
 scene.cycles.samples = plan.get("samples", 8)
 scene.cycles.use_denoising = True
+<<<<<<< HEAD
 scene.render.use_persistent_data = True
+=======
+>>>>>>> origin/checkpoint/video-worktree-20261106
 if photographic:
     scene.cycles.max_bounces = 12
     scene.cycles.transmission_bounces = 10
@@ -99,12 +105,22 @@ white = material("Payload and recovery covers", (0.68, 0.72, 0.7), 0.25)
 fin_mat = material("Fin sheet", (0.19, 0.4, 0.4), 0.1)
 ground_mat = material("Ground", (0.055, 0.065, 0.07))
 if photographic:
+<<<<<<< HEAD
     shell = appearance.readable_pet()
     fin_mat = appearance.material("Assumed sheet fins", (0.25, 0.23, 0.18), 0.65)
     white = appearance.material("Unmeasured cover material", (0.72, 0.72, 0.66), 0.3)
     if job.get("cad_files"):
         fin_mat = appearance.material("Tough PLA Gray", (0.42, 0.44, 0.46), 0.52)
         white = fin_mat
+=======
+    shell = appearance.material(
+        "Unmeasured clear PET wall", (0.98, 1, 1), 0.04, transmission=1, ior=1.575
+    )
+    appearance.surface_detail(shell)
+    fin_mat = appearance.material("Assumed sheet fins", (0.25, 0.23, 0.18), 0.65)
+    white = appearance.material("Unmeasured cover material", (0.72, 0.72, 0.66), 0.3)
+    ground_mat = appearance.asphalt(job_path.parent / "appearance")
+>>>>>>> origin/checkpoint/video-worktree-20261106
 root = bpy.data.objects.new("Confirmed assembly", None)
 scene.collection.objects.link(root)
 r = g["body_diameter"] / 2
@@ -129,7 +145,48 @@ def cylinder(name, radius, depth, z, mat):
 
 bottle_top = length - g["nose_length"] - g["egg_bay_length"] - g["canopy_bay_length"]
 if photographic:
+<<<<<<< HEAD
     profile, body_report = body(job, r, bottle_top, root, shell, cache_root)
+=======
+    # Envelope dimensions are from this design. Small neck/rib details are illustrative.
+    profile = [(r * 0.3, 0), (r * 0.3, bottle_top * 0.1)]
+    for i in range(1, 25):
+        u = i / 24
+        profile.append(
+            (r * (0.3 + 0.7 * (0.5 - 0.5 * math.cos(u * math.pi))), bottle_top * (0.1 + 0.25 * u))
+        )
+    for i in range(1, 65):
+        u = i / 64
+        profile.append((r - 0.00015 * math.sin(u * 35) ** 8, bottle_top * (0.35 + 0.65 * u)))
+    profile.append((0, bottle_top))
+    segments = 128
+    vertices = [
+        (radius * math.cos(i * math.tau / segments), radius * math.sin(i * math.tau / segments), z)
+        for radius, z in profile
+        for i in range(segments)
+    ]
+    faces = [
+        (
+            j * segments + i,
+            j * segments + (i + 1) % segments,
+            (j + 1) * segments + (i + 1) % segments,
+            (j + 1) * segments + i,
+        )
+        for j in range(len(profile) - 1)
+        for i in range(segments)
+    ]
+    mesh = bpy.data.meshes.new("Assumed PET envelope")
+    mesh.from_pydata(vertices, [], faces)
+    bottle = bpy.data.objects.new("Bottle", mesh)
+    scene.collection.objects.link(bottle)
+    bottle.parent = root
+    bottle.data.materials.append(shell)
+    for polygon in mesh.polygons:
+        polygon.use_smooth = True
+    wall = bottle.modifiers.new("Assumed PET thickness", "SOLIDIFY")
+    wall.thickness = 0.00035
+    wall.offset = -1
+>>>>>>> origin/checkpoint/video-worktree-20261106
 else:
     cylinder("Bottle", r, bottle_top, bottle_top / 2, shell)
 cylinder("Recovery bay", r, g["canopy_bay_length"], bottle_top + g["canopy_bay_length"] / 2, white)
@@ -149,14 +206,21 @@ bpy.ops.mesh.primitive_cone_add(
 )
 bpy.context.object.parent = root
 bpy.context.object.data.materials.append(shell)
+<<<<<<< HEAD
 nose_object = bpy.context.object
+=======
+>>>>>>> origin/checkpoint/video-worktree-20261106
 if photographic:
     bpy.context.object.data.materials.clear()
     bpy.context.object.data.materials.append(white)
     for polygon in bpy.context.object.data.polygons:
         polygon.use_smooth = len(polygon.vertices) <= 4
+<<<<<<< HEAD
 fin_count = g.get("fin_count", 4) if job["design"]["has_fins"] else 0
 for i in range(fin_count):
+=======
+for i in range(4):
+>>>>>>> origin/checkpoint/video-worktree-20261106
     z = g["fin_tail_inset"]
     vertices = [
         (r, 0, z),
@@ -172,6 +236,7 @@ for i in range(fin_count):
     obj.rotation_euler.z = i * math.tau / fin_count
     obj.data.materials.append(fin_mat)
     solid = obj.modifiers.new("Sheet thickness representation", "SOLIDIFY")
+<<<<<<< HEAD
     solid.thickness = g.get("fin_thickness", 0.001)
 
 if job.get("cad_files"):
@@ -193,6 +258,40 @@ if job.get("cad_files"):
 job["asset_directory"] = str(job_path.parent / "appearance")
 stage_objects, stage_report = stage(job, cache_root, appearance, template)
 ground, bench, mat, camera = (stage_objects[k] for k in ("ground", "bench", "mat", "camera"))
+=======
+    solid.thickness = 0.001
+
+bpy.ops.mesh.primitive_plane_add(size=400)
+ground = bpy.context.object
+ground.location.z = -0.01
+ground.data.materials.append(ground_mat)
+if photographic:
+    ground.hide_render = True
+    bench_mat = appearance.material("Workshop bench", (0.22, 0.25, 0.27), 0.3, metallic=0.7)
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0.78))
+    bench = bpy.context.object
+    bench.name = "Illustrative workbench"
+    bench.dimensions = (1.8, 1.15, 0.08)
+    bench.data.materials.append(bench_mat)
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0.821))
+    mat = bpy.context.object
+    mat.name = "Cutting mat"
+    mat.dimensions = (0.9, 0.7, 0.002)
+    mat.data.materials.append(appearance.material("Cutting mat", (0.025, 0.07, 0.061), 0.8))
+bpy.ops.object.light_add(type="AREA", location=(2, -2, 4))
+bpy.context.object.data.energy = 350
+bpy.context.object.data.shape = "DISK"
+bpy.context.object.data.size = 4
+bpy.ops.object.light_add(type="SUN", location=(0, 0, 10))
+bpy.context.object.data.energy = 1.5
+bpy.ops.object.camera_add()
+camera = bpy.context.object
+scene.camera = camera
+camera.data.lens = 45
+if photographic:
+    camera.data.dof.use_dof = True
+    camera.data.dof.aperture_fstop = 8
+>>>>>>> origin/checkpoint/video-worktree-20261106
 
 
 def look_at(position, target):
@@ -218,9 +317,12 @@ if photographic:
         cumulative.append(cumulative[-1] + (zb - za) * math.pi * (ra * ra + ra * rb + rb * rb) / 3)
 
     def water_volume(volume):
+<<<<<<< HEAD
         if abs(volume - liquid.get("represented_volume_m3", -1)) < 1e-12:
             return
         liquid["represented_volume_m3"] = volume
+=======
+>>>>>>> origin/checkpoint/video-worktree-20261106
         liquid.hide_render = volume < 1e-8
         if liquid.hide_render:
             return
@@ -264,7 +366,11 @@ fps = plan["fps"]
 count = plan["frames_per_clip"]
 if preview:
     count = 1
+<<<<<<< HEAD
 camera_distance = template["camera_distance_m"]
+=======
+camera_distance = length * 4.5  # Complete assembly inside the caption-safe frame.
+>>>>>>> origin/checkpoint/video-worktree-20261106
 geometry_source = hashlib.sha256(
     json.dumps(job["dimensions_mm"], sort_keys=True).encode()
 ).hexdigest()
@@ -275,6 +381,7 @@ mesh_hashes = {
     for obj in root.children
     if obj.type == "MESH"
 }
+<<<<<<< HEAD
 cache_report = {
     "stage": stage_report,
     "body": body_report if photographic else None,
@@ -289,6 +396,14 @@ for mode in ("design", "launch"):
         scene.world = stage_objects["worlds"][mode]
     ground.hide_render = photographic and mode == "design"
     bench.hide_render = mat.hide_render = not photographic or mode != "design"
+=======
+for mode in ("design", "launch"):
+    count = plan.get(mode + "_frames", plan["frames_per_clip"])
+    if photographic:
+        appearance.photo_world(mode, job_path.parent / "appearance")
+        ground.hide_render = mode == "design"
+        bench.hide_render = mat.hide_render = mode != "design"
+>>>>>>> origin/checkpoint/video-worktree-20261106
     states = []
     frames = output / (mode + "-frames")
     frames.mkdir(exist_ok=True)
@@ -317,6 +432,7 @@ for mode in ("design", "launch"):
             position = [a[k] + (b[k] - a[k]) * mix for k in ("east_m", "north_m", "altitude_m")]
             root.location = position
             if photographic:
+<<<<<<< HEAD
                 # A fixed elevated CG viewpoint keeps terrain behind the clear PET.
                 # It pans/zooms without following the rocket's position or changing its trace.
                 apogee = max(p["altitude_m"] for p in trace)
@@ -329,13 +445,28 @@ for mode in ("design", "launch"):
                         45
                         * math.dist(
                             observation,
+=======
+                # A ground-based camera pans/zooms; it does not fly alongside the rocket.
+                horizontal = max(8, max(p["altitude_m"] for p in trace) * 1.25)
+                camera.data.lens = max(
+                    45,
+                    min(
+                        850,
+                        45
+                        * math.dist(
+                            (horizontal, -horizontal, 0.8),
+>>>>>>> origin/checkpoint/video-worktree-20261106
                             (position[0], position[1], position[2] + length / 2),
                         )
                         / camera_distance,
                     ),
                 )
                 look_at(
+<<<<<<< HEAD
                     observation,
+=======
+                    (horizontal, -horizontal, 0.8),
+>>>>>>> origin/checkpoint/video-worktree-20261106
                     (position[0], position[1], position[2] + length / 2),
                 )
                 remaining = max(
@@ -359,11 +490,18 @@ for mode in ("design", "launch"):
                 {
                     "frame": index,
                     "simulation_time_s": t,
+<<<<<<< HEAD
                     "east_m": float(root.location.x),
                     "north_m": float(root.location.y),
                     "altitude_m": float(root.location.z),
                     "camera_altitude_m": camera.location.z,
                     "position_basis": "object_transform_readback",
+=======
+                    "east_m": position[0],
+                    "north_m": position[1],
+                    "altitude_m": position[2],
+                    "camera_altitude_m": camera.location.z,
+>>>>>>> origin/checkpoint/video-worktree-20261106
                 }
             )
         if photographic:
@@ -371,6 +509,7 @@ for mode in ("design", "launch"):
                 camera.location - root.location - Vector((0, 0, length / 2))
             ).length
         scene.render.filepath = str(frames / f"{index:04d}.png")
+<<<<<<< HEAD
         if checkpoint.valid(scene.render.filepath):
             resumed += 1
         elif cache.restore("frames", clip_identity, f"{index:04d}.png", scene.render.filepath):
@@ -386,6 +525,10 @@ for mode in ("design", "launch"):
         identity=clip_identity, restored=restored, resumed=resumed, rendered=rendered, frames=count
     )
     if mode == "design":
+=======
+        bpy.ops.render.render(write_still=True)
+    if mode == "design" and not preview:
+>>>>>>> origin/checkpoint/video-worktree-20261106
         # Pack licensed textures so the saved scene has no absolute image paths.
         if photographic:
             bpy.ops.file.pack_all()
@@ -395,13 +538,17 @@ for mode in ("design", "launch"):
             writer = csv.DictWriter(stream, fieldnames=list(states[0]))
             writer.writeheader()
             writer.writerows(states)
+<<<<<<< HEAD
 (output / "render-cache.json").write_text(json.dumps(cache_report, indent=2), encoding="utf-8")
+=======
+>>>>>>> origin/checkpoint/video-worktree-20261106
 (output / "scene-source.json").write_text(
     json.dumps(
         {
             "style": plan.get("style", "engineering"),
             "dimensions_sha256": geometry_source,
             "mesh_vertex_hashes": mesh_hashes,
+<<<<<<< HEAD
             "template": template,
             "body_reference": job.get("airframe"),
             "source_id": job["source_id"],
@@ -409,6 +556,10 @@ for mode in ("design", "launch"):
             "camera": "fixed elevated CG viewpoint, not filmed observation"
             if photographic
             else "illustrative tracking camera",
+=======
+            "source_id": job["source_id"],
+            "bottle_detail": "unmeasured illustrative PET envelope",
+>>>>>>> origin/checkpoint/video-worktree-20261106
             "physical_validation": "not_performed",
         },
         indent=2,

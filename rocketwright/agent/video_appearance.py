@@ -14,6 +14,7 @@ RenderStyle = Literal["engineering", "photographic"]
 MANIFEST = ROOT / "AIvideo/pet-rocket/realism/asset-manifest.json"
 
 
+<<<<<<< HEAD
 def recipe(style: str, quality="final") -> dict:
     if quality not in {"preview", "final"}:
         raise ValueError("Unknown video quality")
@@ -33,6 +34,12 @@ def recipe(style: str, quality="final") -> dict:
                 launch_frames=144,
                 samples=8,
             )
+=======
+def recipe(style: str) -> dict:
+    if style == "engineering":
+        return dict(style=style, width=960, height=540, fps=24, frames_per_clip=96)
+    if style == "photographic":
+>>>>>>> origin/checkpoint/video-worktree-20261106
         return dict(
             style=style,
             width=1920,

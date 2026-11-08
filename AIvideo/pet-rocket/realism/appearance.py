@@ -43,7 +43,11 @@ def photo_world(film, cache):
     bpy.context.scene.world = world
 
 
+<<<<<<< HEAD
 def surface_detail(mat, layered=False, roughness_range=None):
+=======
+def surface_detail(mat, layered=False):
+>>>>>>> origin/checkpoint/video-worktree-20261106
     nodes, links = mat.node_tree.nodes, mat.node_tree.links
     shader = nodes.get("Principled BSDF")
     tex = nodes.new("ShaderNodeTexCoord")
@@ -53,9 +57,14 @@ def surface_detail(mat, layered=False, roughness_range=None):
     ramp = nodes.new("ShaderNodeMapRange")
     ramp.inputs["From Min"].default_value = 0
     ramp.inputs["From Max"].default_value = 1
+<<<<<<< HEAD
     low, high = roughness_range or ((0.23, 0.38) if layered else (0.022, 0.075))
     ramp.inputs["To Min"].default_value = low
     ramp.inputs["To Max"].default_value = high
+=======
+    ramp.inputs["To Min"].default_value = 0.23 if layered else 0.022
+    ramp.inputs["To Max"].default_value = 0.38 if layered else 0.075
+>>>>>>> origin/checkpoint/video-worktree-20261106
     links.new(noise.outputs["Fac"], ramp.inputs["Value"])
     links.new(ramp.outputs["Result"], shader.inputs["Roughness"])
     bump = nodes.new("ShaderNodeBump")
@@ -73,6 +82,7 @@ def surface_detail(mat, layered=False, roughness_range=None):
     links.new(bump.outputs["Normal"], shader.inputs["Normal"])
 
 
+<<<<<<< HEAD
 def readable_pet():
     """Illustrative cool PET tint and broad highlights; transmission stays fully enabled."""
     mat = material(
@@ -90,6 +100,8 @@ def readable_pet():
     return mat
 
 
+=======
+>>>>>>> origin/checkpoint/video-worktree-20261106
 def asphalt(cache):
     mat = material("Photographed asphalt / Poly Haven CC0", (0.1, 0.1, 0.1), 0.9)
     nodes, links = mat.node_tree.nodes, mat.node_tree.links

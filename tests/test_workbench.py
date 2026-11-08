@@ -167,11 +167,17 @@ def test_workshop_replay_exports_same_design_and_integrity_checked_downloads(ben
     import rocketwright.agent.production as production
     from rocketwright.agent.production import render_video
 
+<<<<<<< HEAD
     monkeypatch.setattr(
         production,
         "media_settings",
         lambda: {"blender": Path(sys.executable), "python": Path(sys.executable)},
     )
+=======
+    monkeypatch.setattr(production, "media_settings", lambda: {
+        "blender": Path(sys.executable), "python": Path(sys.executable)
+    })
+>>>>>>> origin/checkpoint/video-worktree-20261106
 
     modified = bench.load(state["id"])
     modified["photographic_video_plan"]["width"] = 2000
