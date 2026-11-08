@@ -1,0 +1,263 @@
+{
+  "production_source_hash": "0fee03585c1fb25724063e4bd600172eae7df9e95660bf322b48eaf7a38729f5",
+  "diagnostic_source_sha256": "2b414276b4ef752388e4437713bfdd92cffc0e3c1b002f9e2eb7b1619ec1d723",
+  "parent_manifest_sha256": "1effb1b1b5fa8d5a5ff5b87027f20699389ca8883ef5f3a2fd3c84765e5007df",
+  "verified_parent_files": 34,
+  "cfd_case_sha256": "abfadcf4e1a04176161819d8946ac74d8cb0f442e678334ffaf337a044a017d9",
+  "results": [
+    {
+      "label": "baseline",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.835663736866447,
+      "incidence_deg": 7.676971114984827,
+      "peak_ascent_roll_rad_s": 1.5660489653651457e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.469136006766348e-13
+    },
+    {
+      "label": "Cx--1",
+      "bias": {
+        "Cx": -0.0019228945774589778,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.845659019964987,
+      "incidence_deg": 7.65478493703908,
+      "peak_ascent_roll_rad_s": 1.5338094332055575e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 3.481659405224491e-13
+    },
+    {
+      "label": "Cx-+1",
+      "bias": {
+        "Cx": 0.0019228945774589778,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.821110567348615,
+      "incidence_deg": 7.707050617400415,
+      "peak_ascent_roll_rad_s": 2.7558220019043258e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.8954616482224083e-13
+    },
+    {
+      "label": "Cy--1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": -0.012846918065187563,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.83631149419536,
+      "incidence_deg": 7.68368978066002,
+      "peak_ascent_roll_rad_s": 2.1254958145594854e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.1760371282653068e-13
+    },
+    {
+      "label": "Cy-+1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.012846918065187563,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.83471751340486,
+      "incidence_deg": 7.668770058324781,
+      "peak_ascent_roll_rad_s": 1.863974582238057e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.0961010704922955e-13
+    },
+    {
+      "label": "Cz--1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": -0.011376168654774588,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.835765863611147,
+      "incidence_deg": 7.684911642554352,
+      "peak_ascent_roll_rad_s": 2.0582124499989288e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 3.3661962106634746e-13
+    },
+    {
+      "label": "Cz-+1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": 0.011376168654774588,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.835131455465966,
+      "incidence_deg": 7.742906475999887,
+      "peak_ascent_roll_rad_s": 1.79289187781032e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.2293278334473143e-13
+    },
+    {
+      "label": "Croll--1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": -0.00543950676993935,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.835661865875743,
+      "incidence_deg": 7.673990688256664,
+      "peak_ascent_roll_rad_s": 0.17744528036538665,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.469136006766348e-13
+    },
+    {
+      "label": "Croll-+1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": 0.00543950676993935,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.835665606606966,
+      "incidence_deg": 7.674381165164264,
+      "peak_ascent_roll_rad_s": 0.17744554642044233,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.469136006766348e-13
+    },
+    {
+      "label": "Cpitch_y--1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": -0.012617875310852057,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.835788589089955,
+      "incidence_deg": 7.73916367191999,
+      "peak_ascent_roll_rad_s": 1.3239236047745696e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.469136006766348e-13
+    },
+    {
+      "label": "Cpitch_y-+1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": 0.012617875310852057,
+        "Cm_z": 0.0
+      },
+      "apogee_m": 22.835486667472285,
+      "incidence_deg": 7.744725708221192,
+      "peak_ascent_roll_rad_s": 3.181503812046337e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.469136006766348e-13
+    },
+    {
+      "label": "Cm_z--1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": -0.015291532243388861
+      },
+      "apogee_m": 22.835464017988425,
+      "incidence_deg": 7.799619717282462,
+      "peak_ascent_roll_rad_s": 1.073735129760956e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.469136006766348e-13
+    },
+    {
+      "label": "Cm_z-+1",
+      "bias": {
+        "Cx": 0.0,
+        "Cy": 0.0,
+        "Cz": 0.0,
+        "Croll": 0.0,
+        "Cpitch_y": 0.0,
+        "Cm_z": 0.015291532243388861
+      },
+      "apogee_m": 22.83585202332236,
+      "incidence_deg": 7.758803450472839,
+      "peak_ascent_roll_rad_s": 1.717344607727215e-17,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 2.469136006766348e-13
+    },
+    {
+      "label": "joint--1",
+      "bias": {
+        "Cx": 0.0019228945774589778,
+        "Cy": -0.012846918065187563,
+        "Cz": -0.011376168654774588,
+        "Croll": 0.00543950676993935,
+        "Cpitch_y": 0.012617875310852057,
+        "Cm_z": -0.015291532243388861
+      },
+      "apogee_m": 22.82532387245093,
+      "incidence_deg": 7.697325258928589,
+      "peak_ascent_roll_rad_s": 0.17742259440217767,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 1.9939605522267811e-13
+    },
+    {
+      "label": "joint-+1",
+      "bias": {
+        "Cx": -0.0019228945774589778,
+        "Cy": 0.012846918065187563,
+        "Cz": 0.011376168654774588,
+        "Croll": -0.00543950676993935,
+        "Cpitch_y": -0.012617875310852057,
+        "Cm_z": 0.015291532243388861
+      },
+      "apogee_m": 22.84623598499477,
+      "incidence_deg": 7.65045664135574,
+      "peak_ascent_roll_rad_s": 0.17747318628605227,
+      "aero_domain_pass": true,
+      "equilibrium_residual": 3.481659405224491e-13
+    }
+  ],
+  "altitude_max_change_m": 0.014553169517832032,
+  "incidence_max_change_deg": 0.12264860229763475,
+  "elapsed_s": 63.79699999978766,
+  "source_unchanged": true,
+  "acceptance_performed": false,
+  "physical_qualification": false,
+  "limitations": [
+    "A single-speed/incidence observed difference is not a global confidence bound",
+    "Constant coefficient biases across the trajectory are diagnostic scenarios",
+    "Analytic nominal aerodynamics, not a complete CFD flight prediction",
+    "All production averaging/precision gates remain unchanged"
+  ],
+  "verified_files": 18,
+  "report_sha256": "50594911dada3e4a027287e0c5a58f2ba34e9b9a38062c9f9f6eec7bad55c693"
+}
